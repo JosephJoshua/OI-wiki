@@ -1,0 +1,61 @@
+name: Deploy English translation
+
+on:
+  push:
+    branches:
+      - english-translation
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.10'
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8.1.0
+        with:
+          version: "latest"
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '20.x'
+      - name: Install Python dependencies
+        run: uv sync
+      - name: Install Node.js dependencies
+        run: yarn --frozen-lockfile --production
+      - name: Page Build
+        # Same as scripts/pre-build/pre-build.sh, minus the upstream feedback system.
+        run: |
+          ./scripts/pre-build/install-theme.sh
+          git rev-parse --short HEAD | xargs -I % sed -i "s/githash: ''/githash: '%'/g" mkdocs.yml
+          uv run mkdocs build -v
+      - name: Post-process HTML
+        run: node --loader ts-node/esm scripts/post-build/html-postprocess.ts math external-links
+        env:
+          NODE_OPTIONS: --max_old_space_size=3072
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

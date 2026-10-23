@@ -1,14 +1,14 @@
 # Project Information
 site_name: OI Wiki
-site_description: OI Wiki 是一个编程竞赛知识整合站点，提供有趣又实用的编程竞赛知识以及其他有帮助的内容，帮助广大编程竞赛爱好者更快更深入地学习编程竞赛
+site_description: OI Wiki (English translation) gathers competitive programming knowledge in one place, with fun and practical material to help contest enthusiasts learn faster and more deeply
 site_author: OI Wiki Team
-site_url: https://oi-wiki.org
+site_url: https://josephjoshua.github.io/OI-wiki/
 strict: false
 
 # Repository
-repo_name: 'OI-wiki/OI-wiki'
-repo_url: 'https://github.com/OI-wiki/OI-wiki'
-edit_uri: 'https://oi-wiki.org/edit-landing/?ref='
+repo_name: 'JosephJoshua/OI-wiki'
+repo_url: 'https://github.com/JosephJoshua/OI-wiki'
+edit_uri: 'edit/english-translation/docs/'
 
 # Copyright
 copyright: 'Copyright &copy; 2016 - 2026 OI Wiki Team'
@@ -544,7 +544,7 @@ theme:
   custom_dir: 'mkdocs-material/material/templates'
   static_templates:
     - 404.html
-  language: 'zh'
+  language: 'en'
   palette:
     # Palette toggle for light mode
     - media: "(prefers-color-scheme: light)"
@@ -588,13 +588,10 @@ hooks:
 # Customization
 extra:
   disqus: 'OI-Wiki'
-  copyright: '<a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh">CC BY-SA 4.0</a> 和 <a href="https://github.com/zTrix/sata-license">SATA</a>'
+  copyright: 'English translation of <a href="https://oi-wiki.org">OI Wiki</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> and <a href="https://github.com/zTrix/sata-license">SATA</a>'
   pagetime: 'on'
   manifest: 'manifest.webmanifest'
   githash: ''
-  analytics:
-    provider: google
-    property: UA-124485594-1
 
 extra_javascript:
   - '_static/js/math-csr.js?math-csr'
