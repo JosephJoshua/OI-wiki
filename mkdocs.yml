@@ -130,35 +130,35 @@ nav:
     - Python 速成: lang/python.md
     - Java 速成: lang/java.md
     - Java 进阶: lang/java-pro.md
-  - 算法基础:
-    - 算法基础简介: basic/index.md
-    - 复杂度: 
-      - 复杂度简介: basic/complexity.md
-      - 均摊复杂度: basic/amortized-analysis.md
-    - 枚举: basic/enumerate.md
-    - 模拟: basic/simulate.md
-    - 递归 & 分治: basic/divide-and-conquer.md
-    - 贪心: basic/greedy.md
-    - 排序:
-      - 排序简介: basic/sort-intro.md
-      - 选择排序: basic/selection-sort.md
-      - 冒泡排序: basic/bubble-sort.md
-      - 插入排序: basic/insertion-sort.md
-      - 计数排序: basic/counting-sort.md
-      - 基数排序: basic/radix-sort.md
-      - 快速排序: basic/quick-sort.md
-      - 归并排序: basic/merge-sort.md
-      - 堆排序: basic/heap-sort.md
-      - 桶排序: basic/bucket-sort.md
-      - 希尔排序: basic/shell-sort.md
-      - 锦标赛排序: basic/tournament-sort.md
-      - Tim 排序: basic/tim-sort.md
-      - 排序相关 STL: basic/stl-sort.md
-      - 排序应用: basic/use-of-sort.md
-    - 前缀和 & 差分: basic/prefix-sum.md
-    - 二分: basic/binary.md
-    - 倍增: basic/binary-lifting.md
-    - 构造: basic/construction.md
+  - Basic Algorithms:
+    - Introduction to Basic Algorithms: basic/index.md
+    - Complexity:
+      - Introduction to Complexity: basic/complexity.md
+      - Amortized Analysis: basic/amortized-analysis.md
+    - Enumeration: basic/enumerate.md
+    - Simulation: basic/simulate.md
+    - Recursion & Divide and Conquer: basic/divide-and-conquer.md
+    - Greedy: basic/greedy.md
+    - Sorting:
+      - Introduction to Sorting: basic/sort-intro.md
+      - Selection Sort: basic/selection-sort.md
+      - Bubble Sort: basic/bubble-sort.md
+      - Insertion Sort: basic/insertion-sort.md
+      - Counting Sort: basic/counting-sort.md
+      - Radix Sort: basic/radix-sort.md
+      - Quicksort: basic/quick-sort.md
+      - Merge Sort: basic/merge-sort.md
+      - Heapsort: basic/heap-sort.md
+      - Bucket Sort: basic/bucket-sort.md
+      - Shellsort: basic/shell-sort.md
+      - Tournament Sort: basic/tournament-sort.md
+      - Timsort: basic/tim-sort.md
+      - Sorting in the STL: basic/stl-sort.md
+      - Applications of Sorting: basic/use-of-sort.md
+    - Prefix Sums & Difference Arrays: basic/prefix-sum.md
+    - Binary Search: basic/binary.md
+    - Binary Lifting: basic/binary-lifting.md
+    - Constructive Algorithms: basic/construction.md
   - 搜索:
     - 搜索部分简介: search/index.md
     - DFS（搜索）: search/dfs.md

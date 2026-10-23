@@ -1,3 +1,7 @@
+> **English translation (work in progress).** This fork translates [OI Wiki](https://github.com/OI-wiki/OI-wiki) into English. All credit for the original content goes to the OI Wiki authors and contributors. Like the original, the translation is licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) with the additional [SATA](https://github.com/zTrix/sata-license) license; code is under the original project's terms.
+>
+> Translated so far: `docs/basic/` (Basic Algorithms). The other sections are still in Chinese.
+
 [![Word Art](docs/images/wordArt.webp)](https://oi-wiki.org/)
 
 # 欢迎来到 **OI Wiki**！

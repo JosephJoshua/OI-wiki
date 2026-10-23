@@ -1,32 +1,32 @@
-本页面将简要介绍冒泡排序．
+This page gives a short introduction to bubble sort.
 
-## 定义
+## Definition
 
-冒泡排序（Bubble sort）是一种简单的排序算法．由于在算法的执行过程中，较小的元素像是气泡般慢慢「浮」到数列的顶端，故叫做冒泡排序．
+Bubble sort is a simple sorting algorithm. It gets its name from the way smaller elements slowly "float" to the top of the list, like bubbles rising in water, as the algorithm runs.
 
-## 过程
+## How it works
 
-它的工作原理是每次检查相邻两个元素，如果前面的元素与后面的元素满足给定的排序条件，就将相邻两个元素交换．当没有相邻的元素需要交换时，排序就完成了．
+Bubble sort repeatedly looks at each pair of neighboring elements. If the two are in the wrong order, it swaps them. Once a full pass finds no pair that needs swapping, the list is sorted.
 
-经过 $i$ 次扫描后，数列的末尾 $i$ 项必然是最大的 $i$ 项，因此扫描 $n-1$ 遍足以使数组有序．
+After $i$ passes, the last $i$ positions are guaranteed to hold the $i$ largest elements in their final places. So $n-1$ passes are always enough to sort the array.
 
-## 性质
+## Properties
 
-### 稳定性
+### Stability
 
-冒泡排序是一种稳定的排序算法．
+Bubble sort is stable: equal elements keep their original relative order.
 
-### 时间复杂度
+### Time complexity
 
-在序列完全有序时，冒泡排序只需遍历一遍数组，不用执行任何交换操作，时间复杂度为 $O(n)$．
+If the list is already sorted, bubble sort makes just one pass over the array and performs no swaps, so it runs in $O(n)$ time.
 
-在最坏情况下，冒泡排序要执行 $\dfrac{(n-1)n}{2}$ 次交换操作，时间复杂度为 $O(n^2)$．
+In the worst case, bubble sort performs $\dfrac{(n-1)n}{2}$ swaps, giving $O(n^2)$ time.
 
-冒泡排序的平均时间复杂度为 $O(n^2)$．
+On average, bubble sort also takes $O(n^2)$ time.
 
-## 代码实现
+## Implementation
 
-### 伪代码
+### Pseudocode
 
 $$
 \begin{array}{ll}
@@ -55,7 +55,7 @@ $$
 
 === "Java"
     ```java
-    // 假设数组的大小是 n + 1，冒泡排序从数组下标 1 开始
+    // Assumes the array has size n + 1; sorting starts at index 1
     static void bubble_sort(int[] a, int n) {
         boolean flag = true;
         while (flag) {
