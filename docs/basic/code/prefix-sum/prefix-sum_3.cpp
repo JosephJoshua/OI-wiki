@@ -13,13 +13,13 @@ int power[MAXN];
 int depth[MAXN], lg[MAXN];
 int n, k, ans = 0, tot = 0;
 
-void add(int x, int y) {  // 加边
+void add(int x, int y) {  // add an edge
   edge[++tot].to = y;
   edge[tot].next = head[x];
   head[x] = tot;
 }
 
-void dfs(int now, int father) {  // DFS 预处理结点深度和倍增祖先
+void dfs(int now, int father) {  // DFS to precompute depths and binary lifting ancestors
   fa[now][0] = father;
   depth[now] = depth[father] + 1;
   for (int i = 1; i <= lg[depth[now]]; ++i)
@@ -28,7 +28,7 @@ void dfs(int now, int father) {  // DFS 预处理结点深度和倍增祖先
     if (edge[i].to != father) dfs(edge[i].to, now);
 }
 
-int lca(int x, int y) {  // 求LCA，最近公共祖先
+int lca(int x, int y) {  // find the LCA (lowest common ancestor)
   if (depth[x] < depth[y]) swap(x, y);
   while (depth[x] > depth[y]) x = fa[x][lg[depth[x] - depth[y]] - 1];
   if (x == y) return x;
@@ -38,7 +38,7 @@ int lca(int x, int y) {  // 求LCA，最近公共祖先
   return fa[x][0];
 }
 
-// 用 DFS 累加子树差分，求出每个结点的压力并更新最大压力
+// DFS to sum the difference array over subtrees, get each node's load, and update the maximum
 void get_ans(int u, int father) {
   for (int i = head[u]; i; i = edge[i].next) {
     int to = edge[i].to;
@@ -56,7 +56,7 @@ int main() {
   for (int i = 1; i <= n; i++) {
     lg[i] = lg[i - 1] + (1 << lg[i - 1] == i);
   }
-  for (int i = 1; i <= n - 1; i++) {  // 建图
+  for (int i = 1; i <= n - 1; i++) {  // build the graph
     cin >> x >> y;
     add(x, y);
     add(y, x);
@@ -66,7 +66,7 @@ int main() {
   for (int i = 1; i <= k; i++) {
     cin >> s >> t;
     int ancestor = lca(s, t);
-    // 树上差分
+    // difference array on the tree
     power[s]++;
     power[t]++;
     power[ancestor]--;

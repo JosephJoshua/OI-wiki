@@ -7,19 +7,19 @@
 using namespace std;
 
 // --8<-- [start:sort]
-// 模板的 T 参数表示元素的类型，此类型需要定义小于（<）运算
+// The template parameter T is the element type; it must define less-than (<)
 template <typename T>
-// arr 为查找范围数组，rk 为需要查找的排名（从 0 开始），len 为数组长度
+// arr is the array to search, rk is the rank to find (0-based), len is its length
 T find_kth_element(T arr[], int rk, const int len) {
   if (len <= 1) return arr[0];
-  // 随机选择基准（pivot）
+  // Pick a random pivot
   const T pivot = arr[rand() % len];
-  // i：当前操作的元素下标
-  // arr[0, j)：存储小于 pivot 的元素
-  // arr[k, len)：存储大于 pivot 的元素
+  // i: index of the current element
+  // arr[0, j): elements less than pivot
+  // arr[k, len): elements greater than pivot
   int i = 0, j = 0, k = len;
-  // 完成一趟三路快排，将序列分为：
-  // 小于 pivot 的元素 ｜ 等于 pivot 的元素 ｜ 大于 pivot 的元素
+  // One pass of 3-way partitioning splits the array into:
+  // elements < pivot | elements == pivot | elements > pivot
   while (i < k) {
     if (arr[i] < pivot)
       swap(arr[i++], arr[j++]);
@@ -28,15 +28,15 @@ T find_kth_element(T arr[], int rk, const int len) {
     else
       i++;
   }
-  // 根据要找的排名与两条分界线的位置，去不同的区间递归查找升序下标为 k 的数
-  // 如果小于 pivot 的元素个数比 k 多，则升序下标为 k 的元素一定是一个小于 pivot
-  // 的元素
+  // Compare the rank with the two boundaries and recurse into the part that holds the element at sorted index k
+  // If more than k elements are less than pivot, the element at sorted index k must be
+  // less than pivot
   if (rk < j) return find_kth_element(arr, rk, j);
-  // 否则，如果小于 pivot 和等于 pivot 的元素加起来也没有 k 多，
-  // 则升序下标为 k 的元素一定是一个大于 pivot 的元素
+  // Otherwise, if the elements less than or equal to pivot are still not more than k,
+  // the element at sorted index k must be greater than pivot
   else if (rk >= k)
     return find_kth_element(arr + k, rk - k, len - k);
-  // 否则，pivot 就是升序下标为 k 的元素
+  // Otherwise, pivot is the element at sorted index k
   return pivot;
 }
 

@@ -1,5 +1,5 @@
 // divide-and-conquer_1.h
-// 二叉树结点的定义
+// Definition of a binary tree node
 struct TreeNode {
   int val;
   TreeNode *left;

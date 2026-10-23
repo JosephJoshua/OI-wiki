@@ -8,7 +8,7 @@
 void merge(const int* a, size_t aLen, const int* b, size_t bLen, int* c) {
   size_t i = 0, j = 0, k = 0;
   while (i < aLen && j < bLen) {
-    if (b[j] < a[i]) {  // <!> 先判断 b[j] < a[i]，保证稳定性
+    if (b[j] < a[i]) {  // <!> check b[j] < a[i] first to keep the sort stable
       c[k] = b[j];
       ++j;
     } else {
@@ -17,7 +17,7 @@ void merge(const int* a, size_t aLen, const int* b, size_t bLen, int* c) {
     }
     ++k;
   }
-  // 此时一个数组已空，另一个数组非空，将非空的数组并入 c 中
+  // Now one array is empty and the other is not; append the non-empty one to c
   for (; i < aLen; ++i, ++k) c[k] = a[i];
   for (; j < bLen; ++j, ++k) c[k] = b[j];
 }
@@ -46,12 +46,12 @@ void merge(const int* aBegin, const int* aEnd, const int* bBegin,
 // --8<-- [start:recursive]
 void merge_sort(int* a, int l, int r) {
   if (r - l <= 1) return;
-  // 分解
+  // Divide
   int mid = l + ((r - l) >> 1);
   merge_sort(a, l, mid);
   merge_sort(a, mid, r);
-  // 合并
-  std::vector<int> tmp(r - l);  // 只为本次合并的区间分配缓冲区
+  // Merge
+  std::vector<int> tmp(r - l);  // allocate a buffer only for the range being merged
   merge(a + l, a + mid, a + mid, a + r, tmp.data());
   for (int i = l; i < r; ++i) a[i] = tmp[i - l];
 }
@@ -60,13 +60,13 @@ void merge_sort(int* a, int l, int r) {
 
 // --8<-- [start:iterative]
 void merge_sort(int* a, size_t n) {
-  std::vector<int> tmp(n);  // 合并缓冲区与输入等长
+  std::vector<int> tmp(n);  // merge buffer is as long as the input
   for (size_t seg = 1; seg < n; seg <<= 1) {
     for (size_t left1 = 0; left1 < n - seg;
-         left1 += seg + seg) {  // n - seg: 如果最后只有一个段就不用合并
+         left1 += seg + seg) {  // n - seg: no merge needed if only one segment is left
       size_t right1 = left1 + seg;
       size_t left2 = right1;
-      size_t right2 = std::min(left2 + seg, n);  // <!> 注意最后一个段的边界
+      size_t right2 = std::min(left2 + seg, n);  // <!> mind the bound of the last segment
       merge(a + left1, a + right1, a + left2, a + right2,
             tmp.data() + left1);  // pointer-style merge
       for (size_t i = left1; i < right2; ++i) a[i] = tmp[i];

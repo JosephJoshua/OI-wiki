@@ -12,21 +12,21 @@ int get_digit(string* arr, int i, int dig) {
 }
 
 void MSD_radix_sort_string_base(string* arr, int* begin, int* end,
-                                int digit)  // 主体函数
-// 对仅由小写字母构成的字符串排序
-// 参数表示现在 [begin,end) 内的元素 [0,digit) 位都相同
-// 现在从 digit 位开始进行排序
-// 调用示例：MSD_radix_sort_string(a, a + n)
-// 和上一份代码几乎完全相同，所以注释较少
-// 为节省空间和时间，我们对下标数组进行排序，比较函数依旧比较字符串对应位
+                                int digit)  // main routine
+// Sort strings made of lowercase letters only
+// The arguments mean all elements in [begin,end) share positions [0,digit)
+// Now sort starting from position digit
+// Example call: MSD_radix_sort_string(a, a + n)
+// Almost the same as the previous code, so fewer comments
+// To save space and time we sort an index array; comparisons still use the strings' characters
 {
   if (begin >= end) return;
   static int tmp[MAXN + 5];
   static int cnt[28];
   vector<int> beg;
   beg.resize(28);
-  // Q: 为什么开 28？
-  // A: 0=空字符，1-26=a-z，27=额外空间（防止越界）
+  // Q: Why 28?
+  // A: 0 = null character, 1-26 = a-z, 27 = extra space (to avoid out-of-bounds)
   for (int i = 0; i < 28; i++) cnt[i] = beg[i] = 0;
   for (int* it = begin; it != end; it++) cnt[get_digit(arr, *it, digit)] += 1;
   beg[0] = 0;
@@ -38,7 +38,7 @@ void MSD_radix_sort_string_base(string* arr, int* begin, int* end,
     cnt[bitVal]++;
   }
   for (int* it = begin; it != end; it++) *it = tmp[it - begin];
-  // 如果已经是空字符了就没必要递归了，所以递归 1~26
+  // No need to recurse on the null character, so recurse on 1~26 only
   for (int i = 1; i <= 26; i++)
     MSD_radix_sort_string_base(arr, begin + beg[i], begin + beg[i + 1],
                                digit + 1);
@@ -46,7 +46,7 @@ void MSD_radix_sort_string_base(string* arr, int* begin, int* end,
 
 int label[MAXN + 5];
 
-void MSD_radix_sort_string(string* begin, string* end)  // 调用接口
+void MSD_radix_sort_string(string* begin, string* end)  // entry point
 {
   static string tmp[MAXN + 5];
   int n = end - begin;

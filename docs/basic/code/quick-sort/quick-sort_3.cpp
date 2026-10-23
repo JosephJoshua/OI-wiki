@@ -7,19 +7,19 @@
 using namespace std;
 
 // --8<-- [start:sort]
-// 模板的 T 参数表示元素的类型，此类型需要定义小于（<）运算
+// The template parameter T is the element type; it must define less-than (<)
 template <typename T>
-// arr 为需要被排序的数组，len 为数组长度
+// arr is the array to sort, len is its length
 void quick_sort(T arr[], const int len) {
   if (len <= 1) return;
-  // 随机选择基准（pivot）
+  // Pick a random pivot
   const T pivot = arr[rand() % len];
-  // i：当前操作的元素下标
-  // arr[0, j)：存储小于 pivot 的元素
-  // arr[k, len)：存储大于 pivot 的元素
+  // i: index of the current element
+  // arr[0, j): elements less than pivot
+  // arr[k, len): elements greater than pivot
   int i = 0, j = 0, k = len;
-  // 完成一趟三路快排，将序列分为：
-  // 小于 pivot 的元素 | 等于 pivot 的元素 | 大于 pivot 的元素
+  // One pass of 3-way partitioning splits the array into:
+  // elements < pivot | elements == pivot | elements > pivot
   while (i < k) {
     if (arr[i] < pivot)
       swap(arr[i++], arr[j++]);
@@ -28,7 +28,7 @@ void quick_sort(T arr[], const int len) {
     else
       i++;
   }
-  // 递归完成对于两个子序列的快速排序
+  // Recursively quicksort the two parts
   quick_sort(arr, j);
   quick_sort(arr + k, len - k);
 }

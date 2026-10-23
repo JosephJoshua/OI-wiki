@@ -7,15 +7,15 @@ public class Main {
         int d = input.nextInt();
         int n = input.nextInt();
         int time = 0, dist = 0;
-        while (true) {  // 用死循环来枚举
+        while (true) {  // enumerate with an infinite loop
             dist += u;
             time++;
             if (dist >= n) {
-                break;  // 满足条件则退出死循环
+                break;  // leave the loop once the condition holds
             }
             dist -= d;
         }
-        System.out.println(time);   // 输出得到的结果
+        System.out.println(time);   // print the result
         input.close();
     }
 }

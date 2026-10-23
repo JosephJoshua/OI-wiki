@@ -14,7 +14,7 @@ def merge(a, front, mid, end):
 
 
 # --8<-- [start:sort]
-# 不使用递归的归并排序算法
+# Merge sort without recursion
 def merge_sort_iterative(a):
     n = len(a)
     seg = 1
@@ -26,7 +26,7 @@ def merge_sort_iterative(a):
         seg = seg + seg
 
 
-# 使用递归的归并排序算法
+# Merge sort with recursion
 def merge_sort(a, front, end):
     if front >= end:
         return

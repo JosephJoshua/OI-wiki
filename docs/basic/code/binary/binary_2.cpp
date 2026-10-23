@@ -4,25 +4,25 @@ using namespace std;
 int a[1000005];
 int n, m;
 
-bool check(int k) {  // 检查可行性，k 为锯片高度
+bool check(int k) {  // check feasibility; k is the blade height
   long long sum = 0;
-  for (int i = 1; i <= n; i++)       // 检查每一棵树
-    if (a[i] > k)                    // 如果树高于锯片高度
-      sum += (long long)(a[i] - k);  // 累加树木长度
-  return sum >= m;                   // 如果满足最少长度代表可行
+  for (int i = 1; i <= n; i++)       // check every tree
+    if (a[i] > k)                    // if the tree is taller than the blade
+      sum += (long long)(a[i] - k);  // add up the wood cut off
+  return sum >= m;                   // feasible if we get at least m
 }
 
 int find() {
-  int l = 0, r = 1e9 + 1;   // 因为是左闭右开的，所以 10^9 要加 1
-                            // 保持 check(l) 为真、check(r) 为假
-  while (l + 1 < r) {       // 如果两点不相邻
-    int mid = (l + r) / 2;  // 取中间值
-    if (check(mid))         // 如果可行
-      l = mid;              // 升高锯片高度
+  int l = 0, r = 1e9 + 1;   // the range is half-open, so add 1 to 10^9
+                            // keep check(l) true and check(r) false
+  while (l + 1 < r) {       // while l and r are not adjacent
+    int mid = (l + r) / 2;  // take the midpoint
+    if (check(mid))         // if feasible
+      l = mid;              // raise the blade
     else
-      r = mid;  // 否则降低锯片高度
+      r = mid;  // otherwise lower the blade
   }
-  return l;  // 返回左边值
+  return l;  // return the left end
 }
 
 int main() {

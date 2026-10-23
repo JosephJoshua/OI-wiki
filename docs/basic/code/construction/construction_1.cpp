@@ -17,7 +17,7 @@ int main() {
     for (int t = 1; t < i; ++t) c[i][t] = c[i - 1][t - 1] + c[i - 1][t];
     fill(f, f + K + 1, INF);
     f[0] = 0;
-    // 每个大物品贡献 c[i][t] 种方案，按完全背包求最少物品数。
+    // Each large item adds c[i][t] ways; use unbounded knapsack to find the fewest items.
     for (int t = 0; t <= i; ++t) {
       for (int j = c[i][t]; j <= K; ++j) {
         if (f[j - c[i][t]] + 1 < f[j]) {
@@ -41,7 +41,7 @@ int main() {
     cin >> w >> P >> k;
     int i = small[k];
     vector<int> volumes(i, 1);
-    // 构造恰好 k 种方案；由于 k < P，无需另外处理取模。
+    // Build exactly k ways; since k < P, no extra handling of the modulus is needed.
     while (k > 0) {
       int t = take[i][k];
       volumes.push_back(w - t);

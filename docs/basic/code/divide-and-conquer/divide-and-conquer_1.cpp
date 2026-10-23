@@ -15,7 +15,7 @@ void merge(vector<T>& a, int front, int mid, int end) {
 }
 
 // --8<-- [start:sort]
-// 不使用递归的归并排序算法
+// Merge sort without recursion
 template <typename T>
 void merge_sort(vector<T>& a) {
   int n = a.size();
@@ -24,7 +24,7 @@ void merge_sort(vector<T>& a) {
       merge(a, start, start + seg - 1, std::min(start + seg + seg - 1, n - 1));
 }
 
-// 使用递归的归并排序算法
+// Merge sort with recursion
 template <typename T>
 void merge_sort(vector<T>& a, int front, int end) {
   if (front >= end) return;

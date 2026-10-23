@@ -4,12 +4,12 @@ int main() {
   int n = 0, u = 0, d = 0;
   std::cin >> u >> d >> n;
   int time = 0, dist = 0;
-  while (true) {  // 用死循环来枚举
+  while (true) {  // enumerate with an infinite loop
     dist += u;
     time++;
-    if (dist >= n) break;  // 满足条件则退出死循环
+    if (dist >= n) break;  // leave the loop once the condition holds
     dist -= d;
   }
-  std::cout << time << '\n';  // 输出得到的结果
+  std::cout << time << '\n';  // print the result
   return 0;
 }

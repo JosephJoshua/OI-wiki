@@ -2,67 +2,67 @@
 #include <vector>
 using namespace std;
 // --8<-- [start:core]
-constexpr unsigned MAXN = 1000;  // 要排序的数的个数
-constexpr unsigned RADIX = 10;   // 基数
+constexpr unsigned MAXN = 1000;  // number of values to sort
+constexpr unsigned RADIX = 10;   // radix
 constexpr unsigned powRADIX[10] = {1,         10,        100,     1000,
                                    10000,     100000,    1000000, 10000000,
-                                   100000000, 1000000000};  // RADIX 的幂
+                                   100000000, 1000000000};  // powers of RADIX
 
-unsigned get_digit(unsigned value, int digit)  // 提取第 digit 位
+unsigned get_digit(unsigned value, int digit)  // get the digit at position `digit`
 {
   return (value / powRADIX[digit]) % RADIX;
 }
 
 void MSD_radix_sort(unsigned* begin, unsigned* end, int digit)
-// 表示现在 [begin,end) 内的元素（10 进制下）前若干位都相同
-// 只有最后 digit 位（第 digit-1 到 0 位）需要进行排序
-// 调用示例：MSD_radix_sort(a,a+n,10)
+// All elements in [begin,end) share the same leading digits (in base 10)
+// Only the last `digit` digits (positions digit-1 down to 0) still need sorting
+// Example call: MSD_radix_sort(a,a+n,10)
 {
-  if (begin >= end)  // 空区间
+  if (begin >= end)  // empty range
   {
     return;
   }
-  /**计数排序（个人写法仅供参考）**/
+  /**Counting sort (just one way to write it)**/
   static unsigned cnt[RADIX + 1],
-      tmp[MAXN + 5];  // 由于不同层递归不会同时使用 cnt,tmp
-                      // 数组（每层使用完毕才会调用下一层），使用 static
-                      // 关键字可以节省空间
+      tmp[MAXN + 5];  // recursion levels never use cnt,tmp at the same
+                      // time (each level finishes before calling the next), so
+                      // making them static saves space
   vector<unsigned> beg;
-  beg.resize(RADIX + 1);  // 对 beg 的访问可能冲突，使用局部变量
+  beg.resize(RADIX + 1);  // accesses to beg may conflict, so use a local variable
   for (int i = 0; i <= RADIX; i++) {
-    cnt[i] = beg[i] = 0;  // 清空是一个好习惯
+    cnt[i] = beg[i] = 0;  // clearing is a good habit
   }
-  for (unsigned* it = begin; it != end; it++)  // 计数
+  for (unsigned* it = begin; it != end; it++)  // count
   {
     int bitVal = get_digit(*it, digit - 1);
     cnt[bitVal] += 1;
   }
-  beg[0] = 0;  // 计算每个数码开始存储的位置（偏移量）
+  beg[0] = 0;  // compute where each digit value starts (offset)
   for (int i = 1; i <= RADIX; i++) {
     beg[i] = beg[i - 1] + cnt[i - 1];
   }
-  // 多计算 beg[RADIX] 是因为这样可以直接定义 i 对应的范围是 [beg[i],beg[i+1])
-  // 而不用担心那个 beg[i+1] 越界
+  // We also compute beg[RADIX] so the range for i is simply [beg[i],beg[i+1])
+  // without worrying about beg[i+1] going out of bounds
   for (int i = 0; i < RADIX; i++) {
     cnt[i] = 0;
   }
-  for (unsigned* it = begin; it != end; it++)  // 将计数排序结果放入 tmp
+  for (unsigned* it = begin; it != end; it++)  // put the counting sort result into tmp
   {
-    unsigned bitVal = get_digit(*it, digit - 1);  // 提取第 digit - 1 位
-    // 按原顺序遍历，当前是第 cnt[bitVal]+1 个在第 digit-1 位为 bitVal 的元素
+    unsigned bitVal = get_digit(*it, digit - 1);  // get the digit at position digit - 1
+    // Going in the original order, this is element number cnt[bitVal]+1 with bitVal at position digit-1
     tmp[beg[bitVal] + cnt[bitVal]] = *it;
     cnt[bitVal]++;
   }
-  for (unsigned* it = begin; it != end; it++)  // 将 tmp 拷贝回原数组
+  for (unsigned* it = begin; it != end; it++)  // copy tmp back into the original array
   {
     *it = tmp[it - begin];
   }
-  /**递归排序各桶的下一位**/
-  if (digit == 1)  // 已经是最低位
+  /**Recursively sort each bucket by the next digit**/
+  if (digit == 1)  // already the lowest digit
   {
     return;
   }
-  for (int i = 0; i < RADIX; i++)  // 递归排序下一位
+  for (int i = 0; i < RADIX; i++)  // recursively sort by the next digit
   {
     MSD_radix_sort(begin + beg[i], begin + beg[i + 1], digit - 1);
   }

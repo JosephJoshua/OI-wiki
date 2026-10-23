@@ -3,14 +3,14 @@ def merge(a, b):
     i, j = 0, 0
     c = []
     while i < len(a) and j < len(b):
-        # <!> 先判断 b[j] < a[i]，保证稳定性
+        # <!> check b[j] < a[i] first to keep the sort stable
         if b[j] < a[i]:
             c.append(b[j])
             j += 1
         else:
             c.append(a[i])
             i += 1
-    # 此时一个数组已空，另一个数组非空，将非空的数组并入 c 中
+    # Now one array is empty and the other is not; append the non-empty one to c
     c.extend(a[i:])
     c.extend(b[j:])
     return c
@@ -23,11 +23,11 @@ def merge(a, b):
 def merge_sort(a, ll, rr):
     if rr - ll <= 1:
         return
-    # 分解
+    # Divide
     mid = (rr + ll) // 2
     merge_sort(a, ll, mid)
     merge_sort(a, mid, rr)
-    # 合并
+    # Merge
     a[ll:rr] = merge(a[ll:mid], a[mid:rr])
 
 
