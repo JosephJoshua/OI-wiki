@@ -1,38 +1,38 @@
-本页面将简要介绍快速排序．
+This page gives a short introduction to quicksort.
 
-## 定义
+## Definition
 
-快速排序（Quicksort），又称分区交换排序（partition-exchange sort），简称「快排」，是一种被广泛运用的排序算法．
+Quicksort, also called partition-exchange sort, is a widely used sorting algorithm.
 
-## 基本原理与实现
+## Basic idea and implementation
 
-### 过程
+### How it works
 
-快速排序的工作原理是通过 [分治](./divide-and-conquer.md) 的方式来将一个数组排序．
+Quicksort sorts an array using [divide and conquer](./divide-and-conquer.md).
 
-快速排序分为三个过程：
+Quicksort has three steps:
 
-1.  将数列划分为两部分（要求保证相对大小关系）；
-2.  递归到两个子序列中分别进行快速排序；
-3.  不用合并，因为此时数列已经完全有序．
+1.  Split the sequence into two parts (keeping the required order between the parts);
+2.  Recursively quicksort each of the two subsequences;
+3.  No merging is needed, because the sequence is now fully sorted.
 
-和归并排序不同，第一步并不是直接分成前后两个序列，而是在分的过程中要保证相对大小关系．具体来说，第一步是要把数列分成两个部分，然后保证前一个子数列中的数都不大于后一个子数列中的数．为了保证平均时间复杂度，一般是随机选择一个数 $m$ 来当做两个子数列的分界．
+Unlike merge sort, the first step does not just cut the sequence into a front half and a back half. Instead, the split has to respect the relative order of values. Specifically, the first step divides the sequence into two parts so that every number in the first part is no greater than every number in the second part. To keep the average running time low, we usually pick a random number $m$ as the boundary between the two parts.
 
-之后，维护一前一后两个指针 $p$ 和 $q$，依次考虑当前的数是否放在了应该放的位置（前还是后）．如果当前的数没放对，比如说如果后面的指针 $q$ 遇到了一个比 $m$ 小的数，那么可以交换 $p$ 和 $q$ 位置上的数，再把 $p$ 向后移一位．当前的数的位置全放对后，再移动指针继续处理，直到两个指针相遇．
+Then, we keep two pointers, $p$ at the front and $q$ at the back, and check one by one whether each number is on the correct side (front or back). If a number is on the wrong side, for example if the back pointer $q$ finds a number smaller than $m$, we swap the numbers at $p$ and $q$ and move $p$ forward by one. Once the current numbers are all in the right place, we move the pointers on and keep going until the two pointers meet.
 
-其实，快速排序没有指定应如何具体实现第一步，不论是选择 $m$ 的过程还是划分的过程，都有不止一种实现方法．
+In fact, quicksort does not say exactly how the first step must be done. Both choosing $m$ and partitioning can be done in more than one way.
 
-第三步中的序列已经分别有序且第一个序列中的数都不大于第二个序列中的数，所以直接拼接起来就好了．
+In the third step, the two parts are each sorted, and every number in the first part is no greater than every number in the second part, so we simply put them side by side.
 
-以下是固定选取主元的基础实现：非递归 C++ 实现选取当前子数组的末元素，递归 C++ 实现和 Python 实现选取首元素．它们没有随机化选取主元，在有序输入等情况下可能退化为 $O(n^2)$．
+Below are basic implementations with a fixed choice of pivot: the non-recursive C++ version picks the last element of the current subarray, while the recursive C++ version and the Python version pick the first element. They do not choose the pivot randomly, so they may degrade to $O(n^2)$ on inputs such as already-sorted arrays.
 
 === "C++"
-    === " 非递归实现[^ref2]"
+    === " Non-recursive[^ref2]"
         ```cpp
         --8<-- "docs/basic/code/quick-sort/quick-sort_1.cpp:sort"
         ```
     
-    === "递归实现"
+    === "Recursive"
         ```cpp
         --8<-- "docs/basic/code/quick-sort/quick-sort_2.cpp:sort"
         ```
@@ -42,100 +42,100 @@
     --8<-- "docs/basic/code/quick-sort/quick-sort_2.py:sort"
     ```
 
-## 性质
+## Properties
 
-### 稳定性
+### Stability
 
-快速排序是一种不稳定的排序算法．
+Quicksort is not stable.
 
-### 时间复杂度
+### Time complexity
 
-快速排序的最优时间复杂度和平均时间复杂度为 $O(n\log n)$，最坏时间复杂度为 $O(n^2)$．
+Quicksort runs in $O(n\log n)$ time in the best and average cases, and $O(n^2)$ time in the worst case.
 
-对于最优情况，每一次选择的分界值都是序列的中位数，此时算法时间复杂度满足的递推式为 $T(n) = 2T(\dfrac{n}{2}) + \Theta(n)$，由主定理，$T(n) = \Theta(n\log n)$．
+In the best case, the chosen boundary value is always the median of the sequence. The running time then satisfies $T(n) = 2T(\dfrac{n}{2}) + \Theta(n)$, and by the master theorem, $T(n) = \Theta(n\log n)$.
 
-对于最坏情况，每一次选择的分界值都是序列的最值，此时算法时间复杂度满足的递推式为 $T(n) = T(n - 1) + \Theta(n)$，累加可得 $T(n) = \Theta(n^2)$．
+In the worst case, the chosen boundary value is always the minimum or maximum of the sequence. The running time then satisfies $T(n) = T(n - 1) + \Theta(n)$, and adding it up gives $T(n) = \Theta(n^2)$.
 
-以下期望分析假设键值互异，且每次从当前子数组等概率随机选取主元．
+The expected-time analysis below assumes all keys are distinct and that each pivot is chosen uniformly at random from the current subarray.
 
-??? note "证明"
-    下面我们来证明这种情况下算法的时间复杂度是 $O(n\log n)$．
+??? note "Proof"
+    We now prove that in this setting the algorithm runs in $O(n\log n)$ expected time.
     
-    **引理 1：** 当对 $n$ 个元素的数组进行快速排序时，假设在划分元素时曾经比较的不同元素对数为 $X$，则快速排序的时间复杂度是 $O(n + X)$．
+    **Lemma 1:** When quicksorting an array of $n$ elements, let $X$ be the number of distinct pairs of elements compared during partitioning. Then quicksort runs in $O(n + X)$ time.
     
-    由于在每次划分元素的过程中，都会选择一个元素作为分界，所以划分元素的过程至多发生 $n$ 次．又由于划分元素的过程中每对元素只比较常数次，比较工作量和其他基础操作的次数在一个数量级，所以总时间复杂度是 $O(n + X)$ 的．
+    Each partition step picks one element as the boundary, so partitioning happens at most $n$ times. Also, during partitioning, each pair of elements is compared only a constant number of times, and the comparisons are of the same order as all other basic operations. So the total running time is $O(n + X)$.
     
-    设 $a_i$ 为原数组中第 $i$ 小的数，定义 $A_{i,j}$ 为 $\{ a_i, a_{i+1}, \dots, a_j \}$，$X_{i,j}$ 是一个取值为 $0$ 或者 $1$ 的离散随机变量表示在排序过程中 $a_i$ 是否和 $a_j$ 发生比较．
+    Let $a_i$ be the $i$-th smallest number in the original array. Define $A_{i,j}$ as $\{ a_i, a_{i+1}, \dots, a_j \}$, and let $X_{i,j}$ be a discrete random variable taking the value $0$ or $1$, indicating whether $a_i$ and $a_j$ are compared during sorting.
     
-    显然每次选取的分界值是不同的，而元素只会和分界值比较，所以不同比较对数
+    Clearly, each chosen boundary value is different, and elements are only compared with the boundary value. So the number of distinct compared pairs is
     
     $$
     \begin{aligned} X = \sum \limits _ {i = 1} ^ {n - 1} \sum \limits _ {j = i + 1} ^ n X_{i,j} \end{aligned}
     $$
     
-    由期望的线性性，
+    By linearity of expectation,
     
     $$
-    \begin{aligned} E[X] & = E \left[ \sum \limits _ {i = 1} ^ {n - 1} \sum \limits _ {j = i + 1} ^ n X_{i,j} \right] \\ & = \sum \limits _ {i = 1} ^ {n - 1} \sum \limits _ {j = i + 1} ^ n E[X_{i,j}] \\ & = \sum \limits _ {i = 1} ^ {n - 1} \sum \limits _ {j = i + 1} ^ n P(a_i\ \text{和}\ a_j\ \text{比较}) \end{aligned}
+    \begin{aligned} E[X] & = E \left[ \sum \limits _ {i = 1} ^ {n - 1} \sum \limits _ {j = i + 1} ^ n X_{i,j} \right] \\ & = \sum \limits _ {i = 1} ^ {n - 1} \sum \limits _ {j = i + 1} ^ n E[X_{i,j}] \\ & = \sum \limits _ {i = 1} ^ {n - 1} \sum \limits _ {j = i + 1} ^ n P(a_i\ \text{and}\ a_j\ \text{are compared}) \end{aligned}
     $$
     
-    **引理 2：** $a_i$ 和 $a_j$ 比较的充要条件是 $a_i$ 或 $a_j$ 是集合 $A_{i,j}$ 中第一个被选中的分界值．
+    **Lemma 2:** $a_i$ and $a_j$ are compared if and only if $a_i$ or $a_j$ is the first element of $A_{i,j}$ to be chosen as a boundary value.
     
-    先证必要性，即若 $a_i$ 和 $a_j$ 都不是集合 $A_{i,j}$ 中第一个被选中的分界值，则 $a_i$ 不和 $a_j$ 比较．
+    First, we prove necessity: if neither $a_i$ nor $a_j$ is the first element of $A_{i,j}$ chosen as a boundary value, then $a_i$ and $a_j$ are never compared.
     
-    若 $a_i$ 和 $a_j$ 都不是集合 $A_{i,j}$ 中第一个被选中的分界值，则一定存在一个 $x$ 满足 $i < x < j$，使得 $a_x$ 是 $A_{i,j}$ 中第一个被选中的分界值．在以 $a_x$ 为分界值的划分中，$a_i$ 和 $a_j$ 被划分到数组的两个不同的子序列中，所以之后 $a_i$ 和 $a_j$ 一定不会比较．又因为元素只和分界值比较，所以 $a_i$ 和 $a_j$ 在此次划分前和划分中没有比较．所以 $a_i$ 不和 $a_j$ 比较．
+    If neither $a_i$ nor $a_j$ is the first element of $A_{i,j}$ chosen as a boundary value, then there must be some $x$ with $i < x < j$ such that $a_x$ is the first element of $A_{i,j}$ chosen as a boundary value. In the partition around $a_x$, $a_i$ and $a_j$ go into two different subsequences, so they can never be compared afterwards. Also, since elements are only compared with the boundary value, $a_i$ and $a_j$ were not compared before or during this partition. So $a_i$ and $a_j$ are never compared.
     
-    再证充分性，即若 $a_i$ 或 $a_j$ 是集合 $A_{i,j}$ 中第一个被选中的分界值，则 $a_i$ 和 $a_j$ 比较．
+    Next, we prove sufficiency: if $a_i$ or $a_j$ is the first element of $A_{i,j}$ chosen as a boundary value, then $a_i$ and $a_j$ are compared.
     
-    不失一般地，假设 $a_i$ 是集合 $A_{i,j}$ 中第一个被选中的分界值．由于 $A_{i,j}$ 中没有其他数选为分界值，所以 $A_{i,j}$ 中的元素都在数组的同一子序列中．在以 $a_i$ 为分界值的划分中，$a_i$ 和当前子序列中所有元素都进行了比较，所以 $a_i$ 和 $a_j$ 进行了比较．
+    Without loss of generality, suppose $a_i$ is the first element of $A_{i,j}$ chosen as a boundary value. Since no other number in $A_{i,j}$ has been chosen as a boundary value, all elements of $A_{i,j}$ are still in the same subsequence. In the partition around $a_i$, $a_i$ is compared with every element in the current subsequence, so $a_i$ and $a_j$ are compared.
     
-    考虑计算 $P(a_i\ \text{和}\ a_j\ \text{比较})$．在 $A_{i,j}$ 中某个元素被选为分界值之前，$A_{i,j}$ 中的元素都在数组的同一子序列中．所以 $A_{i,j}$ 中每个元素都会被等可能地第一个被选为分界值．由于 $A_{i,j}$ 中有 $j - i + 1$ 个元素，由引理 2，
-    
-    $$
-    P(a_i \text{和} a_j \text{比较}) = P(a_i \text{或} a_j \text{是集合} A_{i,j} \text{中第一个被选中的分界值}) = \dfrac{2}{j-i+1}
-    $$
-    
-    所以
+    Now let's compute $P(a_i\ \text{and}\ a_j\ \text{are compared})$. Until some element of $A_{i,j}$ is chosen as a boundary value, all elements of $A_{i,j}$ stay in the same subsequence. So each element of $A_{i,j}$ is equally likely to be the first one chosen as a boundary value. Since $A_{i,j}$ has $j - i + 1$ elements, by Lemma 2,
     
     $$
-    \begin{aligned} E[X] & = \sum \limits _ {i = 1} ^ {n - 1} \sum \limits _ {j = i + 1} ^ n P(a_i\ \text{和}\ a_j\ \text{比较}) \\ & = \sum \limits _ {i = 1} ^ {n - 1} \sum \limits _ {j = i + 1} ^ n \dfrac{2}{j - i + 1} \\ & = \sum \limits _ {i = 1} ^ {n - 1} \sum \limits _ {k = 2} ^ {n - i + 1} \dfrac{2}{k} \\ & = \sum \limits _ {i = 1} ^ {n - 1} O(\log n) \\ & = O(n \log n) \end{aligned}
+    P(a_i \text{ and } a_j \text{ are compared}) = P(a_i \text{ or } a_j \text{ is the first element of } A_{i,j} \text{ chosen as a boundary value}) = \dfrac{2}{j-i+1}
     $$
     
-    由此，快速排序的期望时间复杂度为 $O(n \log n)$．
+    Therefore
+    
+    $$
+    \begin{aligned} E[X] & = \sum \limits _ {i = 1} ^ {n - 1} \sum \limits _ {j = i + 1} ^ n P(a_i\ \text{and}\ a_j\ \text{are compared}) \\ & = \sum \limits _ {i = 1} ^ {n - 1} \sum \limits _ {j = i + 1} ^ n \dfrac{2}{j - i + 1} \\ & = \sum \limits _ {i = 1} ^ {n - 1} \sum \limits _ {k = 2} ^ {n - i + 1} \dfrac{2}{k} \\ & = \sum \limits _ {i = 1} ^ {n - 1} O(\log n) \\ & = O(n \log n) \end{aligned}
+    $$
+    
+    Hence the expected running time of quicksort is $O(n \log n)$.
 
-随机选取主元能够降低遭遇最坏划分的概率．此外，快速排序的内存访问遵循局部性原理，这有助于其在实践中取得较好的性能．[^ref1]
+Choosing the pivot randomly lowers the chance of running into the worst-case partition. In addition, quicksort's memory access pattern has good locality, which helps it perform well in practice.[^ref1]
 
-## 优化
+## Optimization
 
-### 朴素优化思想
+### Basic optimization ideas
 
-如果仅按照上文所述的基本思想来实现快速排序（或者是直接照抄模板）的话，那一般无法通过 [P1177【模板】快速排序](https://www.luogu.com.cn/problem/P1177) 这道模板题，因为可以构造数据使朴素快速排序退化为 $O(n^2)$．
+If you implement quicksort using only the basic idea above (or just copy a template), it usually won't pass the template problem [P1177 \[Template\] Quicksort](https://www.luogu.com.cn/problem/P1177), because test data can be constructed to make naive quicksort degrade to $O(n^2)$.
 
-所以，我们需要对朴素快速排序思想加以优化．较为常见的优化思路有以下三种[^ref3]．
+So we need to optimize naive quicksort. The three most common optimizations are[^ref3]:
 
--   通过 **三数取中（即选取第一个、最后一个以及中间的元素中的中位数）** 的方法来选择两个子序列的分界元素（即比较基准）．这样可以避免极端数据（如升序序列或降序序列）带来的退化．
--   当序列较短时，使用 **插入排序** 的效率更高．
--   每趟排序后，**将与分界元素相等的元素聚集在分界元素周围**，这样可以避免极端数据（如序列中大部分元素都相等）带来的退化．
+-   Choose the boundary element (the pivot) between the two subsequences using **median of three (the median of the first, last and middle elements)**. This avoids degrading on extreme data (such as ascending or descending sequences).
+-   When the sequence is short, **insertion sort** is faster.
+-   After each pass, **gather the elements equal to the pivot around the pivot**. This avoids degrading on extreme data (such as sequences where most elements are equal).
 
-下面列举了几种较为成熟的快速排序优化方式．
+Below are some well-established ways to optimize quicksort.
 
-### 三路快速排序
+### 3-way quicksort
 
-#### 定义
+#### Definition
 
-三路快速排序（3-way Quicksort）将元素按与主元的大小关系分成三部分．它的算法思想基于 [荷兰国旗问题](https://en.wikipedia.org/wiki/Dutch_national_flag_problem) 的解法．
+3-way quicksort splits the elements into three parts based on how they compare with the pivot. The idea is based on the solution to the [Dutch national flag problem](https://en.wikipedia.org/wiki/Dutch_national_flag_problem).
 
-#### 过程
+#### How it works
 
-与原始的快速排序不同，三路快速排序在随机选取分界点 $m$ 后，将待排数列划分为三个部分：小于 $m$、等于 $m$ 以及大于 $m$．这样做即实现了将与分界元素相等的元素聚集在分界元素周围这一效果．
+Unlike the original quicksort, 3-way quicksort picks a random boundary value $m$ and then splits the sequence into three parts: less than $m$, equal to $m$, and greater than $m$. This achieves the goal of gathering the elements equal to the pivot around it.
 
-#### 性质
+#### Properties
 
-三路快速排序在处理含有多个重复值的数组时，效率远高于原始快速排序．其最佳时间复杂度为 $O(n)$．
+3-way quicksort is much faster than the original quicksort on arrays with many repeated values. Its best-case running time is $O(n)$.
 
-#### 实现
+#### Implementation
 
-三路快速排序实现起来非常简单，下面给出三路快排的参考实现．
+3-way quicksort is very easy to implement. Here is a reference implementation.
 
 === "C++"
     ```cpp
@@ -147,63 +147,63 @@
     --8<-- "docs/basic/code/quick-sort/quick-sort_3.py:sort"
     ```
 
-### 内省排序
+### Introsort
 
-#### 定义
+#### Definition
 
-内省排序（Introsort，Introspective sort）[^ref4]是快速排序和 [堆排序](./heap-sort.md) 的结合，由 David Musser 于 1997 年发明．内省排序其实是对快速排序的一种优化，保证了最差时间复杂度为 $O(n\log n)$．
+Introsort (introspective sort)[^ref4] combines quicksort with [heap sort](./heap-sort.md). It was invented by David Musser in 1997. Introsort is really an optimization of quicksort that guarantees a worst-case running time of $O(n\log n)$.
 
-#### 性质
+#### Properties
 
-内省排序限制快速排序的划分深度，上限通常取 $2\lfloor \log_2n \rfloor$[^ref5]，超过限制时就转换为堆排序．这样既保留了快速排序内存访问的局部性，又可以防止快速排序在某些情况下性能退化为 $O(n^2)$．
+Introsort limits the recursion depth of quicksort's partitioning, usually to $2\lfloor \log_2n \rfloor$[^ref5]. When the limit is exceeded, it switches to heap sort. This keeps quicksort's good memory locality while preventing it from degrading to $O(n^2)$ in bad cases.
 
-#### 实现
+#### Implementation
 
-从 2000 年 6 月起，SGI C++ STL 的 `stl_algo.h` 中 `sort()` 函数的实现采用了内省排序算法．
+Since June 2000, the `sort()` function in `stl_algo.h` of the SGI C++ STL has used introsort.
 
-## 线性找升序下标为 k 的数
+## Finding the element at ascending index k in linear time
 
-在下面的代码示例中，升序下标为 $k$ 的数被定义为序列排成升序时，第 $k$ 个位置上的数（编号从 0 开始）．
+In the code below, the element at ascending index $k$ is the number at position $k$ (counting from 0) when the sequence is sorted in ascending order.
 
-找升序下标为 $k$ 的数（K-th order statistic），最简单的方法是先排序，然后直接找到升序下标为 $k$ 的位置的元素．这样做的时间复杂度是 $O(n\log n)$，对于这个问题来说很不划算．
+The simplest way to find the element at ascending index $k$ (the k-th order statistic) is to sort first and then read the element at position $k$. This takes $O(n\log n)$ time, which is wasteful for this problem.
 
-我们可以借助快速排序的思想解决这个问题．考虑快速排序的划分过程，在快速排序的「划分」结束后，数列 $A_{p} \cdots A_{r}$ 被分成了 $A_{p} \cdots A_{q}$ 和 $A_{q+1} \cdots A_{r}$，此时可以按照左边元素的个数（$q - p + 1$）和 $k$ 的大小关系来判断是只在左边还是只在右边递归地求解．
+We can solve it with the idea behind quicksort. Look at quicksort's partition step: after the "partition", the sequence $A_{p} \cdots A_{r}$ has been split into $A_{p} \cdots A_{q}$ and $A_{q+1} \cdots A_{r}$. Now compare the number of elements on the left ($q - p + 1$) with $k$ to decide whether to recurse only on the left side or only on the right side.
 
-和快速排序一样，该方法的时间复杂度依赖于每次划分时选择的分界值．如果采用随机选取分界值的方式，可以证明在期望意义下，程序的时间复杂度为 $O(n)$．
+Just like quicksort, the running time depends on the boundary value chosen at each partition. If the boundary value is chosen randomly, one can prove that the expected running time is $O(n)$.
 
-???+ note "参考实现"
+???+ note "Reference implementation"
     ```cpp
     --8<-- "docs/basic/code/quick-sort/quick-sort_4.cpp:sort"
     ```
 
-### 中位数中的中位数
+### Median of medians
 
-中位数中的中位数（英文：Median of medians），提供了一种确定性的选择划分过程中分界值的方法，从而让「找升序下标为 $k$ 的数」的算法在最坏情况下也能实现线性时间复杂度．
+Median of medians gives a deterministic way to choose the boundary value during partitioning, so that the algorithm for "finding the element at ascending index $k$" runs in linear time even in the worst case.
 
-该算法的流程如下：
+The algorithm works as follows:
 
-1.  将序列划分为 $\lceil n/5\rceil$ 组，每组至多五个元素，保留不足五个的尾组；
-2.  排序每组并取中位数，偶数长度时统一取较小的中位数；
-3.  递归选择这些中位数的中位数作为主元，按小于、等于、大于主元三路划分，只递归目标所在的严格小于或严格大于区间．
+1.  Split the sequence into $\lceil n/5\rceil$ groups of at most five elements each, keeping the last group even if it has fewer than five;
+2.  Sort each group and take its median; for groups of even length, always take the lower median;
+3.  Recursively select the median of these medians as the pivot, do a 3-way partition into less than, equal to and greater than the pivot, and recurse only into the strictly-less or strictly-greater part that contains the target.
 
-#### 时间复杂度证明
+#### Proof of the time complexity
 
-设中位数的组数为 $g=\lceil n/5\rceil$．主元两侧（含等号）各有至少 $\lfloor g/2\rfloor$ 个组中位数；排除尾组后，每个完整组至少贡献三个不大于或不小于主元的元素．因此两侧各有至少 $3n/10-O(1)$ 个这样的元素，严格小于和严格大于区间的大小均至多 $7n/10+O(1)$．等值区不再递归．分组、求各组中位数和划分共花费 $O(n)$．综上，我们可以列出这样的不等式：
+Let $g=\lceil n/5\rceil$ be the number of groups. On each side of the pivot (counting ties), there are at least $\lfloor g/2\rfloor$ group medians. Leaving out the last group, each full group contributes at least three elements that are not greater than (or not less than) the pivot. So each side has at least $3n/10-O(1)$ such elements, and both the strictly-less and strictly-greater parts have size at most $7n/10+O(1)$. The equal part is not recursed into. Grouping, finding the group medians and partitioning take $O(n)$ in total. Putting this together, we get the inequality:
 
 $$
 T(n)\le T(\lceil n/5\rceil)+T(7n/10+O(1))+O(n).
 $$
 
-取固定常数 $a,b$，使右边两个递归规模之和至多 $9n/10+a$，非递归成本至多 $bn$．当 $n\ge20a$ 时，该和至多 $19n/20$．在归纳假设 $T(m)\le cm$ 下，只需取 $c\ge20b$ 并增大 $c$ 以覆盖有限个基例，就有 $T(n)\le19cn/20+bn\le cn$．因此最坏时间复杂度为 $O(n)$．
+Pick fixed constants $a,b$ such that the two recursive sizes on the right add up to at most $9n/10+a$, and the non-recursive cost is at most $bn$. When $n\ge20a$, that sum is at most $19n/20$. Under the induction hypothesis $T(m)\le cm$, it is enough to choose $c\ge20b$ and make $c$ larger to cover the finitely many base cases. Then $T(n)\le19cn/20+bn\le cn$. So the worst-case running time is $O(n)$.
 
-## 参考资料与注释
+## References and notes
 
-[^ref1]: [C++ 性能榨汁机之局部性原理 - I'm Root lee !](http://irootlee.com/juicer_locality/)
+[^ref1]: [The locality principle in the C++ performance juicer - I'm Root lee !](http://irootlee.com/juicer_locality/)
 
-[^ref2]: [算法实现/排序/快速排序 - 维基教科书，自由的教学读本](https://zh.wikibooks.org/wiki/%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/%E6%8E%92%E5%BA%8F/%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F)
+[^ref2]: [Algorithm Implementation/Sorting/Quicksort - Wikibooks (Chinese)](https://zh.wikibooks.org/wiki/%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0/%E6%8E%92%E5%BA%8F/%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F)
 
-[^ref3]: [三种快速排序以及快速排序的优化](https://blog.csdn.net/insistGoGo/article/details/7785038)
+[^ref3]: [Three kinds of quicksort and optimizations of quicksort](https://blog.csdn.net/insistGoGo/article/details/7785038)
 
 [^ref4]: [introsort](https://en.wikipedia.org/wiki/Introsort)
 
-[^ref5]: 例如 [libstdc++ 14.2.0：`__introsort_loop` 和 `__sort`](https://github.com/gcc-mirror/gcc/blob/releases/gcc-14.2.0/libstdc%2B%2B-v3/include/bits/stl_algo.h#L1876-L1908)．实际上将深度限制为 $O(\log n)$ 并在达到上限时转用堆排序，即可保证总时间复杂度为 $O(n\log n)$．
+[^ref5]: For example, [libstdc++ 14.2.0: `__introsort_loop` and `__sort`](https://github.com/gcc-mirror/gcc/blob/releases/gcc-14.2.0/libstdc%2B%2B-v3/include/bits/stl_algo.h#L1876-L1908). In fact, limiting the depth to $O(\log n)$ and switching to heap sort when the limit is reached is enough to guarantee a total running time of $O(n\log n)$.

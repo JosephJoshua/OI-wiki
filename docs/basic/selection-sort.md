@@ -1,30 +1,30 @@
-本页面将简要介绍选择排序．
+This page gives a short introduction to selection sort.
 
-## 定义
+## Definition
 
-选择排序（Selection sort）是一种简单直观的排序算法．它的工作原理是每次找出第 $i$ 小的元素（也就是 $A_{i..n}$ 中最小的元素），然后将这个元素与数组第 $i$ 个位置上的元素交换．
+Selection sort is a simple and intuitive sorting algorithm. On step $i$, it finds the $i$-th smallest element (that is, the smallest element in $A_{i..n}$) and swaps it with the element at position $i$ of the array.
 
 ![selection sort animate example](images/selection-sort-animate.svg)
 
-## 性质
+## Properties
 
-### 稳定性
+### Stability
 
-选择排序的稳定性取决于其具体实现．
+Whether selection sort is stable depends on how it is implemented.
 
-倘若使用链表实现，由于链表的任意位置插入和删除均为 $O(1)$，故无需使用 swap（交换两个元素）操作：每次从未排序部分选择最小元素（若有多个，选取第一个）后，将其插入到未排序部分的第一个元素之前，这样就能够保证稳定性．
+With a linked list, inserting or deleting at any position takes $O(1)$, so no swap (exchanging two elements) is needed. Each time, pick the smallest element from the unsorted part (if there are several, pick the first one) and insert it before the first element of the unsorted part. This keeps the sort stable.
 
-数组实现一般会使用 `swap` 将最小元素移到已排序部分，以此减少移动次数，所以不稳定．
+An array implementation usually uses `swap` to move the smallest element into the sorted part, which keeps the number of moves low, but makes the sort unstable.
 
-下面给出的实现示例均是基于数组元素的交换，因此均为 **不稳定的**．
+All the implementations below swap array elements, so they are all **unstable**.
 
-### 时间复杂度
+### Time complexity
 
-选择排序的最优时间复杂度、平均时间复杂度和最坏时间复杂度均为 $O(n^2)$．
+Selection sort takes $O(n^2)$ time in the best, average and worst cases.
 
-## 代码实现
+## Implementation
 
-### 伪代码
+### Pseudocode
 
 $$
 \begin{array}{ll}
@@ -52,7 +52,7 @@ $$
 
 === "Java"
     ```java
-    // arr 数组的下标从 1 开始
+    // The arr array is indexed from 1
     static void selection_sort(int[] arr, int n) {
         for (int i = 1; i < n; i++) {
             int ith = i;

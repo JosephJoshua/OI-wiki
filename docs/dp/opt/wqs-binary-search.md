@@ -97,7 +97,7 @@ $$
 v^\star(y) = \sup_{\lambda\in\mathbf R^d} h(\lambda)+\lambda\cdot y,
 $$
 
-而对偶问题的目标函数是关于 $\lambda\in\mathbf R^d$ 的凹函数，从而是单峰函数，可以通过 [三分法](../../basic/binary.md#三分法) 或 [黄金分割法](../../basic/binary.md#优化黄金分割法) 高效地求解，复杂度仍然是 $O(T(n)\log^d L)$ 的．这就完全地解决了传统 WQS 二分方法中记录 $g(x_\lambda)$ 的值可能会出现的问题，同时，允许将 WQS 二分的思想应用至高维的情形．
+而对偶问题的目标函数是关于 $\lambda\in\mathbf R^d$ 的凹函数，从而是单峰函数，可以通过 [三分法](../../basic/binary.md#ternary-search) 或 [黄金分割法](../../basic/binary.md#optimization-golden-section-search) 高效地求解，复杂度仍然是 $O(T(n)\log^d L)$ 的．这就完全地解决了传统 WQS 二分方法中记录 $g(x_\lambda)$ 的值可能会出现的问题，同时，允许将 WQS 二分的思想应用至高维的情形．
 
 另外，本节还说明，$g(x_\lambda)$ 的范围可以通过 $h(\lambda)$ 求得，而无需在求解 $h(\lambda)$ 时额外记录．例如，对于 $d=1$ 且问题只涉及整数的情形，可以证明 $g(x_\lambda)$ 的取值范围恰为
 
@@ -560,7 +560,7 @@ $$
     
     最终答案就是求得的最大费用．将这一图论模型转换为相应的线性规划问题（具体见上文推论的证明），那么，总流量 $m$ 将出现在表示边 $(s,r)$ 的流量限制的不等式中．由推论可知，最大费用 $v(m)$ 是流量 $m$ 的凹函数．
     
-    利用该费用流模型，可以通过模拟费用流或 [反悔贪心](../../basic/greedy.md#后悔解法) 的方法在 $O(n\log n)$ 的复杂度内解决该问题．
+    利用该费用流模型，可以通过模拟费用流或 [反悔贪心](../../basic/greedy.md#regret-approach) 的方法在 $O(n\log n)$ 的复杂度内解决该问题．
 
 ### 利用状态转移方程
 

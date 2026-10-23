@@ -26,9 +26,9 @@ $$
 
 ### 前缀和优化 DP
 
-相关页面：[前缀和](../../basic/prefix-sum.md#前缀和)
+相关页面：[前缀和](../../basic/prefix-sum.md#prefix-sums)
 
-如果当前状态的计算依赖于之前状态的子段和，那么，可以通过维护前缀和来加速计算．其中，一类涉及高维前缀和的问题也称为 [SOS DP](../../basic/prefix-sum.md#特例子集和-dp)．
+如果当前状态的计算依赖于之前状态的子段和，那么，可以通过维护前缀和来加速计算．其中，一类涉及高维前缀和的问题也称为 [SOS DP](../../basic/prefix-sum.md#special-case-sum-over-subsets-dp)．
 
 习题：
 

@@ -82,7 +82,7 @@ If `cmp` defines a strict weak ordering, then to convert it into qsort's three-w
 
 Older C++ standards only required its **average** time complexity to be $O(n\log n)$. C++11 and later standards require its **worst-case** time complexity to be $O(n\log n)$.
 
-The C++ standard does not strictly specify which algorithm this function uses; that depends on the standard library. For example, the implementations in [libstdc++ 14.2.0](https://github.com/gcc-mirror/gcc/blob/releases/gcc-14.2.0/libstdc%2B%2B-v3/include/bits/stl_algo.h#L1876-L1908) and [libc++ 20.1.8](https://github.com/llvm/llvm-project/blob/llvmorg-20.1.8/libcxx/include/__algorithm/sort.h#L709-L727) both use [introsort](./quick-sort.md#内省排序).
+The C++ standard does not strictly specify which algorithm this function uses; that depends on the standard library. For example, the implementations in [libstdc++ 14.2.0](https://github.com/gcc-mirror/gcc/blob/releases/gcc-14.2.0/libstdc%2B%2B-v3/include/bits/stl_algo.h#L1876-L1908) and [libc++ 20.1.8](https://github.com/llvm/llvm-project/blob/llvmorg-20.1.8/libcxx/include/__algorithm/sort.h#L709-L727) both use [introsort](./quick-sort.md#introsort).
 
 ## std::nth\_element
 
