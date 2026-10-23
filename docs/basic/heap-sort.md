@@ -1,26 +1,26 @@
-本页面将简要介绍堆排序．
+This page gives a short introduction to heap sort.
 
-## 定义
+## Definition
 
-堆排序（Heapsort）是指利用 [二叉堆](../ds/binary-heap.md) 这种数据结构所设计的一种排序算法．堆排序的适用数据结构为数组．
+Heapsort is a sorting algorithm built on the [binary heap](../ds/binary-heap.md) data structure. Heap sort works on arrays.
 
-## 过程
+## How it works
 
-堆排序的本质是建立在堆上的选择排序．
+At its core, heap sort is selection sort done on top of a heap.
 
-### 排序
+### Sorting
 
-首先建立大顶堆，然后将堆顶的元素取出，作为最大值，与数组尾部的元素交换，并维持残余堆的性质；
+First, build a max-heap. Then take out the top element of the heap as the maximum, swap it with the last element of the array, and restore the heap property for the remaining heap;
 
-之后将堆顶的元素取出，作为次大值，与数组倒数第二位元素交换，并维持残余堆的性质；
+Next, take out the top element of the heap as the second largest value, swap it with the second-to-last element of the array, and restore the heap property for the remaining heap;
 
-以此类推，在第 $n-1$ 次操作后，整个数组就完成了排序．
+Keep going like this. After the $(n-1)$-th step, the whole array is sorted.
 
-### 在数组上建立二叉堆
+### Building a binary heap on an array
 
-从根节点开始，依次将每一层的节点排列在数组里．
+Starting from the root, place the nodes of each level into the array one level after another.
 
-于是有数组中下标为 `i` 的节点，对应的父结点、左子结点和右子结点如下：
+Then, for the node at index `i` in the array, its parent, left child and right child are:
 
 ```cpp
 iParent(i) = (i - 1) / 2;
@@ -28,21 +28,21 @@ iLeftChild(i) = 2 * i + 1;
 iRightChild(i) = 2 * i + 2;
 ```
 
-## 性质
+## Properties
 
-### 稳定性
+### Stability
 
-同选择排序一样，堆排序中的交换可能改变相等元素的相对顺序，因此是不稳定的排序算法．
+Just like selection sort, the swaps in heap sort may change the relative order of equal elements, so heap sort is not stable.
 
-### 时间复杂度
+### Time complexity
 
-堆排序的最坏时间复杂度为 $O(n\log n)$．
+The worst-case time complexity of heap sort is $O(n\log n)$.
 
-### 空间复杂度
+### Space complexity
 
-由于可以在输入数组上建立堆，所以这是一个原地算法．
+Since the heap can be built on the input array itself, heap sort is an in-place algorithm.
 
-## 实现
+## Implementation
 
 === "C++"
     ```cpp
@@ -54,6 +54,6 @@ iRightChild(i) = 2 * i + 2;
     --8<-- "docs/basic/code/heap-sort/heap-sort_1.py:sort"
     ```
 
-## 外部链接
+## External links
 
--   [堆排序 - 维基百科，自由的百科全书](https://zh.wikipedia.org/wiki/%E5%A0%86%E6%8E%92%E5%BA%8F)
+-   [Heapsort - Wikipedia (Chinese)](https://zh.wikipedia.org/wiki/%E5%A0%86%E6%8E%92%E5%BA%8F)

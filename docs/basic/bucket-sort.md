@@ -1,35 +1,35 @@
-本页面将简要介绍桶排序．
+This page gives a short introduction to bucket sort.
 
-## 定义
+## Definition
 
-桶排序（Bucket sort）是排序算法的一种，适用于待排序数据值域较大但分布比较均匀的情况．
+Bucket sort is a sorting algorithm. It works well when the values to be sorted span a large range but are spread out fairly evenly.
 
-## 过程
+## How it works
 
-桶排序按下列步骤进行：
+Bucket sort follows these steps:
 
-1.  设置一个定量的数组当作空桶；
-2.  遍历序列，并将元素一个个放到对应的桶中；
-3.  对每个不是空的桶进行排序；
-4.  从不是空的桶里把元素再放回原来的序列中．
+1.  Set up an array of a fixed size to act as empty buckets;
+2.  Go through the sequence and put each element into its matching bucket;
+3.  Sort every bucket that is not empty;
+4.  Take the elements out of the non-empty buckets and put them back into the original sequence.
 
-## 性质
+## Properties
 
-### 稳定性
+### Stability
 
-如果使用稳定的内层排序，并且将元素插入桶中时不改变元素间的相对顺序，那么桶排序就是一种稳定的排序算法．
+If the inner sort is stable, and putting elements into buckets does not change their relative order, then bucket sort is a stable sorting algorithm.
 
-由于每块元素不多，一般使用插入排序．此时桶排序是一种稳定的排序算法．
+Since each bucket holds only a few elements, insertion sort is usually used for the inner sort. In that case, bucket sort is stable.
 
-### 时间复杂度
+### Time complexity
 
-设 $n$ 为元素个数，$k$ 为桶数．若元素独立且均匀落桶，桶排序的平均时间复杂度为 $O(n + n^2/k + k)$（将值域平均分成 $k$ 块 + 排序 + 重新合并元素），当 $k\approx n$ 时为 $O(n)$．[^ref1]
+Let $n$ be the number of elements and $k$ the number of buckets. If the elements fall into buckets independently and uniformly, the average time complexity of bucket sort is $O(n + n^2/k + k)$ (splitting the value range evenly into $k$ blocks + sorting + merging the elements back). When $k\approx n$, this is $O(n)$.[^ref1]
 
-桶排序的最坏时间复杂度为 $O(n^2+k)$．
+The worst-case time complexity of bucket sort is $O(n^2+k)$.
 
-## 实现
+## Implementation
 
-下面 `a[]` 下标从 $1$ 开始，要求 $0\le a_i\le w$、$0\le n<N$，其中 $w$ 是最大键值的上界．
+In the code below, `a[]` is indexed from $1$. It requires $0\le a_i\le w$ and $0\le n<N$, where $w$ is an upper bound on the largest key.
 
 === "C++"
     ```cpp
@@ -41,6 +41,6 @@
     --8<-- "docs/basic/code/bucket-sort/bucket-sort_1.py:sort"
     ```
 
-## 参考资料与注释
+## References and notes
 
 [^ref1]: [Bucket sort - Wikipedia](https://en.wikipedia.org/wiki/Bucket_sort#Average-case_analysis)
