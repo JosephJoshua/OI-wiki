@@ -1,49 +1,49 @@
-前置知识：[前缀和](./prefix-sum.md)
+Prerequisite: [Prefix sums](./prefix-sum.md)
 
-???+ warning "提醒"
-    本页面要介绍的不是 [**基数排序**](./radix-sort.md)．
+???+ warning "Note"
+    This page is not about [**radix sort**](./radix-sort.md).
 
-本页面将简要介绍计数排序．
+This page gives a short introduction to counting sort.
 
-## 定义
+## Definition
 
-计数排序（Counting sort）是一种线性时间的排序算法．
+Counting sort is a linear-time sorting algorithm.
 
-## 过程
+## How it works
 
-计数排序的工作原理是使用一个额外的数组 $C$，其中第 $i$ 个元素是待排序数组 $A$ 中值等于 $i$ 的元素的个数，然后根据数组 $C$ 来将 $A$ 中的元素排到正确的位置．[^ref1]
+Counting sort uses an extra array $C$, where the $i$-th entry is the number of elements in the input array $A$ whose value equals $i$. It then uses $C$ to place each element of $A$ in its correct position.[^ref1]
 
-它的工作过程分为三个步骤：
+It works in three steps:
 
-1.  计算每个数出现了几次；
-2.  求出每个数出现次数的 [前缀和](./prefix-sum.md)；
-3.  利用出现次数的前缀和，从右至左计算每个数的排名．
+1.  Count how many times each value appears;
+2.  Compute the [prefix sums](./prefix-sum.md) of these counts;
+3.  Using the prefix sums of the counts, compute the rank of each element, going from right to left.
 
-### 计算前缀和的原因
+### Why compute prefix sums
 
-按频数重建可以排序纯键值并处理重复值；若要稳定重排原始记录，可利用频数的前缀和确定输出位置．
+If we only need to sort plain keys and handle duplicate values, we can just rebuild the array from the counts. But to rearrange the original records stably, we use the prefix sums of the counts to find each element's output position.
 
-我们通过为额外数组 $C$ 中的每一项计算前缀和，结合每一项的数值，就可以为重复元素确定一个唯一排名：
+By computing the prefix sum of each entry in the extra array $C$, together with the entry's own value, we can give each duplicate element a unique rank:
 
-额外数组 $C$ 中每一项的数值即是该 key 值下重复元素的个数，而该项的前缀和即是排在最后一个的重复元素的排名．
+The value of each entry in $C$ is the number of duplicate elements with that key, and the prefix sum at that entry is the rank of the last of these duplicates.
 
-如果按照 $A$ 的逆序进行排列，那么显然排序后的数组将保持 $A$ 的原序（相同 key 值情况下），也即得到一种稳定的排序算法．
+If we place the elements by going through $A$ in reverse, the sorted array clearly keeps the original order of $A$ among equal keys. In other words, we get a stable sorting algorithm.
 
 ![counting sort animate example](images/counting-sort-animate.svg)
 
-## 性质
+## Properties
 
-### 稳定性
+### Stability
 
-计数排序是一种稳定的排序算法．
+Counting sort is a stable sorting algorithm.
 
-### 时间复杂度
+### Time complexity
 
-计数排序的时间复杂度为 $O(n+w)$，其中 $w$ 代表待排序数据的值域大小．
+The time complexity of counting sort is $O(n+w)$, where $w$ is the size of the value range of the data being sorted.
 
-## 代码实现
+## Implementation
 
-### 伪代码
+### Pseudocode
 
 $$
 \begin{array}{ll}
@@ -73,6 +73,6 @@ $$
     --8<-- "docs/basic/code/counting-sort/counting-sort_1.py:core"
     ```
 
-## 参考资料与注释
+## References and notes
 
-[^ref1]: [计数排序 - 维基百科，自由的百科全书](https://zh.wikipedia.org/wiki/%E8%AE%A1%E6%95%B0%E6%8E%92%E5%BA%8F)
+[^ref1]: [Counting sort - Wikipedia, the free encyclopedia (Chinese)](https://zh.wikipedia.org/wiki/%E8%AE%A1%E6%95%B0%E6%8E%92%E5%BA%8F)

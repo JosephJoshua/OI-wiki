@@ -1,66 +1,66 @@
 author: Ir1d, ShadowsEpic, Fomalhauthmj, siger-young, MingqiHuang, Xeonacid, hsfzLZH1, orzAtalod, NachtgeistW
 
-本页面将简要介绍倍增法．
+This page gives a short introduction to binary lifting.
 
-## 定义
+## Definition
 
-倍增法（binary lifting），顾名思义就是「成倍增长」．我们在进行递推时，如果状态空间很大，通常的线性递推无法满足时间与空间复杂度的要求，那么我们可以通过成倍增长的方式，只递推状态空间中在 $k$ 的整数次幂位置上的值作为代表．当需要其他位置上的值时，我们通过「任意整数可以表示成若干个 $k$ 的次幂项的和」这一性质，使用之前求出的代表值拼成所需的值．所以使用倍增算法也要求我们递推的问题的状态空间关于 $k$ 的次幂具有可划分性．通常情况下 $k$ 取 $2$．[^ref1]
+Binary lifting (also called doubling) means, as the name suggests, "growing by doubling". When we compute values by recurrence over a very large state space, an ordinary linear recurrence may be too slow or use too much memory. Instead, by growing in powers, we only compute the values at positions that are integer powers of $k$, and use them as representatives. When we need the value at some other position, we use the fact that "any integer can be written as a sum of powers of $k$" to build the needed value from the representatives computed earlier. So binary lifting also requires that the state space of the problem can be split up along powers of $k$. Usually $k$ is $2$.[^ref1]
 
-这个方法在很多算法中均有应用，其中最常用的是 RMQ 问题和求 [LCA（最近公共祖先）](../graph/lca.md)．
+This technique is used in many algorithms. The most common uses are the RMQ problem and finding the [LCA (lowest common ancestor)](../graph/lca.md).
 
-## 应用
+## Applications
 
-### RMQ 问题
+### The RMQ problem
 
-参见：[RMQ 专题](../topic/rmq.md)．
+See: [RMQ topic](../topic/rmq.md).
 
-RMQ 是 Range Maximum/Minimum Query 的缩写，表示区间最大（最小）值查询．使用倍增思想解决 RMQ 问题的方法是 [ST 表](../ds/sparse-table.md)．
+RMQ stands for Range Maximum/Minimum Query: finding the maximum (or minimum) value in a range. The way to solve RMQ with the binary lifting idea is the [sparse table](../ds/sparse-table.md).
 
-### 树上倍增求 LCA
+### Finding the LCA with binary lifting on trees
 
-参见：[最近公共祖先](../graph/lca.md)．
+See: [Lowest common ancestor](../graph/lca.md).
 
-## 例题
+## Example problems
 
-### 题一
+### Problem 1
 
-???+ note "例题"
-    如何用尽可能少的砝码称量出 $[0,31]$ 之间的所有重量？（只能在天平的一端放砝码）
+???+ note "Example problem"
+    How can you weigh every weight in $[0,31]$ using as few weights as possible? (Weights may only be placed on one side of the balance.)
 
-??? note "解题思路"
-    答案是使用 1 2 4 8 16 这五个砝码，可以称量出 $[0,31]$ 之间的所有重量．同样，如果要称量 $[0,127]$ 之间的所有重量，可以使用 1 2 4 8 16 32 64 这七个砝码．每次我们都选择 2 的非负整数次幂作砝码的重量，就可以用非常少的砝码称量出任意我们所需要的重量．
+??? note "Solution"
+    The answer is to use five weights: 1, 2, 4, 8, 16. With them you can weigh everything in $[0,31]$. Likewise, to weigh everything in $[0,127]$, you can use seven weights: 1, 2, 4, 8, 16, 32, 64. If every weight we pick is a non-negative integer power of 2, we can weigh any amount we need with very few weights.
     
-    例如，如果我们要量出 $[0,1023]$ 之间的所有重量，只需要 10 个砝码，需要量出 $[0,1048575]$ 之间的所有重量，只需要 20 个．如果我们的目标重量翻倍，砝码个数只需要增加 1．这叫「对数级」的增长速度，因为砝码的所需个数与目标重量的范围的对数成正比．
+    For example, to weigh everything in $[0,1023]$, we only need 10 weights; to weigh everything in $[0,1048575]$, we only need 20. If the target range doubles, we only need 1 more weight. This is called "logarithmic" growth, because the number of weights needed is proportional to the logarithm of the target range.
 
-### 题二
+### Problem 2
 
-???+ note "例题"
-    给出一个长度为 $n$ 的环和一个常数 $k$，每次会从第 $i$ 个点跳到第 $(i+k)\bmod n+1$ 个点，总共跳了 $m$ 次．每个点都有一个权值，记为 $a_i$，求 $m$ 次跳跃的起点的权值之和对 $10^9+7$ 取模的结果．
+???+ note "Example problem"
+    You are given a ring of length $n$ and a constant $k$. Each jump goes from point $i$ to point $(i+k)\bmod n+1$, and there are $m$ jumps in total. Each point has a weight $a_i$. Find the sum of the weights of the starting points of the $m$ jumps, modulo $10^9+7$.
     
-    数据范围：$1\leq n\leq 10^6$，$1\leq m\leq 10^{18}$，$1\leq k\leq n$，$0\le a_i\le 10^9$．
+    Constraints: $1\leq n\leq 10^6$, $1\leq m\leq 10^{18}$, $1\leq k\leq n$, $0\le a_i\le 10^9$.
 
-??? note "解题思路"
-    这里显然不能暴力模拟跳 $m$ 次．因为 $m$ 最大可到 $10^{18}$ 级别，如果暴力模拟的话，时间承受不住．
+??? note "Solution"
+    Clearly we can't just simulate all $m$ jumps by brute force. $m$ can be as large as about $10^{18}$, so brute-force simulation would take far too long.
     
-    所以就需要进行一些预处理，提前整合一些信息，以便于在查询的时候更快得出结果．如果记录下来每一个可能的跳跃次数的结果的话，不论是时间还是空间都难以承受．
+    So we need some preprocessing: combine some information in advance so that queries can be answered faster. But storing the result for every possible number of jumps would take too much time and memory.
     
-    那么应该如何预处理呢？看看第一道例题．有思路了吗？
+    So how should we preprocess? Look back at the first example problem. Do you have an idea now?
     
-    回到本题．我们要预处理一些信息，然后用预处理的信息尽量快地整合出答案．同时预处理的信息也不能太多．所以可以预处理出以 2 的非负整数次幂为单位的信息，这样的话在预处理的时候只需要处理少量信息，在整合的时候也不需要大费周章．
+    Back to this problem. We want to preprocess some information and then combine it into the answer as quickly as possible, while not storing too much. So we can preprocess information in units of non-negative integer powers of 2. This way the preprocessing only handles a small amount of information, and combining it later is also easy.
     
-    在这题上，就是我们预处理出从每个点开始跳 1、2、4、8 等等步之后的结果（所处点和点权和），然后如果要跳 13 步，只需要跳 1+4+8 步就好了．也就是说先在起始点跳 1 步，然后再在跳了之后的终点跳 4 步，再接着跳 8 步，同时统计一下预先处理好的点权和，就可以知道跳 13 步的点权和了．
+    For this problem, we precompute, for each point, the result of jumping 1, 2, 4, 8, ... steps from it (the point we land on and the sum of point weights along the way). Then to jump 13 steps, we just jump 1+4+8 steps. That is, jump 1 step from the start, then jump 4 steps from where we landed, then jump 8 more steps, adding up the precomputed weight sums along the way. This gives the weight sum for 13 steps.
     
-    对于每一个点开始的 $2^i$ 步，记录一个 `go[i][x]` 表示第 $x$ 个点跳 $2^i$ 步之后的终点，而 `sum[i][x]` 表示第 $x$ 个点跳 $2^i$ 步之后能获得的点权和．预处理的时候，开两重循环，对于跳 $2^i$ 步的信息，我们可以看作是先跳了 $2^{i-1}$ 步，再跳 $2^{i-1}$ 步，因为显然有 $2^{i-1}+2^{i-1}=2^i$．即我们有 `sum[i][x] = sum[i-1][x]+sum[i-1][go[i-1][x]]`，且 `go[i][x] = go[i-1][go[i-1][x]]`．
+    For $2^i$ steps starting from each point, store `go[i][x]`, the point reached after jumping $2^i$ steps from point $x$, and `sum[i][x]`, the sum of point weights collected when jumping $2^i$ steps from point $x$. For preprocessing, use two nested loops. Jumping $2^i$ steps can be seen as jumping $2^{i-1}$ steps and then another $2^{i-1}$ steps, since clearly $2^{i-1}+2^{i-1}=2^i$. So we have `sum[i][x] = sum[i-1][x]+sum[i-1][go[i-1][x]]` and `go[i][x] = go[i-1][go[i-1][x]]`.
     
-    当然还有一些实现细节需要注意．为了保证统计的时候不重不漏，我们一般预处理出「左闭右开」的点权和．亦即，对于跳 1 步的情况，我们只记录该点的点权和；对于跳 2 步的情况，我们只记录该点及其下一个点的点权和．相当于总是不将终点的点权和计入 `sum`．这样在预处理的时候，只需要将两部分的点权和直接相加就可以了，不需要担心第一段的终点和第二段的起点会被重复计算．
+    There are also some implementation details to watch for. To make sure nothing is counted twice or missed, we usually precompute weight sums as "half-open" ranges (closed on the left, open on the right). That is, for 1 step we only record the weight of the point itself; for 2 steps we only record the weights of the point and the next point. In other words, the weight of the end point is never included in `sum`. Then during preprocessing we can simply add the two parts' weight sums, without worrying that the end of the first part and the start of the second part get counted twice.
     
-    这题的 $m\leq 10^{18}$，虽然看似恐怖，但是实际上只需要预处理第 $0$ 至 $59$ 层，就可以轻松解决，比起暴力枚举快了很多．用行话讲，这个做法的 [时间复杂度](./complexity.md) 是预处理 $\Theta(n\log m)$，查询每次 $\Theta(\log m)$．
+    Here $m\leq 10^{18}$. That looks scary, but in fact we only need to precompute levels $0$ through $59$ to solve it easily, which is much faster than brute force. In technical terms, the [time complexity](./complexity.md) of this approach is $\Theta(n\log m)$ for preprocessing and $\Theta(\log m)$ per query.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/basic/code/binary-lifting/binary-lifting_1.cpp"
     ```
 
-## 参考资料与注释
+## References and notes
 
-[^ref1]: 引用自李煜东《算法竞赛进阶指南》0x06. 倍增一节．
+[^ref1]: Quoted from Li Yudong, *Advanced Guide to Algorithm Competitions*, section 0x06 "Binary Lifting".

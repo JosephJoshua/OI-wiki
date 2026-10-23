@@ -1,89 +1,89 @@
 author: linehk, persdre
 
-时间复杂度和空间复杂度是衡量一个算法效率的重要标准．
+Time complexity and space complexity are the two main ways to measure how efficient an algorithm is.
 
-## 基本操作数
+## Number of basic operations
 
-同一个算法在不同的计算机上运行的速度会有一定的差别，并且实际运行速度难以在理论上进行计算，实际去测量又比较麻烦，所以我们通常考虑的不是算法运行的实际用时，而是算法运行所需要进行的基本操作的数量．
+The same algorithm runs at different speeds on different computers. Its actual running time is also hard to work out in theory, and measuring it in practice is a hassle. So instead of the real running time, we usually look at how many basic operations the algorithm needs to perform.
 
-在普通的计算机上，加减乘除、访问变量（基本数据类型的变量，下同）、给变量赋值等都可以看作基本操作．
+On an ordinary computer, things like addition, subtraction, multiplication and division, reading a variable (of a primitive data type; the same applies below), and assigning a value to a variable can all be treated as basic operations.
 
-对基本操作的计数或是估测可以作为评判算法用时的指标．
+Counting or estimating the number of basic operations gives us a way to judge how long an algorithm takes.
 
-## 时间复杂度
+## Time complexity
 
-### 定义
+### Definition
 
-衡量一个算法的快慢，一定要考虑数据规模的大小．所谓数据规模，一般指输入的数字个数、输入中给出的图的点数与边数等等．一般来说，数据规模越大，算法的用时就越长．而在算法竞赛中，我们衡量一个算法的效率时，最重要的不是看它在某个数据规模下的用时，而是看它的用时随数据规模而增长的趋势，即 **时间复杂度**．
+To judge how fast an algorithm is, we must take the size of the input into account. The input size usually means things like how many numbers are given in the input, or how many vertices and edges the input graph has. In general, the larger the input, the longer the algorithm takes. In competitive programming, what matters most when we judge an algorithm is not how long it takes on one particular input size, but how its running time grows as the input size grows. This growth trend is called **time complexity**.
 
-### 引入
+### Introduction
 
-考虑用时随数据规模变化的趋势的主要原因有以下几点：
+There are a few main reasons to look at how the running time grows with the input size:
 
-1.  现代计算机每秒可以处理数亿乃至更多次基本运算，因此我们处理的数据规模通常很大．如果算法 A 在规模为 $n$ 的数据上用时为 $100n$ 而算法 B 在规模为 $n$ 的数据上用时为 $n^2$，在数据规模小于 $100$ 时算法 B 用时更短，但在一秒钟内算法 A 可以处理数百万规模的数据，而算法 B 只能处理数万规模的数据．在允许算法执行时间更久时，时间复杂度对可处理数据规模的影响就会更加明显，远大于同一数据规模下用时的影响；
-2.  我们采用基本操作数来表示算法的用时，而不同的基本操作实际用时是不同的，例如加减法的用时远小于除法的用时．计算时间复杂度而忽略不同基本操作之间的区别以及一次基本操作与十次基本操作之间的区别，可以消除基本操作间用时不同的影响．
+1.  A modern computer can perform hundreds of millions of basic operations per second, or even more, so the inputs we deal with are usually large. Suppose algorithm A takes $100n$ time on an input of size $n$ and algorithm B takes $n^2$. When the input size is less than $100$, B is faster. But in one second, A can handle inputs of size in the millions, while B can only handle inputs of size in the tens of thousands. The more time the algorithm is allowed to run, the more obvious this effect becomes. The time complexity affects how large an input we can handle far more than the running time at any single input size does;
+2.  We use the number of basic operations to stand for running time, but different basic operations really take different amounts of time. For example, addition and subtraction are much faster than division. Time complexity ignores the difference between kinds of basic operations, and also the difference between doing one basic operation and doing ten. This removes the effect of basic operations having different costs.
 
-当然，算法的运行用时并非完全由输入规模决定，而是也与输入的内容相关．所以，时间复杂度又分为几种，例如：
+Of course, the running time is not fully decided by the input size; it also depends on what the input actually is. So there are several kinds of time complexity, for example:
 
-1.  最坏时间复杂度，即每个输入规模下用时最长的输入对应的时间复杂度．在算法竞赛中，由于输入可以在给定的数据范围内任意给定，我们为保证算法能够通过某个数据范围内的任何数据，一般考虑最坏时间复杂度；
-2.  平均（期望）时间复杂度，即每个输入规模下所有可能输入对应用时的平均值的复杂度（给定输入概率分布下期望用时的复杂度；均匀平均是常见特例）．
+1.  Worst-case time complexity: for each input size, the time complexity of the input that takes the longest. In competitive programming, the input can be anything within the given limits. To make sure the algorithm passes every possible input within those limits, we usually look at the worst-case time complexity;
+2.  Average (expected) time complexity: for each input size, the complexity of the average running time over all possible inputs (more precisely, the complexity of the expected running time under a given probability distribution of inputs; the uniform average is a common special case).
 
-所谓「用时随数据规模而增长的趋势」是一个模糊的概念，我们需要借助下文所介绍的 **渐近符号** 来形式化地表示时间复杂度．
+"How the running time grows with the input size" is a vague idea. To describe time complexity formally, we use **asymptotic notation**, which is introduced below.
 
-## 渐近符号的定义
+## Definitions of asymptotic notation
 
-渐近符号是函数的阶的规范描述．简单来说，渐近符号忽略了一个函数中增长较慢的部分以及各项的系数（在时间复杂度相关分析中，系数一般被称作「常数」），而保留了可以用来表明该函数增长趋势的重要部分．
+Asymptotic notation is a standard way to describe the order of growth of a function. Simply put, asymptotic notation ignores the slower-growing parts of a function and the coefficients of each term (in time complexity analysis, these coefficients are usually called "constants"). It keeps only the important part that shows how the function grows.
 
-一个简单的记忆方法是，含等于（非严格）用大写，不含等于（严格）用小写，相等是 $\Theta$，小于是 $O$，大于是 $\Omega$．大 $O$ 和小 $o$ 原本是希腊字母 Omicron，由于字形相同，也可以理解为拉丁字母的大 $O$ 和小 $o$．
+A simple way to remember them: notations that include equality (non-strict) use uppercase letters, and notations that exclude equality (strict) use lowercase letters. "Equal to" is $\Theta$, "less than" is $O$, and "greater than" is $\Omega$. Big $O$ and little $o$ were originally the Greek letter Omicron, but since they look the same, you can also think of them as the Latin letters uppercase $O$ and lowercase $o$.
 
-在英文中，词根「-micro-」和「-mega-」常用于表示 10 的负六次方（百万分之一）和六次方（百万），也表示「小」和「大」．小和大也是希腊字母 Omicron 和 Omega 常表示的含义．
+In English, the roots "-micro-" and "-mega-" are often used for 10 to the power of -6 (one millionth) and 10 to the power of 6 (one million). They also mean "small" and "large". "Small" and "large" are also what the Greek letters Omicron and Omega usually stand for.
 
-### 大 Θ 符号
+### Big Θ notation
 
-对于函数 $f(n)$ 和 $g(n)$，$f(n)=\Theta(g(n))$，当且仅当 $\exists c_1,c_2,n_0>0$，使得 $\forall n \ge n_0, 0\le c_1\cdot g(n)\le f(n) \le c_2\cdot g(n)$．
+For functions $f(n)$ and $g(n)$, $f(n)=\Theta(g(n))$ if and only if $\exists c_1,c_2,n_0>0$ such that $\forall n \ge n_0, 0\le c_1\cdot g(n)\le f(n) \le c_2\cdot g(n)$.
 
-也就是说，如果函数 $f(n)=\Theta(g(n))$，那么我们能找到两个正数 $c_1, c_2$ 使得 $f(n)$ 被 $c_1\cdot g(n)$ 和 $c_2\cdot g(n)$ 夹在中间．
+In other words, if $f(n)=\Theta(g(n))$, then we can find two positive numbers $c_1, c_2$ such that $f(n)$ is sandwiched between $c_1\cdot g(n)$ and $c_2\cdot g(n)$.
 
-例如，$3n^2+5n-3=\Theta(n^2)$，这里的 $c_1, c_2, n_0$ 可以分别是 $2, 4, 100$；$n\sqrt {n} + n{\log^5 n} + m{\log m} +nm=\Theta(n\sqrt {n} + m{\log m} + nm)$，这是因为 $\log^5 n=o(\sqrt n)$，故存在足够大的 $n_0$，使被省略项不超过 $n\sqrt n$．
+For example, $3n^2+5n-3=\Theta(n^2)$, where $c_1, c_2, n_0$ can be $2, 4, 100$ respectively. Also, $n\sqrt {n} + n{\log^5 n} + m{\log m} +nm=\Theta(n\sqrt {n} + m{\log m} + nm)$. This is because $\log^5 n=o(\sqrt n)$, so there is a large enough $n_0$ beyond which the dropped term is at most $n\sqrt n$.
 
-### 大 O 符号
+### Big O notation
 
-$\Theta$ 符号同时给了我们一个函数的上下界，如果只知道一个函数的渐近上界而不知道其渐近下界，可以使用 $O$ 符号．$f(n)=O(g(n))$，当且仅当 $\exists c,n_0>0$，使得 $\forall n \ge n_0,0\le f(n)\le c\cdot g(n)$．
+$\Theta$ notation gives both an upper bound and a lower bound of a function. If we only know an asymptotic upper bound of a function but not its asymptotic lower bound, we can use $O$ notation. $f(n)=O(g(n))$ if and only if $\exists c,n_0>0$ such that $\forall n \ge n_0,0\le f(n)\le c\cdot g(n)$.
 
-研究时间复杂度时通常会使用 $O$ 符号，因为我们关注的通常是程序用时的上界，而不关心其用时的下界．
+$O$ notation is the one most often used when studying time complexity, because we usually care about an upper bound on a program's running time, not a lower bound.
 
-需要注意的是，这里的「上界」和「下界」是对于函数的变化趋势而言的，而不是对算法而言的．算法用时的上界对应的是「最坏时间复杂度」而非大 $O$ 记号．所以，使用 $\Theta$ 记号表示最坏时间复杂度是完全可行的，甚至可以说 $\Theta$ 比 $O$ 更加精确，而使用 $O$ 记号的主要原因，一是我们有时只能证明时间复杂度的上界而无法证明其下界（这种情况一般出现在较为复杂的算法以及复杂度分析），二是 $O$ 在电脑上输入更方便一些．
+Note that "upper bound" and "lower bound" here describe how a function grows, not the algorithm itself. An upper bound on an algorithm's running time corresponds to its "worst-case time complexity", not to big $O$ notation. So it is perfectly fine to use $\Theta$ notation for the worst-case time complexity. In fact, $\Theta$ is even more precise than $O$. There are two main reasons people use $O$ notation: first, sometimes we can only prove an upper bound on the time complexity but not a lower bound (this usually happens with more complicated algorithms and complexity analyses); second, $O$ is easier to type on a computer.
 
-### 大 Ω 符号
+### Big Ω notation
 
-同样的，我们使用 $\Omega$ 符号来描述一个函数的渐近下界．$f(n)=\Omega(g(n))$，当且仅当 $\exists c,n_0>0$，使得 $\forall n \ge n_0,0\le c\cdot g(n)\le f(n)$．
+Similarly, we use $\Omega$ notation to describe an asymptotic lower bound of a function. $f(n)=\Omega(g(n))$ if and only if $\exists c,n_0>0$ such that $\forall n \ge n_0,0\le c\cdot g(n)\le f(n)$.
 
-### 小 o 符号
+### Little o notation
 
-如果说 $O$ 符号相当于小于等于号，那么 $o$ 符号就相当于小于号．
+If $O$ notation is like "less than or equal to", then $o$ notation is like "less than".
 
-小 $o$ 符号大量应用于数学分析中，函数在某点处的泰勒展开式拥有皮亚诺余项，使用小 $o$ 符号表示严格小于，从而进行等价无穷小的渐近分析．
+Little $o$ notation is widely used in mathematical analysis. The Taylor expansion of a function at a point has a Peano remainder term, and little $o$ is used there to mean "strictly smaller", which allows asymptotic analysis with equivalent infinitesimals.
 
-$f(n)=o(g(n))$，当且仅当对于任意给定的正数 $c$，$\exists n_0$，使得 $\forall n \ge n_0,0\le f(n)< c\cdot g(n)$．
+$f(n)=o(g(n))$ if and only if for every given positive number $c$, $\exists n_0$ such that $\forall n \ge n_0,0\le f(n)< c\cdot g(n)$.
 
-### 小 ω 符号
+### Little ω notation
 
-如果说 $\Omega$ 符号相当于大于等于号，那么 $\omega$ 符号就相当于大于号．
+If $\Omega$ notation is like "greater than or equal to", then $\omega$ notation is like "greater than".
 
-$f(n)=\omega(g(n))$，当且仅当对于任意给定的正数 $c$，$\exists n_0$，使得 $\forall n \ge n_0,0\le c\cdot g(n)< f(n)$．
+$f(n)=\omega(g(n))$ if and only if for every given positive number $c$, $\exists n_0$ such that $\forall n \ge n_0,0\le c\cdot g(n)< f(n)$.
 
 ![](images/order.svg)
 
-### 常见性质
+### Common properties
 
--   $f(n) = \Theta(g(n))\iff f(n)=O(g(n))\land f(n)=\Omega(g(n))$．
--   $f_1(n) + f_2(n) = O(\max(f_1(n), f_2(n)))$．
--   $f_1(n) \times f_2(n) = O(f_1(n) \times f_2(n))$．
--   $\forall a>1, \log_a{n} = O(\log_2 n)$．由换底公式可以得知，当底数为固定实数 $a>1$ 时，对数函数都具有相同的增长率，因此渐近时间复杂度中对数的底数一般省略不写．
+-   $f(n) = \Theta(g(n))\iff f(n)=O(g(n))\land f(n)=\Omega(g(n))$.
+-   $f_1(n) + f_2(n) = O(\max(f_1(n), f_2(n)))$.
+-   $f_1(n) \times f_2(n) = O(f_1(n) \times f_2(n))$.
+-   $\forall a>1, \log_a{n} = O(\log_2 n)$. By the change-of-base formula, logarithms with any fixed real base $a>1$ all grow at the same rate, so the base of a logarithm is usually left out in asymptotic time complexity.
 
-## 简单的时间复杂度计算的例子
+## Simple examples of computing time complexity
 
-### `for` 循环
+### `for` loops
 
 === "C++"
     ```cpp
@@ -122,15 +122,15 @@ $f(n)=\omega(g(n))$，当且仅当对于任意给定的正数 $c$，$\exists n_0
     }
     ```
 
-如果以输入的数值 $n$ 和 $m$ 的大小作为数据规模，则上面这段代码的时间复杂度为 $\Theta(n^2m)$．
+If we take the values of the input numbers $n$ and $m$ as the input size, then the time complexity of the code above is $\Theta(n^2m)$.
 
 ### DFS
 
-在对以邻接表存储的、$n$ 个点 $m$ 条边的 [连通图](../graph/concept.md#连通) 进行 [DFS](../graph/dfs.md) 时，由于每个节点和每条边都只会被访问常数次，复杂度为 $\Theta(n+m)$．
+When we run a [DFS](../graph/dfs.md) on a [connected graph](../graph/concept.md#连通) with $n$ vertices and $m$ edges stored as an adjacency list, every vertex and every edge is visited only a constant number of times, so the complexity is $\Theta(n+m)$.
 
-## 哪些量是常量
+## Which quantities are constants
 
-当我们要进行若干次操作时，如何判断这若干次操作是否影响时间复杂度呢？例如：
+When we perform some number of operations, how do we decide whether that number affects the time complexity? For example:
 
 === "C++"
     ```cpp
@@ -155,21 +155,21 @@ $f(n)=\omega(g(n))$，当且仅当对于任意给定的正数 $c$，$\exists n_0
     }
     ```
 
-如果 $N$ 的大小不被看作输入规模，那么这段代码的时间复杂度就是 $O(1)$．
+If the value of $N$ is not considered part of the input size, then the time complexity of this code is $O(1)$.
 
-进行时间复杂度计算时，哪些变量被视作输入规模是很重要的，而所有和输入规模无关的量都被视作常量，计算复杂度时可当作 $1$ 来处理．
+When computing time complexity, it is important to decide which variables count as the input size. Every quantity that does not depend on the input size is treated as a constant, and can be treated as $1$ when computing the complexity.
 
-需要注意的是，在进行时间复杂度相关的理论性讨论时，「算法能够解决任何规模的问题」是一个基本假设（当然，在实际中，由于时间和存储空间有限，无法解决规模过大的问题）．因此，能在常量时间内解决数据规模有限的问题（例如，对于数据范围内的每个可能输入预先计算出答案）并不能使一个算法的时间复杂度变为 $O(1)$．
+Note that in theoretical discussions of time complexity, a basic assumption is that "the algorithm can solve problems of any size" (of course, in practice, time and memory are limited, so problems that are too large cannot be solved). For this reason, being able to solve a problem with a bounded input size in constant time (for example, by precomputing the answer for every possible input within the limits) does not make an algorithm's time complexity $O(1)$.
 
-## 主定理
+## Master theorem
 
-我们可以使用主定理（Master theorem）来快速求得关于递归算法的复杂度．假设 $a\ge1$、$b>1$ 为常数，$f$ 非负，$T(1)=\Theta(1)$．为简化讨论，下面额外假设 $n=b^L$，其中 $L$ 为非负整数．其递推关系式如下：
+We can use the master theorem to quickly find the complexity of a recursive algorithm. Assume $a\ge1$ and $b>1$ are constants, $f$ is non-negative, and $T(1)=\Theta(1)$. To keep things simple, we also assume below that $n=b^L$, where $L$ is a non-negative integer. The recurrence is:
 
 $$
 T(n) = a T\left(\frac{n}{b}\right)+f(n),\qquad \forall n=b^L,\ L\ge1.
 $$
 
-那么
+Then
 
 $$
 T(n) = \begin{cases}
@@ -179,47 +179,47 @@ T(n) = \begin{cases}
     \end{cases}
 $$
 
-需要注意的是，这里的第二种情况还需要满足正则条件（regularity condition），即存在常数 $0<c<1$，使得对足够大的 $n$ 有 $a f(n/b) \leq c f(n)$．
+Note that the second case also requires the regularity condition: there must be a constant $0<c<1$ such that $a f(n/b) \leq c f(n)$ for all large enough $n$.
 
-证明思路是将规模为 $n$ 的问题，分解为 $a$ 个规模为 $n/b$ 的问题，然后依次合并，直到合并到最高层．每一次合并子问题，都需要花费 $f(n)$ 的时间．
+The idea of the proof is this: a problem of size $n$ is split into $a$ problems of size $n/b$, and then the results are merged level by level until we reach the top level. Each time subproblems are merged, it costs $f(n)$ time.
 
-??? note "证明"
-    依据上文提到的证明思路，具体证明过程如下：
+??? note "Proof"
+    Following the idea above, here is the detailed proof:
     
-    对于第 $0$ 层（最高层），合并子问题需要花费 $f(n)$ 的时间．
+    At level $0$ (the top level), merging the subproblems costs $f(n)$ time.
     
-    对于第 $1$ 层（第一次划分出来的子问题），共有 $a$ 个子问题，每个子问题合并需要花费 $f\left(\dfrac{n}{b}\right)$ 的时间，所以合并总共要花费 $a f\left(\dfrac{n}{b}\right)$ 的时间．
+    At level $1$ (the subproblems from the first split), there are $a$ subproblems, and merging each one costs $f\left(\dfrac{n}{b}\right)$ time, so merging costs $a f\left(\dfrac{n}{b}\right)$ time in total.
     
-    层层递推，我们可以画出如下递归树：
+    Continuing level by level, we can draw the following recursion tree:
     
     ![](./images/master-theorem-proof.svg)
     
-    这棵树在第 $L=\log_b n$ 层到达终点，共有 $a^L=n^{\log_b a}$ 个叶子．非叶层的编号为 $0,\ldots,L-1$，从而 $T(n) = \Theta(n^{\log_b a}) + g(n)$，其中 $g(n) = \sum_{j = 0}^{L-1} a^{j} f(n / b^{j})$．
+    The tree ends at level $L=\log_b n$ and has $a^L=n^{\log_b a}$ leaves. The non-leaf levels are numbered $0,\ldots,L-1$, so $T(n) = \Theta(n^{\log_b a}) + g(n)$, where $g(n) = \sum_{j = 0}^{L-1} a^{j} f(n / b^{j})$.
     
-    对于第一种情况：$f(n) = O(n^{\log_b a-\epsilon})$，因此 $g(n) = O(n^{\log_b a})$．
+    For the first case: $f(n) = O(n^{\log_b a-\epsilon})$, so $g(n) = O(n^{\log_b a})$.
     
-    对于第二种情况，首先根节点的成本 $T(n)=\Omega(f(n))$．由正则条件，在子问题规模仍足够大时，第 $j$ 层的总成本至多为 $c^j f(n)$，这些层的成本之和为 $O(f(n))$．剩余的底部常数层和叶子的总成本为 $O(n^{\log_b a})=O(f(n))$，因此 $T(n)=\Theta(f(n))$．
+    For the second case: first, the cost of the root alone gives $T(n)=\Omega(f(n))$. By the regularity condition, while the subproblems are still large enough, the total cost of level $j$ is at most $c^j f(n)$, and the costs of these levels add up to $O(f(n))$. The remaining constant number of bottom levels and the leaves cost $O(n^{\log_b a})=O(f(n))$ in total, so $T(n)=\Theta(f(n))$.
     
-    对于第三种情况，令 $p=\log_b a$．对规模足够大的子问题，第 $j$ 层的总成本为 $\Theta(n^p(L-j)^k)$，其中 $k\ge0$ 为固定常数．取固定的 $r_0\ge1$，使 $b^{r_0}$ 能达到该规模，由 $\sum_{r=r_0}^L r^k=\Theta(L^{k+1})$ 可知这些层的总成本为 $\Theta(n^p\log^{k+1}n)$．其余底部常数层和叶子的总成本为 $O(n^p)$，加上后即得结论．
+    For the third case: let $p=\log_b a$. For subproblems that are large enough, the total cost of level $j$ is $\Theta(n^p(L-j)^k)$, where $k\ge0$ is a fixed constant. Pick a fixed $r_0\ge1$ such that $b^{r_0}$ reaches that size. Since $\sum_{r=r_0}^L r^k=\Theta(L^{k+1})$, these levels cost $\Theta(n^p\log^{k+1}n)$ in total. The remaining constant number of bottom levels and the leaves cost $O(n^p)$ in total. Adding them up gives the result.
 
-下面举几个例子来说明主定理如何使用．
+Here are a few examples of how to use the master theorem.
 
-1.  $T(n) = 2T\left(\dfrac{n}{2}\right) + 1$，那么 $a=2, b=2, {\log_2 2} = 1$，那么 $\epsilon$ 可以取值在 $(0, 1]$ 之间，从而满足第一种情况，所以 $T(n) = \Theta(n)$；
+1.  $T(n) = 2T\left(\dfrac{n}{2}\right) + 1$. Then $a=2, b=2, {\log_2 2} = 1$, so $\epsilon$ can be any value in $(0, 1]$. This matches the first case, so $T(n) = \Theta(n)$;
 
-2.  $T(n) = T\left(\dfrac{n}{2}\right) + n$，那么 $a=1, b=2, {\log_2 1} = 0$，那么 $\epsilon$ 可以取值在 $(0, 1]$ 之间，从而满足第二种情况，所以 $T(n) = \Theta(n)$；
+2.  $T(n) = T\left(\dfrac{n}{2}\right) + n$. Then $a=1, b=2, {\log_2 1} = 0$, so $\epsilon$ can be any value in $(0, 1]$. This matches the second case, so $T(n) = \Theta(n)$;
 
-3.  $T(n) = T\left(\dfrac{n}{2}\right) + {\log n}$，那么 $a=1, b=2, {\log_2 1}=0$，那么 $k$ 可以取值为 $1$，从而满足第三种情况，所以 $T(n) = \Theta(\log^2 n)$；
+3.  $T(n) = T\left(\dfrac{n}{2}\right) + {\log n}$. Then $a=1, b=2, {\log_2 1}=0$, so $k$ can be $1$. This matches the third case, so $T(n) = \Theta(\log^2 n)$;
 
-4.  $T(n) = T\left(\dfrac{n}{2}\right) + 1$，那么 $a=1, b=2, {\log_2 1} = 0$，那么 $k$ 可以取值为 $0$，从而满足第三种情况，所以 $T(n) = \Theta(\log n)$．
+4.  $T(n) = T\left(\dfrac{n}{2}\right) + 1$. Then $a=1, b=2, {\log_2 1} = 0$, so $k$ can be $0$. This matches the third case, so $T(n) = \Theta(\log n)$.
 
-## 均摊复杂度
+## Amortized complexity
 
-详情可见 [均摊复杂度](./amortized-analysis.md)．
+See [Amortized complexity](./amortized-analysis.md) for details.
 
-## 空间复杂度
+## Space complexity
 
-类似地，算法所使用的空间随输入规模变化的趋势可以用 **空间复杂度** 来衡量．
+In the same way, the trend of how much memory an algorithm uses as the input size grows is measured by **space complexity**.
 
-## 计算复杂性
+## Computational complexity
 
-本文主要从算法分析的角度对复杂度进行了介绍，如果有兴趣的话可以在 [计算复杂性](../misc/cc-basic.md) 进行更深入的了解．
+This page introduces complexity mainly from the point of view of algorithm analysis. If you are interested, you can learn more in [Computational complexity](../misc/cc-basic.md).

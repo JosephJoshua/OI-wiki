@@ -1,62 +1,62 @@
-本页面将简要介绍贪心算法．
+This page gives a short introduction to greedy algorithms.
 
-## 引入
+## Introduction
 
-贪心算法（greedy algorithm），是用计算机来模拟一个「贪心」的人做出决策的过程．这个人十分贪婪，每一步行动总是按某种指标选取最优的操作．而且他目光短浅，总是只看眼前，并不考虑以后可能造成的影响．
+A greedy algorithm uses a computer to simulate how a "greedy" person makes decisions. This person is very greedy: at every step, they always pick the best option according to some measure. They are also short-sighted: they only look at what is right in front of them and never think about what effect their choice may have later.
 
-可想而知，并不是所有的时候贪心法都能获得最优解，所以一般使用贪心法的时候，都要确保自己能证明其正确性．
+As you can imagine, the greedy method does not always find the optimal solution. So whenever you use a greedy method, you should make sure you can prove that it is correct.
 
-## 解释
+## Explanation
 
-### 适用范围
+### When it applies
 
-贪心算法在有最优子结构的问题中尤为有效．最优子结构的意思是问题能够分解成子问题来解决，子问题的最优解能递推到最终问题的最优解．[^ref1]
+Greedy algorithms work especially well on problems with optimal substructure. Optimal substructure means the problem can be broken into subproblems, and the optimal solutions of the subproblems can be combined step by step into the optimal solution of the whole problem.[^ref1]
 
-### 证明
+### Proof
 
-常见的证明思路包括交换论证和数学归纳法，两者也可以结合使用．
+Common proof approaches are the exchange argument and mathematical induction. The two can also be combined.
 
-1.  交换论证：从任意一个最优解出发，通过有限次保持可行性且不使目标值变差的交换或替换，将其变为贪心算法得到的解，从而证明贪心解也是最优解．常用反证法书写证明．
-2.  归纳法：先算得出边界情况（例如 $n = 1$）的最优解 $F_1$，然后再证明：对于每个 $n$，$F_{n+1}$ 都可以由 $F_{n}$ 推导出结果．
+1.  Exchange argument: start from any optimal solution. Through a finite number of exchanges or replacements, each of which keeps the solution feasible and does not make the objective worse, turn it into the solution produced by the greedy algorithm. This proves that the greedy solution is also optimal. Such proofs are often written as proofs by contradiction.
+2.  Induction: first find the optimal solution $F_1$ for the base case (for example $n = 1$). Then prove that for every $n$, $F_{n+1}$ can be derived from $F_{n}$.
 
-## 要点
+## Key points
 
-### 常见题型
+### Common problem types
 
-在提高组难度以下的题目中，最常见的贪心有两种．
+In problems below Senior Group difficulty, the two most common kinds of greedy are:
 
--   将 XXX 按照某某顺序排序，然后按某种顺序（例如从小到大）选择．
--   每次取 XXX 中最大/小的东西，并更新 XXX．（有时取最大/小值的操作可以优化，比如用优先队列维护）
+-   Sort XXX in some order, then choose items in some order (for example from smallest to largest).
+-   Each time, take the largest/smallest thing in XXX and update XXX. (Sometimes taking the largest/smallest value can be sped up, for example by maintaining a priority queue.)
 
-二者的区别在于前一种一定是离线的，可以先处理后选择；后一种可能是在线的，需要边处理边选择．
+The difference is that the first kind is always offline: you can process everything first and then choose. The second kind may be online: you have to choose while processing.
 
-### 排序解法
+### Sorting approach
 
-用排序法/邻项交换法常见的情况是输入一个包含几个（一般一到两个）权值的数组，通过排序然后遍历模拟计算的方法求出最优值．
+The sorting method / adjacent exchange method is commonly used when the input is an array where each item has a few (usually one or two) weights. You find the optimal value by sorting and then simulating the computation in one pass.
 
-???+ note "例题 [NOIP 2012 国王游戏](https://www.luogu.com.cn/problem/P1080)"
-    恰逢 H 国国庆，国王邀请 $n$ 位大臣来玩一个有奖游戏．首先，他让每个大臣在左、右手上面分别写下一个整数，国王自己也在左、右手上各写一个整数．然后，让这 $n$ 位大臣排成一排，国王站在队伍的最前面．排好队后，所有的大臣都会获得国王奖赏的若干金币，每位大臣获得的金币数分别是：排在该大臣前面的所有人的左手上的数的乘积除以他自己右手上的数，然后向下取整得到的结果．
+???+ note "Example problem [NOIP 2012 King's Game](https://www.luogu.com.cn/problem/P1080)"
+    It is the national day of country H, and the king invites $n$ ministers to play a game with prizes. First, he has each minister write one integer on their left hand and one on their right hand. The king also writes one integer on each of his own hands. Then the $n$ ministers line up in a row, with the king standing at the very front. Once the line is formed, every minister receives some gold coins from the king. The number of coins a minister gets is the product of the numbers on the left hands of everyone in front of him, divided by the number on his own right hand, rounded down.
     
-    国王不希望某一个大臣获得特别多的奖赏，所以他想请你帮他重新安排一下队伍的顺序，使得获得奖赏最多的大臣，所获奖赏尽可能少．注意，国王的位置始终在队伍的最前面．
+    The king does not want any one minister to get an especially large reward. So he asks you to rearrange the line so that the largest reward any minister gets is as small as possible. Note that the king always stays at the front of the line.
 
-??? note "解题思路"
-    设当前排列中第 $i$ 个大臣左右手上的数分别为 $a_i, b_i$．考虑通过邻项交换法推导贪心策略．
+??? note "Solution"
+    Let $a_i, b_i$ be the numbers on the left and right hands of the $i$-th minister in the current order. We derive the greedy strategy with the adjacent exchange method.
     
-    先忽略向下取整，用 $s$ 表示第 $i$ 个大臣前面所有人的 $a_i$ 的乘积．交换前两人之中的最大奖赏为
+    Ignore the rounding down for now, and let $s$ be the product of $a$ over everyone in front of minister $i$. Before swapping, the larger reward of the two ministers is
     
     $$
     \dfrac{s}{b_i b_{i+1}}\max(b_{i+1},a_i b_i),\tag{1}
     $$
     
-    交换后两人之中的最大奖赏为
+    and after swapping, the larger reward of the two is
     
     $$
     \dfrac{s}{b_i b_{i+1}}\max(b_i,a_{i+1}b_{i+1}).\tag{2}
     $$
     
-    若 $a_i b_i\le a_{i+1}b_{i+1}$，由于 $b_{i+1}\le a_{i+1}b_{i+1}$，故 $(1)$ 式不大于 $(2)$ 式．向下取整是单调的，且 $\max(\lfloor u\rfloor,\lfloor v\rfloor)=\lfloor\max(u,v)\rfloor$，所以两人交换顺序后最大奖赏不会变小．因此按 $a_i b_i$ 升序排序即为最优解．
+    If $a_i b_i\le a_{i+1}b_{i+1}$, then since $b_{i+1}\le a_{i+1}b_{i+1}$, expression $(1)$ is no larger than expression $(2)$. Rounding down is monotonic, and $\max(\lfloor u\rfloor,\lfloor v\rfloor)=\lfloor\max(u,v)\rfloor$, so swapping the two does not make the maximum reward smaller. Therefore sorting by $a_i b_i$ in increasing order gives an optimal answer.
     
-    实现的时候我们将输入的两个数用一个结构体来保存并重载运算符：
+    In the implementation, we store the two input numbers in a struct and overload the operator:
     
     ```cpp
     struct uv {
@@ -66,20 +66,20 @@
     };
     ```
 
-### 后悔解法
+### Regret approach
 
-思路是先临时接受新选项；若发生约束冲突，就在已选集合中撤销按贪心准则最差的选项．策略仍需正确性证明．
+The idea is to tentatively accept each new option. If this breaks a constraint, undo the option in the chosen set that is worst according to the greedy criterion. The strategy still needs a proof of correctness.
 
-???+ note "例题 [「USACO09OPEN」工作调度 Work Scheduling](https://www.luogu.com.cn/problem/P2949)"
-    约翰的工作日从 $0$ 时刻开始，有 $10^9$ 个单位时间．在任一单位时间，他都可以选择编号 $1$ 到 $N$ 的 $N(1 \leq N \leq 10^5)$ 项工作中的任意一项工作来完成．工作 $i$ 的截止时间是 $D_i(1 \leq D_i \leq 10^9)$，完成后获利是 $P_i( 1\leq P_i\leq 10^9 )$．在给定的工作利润和截止时间下，求约翰能够获得的利润最大为多少．
+???+ note "Example problem ['USACO09OPEN' Work Scheduling](https://www.luogu.com.cn/problem/P2949)"
+    John's workday starts at time $0$ and lasts $10^9$ units of time. In any unit of time, he can choose to complete any one of $N(1 \leq N \leq 10^5)$ jobs, numbered $1$ to $N$. Job $i$ has deadline $D_i(1 \leq D_i \leq 10^9)$, and completing it earns profit $P_i( 1\leq P_i\leq 10^9 )$. Given the profits and deadlines of the jobs, find the maximum total profit John can earn.
 
-??? note "解题思路"
-    1.  先假设每一项工作都做，将各项工作按截止时间排序后入队；
-    2.  在判断第 `i` 项工作做与不做时，若其截止时间符合条件，则将其与队中报酬最小的元素比较，若第 `i` 项工作报酬较高（后悔），则 `ans += a[i].p - q.top()`．  
-        用优先队列（小根堆）来维护队首元素最小．
-    3.  当 `a[i].d<=q.size()` 可以这么理解从 0 开始到 `a[i].d` 这个时间段只能做 `a[i].d` 个任务，而若 `q.size()>=a[i].d` 说明完成 `q.size()` 个任务时间大于等于 `a[i].d` 的时间，所以当第 `i` 个任务获利比较大的时候应该把最小的任务从优先级队列中换出．
+??? note "Solution"
+    1.  First assume we do every job. Sort the jobs by deadline and push them into the queue;
+    2.  When deciding whether to do job `i`: if its deadline allows it, take it. Otherwise, compare it with the job in the queue that has the smallest profit. If job `i` pays more (we "regret" the earlier choice), then `ans += a[i].p - q.top()`.  
+        Use a priority queue (min-heap) so that the front element is always the smallest.
+    3.  The condition `a[i].d<=q.size()` can be understood like this: from time 0 to time `a[i].d`, at most `a[i].d` jobs can be done. If `q.size()>=a[i].d`, then doing `q.size()` jobs takes at least `a[i].d` time. So when job `i` pays more, we should swap the smallest job out of the priority queue.
 
-??? note "参考代码"
+??? note "Reference code"
     === "C++"
         ```cpp
         --8<-- "docs/basic/code/greedy/greedy_1.cpp"
@@ -90,20 +90,20 @@
         --8<-- "docs/basic/code/greedy/greedy_1.py"
         ```
 
-??? note "复杂度分析"
-    -   空间复杂度：当输入 $n$ 个任务时使用 $n$ 个 $a$ 数组元素，优先队列中最差情况下会储存 $n$ 个元素，则空间复杂度为 $O(n)$．
-    -   时间复杂度：`std::sort` 的时间复杂度为 $O(n\log n)$，维护优先队列的时间复杂度为 $O(n\log n)$，综上所述，时间复杂度为 $O(n\log n)$．
+??? note "Complexity analysis"
+    -   Space complexity: with $n$ jobs as input, the array $a$ uses $n$ elements, and in the worst case the priority queue stores $n$ elements. So the space complexity is $O(n)$.
+    -   Time complexity: `std::sort` takes $O(n\log n)$ time, and maintaining the priority queue takes $O(n\log n)$ time. Overall, the time complexity is $O(n\log n)$.
 
-## 与动态规划的区别
+## Difference from dynamic programming
 
-常规贪心依赖可证明安全的局部选择；动态规划则维护各状态的最优值并比较候选转移．
+Ordinary greedy algorithms rely on local choices that can be proven safe. Dynamic programming instead keeps the optimal value for every state and compares candidate transitions.
 
-## 习题
+## Exercises
 
--   [「USACO1.3」Barn Repair](https://www.luogu.com.cn/problem/P1209)
--   [洛谷 P2123 皇后游戏](https://www.luogu.com.cn/problem/P2123)
--   [LeetCode 上标签为贪心算法的题目](https://leetcode-cn.com/tag/greedy/)
+-   ["USACO1.3" Barn Repair](https://www.luogu.com.cn/problem/P1209)
+-   [Luogu P2123 Queen's Game](https://www.luogu.com.cn/problem/P2123)
+-   [LeetCode problems tagged greedy](https://leetcode-cn.com/tag/greedy/)
 
-## 参考资料与注释
+## References and notes
 
-[^ref1]: [贪心算法 - 维基百科，自由的百科全书](https://zh.wikipedia.org/wiki/%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95)
+[^ref1]: [Greedy algorithm - Wikipedia, the free encyclopedia (Chinese)](https://zh.wikipedia.org/wiki/%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95)

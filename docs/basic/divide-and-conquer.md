@@ -1,40 +1,40 @@
 author: fudonglai, AngelKitty, labuladong
 
-本页面将介绍递归与分治算法的区别与结合运用．
+This page explains the difference between recursion and divide and conquer, and how they are used together.
 
-## 递归
+## Recursion
 
-### 定义
+### Definition
 
-递归（Recursion），在数学和计算机科学中是指在函数的定义中使用函数自身的方法，在计算机科学中还额外指一种通过重复将问题分解为同类的子问题而解决问题的方法．
+In mathematics and computer science, recursion means defining a function in terms of itself. In computer science, it also means a way of solving a problem by repeatedly breaking it down into smaller subproblems of the same kind.
 
-### 引入
+### Introduction
 
-要理解递归，就得先理解什么是递归．
+To understand recursion, you first have to understand recursion.
 
-递归的基本思想是某个函数直接或者间接地调用自身，这样原问题的求解就转换为了许多性质相同但是规模更小的子问题．求解时只需要关注如何把原问题划分成符合条件的子问题，而不需要过分关注这个子问题是如何被解决的．
+The basic idea of recursion is that a function calls itself, directly or indirectly. This turns solving the original problem into solving many smaller subproblems of the same kind. When solving it, you only need to think about how to split the original problem into suitable subproblems; you don't need to worry too much about how each subproblem gets solved.
 
-以下是一些有助于理解递归的例子：
+Here are some examples that may help you understand recursion:
 
-1.  [什么是递归？](./divide-and-conquer.md)
-2.  如何给一堆数字排序？答：分成两半，先排左半边再排右半边，最后合并就行了，至于怎么排左边和右边，请重新阅读这句话．
-3.  你今年几岁？答：去年的岁数加一岁，1999 年我出生．
-4.  ![一个用于理解递归的例子](images/divide-and-conquer-1.png)
+1.  [What is recursion?](./divide-and-conquer.md)
+2.  How do you sort a pile of numbers? Answer: split it into two halves, sort the left half, then sort the right half, and finally merge them. As for how to sort the left and right halves, please read this sentence again.
+3.  How old are you this year? Answer: one year older than I was last year. I was born in 1999.
+4.  ![An example for understanding recursion](images/divide-and-conquer-1.png)
 
-递归在数学中非常常见．例如，集合论对自然数的正式定义是：1 是一个自然数，每个自然数都有一个后继，这一个后继也是自然数．
+Recursion is very common in mathematics. For example, set theory formally defines the natural numbers like this: 1 is a natural number, and every natural number has a successor, which is also a natural number.
 
-递归代码最重要的两个特征：结束条件和自我调用．自我调用是在解决子问题，而结束条件定义了最简子问题的答案．
+The two most important features of recursive code are the base case and the self-call. The self-call solves a subproblem, and the base case gives the answer to the simplest subproblem.
 
 ```cpp
-int func(传入数值) {
-  if (终止条件) return 最小子问题解;
-  return func(缩小规模);
+int func(input value) {
+  if (base case) return answer to the smallest subproblem;
+  return func(smaller input);
 }
 ```
 
-### 为什么要写递归
+### Why write recursive code
 
-1.  结构清晰，可读性强．例如，分别用不同的方法实现 [归并排序](./merge-sort.md)：
+1.  The structure is clear and easy to read. For example, here is [merge sort](./merge-sort.md) implemented in different ways:
 
     === "C++"
         ```cpp
@@ -46,86 +46,86 @@ int func(传入数值) {
         --8<-- "docs/basic/code/divide-and-conquer/divide-and-conquer_1.py:sort"
         ```
 
-    两份代码中的 `merge(a, front, mid, end)` 均原地合并同一数组的两个有序闭区间 `[front,mid]` 和 `[mid+1,end]`．
+    In both versions, `merge(a, front, mid, end)` merges, in place, the two sorted closed ranges `[front,mid]` and `[mid+1,end]` of the same array.
 
-2.  练习分析问题的结构．当发现问题可以被分解成相同结构的小问题时，递归写多了就能敏锐发现这个特点，进而高效解决问题．
+2.  It is good practice for analyzing the structure of a problem. Once you have written enough recursion, you will quickly notice when a problem can be broken into smaller problems with the same structure, and you can then solve it efficiently.
 
-### 递归的缺点
+### Drawbacks of recursion
 
-在程序执行中，递归是利用堆栈来实现的．每当进入一个函数调用，栈就会增加一层栈帧，每次函数返回，栈就会减少一层栈帧．而栈不是无限大的，当递归层数过多时，就会造成 **栈溢出** 的后果．
+When a program runs, recursion is implemented using the call stack. Each time a function is called, a new stack frame is pushed onto the stack; each time a function returns, a stack frame is popped. The stack is not infinitely large, so when the recursion goes too deep, it causes a **stack overflow**.
 
-递归实现可能需要额外的调用栈，而递推实现可以只使用常数辅助空间．例如，给定一个链表头，计算它的长度：
+A recursive implementation may need extra space on the call stack, while an iterative implementation can use only constant extra space. For example, given the head of a linked list, compute its length:
 
 ```cpp
-// 典型的递推遍历框架
+// A typical iterative traversal
 int size(Node *head) {
   int size = 0;
   for (Node *p = head; p != nullptr; p = p->next) size++;
   return size;
 }
 
-// 递归遍历，每层处理一个结点
+// Recursive traversal, handling one node per level
 int size_recursion(Node *head) {
   if (head == nullptr) return 0;
   return size_recursion(head->next) + 1;
 }
 ```
 
-[![二者的对比](images/divide-and-conquer-2.svg)](https://quick-bench.com/q/rZ7jWPmSdltparOO5ndLgmS9BVc)
+[![Comparison of the two](images/divide-and-conquer-2.svg)](https://quick-bench.com/q/rZ7jWPmSdltparOO5ndLgmS9BVc)
 
-### 递归的优化
+### Optimizing recursion
 
-主页面：[搜索优化](../search/opt.md) 和 [记忆化搜索](../dp/memo.md)
+Main pages: [Search optimization](../search/opt.md) and [Memoized search](../dp/memo.md)
 
-比较初级的递归实现可能递归次数太多，容易超时．这时需要对递归进行优化．[^ref1]
+A naive recursive implementation may make too many recursive calls and easily exceed the time limit. In that case, the recursion needs to be optimized.[^ref1]
 
-## 分治
+## Divide and conquer
 
-### 定义
+### Definition
 
-分治（Divide and Conquer），字面上的解释是「分而治之」，就是把一个复杂的问题分成两个或更多的相同或相似的子问题，直到最后子问题可以直接求解，原问题的解即子问题的解的合并．
+Divide and conquer, as the name says, means "divide it up and conquer each part". You split a complex problem into two or more identical or similar subproblems, and keep splitting until the subproblems can be solved directly. The answer to the original problem is then obtained by combining the answers to the subproblems.
 
-### 过程
+### How it works
 
-分治算法的核心思想就是「分而治之」．
+The core idea of divide and conquer is "divide it up and conquer each part".
 
-大概的流程可以分为三步：分解 -> 解决 -> 合并．
+The process roughly has three steps: divide -> conquer -> combine.
 
-1.  分解原问题为结构相同的子问题；
-2.  分解到某个容易求解的边界之后，进行递归求解；
-3.  将子问题的解合并成原问题的解．
+1.  Divide the original problem into subproblems with the same structure;
+2.  Once the division reaches a boundary that is easy to solve, solve the subproblems recursively;
+3.  Combine the answers to the subproblems into the answer to the original problem.
 
-分治法能解决的问题一般有如下特征：
+Problems that divide and conquer can solve usually have these features:
 
--   该问题的规模缩小到一定的程度就可以容易地解决．
--   该问题可以分解为若干个规模较小的相同问题，即该问题具有最优子结构性质，利用该问题分解出的子问题的解可以合并为该问题的解．
--   该问题所分解出的各个子问题是相互独立的，即子问题之间不包含公共的子问题．
+-   Once the problem is made small enough, it can be solved easily.
+-   The problem can be split into several smaller instances of the same problem. That is, the problem has optimal substructure: the answers to the subproblems it splits into can be combined into the answer to the problem itself.
+-   The subproblems are independent of each other, meaning they share no common subproblems.
 
-???+ warning "注意"
-    如果各子问题是不独立的，则分治法要重复地解公共的子问题，也就做了许多不必要的工作．此时虽然也可用分治法，但一般用 [动态规划](../dp/basic.md) 较好．
+???+ warning "Note"
+    If the subproblems are not independent, divide and conquer will solve the shared subproblems again and again, doing a lot of unnecessary work. Divide and conquer can still be used in that case, but [dynamic programming](../dp/basic.md) is usually a better choice.
 
-以归并排序为例．假设实现归并排序的函数名为 `merge_sort`．明确该函数的职责，即 **对传入的一个数组排序**．这个问题显然可以分解．给一个数组排序等于给该数组的左右两半分别排序，然后合并成一个数组．
+Take merge sort as an example. Say the function that implements merge sort is called `merge_sort`. First be clear about what the function is responsible for: **sorting the array passed to it**. This problem can clearly be broken down. Sorting an array is the same as sorting its left half and its right half separately, then merging them into one array.
 
 ```cpp
-void merge_sort(一个数组) {
-  if (可以很容易处理) return;
-  merge_sort(左半个数组);
-  merge_sort(右半个数组);
-  merge(左半个数组, 右半个数组);
+void merge_sort(an array) {
+  if (easy to handle) return;
+  merge_sort(left half of the array);
+  merge_sort(right half of the array);
+  merge(left half of the array, right half of the array);
 }
 ```
 
-传给它半个数组，那么处理完后这半个数组就已经被排好了．注意到，`merge_sort` 与二叉树的后序遍历模板极其相似．因为分治算法的套路是 **分解 -> 解决（触底）-> 合并（回溯）**，先左右分解，再处理合并，回溯就是在退栈，即相当于后序遍历．
+Pass it half of an array, and when it's done, that half is sorted. Notice that `merge_sort` looks very much like the template for a post-order traversal of a binary tree. This is because the pattern of divide and conquer is **divide -> conquer (hit the bottom) -> combine (backtrack)**: first split into left and right, then do the combining. Backtracking is popping the stack, which is just like a post-order traversal.
 
-`merge` 函数的实现方式与两个有序链表的合并一致．
+The `merge` function works the same way as merging two sorted linked lists.
 
-## 要点
+## Key points
 
-### 写递归的要点
+### Key points for writing recursion
 
-**明白一个函数的作用并相信它能完成这个任务，千万不要跳进这个函数里面企图探究更多细节，** 否则就会陷入无穷的细节无法自拔，人脑能压几个栈啊．
+**Understand what a function does and trust that it will do it. Never jump into the function trying to work out every detail,** or you will get lost in endless details. How many stack frames can a human brain hold, anyway?
 
-以遍历二叉树为例．
+Take traversing a binary tree as an example.
 
 ```cpp
 void traverse(TreeNode* root) {
@@ -135,9 +135,9 @@ void traverse(TreeNode* root) {
 }
 ```
 
-这几行代码就足以遍历任何一棵二叉树了．对于递归函数 `traverse(root)`，只要相信给它一个根节点 `root`，它就能遍历这棵树．所以只需要把这个节点的左右节点再传给这个函数就行了．
+These few lines are enough to traverse any binary tree. For the recursive function `traverse(root)`, just trust that if you give it a root node `root`, it will traverse that tree. So all you need to do is pass the node's left and right children to the same function.
 
-同样扩展到遍历一棵 $N$ 叉树．与二叉树的写法一模一样．不过，对于 $N$ 叉树，显然没有中序遍历．
+The same idea extends to traversing an $N$-ary tree, written in exactly the same way as for a binary tree. Of course, an $N$-ary tree has no in-order traversal.
 
 ```cpp
 void traverse(TreeNode* root) {
@@ -146,28 +146,28 @@ void traverse(TreeNode* root) {
 }
 ```
 
-## 区别
+## Differences
 
-### 递归与枚举的区别
+### Recursion vs. enumeration
 
-递归和枚举的区别在于：枚举是横向地把问题划分，然后依次求解子问题；而递归是把问题逐级分解，是纵向的拆分．
+The difference between recursion and enumeration is this: enumeration splits a problem horizontally and solves the pieces one after another, while recursion breaks a problem down level by level, which is a vertical split.
 
-### 递归与分治的区别
+### Recursion vs. divide and conquer
 
-递归是一种编程技巧，一种解决问题的思维方式；分治算法很大程度上是基于递归的，解决更具体问题的算法思想．
+Recursion is a programming technique, a way of thinking about solving problems. Divide and conquer is an algorithmic idea for solving more specific problems, and it is largely built on recursion.
 
-## 例题详解
+## Worked example
 
-???+ note "[437. 路径总和 III](https://leetcode-cn.com/problems/path-sum-iii/)"
-    给定一个二叉树，它的每个结点都存放着一个整数值．
+???+ note "[437. Path Sum III](https://leetcode-cn.com/problems/path-sum-iii/)"
+    You are given a binary tree. Each node stores an integer value.
     
-    找出路径和等于给定数值的路径总数．
+    Find the number of paths whose values add up to a given number.
     
-    路径不需要从根节点开始，也不需要在叶子节点结束，但是路径方向必须是向下的（只能从父节点到子节点）．
+    A path does not have to start at the root or end at a leaf, but it must go downward (only from parent nodes to child nodes).
     
-    二叉树不超过 1000 个节点，且节点数值范围是 $[-10^6,10^6]$ 的整数．
+    The binary tree has at most 1000 nodes, and node values are integers in the range $[-10^6,10^6]$.
     
-    示例：
+    Example:
     
     ```text
     root = [10,5,-3,3,2,null,11,3,-2,null,1], sum = 8
@@ -180,7 +180,7 @@ void traverse(TreeNode* root) {
      / \   \
     3  -2   1
     
-    返回 3．和等于 8 的路径有：
+    Return 3. The paths that sum to 8 are:
     
     1.  5 -> 3
     2.  5 -> 2 -> 1
@@ -191,36 +191,36 @@ void traverse(TreeNode* root) {
     --8<-- "docs/basic/code/divide-and-conquer/divide-and-conquer_2.h"
     ```
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/basic/code/divide-and-conquer/divide-and-conquer_2.cpp"
     ```
 
-??? note "题目解析"
-    题目看起来很复杂，不过代码却极其简洁．
+??? note "Solution"
+    The problem looks complicated, but the code is extremely short.
     
-    首先明确，递归求解树的问题必然是要遍历整棵树的，所以二叉树的遍历框架（分别对左右子树递归调用函数本身）必然要出现在主函数 pathSum 中．那么对于每个节点，它们应该干什么呢？它们应该看看，自己和它们的子树包含多少条符合条件的路径．好了，这道题就结束了．
+    First, note that solving a tree problem recursively always requires traversing the whole tree, so the binary tree traversal framework (calling the function itself on the left and right subtrees) must appear in the main function pathSum. So what should each node do? Each node should count how many valid paths there are in itself and its subtrees. And that's it, the problem is solved.
     
-    按照前面说的技巧，根据刚才的分析来定义清楚每个递归函数应该做的事：
+    Following the technique described earlier, use this analysis to clearly define what each recursive function should do:
     
-    `pathSum` 函数：给定一个节点和一个目标值，返回以这个节点为根的树中，和为目标值的路径总数．
+    The `pathSum` function: given a node and a target value, return the total number of paths in the tree rooted at this node whose sum equals the target value.
     
-    `count` 函数：给定一个节点和一个目标值，返回以这个节点为根的树中，能凑出几个以该节点为路径开头，和为目标值的路径总数．
+    The `count` function: given a node and a target value, return how many paths in the tree rooted at this node start at this node and have a sum equal to the target value.
     
-    ??? note "参考代码"
+    ??? note "Reference code"
         ```cpp
         --8<-- "docs/basic/code/divide-and-conquer/divide-and-conquer_2.cpp"
         ```
     
-    还是那句话，**明白每个函数能做的事，并相信它们能够完成．**
+    Once again: **understand what each function can do, and trust that it will do it.**
     
-    总结下，`pathSum` 函数提供了二叉树遍历框架，在遍历中对每个节点调用 `count` 函数（这里用的是先序遍历，不过中序遍历和后序遍历也可以）．`count` 函数也是一个二叉树遍历，用于寻找以该节点开头的目标值路径．
+    To sum up, the `pathSum` function provides the binary tree traversal framework, and calls the `count` function on each node during the traversal (pre-order traversal is used here, but in-order or post-order traversal works too). The `count` function is also a binary tree traversal; it finds paths that start at the given node and sum to the target value.
 
-## 习题
+## Exercises
 
--   [LeetCode 上的递归专题练习](https://leetcode.com/explore/learn/card/recursion-i/)
--   [LeetCode 上的分治算法专项练习](https://leetcode.com/tag/divide-and-conquer/)
+-   [Recursion practice on LeetCode](https://leetcode.com/explore/learn/card/recursion-i/)
+-   [Divide and conquer practice on LeetCode](https://leetcode.com/tag/divide-and-conquer/)
 
-## 参考资料与注释
+## References and notes
 
-[^ref1]: [labuladong 的算法小抄 - 递归详解](https://labuladong.gitbook.io/algo/suan-fa-si-wei-xi-lie/di-gui-xiang-jie)
+[^ref1]: [labuladong's algorithm notes - Recursion explained](https://labuladong.gitbook.io/algo/suan-fa-si-wei-xi-lie/di-gui-xiang-jie)

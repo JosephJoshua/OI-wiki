@@ -1,135 +1,135 @@
 author: leoleoasd, yzxoi, Estrella-Explore
 
-本页面将简要介绍构造题这类题型．
+This page gives a short introduction to constructive problems.
 
-## 引入
+## Introduction
 
-构造题是比赛中常见的一类题型．
+Constructive problems are a common type of problem in contests.
 
-从形式上来看，问题的答案往往具有某种规律性，使得在问题规模迅速增大的时候，仍然有机会比较容易地得到答案．
+The answer to such a problem often follows some pattern, so even when the problem size grows quickly, there is still a chance to find the answer fairly easily.
 
-这要求解题时要思考问题规模增长对答案的影响，这种影响是否可以推广．例如，在设计动态规划方法的时候，要考虑从一个状态到后继状态的转移会造成什么影响．
+This means that when solving one, you should think about how growing the problem size affects the answer, and whether that effect can be generalized. For example, when designing a dynamic programming solution, you need to think about what a transition from one state to the next one changes.
 
-## 特点
+## Characteristics
 
-构造题一个很显著的特点就是高自由度，也就是说一道题的构造方式可能有很多种，但是会有一种较为简单的构造方式满足题意．看起来是放宽了要求，让题目变得简单了，但很多时候，正是这种高自由度导致题目没有明确思路而无从下手．
+A very notable feature of constructive problems is their high degree of freedom: a problem may have many valid constructions, but usually one fairly simple construction does the job. This seems to loosen the requirements and make the problem easier. But often it is exactly this freedom that leaves you with no clear direction and no idea where to start.
 
-构造题另一个特点就是形式灵活，变化多样．并不存在一个通用解法或套路可以解决所有构造题，甚至很难找出解题思路的共性．
+Another feature is that they are flexible in form and very varied. There is no general method or standard trick that solves all constructive problems. It is even hard to find anything the solutions have in common.
 
-## 例题
+## Example problems
 
-下面将列举一些例题帮助读者体会构造题的一些思想内涵，给予思路上的启发．建议大家深入思考后再查看题解，也欢迎大家参与分享有趣的构造题．
+Below are some example problems to help you get a feel for the ideas behind constructive problems and to give you some inspiration. We suggest thinking each one through carefully before reading the solution. You are also welcome to share interesting constructive problems.
 
-### 例题 1
+### Example 1
 
 ???+ note "[Codeforces Round #384 (Div. 2) C.Vladik and fractions](http://codeforces.com/problemset/problem/743/C)"
-    构造三个两两不同的正整数 $x,y,z$，使得对于给定的 $n$，满足 $\dfrac{1}{x}+\dfrac{1}{y}+\dfrac{1}{z}=\dfrac{2}{n}$．
+    For a given $n$, construct three pairwise distinct positive integers $x,y,z$ such that $\dfrac{1}{x}+\dfrac{1}{y}+\dfrac{1}{z}=\dfrac{2}{n}$.
 
-??? note "解题思路"
-    从样例二可以看出本题的构造方法．
+??? note "Solution"
+    The second sample hints at the construction.
     
-    可将 $\dfrac{2}{n}$ 分解为 $\dfrac{1}{n}+\dfrac{1}{n}$，再将后一项写为 $\dfrac{1}{n+1}+\dfrac{1}{n(n+1)}$．所以 $n,n+1,n(n+1)$ 即为一组合法解．特别地，$n=1$ 时无解，因为三个互异正整数的倒数和至多为 $1+\dfrac{1}{2}+\dfrac{1}{3}<2$．
+    Split $\dfrac{2}{n}$ into $\dfrac{1}{n}+\dfrac{1}{n}$, then rewrite the second term as $\dfrac{1}{n+1}+\dfrac{1}{n(n+1)}$. So $n,n+1,n(n+1)$ is a valid answer. As a special case, there is no solution when $n=1$, because the sum of the reciprocals of three distinct positive integers is at most $1+\dfrac{1}{2}+\dfrac{1}{3}<2$.
 
-### 例题 2
+### Example 2
 
 ???+ note "[Luogu P3599 Koishi Loves Construction](https://www.luogu.com.cn/problem/P3599)"
-    Task1：试判断能否构造并构造一个长度为 $n$ 的 $1\dots n$ 的排列，满足其 $n$ 个前缀和在模 $n$ 的意义下互不相同．
+    Task1: Decide whether you can construct a permutation of $1\dots n$ (of length $n$) whose $n$ prefix sums are pairwise distinct modulo $n$, and if so, construct one.
     
-    Task2：试判断能否构造并构造一个长度为 $n$ 的 $1\dots n$ 的排列，满足其 $n$ 个前缀积在模 $n$ 的意义下互不相同．
+    Task2: Decide whether you can construct a permutation of $1\dots n$ (of length $n$) whose $n$ prefix products are pairwise distinct modulo $n$, and if so, construct one.
 
-??? note "解题思路"
-    两项任务在 $n=1$ 时均直接取排列 $[1]$．以下设 $n>1$．
+??? note "Solution"
+    For both tasks, when $n=1$ just take the permutation $[1]$. From now on assume $n>1$.
     
-    对于 Task1：
+    For Task1:
     
-    当 $n$ 为奇数时，无法构造出合法解；当 $n$ 为偶数时，可以构造一个形如 $n,1,n-2,3,\cdots$ 这样的数列．
+    When $n$ is odd, no valid answer exists. When $n$ is even, we can construct a sequence of the form $n,1,n-2,3,\cdots$.
     
-    首先，我们可以发现 $n$ 必定出现在数列的第一位，否则 $n$ 出现前后的两个前缀和必然会陷入模意义下相等的尴尬境地；
+    First, notice that $n$ must be the first element of the sequence. Otherwise, the prefix sums just before and just after $n$ appears would be equal modulo $n$, which is not allowed.
     
-    然后，我们考虑构造出整个序列的方式：
+    Next, let's think about how to construct the whole sequence:
     
-    考虑通过构造前缀和序列的方式来获得原数列，可以发现相邻前缀和之差（再加第一项）在模意义下应互不相同，因为前缀和序列的差分序列对应着原来的排列．
+    We can get the original sequence by constructing its prefix sum sequence instead. The differences between adjacent prefix sums (plus the first term) must be pairwise distinct modulo $n$, because the difference sequence of the prefix sums is exactly the original permutation.
     
-    因此我们尝试以前缀和数列在模意义下为
+    So we try to make the prefix sums, modulo $n$, look like
     
     $$
     0,1,-1,2,-2,\cdots
     $$
     
-    这样的形式来构造这个序列，不难发现它完美地满足所有限制条件．
+    It is easy to check that this satisfies all the constraints perfectly.
     
-    对于 Task2：
+    For Task2:
     
-    当 $n$ 为除 $4$ 以外的合数时，无法构造出合法解；当 $n=4$ 时单独取 $[1,3,2,4]$．当 $n$ 为质数时，可以构造一个形如 $1,\dfrac{2}{1},\dfrac{3}{2},\cdots,\dfrac{n-1}{n-2},n$ 这样的数列，其中除法表示乘模 $n$ 的 [逆元](../math/number-theory/inverse.md) 后取 $[1,n]$ 中的代表元．
+    When $n$ is a composite number other than $4$, no valid answer exists. When $n=4$, take $[1,3,2,4]$ as a special case. When $n$ is prime, we can construct a sequence of the form $1,\dfrac{2}{1},\dfrac{3}{2},\cdots,\dfrac{n-1}{n-2},n$, where division means multiplying by the [modular inverse](../math/number-theory/inverse.md) modulo $n$ and then taking the representative in $[1,n]$.
     
-    先考虑什么时候有解：
+    First, when does a solution exist?
     
-    当 $n$ 为除 $4$ 以外的合数时无解．因为对于一个合数来说，存在两个比它小的数 $p,q$ 使得 $p\times q \equiv 0 \pmod n$，如 $(3\times6)\bmod 9=0$．那么，当 $p,q$ 均出现过后，数列的前缀积将一直为 $0$，故除 $4$ 以外的合数无解．特殊地，我们可以发现 $4=2\times 2$，无满足条件的 $p,q$，因此存在合法解．
+    There is no solution when $n$ is a composite number other than $4$. For a composite number, there exist two smaller numbers $p,q$ with $p\times q \equiv 0 \pmod n$, such as $(3\times6)\bmod 9=0$. Once both $p$ and $q$ have appeared, every later prefix product is $0$. So composite numbers other than $4$ have no solution. As a special case, $4=2\times 2$, and no suitable $p,q$ exist, so a valid answer exists.
     
-    我们考虑如何构造这个数列：
+    Now, how do we construct the sequence?
     
-    和 task1 同样的思路，我们发现 $1$ 必定出现在数列的第一位，否则 $1$ 出现前后的两个前缀积必然相等；而 $n$ 必定出现在数列的最后一位，因为 $n$ 出现位置后的所有前缀积在模意义下都为 $0$．分析题目给出的几组样例以后发现，所有样例中均有一组合法解满足前缀积在模意义下为 $1,2,3,\cdots,n$，因此我们可以构造出上文所述的数列来满足这个条件．那么我们只需证明这 $n$ 个数互不相同即可．
+    Using the same idea as task1, $1$ must be the first element. Otherwise, the prefix products just before and just after $1$ appears would be equal. Also, $n$ must be the last element, because every prefix product from the position of $n$ onward is $0$ modulo $n$. Looking at the samples, every one of them has a valid answer whose prefix products modulo $n$ are $1,2,3,\cdots,n$. So we can use the sequence described above to achieve this. We then only need to prove that these $n$ numbers are pairwise distinct.
     
-    我们发现这些数均为 $1 \cdots n-2$ 的逆元 $+1$，因此各不相同，此题得解．
+    These numbers are each the inverse of one of $1 \cdots n-2$, plus $1$, so they are all different. This solves the problem.
 
-### 例题 3
+### Example 3
 
 ???+ note "[AtCoder Grand Contest 032 B](https://atcoder.jp/contests/agc032/tasks/agc032_b)"
-    给定一个整数 $N$，试构造一个节点数为 $N$ 的无向图．令节点编号为 $1\ldots N$，要求其满足以下条件：
+    Given an integer $N$, construct an undirected graph with $N$ vertices, numbered $1\ldots N$, that satisfies:
     
-    -   这是一个简单连通图．
-    -   存在一个整数 $S$ 使得对于任意节点，与其相邻节点的下标和为 $S$．
+    -   It is a simple connected graph.
+    -   There is an integer $S$ such that for every vertex, the sum of the indices of its neighbors is $S$.
     
-    保证输入数据有解．
+    A solution is guaranteed to exist for the input.
 
-??? note "解题思路"
-    通过分析 $n=3,4,5$ 的情况，我们可以找到一个构造思路．
+??? note "Solution"
+    By looking at the cases $n=3,4,5$, we can find a way to construct the graph.
     
-    构造一个完全 $k$ 分图，保证这 $k$ 部分和相等．则每个点的 $S$ 均相等，为
+    Build a complete $k$-partite graph where all $k$ parts have the same sum. Then every vertex has the same $S$, namely
     
     $$
-    S=\dfrac{(k-1)\sum_{i=1}^{n}i}{k}．
+    S=\dfrac{(k-1)\sum_{i=1}^{n}i}{k}.
     $$
     
-    如果 $n$ 为偶数，那么我们可以前后两两配对，即 $\{1,n\},\{2,n-1\}\cdots$．
+    If $n$ is even, pair the numbers from both ends: $\{1,n\},\{2,n-1\}\cdots$.
     
-    如果 $n$ 为奇数，那么我们可以把 $n$ 单拿出来作为一组，剩余的 $n-1$ 个两两配对，即 $\{n\},\{1,n-1\},\{2,n-2\}\cdots$．
+    If $n$ is odd, put $n$ in a group by itself and pair up the remaining $n-1$ numbers: $\{n\},\{1,n-1\},\{2,n-2\}\cdots$.
     
-    这样构造出的图在 $n\ge 3$ 时连通性易证，在此不加赘述．
+    It is easy to show that the graph built this way is connected when $n\ge 3$, so we skip the details here.
     
-    此题得解．
+    This solves the problem.
 
-### 例题 4
+### Example 4
 
-???+ note "[BZOJ 4971「Lydsy1708 月赛」记忆中的背包](https://vjudge.net/problem/BZOJ-4971)"
-    经过一天辛苦的工作，小 Q 进入了梦乡．他脑海中浮现出了刚进大学时学 01 背包的情景，那时还是大一萌新的小 Q 解决了一道简单的 01 背包问题．这个问题是这样的：
+???+ note "[BZOJ 4971 'Lydsy1708 Monthly Contest' The Knapsack in Memory](https://vjudge.net/problem/BZOJ-4971)"
+    After a long day of hard work, Little Q fell asleep. In his dream he recalled learning the 0/1 knapsack when he first started university. Back then, as a freshman, Little Q solved a simple 0/1 knapsack problem. The problem was:
     
-    给定 $n$ 个物品，每个物品的体积分别为 $v_1,v_2,\ldots,v_n$，请计算从中选择一些物品（也可以不选），使得总体积恰好为 $w$ 的方案数．因为答案可能非常大，你只需要输出答案对 $P$ 取模的结果．
+    Given $n$ items with volumes $v_1,v_2,\ldots,v_n$, count the ways to choose some of them (choosing none is allowed) so that the total volume is exactly $w$. Since the answer can be very large, output it modulo $P$.
     
-    因为长期熬夜刷题，他只看到样例输入中的 $w$ 和 $P$，以及样例输出是 $k$，看不清到底有几个物品，也看不清每个物品的体积是多少．直到梦醒，小 Q 也没有看清 $n$ 和 $v$，请写一个程序，帮助小 Q 一起回忆曾经的样例输入．
+    Because he had stayed up late solving problems for so long, he could only see $w$ and $P$ in the sample input, and that the sample output was $k$. He couldn't make out how many items there were or what their volumes were. Even when he woke up, Little Q still couldn't see $n$ and $v$. Write a program to help Little Q recall that sample input.
     
-    多组数据，数据满足 $50\le w\le20000$、$1\le P\le2^{30}$、$0\le k\le\min(20000,P-1)$；要求输出 $1\le n\le40$ 个物品，且 $1\le v_i\le20000$．
+    There are multiple test cases, with $50\le w\le20000$, $1\le P\le2^{30}$, $0\le k\le\min(20000,P-1)$. You must output $1\le n\le40$ items, with $1\le v_i\le20000$.
 
-??? note "解题思路"
-    这道题是自由度最高的构造题之一了．这就导致了没有头绪，难以入手的情况．
+??? note "Solution"
+    This is one of the constructive problems with the highest degree of freedom, which makes it hard to know where to begin.
     
-    因为 $k<P$，所以我们可以考虑直接构造方案数恰为 $k$ 的物品集合．
+    Since $k<P$, we can aim to directly construct a set of items whose number of ways is exactly $k$.
     
-    一种构造方式是选取 $i$ 个体积为 $1$ 的小物品和若干个体积为 $w-t$ 的大物品，其中 $1\le i\le20$、$0\le t\le i$．因为 $i<w$ 且 $w-t\ge w-20>w/2$，恰好装满背包的方案必须选择一个大物品．
+    One construction is to choose $i$ small items of volume $1$ and some large items of volume $w-t$, where $1\le i\le20$ and $0\le t\le i$. Since $i<w$ and $w-t\ge w-20>w/2$, any way to fill the knapsack exactly must use exactly one large item.
     
-    令每个体积为 $w-t$ 的大物品对方案数的贡献为 $C$，则 $C=\dbinom{i}{t}$，不同大物品的贡献相加．即使体积相同，不同物品仍分别计数．
+    Let $C$ be the number of ways contributed by each large item of volume $w-t$. Then $C=\dbinom{i}{t}$, and the contributions of different large items add up. Different items are counted separately even if they have the same volume.
     
-    令 $f_{i,j}$ 表示有 $i$ 个 $1$，方案数为 $j$ 的最小大物品数．
+    Let $f_{i,j}$ be the minimum number of large items needed when there are $i$ items of volume $1$ and the number of ways is $j$.
     
-    固定 $i$，令 $f_{i,0}=0$，其余状态初值为 $+\infty$．按 $j$ 递增计算完全背包转移：
+    Fix $i$. Set $f_{i,0}=0$ and all other states to $+\infty$. Compute the unbounded knapsack transition in increasing order of $j$:
     
     $$
-    f_{i,j}=1+\min_{0\le t\le i;~C\le j}f_{i,j-C},\qquad 1\le j\le20000．
+    f_{i,j}=1+\min_{0\le t\le i;~C\le j}f_{i,j-C},\qquad 1\le j\le20000.
     $$
     
-    记录取得最小值的 $t$，即可回溯出每个大物品的体积 $w-t$．对全部 $0\le k\le20000$ 计算可得 $\min_{1\le i\le 20}(i+f_{i,k})\le 29<40$，所以这段预处理范围足够．
+    Record the $t$ that achieves the minimum, and you can backtrack to recover the volume $w-t$ of each large item. Computing this for all $0\le k\le20000$ shows that $\min_{1\le i\le 20}(i+f_{i,k})\le 29<40$, so this precomputation range is enough.
 
-??? note "参考实现"
+??? note "Reference implementation"
     ```cpp
     --8<-- "docs/basic/code/construction/construction_1.cpp"
     ```

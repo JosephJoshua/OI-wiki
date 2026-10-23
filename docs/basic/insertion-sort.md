@@ -1,28 +1,28 @@
-本页面将简要介绍插入排序．
+This page gives a short introduction to insertion sort.
 
-## 定义
+## Definition
 
-插入排序（Insertion sort）是一种简单直观的排序算法．它的工作原理为将待排列元素划分为「已排序」和「未排序」两部分，每次从「未排序的」元素中选择一个插入到「已排序的」元素中的正确位置．
+Insertion sort is a simple and intuitive sorting algorithm. It works by splitting the elements into two parts, "sorted" and "unsorted". Each step takes one element from the "unsorted" part and inserts it into its correct position in the "sorted" part.
 
-一个与插入排序相同的操作是打扑克牌时，从牌桌上抓一张牌，按牌面大小插到手牌后，再抓下一张牌．
+It works the same way as picking up playing cards: you take one card from the table, insert it into your hand according to its value, then take the next card.
 
 ![insertion sort animate example](images/insertion-sort-animate.svg)
 
-## 性质
+## Properties
 
-### 稳定性
+### Stability
 
-插入排序是一种稳定的排序算法．
+Insertion sort is a stable sorting algorithm.
 
-### 时间复杂度
+### Time complexity
 
-插入排序的最优时间复杂度为 $O(n)$，在数列几乎有序时效率很高．
+The best-case time complexity of insertion sort is $O(n)$. It is very efficient when the array is almost sorted.
 
-插入排序的最坏时间复杂度和平均时间复杂度都为 $O(n^2)$．
+Both the worst-case and the average time complexity of insertion sort are $O(n^2)$.
 
-## 代码实现
+## Implementation
 
-### 伪代码
+### Pseudocode
 
 $$
 \begin{array}{ll}
@@ -54,15 +54,15 @@ $$
     --8<-- "docs/basic/code/insertion-sort/insertion-sort_1.java"
     ```
 
-## 折半插入排序
+## Binary insertion sort
 
-插入排序还可以通过二分算法优化性能，在排序元素数量较多时优化的效果比较明显．
+Insertion sort can also be sped up with binary search. The improvement is more noticeable when there are many elements to sort.
 
-### 时间复杂度
+### Time complexity
 
-折半插入排序用二分查找确定插入位置，将总比较次数降为 $O(n\log n)$，但最坏情况下仍需移动 $\Theta(n^2)$ 个元素，因此最坏时间复杂度仍为 $\Theta(n^2)$．
+Binary insertion sort uses binary search to find the insertion position, which cuts the total number of comparisons down to $O(n\log n)$. However, in the worst case it still has to move $\Theta(n^2)$ elements, so its worst-case time complexity is still $\Theta(n^2)$.
 
-### 代码实现
+### Implementation
 
 === "C++"
     ```cpp
@@ -71,7 +71,7 @@ $$
       for (int i = 1; i != len; ++i) {
         int key = arr[i];
         auto index = upper_bound(arr, arr + i, key) - arr;
-        // 使用 memmove 移动元素，比使用 for 循环速度更快，时间复杂度仍为 O(n)
+        // Moving elements with memmove is faster than a for loop; the time complexity is still O(n)
         memmove(arr + index + 1, arr + index, (i - index) * sizeof(int));
         arr[index] = key;
       }

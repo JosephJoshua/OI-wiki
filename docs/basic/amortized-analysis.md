@@ -1,178 +1,178 @@
-前置知识：[时间复杂度](./complexity.md)
+Prerequisites: [Time complexity](./complexity.md)
 
-本页面将介绍均摊复杂度的基础知识．
+This page introduces the basics of amortized complexity.
 
-## 引入
+## Introduction
 
-均摊分析（Amortized Analysis）是一种用于分析算法和动态数据结构性能的技术．它不仅仅关注单次操作的成本，还通过评估一系列操作的平均成本，为整体性能提供更加准确的评估．均摊分析不涉及概率，且只能确保最坏情况性能的每次操作耗费的平均时间，并不能确认系统的平均性能．在最坏情况下，均摊分析通过将高成本操作的开销分摊到低成本操作上，确保整体操作的平均成本保持在合理范围内．
+Amortized analysis is a technique for analyzing the performance of algorithms and dynamic data structures. Instead of looking only at the cost of a single operation, it looks at the average cost over a whole sequence of operations, which gives a more accurate picture of overall performance. Amortized analysis does not involve probability. It only guarantees the average time per operation in the worst case; it does not tell you the average-case performance of the system. In the worst case, amortized analysis spreads the cost of expensive operations over the cheap ones, showing that the average cost per operation stays within a reasonable bound.
 
-均摊分析通常采用三种主要分析方法：聚合分析、记账分析和势能分析．这些方法各有侧重，分别适用于不同的场景，但它们的共同目标是通过均衡操作成本，优化数据结构在最坏情况下的整体性能表现．
+There are three main methods of amortized analysis: aggregate analysis, the accounting method, and the potential method. Each has its own focus and suits different situations, but they share the same goal: by balancing out the costs of operations, they show how well a data structure performs overall in the worst case.
 
-## 内容
+## Content
 
-考虑一个可扩展的数组，例如 C++ 中的 `vector`，其初始容量为 $m = 1$．每次插入新元素时，如果数组已满，则需要将数组的大小加倍，然后将原数组中的元素复制到新数组中，最后插入新元素．
+Consider a growable array, such as `vector` in C++, with an initial capacity of $m = 1$. Each time a new element is inserted, if the array is full, we double the array's size, copy the elements from the old array into the new one, and then insert the new element.
 
-接下来，将以动态数组的插入操作为例，通过聚合分析、记账分析和势能分析三种方法，分析其均摊成本．
+Next, we use insertion into this dynamic array as an example and analyze its amortized cost with each of the three methods: aggregate analysis, the accounting method, and the potential method.
 
-### 聚合分析
+### Aggregate analysis
 
-聚合分析（Aggregate Analysis）通过计算一系列操作的总成本，并将其平均到每次操作上，从而得出每次操作的均摊时间复杂度．
+Aggregate analysis computes the total cost of a sequence of operations and divides it evenly among the operations, which gives the amortized time complexity of each operation.
 
-以动态数组为例，首先，可以得到插入操作的两个关键成本：
+For the dynamic array, we first identify the two key costs of an insertion:
 
--   如果数组未满，插入操作的成本为 $O(1)$．
--   如果数组已满，则插入操作需要扩容，扩容后复制元素的成本为 $O(m)$，其中 $m$ 为当前数组的大小．
+-   If the array is not full, an insertion costs $O(1)$.
+-   If the array is full, the insertion has to grow the array, and copying the elements after growing costs $O(m)$, where $m$ is the current size of the array.
 
-所以，为了计算 $n$ 次插入操作的总成本，可以将其分开为两部分计算：
+So to compute the total cost of $n$ insertions, we can split it into two parts:
 
-1.  **插入操作的成本**：每次插入新元素的直接成本是常数时间 $O(1)$，对于 $n$ 次操作，总成本是 $O(n)$；
-2.  **数组扩容的成本**：每次扩容涉及到复制原数组元素到新数组．这些操作发生在数组大小为 $2$ 的幂次时．扩容时复制的旧容量为所有严格小于 $n$ 的二次幂之和，当 $n\ge1$ 时，总复制成本为 $\sum_{i=0}^{\lceil\log_2 n\rceil - 1}2^i=2^{\lceil\log_2 n\rceil}-1<2n$，总成本是 $O(n)$．
+1.  **Cost of inserting**: the direct cost of inserting each new element is constant time $O(1)$, so for $n$ operations the total is $O(n)$;
+2.  **Cost of growing the array**: each time the array grows, the elements of the old array are copied into the new one. This happens when the array size is a power of $2$. The old capacities copied during growth add up to the sum of all powers of two strictly less than $n$. For $n\ge1$, the total copying cost is $\sum_{i=0}^{\lceil\log_2 n\rceil - 1}2^i=2^{\lceil\log_2 n\rceil}-1<2n$, so the total is $O(n)$.
 
-因此，该数组总的插入成本为 $O(n)$，均摊到每次操作的成本为 $O(1)$．即使在最坏情况下，平均每次插入操作的成本依然是常数时间．
+Therefore, the total cost of all insertions is $O(n)$, and the amortized cost per operation is $O(1)$. Even in the worst case, the average cost of an insertion is still constant time.
 
-### 记账分析
+### Accounting method
 
-记账法（Accounting Method）通过为每次操作预先分配一个固定的均摊成本来确保所有操作的总成本不超过这些预分配的成本总和．记账法类似于一种 **费用前置支付** 的机制，其中较低成本的操作会存储部分费用，以支付未来高成本的操作．
+The accounting method assigns each operation a fixed amortized cost up front, and makes sure the total actual cost of all operations never exceeds the sum of these assigned costs. It works like **paying in advance**: cheap operations save up part of their charge to pay for expensive operations later.
 
-以动态数组为例，可以为每次插入操作分配一个固定的均摊成本，以确保在需要扩容时已经预留了足够的费用．
+For the dynamic array, we can give each insertion a fixed amortized cost, so that enough has been saved up by the time the array needs to grow.
 
-1.  **费用分配**：
-    -   假设每次插入操作的实际成本为 $1$，均摊成本设为 $3$．
-    -   其中 $1$ 用于当前插入操作，$2$ 用于未来可能的扩容操作．
+1.  **Assigning charges**:
+    -   Suppose the actual cost of each insertion is $1$, and we set its amortized cost to $3$.
+    -   Of this, $1$ pays for the current insertion, and $2$ is saved for a possible future growth.
 
-2.  **费用使用**：
-    -   当数组已满时，需要进行扩容操作，实际成本为 $O(m)$，其中 $m$ 是当前数组的大小．
-    -   假设扩容前数组的元素数量为 $n$，由于原数组的后半部分 $n/2$ 个元素在插入时共预存了 $n$ 单位的均摊成本，恰好足够支付扩容操作的成本．
+2.  **Using the savings**:
+    -   When the array is full, it has to grow, with an actual cost of $O(m)$, where $m$ is the current size of the array.
+    -   Suppose the array holds $n$ elements before growing. The $n/2$ elements in the second half of the array together saved $n$ units of amortized cost when they were inserted, which is exactly enough to pay for the growth.
 
-以下是一个具体的示例：
+Here is a concrete example:
 
 ```text
-初始状态：
-arr    = [1, 2, 3, 4]  // 初始数组
-amount = [2, 2, 2, 2]  // 每个元素预存的费用
+Initial state:
+arr    = [1, 2, 3, 4]  // initial array
+amount = [2, 2, 2, 2]  // savings stored by each element
 
-// 第一轮扩容：数组已满，需要扩容
-arr    = [1, 2, 3, 4, null, null, null, null]  // 扩容后数组
-amount = [2, 2, 0, 0, 0, 0, 0, 0]  // 3, 4的费用用于支付扩容
+// First growth: the array is full and needs to grow
+arr    = [1, 2, 3, 4, null, null, null, null]  // array after growing
+amount = [2, 2, 0, 0, 0, 0, 0, 0]  // the savings of 3 and 4 pay for the growth
 
-// 继续插入新元素，直至再次满载
-arr    = [1, 2, 3, 4, 5, 6, 7, 8]  // 继续填充数组
-amount = [2, 2, 0, 0, 2, 2, 2, 2]  // 新插入的元素同样预存费用
+// Keep inserting new elements until the array is full again
+arr    = [1, 2, 3, 4, 5, 6, 7, 8]  // keep filling the array
+amount = [2, 2, 0, 0, 2, 2, 2, 2]  // newly inserted elements also store savings
 
-// 第二轮扩容：数组再次满载，需要更大的空间
-arr    = [1, 2, 3, 4, 5, 6, 7, 8, null, null, null, null, null, null, null, null]  // 扩容后数组
-amount = [2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]  // 5, 6, 7, 8的费用用于支付扩容
+// Second growth: the array is full again and needs more space
+arr    = [1, 2, 3, 4, 5, 6, 7, 8, null, null, null, null, null, null, null, null]  // array after growing
+amount = [2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]  // the savings of 5, 6, 7, 8 pay for the growth
 ```
 
-以上过程表明，每次插入操作所存储的均摊成本足够支付未来的扩容操作，从而确保了每次操作的均摊成本维持在 $O(1)$．
+This shows that the amortized cost saved by each insertion is enough to pay for future growth, so the amortized cost of each operation stays at $O(1)$.
 
-### 势能分析
+### Potential method
 
-势能分析（Potential Method）通过定义一个势能函数（通常表示为 $\Phi$），度量数据结构的 **潜在能量**，即系统状态中的预留资源，这些资源可以用来支付未来的高成本操作．势能的变化用于平衡操作序列的总成本，从而确保整个算法的均摊成本在合理范围内．
+The potential method defines a potential function (usually written $\Phi$) that measures the **potential energy** of a data structure, that is, resources stored up in the state of the system that can pay for expensive operations later. Changes in potential are used to balance the total cost of a sequence of operations, keeping the amortized cost of the whole algorithm within a reasonable bound.
 
-#### 原理
+#### Principle
 
-首先，定义 **状态**  $S$ 为某一时刻数据结构的状态，该状态可能包含元素数量、容量、指针等信息，其中定义初始状态为 $S_0$，即未进行任何操作时的状态．
+First, define a **state** $S$ as the state of the data structure at some moment. It may include the number of elements, the capacity, pointers, and so on. The initial state $S_0$ is the state before any operation is performed.
 
-其次，定义势能函数 $\Phi(S)$ 用于度量数据结构状态 $S$ 的势能，设初始状态为 $S_0$，则所有可达状态 $S$ 的势能均需满足 $\Phi(S) \geq \Phi(S_0)$[^clemson][^uci][^stanford]，有的资料会额外要求 $\Phi(S_0)=0$[^cornell]，实际上是不必要的．
+Next, define a potential function $\Phi(S)$ that measures the potential of state $S$. With initial state $S_0$, every reachable state $S$ must satisfy $\Phi(S) \geq \Phi(S_0)$[^clemson][^uci][^stanford]. Some sources also require $\Phi(S_0)=0$[^cornell], but this is actually unnecessary.
 
-对于每个操作，其均摊成本 $\hat{c}$ 定义为：
+For each operation, its amortized cost $\hat{c}$ is defined as:
 
 $$
 \hat{c} = c + \Phi(S') - \Phi(S)
 $$
 
-其中 $c$ 为操作的实际成本，$S$ 和 $S'$ 分别表示操作前后的数据结构状态．该公式表明，均摊成本等于实际成本加上势能的变化．如果操作增加了势能（即 $\Phi(S') > \Phi(S)$），则均摊成本上升；如果操作消耗了势能（即 $\Phi(S') < \Phi(S)$），则均摊成本下降．
+Here $c$ is the actual cost of the operation, and $S$ and $S'$ are the states of the data structure before and after the operation. The formula says that the amortized cost equals the actual cost plus the change in potential. If the operation increases the potential (that is, $\Phi(S') > \Phi(S)$), the amortized cost goes up; if the operation uses up potential (that is, $\Phi(S') < \Phi(S)$), the amortized cost goes down.
 
-我们可以通过势能函数来分析一系列操作的总成本．设 $S_1, S_2, \dots, S_m$ 为从初始状态 $S_0$ 开始，经过 $m$ 次操作后产生的状态序列，$c_i$ 为第 $i$ 次操作的实际开销，那么第 $i$ 次操作的均摊成本 $p_i$ 为：
+We can use the potential function to analyze the total cost of a sequence of operations. Let $S_1, S_2, \dots, S_m$ be the sequence of states produced by $m$ operations starting from the initial state $S_0$, and let $c_i$ be the actual cost of the $i$-th operation. Then the amortized cost $p_i$ of the $i$-th operation is:
 
 $$
 p_i = c_i + \Phi(S_i) - \Phi(S_{i-1})
 $$
 
-因此，$m$ 次操作的总时间花销为：
+So the total time spent on $m$ operations is:
 
 $$
 \sum_{i=1}^m c_i = \sum_{i=1}^m p_i + \Phi(S_0) - \Phi(S_m)
 $$
 
-由于 $\Phi(S) \geq \Phi(S_0)$，总时间花销的上界为：
+Since $\Phi(S) \geq \Phi(S_0)$, the total time has the upper bound:
 
 $$
 \sum_{i=1}^m p_i \geq \sum_{i=1}^m c_i
 $$
 
-因此，若 $p_i = O(T(n))$，则 $O(T(n))$ 是均摊复杂度的一个上界．
+Therefore, if $p_i = O(T(n))$, then $O(T(n))$ is an upper bound on the amortized complexity.
 
-#### 示例：动态数组的扩容分析
+#### Example: analyzing growth of a dynamic array
 
-以动态数组 `vector` 的插入操作为例，记初始状态为 $h_0$，定义如下的势能函数 $\Phi(h)$：
+Take insertion into the dynamic array `vector` as an example. Let the initial state be $h_0$, and define the potential function $\Phi(h)$ as:
 
 $$
 \Phi(h) = 2n - m
 $$
 
-其中，$n$ 是数组中的元素数量，$m$ 是数组的当前容量．这个势能函数的变化反映了用于支付未来扩容的预存费用的增减．在容量为 $1$ 的空数组初态，$\Phi(h_0)=-1$；在仅插入、满时倍增的非空可达状态中，$m\leq 2n$，故 $\Phi(h)\geq 0>\Phi(h_0)$．
+Here $n$ is the number of elements in the array and $m$ is its current capacity. Changes in this potential function reflect the savings stored up to pay for future growth going up and down. In the initial state, an empty array with capacity $1$, $\Phi(h_0)=-1$. In every non-empty state reachable by only inserting and doubling when full, $m\leq 2n$, so $\Phi(h)\geq 0>\Phi(h_0)$.
 
-1.  **插入操作（无需扩容）**：
-    -   **操作成本**：$O(1)$，因为只需插入一个元素．
-    -   **势能变化**：插入后，元素数量增加 1，势能增加 $2$．
-        -   $\Phi(h') - \Phi(h) = 2(n + 1) - m - (2n - m) = 2$．
-    -   **均摊成本**：$1 + 2 = 3$．
+1.  **Insertion (no growth needed)**:
+    -   **Actual cost**: $O(1)$, since only one element is inserted.
+    -   **Change in potential**: after the insertion, the number of elements goes up by 1, so the potential goes up by $2$.
+        -   $\Phi(h') - \Phi(h) = 2(n + 1) - m - (2n - m) = 2$.
+    -   **Amortized cost**: $1 + 2 = 3$.
 
-2.  **插入操作（触发扩容）**：
-    -   假设当前容量 $m = n$，插入一个新元素时触发扩容，新的容量变为 $2n$．
-    -   **操作成本**：$O(n)$，因为需要将所有元素复制到新数组中，并插入新元素．
-    -   **势能变化**：扩容并插入后的势能变化为 $2-n$，当 $n>2$ 时才下降．
-        -   $\Phi(h') - \Phi(h) = 2(n + 1) - 2n - (2n - n) = 2 - n$．
-    -   **均摊成本**：$n + 1 + (2 - n) = 3$．
+2.  **Insertion (triggers growth)**:
+    -   Suppose the current capacity is $m = n$. Inserting a new element triggers growth, and the new capacity becomes $2n$.
+    -   **Actual cost**: $O(n)$, since all elements must be copied into the new array and then the new element is inserted.
+    -   **Change in potential**: after growing and inserting, the potential changes by $2-n$, which is a decrease only when $n>2$.
+        -   $\Phi(h') - \Phi(h) = 2(n + 1) - 2n - (2n - n) = 2 - n$.
+    -   **Amortized cost**: $n + 1 + (2 - n) = 3$.
 
-通过上述分析可以看出，尽管扩容操作的实际成本较高，但由于势能函数的设计，整体均摊成本仍然保持在常数级别 $O(1)$．
+From this analysis we can see that even though growing the array has a high actual cost, thanks to the choice of potential function, the overall amortized cost still stays constant, $O(1)$.
 
-## 扩展示例：堆栈操作
+## Further example: stack operations
 
-堆栈操作是均摊分析的经典应用场景之一．假设从空栈开始，`pop` 仅用于非空栈，堆栈 `S` 支持以下三种操作：
+Stack operations are a classic application of amortized analysis. Suppose we start from an empty stack and `pop` is only used on a non-empty stack. The stack `S` supports the following three operations:
 
-| 操作               | 说明             | 实际成本 $c_i$                  |
-| ---------------- | -------------- | --------------------------- |
-| `S.push(x)`      | 将元素 $x$ 入栈     | $1$                         |
-| `S.pop()`        | 弹出栈顶元素         | $1$                         |
-| `S.multi-pop(k)` | 最多弹出栈顶 $k$ 个元素 | $O(\min(\lvert S\rvert,k))$ |
+| Operation        | Description                                | Actual cost $c_i$           |
+| ---------------- | ------------------------------------------ | --------------------------- |
+| `S.push(x)`      | Push element $x$ onto the stack            | $1$                         |
+| `S.pop()`        | Pop the top element                        | $1$                         |
+| `S.multi-pop(k)` | Pop at most $k$ elements from the top      | $O(\min(\lvert S\rvert,k))$ |
 
-我们将通过聚合分析、记账分析和势能分析三种方法来分析这些堆栈操作的均摊成本．
+We will analyze the amortized cost of these stack operations with the three methods: aggregate analysis, the accounting method, and the potential method.
 
-### 聚合分析法
+### Aggregate analysis
 
-聚合分析将计算所有操作的总成本，并将其平均分摊到每个操作上，从而得出均摊成本．
+Aggregate analysis computes the total cost of all operations and divides it evenly among them to get the amortized cost.
 
-1.  对于 $n_{\text{push}}$ 次 `push(x)` 操作，每次的成本为 $O(1)$，因此总成本为 $O(n_{\text{push}})$；
-2.  对于 $n_{\text{pop}}$ 次 `pop()` 操作，每次的成本为 $O(1)$，总成本为 $O(n_{\text{pop}})$；
-3.  对于 $n_{\text{multi-pop}}$ 次 `multi-pop(k)` 操作，尽管每次的实际成本为 $O(\min(\lvert S \rvert, k))$，但这些操作弹出的元素数量不会超过之前 `push(x)` 的元素数量，因此总成本仍受 $n_{\text{push}}$ 的约束．
+1.  For $n_{\text{push}}$ `push(x)` operations, each costs $O(1)$, so the total cost is $O(n_{\text{push}})$;
+2.  For $n_{\text{pop}}$ `pop()` operations, each costs $O(1)$, so the total cost is $O(n_{\text{pop}})$;
+3.  For $n_{\text{multi-pop}}$ `multi-pop(k)` operations, even though each one actually costs $O(\min(\lvert S \rvert, k))$, the number of elements they pop can never exceed the number of elements pushed earlier by `push(x)`, so their total cost is still bounded by $n_{\text{push}}$.
 
-总操作次数为 $n=n_{\text{push}}+n_{\text{pop}}+n_{\text{multi-pop}}$，且 $n_{\text{push}}\le n$．每个元素最多入栈和出栈各一次，故按元素计费的总成本为 $O(n_{\text{push}})=O(n)$；即使另计每次调用的常数检查开销，总成本仍为 $O(n)$，均摊为 $O(1)$．
+The total number of operations is $n=n_{\text{push}}+n_{\text{pop}}+n_{\text{multi-pop}}$, and $n_{\text{push}}\le n$. Each element is pushed at most once and popped at most once, so the total cost, charged per element, is $O(n_{\text{push}})=O(n)$. Even if we also count a constant checking cost for each call, the total cost is still $O(n)$, and the amortized cost is $O(1)$.
 
-### 记账分析法
+### Accounting method
 
-记账分析为每次 `push(x)` 操作预留一部分费用，以支付未来可能的 `pop()` 或 `multi-pop(k)` 操作．
+The accounting method sets aside part of the charge for each `push(x)` operation to pay for a possible future `pop()` or `multi-pop(k)` operation.
 
-1.  **`S.push(x)`**：假设每次 `push(x)` 操作的均摊成本为 $2$，其中 $1$ 单位用于当前操作，另 $1$ 单位存储为费用，用于支付未来的 `pop()` 或 `multi-pop(k)` 操作；
-2.  **`S.pop()`**：实际成本为 $1$，但由于之前的 `push(x)` 操作已为其预存了 $1$ 单位费用，因此均摊成本为 $0$；
-3.  **`S.multi-pop(k)`**：每个弹出的元素的实际成本为 $1$，可以由之前该元素的 `push(x)` 操作预存的费用支付，因此均摊成本为 $0$．
+1.  **`S.push(x)`**: suppose each `push(x)` has an amortized cost of $2$. $1$ unit pays for the current operation, and the other $1$ unit is saved to pay for a future `pop()` or `multi-pop(k)`;
+2.  **`S.pop()`**: the actual cost is $1$, but since the earlier `push(x)` already saved $1$ unit for it, its amortized cost is $0$;
+3.  **`S.multi-pop(k)`**: each popped element has an actual cost of $1$, which can be paid with the savings from that element's earlier `push(x)`, so the amortized cost is $0$.
 
-通过以上分析，入栈操作预存的费用足以支付未来该元素的出栈操作，因此每次操作的均摊成本为 $O(1)$．
+From this analysis, the savings stored by each push are enough to pay for popping that element later, so the amortized cost of each operation is $O(1)$.
 
-### 势能分析法
+### Potential method
 
-势能分析定义了一个势能函数来衡量堆栈的状态，并利用势能的变化来平衡操作成本．
+The potential method defines a potential function that measures the state of the stack, and uses changes in potential to balance the costs of operations.
 
-1.  **势能函数**：设 $\Phi(h)$ 为堆栈中的元素数量，即 $\Phi(h) = \lvert S \rvert$．每个元素贡献 $1$ 单位的势能；
-2.  **`S.push(x)`**：每次 `push(x)` 操作增加堆栈中的元素数量，势能增加 $1$，因此均摊成本为 $1 + 1 = 2$；
-3.  **`S.pop()`**：每次 `pop()` 操作减少堆栈中的元素数量，势能减少 $1$，因此均摊成本为 $1 - 1 = 0$；
-4.  **`S.multi-pop(k)`**：令 $t=\min(\lvert S\rvert,k)$，`multi-pop(k)` 实际弹出 $t$ 个元素，势能减少 $t$，按元素计费的均摊成本为 $t-t=0$；计入调用开销则为 $O(1)$．
+1.  **Potential function**: let $\Phi(h)$ be the number of elements in the stack, that is, $\Phi(h) = \lvert S \rvert$. Each element contributes $1$ unit of potential;
+2.  **`S.push(x)`**: each `push(x)` adds an element to the stack, raising the potential by $1$, so its amortized cost is $1 + 1 = 2$;
+3.  **`S.pop()`**: each `pop()` removes an element from the stack, lowering the potential by $1$, so its amortized cost is $1 - 1 = 0$;
+4.  **`S.multi-pop(k)`**: let $t=\min(\lvert S\rvert,k)$. `multi-pop(k)` actually pops $t$ elements, lowering the potential by $t$, so the amortized cost charged per element is $t-t=0$; counting the call overhead, it is $O(1)$.
 
-通过以上势能函数设计，`push(x)` 操作的均摊成本为 $2$，而 `pop()` 和 `multi-pop(k)` 操作的均摊成本为 $0$．因此，所有堆栈操作的均摊成本均为 $O(1)$．
+With this potential function, `push(x)` has an amortized cost of $2$, while `pop()` and `multi-pop(k)` have an amortized cost of $0$. So every stack operation has an amortized cost of $O(1)$.
 
-## 参考资料与注释
+## References and notes
 
 -   [Amortized Analysis - Wikipedia](https://en.wikipedia.org/wiki/Amortized_analysis)
 

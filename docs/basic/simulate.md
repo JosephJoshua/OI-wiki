@@ -1,32 +1,32 @@
-本页面将简要介绍模拟算法．
+This page gives a short introduction to simulation.
 
-## 简介
+## Overview
 
-模拟就是用计算机来模拟题目中要求的操作．
+Simulation means using a computer to carry out the operations a problem describes.
 
-模拟题目通常具有码量大、操作多、思路繁复的特点．由于它码量大，经常会出现难以查错的情况，如果在考试中写错是相当浪费时间的．
+Simulation problems usually need a lot of code, involve many operations, and have complicated logic. Because there is so much code, bugs are often hard to find, and getting one wrong in a contest can waste a lot of time.
 
-## 技巧
+## Tips
 
-写模拟题时，遵循以下的建议有可能会提升做题速度：
+When writing a simulation problem, following these suggestions may help you solve it faster:
 
--   在动手写代码之前，在草纸上尽可能地写好要实现的流程．
--   在代码中，尽量把每个部分模块化，写成函数、结构体或类．
--   对于一些可能重复用到的概念，可以统一转化，方便处理：如，某题给你「YY-MM-DD 时：分」把它抽取到一个函数，处理成秒，会减少概念混淆．
--   调试时分块调试．模块化的好处就是可以方便地单独调试某一部分．
--   写代码的时候一定要思路清晰，不要想到什么写什么，要按照落在纸上的步骤写．
+-   Before you start coding, write down the process you need to implement on scratch paper in as much detail as you can.
+-   In your code, split each part into modules as much as possible, as functions, structs, or classes.
+-   For concepts that may come up repeatedly, convert them into one common form so they are easy to handle. For example, if a problem gives you times in the form "YY-MM-DD hour:minute", put the conversion into a function that turns them into seconds. This reduces confusion between different concepts.
+-   Debug one piece at a time. The benefit of modular code is that you can easily debug one part on its own.
+-   Keep a clear head while coding. Don't just write whatever comes to mind; follow the steps you wrote down on paper.
 
-实际上，上述步骤在解决其它类型的题目时也是很有帮助的．
+In fact, these steps are also very helpful for solving other kinds of problems.
 
-## 例题详解
+## Worked example
 
 ???+ note "[Climbing Worm](https://open.kattis.com/problems/climbingworm)"
-    一只长度不计的蠕虫位于 $n$ 英寸深的井的底部．它每次向上爬 $u$ 英寸，但是必须休息一次才能再次向上爬．在休息的时候，它滑落了 $d$ 英寸．之后它将重复向上爬和休息的过程．蠕虫爬出井口需要至少爬多少次？如果蠕虫爬完后刚好到达井的顶部，我们也视作蠕虫已经爬出井口．
+    A worm of negligible length is at the bottom of a well that is $n$ inches deep. Each time, it climbs up $u$ inches, but it must rest before it can climb again. While resting, it slides down $d$ inches. It then repeats climbing and resting. At least how many climbs does the worm need to get out of the well? If the worm reaches exactly the top of the well after a climb, we also count it as having gotten out.
 
-??? note "解题思路"
-    本题保证能爬出井口，即 $u\ge n$ 或 $u>d$．在此条件下可直接模拟．用一个循环重复蠕虫的爬井过程，当攀爬的长度超过或者等于井的深度时跳出．
+??? note "Solution"
+    The problem guarantees that the worm can get out, that is, $u\ge n$ or $u>d$. Under this condition, we can simply simulate it. Use a loop to repeat the worm's climbing process, and stop when the height climbed is greater than or equal to the depth of the well.
 
-??? note "参考代码"
+??? note "Reference code"
     === "C++"
         ```cpp
         --8<-- "docs/basic/code/simulate/simulate_1.cpp"
@@ -42,8 +42,8 @@
         --8<-- "docs/basic/code/simulate/simulate_1.java"
         ```
 
-## 习题
+## Exercises
 
--   [「NOIP2014」生活大爆炸版石头剪刀布 - Universal Online Judge](https://uoj.ac/problem/15)
--   [「OpenJudge 3750」魔兽世界](http://bailian.openjudge.cn/practice/3750/)
--   [「SDOI2010」猪国杀 - LibreOJ](https://loj.ac/problem/2885)
+-   ["NOIP 2014" Rock-Paper-Scissors, Big Bang Edition - Universal Online Judge](https://uoj.ac/problem/15)
+-   ["OpenJudge 3750" World of Warcraft](http://bailian.openjudge.cn/practice/3750/)
+-   ["SDOI 2010" Pig Kingdom Kill - LibreOJ](https://loj.ac/problem/2885)

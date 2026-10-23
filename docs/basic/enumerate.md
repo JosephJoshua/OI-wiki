@@ -1,40 +1,40 @@
 author: Early0v0, frank-xjh, Great-designer, ksyx, qiqistyle, Tiphereth-A , Saisyc, shuzhouliu, Xeonacid, xyf007
 
-本页面将简要介绍枚举算法．
+This page gives a short introduction to enumeration.
 
-## 简介
+## Introduction
 
-枚举（Enumerate）是基于已有知识来猜测答案的一种问题求解策略．
+Enumeration is a problem-solving strategy that guesses answers based on what is already known.
 
-枚举的思想是不断地猜测，从可能的集合中一一尝试，然后再判断题目的条件是否成立．
+The idea is to keep guessing: try every candidate in the set of possibilities one by one, and check whether it satisfies the conditions of the problem.
 
-## 要点
+## Key points
 
-### 给出解空间
+### Define the solution space
 
-建立简洁的数学模型．
+Build a simple, clear mathematical model.
 
-枚举的时候要想清楚：可能的情况是什么？要枚举哪些要素？
+When enumerating, think carefully: what are the possible cases? Which elements do we need to enumerate?
 
-### 减少枚举的空间
+### Shrink the search space
 
-枚举的范围是什么？是所有的内容都需要枚举吗？
+What range should we enumerate over? Do we really need to enumerate everything?
 
-在用枚举法解决问题的时候，一定要想清楚这两件事，否则会带来不必要的时间开销．
+When solving a problem by enumeration, always think these two questions through. Otherwise you will waste time.
 
-### 选择合适的枚举顺序
+### Choose a good enumeration order
 
-根据题目判断．例如，若题目要求最大的符合条件的素数，那自然是从大到小枚举比较合适．
+Decide based on the problem. For example, if the problem asks for the largest prime that satisfies some condition, it naturally makes sense to enumerate from largest to smallest.
 
-## 例题
+## Example problem
 
-以下是一个使用枚举解题与优化枚举范围的例子．
+Here is an example of solving a problem by enumeration and then shrinking the enumeration range.
 
-??? note "例题"
-    给定一个数组，其所有元素互不相同且均不为 $0$．求该数组中和为 $0$ 的有序数对个数．
+??? note "Example problem"
+    Given an array whose elements are pairwise distinct and all nonzero, count the ordered pairs in the array whose sum is $0$.
 
-??? note "解题思路"
-    枚举两个数的代码很容易就可以写出来．
+??? note "Solution"
+    The code that enumerates both numbers is easy to write.
     
     === "C++"
         ```cpp
@@ -58,7 +58,7 @@ author: Early0v0, frank-xjh, Great-designer, ksyx, qiqistyle, Tiphereth-A , Sais
             if (a[i] + a[j] == 0) ++ans;
         ```
     
-    来看看枚举的范围如何优化．若 $(a_i,a_j)$ 满足条件，则 $(a_j,a_i)$ 也满足条件；又因为元素均不为 $0$，满足条件时必有 $i\ne j$．因此可以只枚举 $j<i$，使每个无序配对只统计一次，再将结果乘 $2$，得到有序数对个数．代码如下：
+    Let's see how to shrink the enumeration range. If $(a_i,a_j)$ satisfies the condition, then so does $(a_j,a_i)$. Also, since no element is $0$, any valid pair must have $i\ne j$. So we can enumerate only $j<i$, counting each unordered pair once, and then multiply the result by $2$ to get the number of ordered pairs. The code is:
     
     === "C++"
         ```cpp
@@ -85,11 +85,11 @@ author: Early0v0, frank-xjh, Great-designer, ksyx, qiqistyle, Tiphereth-A , Sais
         ans *= 2;
         ```
     
-    不难发现这里已经减少了 $j$ 的枚举范围，减少了这段代码的时间开销．
+    Notice that this already shrinks the range of $j$, which cuts the running time of this code.
     
-    我们可以在此之上进一步优化．
+    We can optimize further.
     
-    两个数是否都一定要枚举出来呢？枚举其中一个数之后，题目的条件已经确定了其他的要素（另一个数）的条件，如果能找到一种方法直接判断题目要求的那个数是否存在，就可以省掉枚举后一个数的时间了．较为进阶地，在数据范围允许的情况下，我们可以使用桶[^1]记录遍历过的数．
+    Do we really need to enumerate both numbers? Once we fix one number, the problem's condition already determines what the other number must be. If we can find a way to check directly whether that number exists, we save the time spent enumerating the second number. As a more advanced trick, when the value range allows it, we can use a bucket[^1] to record the numbers we have already seen.
     
     === "C++"
         ```cpp
@@ -116,15 +116,15 @@ author: Early0v0, frank-xjh, Great-designer, ksyx, qiqistyle, Tiphereth-A , Sais
         ans *= 2;
         ```
 
-### 复杂度分析
+### Complexity analysis
 
--   时间复杂度分析：对 $a$ 数组遍历了一遍就能完成题目要求，当 $n$ 足够大的时候时间复杂度为 $O(n)$．
--   空间复杂度分析：$O(n+\max\{|x|:x\in a\})$．
+-   Time complexity: one pass over the array $a$ is enough to solve the problem, so when $n$ is large enough the time complexity is $O(n)$.
+-   Space complexity: $O(n+\max\{|x|:x\in a\})$.
 
-## 习题
+## Exercises
 
--   [2811: 熄灯问题 - OpenJudge](http://bailian.openjudge.cn/practice/2811/)
+-   [2811: Light-Off Problem - OpenJudge](http://bailian.openjudge.cn/practice/2811/)
 
-## 参考资料与注释
+## References and notes
 
-[^1]: [桶排序](../basic/bucket-sort.md) 以及 [主元素问题](../misc/main-element.md#离线算法) 以及 [Stack Overflow 上对桶数据结构的讲解](https://stackoverflow.com/questions/42399355/what-is-a-bucket-or-double-bucket-data-structure)（英文）
+[^1]: [Bucket sort](../basic/bucket-sort.md), the [majority element problem](../misc/main-element.md#离线算法), and [an explanation of the bucket data structure on Stack Overflow](https://stackoverflow.com/questions/42399355/what-is-a-bucket-or-double-bucket-data-structure) (in English)

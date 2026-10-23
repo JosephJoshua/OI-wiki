@@ -1,57 +1,57 @@
-本页面将介绍归并排序及其计算逆序对的应用．
+This page introduces merge sort and how to use it to count inversions.
 
-## 定义
+## Definition
 
-归并排序（[merge sort](https://en.wikipedia.org/wiki/Merge_sort)）是高效的基于比较的稳定排序算法．
+Merge sort ([merge sort](https://en.wikipedia.org/wiki/Merge_sort)) is an efficient, stable, comparison-based sorting algorithm.
 
-## 性质
+## Properties
 
-归并排序基于分治思想将数组分段排序后合并，时间复杂度在最优、最坏与平均情况下均为 $\Theta (n \log n)$，空间复杂度为 $\Theta (n)$．
+Merge sort is based on divide and conquer: it sorts the array in pieces and then merges them. Its time complexity is $\Theta (n \log n)$ in the best, worst, and average cases, and its space complexity is $\Theta (n)$.
 
-归并排序可以只使用 $\Theta (1)$ 的辅助空间，但为便捷通常使用与原数组等长的辅助数组．
+Merge sort can be done with only $\Theta (1)$ auxiliary space, but for convenience it usually uses an auxiliary array as long as the original one.
 
-## 过程
+## How it works
 
-### 合并
+### Merging
 
-归并排序最核心的部分是合并（merge）过程：将两个有序的数组 `a` 和 `b` 合并为一个有序数组 `c`．
+The core of merge sort is the merge step: combining two sorted arrays `a` and `b` into one sorted array `c`.
 
-从左往右枚举 `a[i]` 和 `b[j]`，每次将较小元素写入 `c[k]`；当一个数组遍历完毕时，将另一个数组的剩余元素追加到 `c` 中．
+Go through `a[i]` and `b[j]` from left to right, and each time write the smaller element into `c[k]`. When one array runs out, append the remaining elements of the other array to `c`.
 
-为保证排序的稳定性，前段首元素小于或等于后段首元素时（`a[i] <= b[j]`）而非小于时（`a[i] < b[j]`）就要作为最小值放入 `c[k]`．
+To keep the sort stable, the first element of the front part must be taken as the minimum and put into `c[k]` when it is less than or equal to the first element of the back part (`a[i] <= b[j]`), not only when it is strictly less (`a[i] < b[j]`).
 
-#### 实现
+#### Implementation
 
 === "C/C++"
-    === "数组实现"
+    === "Array version"
         ```cpp
         --8<-- "docs/basic/code/merge-sort/merge-sort_1.cpp:array"
         ```
     
-    === "指针实现"
+    === "Pointer version"
         ```cpp
         --8<-- "docs/basic/code/merge-sort/merge-sort_1.cpp:pointer"
         ```
     
-    也可使用 `<algorithm>` 库的 `std::merge` 函数，用法与上述指针式写法相同．
+    You can also use the `std::merge` function from the `<algorithm>` library. It is used the same way as the pointer version above.
 
 === "Python"
     ```python
     --8<-- "docs/basic/code/merge-sort/merge-sort_1.py:merge"
     ```
 
-### 分治法实现归并排序
+### Merge sort with divide and conquer
 
-1.  当数组长度为 $1$ 时，该数组就已经是有序的，不用再分解．
-2.  当数组长度大于 $1$ 时，该数组很可能不是有序的．此时将该数组分为两段，再分别检查两个数组是否有序（用第一条）．如果有序，则将它们合并为一个有序数组；否则对尚未有序的数组重复第二条，再合并．
+1.  When the array has length $1$, it is already sorted and does not need to be split further.
+2.  When the array is longer than $1$, it is probably not sorted. Split it into two parts, and check each part for being sorted (using rule 1). If both are sorted, merge them into one sorted array. Otherwise, apply rule 2 again to any part that is not yet sorted, and then merge.
 
-用数学归纳法可以证明该流程可以将一个数组转变为有序数组．
+You can prove by mathematical induction that this process turns any array into a sorted one.
 
-为保证排序的复杂度，通常将数组分为尽量等长的两段（$\textit{mid} = \left\lfloor \dfrac{l + r}{2} \right\rfloor$）．
+To guarantee the complexity, we usually split the array into two parts of nearly equal length ($\textit{mid} = \left\lfloor \dfrac{l + r}{2} \right\rfloor$).
 
-#### 实现
+#### Implementation
 
-注意下面的代码所表示的区间分别是 $[l, r)$，$[l, \textit{mid})$，$[\textit{mid}, r)$．
+Note that the ranges in the code below are $[l, r)$, $[l, \textit{mid})$, and $[\textit{mid}, r)$.
 
 === "C/C++"
     ```cpp
@@ -63,26 +63,26 @@
     --8<-- "docs/basic/code/merge-sort/merge-sort_1.py:recursive"
     ```
 
-### 倍增法实现归并排序
+### Merge sort with binary lifting
 
-已知当数组长度为 $1$ 时，该数组就已经是有序的．
+We know that an array of length $1$ is already sorted.
 
-将数组全部切成长度为 $1$ 的段．
+Cut the whole array into pieces of length $1$.
 
-从左往右依次合并两个长度为 $1$ 的有序段，得到一系列长度 $\le 2$ 的有序段；
+From left to right, merge pairs of sorted pieces of length $1$, giving a series of sorted pieces of length $\le 2$;
 
-从左往右依次合并两个长度 $\le 2$ 的有序段，得到一系列长度 $\le 4$ 的有序段；
+From left to right, merge pairs of sorted pieces of length $\le 2$, giving a series of sorted pieces of length $\le 4$;
 
-从左往右依次合并两个长度 $\le 4$ 的有序段，得到一系列长度 $\le 8$ 的有序段；
+From left to right, merge pairs of sorted pieces of length $\le 4$, giving a series of sorted pieces of length $\le 8$;
 
-……
+...
 
-重复上述过程直至数组只剩一个有序段，该段就是排好序的原数组．
+Repeat until only one sorted piece is left. That piece is the original array, sorted.
 
-???+ note "为什么是 $\le$ 而不是 $=$"
-    数组的长度很可能不是 $2^x$，此时在最后就可能出现长度不完整的段，可能出现最后一个段是独立的情况．
+???+ note "Why $\le$ and not $=$"
+    The length of the array is probably not a power $2^x$. In that case, an incomplete piece may appear at the end, and the last piece may be left on its own without a partner.
 
-#### 实现
+#### Implementation
 
 === "C/C++"
     ```cpp
@@ -94,16 +94,16 @@
     --8<-- "docs/basic/code/merge-sort/merge-sort_1.py:iterative"
     ```
 
-## 逆序对
+## Inversions
 
-相关阅读和参考实现：[逆序对](../math/permutation.md#逆序数)
+Related reading and reference implementation: [Inversions](../math/permutation.md#逆序数)
 
-逆序对是 $i < j$ 且 $a_i > a_j$ 的有序数对 $(i, j)$．
+An inversion is an ordered pair $(i, j)$ with $i < j$ and $a_i > a_j$.
 
-排序后的数组无逆序对．归并排序的合并操作中，每次后段首元素被作为当前最小值取出时，前段剩余元素个数之和即是合并操作减少的逆序对数量；故归并排序计算逆序对数量的时间复杂度为 $\Theta (n \log n)$．此外，逆序对计数还可以通过树状数组或线段树解决，时间复杂度也是 $O(n \log n)$；这一算法的详细解释参见 [树状数组](../ds/fenwick.md#全局逆序对全局二维偏序) 相应描述．两种算法的参考实现都在 [逆序对](../math/permutation.md#逆序数) 章节．
+A sorted array has no inversions. In the merge step of merge sort, each time the first element of the back part is taken out as the current minimum, the number of elements left in the front part is exactly the number of inversions removed by that step. So counting inversions with merge sort takes $\Theta (n \log n)$ time. Inversions can also be counted with a Fenwick tree or a segment tree, also in $O(n \log n)$ time; see the corresponding part of [Fenwick tree](../ds/fenwick.md#全局逆序对全局二维偏序) for a detailed explanation. Reference implementations of both algorithms are in the [Inversions](../math/permutation.md#逆序数) section.
 
-## 外部链接
+## External links
 
 -   [Merge Sort - GeeksforGeeks](https://www.geeksforgeeks.org/merge-sort/)
--   [归并排序 - 维基百科，自由的百科全书](https://zh.wikipedia.org/wiki/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F)
--   [逆序对 - 维基百科，自由的百科全书](https://zh.wikipedia.org/wiki/%E9%80%86%E5%BA%8F%E5%AF%B9)
+-   [Merge sort - Wikipedia, the free encyclopedia (Chinese)](https://zh.wikipedia.org/wiki/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F)
+-   [Inversion - Wikipedia, the free encyclopedia (Chinese)](https://zh.wikipedia.org/wiki/%E9%80%86%E5%BA%8F%E5%AF%B9)
