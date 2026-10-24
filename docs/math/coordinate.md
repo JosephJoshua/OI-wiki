@@ -1,106 +1,106 @@
 author: Ir1d, HeRaNO, Chrogeek, abc1763613206, mxdyzmx
 
-## 角的定义
+## Definition of an angle
 
-在小学或初中已经学习过角的 **静态定义**：具有公共端点的两条射线组成的图形叫做角．
+In primary or middle school you learned the **static definition** of an angle: a figure made of two rays with a common endpoint is called an angle.
 
-但是该定义将角度限制在了 $[0, 360^\circ]$，这给深入研究带来了一定的困难，还有其他的问题无法解释清，比如：旋转 $720^\circ$ 是什么意思？
+However, this definition limits angles to $[0, 360^\circ]$. That makes deeper study harder, and leaves some questions unanswered, for example: what does it mean to rotate by $720^\circ$?
 
-在高中数学，讲了角的 **动态定义**：平面内一条射线绕其端点从一个位置旋转到另一个位置形成的图形叫做角．
+High school math gives the **dynamic definition** of an angle: the figure formed when a ray in the plane rotates about its endpoint from one position to another is called an angle.
 
-开始的位置称为 **始边**，结束的位置称为 **终边**．并规定：
+The starting position is called the **initial side**, and the ending position is called the **terminal side**. We also agree that:
 
--   按 **逆时针** 方向旋转形成的角叫做 **正角**，其角度为正；
--   按 **顺时针** 方向旋转形成的角叫做 **负角**，其角度为负；
--   终边相对于始边没有做任何旋转的角叫做 **零角**，其角度为 $0^\circ$．
+-   An angle formed by rotating **counterclockwise** is called a **positive angle**, and its measure is positive;
+-   An angle formed by rotating **clockwise** is called a **negative angle**, and its measure is negative;
+-   An angle whose terminal side has not rotated at all relative to its initial side is called a **zero angle**, and its measure is $0^\circ$.
 
-这样就把角的概念推向了 **任意角**．
+This extends the idea of an angle to **angles of any size**.
 
-???+ note "注意"
-    零角始边和终边重合，但始边和终边重合的角并不都是零角，如以 $360^\circ$ 为倍数的角．
+???+ note "Note"
+    For a zero angle, the initial and terminal sides coincide. But not every angle whose initial and terminal sides coincide is a zero angle, for example angles that are multiples of $360^\circ$.
 
-## 弧度制
+## Radian measure
 
-实际应用中经常有角度到各种参数的转换，而使用弧度制描述角可以减少系数的使用．所以接下来，介绍 **弧度制**：
+In practice we often need to convert angles into various other quantities, and describing angles in radians reduces the number of constant factors we need. So next we introduce **radian measure**:
 
-把长度等于半径长的弧所对的圆心角称为 $1$ 弧度的角，用符号 $\text{rad}$ 表示，读作：弧度．
+The central angle subtended by an arc whose length equals the radius is called an angle of $1$ radian. It is written with the symbol $\text{rad}$, read as "radian".
 
-根据前面的规定，正角的弧度为正，负角的弧度为负，零角的弧度为 $0$，如果半径为 $r$ 的圆的圆心角 $\alpha$ 所对弧长为 $l$，则：
+Following the conventions above, a positive angle has a positive radian measure, a negative angle has a negative radian measure, and a zero angle has radian measure $0$. If a central angle $\alpha$ of a circle with radius $r$ subtends an arc of length $l$, then:
 
 $$
 |\alpha|=\dfrac{l}{r}
 $$
 
-利用这个公式还可以写出弧长和扇形面积公式，在此略过．
+From this formula you can also derive the formulas for arc length and the area of a sector, which we skip here.
 
-于是，$360^\circ$ 角的弧度为 $2\pi$，这样有了对应关系之后就可以进行角度值和弧度制的转化了：
+So an angle of $360^\circ$ measures $2\pi$ radians. With this correspondence, we can convert between degrees and radians:
 
 $$
 k \operatorname{rad} = \frac{\pi}{180^\circ} n^\circ
 $$
 
-考虑一个角，将其终边再旋转一周，甚至多周，始边位置不动，那么终边位置永远是相同的，称这些角为终边位置相同的角．
+Consider an angle. Rotate its terminal side by one more full turn, or even several, while keeping the initial side fixed. The terminal side always ends up in the same position. These angles are called angles with the same terminal side.
 
-与角 $\alpha$ 终边位置相同的角的集合很容易得出，为 $\{\varphi \mid \varphi = \alpha + 2k\pi, k \in \mathbf{Z}\}$．
+The set of angles with the same terminal side as $\alpha$ is easy to find: $\{\varphi \mid \varphi = \alpha + 2k\pi, k \in \mathbf{Z}\}$.
 
-可以理解为：给这个角的边不停加转一圈，终边位置不变．
+You can think of it this way: keep adding full turns to the angle, and the terminal side stays where it is.
 
-???+ note "$\pi$ 和 $\tau$ 两个数学常数"
-    目前西方数学界有一些观点认为，「真正的圆周率」应为 $2\pi$，将这个值记为希腊字母 $\tau$．新圆周率的支持者们选择在 6 月 28 日庆祝「真正的」圆周率日．
+???+ note "The two mathematical constants $\pi$ and $\tau$"
+    Some people in the Western math community currently argue that "the true circle constant" should be $2\pi$, and they write this value as the Greek letter $\tau$. Supporters of the new circle constant celebrate the "true" Pi Day (Tau Day) on June 28.
     
-    比如，在弧度制下，一个周角是 $2\pi$，直接对 $2\pi$ 进行等分可以得到周角的等分．又例如，在复变函数中频繁出现 $2\pi$ 的组合，等等．
+    For example, in radian measure a full angle is $2\pi$, so dividing $2\pi$ into equal parts directly gives equal parts of a full turn. As another example, the combination $2\pi$ appears frequently in complex analysis, and so on.
     
-    为了迎合中国各地区约定俗成的习惯，在 **OI Wiki**，采用参数 $\pi$ 表示圆周率．
+    To follow the established convention across Chinese-speaking regions, **OI Wiki** uses $\pi$ for the circle constant.
 
-???+ note "编程中圆周率的习惯写法"
-    在 C/C++ 语言中，一般取 $\pi$ 为 `acos(-1)`，只有这个值是最接近 $\pi$ 的浮点数．使用 `acos(-1)` 或者 `4 * atan(1)` 写出来的 $\pi$ 是 $3.14159265358979310000$．
+???+ note "How to write pi in code"
+    In C/C++, $\pi$ is usually taken as `acos(-1)`, which gives the floating-point number closest to $\pi$. The value of $\pi$ obtained from `acos(-1)` or `4 * atan(1)` is $3.14159265358979310000$.
     
-    采用其他值，例如 `acos(-1.0/2.0)`，`acos(1.0/2.0)`，`asin(1.0/2.0)` 等等，写出来的 $\pi$ 是 $3.14159265358979360000$，这就不是最接近 $\pi$ 的浮点数了．
+    Other expressions, such as `acos(-1.0/2.0)`, `acos(1.0/2.0)`, `asin(1.0/2.0)` and so on, give $3.14159265358979360000$, which is not the floating-point number closest to $\pi$.
     
-    如果你背得下来，也可以直接写 $3.1415926535897932$．
+    If you can memorize it, you can also write $3.1415926535897932$ directly.
 
-## 平面直角坐标系
+## Cartesian coordinates in the plane
 
-在同一个平面上互相垂直且有公共原点的两条数轴构成平面直角坐标系（Rectangular Coordinates）．
+Two number lines in the same plane that are perpendicular to each other and share a common origin form a plane Cartesian coordinate system (Rectangular Coordinates).
 
-通常，两条数轴分别置于水平位置与垂直位置，取向右与向上的方向分别为两条数轴的正方向．水平的数轴叫做 $x$ 轴（x-axis）或横轴，垂直的数轴叫做 $y$ 轴（y-axis）或纵轴，$x$ 轴 $y$ 轴统称为坐标轴，它们的公共原点 $O$ 称为平面直角坐标系的原点（origin），以点 $O$ 为原点的平面直角坐标系记作平面直角坐标系 $xOy$．
+Usually the two number lines are placed horizontally and vertically, with right and up as their positive directions. The horizontal number line is called the $x$-axis (x-axis) or horizontal axis, and the vertical one is called the $y$-axis (y-axis) or vertical axis. Together the $x$-axis and $y$-axis are called the coordinate axes. Their common origin $O$ is called the origin of the coordinate system. A plane Cartesian coordinate system with origin $O$ is written as the coordinate system $xOy$.
 
-$x$ 轴 $y$ 轴将坐标平面分成了四个象限（quadrant），右上方的部分叫做第一象限，其他三个部分按逆时针方向依次叫做第二象限、第三象限和第四象限．象限以数轴为界，横轴、纵轴上的点及原点不在任何一个象限内．一般情况下，$x$ 轴 $y$ 轴取相同的单位长度，但在特殊的情况下，也可以取不同的单位长度．
+The $x$-axis and $y$-axis divide the coordinate plane into four quadrants. The upper-right part is called the first quadrant, and the other three parts, going counterclockwise, are called the second, third and fourth quadrants. The quadrants are bounded by the axes: points on the horizontal axis, on the vertical axis, and the origin do not belong to any quadrant. Usually the $x$-axis and $y$-axis use the same unit length, but in special cases they can use different unit lengths.
 
-### 平面直角坐标系下位置的描述
+### Describing positions in Cartesian coordinates
 
-在平面直角坐标系中，对于平面上的任意一点，都有唯一的一个有序数对（即点的坐标（coordinates））与它对应；反过来，对于任意一个有序数对，都有平面上唯一的一点与它对应．
+In a plane Cartesian coordinate system, every point in the plane corresponds to exactly one ordered pair of numbers (its coordinates). Conversely, every ordered pair corresponds to exactly one point in the plane.
 
-对于平面内任意一点 $C$，过点 $C$ 分别向 $x$ 轴、$y$ 轴作垂线，垂足在 $x$ 轴、$y$ 轴上的对应点 $a, b$ 分别叫做点 $C$ 的横坐标、纵坐标，有序数对（ordered pair）$(a, b)$ 叫做点 $C$ 的直角坐标．一个点在不同的象限或坐标轴上，其坐标都不一样．
+For any point $C$ in the plane, draw perpendiculars from $C$ to the $x$-axis and the $y$-axis. The feet of these perpendiculars give values $a, b$ on the $x$-axis and $y$-axis, called the $x$-coordinate (abscissa) and $y$-coordinate (ordinate) of $C$. The ordered pair $(a, b)$ is called the Cartesian coordinates of $C$. Points in different quadrants or on different axes have different coordinates.
 
-## 平面极坐标系
+## Polar coordinates in the plane
 
-考虑实际情况，比如航海，说「点 $B$ 在点 $A$ 的北偏东 $30^\circ$ 方向上，距离为 $100$ 米」，而不是「以 $A$ 为原点建立平面直角坐标系，$B(50,50\sqrt 3)$」．
+Think of real-life situations such as navigation. People say "point $B$ is $100$ meters from point $A$, in the direction $30^\circ$ east of north", not "set up a Cartesian coordinate system with $A$ as the origin; then $B(50,50\sqrt 3)$".
 
-这样：
+So:
 
-1.  在平面上选一定点 $O$，称为 **极点**；
-2.  自极点引出一条射线 $Ox$，称为 **极轴**；
-3.  选择一个单位长度（在数学问题中通常为 $1$），一个角度单位（通常为弧度）及其正方向（通常为逆时针方向）；
+1.  Choose a fixed point $O$ in the plane, called the **pole**;
+2.  Draw a ray $Ox$ from the pole, called the **polar axis**;
+3.  Choose a unit of length (usually $1$ in math problems), a unit of angle (usually radians) and a positive direction for angles (usually counterclockwise);
 
-就建立了 **极坐标系**．
+This sets up a **polar coordinate system**.
 
-### 极坐标系下位置的描述
+### Describing positions in polar coordinates
 
-设 $A$ 为平面上一点．
+Let $A$ be a point in the plane.
 
--   极点 $O$ 与 $A$ 之间的距离 $|OA|$ 称为 **极径**，记为 $\rho$；
--   以极轴为始边，$OA$ 为终边的角 $\angle xOA$ 称为 **极角**，记为 $\varphi$；
+-   The distance $|OA|$ between the pole $O$ and $A$ is called the **radial coordinate** (polar radius), written $\rho$;
+-   The angle $\angle xOA$, with the polar axis as initial side and $OA$ as terminal side, is called the **polar angle**, written $\varphi$;
 
-那么有序数对 $(\rho,\varphi)$ 即为 $A$ 的 **极坐标**．
+Then the ordered pair $(\rho,\varphi)$ is the **polar coordinates** of $A$.
 
-由终边相同的角的定义可知，$(\rho,\varphi)$ 与 $(\rho,\varphi + 2k\pi)\ (k\in \mathbf{Z})$ 其实表示的是一样的点．特别地，极点的极坐标为 $(0,\varphi)\ (\varphi \in \mathbf{R})$，于是平面内的点的极坐标表示有无数多种．
+By the definition of angles with the same terminal side, $(\rho,\varphi)$ and $(\rho,\varphi + 2k\pi)\ (k\in \mathbf{Z})$ actually describe the same point. In particular, the pole has polar coordinates $(0,\varphi)\ (\varphi \in \mathbf{R})$. So each point in the plane has infinitely many polar representations.
 
-如果规定 $\rho \ge 0,0 \le \varphi < 2\pi$，那么除极点外，其他平面内的点可以用唯一有序数对 $(\rho,\varphi)$ 表示，而极坐标 $(\rho,\varphi)$ 表示的点是唯一确定的．
+If we require $\rho \ge 0,0 \le \varphi < 2\pi$, then every point in the plane except the pole can be represented by a unique ordered pair $(\rho,\varphi)$, and the point described by polar coordinates $(\rho,\varphi)$ is uniquely determined.
 
-### 平面直角坐标系与极坐标系的相互转换
+### Converting between Cartesian and polar coordinates
 
-当然，有时候研究极坐标系下的图形有些不方便．要想转到直角坐标系下研究，有互化公式．点 $A(\rho,\varphi)$ 的直角坐标 $(x,y)$ 可以如下表示：
+Of course, studying figures in polar coordinates is sometimes inconvenient. To switch to Cartesian coordinates, we have conversion formulas. The Cartesian coordinates $(x,y)$ of the point $A(\rho,\varphi)$ are:
 
 $$
 \begin{aligned}
@@ -109,7 +109,7 @@ y &= \rho \sin \varphi
 \end{aligned}
 $$
 
-进而可知：
+From this we get:
 
 $$
 \begin{aligned}
@@ -118,9 +118,9 @@ $$
 \end{aligned}
 $$
 
-于是有 $\rho = \sqrt{x^2+y^2}$．
+So $\rho = \sqrt{x^2+y^2}$.
 
-但具有相同 $\dfrac{y}{x}$ 的 $\tan\varphi$ 有两个可能的 $\varphi$ 的值，此时还需要根据 $x, y$ 的值来确定方向．具体地，定义函数：
+However, a given value of $\tan\varphi = \dfrac{y}{x}$ corresponds to two possible values of $\varphi$, so we also need the values of $x, y$ to determine the direction. Specifically, define the function:
 
 $$
 \operatorname{atan2}(y, x) = \begin{cases}
@@ -133,66 +133,66 @@ $$
 \end{cases}
 $$
 
-则 $\varphi = \operatorname{atan2}(y, x)$．注意上述函数的值域为 $(-\pi, \pi]$．
+Then $\varphi = \operatorname{atan2}(y, x)$. Note that the range of this function is $(-\pi, \pi]$.
 
-在 C/C++ 语言的 `<math.h>` 或 `<cmath>` 库里定义了 [该函数](https://zh.cppreference.com/w/cpp/numeric/math/atan2)，调用 `atan2(y, x)` 即可．
+[This function](https://zh.cppreference.com/w/cpp/numeric/math/atan2) is defined in the C/C++ `<math.h>` or `<cmath>` library; just call `atan2(y, x)`.
 
-## 空间直角坐标系
+## Cartesian coordinates in space
 
-使用如下方法建立空间直角坐标系：
+Set up a 3D Cartesian coordinate system as follows:
 
-1.  在空间内选定一点 $O$；
-2.  过点 $O$ 作三条互相垂直的数轴 $\overrightarrow{Ox}, \overrightarrow{Oy}, \overrightarrow{Oz}$，分别称作 $x$ 轴（横轴），$y$ 轴（纵轴），$z$ 轴（竖轴），统称为坐标轴；它们的正方向符合右手规则，即以右手握住 $z$ 轴，当右手的四个手指 $x$ 轴的正向以角度转向 $y$ 轴正向时，大拇指的指向就是 $z$ 轴的正向；
-3.  设定各轴上的长度单位，通常都设为 $1$．
+1.  Choose a point $O$ in space;
+2.  Through $O$, draw three mutually perpendicular number lines $\overrightarrow{Ox}, \overrightarrow{Oy}, \overrightarrow{Oz}$, called the $x$-axis (horizontal axis), the $y$-axis (vertical axis) and the $z$-axis (upright axis), together called the coordinate axes. Their positive directions follow the right-hand rule: grip the $z$-axis with your right hand so that your four fingers curl from the positive $x$-axis toward the positive $y$-axis; then your thumb points along the positive $z$-axis;
+3.  Choose a unit of length on each axis, usually $1$.
 
-这样就构成了一个空间直角坐标系，称为空间直角坐标系 $O-xyz$．定点 $O$ 称为该坐标系的原点．
+This forms a 3D Cartesian coordinate system, written $O-xyz$. The fixed point $O$ is called the origin of the coordinate system.
 
-任意两条坐标轴确定一个平面，这样可确定三个互相垂直的平面，统称为坐标面．其中 $x$ 轴与 $y$ 轴所确定的坐标面称为 $xOy$ 面，类似地有 $yOz$ 面和 $zOx$ 面．三个坐标面把空间分成八个部分，每一部分称为一个卦限．
+Any two coordinate axes determine a plane, which gives three mutually perpendicular planes, together called the coordinate planes. The plane determined by the $x$-axis and $y$-axis is called the $xOy$ plane, and similarly there are the $yOz$ plane and the $zOx$ plane. The three coordinate planes divide space into eight parts, and each part is called an octant.
 
-### 空间直角坐标系下位置的描述
+### Describing positions in 3D Cartesian coordinates
 
-取定空间直角坐标系 $O-xyz$ 后，就可以建立空间的点与三元组之间的一一对应关系．
+Once a 3D Cartesian coordinate system $O-xyz$ is fixed, we can set up a one-to-one correspondence between points in space and triples of numbers.
 
-设点 $M$ 为空间的一点，过点 $M$ 分别作垂直于 $x$ 轴、$y$ 轴和 $z$ 轴的平面．设三个平面与 $x$ 轴、$y$ 轴和 $z$ 轴的交点依次为 $P, Q, R$，点 $P, Q, R$ 分别称为点 $M$ 在 $x$ 轴、$y$ 轴和 $z$ 轴上的投影．又设点 $P, Q, R$ 在 $x$ 轴、$y$ 轴和 $z$ 轴上的坐标依次为 $x, y, z$，于是点 $M$ 确定了一个三元组 $(x, y, z)$．
+Let $M$ be a point in space. Through $M$, draw planes perpendicular to the $x$-axis, the $y$-axis and the $z$-axis. Let these three planes meet the $x$-axis, $y$-axis and $z$-axis at $P, Q, R$ respectively. The points $P, Q, R$ are called the projections of $M$ onto the $x$-axis, $y$-axis and $z$-axis. Let the coordinates of $P, Q, R$ on the $x$-axis, $y$-axis and $z$-axis be $x, y, z$ respectively. Then the point $M$ determines a triple $(x, y, z)$.
 
-反之，如果给定一个三元组 $(x, y, z)$，可以在 $x$ 轴上取坐标为 $x$ 的点 $P$，在 $y$ 轴上取坐标为 $y$ 的点 $Q$，在 $z$ 轴上取坐标为 $z$ 的点 $R$，然后点 $P, Q, R$ 分别作垂直于 $x$ 轴、$y$ 轴和 $z$ 轴的三个平面，它们相交于空间的一点 $M$，点 $M$ 就是由三元组 $(x, y, z)$ 所确定的点．
+Conversely, given a triple $(x, y, z)$, take the point $P$ with coordinate $x$ on the $x$-axis, the point $Q$ with coordinate $y$ on the $y$-axis, and the point $R$ with coordinate $z$ on the $z$-axis. Then through $P, Q, R$ draw three planes perpendicular to the $x$-axis, $y$-axis and $z$-axis respectively. They meet at a single point $M$ in space, and $M$ is the point determined by the triple $(x, y, z)$.
 
-这样一来，空间的点 $M$ 与三元组 $(x, y, z)$ 之间就建立了一一对应的关系．把三元组 $(x, y, z)$ 称为点 $M$ 的坐标，记作 $M(x, y, z)$，其中 $x$ 称为横坐标、$y$ 称为纵坐标、$z$ 称为竖坐标．
+In this way, we get a one-to-one correspondence between points $M$ in space and triples $(x, y, z)$. The triple $(x, y, z)$ is called the coordinates of $M$, written $M(x, y, z)$, where $x$ is called the $x$-coordinate, $y$ the $y$-coordinate and $z$ the $z$-coordinate.
 
-## 空间柱坐标系
+## Cylindrical coordinates
 
-空间柱坐标系，将极坐标扩展为三维的方式：从应用于平面工作中的极坐标系开始，然后过极点 $O$ 添加垂直于该平面的 $z$ 轴，方向朝上．
+Cylindrical coordinates extend polar coordinates to three dimensions: start with a polar coordinate system in a plane, then add a $z$-axis through the pole $O$, perpendicular to that plane and pointing up.
 
-为了找到由柱坐标 $(\rho, \varphi, z)$ 所描述的点，可以首先在极坐标系下处理 $\rho$ 和 $\varphi$，然后根据 $z$ 坐标沿着 $z$ 轴「向上」或「向下」移动．
+To find the point described by cylindrical coordinates $(\rho, \varphi, z)$, first handle $\rho$ and $\varphi$ in the polar coordinate system, then move "up" or "down" along the $z$-axis according to the $z$ coordinate.
 
-### 柱坐标系与空间直角坐标系的相互转换
+### Converting between cylindrical and 3D Cartesian coordinates
 
-两坐标系下 $z$ 的值是相同的．
+The value of $z$ is the same in both coordinate systems.
 
-$(x,y)$ 与 $(\rho, \varphi)$ 的相互转换参见上文 [平面直角坐标系与极坐标系的相互转换](#平面直角坐标系与极坐标系的相互转换)．
+For converting between $(x,y)$ and $(\rho, \varphi)$, see [Converting between Cartesian and polar coordinates](#converting-between-cartesian-and-polar-coordinates) above.
 
-## 空间球坐标系
+## Spherical coordinates
 
-球坐标可以通过以下方法确定：
+Spherical coordinates can be determined as follows:
 
-1.  站在原点，面向水平极轴的方向；垂直轴的指向是从脚指向头部；
-2.  手臂向上，指向垂直极轴方向；
-3.  逆时针旋转角度 $\varphi$；
-4.  将手臂向下旋转角度 $\vartheta$，手臂指向 $\varphi$ 和 $\vartheta$ 指定的方向；
-5.  沿着该方向从原点移位距离 $r$．
+1.  Stand at the origin, facing the direction of the horizontal polar axis; the vertical axis points from your feet to your head;
+2.  Raise your arm straight up, pointing along the vertical polar axis;
+3.  Rotate counterclockwise by the angle $\varphi$;
+4.  Rotate your arm down by the angle $\vartheta$; your arm now points in the direction given by $\varphi$ and $\vartheta$;
+5.  Move a distance $r$ from the origin along this direction.
 
-这样即可到达球坐标 $(r,\vartheta,\varphi)$ 所描述的点．其中 $\vartheta$ 称为 **天顶角**，$\varphi$ 称为 **方位角**．
+This brings you to the point described by spherical coordinates $(r,\vartheta,\varphi)$. Here $\vartheta$ is called the **zenith angle** (polar angle) and $\varphi$ is called the **azimuth angle**.
 
 ???+ warning "Warning"
-    由于诸多原因，有的地方使用 $\phi$ 表示天顶角，用 $\theta$ 表示方位角．阅读文章遇到球坐标系时请务必注意这一点．
+    For various reasons, some sources use $\phi$ for the zenith angle and $\theta$ for the azimuth angle. Pay close attention to this whenever you read an article that uses spherical coordinates.
     
-    同时，在写文章时，如果用到了球坐标系，建议提前声明清楚使用什么符号表示天顶角和方位角．
+    Also, when you write an article that uses spherical coordinates, it is a good idea to state clearly up front which symbols you use for the zenith angle and the azimuth angle.
 
-### 柱坐标系与球坐标系的相互转换
+### Converting between cylindrical and spherical coordinates
 
-两坐标系下 $\varphi$ 的值是相同的．
+The value of $\varphi$ is the same in both coordinate systems.
 
-从柱坐标系到球坐标系：
+From cylindrical to spherical coordinates:
 
 $$
 \begin{aligned}
@@ -205,9 +205,9 @@ r &= \sqrt{\rho^2 + z^2} \\
 \end{aligned}
 $$
 
-注意对于柱坐标系下的点 $(0,0,0)$，其球坐标的 $\vartheta$ 不明确．
+Note that for the point $(0,0,0)$ in cylindrical coordinates, the spherical coordinate $\vartheta$ is undefined.
 
-从球坐标系到柱坐标系：
+From spherical to cylindrical coordinates:
 
 $$
 \begin{aligned}
@@ -216,11 +216,11 @@ z &= r \cos \vartheta
 \end{aligned}
 $$
 
-### 空间直角坐标系与球坐标系的相互转换
+### Converting between 3D Cartesian and spherical coordinates
 
-可以结合上文 [平面直角坐标系与极坐标系的相互转换](#平面直角坐标系与极坐标系的相互转换) 和上文 [柱坐标系与球坐标系的相互转换](#柱坐标系与球坐标系的相互转换) 一起使用，或直接使用下面的公式：
+You can combine [Converting between Cartesian and polar coordinates](#converting-between-cartesian-and-polar-coordinates) and [Converting between cylindrical and spherical coordinates](#converting-between-cylindrical-and-spherical-coordinates) above, or use the formulas below directly:
 
-从空间直角坐标系到球坐标系：
+From 3D Cartesian to spherical coordinates:
 
 $$
 \begin{aligned}
@@ -230,11 +230,11 @@ r &= \sqrt{x^2 + y^2 + z^2} \\
 \end{aligned}
 $$
 
-其中 $\operatorname{atan2}$ 的定义见 [平面直角坐标系与极坐标系的相互转换](#平面直角坐标系与极坐标系的相互转换)．
+For the definition of $\operatorname{atan2}$, see [Converting between Cartesian and polar coordinates](#converting-between-cartesian-and-polar-coordinates).
 
-注意对于空间直角坐标系下的点 $(0,0,0)$，其球坐标的 $\vartheta$ 和 $\varphi$ 取值不明确．
+Note that for the point $(0,0,0)$ in 3D Cartesian coordinates, the spherical coordinates $\vartheta$ and $\varphi$ are undefined.
 
-从球坐标系到空间直角坐标系：
+From spherical to 3D Cartesian coordinates:
 
 $$
 \begin{aligned}

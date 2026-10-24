@@ -1,16 +1,16 @@
-前置知识：[博弈论简介](./intro.md)
+Prerequisites: [Introduction to game theory](./intro.md)
 
-本文讨论（二人）[零和游戏](./intro.md#零和非零和博弈)．
+This article discusses (two-player) [zero-sum games](./intro.md#零和非零和博弈).
 
-在零和游戏中，两名玩家的收益之和恒为零，一方的收益必然意味着另一方的损失．零和游戏可以视为常和游戏的特殊情形．反过来，任何常和游戏都可以通过对某一方的收益整体加上或减去一个常数，等价地转化为零和游戏，所以仅需要讨论零和游戏．
+In a zero-sum game, the payoffs of the two players always add up to zero, so one player's gain is always the other player's loss. Zero-sum games can be seen as a special case of constant-sum games. Conversely, any constant-sum game can be turned into an equivalent zero-sum game by adding or subtracting a constant to all of one player's payoffs, so we only need to discuss zero-sum games.
 
-在算法竞赛中常见的零和游戏大致可分为两类：序贯零和游戏与同时零和游戏．
+Zero-sum games that appear in competitive programming roughly fall into two types: sequential zero-sum games and simultaneous zero-sum games.
 
-## 序贯零和游戏
+## Sequential zero-sum games
 
-序贯零和游戏中，两名玩家轮流行动，直到游戏终止．
+In a sequential zero-sum game, the two players take turns until the game ends.
 
-序贯零和游戏中，玩家的收益函数呈现递归结构．游戏局面 $S$ 可以分为三类，即终止局面 $S_0$、玩家 $1$ 行动的局面 $S_1$ 和玩家 $2$ 行动的局面 $S_2$．假设终止局面 $s\in S_0$ 处，玩家 $1$ 的收益为 $v(s)$，相应地，玩家 $2$ 的收益为 $-v(s)$．因此，轮到玩家 $2$ 行动时，最大化它的收益就相当于最小化玩家 $1$ 的收益．由此，假设双方都采取最优策略，玩家 $1$ 在局面 $s\in S$ 处能够获得的最大收益 $V(s)$ 满足如下递推关系：
+In a sequential zero-sum game, the players' payoff functions have a recursive structure. The game positions $S$ fall into three kinds: terminal positions $S_0$, positions $S_1$ where player $1$ moves, and positions $S_2$ where player $2$ moves. Suppose that at a terminal position $s\in S_0$, player $1$ gets payoff $v(s)$, and so player $2$ gets payoff $-v(s)$. So when it is player $2$'s turn, maximizing their own payoff is the same as minimizing player $1$'s payoff. Therefore, assuming both sides play optimally, the maximum payoff $V(s)$ that player $1$ can get from position $s\in S$ satisfies the following recurrence:
 
 $$
 V(s) = \begin{cases}
@@ -20,23 +20,23 @@ v(s), & s \in S_0,\\
 \end{cases}
 $$
 
-其中，$t\in s$ 表示 $t$ 是 $s$ 的后继局面．这就是 [极小化极大思想](../../search/alpha-beta.md#minimax-算法)．
+Here $t\in s$ means that $t$ is a successor position of $s$. This is the [minimax idea](../../search/alpha-beta.md#minimax-算法).
 
-将这一算法应用于实际问题中，通常有如下具体方法：
+When applying this algorithm to real problems, the usual concrete approaches are:
 
--   如果游戏中涉及的局面数量较少，直接暴力实现这一算法即可．
+-   If the game has few positions, just implement this algorithm directly by brute force.
 
--   如果游戏中涉及的局面数量较为庞大且没有特殊结构，可以考虑 [Alpha–Beta 剪枝](../../search/alpha-beta.md#alphabeta-剪枝) 并结合其他搜索剪枝算法使用．
+-   If the game has a large number of positions and no special structure, consider [Alpha–Beta pruning](../../search/alpha-beta.md#alphabeta-剪枝), combined with other search pruning techniques.
 
--   如果游戏中单个局面经常是多个局面的后继局面，为避免重复搜索，可以考虑记忆化搜索或其他动态规划算法．
+-   If a single position is often a successor of many positions, consider memoized search or another dynamic programming algorithm to avoid repeated search.
 
--   如果游戏中玩家的最终收益是终局前所有行动的收益和，可以适当优化建模方式．具体地，假设到达终局 $s\in S_0$ 时，玩家 $i=1,2$ 的行动序列分别为 $\{a^{(i)}_j\}_{j=1}^{k_i}$，行动 $a$ 对应的收益为 $w(a)$，玩家 $1$ 的收益函数为
+-   If a player's final payoff is the sum of payoffs of all moves made before the game ends, the model can be improved. Specifically, suppose that when the game reaches terminal position $s\in S_0$, the move sequences of players $i=1,2$ are $\{a^{(i)}_j\}_{j=1}^{k_i}$, the payoff of move $a$ is $w(a)$, and player $1$'s payoff function is
 
     $$
     v(s) = \sum_{j=1}^{k_1}w(a_j^{(1)}) - \sum_{j=1}^{k_2}w(a_j^{(2)}).
     $$
 
-    那么，可以设 $\tilde V(s)$ 为在局面 $s\in S$ 之后的游戏中，当前行动的玩家所得收益与对手所得收益之差的最大值．对于由玩家 $1$ 首先行动的初始状态 $s_0$，有 $V(s_0)=\tilde V(s_0)$，因此求出 $\tilde V(\cdot)$ 足以求解原问题．对于 $\tilde V(\cdot)$，有如下递推关系：
+    Then let $\tilde V(s)$ be the maximum, over the rest of the game after position $s\in S$, of the payoff of the player to move minus the payoff of their opponent. For the initial state $s_0$, where player $1$ moves first, we have $V(s_0)=\tilde V(s_0)$, so computing $\tilde V(\cdot)$ is enough to solve the original problem. $\tilde V(\cdot)$ satisfies the recurrence:
 
     $$
     \tilde V(s) = \begin{cases}
@@ -45,21 +45,21 @@ $$
     \end{cases}
     $$
 
-    其中，$a_{s\to t}$ 表示可以使得状态从 $s$ 转移到 $t$ 的行动，如果有多个这样的行动，取收益 $w(a)$ 最高的那个．
+    Here $a_{s\to t}$ is a move that takes the state from $s$ to $t$. If there are several such moves, take the one with the highest payoff $w(a)$.
 
--   公平组合游戏都是序贯零和游戏，只需要设游戏中胜利方和失败方的收益分别为 $+1$ 和 $-1$．此时，收益函数 $V(\cdot)$ 的递推关系其实就是判定必胜状态和必败状态的 [引理](./impartial-game.md#博弈图和状态)．
+-   Impartial games are all sequential zero-sum games: just give the winner payoff $+1$ and the loser payoff $-1$. Then the recurrence for the payoff function $V(\cdot)$ is exactly the [lemma](./impartial-game.md#博弈图和状态) for determining winning and losing states.
 
-    这类问题还有一种常见的变形，即求胜利方最少需要的回合数和失败方最多可以坚持的回合数．为此，只需要注意到从终止状态开始做 BFS 并按照引理判定必胜状态和必败状态时，记录判定必胜状态和必败状态时 BFS 进行到的轮次数，就是所求的回合数．这是因为判定为必胜状态只需要一个后继状态是必败状态即可，它总是由后继状态中轮次数最小的必败状态转移而来；而判定为必败状态需要所有后继状态都是必胜状态，它总是由后继状态中轮次数最大的必胜状态转移而来．
+    A common variant of such problems asks for the minimum number of turns the winner needs and the maximum number of turns the loser can hold out. For this, note the following: run a BFS starting from the terminal states, and classify states as winning or losing according to the lemma. The BFS round in which a state is classified as winning or losing is exactly the number of turns we want. This is because a state is classified as winning as soon as one successor is a losing state, so it is always reached from the losing successor with the smallest round number; and a state is classified as losing only when all of its successors are winning states, so it is always reached from the winning successor with the largest round number.
 
-    这一方法同样可以推广到一般的 [有向图游戏](./impartial-game.md#有向图游戏)．
+    This method also extends to general [directed graph games](./impartial-game.md#有向图游戏).
 
-### 例题
+### Example problem
 
 ???+ example "[Codeforces 794 E. Choosing Carrot](https://codeforces.com/problemset/problem/794/E)"
-    设有一个长度为 $n$ 的数列 $\{a_i\}$．两名玩家 $1$ 和 $2$ 轮流从数列的两端取走一个数，直到数列中仅剩下最后一个数字为止．玩家 $1$ 的目标是最大化这个最后剩下的数字，玩家 $2$ 的目标是最小化它．在游戏正式开始前，玩家 $1$ 还可以先进行 $k$ 次行动．假设两名玩家在整个过程中都采取最优策略．对于每一个 $k = 0,1,2,\cdots,n-1$，求出游戏结束时最后剩下的数字．其中，$1 \le n \le 3\times 10^5$．
+    There is a sequence $\{a_i\}$ of length $n$. Two players, $1$ and $2$, take turns removing one number from either end of the sequence, until only one number is left. Player $1$ wants to maximize this last number, and player $2$ wants to minimize it. Before the game officially starts, player $1$ may also make $k$ moves first. Assume both players play optimally throughout. For each $k = 0,1,2,\cdots,n-1$, find the number left at the end of the game. Here $1 \le n \le 3\times 10^5$.
 
-??? note "解答"
-    因为无论双方怎样取走数字，数列剩余部分都是一段完整的区间，所以，游戏中的局面可以仅由区间 $[l,r]$ 和当前行动的玩家 $i=1,2$ 描述，可以使用动态规划算法求解．设 $f(l,r,i)$ 为局面由 $(l,r,i)$ 描述时，游戏最后剩下的数字．由前文分析可知，当 $l < r$ 时，这一函数满足状态转移方程：
+??? note "Solution"
+    No matter how the two sides remove numbers, what remains of the sequence is always a contiguous interval. So a game position can be described just by the interval $[l,r]$ and the player to move $i=1,2$, and the game can be solved with dynamic programming. Let $f(l,r,i)$ be the number left at the end of the game when the position is described by $(l,r,i)$. From the analysis above, when $l < r$ this function satisfies the transitions:
     
     $$
     \begin{aligned}
@@ -68,49 +68,49 @@ $$
     \end{aligned}
     $$
     
-    终值条件为 $f(l,l,1)=f(l,l,2) = a_l$．据此，可以在 $\Theta(n^2)$ 时间内求出所有可能局面的函数值．对于每个 $k$，答案就是
+    The terminal condition is $f(l,l,1)=f(l,l,2) = a_l$. With this, we can compute the function value of every possible position in $\Theta(n^2)$ time. For each $k$, the answer is
     
     $$
     g(k) = \max f(l,r,1) \text{ subject to } r - l + 1 = n - k.
     $$
     
-    这一算法无法通过原题所设的数据范围，因此需要考虑优化转移．此处有很多种处理方法，本文只提供其中一种．
+    This algorithm is too slow for the constraints of the original problem, so we need to optimize the transitions. There are many ways to do this; this article gives just one.
     
-    将状态转移方程看作是对数列整体的操作．两个转移方程分别表示将相邻数字取最大值和最小值得到新数列，将它们分别称为「最大化操作」和「最小化操作」．每次操作都会使得数列长度减一．所有长度为 $d$ 的区间对应结果共计 $(n-d+1)$ 个，这就相当于对序列进行 $(d-1)$ 次操作得到的序列．另外，要得到 $f(l,r,1)$ 的结果，就需要保证最后一次操作是最大化操作．因此，这些操作序列中两种操作交替进行，且结尾总是最大化操作．
+    Think of the transitions as operations on the whole sequence. The two transitions build a new sequence by taking the maximum and the minimum of adjacent numbers, respectively. Call them the "max operation" and the "min operation". Each operation shortens the sequence by one. The results for all intervals of length $d$ form $(n-d+1)$ values, which is exactly the sequence obtained after applying $(d-1)$ operations to the original sequence. Also, to get $f(l,r,1)$, the last operation must be a max operation. So in these operation sequences the two operations alternate, and the last one is always a max operation.
     
-    考虑连续两次操作给数列带来的变化．不妨考虑首先做最小化操作，再做最大化操作．此时，数列 $a_1,a_2,a_3$ 将变为
+    Consider how two consecutive operations change the sequence. Without loss of generality, do a min operation first and then a max operation. Then the sequence $a_1,a_2,a_3$ becomes
     
     $$
     \max\{\min\{a_1,a_2\},\min\{a_2,a_3\}\}.
     $$
     
-    枚举 $a_1,a_2,a_3$ 三个数字之间所有可能的大小关系可知，除了 $a_1 < a_2$ 且 $a_2 > a_3$（即 $a_2$ 是严格极大值）这种情形外，这一表达式总是等于 $a_2$．也就是说，如果一个数列不存在任何严格极大值点，那么，连续两次操作对它的唯一影响就是删去了数列首尾各一个数字．这显然大幅简化了转移．剩下唯一的问题就是：如何保证数列不存在任何严格极大值点？事实上，只要对序列做一次最大化操作，就能保证不存在严格极大值点．故而，所有偶数次操作的结果，可以通过对初始数列进行两次操作得到的序列，逐对删去首尾数字得到；所有奇数次操作的结果，可以通过对初始数列进行一次操作得到的序列，逐对删去首尾数字得到．（零次操作的情形，即 $k=n-1$ 时，答案就是 $\max_i a_i$，需要单独处理．）
+    By going through all possible orderings of $a_1,a_2,a_3$, we see that this expression always equals $a_2$, except when $a_1 < a_2$ and $a_2 > a_3$ (that is, $a_2$ is a strict local maximum). In other words, if a sequence has no strict local maxima, then the only effect of two consecutive operations is to delete one number from each end of the sequence. This clearly simplifies the transitions a lot. The only remaining question is: how do we make sure the sequence has no strict local maxima? In fact, applying one max operation to the sequence is enough to guarantee that there are no strict local maxima. Therefore, the results of all even numbers of operations can be obtained from the sequence after two operations on the initial sequence, by repeatedly deleting the first and last numbers in pairs; the results of all odd numbers of operations can be obtained from the sequence after one operation on the initial sequence, in the same way. (The case of zero operations, that is $k=n-1$, has answer $\max_i a_i$ and must be handled separately.)
     
-    由于对序列的完整操作至多只需要进行 $3$ 次，而后续统计答案只需要 $2$ 次遍历，所以该算法的总时间复杂度为 $\Theta(n)$．
+    Since we need at most $3$ full operations on the sequence, and collecting the answers takes only $2$ passes, the total time complexity of this algorithm is $\Theta(n)$.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/math/code/zero-sum-game/zero-sum-game-1.cpp"
     ```
 
-### 习题
+### Exercises
 
--   [Luogu P2734 \[USACO3.3\] 游戏 A Game](https://www.luogu.com.cn/problem/P2734)
--   [Luogu P4576 \[CQOI2013\] 棋盘游戏](https://www.luogu.com.cn/problem/P4576)
--   [Luogu P7097 \[yLOI2020\] 牵丝戏](https://www.luogu.com.cn/problem/P7097)
+-   [Luogu P2734 \[USACO3.3\] A Game](https://www.luogu.com.cn/problem/P2734)
+-   [Luogu P4576 \[CQOI2013\] Board Game](https://www.luogu.com.cn/problem/P4576)
+-   [Luogu P7097 \[yLOI2020\] Marionette Play](https://www.luogu.com.cn/problem/P7097)
 -   [Codeforces 388 C. Fox and Card Game](https://codeforces.com/problemset/problem/388/C)
 -   [Codeforces 794 E. Choosing Carrot](https://codeforces.com/problemset/problem/794/E)
 -   [Codeforces 1628 D2. Game on Sum (Hard Version)](https://codeforces.com/problemset/problem/1628/D2)
--   [Luogu P3210 \[HNOI2010\] 取石头游戏](https://www.luogu.com.cn/problem/P3210)
+-   [Luogu P3210 \[HNOI2010\] Stone-Taking Game](https://www.luogu.com.cn/problem/P3210)
 
-## 同时零和游戏
+## Simultaneous zero-sum games
 
-同时零和游戏中，两名玩家同时行动．
+In a simultaneous zero-sum game, the two players move at the same time.
 
-同时零和游戏通常采用收益矩阵表示．假设玩家 $i=1,2$ 的行动集合为 $A_i$，且当玩家 $i=1,2$ 分别采取行动 $a_i\in A_i$ 时，两人的收益分别是 $v(a_1,a_2)$ 和 $-v(a_1,a_2)$．
+Simultaneous zero-sum games are usually described with a payoff matrix. Suppose the action set of player $i=1,2$ is $A_i$, and when players $i=1,2$ take actions $a_i\in A_i$, their payoffs are $v(a_1,a_2)$ and $-v(a_1,a_2)$ respectively.
 
-???+ example "例子"
-    考虑石头剪刀布游戏．假定胜利得 $1$ 分，失败得 $-1$ 分，平局得 $0$ 分．那么，游戏中两人的收益可以表示为
+???+ example "Example"
+    Consider rock paper scissors. Say a win scores $1$ point, a loss scores $-1$ point, and a draw scores $0$ points. Then the payoffs of the two players can be written as
     
     $$
     \begin{pmatrix}
@@ -120,7 +120,7 @@ $$
     \end{pmatrix}.
     $$
     
-    一般的二人同时游戏也可以表示为类似形式，故而也称为 [双矩阵游戏](https://en.wikipedia.org/wiki/Bimatrix_game)（bimatrix game）．对于零和游戏，由于玩家 $1$ 的收益矩阵和玩家 $2$ 的收益矩阵互为相反数，所以可以只考虑玩家 $1$ 的收益矩阵：
+    A general two-player simultaneous game can be written in a similar form, so it is also called a [bimatrix game](https://en.wikipedia.org/wiki/Bimatrix_game). For a zero-sum game, player $1$'s payoff matrix is the negative of player $2$'s, so we only need to consider player $1$'s payoff matrix:
     
     $$
     V = (v(a_1,a_2))_{(a_1,a_2)\in A_1\times A_2} = \begin{pmatrix}
@@ -130,78 +130,78 @@ $$
     \end{pmatrix}.
     $$
 
-需要解决的问题是：给定收益矩阵 $V = (v(a_1,a_2))_{(a_1,a_2)\in A_1\times A_2}$，如何求出两名玩家的最优策略和最大收益？
+The problem to solve is: given the payoff matrix $V = (v(a_1,a_2))_{(a_1,a_2)\in A_1\times A_2}$, how do we find both players' optimal strategies and maximum payoffs?
 
-### 混合策略
+### Mixed strategies
 
-相较于序贯零和游戏，同时游戏中两名玩家的角色是对称的．但是，既然已经解决了序贯零和游戏，那么不妨考虑同时游戏的序贯版本．例如，如果假定玩家 $1$ 首先做出行动，玩家 $2$ 再做出行动，那么，根据前文讨论，游戏结束时玩家 $1$ 的收益将由
+Unlike in sequential zero-sum games, the two players in a simultaneous game play symmetric roles. But since we have already solved sequential zero-sum games, let us look at sequential versions of the simultaneous game. For example, if we assume player $1$ moves first and then player $2$ moves, then by the discussion above, player $1$'s payoff at the end of the game is
 
 $$
 w_-=\max_{a_1\in A_1}\min_{a_2\in A_2} v(a_1,a_2)
 $$
 
-给出．由于玩家 $1$ 的行动对于玩家 $2$ 单向透明，这应该是玩家 $1$ 所能获得的最差结果．对称地，如果假定玩家 $2$ 首先行动，那么，玩家 $1$ 的收益将由
+Since player $1$'s move is visible to player $2$ (but not the other way around), this should be the worst outcome player $1$ can get. Symmetrically, if we assume player $2$ moves first, then player $1$'s payoff is
 
 $$
 w_+ = \min_{a_2\in A_2}\max_{a_1\in A_1} v(a_1,a_2)
 $$
 
-给出．由于玩家 $2$ 的行动对于玩家 $1$ 单向透明，这应该是玩家 $1$ 所能获得的最好结果．玩家 $1$ 应该期待实际进行游戏时，所能获得的收益 $w\in[w_-,w_+]$．尽管不等式 $w_-\le w_+$ 总是成立（证明参见 [弱对偶定理](../linear-programming.md#对偶原理)），但是由于等号未必成立，所以，仅采用序贯游戏的分析手段，一般情况下没有办法唯一确定游戏结果．
+Since player $2$'s move is visible to player $1$ (but not the other way around), this should be the best outcome player $1$ can get. Player $1$ should expect the payoff $w$ in the actual game to satisfy $w\in[w_-,w_+]$. Although the inequality $w_-\le w_+$ always holds (for a proof, see the [weak duality theorem](../linear-programming.md#对偶原理)), equality does not necessarily hold. So in general, analyzing sequential games alone cannot uniquely determine the outcome of the game.
 
-???+ example "例子（续）"
-    石头剪刀布游戏中，如果出手有先后，那么先手必输，后手必赢．转换为数学语言，这就是下列不等式：
+???+ example "Example (continued)"
+    In rock paper scissors, if the players move one after the other, the first player always loses and the second player always wins. In mathematical terms, this is the inequality:
     
     $$
     w_- = -1 \le +1 = w_+.
     $$
     
-    此时，$w_- = w_+$ 并不成立．
+    Here $w_- = w_+$ does not hold.
 
-上述分析过程遗漏了同时游戏的一个关键因素，就是玩家无法准确预测对手的行动．形式上，这意味着双方可以采取某种随机策略．这一想法在序贯游戏的语境下并不成立，因为无论先手玩家如何随机选择行动，后手玩家总能准确地观测到这一行动，并有针对性地回应．但是，对于同时游戏，随机策略引入的战略模糊将使得对手无法有效地针对己方的行动．
+The analysis above misses a key element of simultaneous games: a player cannot predict the opponent's move exactly. Formally, this means both sides can use some kind of random strategy. This idea does not work for sequential games, because no matter how the first player randomly chooses a move, the second player can always see exactly what it was and respond to it. But in a simultaneous game, the strategic ambiguity created by a random strategy prevents the opponent from effectively targeting your move.
 
-???+ example "例子（续）"
-    石头剪刀布游戏中，如果玩家 $1$ 均匀随机地选择石头、剪刀、布三个行动之一，那么，根据玩家 $2$ 的行动不同，玩家 $1$ 可能获得的收益是
+???+ example "Example (continued)"
+    In rock paper scissors, if player $1$ chooses rock, scissors or paper uniformly at random, then depending on player $2$'s move, player $1$'s payoff is
     
     $$
     \dfrac{1}{3}(0,1,-1)^T + \dfrac{1}{3}(-1,0,1)^T + \dfrac{1}{3}(1,-1,0)^T = (0,0,0)^T.
     $$
     
-    此时，无论玩家 $2$ 如何选择行动，玩家 $1$ 的期望收益总是 $0$．这显然好于确定性地选择单个行动．
+    So no matter what player $2$ does, player $1$'s expected payoff is always $0$. This is clearly better than deterministically picking a single move.
 
-由此，就引入了混合策略的概念．
+This leads to the concept of a mixed strategy.
 
-???+ abstract "混合策略"
-    同时游戏中，玩家 $i$ 的 **混合策略**（mixed strategy），简称 **策略**，是指函数 $s_i:A_i\to[0,1]$，且它满足 $\sum_{a_i\in A_i}s_i(a_i)=1$．也就是说，策略 $s_i$ 就是玩家 $i$ 的行动集合 $A_i$ 上的一个概率分布．玩家 $i$ 全体混合策略的集合记作 $S_i=\Delta(A_i)$，其中，$\Delta(A_i)$ 表示 $A_i$ 上的全体概率分布的集合．如果 $s_i$ 是退化的概率分布，即存在 $a\in A_i$ 使得 $s_i(a)=1$，那么，也称策略 $s_i$ 为 **纯策略**（pure strategy）．
+???+ abstract "Mixed strategy"
+    In a simultaneous game, a **mixed strategy** of player $i$, or simply a **strategy**, is a function $s_i:A_i\to[0,1]$ that satisfies $\sum_{a_i\in A_i}s_i(a_i)=1$. In other words, a strategy $s_i$ is a probability distribution over player $i$'s action set $A_i$. The set of all mixed strategies of player $i$ is written $S_i=\Delta(A_i)$, where $\Delta(A_i)$ denotes the set of all probability distributions over $A_i$. If $s_i$ is a degenerate distribution, that is, there exists $a\in A_i$ with $s_i(a)=1$, then $s_i$ is also called a **pure strategy**.
 
-混合策略的收益就是单个行动收益的期望：
+The payoff of mixed strategies is the expected value of the payoffs of single actions:
 
 $$
 v(s_1,s_2) = \sum_{a_1\in A_1}\sum_{a_2\in A_2}s_1(a_1)s_2(a_2)v(a_1,a_2).
 $$
 
-将单个行动看作对应的纯策略，那么，就可以将行动集合 $A_i$ 嵌入（混合）策略集合 $S_i$ 中，且上式定义的 $v(s_1,s_2)$ 就可以看作是将 $v(a_1,a_2)$ 从 $A_1\times A_2$ 延拓到 $S_1\times S_2$ 上．
+If we treat each single action as the corresponding pure strategy, the action set $A_i$ embeds into the (mixed) strategy set $S_i$, and $v(s_1,s_2)$ defined above can be seen as extending $v(a_1,a_2)$ from $A_1\times A_2$ to $S_1\times S_2$.
 
-### von Neumann 定理
+### von Neumann's theorem
 
-引入混合策略后，极大化极小思想和极小化极大思想得到的结果是一致的，由此，同时零和游戏的结果也是唯一确定的．
+Once mixed strategies are allowed, the maximin idea and the minimax idea give the same result, so the outcome of a simultaneous zero-sum game is uniquely determined.
 
-???+ note "定理（von Neumann）"
-    允许混合策略的同时零和游戏中，如果双方都采取最优策略，那么，玩家 $1$ 的最大收益为
+???+ note "Theorem (von Neumann)"
+    In a simultaneous zero-sum game with mixed strategies allowed, if both sides play optimally, player $1$'s maximum payoff is
     
     $$
     w = \max_{s_1\in S_1}\min_{s_2\in S_2} v(s_1,s_2) = \min_{s_2\in S_2}\max_{s_1\in S_1} v(s_1,s_2),
     $$
     
-    玩家 $2$ 的最大收益为 $-w$．
+    and player $2$'s maximum payoff is $-w$.
 
-??? note "证明"
-    设 $w = \max_{s_1\in S_1}\min_{s_2\in S_2} v(s_1,s_2)$．考虑内层最小化问题，因为 $v(s_1,s_2)=\sum_{a_2\in A_2}s_2(a_2)v(s_1,a_2)$，所以，$\min_{s_2\in S_2}v(s_1,s_2)=\min_{a_2\in A_2}v(s_1,a_2)$，后者的最优解对应的纯策略就是前者的一个最优解．因此，有 $w = \max_{s_1\in S_1}\min_{a_2\in A_2} v(s_1,a_2)$．进而，引入辅助变量 $u$，问题就可以改写为
+??? note "Proof"
+    Let $w = \max_{s_1\in S_1}\min_{s_2\in S_2} v(s_1,s_2)$. Consider the inner minimization. Since $v(s_1,s_2)=\sum_{a_2\in A_2}s_2(a_2)v(s_1,a_2)$, we have $\min_{s_2\in S_2}v(s_1,s_2)=\min_{a_2\in A_2}v(s_1,a_2)$, and the pure strategy corresponding to an optimal solution of the latter is an optimal solution of the former. So $w = \max_{s_1\in S_1}\min_{a_2\in A_2} v(s_1,a_2)$. Then, introducing an auxiliary variable $u$, the problem can be rewritten as
     
     $$
     w = \max_{u,s_1} u \text{ subject to }u \le \min_{a_2\in A_2} v(s_1,a_2).
     $$
     
-    这个约束等价于 $u\le v(s_1,a_2)$ 对于所有 $a_2\in A_2$ 都成立．最后，引入混合策略 $s_1$ 的定义和收益函数 $v(s_1,a_2)$ 的表达式，原问题就等价于 [线性规划问题](../linear-programming.md)
+    This constraint is equivalent to $u\le v(s_1,a_2)$ holding for every $a_2\in A_2$. Finally, plugging in the definition of a mixed strategy $s_1$ and the expression for the payoff function $v(s_1,a_2)$, the original problem is equivalent to the [linear programming problem](../linear-programming.md)
     
     $$
     (P) \qquad
@@ -213,7 +213,7 @@ $$
     \end{aligned}
     $$
     
-    这个问题显然是可行的，且目标函数有界，所以存在最优解．根据 [对偶原理](../linear-programming.md#对偶原理) 可知，它的最优值就等于对偶问题的最优值：
+    This problem is clearly feasible and its objective is bounded, so an optimal solution exists. By the [duality principle](../linear-programming.md#对偶原理), its optimal value equals the optimal value of the dual problem:
     
     $$
     (D) \qquad
@@ -225,13 +225,13 @@ $$
     \end{aligned}
     $$
     
-    重复前文的步骤，这一问题就等价于 $\min_{s_2\in S_2}\max_{s_1\in S_1}v(s_1,s_2)$．定理得证．
+    Repeating the steps above, this problem is equivalent to $\min_{s_2\in S_2}\max_{s_1\in S_1}v(s_1,s_2)$. This proves the theorem.
 
-双方的最优策略构成了这一游戏的 [Nash 均衡](https://en.wikipedia.org/wiki/Nash_equilibrium)．也就是说，假定双方都选择均衡中的最优策略，那么，没有任何玩家能够从单方面偏离均衡策略中严格获益．
+The optimal strategies of the two sides form a [Nash equilibrium](https://en.wikipedia.org/wiki/Nash_equilibrium) of the game. That is, if both sides choose their optimal strategies in the equilibrium, no player can strictly gain by deviating from the equilibrium strategy on their own.
 
-### 转化为线性规划问题
+### Reducing to linear programming
 
-von Neumann 定理的证明同时也指出了同时零和游戏的求解方法．设 $n$ 和 $m$ 分别是玩家 $1$ 和 $2$ 可采取的行动数目．给定玩家 $1$ 的收益矩阵 $V\in\mathbf R^{n\times m}$，可以求解如下线性规划问题：
+The proof of von Neumann's theorem also shows how to solve simultaneous zero-sum games. Let $n$ and $m$ be the numbers of actions available to players $1$ and $2$. Given player $1$'s payoff matrix $V\in\mathbf R^{n\times m}$, solve the following linear program:
 
 $$
 \begin{aligned}
@@ -242,13 +242,13 @@ w = \max_{(u,s)\in\mathbf R\times\mathbf R^n}\; & u\\
 \end{aligned}
 $$
 
-这是一个有 $n+1$ 个变量、$m+1$ 个约束（不计非负约束）的线性规划问题，可以用 [单纯形法](../simplex.md) 高效求解．由于 $u$ 可能为负，可以先将 $V$ 的所有元素都加上同一个常数 $c$ 使其均为正，从而可以要求 $u\ge 0$；这不改变最优策略，求得的 $w$ 减去 $c$ 即为原游戏的值．算法得到的最优解 $s$ 就是玩家 $1$ 的最优（混合）策略．要求得玩家 $2$ 的最优策略，只需要从单纯形表中获得该问题最优解的对偶变量（即影子价格）即可．
+This is a linear program with $n+1$ variables and $m+1$ constraints (not counting nonnegativity constraints), and it can be solved efficiently with the [simplex method](../simplex.md). Since $u$ may be negative, you can first add the same constant $c$ to every entry of $V$ to make them all positive, so that you can require $u\ge 0$. This does not change the optimal strategies; subtracting $c$ from the resulting $w$ gives the value of the original game. The optimal solution $s$ found by the algorithm is player $1$'s optimal (mixed) strategy. To get player $2$'s optimal strategy, just read off the dual variables (that is, the shadow prices) of the optimal solution from the simplex tableau.
 
-### 习题
+### Exercises
 
--   [Luogu P4232 无意识之外的捉迷藏](https://www.luogu.com.cn/problem/P4232)
+-   [Luogu P4232 Hide-and-Seek Beyond the Unconscious](https://www.luogu.com.cn/problem/P4232)
 
-## 参考资料与注释
+## References and notes
 
 -   [Zero-sum game - Wikipedia](https://en.wikipedia.org/wiki/Zero-sum_game)
 -   [Minimax theorem - Wikipedia](https://en.wikipedia.org/wiki/Minimax_theorem)

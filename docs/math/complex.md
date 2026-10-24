@@ -1,73 +1,73 @@
-如果您已经学习过复数相关知识，请跳过本页面．
+If you have already learned about complex numbers, feel free to skip this page.
 
-学习复数知识需要一部分向量基础，如果并未学习过向量知识请移步 [向量页面](../math/linear-algebra/vector.md)．
+Learning about complex numbers requires some background on vectors. If you have not learned about vectors yet, please read the [vector page](../math/linear-algebra/vector.md) first.
 
-## 复数
+## Complex numbers
 
-### 引入
+### Introduction
 
-???+ note "注"
-    下面的引入方法来自人教版高中数学 A 版必修二．
+???+ note "Note"
+    The introduction below follows the approach of the PEP (People's Education Press) high school math textbook, Edition A, Compulsory Volume 2.
 
-从方程的角度看，负实数能不能开平方，就是方程 $x^2+a=0 (a>0)$ 有没有解，进而可以归结为方程 $x^2+1=0$ 有没有解．
+From the point of view of equations, asking whether a negative real number has a square root is the same as asking whether the equation $x^2+a=0 (a>0)$ has a solution. This in turn comes down to whether the equation $x^2+1=0$ has a solution.
 
-回顾已有的数集扩充过程，可以看到，每次扩充都与实际需求密切相关．例如，为了解决正方形对角线的度量，以及 $x^2-2=0$ 这样的方程在有理数集中无解的问题，人们把有理数集扩充到了实数集．数集扩充后，在实数集中规定的加法运算、乘法运算，与原来在有理数集中规定的加法运算、乘法运算协调一致，并且加法和乘法都满足交换律和结合律，乘法对加法满足分配律．
+Looking back at how number sets have been extended so far, we can see that each extension was closely tied to practical needs. For example, to measure the diagonal of a square, and to deal with the fact that equations like $x^2-2=0$ have no solution in the rationals, people extended the set of rational numbers to the set of real numbers. After the extension, the addition and multiplication defined on the reals agree with the addition and multiplication previously defined on the rationals. Both addition and multiplication are commutative and associative, and multiplication distributes over addition.
 
-依照这种思想，为了解决 $x^2+1=0$ 这样的方程在实数系中无解的问题，我们设想引入一个新数 $\mathrm{i}$，使得 $x=\mathrm{i}$ 是方程 $x^2+1=0$ 的解，即使得 $\mathrm{i}^2=-1$．
+Following the same idea, to deal with the fact that equations like $x^2+1=0$ have no solution in the real number system, we imagine introducing a new number $\mathrm{i}$ such that $x=\mathrm{i}$ is a solution of $x^2+1=0$, that is, $\mathrm{i}^2=-1$.
 
-思考：把新引进的数 $\mathrm{i}$ 添加到实数集中，我们希望数 $\mathrm{i}$ 和实数之间仍然能像实数那样进行加法和乘法运算，并希望加法和乘法都满足交换律、结合律，以及乘法对加法满足分配律．那么，实数系经过扩充后，得到的新数系由哪些数组成呢？
+Think about it: we add the new number $\mathrm{i}$ to the set of real numbers. We want $\mathrm{i}$ and the real numbers to still support addition and multiplication just like real numbers do, and we want addition and multiplication to be commutative and associative, with multiplication distributing over addition. Then, after extending the real number system, what numbers make up the new number system?
 
-依照以上设想，把实数 $b$ 与 $\mathrm{i}$ 相乘，结果记作 $b\mathrm{i}$；把实数 $a$ 与 $b\mathrm{i}$ 相加，结果记作 $a+b\mathrm{i}$．注意到所有实数以及 $\mathrm{i}$ 都可以写成 $a+b\mathrm{i}(a,b\in \mathbf{R})$ 的形式，从而这些数都在扩充后的新数集中．
+Following this idea, multiply a real number $b$ by $\mathrm{i}$ and write the result as $b\mathrm{i}$; add a real number $a$ to $b\mathrm{i}$ and write the result as $a+b\mathrm{i}$. Note that every real number, as well as $\mathrm{i}$, can be written in the form $a+b\mathrm{i}(a,b\in \mathbf{R})$, so all of them are in the new, extended number set.
 
-### 定义
+### Definition
 
-我们定义形如 $a+b\mathrm{i}$，其中 $a,b\in \mathbf{R}$ 的数叫做 **复数**，其中 $\mathrm{i}$ 被称为 **虚数单位**，全体复数的集合叫做 **复数集**，记作 $\mathbf{C}$．
+A number of the form $a+b\mathrm{i}$, where $a,b\in \mathbf{R}$, is called a **complex number**. Here $\mathrm{i}$ is called the **imaginary unit**. The set of all complex numbers is called the **set of complex numbers** and is written $\mathbf{C}$.
 
-复数通常用 $z$ 表示，即 $z=a+b\mathrm{i}$．这种形式被称为 **复数的代数形式**．其中 $a$ 称为复数 $z$ 的 **实部**，记作 $\operatorname{Re}(z)$，$b$ 称为复数 $z$ 的 **虚部**，记作 $\operatorname{Im}(z)$．如无特殊说明，都有 $a,b\in \mathbf{R}$．
+A complex number is usually written as $z$, that is, $z=a+b\mathrm{i}$. This is called the **algebraic form of a complex number**. Here $a$ is called the **real part** of $z$, written $\operatorname{Re}(z)$, and $b$ is called the **imaginary part** of $z$, written $\operatorname{Im}(z)$. Unless stated otherwise, we always have $a,b\in \mathbf{R}$.
 
-对于一个复数 $z$，当且仅当 $b=0$ 时，它是实数，当 $b\not = 0$ 时，它是虚数，当 $a=0$ 且 $b\not = 0$ 时，它是纯虚数．
+A complex number $z$ is a real number if and only if $b=0$. When $b\not = 0$, it is an imaginary number. When $a=0$ and $b\not = 0$, it is a purely imaginary number.
 
-纯虚数，虚数，实数，复数的关系如下图所示．
+The figure below shows how purely imaginary numbers, imaginary numbers, real numbers and complex numbers relate to each other.
 
 ![](./images/complex-relation.svg)
 
-## 性质与运算
+## Properties and operations
 
-### 几何意义
+### Geometric meaning
 
-我们知道了 $a+b\mathrm{i}$ 这样类似的形式的数被称为复数，并且给出了定义和分类，我们还可以挖掘一下更深层的性质．
+We now know that numbers of the form $a+b\mathrm{i}$ are called complex numbers, and we have given their definition and classification. We can dig deeper into their properties.
 
-我们把所有实数都放在了数轴上，并且发现数轴上的点与实数一一对应．我们考虑对复数也这样处理．
+We placed all real numbers on the number line and found that points on the line correspond one-to-one with real numbers. Let us try to do the same for complex numbers.
 
-首先我们定义 **复数相等**：两个复数 $z_1=a+b\mathrm{i},z_2=c+d\mathrm{i}$ 是相等的，当且仅当 $a=c$ 且 $b=d$．
+First, we define **equality of complex numbers**: two complex numbers $z_1=a+b\mathrm{i},z_2=c+d\mathrm{i}$ are equal if and only if $a=c$ and $b=d$.
 
-这么定义是十分自然的，在此不做过多解释．
+This definition is very natural, so we will not explain it further here.
 
-也就是说，我们可以用唯一的有序实数对 $(a,b)$ 表示一个复数 $z=a+b\mathrm{i}$．这样，联想到平面直角坐标系，我们可以发现 **复数集与平面直角坐标系中的点集一一对应**．好了，我们找到了复数的一种几何意义．
+In other words, a complex number $z=a+b\mathrm{i}$ can be represented by a unique ordered pair of real numbers $(a,b)$. This reminds us of the Cartesian coordinate plane, and we see that **the set of complex numbers corresponds one-to-one with the set of points in the Cartesian plane**. So we have found one geometric meaning of complex numbers.
 
-那么这个平面直角坐标系就不再一般，因为平面直角坐标系中的点具有了特殊意义——表示一个复数，所以我们把这样的平面直角坐标系称为 **复平面**，$x$ 轴称为 **实轴**，$y$ 轴称为 **虚轴**．我们进一步地说：**复数集与复平面内所有的点所构成的集合是一一对应的**．
+This coordinate plane is no longer an ordinary one, because its points now have a special meaning: each represents a complex number. So we call such a plane the **complex plane**, the $x$-axis the **real axis**, and the $y$-axis the **imaginary axis**. We can say more precisely: **the set of complex numbers corresponds one-to-one with the set of all points in the complex plane**.
 
-我们考虑到学过的平面向量的知识，发现向量的坐标表示也是一个有序实数对 $(a,b)$，显然，复数 $z=a+b\mathrm{i}$ 对应复平面内的点 $Z(a,b)$，那么它还对应平面向量 $\overrightarrow{OZ}=(a,b)$，于是我们又找到了复数的另一种几何意义：**复数集与复平面内的向量所构成的集合是一一对应的（实数 $0$ 与零向量对应）**．
+Recall plane vectors: the coordinate form of a vector is also an ordered pair of real numbers $(a,b)$. Clearly, the complex number $z=a+b\mathrm{i}$ corresponds to the point $Z(a,b)$ in the complex plane, so it also corresponds to the plane vector $\overrightarrow{OZ}=(a,b)$. This gives us another geometric meaning of complex numbers: **the set of complex numbers corresponds one-to-one with the set of vectors in the complex plane (the real number $0$ corresponds to the zero vector)**.
 
-于是，我们由向量的知识迁移到复数上来，定义 **复数的模** 就是复数所对应的向量的模．复数 $z=a+b\mathrm{i}$ 的模 $|z|=\sqrt{a^2+b^2}$．
+So we carry ideas over from vectors to complex numbers, and define the **modulus of a complex number** as the length (magnitude) of its corresponding vector. The modulus of $z=a+b\mathrm{i}$ is $|z|=\sqrt{a^2+b^2}$.
 
-于是为了方便，我们常把复数 $z=a+b\mathrm{i}$ 称为点 $Z$ 或向量 $\overrightarrow {OZ}$，并规定相等的向量表示同一个复数．
+For convenience, we often call the complex number $z=a+b\mathrm{i}$ the point $Z$ or the vector $\overrightarrow {OZ}$, and we agree that equal vectors represent the same complex number.
 
-并且由向量的知识我们发现，虚数不可以比较大小（但是实数是可以的）．
+Also, from what we know about vectors, we see that imaginary numbers cannot be compared in size (but real numbers can).
 
-### 加法与减法
+### Addition and subtraction
 
-对复数 $z_1=a+b\mathrm{i},z_2=c+d\mathrm{i}$，定义加法规则如下：
+For complex numbers $z_1=a+b\mathrm{i},z_2=c+d\mathrm{i}$, addition is defined as:
 
 $$
 z_1+z_2=(a+c)+(b+d)\mathrm{i}
 $$
 
-很明显，两个复数的和仍为复数．
+Clearly, the sum of two complex numbers is still a complex number.
 
-考虑到向量的加法运算，我们发现复数的加法运算符合向量的加法运算法则，这同样证明了复数的几何意义的正确性．
+Comparing with vector addition, we see that complex addition follows the same rule as vector addition. This also confirms that the geometric meaning of complex numbers is correct.
 
-同样可以验证，复数的加法满足 **交换律** 和 **结合律**．即：
+We can also check that complex addition is **commutative** and **associative**, that is:
 
 $$
 \begin{aligned}
@@ -76,17 +76,17 @@ z_1+z_2&=z_2+z_1\\
 \end{aligned}
 $$
 
-减法作为加法的逆运算，我们可以通过加法法则与复数相等的定义来推导出减法法则：
+Subtraction is the inverse of addition. Using the addition rule and the definition of equality of complex numbers, we can derive the subtraction rule:
 
 $$
 z_1-z_2=(a-c)+(b-d)\mathrm{i}
 $$
 
-这同样符合向量的减法运算．
+This also matches vector subtraction.
 
-### 乘法、除法与共轭
+### Multiplication, division and conjugates
 
-对复数 $z_1=a+b\mathrm{i},z_2=c+d\mathrm{i}$，定义乘法规则如下：
+For complex numbers $z_1=a+b\mathrm{i},z_2=c+d\mathrm{i}$, multiplication is defined as:
 
 $$
 \begin{aligned}
@@ -96,19 +96,19 @@ z_1z_2&=(a+b\mathrm{i})(c+d\mathrm{i})\\
 \end{aligned}
 $$
 
-可以看出，两个复数相乘类似于两个多项式相乘，只需要把 $\mathrm{i}^2$ 换成 $-1$，并将实部与虚部分别合并即可．
+As you can see, multiplying two complex numbers is like multiplying two polynomials: just replace $\mathrm{i}^2$ with $-1$, then collect the real parts and the imaginary parts separately.
 
-复数的乘法与向量的向量积形式类似．
+Complex multiplication looks similar in form to the cross product of vectors.
 
-易得复数乘法满足 **交换律**，**结合律** 和 **对加法的分配律**，即：
+It is easy to show that complex multiplication is **commutative**, **associative** and **distributive over addition**, that is:
 
 -   $z_1z_2=z_2z_1$
 -   $(z_1z_2)z_3=z_1(z_2z_3)$
 -   $z_1(z_2+z_3)=z_1z_2+z_1z_3$
 
-由于满足运算律，我们可以发现实数域中的 **乘法公式在复数域中同样适用**．
+Since these laws hold, we see that **the algebraic identities for multiplication over the reals also hold over the complex numbers**.
 
-除法运算是乘法运算的逆运算，我们可以推导一下：
+Division is the inverse of multiplication. Let us derive it:
 
 $$
 \begin{aligned}
@@ -117,80 +117,80 @@ $$
 \end{aligned}
 $$
 
-由于向量没有除法，这里不讨论与向量的关系．
+Since vectors have no division, we do not discuss the relation to vectors here.
 
-为了分母实数化，我们乘了一个 $c-d\mathrm{i}$，这个式子很有意义．
+To make the denominator real, we multiplied by $c-d\mathrm{i}$. This expression is very meaningful.
 
-对复数 $z=a+b\mathrm{i}$，称 $a-b\mathrm{i}$ 为 $z$ 的 **共轭复数**，通常记为 $\bar z$．我们可以发现，若两个复数互为共轭复数，那么它们 **关于实轴对称**．
+For a complex number $z=a+b\mathrm{i}$, the number $a-b\mathrm{i}$ is called the **complex conjugate** of $z$, usually written $\bar z$. We can see that if two complex numbers are conjugates of each other, they are **symmetric about the real axis**.
 
-对复数 $z,w$，复数共轭有如下性质
+For complex numbers $z,w$, complex conjugation has the following properties:
 
 -   $z\cdot\bar{z}=|z|^2$
 -   $\overline{\overline{z}}=z$
--   $\operatorname{Re}(z)=\dfrac{z+\bar{z}}{2}$，$\operatorname{Im}(z)=\dfrac{z-\bar{z}}{2}$
+-   $\operatorname{Re}(z)=\dfrac{z+\bar{z}}{2}$, $\operatorname{Im}(z)=\dfrac{z-\bar{z}}{2}$
 -   $\overline{z\pm w}=\bar{z}\pm\bar{w}$
 -   $\overline{zw}=\bar{z}\bar{w}$
 -   $\overline{z/w}=\bar{z}/\bar{w}$
 
-### 辐角和辐角主值
+### Argument and principal argument
 
-如果设定实数单位 $1$ 作为水平正方向，虚数单位 $\mathrm{i}$ 作为竖直正方向，得到的就是直角坐标视角下的复平面．
+If we take the real unit $1$ as the positive horizontal direction and the imaginary unit $\mathrm{i}$ as the positive vertical direction, we get the complex plane seen through Cartesian coordinates.
 
-表示复数 $z$ 的位置，也可以借助于极坐标 $(r, \theta)$ 确定．前文已经提到了 $r$ 为复数 $z$ 的模．
+The position of a complex number $z$ can also be given in polar coordinates $(r, \theta)$. As mentioned above, $r$ is the modulus of $z$.
 
-从实轴正向到 **非零** 复数 $z=x+\mathrm{i}y$ 对应向量的夹角 $\theta$ 满足关系：
+The angle $\theta$ from the positive real axis to the vector of a **nonzero** complex number $z=x+\mathrm{i}y$ satisfies:
 
 $$
 \tan \theta=\frac{y}{x}
 $$
 
-称为复数 $z$ 的 **辐角**，记为：
+It is called the **argument** of $z$, written:
 
 $$
 \theta= \arg z
 $$
 
-任一个 **非零** 复数 $z$ 有无穷多个辐角，故 $\arg z$ 事实上是一个集合．借助开头大写的 $\operatorname{Arg} z$ 表示 **其中一个特定值**，满足条件：
+Every **nonzero** complex number $z$ has infinitely many arguments, so $\arg z$ is actually a set. We use $\operatorname{Arg} z$, with a capital letter, to denote **one particular value** that satisfies:
 
 $$
 -\pi<\operatorname{Arg} z \le \pi
 $$
 
-称 $\operatorname{Arg} z$ 为 **辐角主值** 或 **主辐角**．辐角就是辐角主值基础上加若干整数个（可以为零或负整数）$2k\pi$，即 $\arg z = \{\operatorname{Arg} z + 2k\pi \mid k\in \mathbf Z\}$．
+$\operatorname{Arg} z$ is called the **principal value of the argument**, or the **principal argument**. Any argument is the principal argument plus some integer multiple $2k\pi$ (where $k$ may be zero or negative), that is, $\arg z = \{\operatorname{Arg} z + 2k\pi \mid k\in \mathbf Z\}$.
 
-需要注意的是两个辐角主值相加后不一定还是辐角主值，而两个辐角相加一定还是合法的辐角．
+Note that the sum of two principal arguments is not necessarily a principal argument, but the sum of two arguments is always a valid argument.
 
-称模小于 $1$ 的复数，在复平面上构成的图形为 **单位圆**．称模等于 $1$ 的复数为 **单位复数**，全体单位复数在复平面上构成的图形为 **单位圆周**．在不引起混淆的情况下，有时单位圆周也简称单位圆．
+The shape formed in the complex plane by complex numbers with modulus less than $1$ is called the **unit disk**. A complex number with modulus equal to $1$ is called a **unit complex number**, and the shape formed in the complex plane by all unit complex numbers is called the **unit circle**. When there is no risk of confusion, the term "unit disk" is sometimes also used loosely to mean the unit circle.
 
-在极坐标的视角下，复数的乘除法变得很简单．复数乘法，模相乘，辐角相加．复数除法，模相除，辐角相减．
+From the polar point of view, multiplication and division of complex numbers become very simple. To multiply complex numbers, multiply the moduli and add the arguments. To divide complex numbers, divide the moduli and subtract the arguments.
 
-### 欧拉公式
+### Euler's formula
 
-???+ note "欧拉公式（Euler's formula）[^ref1]"
-    对任意实数 $x$，有
+???+ note "Euler's formula[^ref1]"
+    For any real number $x$,
     
     $$
     \mathrm{e}^{\mathrm{i}x}=\cos x+\mathrm{i}\sin x
     $$
     
-    在补充 [复指数函数与复三角函数](#指数函数与三角函数) 的定义后，该公式可推广至全体复数．
+    After defining the [complex exponential and complex trigonometric functions](#exponential-and-trigonometric-functions), this formula extends to all complex numbers.
 
-### 指数函数与三角函数
+### Exponential and trigonometric functions
 
-对于复数 $z=x+\mathrm{i}y$，函数 $f(z)=\mathrm{e}^x(\cos y+\mathrm{i}\sin y)$ 满足 $f(z_1+z_2)=f(z_1)f(z_2)$．由此给出 **复指数函数** 的定义：
+For a complex number $z=x+\mathrm{i}y$, the function $f(z)=\mathrm{e}^x(\cos y+\mathrm{i}\sin y)$ satisfies $f(z_1+z_2)=f(z_1)f(z_2)$. This gives the definition of the **complex exponential function**:
 
 $$
 \exp z=\mathrm{e}^x(\cos y+\mathrm{i}\sin y)
 $$
 
-复指数函数在实数集上与实指数函数的定义完全一致．在复平面上拥有性质：
+On the real numbers, the complex exponential function is exactly the same as the real exponential function. On the complex plane it has these properties:
 
--   模恒正：$|\exp z|=\exp x>0$．
--   辐角：$\arg(\exp z)=\{y + 2k\pi \mid k\in\mathbf Z\}$．
--   加法定理：$\exp (z_1+z_2)=\exp (z_1)\exp (z_2)$．
--   周期性：$\exp z$ 是以 $2\pi \mathrm{i}$ 为基本周期的周期函数．如果一个函数 $f(z)$ 的周期是某一周期的整倍数，称该周期为 **基本周期**．
+-   Always positive modulus: $|\exp z|=\exp x>0$.
+-   Argument: $\arg(\exp z)=\{y + 2k\pi \mid k\in\mathbf Z\}$.
+-   Addition theorem: $\exp (z_1+z_2)=\exp (z_1)\exp (z_2)$.
+-   Periodicity: $\exp z$ is a periodic function with fundamental period $2\pi \mathrm{i}$. If every period of a function $f(z)$ is an integer multiple of some period, that period is called the **fundamental period**.
 
-**复三角函数**（也简称 **三角函数**）的定义如下：
+The **complex trigonometric functions** (also simply called **trigonometric functions**) are defined as:
 
 $$
 \cos z=\frac{\exp (\mathrm{i}z)+\exp (-\mathrm{i}z)}{2}
@@ -200,7 +200,7 @@ $$
 \sin z=\frac{\exp (\mathrm{i}z)-\exp (-\mathrm{i}z)}{2\mathrm{i}}
 $$
 
-若取 $z\in\mathbf{R}$，则由 [欧拉公式](#欧拉公式) 有：
+If $z\in\mathbf{R}$, then by [Euler's formula](#eulers-formula):
 
 $$
 \cos z=\operatorname{Re}\left(\mathrm{e}^{\mathrm{i}z}\right)
@@ -210,131 +210,131 @@ $$
 \sin z=\operatorname{Im}\left(\mathrm{e}^{\mathrm{i}z}\right)
 $$
 
-复三角函数在实数集上与实三角函数的定义完全一致．在复平面上拥有性质：
+On the real numbers, the complex trigonometric functions are exactly the same as the real trigonometric functions. On the complex plane they have these properties:
 
--   奇偶性：正弦函数是奇函数，余弦函数是偶函数．
--   三角恒等式：通常的三角恒等式都成立，例如平方和为 $1$，或者角的和差公式等．
--   周期性：正弦与余弦函数以 $2\pi$ 为基本周期．
--   零点：实正弦与实余弦函数的全体零点，构成了复正弦与复余弦函数的全体零点．这个推广没有引进新的零点．
--   模的无界性：复正弦与复余弦函数，模长可以大于任意给定的正数，不再像实正弦与实余弦函数一样被限制在 $1$ 的范围内．
+-   Parity: sine is an odd function and cosine is an even function.
+-   Trigonometric identities: the usual trigonometric identities all hold, for example the sum of squares being $1$, or the angle addition and subtraction formulas.
+-   Periodicity: sine and cosine have fundamental period $2\pi$.
+-   Zeros: the zeros of real sine and real cosine are exactly all the zeros of complex sine and complex cosine. The extension adds no new zeros.
+-   Unbounded modulus: the modulus of complex sine and complex cosine can be larger than any given positive number. Unlike real sine and real cosine, they are no longer bounded by $1$.
 
-## 复数的三种形式
+## Three forms of a complex number
 
-借助直角坐标系的视角以及极坐标系的视角，可以写出复数的三种形式．
+Using the Cartesian and polar points of view, we can write a complex number in three forms.
 
-复数的 **代数形式** 用于表示任意复数．
+The **algebraic form** can represent any complex number.
 
 $$
 z=x+y\mathrm{i}
 $$
 
-代数形式用于计算复数的加减乘除四个运算比较方便．
+The algebraic form is convenient for computing the four operations: addition, subtraction, multiplication and division.
 
-复数的 **三角形式** 和 **指数形式**，用于表示非零复数．
+The **trigonometric form** and the **exponential form** represent nonzero complex numbers.
 
 $$
 z=r(\cos \theta +\mathrm{i}\sin \theta)=r \exp (\mathrm{i}\theta)
 $$
 
-这两种形式用于计算复数的乘除两个运算以及后面的运算较为方便．如果只用高中见过的函数，可以使用三角形式．如果引入了复指数函数，写成等价的指数形式会更加方便．
+These two forms are more convenient for multiplication, division and the operations that come later. If you only want to use functions seen in high school, use the trigonometric form. Once the complex exponential function is introduced, the equivalent exponential form is more convenient.
 
-## 单位根
+## Roots of unity
 
-考察方程 $x^n=1$ 在复数意义下的解．显然，这样的解有 $n$ 个，称这 $n$ 个解都是 **$n$ 次单位（复）根**（$n$-th root of unity）．根据复平面的知识，$n$ 次单位根把单位圆 $n$ 等分．
+Consider the solutions of $x^n=1$ over the complex numbers. Clearly there are $n$ such solutions, and each of them is called an **$n$-th root of unity** (complex root of unity). From what we know about the complex plane, the $n$-th roots of unity divide the unit circle into $n$ equal parts.
 
-设 $\omega_n=\exp\dfrac{2\pi \mathrm{i}}{n}$（即幅角为 $2\pi/n$ 的单位复数），则 $x^n=1$ 的解集表示为 $\{\omega_n^k\mid k=0,1\cdots,n-1\}$，其中，
+Let $\omega_n=\exp\dfrac{2\pi \mathrm{i}}{n}$ (the unit complex number with argument $2\pi/n$). Then the solution set of $x^n=1$ is $\{\omega_n^k\mid k=0,1\cdots,n-1\}$, where
 
 $$
 w_n^k = \exp\dfrac{2\pi k \mathrm{i}}{n} = \cos\dfrac{2\pi k}{n} + \mathrm{i}\sin\dfrac{2\pi k}{n}.
 $$
 
-如果不加说明，一般叙述中的 $n$ 次单位根，是指从 $1$ 开始逆时针方向的第一个解，即上述 $\omega_n$，其它解均可以用 $\omega_n$ 的幂表示．
+Unless stated otherwise, "the $n$-th root of unity" usually means the first solution counterclockwise from $1$, that is, $\omega_n$ above. All other solutions can be written as powers of $\omega_n$.
 
-???+ tip "为什么通常提到 $n$ 次单位根，总是特指第一个？"
-    主要是为了应用时方便．所有 $n$ 次单位根都可以表示为第一个 $n$ 次单位根 $\omega_n$ 的幂次；而且，对于任意 $k < n$，复数 $\omega_n$ 都不是 $k$ 次单位根．
+???+ tip "Why does 'the $n$-th root of unity' usually mean the first one?"
+    Mainly for convenience in applications. All $n$-th roots of unity can be written as powers of the first $n$-th root of unity $\omega_n$. Also, for any $k < n$, the complex number $\omega_n$ is not a $k$-th root of unity.
 
-### 本原单位根
+### Primitive roots of unity
 
-事实上，$n$ 次单位根中满足类似性质的不止 $\omega_n$ 一个．称集合
+In fact, $\omega_n$ is not the only $n$-th root of unity with this kind of property. The elements of the set
 
 $$
 \{\omega_n^k\mid 0\le k<n,~\gcd(n,k)=1\}
 $$
 
-中的元素为 **$n$ 次本原单位根**（$n$-th primitive root of unity）．根据上述表达式可知，全体 $n$ 次本原单位根共有 $\varphi(n)$ 个，其中，$\varphi(n)$ 为 [欧拉函数](./number-theory/euler-totient.md)．
+are called **$n$-th primitive roots of unity**. From this expression, there are $\varphi(n)$ primitive $n$-th roots of unity in total, where $\varphi(n)$ is [Euler's totient function](./number-theory/euler-totient.md).
 
-任意一个本原单位根 $\omega$，都与上述 $\omega_n$ 具有相同的性质：对于任意的 $0<k<n$，$\omega$ 的 $k$ 次幂不为 $1$，也就是说，$\omega$ 不是 $k$ 次单位根．因此，借助任意一个本原单位根，都可以生成全体单位根．
+Every primitive root of unity $\omega$ has the same property as $\omega_n$ above: for any $0<k<n$, the $k$-th power of $\omega$ is not $1$. In other words, $\omega$ is not a $k$-th root of unity. Therefore, any primitive root of unity can generate all the roots of unity.
 
-为了理解 $n$ 次本原单位根的结构，需要考虑单位根的如下性质：
+To understand the structure of the $n$-th primitive roots of unity, we need the following property of roots of unity:
 
-???+ note "性质"
-    对于整数 $n$ 和 $k$，设 $d=\gcd(n,k)$，有 $\omega_n^k = \omega_{n/d}^{k/d}$．
+???+ note "Property"
+    For integers $n$ and $k$, let $d=\gcd(n,k)$. Then $\omega_n^k = \omega_{n/d}^{k/d}$.
 
-??? note "证明"
-    直接计算可知
+??? note "Proof"
+    By direct computation,
     
     $$
     w_n^k = \exp\dfrac{2\pi k\mathrm{i}}{n} = \exp\dfrac{2\pi (k/d)\mathrm{i}}{n/d} = \omega_{n/d}^{k/d}.
     $$
 
-这说明，只要 $\gcd(n,k)\neq 1$，那么，$\omega_n^k$ 就一定是 $\dfrac{n}{\gcd(n,k)}$ 次（本原）单位根．因此，满足前述性质的单位根 $\omega_n^k$ 一定是满足 $\gcd(n,k)=1$．这正是本原单位根具有上述定义的原因．
+This shows that whenever $\gcd(n,k)\neq 1$, $\omega_n^k$ must be a (primitive) $\dfrac{n}{\gcd(n,k)}$-th root of unity. So a root of unity $\omega_n^k$ with the property above must satisfy $\gcd(n,k)=1$. This is exactly why primitive roots of unity are defined the way they are.
 
-另外，作为这些分析的简单推论，有：
+Also, as a simple corollary of this analysis:
 
-???+ note "定理"
-    当 $k$ 遍历 $n$ 的因数，所有 $k$ 次本原单位根恰构成 $n$ 次单位根的一个划分．而且，对于 $\ell\perp n$，映射 $x\mapsto x^\ell$ 给出 $n$ 次单位根之间的双射，且保持上述划分不变：它将 $k\mid n$ 次本原单位根仍然映射到 $k$ 次本原单位根．
+???+ note "Theorem"
+    As $k$ ranges over the divisors of $n$, the primitive $k$-th roots of unity together form a partition of the $n$-th roots of unity. Moreover, for $\ell\perp n$, the map $x\mapsto x^\ell$ is a bijection on the $n$-th roots of unity that preserves this partition: it maps primitive $k$-th roots of unity (for $k\mid n$) to primitive $k$-th roots of unity.
 
-尽管本原单位根有很多选择，但是由于第一个根 $\omega_n$ 形式最为简单，算法竞赛中还是 $\omega_n$ 最为常用．对于部分场景，为提高计算效率，还可以考虑用某一模数下的 [本原单位根](./number-theory/residue.md#单位根) 代替复数域中的 $\omega_n$．
+Although there are many choices of primitive root of unity, the first root $\omega_n$ has the simplest form, so $\omega_n$ is still the most commonly used one in competitive programming. In some situations, to make computation faster, you can also replace $\omega_n$ in the complex numbers with a [primitive root of unity](./number-theory/residue.md#单位根) modulo some number.
 
-## 编程语言中的复数
+## Complex numbers in programming languages
 
-### C 中的复数
+### Complex numbers in C
 
-在 C99 标准中，有 `<complex.h>` 头文件．
+The C99 standard has the `<complex.h>` header.
 
-在 `<complex.h>` 头文件中，提供了 `double complex`、`float complex` 和 `long double complex` 三种类型．
+The `<complex.h>` header provides three types: `double complex`, `float complex` and `long double complex`.
 
-算术运算符'+'、'-'、'\*'和'/'，可以用于浮点数和复数的任意混合．当表达式两端有一个为复数时，计算结果为复数．
+The arithmetic operators '+', '-', '\*' and '/' can be used with any mix of floating-point and complex numbers. If either operand of an expression is complex, the result is complex.
 
-头文件 `<complex.h>` 提供了虚数单位 `I`，引入此头文件时，大写字母 `I` 不可以作为变量名使用．
+The header `<complex.h>` provides the imaginary unit `I`. When this header is included, the capital letter `I` cannot be used as a variable name.
 
-对于单个复数，`<complex.h>` 提供了若干操作：`creal` 函数用于提取实部，`cimag` 函数用于提取虚部，`cabs` 函数用于计算模，`carg` 函数用于计算辐角主值．
+For a single complex number, `<complex.h>` provides several operations: `creal` extracts the real part, `cimag` extracts the imaginary part, `cabs` computes the modulus, and `carg` computes the principal argument.
 
-所有的函数根据类型不同，都有三个．例如 `creal` 函数有 `creal`、`crealf`、`creall` 三个，用于处理对应的 `double`、`float` 和 `long double` 三种类型．末尾什么都不带的默认处理 `double` 类型．以下所有函数均遵从此规律，不再特别说明．
+Every function comes in three versions for different types. For example, `creal` comes as `creal`, `crealf` and `creall`, which handle `double`, `float` and `long double` respectively. The version with no suffix handles `double` by default. All functions below follow the same pattern, which we will not repeat.
 
-这些函数返回值都是一般的浮点数．可以将普通浮点数直接赋值给复数，但是不可以将复数直接赋值给浮点数，而是需要使用上述提取操作．
+These functions all return ordinary floating-point numbers. You can assign an ordinary floating-point number directly to a complex number, but you cannot assign a complex number directly to a floating-point number; you need to use the extraction operations above.
 
-函数 `conj` 用于计算共轭复数，返回值是复数．
+The function `conj` computes the complex conjugate and returns a complex number.
 
-函数 `cexp` 计算复指数，`clog` 计算对数主值，`csin` 计算正弦，`ccos` 计算余弦，`ctan` 计算正切．
+The function `cexp` computes the complex exponential, `clog` the principal value of the logarithm, `csin` the sine, `ccos` the cosine, and `ctan` the tangent.
 
-函数 `cpow` 计算幂函数，`csqrt` 计算平方根，`casin` 计算反正弦，`cacos` 计算反余弦，`catan` 计算反正切．这部分函数计算的全部都是多值函数的主值．
+The function `cpow` computes powers, `csqrt` the square root, `casin` the inverse sine, `cacos` the inverse cosine, and `catan` the inverse tangent. All of these compute the principal value of a multivalued function.
 
-### C++ 中的复数
+### Complex numbers in C++
 
-在 C 里面的 `<ctype.h>`，到 C++ 会变成 `<cctype>`，几乎所有的头文件遵从这个命名规律．
+The C header `<ctype.h>` becomes `<cctype>` in C++, and almost every header follows this naming pattern.
 
-但是，`<complex.h>` 不遵守，C++ 没有 `<ccomplex>` 头文件．C++ 的复数直接是 `<complex>`，并且装的东西和 C 完全不一样．
+However, `<complex.h>` does not. C++ has no `<ccomplex>` header. C++ complex numbers live directly in `<complex>`, and its contents are completely different from C's.
 
-很有趣．这是因为，在 C++ 的第一个版本 C++98，即已经有了 `<complex>`，而 C 语言在 C99 才添加．
+This is interesting. The reason is that the first version of C++, C++98, already had `<complex>`, while C only added it in C99.
 
-在 C++ 中，复数类型定义使用 `complex<float>`、`complex<double>` 和 `complex<long double>`．由于面向对象的多态性，下面函数的名字都是唯一的，无需 f 或 l 的后缀．
+In C++, complex types are `complex<float>`, `complex<double>` and `complex<long double>`. Thanks to object-oriented polymorphism (overloading), each function below has a single name, with no f or l suffix.
 
-一个复数对象拥有成员函数 `real` 和 `imag`，可以访问实部和虚部．
+A complex object has member functions `real` and `imag` to access the real and imaginary parts.
 
-一个复数对象拥有非成员函数 `real`、`imag`、`abs`、`arg`，返回实部、虚部、模和辐角．
+There are non-member functions `real`, `imag`, `abs` and `arg` that return the real part, imaginary part, modulus and argument.
 
-一个复数对象还拥有非成员函数：`norm` 为模的平方，`conj` 为共轭复数．
+There are also non-member functions `norm`, the square of the modulus, and `conj`, the complex conjugate.
 
-一个复数对象还拥有非成员函数 `exp`、`log`（底为 $\mathrm{e}$ 的对数主值）、`log10`（底为 10 的对数主值，C 中没有）、`pow`、`sqrt`、`sin`、`cos`、`tan`，含义与 C 中的含义相同．
+There are also non-member functions `exp`, `log` (principal value of the logarithm with base $\mathrm{e}$), `log10` (principal value of the base-10 logarithm, not in C), `pow`, `sqrt`, `sin`, `cos` and `tan`, with the same meanings as in C.
 
-在 C++14 及以后的版本中，定义了 [字面量运算符 `std::literals::complex_literals::""if, ""i, ""il`](https://zh.cppreference.com/w/cpp/numeric/complex/operator%2522%2522i.html)．例如输入 `100if`、`100i` 和 `100il`，三者将分别返回 `std::complex<float>{0.0f, 100.0f}`、`std::complex<double>{0.0, 100.0}` 以及 `std::complex<long double>{0.0l, 100.0l}`．这使得我们可以方便地书写形如 `auto z = 4.0 + 3i` 的复数声明．
+C++14 and later define the [literal operators `std::literals::complex_literals::""if, ""i, ""il`](https://zh.cppreference.com/w/cpp/numeric/complex/operator%2522%2522i.html). For example, `100if`, `100i` and `100il` return `std::complex<float>{0.0f, 100.0f}`, `std::complex<double>{0.0, 100.0}` and `std::complex<long double>{0.0l, 100.0l}` respectively. This lets us conveniently write complex declarations like `auto z = 4.0 + 3i`.
 
-## 参考资料与链接
+## References and links
 
 -   [Complex number - Wikipedia](https://en.wikipedia.org/wiki/Complex_number)
 -   [Euler's formula - Wikipedia](https://en.wikipedia.org/wiki/Euler's_formula)
 -   [Complex number arithmetic - cppreference.com](https://en.cppreference.com/w/c/numeric/complex)
 -   [std::complex - cppreference.com](https://en.cppreference.com/w/cpp/numeric/complex)
 
-[^ref1]: 有关欧拉公式的更多介绍，可以参考两个视频：[欧拉公式与初等群论](https://www.bilibili.com/video/BV1fx41187tZ)、[微分方程概论 - 第五章：在 3.14 分钟内理解 $\mathrm{e}^{\mathrm{i}\pi}$](https://www.bilibili.com/video/BV1G4411D7kZ)．
+[^ref1]: For more on Euler's formula, see these two videos (in Chinese): [Euler's formula and introductory group theory](https://www.bilibili.com/video/BV1fx41187tZ), [Differential equations overview - Chapter 5: understanding $\mathrm{e}^{\mathrm{i}\pi}$ in 3.14 minutes](https://www.bilibili.com/video/BV1G4411D7kZ).

@@ -1,9 +1,9 @@
-本章介绍 OI 中可能会用到的数学知识．计算机科学与数学紧密相关，而在算法竞赛中尤其强调以数论、排列组合、概率期望、多项式为代表离散、具体的数学：其注重程序实现和现实问题，可以出现在几乎任何类别的题目中．
+This chapter covers the math you may need in OI. Computer science is closely tied to mathematics, and competitive programming puts special weight on discrete, concrete math such as number theory, combinatorics, probability and expected value, and polynomials. This kind of math focuses on implementation and on real problems, and it can show up in almost any kind of problem.
 
-实际上，算法竞赛中涉及到的算法和数据结构以及自动机等也可以被认为属于数学范畴，但是这些内容被细分到诸如字符串等的具体章节加以应用背景以更好理解．本章主要介绍数学中一些基础概念、代数、数论、博弈论及概率论等知识．运用这些知识可以帮助优化其他算法和数据结构，例如：
+In fact, the algorithms, data structures, automata and so on used in competitive programming could also be seen as part of mathematics. However, those topics are split into their own chapters, such as strings, where they come with application context that makes them easier to understand. This chapter mainly covers basic mathematical concepts, algebra, number theory, game theory, probability theory and similar topics. This knowledge can help you optimize other algorithms and data structures, for example:
 
--   用多项式优化卷积形式的背包，来做一些字符串题．
--   很多递推类型的题背景都是排列组合或概率期望，可以更进一步用生成函数推导和解决，以及使用基于 FFT 的分治优化算法效率．
--   利用同余和环分析图上非简单路径在模意义下可能的权值和，并用带权并查集维护．
+-   Use polynomials to speed up knapsack problems that have a convolution form, which helps with some string problems.
+-   Many recurrence problems are based on combinatorics or probability and expected value. You can go further and derive and solve them with generating functions, and use FFT-based divide and conquer to make the algorithm faster.
+-   Use congruences and rings to analyze which path weight sums (modulo some number) are possible for non-simple paths in a graph, and maintain them with a weighted DSU.
 
-此外，高中数学是信息学竞赛数学的基础，学好课本上的基本概念和性质能更好地帮助学习本章内容．
+Also, high school math is the foundation of math for informatics olympiads. Learning the basic concepts and properties from your textbooks well will make this chapter much easier to learn.

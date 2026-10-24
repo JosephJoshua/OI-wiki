@@ -1,102 +1,102 @@
 author: cutekibry, woruo27, tinjyu, 2008verser, Backl1ght, billchenchina, Enter-tainer, FFjet, Ir1d, Molmin, orzAtalod, ouuan, SaMiiKaaaa, SamZhangQingChuan, Tiphereth-A, chu-yuehan
 
-前置知识：[博弈论简介](./intro.md)
+Prerequisites: [Introduction to game theory](./intro.md)
 
-本文讨论 [公平组合游戏](./intro.md#公平组合博弈)．
+This article discusses [impartial games](./intro.md#公平组合博弈).
 
-公平组合游戏中，最基础也最重要的是正常 Nim 游戏．Sprague–Grundy 定理指出，所有正常规则的公平组合游戏都等价于一个单堆 Nim 游戏．由此，可以发展出 Sprague–Grundy 函数和 Nim 数的概念，它们完全地刻画了一个正常规则的公平组合游戏．因此，本文首先建立了正常 Nim 游戏的结论和 Sprague–Grundy 理论．随后，本文讨论了算法竞赛中常见的一些公平组合游戏．
+Among impartial games, the most basic and most important one is the normal Nim game. The Sprague–Grundy theorem says that every impartial game under the normal play rule is equivalent to a single-pile Nim game. From this we get the concepts of the Sprague–Grundy function and nimbers, which completely describe an impartial game under normal play. So this article first establishes the results for normal Nim and the Sprague–Grundy theory. After that, it discusses some impartial games that are common in competitive programming.
 
-最后，本文简单地讨论了反常 Nim 游戏．反常游戏相对于正常游戏来说要复杂得多，也很少在算法竞赛中出现．本文提到的游戏，如果没有特别说明，均默认为正常的公平组合游戏．
+Finally, this article briefly discusses misère Nim. Misère games are much more complicated than normal games, and they rarely appear in competitive programming. Unless stated otherwise, every game mentioned in this article is an impartial game under normal play.
 
-???+ info "「状态」、「局面」与「游戏」"
-    本文会交替地使用这三个词语．在博弈论中，游戏的状态（state）通常包括到游戏的某一时刻为止，所有可能与游戏有关的信息．在一般的情形下，游戏的状态通常包括双方玩家过往的行动、已经实现的随机变量值、双方已知信息的内容等．游戏的局面（position）相对来说并非博弈论的标准术语，通常指在游戏的某一时刻，双方玩家面对的局势，例如棋类游戏中各棋子的位置等．仅对于公平组合游戏（或更一般的零和、确定、完美信息游戏）而言，由于游戏不涉及随机性，且玩家未来的行动集合与收益函数均与到达当前局面的历史路径（即之前双方的行为）无关，所以，游戏的状态（state）和局面（position）没有区别，且都可以看作博弈图上的一个结点（node）．由于一个游戏（game）总是可以由它的初始局面描述，所以有时也会直接使用「局面」一词代指游戏本身．
+???+ info "'State', 'position' and 'game'"
+    This article uses these three words interchangeably. In game theory, the state of a game usually includes all information that may be relevant to the game up to a certain moment. In general, the state of a game usually includes the past moves of both players, the values of random variables that have already been revealed, what each player knows, and so on. The position of a game is, relatively speaking, not a standard term in game theory. It usually means the situation the players face at a certain moment, such as where the pieces are in a board game. Only for impartial games (or more generally, zero-sum deterministic games with perfect information) is there no difference between state and position: these games have no randomness, and the players' future move sets and payoff functions do not depend on the history (that is, the earlier moves of both players) that led to the current position. Both can then be seen as a node in the game graph. Since a game can always be described by its initial position, the word "position" is sometimes used to refer to the game itself.
 
-## Nim 游戏
+## Nim
 
-Nim 游戏的规则很简单：
+The rules of Nim are simple:
 
-???+ abstract "Nim 游戏"
-    共有 $n$ 堆石子，第 $i$ 堆有 $a_i$ 枚石子．两名玩家轮流取走任意一堆中的任意多枚石子，但不能不取．取走最后一枚石子的玩家获胜．
+???+ abstract "Nim"
+    There are $n$ piles of stones, and pile $i$ has $a_i$ stones. Two players take turns. On each turn, a player removes any positive number of stones from any one pile; they may not take nothing. The player who takes the last stone wins.
 
-容易验证，Nim 游戏是正常规则的公平组合游戏．
+It is easy to check that Nim is an impartial game under normal play.
 
-???+ example "例子"
-    举个例子．当前，有 $3$ 堆石子，石子的数量分别为 $2,5,4$．那么，可以取走第 $1$ 堆中的 $2$ 枚石子，局面就变成了 $0, 5, 4$；也可以取走第 $2$ 堆的 $4$ 枚石子，局面就变成了 $2, 1, 4$．如果某一时刻的局面变为了 $0, 0, 5$，且轮到玩家甲行动，那么甲可以取走第 $3$ 堆的 $5$ 枚石子，也就是取走最后一枚石子，此时甲获胜．
+???+ example "Example"
+    Here is an example. Suppose there are $3$ piles with $2,5,4$ stones. One possible move is to take the $2$ stones from pile $1$, giving the position $0, 5, 4$; another is to take $4$ stones from pile $2$, giving the position $2, 1, 4$. If at some point the position becomes $0, 0, 5$ and it is player A's turn, then A can take all $5$ stones from pile $3$. That takes the last stone, so A wins.
 
-### 博弈图和状态
+### Game graphs and states
 
-Nim 游戏中，局面可能的变化可以用博弈图来描述．
+In Nim, the possible changes of position can be described with a game graph.
 
-将每一个可能的状态都看作是图中的一个结点，并将状态向它的后继状态（即通过一次操作可以达到的状态）连边，就得到一个有向无环图，这就是博弈图．图是无环的，因为 Nim 游戏中，每次操作，石子的总数量都是严格减少的．
+Treat every possible state as a node of a graph, and add an edge from each state to each of its successor states (states reachable with one move). This gives a directed acyclic graph, called the game graph. The graph is acyclic because in Nim the total number of stones strictly decreases with every move.
 
-???+ example "例子"
-    例如，对于初始局面有 $3$ 堆石子，且每堆石子的数量分别为 $1,1,2$ 的 Nim 游戏，可以绘制如下的博弈图：
+???+ example "Example"
+    For example, for a Nim game whose initial position has $3$ piles with $1,1,2$ stones, we can draw the following game graph:
     
-    ![博弈图的例子](./images/nim.svg)
+    ![Example of a game graph](./images/nim.svg)
     
-    马上就会提到，图中的红色结点表示必胜状态，黑色结点表示必败状态．
+    As we will explain shortly, red nodes in the graph are winning states and black nodes are losing states.
 
-由于 Nim 游戏是公平组合游戏，每个玩家是否有必胜策略，只取决于当前游戏所处的状态，而与玩家的身份无关．因此，所有状态可以分为（先手）**必胜状态** 和（先手）**必败状态**，分别记为 $\mathcal N$ 态和 $\mathcal P$ 态[^n-vs-p]．这个定义适用于所有公平组合游戏．
+Since Nim is an impartial game, whether a player has a winning strategy depends only on the current state of the game, not on who the player is. So all states can be divided into (first-player) **winning states** and (first-player) **losing states**, written as $\mathcal N$-positions and $\mathcal P$-positions respectively[^n-vs-p]. This definition applies to all impartial games.
 
-通过下述引理，可以归纳地将所有状态标记为必胜状态和必败状态：
+Using the following lemma, we can label every state as winning or losing by induction:
 
-???+ note "引理"
-    正常规则的公平组合游戏中，
+???+ note "Lemma"
+    In an impartial game under normal play,
     
-    1.  没有后继状态的状态是必败状态 $\mathcal P$，
-    2.  一个状态是必胜状态 $\mathcal N$ 当且仅当存在至少一个它的后继状态为必败状态 $\mathcal P$，
-    3.  一个状态是必败状态 $\mathcal P$ 当且仅当它的所有后继状态均为必胜状态 $\mathcal N$．
+    1.  A state with no successor states is a losing state $\mathcal P$,
+    2.  A state is a winning state $\mathcal N$ if and only if at least one of its successors is a losing state $\mathcal P$,
+    3.  A state is a losing state $\mathcal P$ if and only if all of its successors are winning states $\mathcal N$.
 
-??? note "证明"
-    对于第一条，如果玩家当前已经没有可选的行动，那么玩家已经输掉了游戏．
+??? note "Proof"
+    For the first point: if the player to move has no available moves, they have already lost the game.
     
-    对于第二条，如果该状态至少有一个后继状态为必败状态，那么玩家可以操作到该必败状态；此时，对手面临了先手必败状态，玩家自己就获得了胜利．
+    For the second point: if the state has at least one losing successor, the player can move to that losing state. The opponent then faces a state that is losing for the player to move, so the player wins.
     
-    对于第三条，如果不存在一个后继状态为必败状态，那么无论如何，玩家只能操作到必胜状态；此时，对手面临了先手必胜状态，玩家自己就输掉了游戏．
+    For the third point: if no successor is a losing state, then whatever the player does, they can only move to a winning state. The opponent then faces a state that is winning for the player to move, so the player loses.
 
-所有公平组合游戏中，博弈图都是有向无环图．所以，通过这三条性质，可以在绘制出博弈图后，在 $O(|V|+|E|)$ 的时间内，计算出每个状态是必胜状态还是必败状态．其中，$|V|$ 为博弈图的状态数目，$|E|$ 为边数，即所有状态可以采取的行动的数量的总和．
+In every impartial game, the game graph is a directed acyclic graph. So with these three properties, once the game graph is drawn, we can determine whether each state is winning or losing in $O(|V|+|E|)$ time. Here $|V|$ is the number of states in the game graph and $|E|$ is the number of edges, that is, the total number of moves available over all states.
 
-这一引理可以推广到反常游戏和有向图可能有环的情形．相关讨论详见 [有向图游戏](#有向图游戏) 一节．
+This lemma can be extended to misère games and to directed graphs that may contain cycles. See the section [Directed graph games](#directed-graph-games) for details.
 
-### Nim 和
+### Nim sum
 
-继续考察 Nim 游戏．
+Let us continue with Nim.
 
-通过绘制博弈图，可以求出某一局面是否是先手必胜．但是，这样做需要 $\Omega(\prod_{i=1}^n(a_i+1))$ 的时间，复杂度过高，无法实际应用．实际上，可以发现 Nim 游戏的状态是否先手必胜，只与当前局面的石子数目的 Nim 和有关．
+By drawing the game graph, we can find out whether a position is a first-player win. But this takes $\Omega(\prod_{i=1}^n(a_i+1))$ time, which is far too slow to be practical. In fact, whether a Nim state is a first-player win depends only on the Nim sum of the pile sizes in the current position.
 
-???+ abstract "Nim 和"
-    自然数 $a_1,a_2,\cdots,a_n$ 的 **Nim 和**（Nim sum）定义为 $a_1\oplus a_2\oplus\cdots\oplus a_n$．
+???+ abstract "Nim sum"
+    The **Nim sum** of natural numbers $a_1,a_2,\cdots,a_n$ is defined as $a_1\oplus a_2\oplus\cdots\oplus a_n$.
 
-所谓 Nim 和，就是 [异或运算](../bit.md#位运算)．
+The Nim sum is just the [XOR operation](../bit.md#位运算).
 
-???+ note "定理"
-    Nim 游戏中，状态 $(a_1,a_2,\cdots,a_n)$ 是必败状态 $\mathcal P$，当且仅当 Nim 和
+???+ note "Theorem"
+    In Nim, the state $(a_1,a_2,\cdots,a_n)$ is a losing state $\mathcal P$ if and only if the Nim sum
     
     $$
     a_1\oplus a_2\oplus\cdots\oplus a_n = 0.
     $$
 
-??? note "证明"
-    对所有可能的状态应用归纳法：
+??? note "Proof"
+    Apply induction over all possible states:
     
-    1.  如果 $a_i=0$ 对所有 $i=1,\cdots,n$ 都成立，该状态没有后继状态，且 Nim 和等于 $0$，命题成立．
-    2.  如果 $k = a_1\oplus a_2\oplus\cdots\oplus a_n\neq 0$，那么，需要证明该状态是必胜状态．也就是说，需要构造一个合法移动，使得后继状态为必败状态；由归纳假设，只需要证明后继状态满足 $a'_1\oplus a'_2\oplus\cdots\oplus a'_n=0$．利用 Nim 和（即异或）的性质，这等价于说，存在第 $i$ 堆石子，从中拿走若干枚石子后，数量可以变为 $a_i\oplus k$，亦即 $a_i>a_i\oplus k$．
+    1.  If $a_i=0$ for all $i=1,\cdots,n$, the state has no successors and the Nim sum is $0$, so the claim holds.
+    2.  If $k = a_1\oplus a_2\oplus\cdots\oplus a_n\neq 0$, we need to prove that the state is winning. That is, we need to construct a legal move whose successor is a losing state. By the induction hypothesis, it is enough to show that the successor satisfies $a'_1\oplus a'_2\oplus\cdots\oplus a'_n=0$. Using properties of the Nim sum (XOR), this is the same as saying that there is some pile $i$ from which we can remove stones so that it has $a_i\oplus k$ stones left, that is, $a_i>a_i\oplus k$.
     
-        实际上，设 $k$ 的二进制表示中，最高位的 $1$ 是第 $d$ 位．那么，一定存在某个 $a_i$，使得它的二进制第 $d$ 位是 $1$．对于相应的石子堆，就一定有 $a_i>a_i\oplus k$，因为 $a_i\oplus k$ 中第 $d$ 位为 $0$，更高位和 $a_i$ 一样．
-    3.  如果 $a_1\oplus a_2\oplus\cdots\oplus a_n= 0$，那么，需要证明该状态是必败状态．由归纳假设可知，只要证明它的所有后继状态的 Nim 和都不是 $0$．这是必然的，任何合法移动将 $a_i$ 变为 $a'_i\neq a_i$，就必然会使得 Nim 和变为 $a'_i\oplus a_i\neq 0$．
+        Indeed, let the highest $1$ bit in the binary representation of $k$ be bit $d$. Then there must be some $a_i$ whose bit $d$ is $1$. For that pile, $a_i>a_i\oplus k$ must hold, because bit $d$ of $a_i\oplus k$ is $0$ and all higher bits are the same as in $a_i$.
+    3.  If $a_1\oplus a_2\oplus\cdots\oplus a_n= 0$, we need to prove that the state is losing. By the induction hypothesis, it is enough to show that no successor has Nim sum $0$. This must be true: any legal move changes some $a_i$ to $a'_i\neq a_i$, which changes the Nim sum to $a'_i\oplus a_i\neq 0$.
 
-由此，可以在 $O(n)$ 时间内判断 Nim 游戏的一个状态是否为先手必胜状态．
+So we can decide in $O(n)$ time whether a Nim state is a first-player win.
 
-## Sprague–Grundy 理论
+## Sprague–Grundy theory
 
-Sprague–Grundy 理论指出，所有正常规则的公平组合游戏都等价于单堆 Nim 游戏．这一结论主要应用的场景，就是游戏由多个相互独立的子游戏组成的情形．此时，游戏的状态判定可以通过计算子游戏的 SG 函数值的 Nim 和来完成．如果游戏本身没有这样的结构，那么，判定必胜状态和必败状态只需要应用前文 [博弈图](#博弈图和状态) 一节的引理．
+Sprague–Grundy theory says that every impartial game under normal play is equivalent to a single-pile Nim game. This result is mainly used when a game is made of several independent subgames. Then we can decide the state of the whole game by computing the Nim sum of the SG values of the subgames. If the game has no such structure, deciding winning and losing states only needs the lemma from the [game graph](#game-graphs-and-states) section above.
 
-### 游戏的记法
+### Notation for games
 
-前文已经说明，所有公平组合游戏都可以通过绘制博弈图来描述．由于博弈图中，每个状态的性质只由它的后继状态决定，所以，可以将博弈图中的一个状态 $S$ 用它的后继状态的集合来表示．
+As explained above, every impartial game can be described by drawing its game graph. In a game graph, the nature of each state is determined only by its successors, so we can represent a state $S$ in the game graph by the set of its successor states.
 
-???+ example "例子（续）"
-    以上文的博弈图为例，可以得到如下状态表示：
+???+ example "Example (continued)"
+    Using the game graph above as an example, we get the following representations of the states:
     
     $$
     \begin{aligned}
@@ -109,20 +109,20 @@ Sprague–Grundy 理论指出，所有正常规则的公平组合游戏都等价
     \end{aligned}
     $$
     
-    其中，$S_{0,1,0}=S_{0,0,1}$．
+    Here $S_{0,1,0}=S_{0,0,1}$.
 
-一个游戏可以用它的初始状态表示．
+A game can be represented by its initial state.
 
-尽管公平游戏的表示可能相当复杂，单堆 Nim 游戏相对来说简单很多．只有一堆石子，石子数量为 $n$ 时，它可以表示为
+Although the representation of an impartial game can be quite complicated, single-pile Nim is much simpler. With just one pile of $n$ stones, it can be written as
 
 $$
 *0 = \{\},~*n = \{*m : m<n,~m\in\mathbf N\} = \{*0,*1,\cdots,*(n-1)\}.
 $$
 
-其中，记号 $*n$ 表示石子数量为 $n$ 时的单堆 Nim 游戏（的初始状态）．
+Here the notation $*n$ means (the initial state of) single-pile Nim with $n$ stones.
 
-???+ example "例子（续）"
-    利用这一记号，上面的例子中的状态可以简单地表示为
+???+ example "Example (continued)"
+    With this notation, the states in the example above can be written simply as
     
     $$
     S_{0,0,0} = *0,~
@@ -132,136 +132,136 @@ $$
     S_{0,1,2} = \{*1, *2, \{*1\}\}.
     $$
 
-在随后的讨论中，记号 $T\in S$ 应当理解为状态 $T$ 是状态 $S$ 的后继状态．
+In what follows, the notation $T\in S$ means that state $T$ is a successor of state $S$.
 
-### 游戏的和与等价
+### Sums of games and equivalence
 
-游戏的等价关系，依赖于游戏的和[^more-sums]的概念．
+Equivalence of games is built on the concept of the sum of games[^more-sums].
 
-???+ note "游戏的和"
-    游戏 $G$ 和 $H$ 的 **和**（sum），或称 **游戏组合**（combined game），记作 $G+H$，是指游戏
+???+ note "Sum of games"
+    The **sum** of games $G$ and $H$, also called the **combined game**, is written $G+H$ and is the game
     
     $$
     G + H = \{g + H : g \in G\} \cup \{G + h : h \in H\}.
     $$
 
-游戏的和，可以理解为由两个同时进行且互不干扰的子游戏组成的游戏，玩家在每一步能且只能选择其中一个子游戏移动一步，且游戏在两个子游戏都无法移动时结束．游戏的和的概念，可以推广到任意多个游戏的情形，且满足结合律和交换律——也就是说，多个游戏组合的结果，和组合进行的次序以及游戏的顺序都无关．Nim 游戏就是多个单堆 Nim 游戏的和．
+You can think of the sum of games as a game made of two subgames played side by side without affecting each other. On each turn, a player must choose exactly one of the subgames and make one move in it. The game ends when neither subgame has a move left. The sum extends to any number of games, and it is associative and commutative; that is, the result of combining several games does not depend on the order in which they are combined or listed. Nim is exactly the sum of several single-pile Nim games.
 
-一个观察是，尽管单堆 Nim 游戏中，除了没有石子的情形，都是先手必胜状态，但是这些不同的单堆 Nim 游戏在和其他的单堆 Nim 游戏组合起来时，得到的游戏并不相同．比如，游戏 $*n$ 只有在和另一个 $*n$ 组合时，才能得到一个必败游戏；和所有其他的单堆 Nim 游戏 $*n'\neq *n$ 组合，得到的游戏都是必胜游戏．
+One observation: in single-pile Nim, every state except the empty pile is a first-player win. Yet different single-pile Nim games give different results when combined with other single-pile Nim games. For example, the game $*n$ gives a losing game only when combined with another $*n$; combining it with any other single-pile Nim game $*n'\neq *n$ always gives a winning game.
 
-这个观察带来的启示是，可以通过考察与其他游戏的和来研究某个游戏的性质．这就引出了游戏的等价的概念．
+This observation suggests that we can study a game by looking at its sums with other games. This leads to the concept of equivalence of games.
 
-???+ abstract "游戏的等价关系"
-    如果对于所有游戏 $H$，游戏 $G_1+H$ 和 $G_2+H$ 都同处于必败状态或必胜状态，那么，称游戏 $G_1$ 和 $G_2$  **等价**（equivalent），记作 $G_1\approx G_2$．
+???+ abstract "Equivalence of games"
+    If for every game $H$, the games $G_1+H$ and $G_2+H$ are both losing or both winning, then games $G_1$ and $G_2$ are called **equivalent**, written $G_1\approx G_2$.
 
-容易验证，这样定义的 $\approx$ 确实是全体公平游戏上的 [等价关系](../order-theory.md#二元关系)．
+It is easy to check that $\approx$ defined this way is indeed an [equivalence relation](../order-theory.md#二元关系) on all impartial games.
 
-### Sprague–Grundy 函数
+### Sprague–Grundy function
 
-对 Nim 游戏的分析说明，不同的单堆 Nim 游戏互不等价．但是，所有的公平游戏都等价于某个单堆 Nim 游戏．由此，可以给每个公平游戏都分配一个数字，这就是 Sprague–Grundy 函数．
+The analysis of Nim shows that different single-pile Nim games are not equivalent to each other. However, every impartial game is equivalent to some single-pile Nim game. So we can assign a number to every impartial game. This is the Sprague–Grundy function.
 
-为了证明这些结论，首先需要建立关于游戏等价关系的两个引理．第一，将必败游戏和任何游戏组合到一起，都和原来的游戏等价．
+To prove these results, we first need two lemmas about game equivalence. First, combining any game with a losing game gives a game equivalent to the original.
 
-???+ note "引理 1"
-    对于游戏 $G$ 和任何必败游戏 $A\in\mathcal P$，都有 $G\approx G + A$．
+???+ note "Lemma 1"
+    For any game $G$ and any losing game $A\in\mathcal P$, we have $G\approx G + A$.
 
-??? note "证明"
-    按照定义，只需要证明对于任何游戏 $H$，游戏 $G+H$ 和 $G+A+H$ 都同处于必败状态或必胜状态．
+??? note "Proof"
+    By definition, we only need to prove that for every game $H$, the games $G+H$ and $G+A+H$ are both losing or both winning.
     
-    如果游戏 $G+H$ 有必胜策略，那么，游戏 $G+A+H$ 也有必胜策略．如果对手在子游戏 $A$ 中进行了移动，就在子游戏 $A$ 中进行移动，将它恢复至必败状态；否则，按照游戏 $G+H$ 中的必胜策略移动．这样一定能保证最终的胜利．
+    If the game $G+H$ has a winning strategy, then so does $G+A+H$. If the opponent moves in the subgame $A$, move in subgame $A$ too, restoring it to a losing state; otherwise, follow the winning strategy for $G+H$. This guarantees the final win.
     
-    如果游戏 $G+H$ 是必败游戏，那么，游戏 $G+A+H$ 也同样是必败游戏．因为无论这一回合进行的是子游戏 $G+H$ 还是子游戏 $A$ 中的移动，对手都可以在下一回合将相应子游戏恢复至必败状态．最终，先手玩家一定无法获胜．
+    If the game $G+H$ is a losing game, then $G+A+H$ is also a losing game. No matter whether a move this turn is made in the subgame $G+H$ or in the subgame $A$, the opponent can restore that subgame to a losing state on the next turn. In the end, the first player cannot win.
 
-第二，两个游戏等价，当且仅当它们的和是必败游戏．这一引理提供了证明两个游戏等价的方法．
+Second, two games are equivalent if and only if their sum is a losing game. This lemma gives a way to prove that two games are equivalent.
 
-???+ note "引理 2"
-    游戏 $G$ 和 $G'$ 等价，当且仅当 $G+G'\in\mathcal P$ 是必败游戏．
+???+ note "Lemma 2"
+    Games $G$ and $G'$ are equivalent if and only if $G+G'\in\mathcal P$ is a losing game.
 
-??? note "证明"
-    如果游戏 $G$ 和 $G'$ 等价，那么，$G+G'$ 与 $G+G$ 同时必胜或同时必败，而游戏 $G+G$ 是必败游戏．这是因为，对于先手玩家的任何操作，后手玩家都可以在另一个子游戏中采取相同的行动，最后一定是先手玩家无法移动．
+??? note "Proof"
+    If games $G$ and $G'$ are equivalent, then $G+G'$ and $G+G$ are both winning or both losing, and the game $G+G$ is a losing game. This is because for any move by the first player, the second player can make the same move in the other subgame, so in the end it is the first player who cannot move.
     
-    反过来，如果 $G+G'$ 是必败游戏，那么，由引理 1 可知，$G\approx G+(G+G') = (G+G)+G' \approx G'$．
+    Conversely, if $G+G'$ is a losing game, then by Lemma 1, $G\approx G+(G+G') = (G+G)+G' \approx G'$.
 
-利用这些引理，可以得到如下定理：
+Using these lemmas, we get the following theorem:
 
-???+ note "定理（Sprague–Grundy）"
-    对于任何一个（有限）公平游戏 $G$，都存在 $n\in\mathbf N$，使得 $G\approx *n$ 成立．
+???+ note "Theorem (Sprague–Grundy)"
+    For every (finite) impartial game $G$, there exists $n\in\mathbf N$ such that $G\approx *n$.
 
-??? note "证明"
-    要证明定理的结论，可以应用数学归纳法．设游戏 $G = \{G_1,G_2,\cdots,G_k\}$．根据归纳假设可知，存在 $n_1,n_2,\cdots,n_k$ 使得 $G_i\approx *n_i$，那么，可以考察游戏
+??? note "Proof"
+    We prove the theorem by mathematical induction. Let the game be $G = \{G_1,G_2,\cdots,G_k\}$. By the induction hypothesis, there exist $n_1,n_2,\cdots,n_k$ such that $G_i\approx *n_i$. Consider the game
     
     $$
     G' = \{*n_1,*n_2,\cdots,*n_k\}.
     $$
     
-    将要证明的是，$G'\approx *m$，其中，$m=\operatorname{mex}\{n_1,n_2,\cdots,n_k\}$ 是没有出现在集合中的最小自然数．
+    We will prove that $G'\approx *m$, where $m=\operatorname{mex}\{n_1,n_2,\cdots,n_k\}$ is the smallest natural number not in the set.
     
-    第一步，需要说明 $G\approx G'$．根据引理 2，只需要证明游戏 $G+G'$ 是必败游戏．不妨假设 $G\neq *0$．如果先手玩家选择 $G_i$，那么后手玩家就可以选择 $*n_i$；反过来，如果先手玩家选择了 $*n_i$，后手玩家就可以选择 $G_i$．总之，在这两步操作后，游戏变为 $G_i+*n_i$，根据引理 2 和 $G_i\approx *n_i$，这是必败游戏．这就证明了 $G\approx G'$．
+    Step one: show that $G\approx G'$. By Lemma 2, it is enough to show that the game $G+G'$ is a losing game. Assume without loss of generality that $G\neq *0$. If the first player chooses $G_i$, the second player can choose $*n_i$; conversely, if the first player chooses $*n_i$, the second player can choose $G_i$. Either way, after these two moves the game becomes $G_i+*n_i$, which by Lemma 2 and $G_i\approx *n_i$ is a losing game. This proves $G\approx G'$.
     
-    第二步，需要说明 $G'\approx*m$．根据引理 2，只需要证明 $G'+*m$ 是必败游戏．不妨假设 $G'\neq *0$．如果先手玩家选择了 $*n_i\in *m$，那么根据 $m$ 的定义，后手玩家就可以选择 $*n_i\in G'$，将游戏局面变为 $*n_i + *n_i\in\mathcal P$，先手必败．如果先手玩家选择了 $*n_i\in G'$ 且 $n_i<m$，那么，后手玩家可以选择 $*n_i\in *m$，游戏局面同样变为 $*n_i+*n_i\in\mathcal P$，先手必败．最后，如果先手玩家选择了 $*n_i\in G'$ 且 $n_i>m$，那么，后手玩家可以选择 $*m\in *n_i$，游戏局面变为 $*m+*m\in\mathcal P$，先手必败．这就证明了 $G'\approx *m$．
+    Step two: show that $G'\approx*m$. By Lemma 2, it is enough to show that $G'+*m$ is a losing game. Assume without loss of generality that $G'\neq *0$. If the first player chooses $*n_i\in *m$, then by the definition of $m$, the second player can choose $*n_i\in G'$, turning the position into $*n_i + *n_i\in\mathcal P$, so the first player loses. If the first player chooses $*n_i\in G'$ with $n_i<m$, the second player can choose $*n_i\in *m$, and again the position becomes $*n_i+*n_i\in\mathcal P$, so the first player loses. Finally, if the first player chooses $*n_i\in G'$ with $n_i>m$, the second player can choose $*m\in *n_i$, turning the position into $*m+*m\in\mathcal P$, so the first player loses. This proves $G'\approx *m$.
     
-    由等价关系的传递性可知，$G\approx *m$．这就完成了归纳，证明所有游戏 $G$ 都等价于一个单堆 Nim 游戏．
+    By transitivity of the equivalence relation, $G\approx *m$. This completes the induction and proves that every game $G$ is equivalent to a single-pile Nim game.
 
-这一结论说明，可以为每一个公平游戏 $G$ 都分配一个自然数 $n$，使得 $G\approx *n$．
+This result shows that we can assign to every impartial game $G$ a natural number $n$ such that $G\approx *n$.
 
-???+ abstract "Nim 数"
-    一个公平游戏 $G$ 对应的 **Nim 数**（nimber）就是使得 $G\approx *n$ 成立的唯一自然数 $n$．
+???+ abstract "Nimber"
+    The **nimber** of an impartial game $G$ is the unique natural number $n$ such that $G\approx *n$.
 
-这个将公平游戏映射到 Nim 数的函数称为 **Sprague–Grundy 函数**（Sprague–Grundy function），简称 **SG 函数**，记作 $\operatorname{SG}(\cdot)$．由于每个公平游戏的状态都是另一个公平游戏，所以，对于公平游戏的每一个状态都可以计算相应的 Nim 数，也称为相应的 SG 函数值．
+The function that maps impartial games to nimbers is called the **Sprague–Grundy function**, or **SG function** for short, written $\operatorname{SG}(\cdot)$. Since every state of an impartial game is itself another impartial game, we can compute the nimber of each state of an impartial game, also called its SG value.
 
-根据本节定理的证明过程可知，Sprague–Grundy 函数可以递归地计算如下：
+From the proof of the theorem in this section, the Sprague–Grundy function can be computed recursively as follows:
 
-???+ note "推论"
-    公平游戏 $G$ 中的一个状态 $x$ 对应的 Sprague–Grundy 函数值 $\operatorname{SG}(x)$ 满足
+???+ note "Corollary"
+    The Sprague–Grundy value $\operatorname{SG}(x)$ of a state $x$ in an impartial game $G$ satisfies
     
     $$
     \operatorname{SG}(x) = \operatorname{mex}\{\operatorname{SG}(x'): x'\in x\}.
     $$
     
-    其中，$\operatorname{mex}(A):=\min\{n\in\mathbf N:n\notin A\}$ 是没有出现在集合 $A$ 中的最小自然数．
+    Here $\operatorname{mex}(A):=\min\{n\in\mathbf N:n\notin A\}$ is the smallest natural number not in the set $A$.
 
-也就是说，一个状态的 SG 函数值，等于它的所有后继状态的 SG 函数值的 $\operatorname{mex}$ 值．
+In other words, the SG value of a state equals the $\operatorname{mex}$ of the SG values of all its successor states.
 
-利用 SG 函数值（即 Nim 数），可以判断一个状态是否为先手必胜状态．
+Using SG values (nimbers), we can decide whether a state is a first-player win.
 
-???+ note "推论"
-    公平游戏 $G$ 中的一个状态 $x$ 是先手必胜状态，当且仅当 $\operatorname{SG}(x)\neq 0$．
+???+ note "Corollary"
+    A state $x$ in an impartial game $G$ is a first-player win if and only if $\operatorname{SG}(x)\neq 0$.
 
-最后，游戏的和的 SG 函数值，就是子游戏的 SG 函数值的 Nim 和（即异或）．
+Finally, the SG value of a sum of games is the Nim sum (XOR) of the SG values of the subgames.
 
-???+ note "定理（Sprague–Grundy）"
-    对于公平游戏 $G_1,G_2,\cdots,G_n$，有
+???+ note "Theorem (Sprague–Grundy)"
+    For impartial games $G_1,G_2,\cdots,G_n$,
     
     $$
     \operatorname{SG}(G_1+ G_2+\cdots + G_n) = \operatorname{SG}(G_1)\oplus \operatorname{SG}(G_2)\oplus\cdots\oplus\operatorname{SG}(G_n).
     $$
 
-??? note "证明"
-    因为 $*a_1+ *a_2 + \cdots + *a_n$ 就是石子数量为 $(a_1,a_2,\cdots,a_n)$ 的 Nim 游戏，所以，根据 Nim 游戏的结论可知，游戏
+??? note "Proof"
+    Since $*a_1+ *a_2 + \cdots + *a_n$ is exactly Nim with pile sizes $(a_1,a_2,\cdots,a_n)$, the result for Nim tells us that the game
     
     $$
     *a_1+ *a_2 + \cdots + *a_n + *(a_1\oplus a_2\oplus\cdots\oplus a_n)
     $$
     
-    是先手必败的．根据引理 2，有
+    is a first-player loss. By Lemma 2,
     
     $$
     *a_1+ *a_2 + \cdots + *a_n \approx *(a_1\oplus a_2\oplus\cdots\oplus a_n).
     $$
     
-    所以，有
+    Therefore,
     
     $$
     \operatorname{SG}(*a_1 + *a_2 + \cdots + *a_n) = a_1\oplus a_2\oplus\cdots\oplus a_n.
     $$
     
-    设 $a_i=\operatorname{SG}(G_i)$，就有 $G_i\approx *a_i$，那么，利用 $\approx$ 的代数性质，有
+    Let $a_i=\operatorname{SG}(G_i)$, so that $G_i\approx *a_i$. Then, using the algebraic properties of $\approx$,
     
     $$
     (G_1+ G_2+\cdots + G_n) + (*a_1 + *a_2 + \cdots + *a_n) = \sum_{i=1}^n(G_i+*a_i) \in\mathcal P.
     $$
     
-    所以，就有
+    So
     
     $$
     \begin{aligned}
@@ -271,282 +271,282 @@ $$
     \end{aligned}
     $$
 
-利用这一定理，在计算游戏的和的 SG 函数值时，可以大幅简化计算．
+With this theorem, computing the SG value of a sum of games becomes much simpler.
 
-由此，可以总结出 SG 函数值的计算方法：
+To sum up, SG values are computed as follows:
 
--   对于多个独立的游戏，可以分别计算它们的 SG 函数值，再求 Nim 和；
--   对于单个游戏，每个状态的 SG 函数值都是它的所有后继状态的 SG 函数值的 $\operatorname{mex}$ 值；
--   特别地，终止状态（即没有后继状态的状态）的 SG 函数值为 $\operatorname{mex}\varnothing = 0$．
+-   For several independent games, compute the SG value of each one separately, then take their Nim sum;
+-   Within a single game, the SG value of each state is the $\operatorname{mex}$ of the SG values of all its successor states;
+-   In particular, the SG value of a terminal state (a state with no successors) is $\operatorname{mex}\varnothing = 0$.
 
-### Nim 数
+### Nimbers
 
-所有的公平游戏都唯一对应一个 Nim 数．（有限）Nim 数的集合就是自然数集 $\mathbf N$．但是，它的代数性质和自然数集不同．具体来说，Nim 数上可以定义 Nim 和 $\oplus$、Nim 积 $\otimes$ 两种运算：
+Every impartial game corresponds to exactly one nimber. The set of (finite) nimbers is the set of natural numbers $\mathbf N$. However, its algebraic properties are different from those of the natural numbers. Specifically, two operations can be defined on nimbers: the Nim sum $\oplus$ and the Nim product $\otimes$:
 
-???+ abstract "Nim 数的运算"
-    对于 Nim 数 $a,b$，可以定义：
+???+ abstract "Operations on nimbers"
+    For nimbers $a,b$, define:
     
-    -   Nim 和 $a\oplus b=\operatorname{mex}(\{a'\oplus b:a'<a,~a'\in\mathbf N\}\cup\{a\oplus b':b'<b,~b'\in\mathbf N\})$，
-    -   Nim 积 $a\otimes b=\operatorname{mex}(\{(a'\otimes b)\oplus(a\otimes b')\oplus(a'\otimes b'):a'<a,~b'<b,~a',b'\in\mathbf N\})$．
+    -   The Nim sum $a\oplus b=\operatorname{mex}(\{a'\oplus b:a'<a,~a'\in\mathbf N\}\cup\{a\oplus b':b'<b,~b'\in\mathbf N\})$,
+    -   The Nim product $a\otimes b=\operatorname{mex}(\{(a'\otimes b)\oplus(a\otimes b')\oplus(a'\otimes b'):a'<a,~b'<b,~a',b'\in\mathbf N\})$.
 
-全体 Nim 数在运算 $\oplus$ 和 $\otimes$ 下构成一个特征为 $2$ 的 [域](../algebra/basic.md#域)．而且，这些运算以及它们的逆运算，对于前 $2^{2^n}$ 个 Nim 数是封闭的；这就得到一系列大小为 $2^{2^n}$ 的 [有限域](../algebra/field-theory.md#有限域) $\mathbf F_{2^{2^n}}$．
+Under $\oplus$ and $\otimes$, the nimbers form a [field](../algebra/basic.md#域) of characteristic $2$. Moreover, these operations and their inverses are closed on the first $2^{2^n}$ nimbers; this gives a series of [finite fields](../algebra/field-theory.md#有限域) $\mathbf F_{2^{2^n}}$ of size $2^{2^n}$.
 
-## 常见的公平游戏
+## Common impartial games
 
-尽管 Sprague–Grundy 理论完全解决了公平游戏的问题，但是，处理实际的公平游戏时，直接应用 Sprague–Grundy 定理计算效率仍然不高．比如，Nim 游戏中，暴力计算 Sprague–Grundy 值的复杂度是指数级的．因此，往往需要通过打表的方式猜测具体的公平游戏的结论．
+Although Sprague–Grundy theory completely solves impartial games in principle, applying the Sprague–Grundy theorem directly to real impartial games is often still slow. For example, computing Sprague–Grundy values of Nim by brute force takes exponential time. So in practice we often guess the result for a specific impartial game by printing a table of small cases.
 
-本节列举了一些常见的公平游戏及其结论．叙述结论时，本节只给出了必胜和必败状态的判断法则．至于必胜策略，就是进行恰当的操作，使得留给对手的局面恰好为必败状态．由于算法竞赛中经常出现这些游戏的变体，所以，掌握每个游戏的结论的证明过程也很重要．
+This section lists some common impartial games and their results. For each result, we only give the rule that tells winning states from losing states. As for the winning strategy, it is to make a suitable move that leaves the opponent in a losing state. Since variants of these games often appear in competitive programming, it is also important to understand the proof of each result.
 
-???+ info "本节结论的证明方法"
-    本节结论的证明都是验证性的．对于一个游戏，结论中会描述它的先手必败状态和先手必胜状态．证明中，只需要验证从一个先手必败状态出发，只能得到先手必胜状态；而从先手必胜状态出发，总能得到至少一个先手必败状态．要将这些证明改写为严格的证明，需要建立博弈图，然后对博弈图上的状态应用数学归纳法，而这些验证的步骤就是其中的归纳部分．
+???+ info "How the results in this section are proved"
+    The proofs in this section are all verifications. For each game, the result describes its first-player losing states and first-player winning states. The proof only needs to check that from a losing state, every move leads to a winning state, and that from a winning state, at least one move leads to a losing state. To turn these into rigorous proofs, you would build the game graph and apply induction over its states; these verification steps are exactly the inductive step.
 
-### Bachet 游戏
+### Bachet's game
 
-相较于单堆 Nim 游戏，Bachet 游戏限制了每次可以取走的石子的数量．
+Compared with single-pile Nim, Bachet's game limits how many stones can be taken at a time.
 
-???+ abstract "Bachet 游戏"
-    有一堆石子，共计 $n$ 枚．两名玩家轮流取走至少 $1$ 枚、至多 $k$ 枚石子．取走最后一枚石子的玩家获胜．
+???+ abstract "Bachet's game"
+    There is one pile of $n$ stones. Two players take turns removing at least $1$ and at most $k$ stones. The player who takes the last stone wins.
 
-对此，有如下结论：
+The result is:
 
-???+ note "定理"
-    游戏先手必败，当且仅当 $n\equiv 0\pmod {k+1}$．
+???+ note "Theorem"
+    The first player loses if and only if $n\equiv 0\pmod {k+1}$.
 
-??? note "证明一"
-    当 $n\not\equiv 0\pmod {k+1}$ 时，只要取走 $n\bmod{(k+1)}\in[1,k]$ 枚石子，就能保证对手处于必败状态．因此，此时是先手必胜状态．
+??? note "Proof 1"
+    When $n\not\equiv 0\pmod {k+1}$, taking $n\bmod{(k+1)}\in[1,k]$ stones puts the opponent in a losing state. So this is a first-player winning state.
     
-    反过来，当 $n\equiv 0\pmod {k+1}$ 时，要么已经没有选择，要么自己取走 $k'$ 枚石子后，对手紧接着可以取走 $k+1-k'$ 枚石子，让自己回到必败状态．
+    Conversely, when $n\equiv 0\pmod {k+1}$, either there is no move left, or after you take $k'$ stones, the opponent can immediately take $k+1-k'$ stones and put you back in a losing state.
 
-??? note "证明二"
-    作为 Sprague–Grundy 定理的应用，可以计算 $f(n)$ 为只剩下 $n$ 枚石子时，对应局面的 SG 函数值．
+??? note "Proof 2"
+    As an application of the Sprague–Grundy theorem, let $f(n)$ be the SG value of the position with $n$ stones left.
     
-    对于 $n\le k$，可以归纳地证明 $f(n)=n$．这与单堆 Nim 游戏相同，因为取走石子数目的限制没有发挥作用．对于 $n>k$，需要证明 $f(n)=n\bmod{(k+1)}$．由于每次可以取走 $1$ 到 $k$ 枚石子，有
+    For $n\le k$, we can prove $f(n)=n$ by induction. This is the same as single-pile Nim, because the limit on the number of stones taken has no effect. For $n>k$, we need to prove $f(n)=n\bmod{(k+1)}$. Since each move takes $1$ to $k$ stones,
     
     $$
     f(n) = \operatorname{mex}\{f(n-k),f(n-k+1),\cdots,f(n-1)\}.
     $$
     
-    由归纳假设，这遍历了模 $k+1$ 的全体余数，除了 $n\bmod{(k+1)}$．因此，就有 $f(n) = n\bmod{(k+1)}$．
+    By the induction hypothesis, these values cover every residue modulo $k+1$ except $n\bmod{(k+1)}$. So $f(n) = n\bmod{(k+1)}$.
 
-### Moore's Nim-k 游戏
+### Moore's Nim-k
 
-相较于 Nim 游戏，Moore's Nim-$k$ 游戏允许一次性从至多 $k$ 个石子堆中取石子．
+Compared with Nim, Moore's Nim-$k$ allows taking stones from up to $k$ piles at once.
 
-???+ abstract "Moore's Nim-$k$ 游戏"
-    共有 $n$ 堆石子，第 $i$ 堆有 $a_i$ 枚石子．两名玩家轮流取走至少 $1$ 堆、至多 $k$ 堆中的任意多枚石子，但不能不取．取走最后一枚石子的玩家获胜．
+???+ abstract "Moore's Nim-$k$"
+    There are $n$ piles of stones, and pile $i$ has $a_i$ stones. Two players take turns. On each turn, a player chooses at least $1$ and at most $k$ piles and removes any number of stones from each of them; they may not take nothing. The player who takes the last stone wins.
 
-对此，有如下结论：
+The result is:
 
-???+ note "定理"
-    将每一堆石子的数目都表示为二进制数，并对每个数位 $d$，都统计有多少堆石子数目的第 $d$ 位是 $1$，并计算这个数目对于 $(k+1)$ 的余数．如果对于每个数位，这个余数都等于 $0$，那么先手必败；否则，先手必胜．
+???+ note "Theorem"
+    Write each pile size in binary. For each bit $d$, count how many piles have a $1$ in bit $d$, and take this count modulo $(k+1)$. If this remainder is $0$ for every bit, the first player loses; otherwise, the first player wins.
 
-??? note "证明"
-    仿照 Nim 游戏的结论的证明，很容易证明本结论．设 $d$ 为余数不为 $0$ 的最高二进制位，且对应的余数为 $k'\le k$．那么，必胜策略为，在石子数目二进制第 $d$ 位为 $1$ 的石子堆中，选择 $k'$ 堆，并选择移走的石子数目恰好使得对手局面中，每个数位的余数都是 $0$．唯一需要说明的是，最后取走石子数量的选择总是可行的．
+??? note "Proof"
+    This is easy to prove by imitating the proof for Nim. Let $d$ be the highest bit whose remainder is not $0$, and let that remainder be $k'\le k$. The winning strategy is: among the piles with a $1$ in bit $d$, choose $k'$ piles, and remove stones so that in the position left for the opponent, the remainder for every bit is $0$. The only thing to check is that the final choice of how many stones to take is always possible.
     
-    实际上，只要将选定的 $k'$ 堆石子的第 $d$ 位都变为 $0$，就能使得结果中，第 $d$ 位余数变为 $0$；由于更高位不变，这些堆的更低位可以任意设置．对于更低的数位，从高到低依次处理：设已选定 $c$ 堆，其余堆在该位的余数为 $r$．如果 $c\ge k+1-r$，就将选定堆中恰好 $k+1-r$ 堆的该位设为 $1$；否则，有 $c+r\le k$，就再选定 $r$ 个该位为 $1$ 的堆，将它们的该位变为 $0$，并将原先选定堆的该位都设为 $0$．这样，选定的堆数始终不超过 $k$．
+    In fact, as long as bit $d$ of each of the $k'$ chosen piles becomes $0$, the remainder for bit $d$ becomes $0$; since the higher bits do not change, the lower bits of these piles can be set to anything. Handle the lower bits from high to low: suppose $c$ piles are already chosen, and the remainder for this bit among the other piles is $r$. If $c\ge k+1-r$, set this bit to $1$ in exactly $k+1-r$ of the chosen piles. Otherwise, $c+r\le k$, so choose $r$ more piles that have a $1$ in this bit, set this bit to $0$ in them, and set this bit to $0$ in all previously chosen piles. This way, the number of chosen piles never exceeds $k$.
 
-### 阶梯 Nim 游戏
+### Staircase Nim
 
-阶梯 Nim 游戏稍微复杂一些，它允许石子在相邻的堆之间移动．
+Staircase Nim is a bit more complicated: it allows stones to move between adjacent piles.
 
-???+ abstract "阶梯 Nim 游戏"
-    共有 $n$ 堆石子，第 $i$ 堆有 $a_i$ 枚石子．两名玩家轮流操作，每次操作中，要么取走第 $1$ 堆石子中的任意多枚，要么将第 $i>1$ 堆石子中的任意多枚移动到第 $i-1$ 堆，但不能不做任何操作．取走最后一枚石子的玩家获胜．
+???+ abstract "Staircase Nim"
+    There are $n$ piles of stones, and pile $i$ has $a_i$ stones. Two players take turns. On each turn, a player either removes any positive number of stones from pile $1$, or moves any positive number of stones from pile $i>1$ to pile $i-1$; they may not do nothing. The player who takes the last stone wins.
 
-对此，有如下结论：
+The result is:
 
-???+ note "定理"
-    游戏先手必败，当且仅当奇数堆石子数量的 Nim 和 $a_1\oplus a_3\oplus\cdots\oplus a_{n-1+(n\bmod 2)}=0$．
+???+ note "Theorem"
+    The first player loses if and only if the Nim sum of the odd-numbered piles is $a_1\oplus a_3\oplus\cdots\oplus a_{n-1+(n\bmod 2)}=0$.
 
-??? note "证明"
-    任何玩家将偶数堆的石子移动到奇数堆时，对手都可以将这些石子继续移动到下一个偶数堆（或移走），因此，这样的移动不会影响奇数堆的局面．此时，每一个奇数堆向下移动到相邻的偶数堆（或移走）都可以看作独立的单堆 Nim 游戏．根据 Sprague–Grundy 定理关于游戏的和的结论，阶梯 Nim 游戏的 SG 函数值，是这些子游戏的 SG 函数值的 Nim 和．这就得到上述结论．
+??? note "Proof"
+    Whenever a player moves stones from an even-numbered pile to an odd-numbered pile, the opponent can move those same stones on to the next even-numbered pile (or remove them). So such moves do not affect the odd-numbered piles. Then moving stones from each odd-numbered pile down to the adjacent even-numbered pile (or removing them) can be seen as an independent single-pile Nim game. By the Sprague–Grundy result on sums of games, the SG value of staircase Nim is the Nim sum of the SG values of these subgames. This gives the result above.
 
-### Fibonacci Nim 游戏
+### Fibonacci Nim
 
-Fibonacci Nim 游戏类似 Bachet 游戏，只有一堆石子，且限制了每次取走的数量．与 Bachet 游戏不同，Fibonacci Nim 游戏中，每次取走的数量的限制是动态的．
+Fibonacci Nim is similar to Bachet's game: there is only one pile, and the number of stones taken each turn is limited. Unlike Bachet's game, the limit in Fibonacci Nim changes over time.
 
-???+ abstract "Fibonacci Nim 游戏"
-    有一堆石子，共计 $n$ 枚．两名玩家轮流取石子．第一个行动的玩家不限制取走的石子数目，但是不能取完石子；随后，每次取走的石子数目不得超过上次（指对手回合）取走的石子数目的二倍．每次取走的石子的数目不得为 $0$．取走最后一枚石子的玩家获胜．
+???+ abstract "Fibonacci Nim"
+    There is one pile of $n$ stones. Two players take turns taking stones. The player who moves first may take any number of stones, but not all of them. After that, each move may take at most twice as many stones as the previous move (the opponent's turn). Each move must take a nonzero number of stones. The player who takes the last stone wins.
 
-对此，有如下结论：
+The result is:
 
-???+ note "定理"
-    游戏开始时，先手必败，当且仅当石子数目 $n$ 是 [Fibonacci 数](../combinatorics/fibonacci.md)．
+???+ note "Theorem"
+    At the start of the game, the first player loses if and only if the number of stones $n$ is a [Fibonacci number](../combinatorics/fibonacci.md).
 
-??? note "证明"
-    设 $q$ 为当前局面可移走石子数量的限额（quota）．那么，第一回合中，$q=n-1$；而之后的回合中，$q$ 是上次（对手）移走的石子数目的二倍．考察剩余石子数目 $n$ 的 [Fibonacci 编码](../combinatorics/fibonacci.md#斐波那契编码)，也就是将 $n$ 唯一地分解为一系列不相邻的、正的 Fibonacci 数的和．需要证明的是，当前状态是必胜状态，当且仅当 $q$ 大于等于 $n$ 的分解中的最小 Fibonacci 数．
+??? note "Proof"
+    Let $q$ be the quota: the maximum number of stones that can be taken in the current position. On the first turn, $q=n-1$; on later turns, $q$ is twice the number of stones the opponent took last time. Consider the [Fibonacci coding](../combinatorics/fibonacci.md#斐波那契编码) of the number of remaining stones $n$, that is, the unique way of writing $n$ as a sum of non-adjacent positive Fibonacci numbers. We need to prove that the current state is winning if and only if $q$ is at least the smallest Fibonacci number in the decomposition of $n$.
     
-    必胜策略是：如果可以，移走所有剩余石子；否则，移走分解中最小的 Fibonacci 数．由于分解中，次小的 Fibonacci 数一定严格大于最小的 Fibonacci 数的两倍，所以，只要处于必胜状态的当前回合取不走所有石子，对手在下一回合也取不走次小的 Fibonacci 数（也就是下一回合最小的 Fibonacci 数），对手一定处于必败状态．
+    The winning strategy is: if possible, take all remaining stones; otherwise, take the smallest Fibonacci number in the decomposition. In the decomposition, the second smallest Fibonacci number is always strictly greater than twice the smallest one. So whenever the player in a winning state cannot take all the stones this turn, the opponent cannot take the second smallest Fibonacci number (which becomes the smallest Fibonacci number on the next turn) either. So the opponent is always in a losing state.
     
-    反过来，如果当前处于必败状态，那么，设当前取走的数目为 $k$，它一定严格小于当前分解中的最小 Fibonacci 数 $F$．假设下一回合最小的 Fibonacci 数是 $F'$，它一定也是 $F - k$ 对应的分解中最小的 Fibonacci 数．如果 $F'\le 2$，那么，由 $k\ge 1$ 可知下一回合的限额 $2k\ge 2\ge F'$，已是必胜状态．否则，设 $F'=F''+F'''$ 且 $F''>F'''$，也就是说，$F''',F'',F'$ 是 Fibonacci 数列中相邻三项．如果 $k<F''$，那么，利用 Fibonacci 编码计算 $k + (F-k)$ 时，不需要进位，自然得不到 $F$．所以，一定有 $k\ge F''$．这就说明，下一回合的限额 $2k>F''+F'''=F'$，是必胜状态．
+    Conversely, suppose the current state is losing. Let the number of stones taken now be $k$; it must be strictly less than the smallest Fibonacci number $F$ in the current decomposition. Let the smallest Fibonacci number on the next turn be $F'$; it must also be the smallest Fibonacci number in the decomposition of $F - k$. If $F'\le 2$, then since $k\ge 1$, the quota on the next turn is $2k\ge 2\ge F'$, so it is already a winning state. Otherwise, write $F'=F''+F'''$ with $F''>F'''$; that is, $F''',F'',F'$ are three consecutive Fibonacci numbers. If $k<F''$, then computing $k + (F-k)$ with Fibonacci coding involves no carries, so the result cannot be $F$. So $k\ge F''$ must hold. This shows that the quota on the next turn is $2k>F''+F'''=F'$, so it is a winning state.
 
-### Wythoff 游戏
+### Wythoff's game
 
-Wythoff 游戏允许同时从多堆石子中移除，但是要求每堆移除相同数量的石子．
+Wythoff's game allows removing stones from more than one pile at once, but requires removing the same number from each pile.
 
-???+ abstract "Wythoff 游戏"
-    有两堆石子，分别有 $a_1$ 和 $a_2$ 枚石子．两名玩家轮流从其中一堆或两堆中取石子，不能不取，但要求从两堆都取石子时，取走的石子数量必须相同．取走最后一枚石子的玩家获胜．
+???+ abstract "Wythoff's game"
+    There are two piles with $a_1$ and $a_2$ stones. Two players take turns taking stones from one or both piles. A player may not take nothing, and when taking from both piles, they must take the same number of stones from each. The player who takes the last stone wins.
 
-对此，有如下结论：
+The result is:
 
-???+ note "定理"
-    不妨设 $a_1\le a_2$，那么，先手必败，当且仅当 $a_1 = \lfloor(a_2-a_1)\phi\rfloor$，其中，$\phi=(\sqrt{5}+1)/2$ 是黄金分割比．
+???+ note "Theorem"
+    Assume without loss of generality that $a_1\le a_2$. Then the first player loses if and only if $a_1 = \lfloor(a_2-a_1)\phi\rfloor$, where $\phi=(\sqrt{5}+1)/2$ is the golden ratio.
 
-为了证明这一结论，需要用到如下引理：
+To prove this result, we need the following lemma:
 
-???+ abstract "Beatty 序列"
-    设 $r > 1$ 为无理数．它生成的 Beatty 序列是 $\mathcal B_r = \{\lfloor kr\rfloor : k \in\mathbf N_+\}$．
+???+ abstract "Beatty sequence"
+    Let $r > 1$ be an irrational number. The Beatty sequence it generates is $\mathcal B_r = \{\lfloor kr\rfloor : k \in\mathbf N_+\}$.
 
-???+ note "Rayleigh 定理"
-    设 $r,s > 1$ 是两个无理数，且 $\dfrac{1}{r}+\dfrac{1}{s}=1$．那么，序列 $\mathcal B_r$ 和 $\mathcal B_s$ 构成正整数集 $\mathbf N_+$ 的一个分划．此时，它们也称为互补的 Beatty 序列．
+???+ note "Rayleigh's theorem"
+    Let $r,s > 1$ be two irrational numbers with $\dfrac{1}{r}+\dfrac{1}{s}=1$. Then the sequences $\mathcal B_r$ and $\mathcal B_s$ form a partition of the set of positive integers $\mathbf N_+$. In this case they are also called complementary Beatty sequences.
 
-??? note "证明"
-    设 $\mathcal A_r=\{kr:k\in\mathbf N_+\}$．考虑将集合 $\mathcal A=\mathcal A_r\cup\mathcal A_s$ 里的元素排序得到序列 $\{a_i\}_{i\in\mathbf N_+}$．只需要证明 $i=\lfloor a_i\rfloor$ 对所有 $i\in\mathbf N_+$ 都成立，就能得到 $\mathcal B_r\cup\mathcal B_s$ 是正整数集 $\mathbf N_+$ 的一个分划．
+??? note "Proof"
+    Let $\mathcal A_r=\{kr:k\in\mathbf N_+\}$. Sort the elements of the set $\mathcal A=\mathcal A_r\cup\mathcal A_s$ to get a sequence $\{a_i\}_{i\in\mathbf N_+}$. It is enough to prove that $i=\lfloor a_i\rfloor$ for all $i\in\mathbf N_+$; this gives that $\mathcal B_r\cup\mathcal B_s$ is a partition of $\mathbf N_+$.
     
-    首先，证明序列里没有重复的元素．假设不然，存在 $k,\ell\in\mathbf N_+$ 使得 $kr=\ell s$ 成立．那么，有
+    First, we prove that the sequence has no repeated elements. Suppose otherwise: there exist $k,\ell\in\mathbf N_+$ with $kr=\ell s$. Then
     
     $$
     \dfrac{\ell}{k} = \dfrac{r}{s} = r - 1.
     $$
     
-    但是，等式左侧是有理数，等式右侧是无理数，矛盾．因此，序列的数字各不相同．
+    But the left side is rational and the right side is irrational, a contradiction. So all numbers in the sequence are distinct.
     
-    然后，证明集合 $\mathcal A$ 中小于等于 $a_i$ 的数恰有 $\lfloor a_i\rfloor$ 个．不妨设 $a_i\in\mathcal A_r$，即 $a_i=kr$，那么，对集合 $\mathcal A_r$ 和 $\mathcal A_s$ 中的元素分别计数，就得到集合 $\mathcal A$ 中小于等于 $a_i$ 的元素恰有
+    Next, we prove that exactly $\lfloor a_i\rfloor$ numbers in $\mathcal A$ are less than or equal to $a_i$. Assume without loss of generality that $a_i\in\mathcal A_r$, that is, $a_i=kr$. Counting the elements of $\mathcal A_r$ and $\mathcal A_s$ separately, the number of elements of $\mathcal A$ that are less than or equal to $a_i$ is exactly
     
     $$
     k + \left\lfloor\dfrac{kr}{s}\right\rfloor = k + \lfloor k(r-1)\rfloor = \lfloor kr\rfloor = \lfloor a_i\rfloor
     $$
     
-    个．进而，由于序列 $\{a_i\}$ 是严格递增的，小于等于 $a_i$ 的数恰有 $i$ 个．这就得到 $i=\lfloor a_i\rfloor$．
+    On the other hand, since the sequence $\{a_i\}$ is strictly increasing, exactly $i$ numbers are less than or equal to $a_i$. This gives $i=\lfloor a_i\rfloor$.
 
-由此，可以得到前述结论的证明．
+With this, we can prove the result above.
 
-??? note "Wythoff 游戏结论的证明"
-    对于定理所述的所有 $a_1 < a_2$ 且先手必败的状态 $(a_1,a_2)$，令 $k = a_2 - a_1 \in\mathbf N_+$，都有 $a_1=\lfloor k\phi\rfloor$ 且 $a_2=\lfloor k(\phi+1)\rfloor$．由于 $\phi$ 是黄金分割比，所以 $\dfrac{1}{\phi}+\dfrac{1}{\phi+1}=1$．由 Rayleigh 定理可知，序列 $\{\lfloor k\phi\rfloor\}$ 和 $\{\lfloor k(\phi+1)\rfloor\}$ 构成正整数集 $\mathbf N_+$ 的一个分划．这其实说明，所有 $a_1 < a_2$ 且先手必败的状态 $(a_1,a_2)$ 中，分量 $a_1$ 和 $a_2$ 恰取遍全体正整数一次，且它们的差 $a_2-a_1$ 也恰取遍全体正整数一次．
+??? note "Proof of the result for Wythoff's game"
+    For every first-player losing state $(a_1,a_2)$ with $a_1 < a_2$ described by the theorem, let $k = a_2 - a_1 \in\mathbf N_+$. Then $a_1=\lfloor k\phi\rfloor$ and $a_2=\lfloor k(\phi+1)\rfloor$. Since $\phi$ is the golden ratio, $\dfrac{1}{\phi}+\dfrac{1}{\phi+1}=1$. By Rayleigh's theorem, the sequences $\{\lfloor k\phi\rfloor\}$ and $\{\lfloor k(\phi+1)\rfloor\}$ form a partition of $\mathbf N_+$. This means that over all first-player losing states $(a_1,a_2)$ with $a_1 < a_2$, the components $a_1$ and $a_2$ together take every positive integer exactly once, and their difference $a_2-a_1$ also takes every positive integer exactly once.
     
-    由于 Wythoff 游戏中，一次合法的操作要么保持分量之一不变，要么保持分量之差不变，所以，从一个先手必败状态开始，确实无法通过一次合法的操作得到另一个先手必败状态．反过来，对于任何先手必胜状态 $(a_1,a_2)$，不妨设 $a_1\le a_2$，并令 $k=a_2-a_1$．如果 $a_1>\lfloor k\phi\rfloor$，那么，先手玩家可以从两堆石子各取 $(a_1 - \lfloor k\phi\rfloor)$ 枚，将局面变为必败状态．否则，由于 $(a_1,a_2)$ 是先手必胜状态，有 $a_1 < \lfloor k\phi\rfloor$，从而 $k\ge 1$．由前一段的结论（以及必败状态 $(0,0)$），对于这个 $a_1$ 必然存在唯一一个必败状态 $(a_1,a_2')$（这里不要求 $a_1\le a_2'$）．进而，如果 $a_1 \ge a_2'$，显然有 $a_2' \le a_1 < a_2$；否则，如果 $a_1 < a_2'$，那么，可以取 $k'=a_2'-a_1$ 使得 $a_1=\lfloor k'\phi\rfloor$，又有 $a_1 < \lfloor k\phi\rfloor$，故而 $k' < k$，因此 $a_2'=a_1 + k' < a_1+k = a_2$．所以，只要 $a_1 < \lfloor k\phi\rfloor$，就一定有 $a_2' < a_2$，先手玩家只需要从第二堆石子中取走 $(a_2-a'_2)$ 枚石子就可以使得局面变为必败状态．
+    In Wythoff's game, a legal move either keeps one of the components unchanged or keeps the difference of the components unchanged. So from one first-player losing state, you indeed cannot reach another first-player losing state in one legal move. Conversely, take any first-player winning state $(a_1,a_2)$, assume without loss of generality that $a_1\le a_2$, and let $k=a_2-a_1$. If $a_1>\lfloor k\phi\rfloor$, the first player can take $(a_1 - \lfloor k\phi\rfloor)$ stones from each pile, turning the position into a losing state. Otherwise, since $(a_1,a_2)$ is a first-player winning state, $a_1 < \lfloor k\phi\rfloor$, so $k\ge 1$. By the result of the previous paragraph (together with the losing state $(0,0)$), for this $a_1$ there is exactly one losing state $(a_1,a_2')$ (here we do not require $a_1\le a_2'$). Now, if $a_1 \ge a_2'$, then clearly $a_2' \le a_1 < a_2$. Otherwise, if $a_1 < a_2'$, take $k'=a_2'-a_1$ so that $a_1=\lfloor k'\phi\rfloor$; since also $a_1 < \lfloor k\phi\rfloor$, we get $k' < k$, so $a_2'=a_1 + k' < a_1+k = a_2$. So whenever $a_1 < \lfloor k\phi\rfloor$, we must have $a_2' < a_2$, and the first player only needs to take $(a_2-a'_2)$ stones from the second pile to turn the position into a losing state.
 
-### 翻硬币游戏
+### Coin-turning games
 
-翻硬币游戏也是一类常见的公平组合游戏．
+Coin-turning games are another common class of impartial games.
 
-???+ abstract "翻硬币游戏"
-    设 $(S,\preceq)$ 是一个 [良基偏序集](../order-theory.md)，映射 $f:S\rightarrow\mathcal P\mathcal PS$ 满足对于所有 $s\in S$，集合 $f(s)$ 都非空，对于 $T\in f(s)$ 都有 $s\in T$，而且对于所有 $t\in T$，都有 $t\preceq s$．集合 $S$ 的每个元素处都有一枚硬币，可能正面朝上也可能背面朝上．玩家轮流行动，选择一枚正面朝上的硬币 $s$ 和集合 $T\in f(s)$，并将集合 $T$ 中所有硬币翻转．将所有硬币都翻转到背面朝上的玩家获胜．
+???+ abstract "Coin-turning game"
+    Let $(S,\preceq)$ be a [well-founded partially ordered set](../order-theory.md), and let the map $f:S\rightarrow\mathcal P\mathcal PS$ satisfy: for every $s\in S$, the set $f(s)$ is nonempty; for every $T\in f(s)$, we have $s\in T$; and for every $t\in T$, we have $t\preceq s$. There is a coin at each element of $S$, either heads up or tails up. Players take turns. On each turn, a player chooses a heads-up coin $s$ and a set $T\in f(s)$, and flips all the coins in $T$. The player who turns all the coins tails up wins.
 
-翻硬币游戏其实是一大类游戏．取决于具体的偏序集 $S$ 和映射 $f$ 的选择，翻硬币游戏的具体形式也有所不同．游戏描述中，映射 $f$ 需要满足的条件是在说，每次玩家选择翻转硬币的集合 $T$ 中，一定存在一枚正面朝上的硬币 $s$，使得集合 $T$ 中其余元素都排在 $s$ 前面．这保证了游戏可以在若干步后终止．
+Coin-turning games are actually a large family of games. Their exact form depends on the choice of the partially ordered set $S$ and the map $f$. In the game description, the condition on $f$ says that each set $T$ of coins a player flips contains a heads-up coin $s$ such that all other elements of $T$ come before $s$. This guarantees that the game ends after a finite number of moves.
 
-???+ example "例子"
-    1.  设 $S=\{1,2,\cdots,n\}$ 且 $f(s)=\{\{t,s\}:t \le s\}$．这相当于说，有一排 $n$ 枚硬币，每次翻转一枚正面朝上的硬币，并且可以选择一枚它左侧的硬币翻转．
-    2.  设 $S=\{1,2,\cdots,n\}$ 且 $f(s)=\{[t,s]:t \le s\}$．这相当于说，有一排 $n$ 枚硬币，每次翻转一段连续的硬币，但是必须保证这些硬币中最右侧的那枚硬币在翻转前是正面朝上的．
-    3.  设 $S=\{1,2,\cdots,n\}^2$ 且 $f(s)=\{\{s\}\}$．这相当于说，有 $n$ 行 $n$ 列硬币，每次只能翻转一枚正面朝上的硬币．
-    4.  设 $S$ 是一棵有根树的结点集合，且 $f(s)$ 是顶点 $s$ 到树根的路径经过的结点集合的子集中，所有包含 $s$ 自身的子集的集合．这相当于说，有一棵有根树，每个结点处放置一枚硬币，每次翻转一枚正面朝上的硬币，并且可以选择它的若干个祖先结点处的硬币翻转．
+???+ example "Example"
+    1.  Let $S=\{1,2,\cdots,n\}$ and $f(s)=\{\{t,s\}:t \le s\}$. This means there is a row of $n$ coins; each move flips one heads-up coin, and may also flip one coin to its left.
+    2.  Let $S=\{1,2,\cdots,n\}$ and $f(s)=\{[t,s]:t \le s\}$. This means there is a row of $n$ coins; each move flips a contiguous block of coins, but the rightmost coin in the block must be heads up before the flip.
+    3.  Let $S=\{1,2,\cdots,n\}^2$ and $f(s)=\{\{s\}\}$. This means there are $n$ rows and $n$ columns of coins, and each move can flip only one heads-up coin.
+    4.  Let $S$ be the set of nodes of a rooted tree, and let $f(s)$ be the collection of all subsets of the nodes on the path from $s$ to the root that contain $s$ itself. This means there is a rooted tree with a coin on each node; each move flips one heads-up coin, and may also flip the coins on any of its ancestors.
 
-尽管翻硬币游戏种类繁多，但是它们的求解思路是一致的．对于翻硬币游戏 $(S,f)$，设 $G_s$ 为只有元素 $s$ 处的硬币正面朝上的局面．这些局面称为基础局面．那么，任意一个局面 $G$ 都可以看作是这些基础局面对应的游戏的和．也就是说，以下结论成立：
+Although there are many kinds of coin-turning games, they are all solved the same way. For a coin-turning game $(S,f)$, let $G_s$ be the position where only the coin at $s$ is heads up. These positions are called basic positions. Then any position $G$ can be seen as the sum of the games given by these basic positions. That is, the following result holds:
 
-???+ note "定理"
-    对于翻硬币游戏 $(S,f)$ 和局面 $G$，设其中正面朝上的硬币所处位置的集合为 $H(G)\subseteq S$．那么，局面 $G$ 的 SG 函数值就是
+???+ note "Theorem"
+    For a coin-turning game $(S,f)$ and a position $G$, let $H(G)\subseteq S$ be the set of positions of the heads-up coins. Then the SG value of $G$ is
     
     $$
     \operatorname{SG}(G) = \bigoplus_{s\in H(G)}\operatorname{SG}(G_s).
     $$
 
-??? note "证明"
-    考虑一个相关的游戏：一个局面 $G'$ 中，集合 $S$ 的每个元素处都放置有若干枚石子；玩家每次行动时，都可以取走 $s$ 处的一枚石子，并选取集合 $T\in f(s)$，再在集合 $T\setminus\{s\}$ 中的各个元素处均放置一枚石子．对于这类游戏，仍然可以定义基础局面 $G'_s$，即仅在位置 $s$ 处放置有一枚石子的局面．这类游戏中，每个局面均为其所有石子对应基础局面的和．这是因为只要放置新石子时将它对应到取走的石子上，就可以将游戏过程中出现的每枚石子都对应到初始局面中的各个石子上，进而对应初始局面不同石子的子游戏进程互不干扰，整个游戏就可以看作是这些子游戏的和．由于相同位置石子对应基础局面的 SG 值是一样的，所以利用异或值的特性可知，局面 $G'$ 的 SG 值仅由各堆石子数量的奇偶性决定，而与具体数量无关．因此，对于游戏局面 $G'$，如果记其石子数量为奇数的位置集合为 $H(G')$，那么，本段的分析可以总结为公式：
+??? note "Proof"
+    Consider a related game: in a position $G'$, there are some stones at each element of $S$. On each move, a player removes one stone at some $s$, chooses a set $T\in f(s)$, and then places one stone at each element of $T\setminus\{s\}$. For this kind of game we can still define basic positions $G'_s$, the position with a single stone at $s$. In this game, every position is the sum of the basic positions given by all its stones. This is because if each newly placed stone is linked to the stone that was removed, every stone appearing during the game can be traced back to one stone in the initial position. Then the subgames started by different initial stones do not affect each other, and the whole game can be seen as the sum of these subgames. Since stones at the same position have basic positions with the same SG value, the properties of XOR show that the SG value of $G'$ depends only on the parity of the number of stones at each position, not on the exact numbers. So for a position $G'$, if $H(G')$ is the set of positions with an odd number of stones, the analysis of this paragraph can be summed up in the formula:
     
     $$
     \operatorname{SG}(G') = \bigoplus_{s\in H(G')} \operatorname{SG}(G'_s).
     $$
     
-    由此，下文只需要建立游戏 $G'$ 与游戏 $G$ 的等价性就可以证明定理中的公式．
+    So to prove the formula in the theorem, it remains to establish the equivalence of game $G'$ and game $G$.
     
-    需要说明的是，对于新游戏的局面 $G'$ 与翻硬币游戏的局面 $G$，只要 $G'$ 中石子数量为奇数的位置与 $G$ 中硬币正面朝上的位置相同，就有 $G'$ 与 $G$ 等价．根据 [Sprague–Grundy 函数](#spraguegrundy-函数) 一节的引理 2，这等价于证明局面 $G+G'$ 是必败状态．后手玩家的胜利策略很简单：如果先手玩家选择取走 $s$ 处的石子且该处不止一枚石子，那么后手玩家直接模仿先手玩家的行为；否则，后手玩家选择和先手玩家同样的 $s$ 和 $T\in f(s)$，但是选择和先手玩家不同的子游戏，即先手取石子后手就翻硬币，先手翻硬币后手就取石子．无论先手玩家如何操作，后手玩家都可以继续操作，并保证残余局面中石子数量为奇数的位置与硬币正面朝上的位置相同．这样，游戏必然结束在先手玩家没有合法操作时，因此，先手必败．定理由此得证．
+    We need to show that a position $G'$ of the new game and a position $G$ of the coin-turning game are equivalent whenever the positions with an odd number of stones in $G'$ are the same as the positions of heads-up coins in $G$. By Lemma 2 in the section [Sprague–Grundy function](#spraguegrundy-function), this is the same as proving that the position $G+G'$ is a losing state. The second player's winning strategy is simple: if the first player removes a stone at $s$ and there was more than one stone there, the second player simply copies the first player's move; otherwise, the second player chooses the same $s$ and $T\in f(s)$ as the first player, but in the other subgame: if the first player removed a stone, the second player flips coins, and if the first player flipped coins, the second player removes a stone. Whatever the first player does, the second player can always respond, and keep the positions with an odd number of stones equal to the positions of heads-up coins in the remaining position. So the game must end when the first player has no legal move, which means the first player loses. This proves the theorem.
 
-利用这一结论，判断某一局面是否必胜，只需要计算其中所有正面朝上的硬币对应的基础局面的 SG 函数值，再求 Nim 和即可．这些基础局面的 SG 函数值也不难计算，因为它们的后继局面已经由映射 $f$ 给出，且后继局面的 SG 值可以归纳地计算：
+Using this result, to decide whether a position is winning, we only need to compute the SG values of the basic positions for all heads-up coins and take their Nim sum. The SG values of these basic positions are not hard to compute either, because their successors are given by the map $f$, and the SG values of the successors can be computed by induction:
 
 $$
 \operatorname{SG}(G_s) = \operatorname{mex}\limits_{T\in f(s)}\bigoplus_{t\in T\setminus\{s\}}\operatorname{SG}(G_t).
 $$
 
-这相当于提供了一个基础局面 SG 函数值的递推公式．
+This gives a recurrence for the SG values of the basic positions.
 
-### 二分图博弈
+### Bipartite graph games
 
-前置知识：[二分图最大匹配](../../graph/graph-matching/bigraph-match.md)
+Prerequisites: [Maximum bipartite matching](../../graph/graph-matching/bigraph-match.md)
 
-本节的最后，讨论二分图博弈．尽管这个游戏常称作二分图博弈，但是它的描述和结论的证明都与二分图的结构无关，所以，它的结论实际上对于一般的无向图都成立．但是，一般图的最大匹配较为复杂，所以这一结论常出现在二分图的题目中．
+To end this section, we discuss bipartite graph games. Although this game is usually called a bipartite graph game, neither its description nor the proof of its result depends on the graph being bipartite, so the result actually holds for general undirected graphs. However, maximum matching in general graphs is more complicated, so this result usually appears in problems on bipartite graphs.
 
-???+ abstract "二分图博弈"
-    两个玩家轮流行动．每个玩家面临的局面都由一个无向图 $G=(V,E)$ 和它的一个顶点 $v\in V$ 构成．在一名玩家的回合中，若当前局面为 $(G,v)$，则该玩家必须选择一个与 $v$ 相邻的顶点 $u$．随后，将顶点 $v$ 及其所有关联边从图 $G$ 中删除，得到残余图 $G'$．新的局面即为 $(G',u)$，交由下一位玩家．若某位玩家在其回合开始时，当前顶点 $v$ 在图中没有相邻顶点（即不存在合法选择），则该玩家无法行动，并因此输掉游戏．
+???+ abstract "Bipartite graph game"
+    Two players take turns. The position each player faces consists of an undirected graph $G=(V,E)$ and one of its vertices $v\in V$. On a player's turn, if the current position is $(G,v)$, the player must choose a vertex $u$ adjacent to $v$. Then vertex $v$ and all its incident edges are deleted from $G$, giving the remaining graph $G'$. The new position is $(G',u)$, which is handed to the next player. If at the start of a player's turn the current vertex $v$ has no neighbors in the graph (so there is no legal choice), that player cannot move and loses the game.
 
-对此，有如下结论：
+The result is:
 
-???+ note "定理"
-    游戏先手必胜，当且仅当顶点 $v$ 是图 $G$ 的最大匹配关键点，也就是说，在图 $G$ 的所有最大匹配中，顶点 $v$ 都是匹配点．
+???+ note "Theorem"
+    The first player wins if and only if vertex $v$ is a critical vertex for maximum matchings of $G$, that is, $v$ is matched in every maximum matching of $G$.
 
-??? note "证明"
-    首先，设顶点 $v$ 是图 $G$ 的最大匹配关键点．设 $G$ 的一个最大匹配为 $M$．此时，先手可以将局面移动到在 $M$ 中与顶点 $v$ 匹配的顶点 $u$．由于顶点 $v$ 出现在所有图 $G$ 的最大匹配中，所以，残余图 $G'$ 的最大匹配的大小至多是 $|M|-1$；而且将 $M$ 去掉边 $(u,v)$ 就能得到图 $G'$ 的一个大小为 $|M|-1$ 的匹配 $M'$：结合这两点就知道，$M'$ 是图 $G'$ 的一个最大匹配．但是，后手玩家所处的局面中，顶点 $u$ 并不是匹配 $M'$ 的一个匹配点．因此，后手玩家必然处于一个必败状态．
+??? note "Proof"
+    First, suppose $v$ is a critical vertex for maximum matchings of $G$. Let $M$ be a maximum matching of $G$. The first player can move to the vertex $u$ matched with $v$ in $M$. Since $v$ appears in every maximum matching of $G$, a maximum matching of the remaining graph $G'$ has size at most $|M|-1$. Also, removing the edge $(u,v)$ from $M$ gives a matching $M'$ of $G'$ of size $|M|-1$. Together these show that $M'$ is a maximum matching of $G'$. But in the position the second player faces, the vertex $u$ is not matched in $M'$. So the second player must be in a losing state.
     
-    反过来，假设存在最大匹配 $M$ 使得 $v$ 是未匹配点．由于 $M$ 不含顶点 $v$，它也是残余图 $G'$ 的一个最大匹配；因此，$G'$ 的任何最大匹配 $N$ 都是 $G$ 的一个不含顶点 $v$ 的最大匹配．与顶点 $v$ 相邻的顶点 $u$ 一定是 $N$ 的匹配点；否则，就可以将边 $(u,v)$ 添加到 $N$ 中，得到 $G$ 的一个更大的匹配．这说明 $u$ 是 $G'$ 的最大匹配关键点．因此，无论先手怎么选择，后手都处于一个必胜状态．
+    Conversely, suppose there is a maximum matching $M$ in which $v$ is unmatched. Since $M$ does not contain $v$, it is also a maximum matching of the remaining graph $G'$. So every maximum matching $N$ of $G'$ is a maximum matching of $G$ that does not contain $v$. Every vertex $u$ adjacent to $v$ must be matched in $N$; otherwise, we could add the edge $(u,v)$ to $N$ and get a larger matching of $G$. This shows that $u$ is a critical vertex for maximum matchings of $G'$. So no matter what the first player chooses, the second player is in a winning state.
 
-求出二分图最大匹配关键点的算法详见 [二分图最大匹配页面](../../graph/graph-matching/bigraph-match.md#最大匹配关键点)．
+For the algorithm that finds the critical vertices for maximum matchings of a bipartite graph, see the [maximum bipartite matching page](../../graph/graph-matching/bigraph-match.md#最大匹配关键点).
 
-另外，二分图博弈还有一个变体：
+There is also a variant of the bipartite graph game:
 
-???+ abstract "二分图博弈的变体"
-    设 $G=(V,E)$ 是一个无向图，且图的每个顶点上都放置了一枚石子．两名玩家轮流行动取走石子．游戏开始时，先手玩家可以取走任何一枚石子；后续的回合中，每名玩家取走石子的顶点必须与上一回合中对方取走石子的顶点相邻．最先无法取走石子的玩家输掉游戏．
+???+ abstract "Variant of the bipartite graph game"
+    Let $G=(V,E)$ be an undirected graph with one stone on each vertex. Two players take turns removing stones. At the start of the game, the first player may remove any stone; on later turns, each player must remove a stone from a vertex adjacent to the vertex where the opponent removed a stone on the previous turn. The first player unable to remove a stone loses.
 
-显然，这个变体相当于在前文所述二分图博弈中，让先手玩家选择初始局面，然后从后手玩家开始二分图博弈．因此，这个变体中，先手玩家必败，当且仅当每个顶点都是最大匹配关键点，亦即图 $G$ 存在 [完美匹配](../../graph/graph-matching/graph-match.md#定义)．
+Clearly, this variant is the same as letting the first player choose the initial position of the bipartite graph game described above, and then playing the bipartite graph game starting with the second player. So in this variant, the first player loses if and only if every vertex is a critical vertex for maximum matchings, that is, the graph $G$ has a [perfect matching](../../graph/graph-matching/graph-match.md#定义).
 
-## 反常 Nim 游戏
+## Misère Nim
 
-本节讨论反常 Nim 游戏的求解．
+This section discusses how to solve misère Nim.
 
-???+ abstract "反常 Nim 游戏"
-    共有 $n$ 堆石子，第 $i$ 堆有 $a_i$ 枚石子．两名玩家轮流取走任意一堆中的任意多枚石子，但不能不取．取走最后一枚石子的玩家失败．
+???+ abstract "Misère Nim"
+    There are $n$ piles of stones, and pile $i$ has $a_i$ stones. Two players take turns. On each turn, a player removes any positive number of stones from any one pile; they may not take nothing. The player who takes the last stone loses.
 
-对此，有如下结论：
+The result is:
 
-???+ note "定理"
-    反常 Nim 游戏中，状态 $(a_1,a_2,\cdots,a_n)$ 是必败状态 $\mathcal P$，当且仅当
+???+ note "Theorem"
+    In misère Nim, the state $(a_1,a_2,\cdots,a_n)$ is a losing state $\mathcal P$ if and only if
     
-    1.  存在 $i$ 使得 $a_i>1$，且 Nim 和 $a_1\oplus a_2\oplus\cdots\oplus a_n=0$，或者
-    2.  对于所有 $i$ 都有 $a_i\le 1$，且剩余的非空石子堆数是奇数．
+    1.  there exists $i$ with $a_i>1$, and the Nim sum $a_1\oplus a_2\oplus\cdots\oplus a_n=0$, or
+    2.  $a_i\le 1$ for all $i$, and the number of nonempty piles left is odd.
 
-??? note "证明"
-    由于无法操作是先手必胜态 $\mathcal N$，所以，可以归纳地证明，如果每堆石子都至多一枚，那么非空石子堆数是奇数就对应着先手必败态 $\mathcal P$，非空石子堆数是偶数就对应着先手必胜态 $\mathcal N$．
+??? note "Proof"
+    Being unable to move is a first-player winning state $\mathcal N$. So by induction, if every pile has at most one stone, an odd number of nonempty piles corresponds to a first-player losing state $\mathcal P$, and an even number of nonempty piles corresponds to a first-player winning state $\mathcal N$.
     
-    接下来，考察有些堆石子的数量严格大于 $1$ 的情况．
+    Next, consider the case where some piles have strictly more than $1$ stone.
     
-    情形 A：如果只有一堆石子的数量严格大于 $1$，那么，此时 Nim 和一定不为 $0$．而且，先手玩家可以选择转移到全部堆的石子数量均不超过 $1$ 的局面，并且可以控制剩余的非空石子堆数的奇偶性．因此，此时为先手必胜态 $\mathcal N$．
+    Case A: if exactly one pile has strictly more than $1$ stone, then the Nim sum cannot be $0$. Also, the first player can move to a position where every pile has at most $1$ stone, and can control the parity of the number of nonempty piles left. So this is a first-player winning state $\mathcal N$.
     
-    情形 B：现在，有不止一堆石子的数量严格大于 $1$，那么，无论怎么操作，下一个局面中，都至少有一堆石子的数量严格大于 $1$．根据归纳假设，下一局面中，先手必败对应着 Nim 和为零，先手必胜对应着 Nim 和不为零．这与正常 Nim 游戏的归纳假设完全相同．因此，重复 Nim 游戏的论证，就能知道，当前局面同样符合 Nim 和为零对应先手必败状态的结论．
+    Case B: now suppose more than one pile has strictly more than $1$ stone. Then whatever move is made, the next position still has at least one pile with strictly more than $1$ stone. By the induction hypothesis, in the next position a first-player loss corresponds to Nim sum zero and a first-player win corresponds to nonzero Nim sum. This is exactly the same as the induction hypothesis for normal Nim. So repeating the argument for Nim, the current position also satisfies the rule that Nim sum zero means a first-player losing state.
 
-## 有向图游戏
+## Directed graph games
 
-本文讨论的公平组合游戏，要求同一局面不能出现两次，也不存在平局的可能性．因此，对应的博弈图总是有向无环图．本节放宽了这一限制，讨论如何在一般的有向图上判定各个状态是先手必胜、先手必败或平局．
+The impartial games discussed in this article require that the same position never appears twice and that there are no draws. So the corresponding game graph is always a directed acyclic graph. This section relaxes this restriction and discusses how to decide, on a general directed graph, whether each state is a first-player win, a first-player loss or a draw.
 
-有向图游戏的规则和其他的公平组合游戏大体一致：从起始状态出发，轮流沿着有向图的边移动一步，直到无路可走．根据游戏是正常规则还是反常规则，无法移动的玩家分别是败者和胜者．在这样的游戏里，每个状态的胜负情况共有三种可能性：先手必胜、先手必败、平局．平局中游戏永远不会终止．尽管稍微复杂一些，但是关于必败状态和必胜状态的 [引理](#博弈图和状态) 依然成立，而剩下的状态就是平局状态：
+The rules of a directed graph game are mostly the same as for other impartial games: starting from the initial state, players take turns moving one step along an edge of the directed graph, until no move is possible. Under normal play the player who cannot move loses; under misère play that player wins. In such a game, each state has three possible outcomes: first-player win, first-player loss, or draw. In a draw the game never ends. Although things are a bit more complicated, the [lemma](#game-graphs-and-states) about losing and winning states still holds, and the remaining states are draws:
 
--   如果一个状态有后继状态，那么它先手必胜，当且仅当后继状态之一是必败状态；
--   如果一个状态有后继状态，那么它先手必败，当且仅当所有后继状态都是必胜状态；
--   如果一个状态无法分类为必胜状态和必败状态，那么它就是平局状态．
+-   If a state has successors, it is a first-player win if and only if one of its successors is a losing state;
+-   If a state has successors, it is a first-player loss if and only if all of its successors are winning states;
+-   If a state cannot be classified as winning or losing, it is a draw.
 
-要将所有状态分类为这三种状态，只需要采用类似 [拓扑排序](../../graph/topo.md) 的思路：
+To classify all states into these three kinds, just use an idea similar to [topological sort](../../graph/topo.md):
 
-1.  初始化时，记录所有状态的出度，将所有出度为零的状态压入队列，并根据游戏是正常规则或是反常规则分别设为必败状态或必胜状态．
-2.  弹出队首状态．如果是必败状态，则将所有尚未判断的前驱状态设为必胜状态；否则，当前状态是必胜状态，将它的所有前驱状态的出度减一，并将出度为零的前驱状态设为必败状态．将可以判断是必胜或必败状态的前驱状态压入队列．
-3.  算法在队列为空时终止．尚未判断为必胜或必败状态的状态均为平局状态．
+1.  To initialize, record the out-degree of every state. Push all states with out-degree zero into a queue, and mark them as losing or winning depending on whether the game uses normal or misère play.
+2.  Pop the state at the front of the queue. If it is a losing state, mark all its predecessors that are not yet decided as winning states. Otherwise, the current state is a winning state: decrease the out-degree of each of its predecessors by one, and mark predecessors whose out-degree becomes zero as losing states. Push every predecessor that has just been decided as winning or losing into the queue.
+3.  The algorithm stops when the queue is empty. Every state not yet decided as winning or losing is a draw.
 
-这一算法可以在 $O(|V|+|E|)$ 时间内将所有状态分类．
+This algorithm classifies all states in $O(|V|+|E|)$ time.
 
-## 例题
+## Example problems
 
-本节讨论一些典型的例题．
+This section discusses some typical example problems.
 
 ???+ example "[Luogu P2148 \[SDOI2009\] E&D](https://www.luogu.com.cn/problem/P2148)"
-    有 $2n$ 堆石子．对于 $k=1,2,\cdots,n$，石子堆 $2k-1$ 和 $2k$ 分为一组．两名玩家轮流操作，每次选择一组石子堆，将其中一堆移走，并将另一堆分为非空的两堆，放到该组石子堆所在的两个位置．如果所有石子堆都只有一枚石子，当前玩家就没有合法操作，输掉游戏．给定每堆石子的数量 $\{a_i\}_{i=1}^{2n}$，问是否为先手必胜状态．
+    There are $2n$ piles of stones. For $k=1,2,\cdots,n$, piles $2k-1$ and $2k$ form a group. Two players take turns. On each turn, a player chooses a group, removes one of its piles, and splits the other pile into two nonempty piles, which are placed in the two positions of that group. If every pile has only one stone, the current player has no legal move and loses. Given the size of each pile $\{a_i\}_{i=1}^{2n}$, decide whether this is a first-player winning state.
 
-??? note "解答"
-    显然，不同组石子堆的游戏相互独立，所以，只要计算每组游戏的 SG 函数值，就能计算出整个游戏的 SG 值，进而判断是否为必胜状态．关键在于如何计算每组石子堆的 SG 函数值．这并不容易．解决这类博弈论问题的常见思路是打表．设一组石子堆中石子数量分别为 $(i,j)$ 时，SG 值为 $f(i,j)$．那么，写一个暴力打表的程序，就得到如下结果：
+??? note "Solution"
+    Clearly, the games in different groups are independent, so if we compute the SG value of each group, we can get the SG value of the whole game and decide whether it is a winning state. The key is how to compute the SG value of each group, which is not easy. A common approach for this kind of game theory problem is to print a table. Let $f(i,j)$ be the SG value of a group whose piles have $(i,j)$ stones. Writing a brute-force program to print the table gives:
     
     ```text
     0 1 0 2 0 1 0 3 0 1 0 2 0 1 0 4 
@@ -567,7 +567,7 @@ $$
     4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4
     ```
     
-    这个表很具有规律性．有一个简单的观察：表格分成若干个 $2\times 2$ 的矩阵，且左上角处总是 $0$，而其余三个值总是一样的．于是，不妨将这个表格压缩，将每个 $2\times 2$ 的矩阵都压缩为除了左上角之外那个共同的数值：
+    This table has a very clear pattern. A simple observation: the table splits into $2\times 2$ blocks, where the top-left entry is always $0$ and the other three entries are always equal. So let us compress the table, replacing each $2\times 2$ block with the common value of its entries other than the top-left one:
     
     ```text
     1 2 1 3 1 2 1 4 
@@ -580,7 +580,7 @@ $$
     4 4 4 4 4 4 4 4 
     ```
     
-    可以发现，这个压缩的表格是前面完整表格相同位置的值加一．其实问题已经解决了．设下标从 $0$ 开始，那么表格中 $(i,j)$ 处的值 $g(i,j)$ 可以由如下递推公式给出：
+    Notice that the compressed table is the value at the same position in the full table plus one. That actually solves the problem. With indices starting from $0$, the value $g(i,j)$ at $(i,j)$ in the table is given by the recurrence:
     
     $$
     g(i,j) =
@@ -590,41 +590,41 @@ $$
     \end{cases}
     $$
     
-    要求的 SG 函数 $f(i,j)=g(i-1,j-1)$．利用这一递推公式，算法可以在 $O(\log\max\{i,j\})$ 时间内求出 $f(i,j)$ 的取值．
+    The SG function we want is $f(i,j)=g(i-1,j-1)$. With this recurrence, the algorithm computes $f(i,j)$ in $O(\log\max\{i,j\})$ time.
     
-    当然，可以通过简单的归纳法得到 $g(i,j)$ 其实就是将 $i$ 和 $j$ 反复同时除以 $2$ 得到两个偶数的最少次数．换句话说，它就是 $i$ 与 $j$ 的按位或中末尾连续 $1$ 的个数．由此，也可以直接利用 `__builtin_ctz(~(i | j))` 算出该值．
+    Of course, a simple induction shows that $g(i,j)$ is just the minimum number of times $i$ and $j$ must both be halved (rounding down) until both are even. In other words, it is the number of trailing $1$ bits in the bitwise OR of $i$ and $j$. So the value can also be computed directly with `__builtin_ctz(~(i | j))`.
     
-    这类题目中，只要通过打表观察的方法得到 SG 函数表达式，它都很容易通过归纳法证明，因而解题的关键在于以某种形式获得这些结论而非推导．例如，已知结论后，本题中的递推关系可以归纳证明如下．设 $S_k$ 为将 $k$ 枚石子分成非空的两堆能得到的局面的 SG 值集合，那么，$f(i,j) = \operatorname{mex}(S_i \cup S_j)$．故而，$S_k$ 有递推关系：
+    In problems like this, once you get the expression for the SG function by printing tables and observing patterns, it is usually easy to prove by induction. So the key to solving the problem is to obtain the result somehow, not to derive it. For example, once the result is known, the recurrence in this problem can be proved by induction as follows. Let $S_k$ be the set of SG values of the positions obtained by splitting $k$ stones into two nonempty piles. Then $f(i,j) = \operatorname{mex}(S_i \cup S_j)$. So $S_k$ satisfies the recurrence:
     
     $$
     S_k = \{\operatorname{mex}(S_i \cup S_j) : i + j = k,~i,j\in\mathbf N_+\}.
     $$
     
-    需要证明的是，$d\in S_k$ 当且仅当 $(k-1)$ 的二进制表示中第 $d$ 位（最低位是第 $0$ 位）是 $1$．
+    We need to prove that $d\in S_k$ if and only if bit $d$ (the lowest bit is bit $0$) of the binary representation of $(k-1)$ is $1$.
     
-    利用数学归纳法．归纳起点 $S_1=\varnothing$ 显然成立．假设命题对小于 $k$ 的正整数都成立．那么，$d\in S_k$，当且仅当存在 $i,j\in\mathbf N_+$ 使得 $i+j=k$，$(i-1)$ 和 $(j-1)$ 两个数的第 $d$ 位均为 $0$，且对于每个 $d' < d$，两者的第 $d'$ 位至少有一个为 $1$．显然，存在这样一种拆分，当且仅当只考虑第 $0\sim d$ 位的部分，即模 $2^{d+1}$ 时，$(k-1)=(i-1)+(j-1)+1$ 的取值范围为 $[2^d,2^{d+1})$．这一条件就等价于 $(k-1)$ 的第 $d$ 位是 $1$．由此，归纳步骤成立．原命题得证．
+    Use induction. The base case $S_1=\varnothing$ clearly holds. Suppose the claim holds for all positive integers less than $k$. Then $d\in S_k$ if and only if there exist $i,j\in\mathbf N_+$ with $i+j=k$ such that bit $d$ of both $(i-1)$ and $(j-1)$ is $0$, and for each $d' < d$, at least one of them has a $1$ in bit $d'$. Clearly, such a split exists if and only if, looking only at bits $0\sim d$ (that is, modulo $2^{d+1}$), the possible values of $(k-1)=(i-1)+(j-1)+1$ cover the range $[2^d,2^{d+1})$. This condition is equivalent to bit $d$ of $(k-1)$ being $1$. So the inductive step holds, and the claim is proved.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/math/code/impartial-game/impartial-game-1.cpp"
     ```
 
-???+ example "[Luogu P5675 \[GZOI2017\] 取石子游戏](https://www.luogu.com.cn/problem/P5675)"
-    有 $n$ 堆石子，第 $i$ 堆有 $a_i$ 枚．两人玩 Nim 游戏．现在，可以任意指定若干堆石子作为初始局面，并指定其中一堆石子要求先手玩家首轮必须从中取走石子，但不能指定取走石子的数目．问有多少种指定方式，使得先手无法获得胜利．数据满足 $n,a_i\le 200$．
+???+ example "[Luogu P5675 \[GZOI2017\] Stone-Taking Game](https://www.luogu.com.cn/problem/P5675)"
+    There are $n$ piles of stones, and pile $i$ has $a_i$ stones. Two people play Nim. You may choose any subset of the piles as the initial position, and choose one of these piles from which the first player must take stones on the first turn, but you cannot choose how many stones are taken. How many ways of choosing are there such that the first player cannot win? Constraints: $n,a_i\le 200$.
 
-??? note "解答"
-    对于这类问题，需要利用常见游戏的结论，并结合其他部分知识来进行解答．假设指定先手必须取走第 $i$ 堆石子，且指定的所有石子堆数量 Nim 和为 $v$，那么，先手无法获得胜利，当且仅当 $a_i \le a_i\oplus v$，也就是说，第 $i$ 堆石子数量 $a_i$ 不超过除第 $i$ 堆外剩余石子堆数量 Nim 和 $a_i\oplus v$．由于数据范围很小，直接枚举指定首轮取石子的堆；枚举到第 $i$ 堆时，剩余每个堆选或不选，得到不同 Nim 和的方案数可以通过 DP 计算出来，将最后得到的方案数中大于等于 $a_i$ 的部分加总起来即可．
+??? note "Solution"
+    For problems like this, you need to combine the results for common games with other knowledge. Suppose the first player must take from pile $i$, and the Nim sum of all chosen piles is $v$. Then the first player cannot win if and only if $a_i \le a_i\oplus v$; that is, the size $a_i$ of pile $i$ is at most the Nim sum $a_i\oplus v$ of the other chosen piles. Since the constraints are small, just enumerate the pile used on the first turn. When enumerating pile $i$, each of the other piles is either chosen or not, and the number of ways to get each Nim sum can be computed with DP. Then add up the counts for Nim sums greater than or equal to $a_i$.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/math/code/impartial-game/impartial-game-2.cpp"
     ```
 
-???+ example "[Luogu P2599 \[ZJOI2009\] 取石子游戏](https://www.luogu.com.cn/problem/P2599)"
-    有 $n$ 堆石子，第 $i$ 堆有 $a_i$ 枚．两人轮流取走石子，每次都只能从最左或最右的两堆中选择一堆取走任意枚石子，但不能不取．取走最后一枚石子的玩家胜利．问先手是否必胜．
+???+ example "[Luogu P2599 \[ZJOI2009\] Stone-Taking Game](https://www.luogu.com.cn/problem/P2599)"
+    There are $n$ piles of stones, and pile $i$ has $a_i$ stones. Two people take turns taking stones. On each turn, a player can only choose the leftmost or the rightmost pile and take any positive number of stones from it; they may not take nothing. The player who takes the last stone wins. Decide whether the first player wins.
 
-??? note "解答"
-    由于本题中并不存在相互独立的子游戏，所以这道题目原则上只用到 [判断必败和必胜状态的引理](#博弈图和状态)．从最简单的情形开始分析．当 $n\le 2$ 时，就是 Nim 游戏．当 $n \ge 3$ 时，问题变得复杂．但是，由于可操作的石子堆只能是两端的石子堆，不妨设它们中石子数量分别为 $x$ 和 $y$．进一步地，设 $f(x,y)$ 为先手必胜状态的指示函数，即先手必胜时 $f(x,y)=1$，否则 $f(x,y)=0$．容易发现，$f(x,y)$ 的取值满足递推关系：$f(x,y)=0$，当且仅当对于所有 $s < x$ 和 $t < y$ 都有 $f(x,t)=f(s,y)=1$．递推起点在 $x=0$ 或 $y=0$ 时，此时，游戏已经不足 $n$ 堆石子，需要进一步考虑中间石子堆的数量．因此，不妨暂时假设 $f(x,0)$ 和 $f(0,y)$ 是已知的，考虑如何从它们的取值推出所有 $f(x,y)$ 的取值．这并不困难．考虑下标集合为 $\mathbf N\times\mathbf N$ 的无穷大矩阵，求 $f(x,y)$ 相当于向里面填 $0$ 和 $1$，需要满足的条件是，每行和每列都至多一个 $0$，且如果同行和同列中之前的位置都没有出现过 $0$，该位置一定是 $0$．每行中 $0$ 的位置实际上定义了一个从行号 $x$ 到列号 $y$ 的函数．简单尝试几个例子（即打表）之后就可以发现，如果设使得 $f(x,0)=0$ 的唯一的 $x$ 是 $x_0$，使得 $f(0,y)=0$ 的唯一的 $y$ 是 $y_0$，那么，对于任何正整数 $x$，使得 $f(x,y)=0$ 成立的
+??? note "Solution"
+    Since this problem has no independent subgames, in principle it only uses the [lemma for deciding losing and winning states](#game-graphs-and-states). Start with the simplest case. When $n\le 2$, it is just Nim. When $n \ge 3$, things get complicated. However, since only the piles at the two ends can be changed, let their sizes be $x$ and $y$. Further, let $f(x,y)$ be the indicator function of first-player winning states: $f(x,y)=1$ if the first player wins, and $f(x,y)=0$ otherwise. It is easy to see that $f(x,y)$ satisfies the recurrence: $f(x,y)=0$ if and only if $f(x,t)=f(s,y)=1$ for all $s < x$ and $t < y$. The base case is $x=0$ or $y=0$; then the game has fewer than $n$ piles, and we must further consider the sizes of the middle piles. So for now assume $f(x,0)$ and $f(0,y)$ are known, and consider how to derive all values of $f(x,y)$ from them. This is not hard. Consider an infinite matrix indexed by $\mathbf N\times\mathbf N$. Computing $f(x,y)$ means filling it with $0$s and $1$s, subject to: each row and each column has at most one $0$, and a position must be $0$ if no earlier position in the same row or the same column has a $0$. The position of the $0$ in each row actually defines a function from the row index $x$ to the column index $y$. After trying a few examples (that is, printing a table), you will find the following. Let $x_0$ be the unique $x$ with $f(x,0)=0$, and $y_0$ the unique $y$ with $f(0,y)=0$. Then for any positive integer $x$, the $y$ that makes $f(x,y)=0$ is
     
     $$
     y = \begin{cases}
@@ -635,38 +635,38 @@ $$
     \end{cases}
     $$
     
-    也就是说，只要知道 $x_0$ 和 $y_0$，就可以在 $O(1)$ 时间内计算出任意 $f(x,y)$ 的值，判断当前状态是否为先手必胜状态．而 $x_0$ 和 $y_0$ 可以递归计算．例如，$x_0$ 是使得 $f(x,0)=0$ 的唯一解，但同时，$f(x,0)$ 的取值可以通过移除最右侧石子堆后，只考虑剩下的 $n-1$ 堆石子来计算；也就是说，只考虑前 $n-1$ 堆石子，同样可以计算一个 $f_{1,n-1}(x,y)$，那么，显然有 $f(x,0)=f_{1,n-1}(x,a_{n-1})$；类似地，移除最左侧石子堆并计算得出 $f_{2,n}(x,y)$ 后，就得到 $f(0,y)=f_{2,n}(a_2,y)$．当然，内层的函数 $f_{1,n-1}(x,y)$ 和 $f_{2,n}(x,y)$ 的计算依赖于更内层的函数．这是典型的 [区间 DP](../../dp/interval.md)．每层只需要维护相应函数的 $x_0$ 和 $y_0$ 即可．
+    In other words, once we know $x_0$ and $y_0$, we can compute any $f(x,y)$ in $O(1)$ time and decide whether the current state is a first-player win. And $x_0$ and $y_0$ can be computed recursively. For example, $x_0$ is the unique solution of $f(x,0)=0$, but the value of $f(x,0)$ can also be computed by removing the rightmost pile and considering only the remaining $n-1$ piles. That is, considering only the first $n-1$ piles, we can similarly compute a function $f_{1,n-1}(x,y)$, and clearly $f(x,0)=f_{1,n-1}(x,a_{n-1})$. Similarly, after removing the leftmost pile and computing $f_{2,n}(x,y)$, we get $f(0,y)=f_{2,n}(a_2,y)$. Of course, computing the inner functions $f_{1,n-1}(x,y)$ and $f_{2,n}(x,y)$ depends on functions further inside. This is a typical [interval DP](../../dp/interval.md). Each level only needs to maintain the $x_0$ and $y_0$ of its function.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/math/code/impartial-game/impartial-game-3.cpp"
     ```
 
-## 习题
+## Exercises
 
-首先是一些模板题．它们是对本页面的结论的简单应用：
+First, some template problems. They are simple applications of the results on this page:
 
--   [Luogu P2197【模板】Nim 游戏](https://www.luogu.com.cn/problem/P2197)
--   [Luogu P2252 \[SHOI2002\] 取石子游戏](https://www.luogu.com.cn/problem/P2252)
--   [Luogu P2594 \[ZJOI2009\] 染色游戏](https://www.luogu.com.cn/problem/P2594)
--   [Luogu P3185 \[HNOI2007\] 分裂游戏](https://www.luogu.com.cn/problem/P3185)
+-   [Luogu P2197 \[Template\] Nim Game](https://www.luogu.com.cn/problem/P2197)
+-   [Luogu P2252 \[SHOI2002\] Stone-Taking Game](https://www.luogu.com.cn/problem/P2252)
+-   [Luogu P2594 \[ZJOI2009\] Coloring Game](https://www.luogu.com.cn/problem/P2594)
+-   [Luogu P3185 \[HNOI2007\] Splitting Game](https://www.luogu.com.cn/problem/P3185)
 -   [Luogu P3480 \[POI 2009\] KAM-Pebbles](https://www.luogu.com.cn/problem/P3480)
--   [Luogu P4101 \[HEOI2014\] 人人尽说江南好](https://www.luogu.com.cn/problem/P4101)
--   [Luogu P4279 \[SHOI2008\] 小约翰的游戏](https://www.luogu.com.cn/problem/P4279)
+-   [Luogu P4101 \[HEOI2014\] Everyone Praises Jiangnan](https://www.luogu.com.cn/problem/P4101)
+-   [Luogu P4279 \[SHOI2008\] Little John's Game](https://www.luogu.com.cn/problem/P4279)
 -   [Luogu P6487 \[COCI 2010/2011 #4\] HRPA](https://www.luogu.com.cn/problem/P6487)
--   [Luogu P6560 \[SBCOI2020\] 时光的流逝](https://www.luogu.com.cn/problem/P6560)
--   [Luogu P7589 黑白棋（2021 CoE-II B）](https://www.luogu.com.cn/problem/P7589)
+-   [Luogu P6560 \[SBCOI2020\] The Passage of Time](https://www.luogu.com.cn/problem/P6560)
+-   [Luogu P7589 Black and White Chess (2021 CoE-II B)](https://www.luogu.com.cn/problem/P7589)
 -   [AtCoder Regular Contest 168 B - Arbitrary Nim](https://atcoder.jp/contests/arc168/tasks/arc168_b)
 
-然后是一些思维性更强或更为综合的题目：
+Next, some problems that need more insight or combine more ideas:
 
--   [Luogu P2490 \[SDOI2011\] 黑白棋](https://www.luogu.com.cn/problem/P2490)
--   [Luogu P3179 \[HAOI2015\] 数组游戏](https://www.luogu.com.cn/problem/P3179)
--   [Luogu P5363 \[SDOI2019\] 移动金币](https://www.luogu.com.cn/problem/P5363)
+-   [Luogu P2490 \[SDOI2011\] Black and White Chess](https://www.luogu.com.cn/problem/P2490)
+-   [Luogu P3179 \[HAOI2015\] Array Game](https://www.luogu.com.cn/problem/P3179)
+-   [Luogu P5363 \[SDOI2019\] Moving Coins](https://www.luogu.com.cn/problem/P5363)
 -   [Luogu P5970 \[POI 2016\] Nim z utrudnieniem](https://www.luogu.com.cn/problem/P5970)
--   [Luogu P6791 \[SNOI2020\] 取石子](https://www.luogu.com.cn/problem/P6791)
--   [Luogu P7864「EVOI-RD1」摘叶子](https://www.luogu.com.cn/problem/P7864)
--   [Luogu P8347「Wdoi-6」另一侧的月](https://www.luogu.com.cn/problem/P8347)
+-   [Luogu P6791 \[SNOI2020\] Taking Stones](https://www.luogu.com.cn/problem/P6791)
+-   [Luogu P7864 \[EVOI-RD1\] Picking Leaves](https://www.luogu.com.cn/problem/P7864)
+-   [Luogu P8347 \[Wdoi-6\] The Moon on the Other Side](https://www.luogu.com.cn/problem/P8347)
 -   [AtCoder Grand Contest 002 E - Candy Piles](https://atcoder.jp/contests/agc002/tasks/agc002_e)
 -   [AtCoder Grand Contest 010 F - Tree Game](https://atcoder.jp/contests/agc010/tasks/agc010_f)
 -   [AtCoder Grand Contest 017 D - Game on Tree](https://atcoder.jp/contests/agc017/tasks/agc017_d)
@@ -677,27 +677,27 @@ $$
 -   [Codeforces 1451 F. Nullify The Matrix](https://codeforces.com/problemset/problem/1451/F)
 -   [Codeforces 1704 F. Colouring Game](https://codeforces.com/problemset/problem/1704/F)
 
-最后是一些二分图博弈的题目．由于需要用到一些二分图匹配的算法，故将它们单独列出：
+Finally, some bipartite graph game problems. They need bipartite matching algorithms, so they are listed separately:
 
--   [Luogu P4136 谁能赢呢？](https://www.luogu.com.cn/problem/P4136)
+-   [Luogu P4136 Who Can Win?](https://www.luogu.com.cn/problem/P4136)
 -   [Luogu P4617 \[COCI 2017/2018 #5\] Planinarenje](https://www.luogu.com.cn/problem/P4617)
--   [Luogu P4055 \[JSOI2009\] 游戏](https://www.luogu.com.cn/problem/P4055)
--   [Luogu P1971 \[NOI2011\] 兔兔与蛋蛋游戏](https://www.luogu.com.cn/problem/P1971)
+-   [Luogu P4055 \[JSOI2009\] Game](https://www.luogu.com.cn/problem/P4055)
+-   [Luogu P1971 \[NOI2011\] Bunny and Egg Game](https://www.luogu.com.cn/problem/P1971)
 -   [Codeforces 1147 F. Zigzag Game](https://codeforces.com/problemset/problem/1147/F)
 
-## 参考资料与注释
+## References and notes
 
--   [（转载）Nim 游戏博弈（收集完全版）by exponent - 博客园](http://www.cnblogs.com/exponent/articles/2141477.html)
--   [\[组合游戏与博弈论\]【学习笔记】by Candy? - 博客园](https://www.cnblogs.com/candy99/p/6548836.html)
+-   [(Repost) Nim games (complete collection) by exponent - cnblogs](http://www.cnblogs.com/exponent/articles/2141477.html)
+-   [\[Combinatorial games and game theory\] (study notes) by Candy? - cnblogs](https://www.cnblogs.com/candy99/p/6548836.html)
 -   [Nim - Wikipedia](https://en.wikipedia.org/wiki/Nim)
 -   [Sprague–Grundy theorem - Wikipedia](https://en.wikipedia.org/wiki/Sprague%E2%80%93Grundy_theorem)
 -   [Nimber - Wikipedia](https://en.wikipedia.org/wiki/Nimber)
 -   [Beatty Sequence - Wikipedia](https://en.wikipedia.org/wiki/Beatty_sequence)
 -   [Games on arbitrary graphs - CP Algorithms](https://cp-algorithms.com/game_theory/games_on_graphs.html)
--   [算法学习笔记（74): 二分图博弈 by Pecco - 知乎](https://zhuanlan.zhihu.com/p/359334008)
+-   [Algorithm study notes (74): bipartite graph games by Pecco - Zhihu](https://zhuanlan.zhihu.com/p/359334008)
 -   Conway, John H. On numbers and games. AK Peters/CRC Press, 2000.
 -   Berlekamp, Elwyn R., John H. Conway, and Richard K. Guy. Winning ways for your mathematical plays, volume 1-4. AK Peters/CRC Press, 2001-2004.
 
-[^n-vs-p]: 「$\mathcal N$ 态」和「$\mathcal P$ 态」这两个名称分别表示「下一名玩家胜利」（Next player wins）和「前一名玩家胜利」（Previous player wins）．
+[^n-vs-p]: The names "$\mathcal N$-position" and "$\mathcal P$-position" stand for "Next player wins" and "Previous player wins" respectively.
 
-[^more-sums]: 本文讨论的「和」都是 **长规则**（long rule）下的 **析取和**（disjunctive sum）．这也是最常见的一种游戏组合方式．除此之外，还有其他可能的游戏组合方式．关于它们的详细讨论，可以参考 Conway, John H. On numbers and games. AK Peters/CRC Press, 2000. 一书的第 14 章．
+[^more-sums]: All "sums" discussed in this article are **disjunctive sums** under the **long rule**. This is the most common way to combine games. There are other possible ways to combine games as well. For a detailed discussion, see Chapter 14 of Conway, John H. On numbers and games. AK Peters/CRC Press, 2000.
