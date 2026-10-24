@@ -1,186 +1,186 @@
-前置知识：[费马小定理](./fermat.md#费马小定理)、[欧拉定理](./fermat.md#欧拉定理)、[拉格朗日定理](./congruence-equation.md#素数模同余方程)
+Prerequisites: [Fermat's little theorem](./fermat.md#费马小定理), [Euler's theorem](./fermat.md#欧拉定理), [Lagrange's theorem](./congruence-equation.md#素数模同余方程)
 
-阶和原根，是理解模 $m$ [既约剩余系](./basic.md#同余类与剩余系) $\mathbf Z_m^*$ 乘法结构的重要工具．基于此，可以定义 [离散对数](./discrete-logarithm.md) 等概念．更为一般的讨论可以参见抽象代数部分 [群论](../algebra/group-theory.md#阶) 和 [环论](../algebra/ring-theory.md#应用整数同余类的乘法群) 等页面相关章节．
+Orders and primitive roots are key tools for understanding the multiplicative structure of the [reduced residue system](./basic.md#同余类与剩余系) $\mathbf Z_m^*$ modulo $m$. Building on them, one can define concepts such as the [discrete logarithm](./discrete-logarithm.md). For a more general treatment, see the related sections of the abstract algebra pages on [group theory](../algebra/group-theory.md#阶) and [ring theory](../algebra/ring-theory.md#应用整数同余类的乘法群).
 
-## 阶
+## Order
 
-本节中，总是假设模数 $m\in\mathbf N_+$ 和底数 $a\in\mathbf Z$ 互素，即 $(a,m)=1$，也记作 $a\perp m$．
+In this section, we always assume that the modulus $m\in\mathbf N_+$ and the base $a\in\mathbf Z$ are coprime, that is, $(a,m)=1$, also written $a\perp m$.
 
-对于 $n\in\mathbf Z$，幂次 $a^n\bmod m$ 呈现一种循环结构．这个循环节的最小长度，就是 $a$ 模 $m$ 的阶．阶就定义为幂 $a^n \bmod m$ 第一次回到起点 $a^0\bmod m = 1$ 时的指数：
+For $n\in\mathbf Z$, the powers $a^n\bmod m$ form a cycle. The minimum length of this cycle is the order of $a$ modulo $m$. The order is defined as the exponent at which the power $a^n \bmod m$ first returns to the start $a^0\bmod m = 1$:
 
-???+ abstract "阶"
-    对于 $a\in\mathbf Z,m\in\mathbf N_+$ 且 $a\perp m$，满足同余式 $a^n \equiv 1 \pmod m$ 的最小正整数 $n$ 称作 **$a$ 模 $m$ 的阶**（the order of $a$ modulo $m$），记作 $\delta_m(a)$ 或 $\operatorname{ord}_m(a)$．
+???+ abstract "Order"
+    For $a\in\mathbf Z,m\in\mathbf N_+$ with $a\perp m$, the smallest positive integer $n$ satisfying the congruence $a^n \equiv 1 \pmod m$ is called **the order of $a$ modulo $m$**, written $\delta_m(a)$ or $\operatorname{ord}_m(a)$.
 
-???+ tip "注"
-    在 [抽象代数](../algebra/group-theory.md#阶) 中，这里的「阶」就是模 $m$ 既约剩余系关于乘法形成的群中，元素 $a$ 的阶．用记号 $\delta$ 表示阶只适用于这个特殊的群．下面的诸多性质可以直接推广到抽象代数中群元素的阶的性质．
+???+ tip "Note"
+    In [abstract algebra](../algebra/group-theory.md#阶), the "order" here is exactly the order of the element $a$ in the group formed by the reduced residue system modulo $m$ under multiplication. The notation $\delta$ for the order is only used for this particular group. Many of the properties below generalize directly to properties of the order of elements in abstract groups.
     
-    另外还有「半阶」的概念，在数论中会用 $\delta^-$ 记号表示．它是满足同余式 $a^n \equiv -1 \pmod m$ 的最小正整数．半阶不是群论中的概念．阶一定存在，半阶不一定存在．
+    There is also the concept of a "half order", written $\delta^-$ in number theory. It is the smallest positive integer satisfying the congruence $a^n \equiv -1 \pmod m$. The half order is not a group-theoretic concept. The order always exists, but the half order may not.
 
-### 幂的循环结构
+### Cyclic structure of powers
 
-利用阶，可以刻画幂的循环结构．对于幂 $a^n\bmod m$，可以将指数 $n$ 对阶 $\delta_m(a)$ 做带余除法：
+The order describes the cyclic structure of powers. For a power $a^n\bmod m$, divide the exponent $n$ by the order $\delta_m(a)$ with remainder:
 
 $$
 n = \delta_m(a)q + r, ~ 0\le r < \delta_m(a). 
 $$
 
-进而，利用幂的运算律，就得到
+Then, by the rules of exponents,
 
 $$
 a^n = a^{\delta_m(a)q + r} = (a^{\delta_m(a)})^q \cdot a^r \equiv a^r \pmod m.
 $$
 
-这说明，对于任意指数的幂，可以将它平移到第一个非负的循环节．由此，可以得到一系列关于阶的性质．
+So a power with any exponent can be shifted into the first nonnegative cycle. This gives a series of properties of the order.
 
-???+ note "性质 1"
-    对于 $a\in\mathbf Z,m\in\mathbf N_+$ 且 $a\perp m$，幂次 $a^0(=1),a,a^2,\cdots,a^{\delta_m(a)-1}$ 模 $m$ 两两不同余．
+???+ note "Property 1"
+    For $a\in\mathbf Z,m\in\mathbf N_+$ with $a\perp m$, the powers $a^0(=1),a,a^2,\cdots,a^{\delta_m(a)-1}$ are pairwise incongruent modulo $m$.
 
-??? note "证明"
-    考虑反证．假设存在两个数 $0\le i< j<\delta_m(a)$，且 $a^i\equiv a^j\pmod m$，则有 $a^{j - i}\equiv 1\pmod m$．但是，$0 < j - i < \delta_m(a)$．这与阶的最小性矛盾，故原命题成立．
+??? note "Proof"
+    By contradiction. Suppose there are two numbers $0\le i< j<\delta_m(a)$ with $a^i\equiv a^j\pmod m$. Then $a^{j - i}\equiv 1\pmod m$. But $0 < j - i < \delta_m(a)$, which contradicts the minimality of the order. So the claim holds.
 
-???+ note "性质 2"
-    对于 $a,n\in\mathbf Z,m\in\mathbf N_+$ 且 $a\perp m$，同余关系 $a^n \equiv 1 \pmod m$ 成立，当且仅当 $\delta_m(a)\mid n$．
+???+ note "Property 2"
+    For $a,n\in\mathbf Z,m\in\mathbf N_+$ with $a\perp m$, the congruence $a^n \equiv 1 \pmod m$ holds if and only if $\delta_m(a)\mid n$.
 
-??? note "证明"
-    如前文所述，$a^{n}\equiv a^{n\bmod\delta_m(a)}\pmod m$．由性质 1 可知，$0\le r < \delta_m(a)$ 中唯一一个使得 $a^r\equiv 1\pmod m$ 成立的 $r$ 就是 $r=0$．因此，$a^n \equiv 1 \pmod m$，当且仅当 $n\bmod \delta_m(a) = 0$，也就是 $\delta_m(a)\mid n$．
+??? note "Proof"
+    As shown above, $a^{n}\equiv a^{n\bmod\delta_m(a)}\pmod m$. By Property 1, the only $r$ with $0\le r < \delta_m(a)$ and $a^r\equiv 1\pmod m$ is $r=0$. So $a^n \equiv 1 \pmod m$ if and only if $n\bmod \delta_m(a) = 0$, that is, $\delta_m(a)\mid n$.
 
-[欧拉定理](./fermat.md#欧拉定理) 中，同余关系 $a^{\varphi(m)}\equiv 1\pmod m$ 对于所有 $a\perp m$ 都成立．结合性质 2，这说明对于所有 $a\perp m$，都有 $\delta_m(a)\mid\varphi(m)$．换句话说，$\varphi(m)$ 是所有 $a\perp m$ 的阶的一个公倍数．对于一个正整数 $m$，所有 $a\perp m$ 的阶 $\delta_m(a)$ 的最小公倍数，记作 $\lambda(m)$，就是 $m$ 的 [Carmichael 函数](#carmichael-函数)．后文会详细讨论它的性质．
+In [Euler's theorem](./fermat.md#欧拉定理), the congruence $a^{\varphi(m)}\equiv 1\pmod m$ holds for all $a\perp m$. Combined with Property 2, this means $\delta_m(a)\mid\varphi(m)$ for all $a\perp m$. In other words, $\varphi(m)$ is a common multiple of the orders of all $a\perp m$. For a positive integer $m$, the least common multiple of the orders $\delta_m(a)$ of all $a\perp m$, written $\lambda(m)$, is the [Carmichael function](#carmichael-function) of $m$. Its properties are discussed in detail later.
 
-和其他的循环结构类似，可以根据 $a$ 的阶计算 $a^k$ 的阶．
+As with other cyclic structures, the order of $a^k$ can be computed from the order of $a$.
 
-???+ note "性质 3"
-    对于 $k,a\in\mathbf Z,m\in\mathbf N_+$ 且 $a\perp m$，有
+???+ note "Property 3"
+    For $k,a\in\mathbf Z,m\in\mathbf N_+$ with $a\perp m$,
     
     $$
     \delta_m(a^k) = \dfrac{\delta_m(a)}{(\delta_m(a),k)}.
     $$
 
-??? note "证明"
-    由性质 2，同余关系 $(a^k)^n = a^{kn} \equiv 1\pmod m$ 成立，当且仅当 $\delta_m(a) \mid kn$．这一条件就等价于
+??? note "Proof"
+    By Property 2, the congruence $(a^k)^n = a^{kn} \equiv 1\pmod m$ holds if and only if $\delta_m(a) \mid kn$. This condition is equivalent to
     
     $$
     \dfrac{\delta_m(a)}{\left(\delta_m(a),k\right)} \mid n.
     $$
     
-    使得这一条件成立的最小正整数就是
+    The smallest positive integer satisfying this condition is
     
     $$
     \delta_m(a^k)=\dfrac{\delta_m(a)}{\left(\delta_m(a),k\right)}.
     $$
 
-### 乘积的阶
+### Order of a product
 
-设 $a,b$ 是与 $m$ 互素的不同整数．如果已知阶 $\delta_m(a)$ 和 $\delta_m(b)$，那么，同样可以获得一些关于它们乘积 $ab$ 的阶 $\delta_{m}(ab)$ 的信息．
+Let $a,b$ be distinct integers coprime to $m$. If the orders $\delta_m(a)$ and $\delta_m(b)$ are known, we can also get some information about the order $\delta_{m}(ab)$ of their product $ab$.
 
-???+ note "性质 4"
-    对于 $a,b\in\mathbf Z,m\in\mathbf N_+$ 且 $a,b\perp m$，有
+???+ note "Property 4"
+    For $a,b\in\mathbf Z,m\in\mathbf N_+$ with $a,b\perp m$,
     
     $$
     \dfrac{[\delta_m(a),\delta_m(b)]}{(\delta_m(a),\delta_m(b))} \mid \delta_m(ab) \mid [\delta_m(a),\delta_m(b)].
     $$
 
-??? note "证明"
-    因为 $[\delta_m(a),\delta_m(b)]$ 是 $\delta_m(a)$ 和 $\delta_m(b)$ 的倍数，所以，由性质 2 可知
+??? note "Proof"
+    Since $[\delta_m(a),\delta_m(b)]$ is a multiple of both $\delta_m(a)$ and $\delta_m(b)$, Property 2 gives
     
     $$
     (ab)^{[\delta_m(a),\delta_m(b)]} = a^{[\delta_m(a),\delta_m(b)]} b^{[\delta_m(a),\delta_m(b)]} \equiv 1 \pmod m.
     $$
     
-    再次应用性质 2，就得到
+    Applying Property 2 again gives
     
     $$
     \delta_m(ab) \mid [\delta_m(a),\delta_m(b)].
     $$
     
-    这就得到右侧的整除关系．
+    This is the divisibility on the right.
     
-    反过来，由于
+    Conversely, since
     
     $$
     1 \equiv (ab)^{\delta_m(ab)\delta_m(b)} \equiv a^{\delta_m(ab)\delta_m(b)} \pmod m,
     $$
     
-    所以，应用性质 2，就得到 $\delta_m(a)\mid\delta_m(ab)\delta_m(b)$．两侧消去 $(\delta_m(a),\delta_m(b))$，就得到
+    Property 2 gives $\delta_m(a)\mid\delta_m(ab)\delta_m(b)$. Dividing both sides by $(\delta_m(a),\delta_m(b))$ gives
     
     $$
     \dfrac{\delta_m(a)}{(\delta_m(a),\delta_m(b))}\mid\delta_m(ab)\dfrac{\delta_m(b)}{(\delta_m(a),\delta_m(b))}.
     $$
     
-    消去公因子后，两个分式互素，这就得到
+    After removing the common factor, the two fractions are coprime, so
     
     $$
     \dfrac{\delta_m(a)}{(\delta_m(a),\delta_m(b))}\mid\delta_m(ab).
     $$
     
-    同理，也有
+    Similarly,
     
     $$
     \dfrac{\delta_m(b)}{(\delta_m(a),\delta_m(b))}\mid\delta_m(ab).
     $$
     
-    由于两个整除关系的左侧互素，有
+    Since the left sides of these two divisibilities are coprime,
     
     $$
     \dfrac{[\delta_m(a),\delta_m(b)]}{(\delta_m(a),\delta_m(b))} =\dfrac{\delta_m(a)\delta_m(b)}{(\delta_m(a),\delta_m(b))^2}\mid\delta_m(ab).
     $$
     
-    这就得到左侧的整除关系．
+    This is the divisibility on the left.
 
-对于 $a$ 和 $b$ 的阶互素的情形，这一结论有着更为简单的形式．
+When the orders of $a$ and $b$ are coprime, this result takes a simpler form.
 
-???+ note "性质 4'"
-    对于 $a,b\in\mathbf Z,m\in\mathbf N_+$ 且 $a,b\perp m$，有
+???+ note "Property 4'"
+    For $a,b\in\mathbf Z,m\in\mathbf N_+$ with $a,b\perp m$,
     
     $$
     \delta_m(ab) = \delta_m(a)\delta_m(b) \iff \delta_m(a)\perp\delta_m(b).
     $$
 
-??? note "证明"
-    如果 $\delta_m(a)\perp\delta_m(b)$，那么性质 4 中所有整除关系都是等式，所以有
+??? note "Proof"
+    If $\delta_m(a)\perp\delta_m(b)$, then all divisibilities in Property 4 are equalities, so
     
     $$
     \delta_m(ab) = [\delta_m(a),\delta_m(b)] = \delta_m(a)\delta_m(b).
     $$
     
-    反过来，如果 $\delta_m(ab)=\delta_m(a)\delta_m(b)$，那么根据性质 4，就有
+    Conversely, if $\delta_m(ab)=\delta_m(a)\delta_m(b)$, then by Property 4,
     
     $$
     \delta_m(a)\delta_m(b) = \delta_m(ab) \mid [\delta_m(a),\delta_m(b)].
     $$
     
-    这立马说明 $(\delta_m(a),\delta_m(b))=1$，即 $\delta_m(a)\perp\delta_m(b)$．
+    This immediately gives $(\delta_m(a),\delta_m(b))=1$, that is, $\delta_m(a)\perp\delta_m(b)$.
 
-一般情形中，性质 4 得到的界已经是紧的．乘积的阶取得下界的情形很容易构造：例如 $(a,b,m)=(3,5,7)$ 时，$\delta_m(a)=\delta_m(b)=6$，但是它们的乘积的阶 $\delta_m(ab)=1$．
+In general, the bounds from Property 4 are already tight. It is easy to construct a case where the order of the product reaches the lower bound: for example, with $(a,b,m)=(3,5,7)$, $\delta_m(a)=\delta_m(b)=6$, but the order of their product is $\delta_m(ab)=1$.
 
-尽管一般情形中，乘积 $ab$ 的阶未必是它们的阶的最小公倍数，但是总能找到一个元素使得它的阶等于这个最小公倍数．
+Although in general the order of the product $ab$ need not be the least common multiple of their orders, we can always find an element whose order equals this least common multiple.
 
-???+ note "性质 5"
-    对于 $a,b\in\mathbf Z,m\in\mathbf N_+$ 且 $a,b\perp m$，总是存在 $c\in\mathbf Z$ 且 $c\perp m$ 使得
+???+ note "Property 5"
+    For $a,b\in\mathbf Z,m\in\mathbf N_+$ with $a,b\perp m$, there always exists $c\in\mathbf Z$ with $c\perp m$ such that
     
     $$
     \delta_m(c) = [\delta_m(a),\delta_m(b)].
     $$
 
-??? note "证明"
-    考虑素因数分解：
+??? note "Proof"
+    Consider the prime factorizations:
     
     $$
     \delta_m(a) = \prod_p p^{\alpha_p},~ \delta_m(b) = \prod_p p^{\beta_p}.
     $$
     
-    利用 $\alpha_p$ 和 $\beta_p$ 的大小关系，可以将所有素因子分为两类：
+    By comparing $\alpha_p$ and $\beta_p$, split all prime factors into two classes:
     
     $$
     A = \{p : \alpha_p \ge \beta_p\}, ~ B = \{p : \alpha_p < \beta_p\}.
     $$
     
-    由此，分别设
+    Then set
     
     $$
     \gamma_A = \prod_{p\in A}p^{\alpha_p},~\gamma_B = \prod_{p\in B}p^{\alpha_p},~\eta_A = \prod_{p\in A}p^{\beta_p},~\eta_B = \prod_{p\in B}p^{\beta_p},
     $$
     
-    就有 $\delta_m(a) = \gamma_A\gamma_B$ 和 $\delta_m(b)=\eta_A\eta_B$．根据性质 3，可知
+    so that $\delta_m(a) = \gamma_A\gamma_B$ and $\delta_m(b)=\eta_A\eta_B$. By Property 3,
     
     $$
     \begin{aligned}
@@ -189,65 +189,65 @@ $$
     \end{aligned}
     $$
     
-    因为 $\gamma_A\perp\eta_B$，由性质 4'，就有
+    Since $\gamma_A\perp\eta_B$, Property 4' gives
     
     $$
     \delta_m(a^{\gamma_B}b^{\eta_A}) = \gamma_A\eta_B = \prod_p p^{\max\{\alpha_p,\beta_p\}} = [\delta_m(a),\delta_m(b)].
     $$
     
-    因此，$c=a^{\gamma_B}b^{\eta_A}$ 就是阶为 $[\delta_m(a),\delta_m(b)]$ 的元素．
+    So $c=a^{\gamma_B}b^{\eta_A}$ is an element of order $[\delta_m(a),\delta_m(b)]$.
 
-这一结论常用于构造出指定阶的元素．
+This result is often used to construct elements of a given order.
 
-## 原根
+## Primitive root
 
-原根是一些特殊元素——它的阶就等于模 $m$ 既约剩余系中元素的个数．
+Primitive roots are special elements whose order equals the number of elements in the reduced residue system modulo $m$.
 
-???+ abstract "原根"
-    对于 $m\in\mathbf N_+$，如果存在 $g\in\mathbf Z$ 且 $g\perp m$ 使得 $\delta_m(g)=|\mathbf Z_m^*|=\varphi(m)$，就称 $g$ 为 **模 $m$ 的原根**（primitive root modulo $m$）．其中，$\varphi(m)$ 是 [欧拉函数](./euler-totient.md)．
+???+ abstract "Primitive root"
+    For $m\in\mathbf N_+$, if there exists $g\in\mathbf Z$ with $g\perp m$ such that $\delta_m(g)=|\mathbf Z_m^*|=\varphi(m)$, then $g$ is called a **primitive root modulo $m$**. Here $\varphi(m)$ is [Euler's totient function](./euler-totient.md).
 
-并非所有正整数 $m$ 都存在模 $m$ 的原根．由上文的 [性质 1](#幂的循环结构)，如果模 $m$ 的原根 $g$ 存在，那么，$g,g^2,\cdots,g^{\varphi(m)}$ 所在的同余类互不相同，构成模 $m$ 既约剩余系．特别地，对于素数 $p$，余数 $g^i\bmod p$ 对于 $i=1,2,\cdots,p-1$ 两两不同．
+Not every positive integer $m$ has a primitive root modulo $m$. By [Property 1](#cyclic-structure-of-powers) above, if a primitive root $g$ modulo $m$ exists, then $g,g^2,\cdots,g^{\varphi(m)}$ lie in pairwise different residue classes and form a reduced residue system modulo $m$. In particular, for a prime $p$, the remainders $g^i\bmod p$ for $i=1,2,\cdots,p-1$ are pairwise distinct.
 
-???+ tip "注"
-    在 [抽象代数](../algebra/ring-theory.md#应用整数同余类的乘法群) 中，原根就是循环群的生成元．这个概念只在模 $m$ 既约剩余系关于乘法形成的群中有「原根」这个名字，在一般的循环群中都称作「生成元」．并非每个模 $m$ 既约剩余系关于乘法形成的群都是循环群，存在原根就表明它同构于循环群，如果不存在原根就表明不同构．
+???+ tip "Note"
+    In [abstract algebra](../algebra/ring-theory.md#应用整数同余类的乘法群), a primitive root is a generator of a cyclic group. The name "primitive root" is only used for the group formed by the reduced residue system modulo $m$ under multiplication; in a general cyclic group it is called a "generator". Not every such group is cyclic: having a primitive root means the group is isomorphic to a cyclic group, and having none means it is not.
 
-模为 $1$ 时，模 $1$ 整数乘法群就是 $\{0\}$．这显然是循环群，所以原根就是 $0$．
+When the modulus is $1$, the multiplicative group of integers modulo $1$ is $\{0\}$. This is clearly a cyclic group, so the primitive root is $0$.
 
-### 原根判定定理
+### Primitive root test
 
-如果已知 $\varphi(m)$ 的全体素因子，那么很容易判断给定的 $g$ 是否为模 $m$ 的原根．
+If all prime factors of $\varphi(m)$ are known, it is easy to check whether a given $g$ is a primitive root modulo $m$.
 
-???+ note "定理"
-    对于整数 $m\ge 3$ 和 $g\perp m$，$g$ 是模 $m$ 的原根，当且仅当对于 $\varphi(m)$ 的每个素因数 $p$，都有
+???+ note "Theorem"
+    For an integer $m\ge 3$ and $g\perp m$, $g$ is a primitive root modulo $m$ if and only if for every prime factor $p$ of $\varphi(m)$,
     
     $$
     g^{\frac{\varphi(m)}{p}}\not\equiv 1 \pmod m.
     $$
 
-??? note "证明"
-    必要性显然．为证明充分性，考虑使用反证法．如果 $g$ 不是模 $m$ 的原根，那么一定有 $\delta_m(g)< \varphi(m)$．由 [性质 2](#幂的循环结构) 和欧拉定理可知，$\delta_m(g)\mid\varphi(m)$．由此，设 $p$ 是 $\dfrac{\varphi(m)}{\delta_m(g)}$ 的一个素因子，就有 $\delta_m(g)\mid\dfrac{\varphi(m)}{p}$．再次应用性质 2 就得到
+??? note "Proof"
+    Necessity is obvious. To prove sufficiency, use contradiction. If $g$ is not a primitive root modulo $m$, then $\delta_m(g)< \varphi(m)$. By [Property 2](#cyclic-structure-of-powers) and Euler's theorem, $\delta_m(g)\mid\varphi(m)$. So let $p$ be a prime factor of $\dfrac{\varphi(m)}{\delta_m(g)}$; then $\delta_m(g)\mid\dfrac{\varphi(m)}{p}$. Applying Property 2 again gives
     
     $$
     g^{\frac{\varphi(m)}{p}} \equiv 1 \pmod m.
     $$
     
-    但是，$p$ 也是 $\varphi(m)$ 的一个素因子，这就与题设条件矛盾．由此，原命题的充分性成立．
+    But $p$ is also a prime factor of $\varphi(m)$, which contradicts the assumption. So sufficiency holds.
 
-### 原根个数
+### Number of primitive roots
 
-原根如果存在，也未必唯一．一般地，对于模 $m$ 既约剩余系中所有元素可能的阶和某个阶的元素数量，有如下结论：
+A primitive root, if it exists, need not be unique. In general, the possible orders of elements of the reduced residue system modulo $m$ and the number of elements of each order are given by:
 
-???+ note "定理"
-    如果正整数 $m$ 有原根 $g$，那么，当且仅当 $d\mid\varphi(m)$ 时，模 $m$ 的 $d$ 阶元素存在，且恰有 $\varphi(d)$ 个．特别地，模 $m$ 的原根个数为 $\varphi(\varphi(m))$．
+???+ note "Theorem"
+    If the positive integer $m$ has a primitive root $g$, then elements of order $d$ modulo $m$ exist if and only if $d\mid\varphi(m)$, and there are exactly $\varphi(d)$ of them. In particular, there are $\varphi(\varphi(m))$ primitive roots modulo $m$.
 
-??? note "证明"
-    根据原根的定义，所有模 $m$ 的既约同余类都可以写作 $g^k\bmod m$ 的形式，且 $k$ 是 $1,2,\cdots,\varphi(m)$ 之一．由 [性质 3](#幂的循环结构)，这些元素的阶等于
+??? note "Proof"
+    By the definition of a primitive root, every reduced residue class modulo $m$ can be written as $g^k\bmod m$ with $k$ one of $1,2,\cdots,\varphi(m)$. By [Property 3](#cyclic-structure-of-powers), the order of such an element is
     
     $$
     \delta_m(g^k) = \dfrac{\varphi(m)}{(\varphi(m),k)}.
     $$
     
-    因此，$d$ 阶元素存在，当且仅当 $d\mid\varphi(m)$．而且，对于 $d\mid\varphi(m)$，令 $d'=\varphi(m)/d$，这些元素的集合就是
+    So an element of order $d$ exists if and only if $d\mid\varphi(m)$. Moreover, for $d\mid\varphi(m)$, let $d'=\varphi(m)/d$; the set of these elements is
     
     $$
     \begin{aligned}
@@ -256,58 +256,58 @@ $$
     \end{aligned}
     $$
     
-    这些元素对应的 $k'=k/d'$ 恰为那些不超过 $d$ 且与 $d$ 互素的正整数．由欧拉函数的定义，这就是 $\varphi(d)$．
+    The values $k'=k/d'$ for these elements are exactly the positive integers not exceeding $d$ and coprime to $d$. By the definition of Euler's totient function, there are $\varphi(d)$ of them.
 
-### 原根存在定理
+### Existence theorem for primitive roots
 
-本节将建立如下原根存在定理：
+This section proves the following existence theorem for primitive roots:
 
-???+ note "定理"
-    模 $m$ 的原根存在，当且仅当 $m=1,2,4,p^e,2p^e$，其中，$p$ 是奇素数且 $e\in\mathbf N_+$．
+???+ note "Theorem"
+    A primitive root modulo $m$ exists if and only if $m=1,2,4,p^e,2p^e$, where $p$ is an odd prime and $e\in\mathbf N_+$.
 
-为说明这一结论，需要分别讨论如下四种情形：
+To show this, we discuss the following four cases separately:
 
-1.  $m=1,2,4$，原根分别是 $g=0,1,3$，显然存在．
+1.  $m=1,2,4$: the primitive roots are $g=0,1,3$ respectively, so they clearly exist.
 
-2.  $m=p^{e}$ 是奇素数的幂，其中，$p$ 为奇素数，$e\in\mathbf N_+$．
+2.  $m=p^{e}$ is a power of an odd prime, where $p$ is an odd prime and $e\in\mathbf N_+$.
 
-    ???+ note "引理 1"
-        对于奇素数 $p$，模 $p$ 的原根存在．
+    ???+ note "Lemma 1"
+        For an odd prime $p$, a primitive root modulo $p$ exists.
 
-    ??? note "证明"
-        证明分为两步．
+    ??? note "Proof"
+        The proof has two steps.
         
-        **第一步**：对于 $d\mid(p-1)$，同余方程 $x^d\equiv 1\pmod p$ 恰有 $d$ 个互不相同的解．
+        **Step 1**: For $d\mid(p-1)$, the congruence $x^d\equiv 1\pmod p$ has exactly $d$ distinct solutions.
         
-        令 $p-1=kd$，多项式
+        Let $p-1=kd$ and consider the polynomial
         
         $$
         f(x) = x^{d(k-1)} + x^{d(k-2)} + \cdots + x^d + 1. 
         $$
         
-        根据 [欧拉定理](./fermat.md#欧拉定理)，同余方程 $(x^d-1)f(x)=x^{p-1}-1\equiv 0\pmod{p}$ 恰有 $p-1$ 个互不相同的解．这些解分别是 $x^d-1$ 和 $f(x)$ 的零点．由 [Lagrange 定理](./congruence-equation.md#素数模同余方程)，它们分别至多只能有 $d$ 个和 $d(k-1)$ 个互不相同的零点．由于 $d+d(k-1)=p-1$，前者只能恰好有 $d$ 个互不相同的零点．这说明同余方程 $x^d\equiv 1\pmod p$ 恰有 $d$ 个互不相同的解．
+        By [Euler's theorem](./fermat.md#欧拉定理), the congruence $(x^d-1)f(x)=x^{p-1}-1\equiv 0\pmod{p}$ has exactly $p-1$ distinct solutions. Each of these is a root of either $x^d-1$ or $f(x)$. By [Lagrange's theorem](./congruence-equation.md#素数模同余方程), these have at most $d$ and at most $d(k-1)$ distinct roots respectively. Since $d+d(k-1)=p-1$, the former must have exactly $d$ distinct roots. So the congruence $x^d\equiv 1\pmod p$ has exactly $d$ distinct solutions.
         
-        **第二步**：对于 $d\mid(p-1)$，$d$ 阶元素恰好有 $\varphi(d)$ 个．
+        **Step 2**: For $d\mid(p-1)$, there are exactly $\varphi(d)$ elements of order $d$.
         
-        将 $p-1$ 的所有因子排序，然后应用归纳法．因为 $1$ 阶元素只能是 $1$，只有一个，归纳起点成立．对于 $d\mid(p-1)$，根据前文的 [性质 2](#幂的循环结构)，同余方程 $x^d\equiv 1\pmod p$ 的解一定满足 $\delta_p(x)\mid d$．因此，其中 $d$ 阶元素个数为
+        Sort all divisors of $p-1$ and use induction. The only element of order $1$ is $1$, so there is exactly one, and the base case holds. For $d\mid(p-1)$, by [Property 2](#cyclic-structure-of-powers) above, every solution of $x^d\equiv 1\pmod p$ satisfies $\delta_p(x)\mid d$. So the number of elements of order $d$ among them is
         
         $$
         N(d) = d - \sum_{e\mid d,~e\neq d} N(e) = d - \sum_{e\mid d,~e\neq d} \varphi(e) = \varphi(d).
         $$
         
-        第二个等号是归纳假设，第三个等号是欧拉函数的性质．由数学归纳法，就知道对于所有 $d\mid(p-1)$，都恰有 $\varphi(d)$ 个 $d$ 阶元素．
+        The second equality is the induction hypothesis, and the third is a property of Euler's totient function. By induction, for every $d\mid(p-1)$ there are exactly $\varphi(d)$ elements of order $d$.
         
-        特别地，对于 $d=p-1$，恰有 $\varphi(p-1)$ 个 $(p-1)$ 阶元素．因此，模 $p$ 的原根存在．
+        In particular, for $d=p-1$ there are exactly $\varphi(p-1)$ elements of order $(p-1)$. So a primitive root modulo $p$ exists.
 
-    ???+ note "引理 2"
-        对于奇素数 $p$ 和 $e \in \mathbf{N}_+$，模 $p^e$ 的原根存在．
+    ???+ note "Lemma 2"
+        For an odd prime $p$ and $e \in \mathbf{N}_+$, a primitive root modulo $p^e$ exists.
 
-    ??? note "证明"
-        证明分为三步．
+    ??? note "Proof"
+        The proof has three steps.
         
-        **第一步**：存在模 $p$ 的原根 $g$，使得 $g^{p-1}\not\equiv 1\pmod{p^2}$．
+        **Step 1**: There is a primitive root $g$ modulo $p$ such that $g^{p-1}\not\equiv 1\pmod{p^2}$.
         
-        任取一个模 $p$ 的原根 $g$．如果它不符合条件，即 $g^{p-1}\equiv 1\pmod{p^2}$，那么，可以证明 $g+p$ 符合条件：$g+p$ 也是模 $p$ 的原根，且
+        Take any primitive root $g$ modulo $p$. If it does not satisfy the condition, that is, $g^{p-1}\equiv 1\pmod{p^2}$, then we can show that $g+p$ does: $g+p$ is also a primitive root modulo $p$, and
         
         $$
         \begin{aligned}
@@ -317,41 +317,41 @@ $$
         \end{aligned}
         $$
         
-        **第二步**：上文选取的 $g$，对于任意 $e\ge 1$，都有 $g^{\varphi(p^e)}\not\equiv 1\pmod{p^{e+1}}$．
+        **Step 2**: For the $g$ chosen above, $g^{\varphi(p^e)}\not\equiv 1\pmod{p^{e+1}}$ for every $e\ge 1$.
         
-        对 $g$ 的选取保证了 $e=1$ 时，该式成立．假设该式对于 $e$ 的情形成立，现要证明 $e+1$ 的情形也成立．对于任意 $e \ge 1$，由欧拉定理可知，存在整数 $t$ 使得
+        The choice of $g$ ensures the claim holds for $e=1$. Suppose it holds for $e$; we show it also holds for $e+1$. For any $e \ge 1$, by Euler's theorem there is an integer $t$ such that
         
         $$
         g^{\varphi(p^e)} = 1 + t p^e
         $$
         
-        成立．由归纳假设，$t\perp p$．因为 $\varphi(p^{e+1})=p\varphi(p^e)$，所以
+        By the induction hypothesis, $t\perp p$. Since $\varphi(p^{e+1})=p\varphi(p^e)$,
         
         $$
         g^{\varphi(p^{e+1})} = \left(g^{\varphi(p^{e})}\right)^p = (1 + t p^e)^p \equiv 1 + t p^{e+1} \pmod{p^{e+2}}.
         $$
         
-        结合 $t\perp p$ 可知，$g^{\varphi(p^{e+1})}\not\equiv 1\pmod{p^{e+2}}$．由数学归纳法可知，命题成立．
+        Together with $t\perp p$, this gives $g^{\varphi(p^{e+1})}\not\equiv 1\pmod{p^{e+2}}$. By induction, the claim holds.
         
-        **第三步**：上文选取的 $g$，对于任意 $e\ge 1$，都是模 $p^e$ 的原根．
+        **Step 3**: The $g$ chosen above is a primitive root modulo $p^e$ for every $e\ge 1$.
         
-        对 $g$ 的选取保证了 $e=1$ 时，命题成立．假设命题对于 $e$ 成立，现在要证明命题对于 $e+1$ 也成立．将 $\delta_{p^{e+1}}(g)$ 简记为 $\delta$．由于 $g^\delta\equiv 1\pmod{p^{e+1}}$，必然也有 $g^\delta\equiv 1\pmod{p^e}$．由归纳假设可知，$\delta_{p^e}(g) = \varphi(p^e)$．因此，由前文阶的 [性质 2](#幂的循环结构)，就有 $\varphi(p^e)\mid\delta$．又由欧拉定理可知，$\delta\mid\varphi(p^{e+1})$．但是，$\varphi(p^{e+1})=p\varphi(p^e)$．因此，只有两种可能：$\delta=\varphi(p^e)$ 或 $\delta=\varphi(p^{e+1})$．但是，第二步的结论说明，$g^{\varphi(p^e)}\not\equiv 1\pmod{p^{e+1}}$．因此，可能性 $\delta=\varphi(p^e)$ 并不成立．唯一的可能性就是 $\delta=\varphi(p^{e+1})$．这就说明 $g$ 是模 $p^{e+1}$ 的原根．由数学归纳法，命题对于所有 $e\ge 1$ 都成立．
+        The choice of $g$ ensures the claim holds for $e=1$. Suppose it holds for $e$; we show it also holds for $e+1$. Write $\delta$ for $\delta_{p^{e+1}}(g)$. Since $g^\delta\equiv 1\pmod{p^{e+1}}$, also $g^\delta\equiv 1\pmod{p^e}$. By the induction hypothesis, $\delta_{p^e}(g) = \varphi(p^e)$. So by [Property 2](#cyclic-structure-of-powers) of the order, $\varphi(p^e)\mid\delta$. Also, by Euler's theorem, $\delta\mid\varphi(p^{e+1})$. But $\varphi(p^{e+1})=p\varphi(p^e)$. So there are only two possibilities: $\delta=\varphi(p^e)$ or $\delta=\varphi(p^{e+1})$. However, Step 2 shows that $g^{\varphi(p^e)}\not\equiv 1\pmod{p^{e+1}}$, so $\delta=\varphi(p^e)$ is impossible. The only possibility is $\delta=\varphi(p^{e+1})$, which means $g$ is a primitive root modulo $p^{e+1}$. By induction, the claim holds for all $e\ge 1$.
 
-3.  $m=2p^{e}$，其中，$p$ 为奇素数，$e\in\mathbf N_+$．
+3.  $m=2p^{e}$, where $p$ is an odd prime and $e\in\mathbf N_+$.
 
-    ???+ note "引理 3"
-        对于奇素数 $p$ 和 $e \in \mathbf{N}_+$，模 $2p^e$ 的原根存在．
+    ???+ note "Lemma 3"
+        For an odd prime $p$ and $e \in \mathbf{N}_+$, a primitive root modulo $2p^e$ exists.
 
-    ??? note "证明"
-        设 $g$ 是模 $p^{e}$ 的原根，则 $g+p^e$ 也是模 $p^{e}$ 的原根．两者之间必然有一个是奇数，不妨设它就是 $g$．显然，$(g,2p^e)=1$．设 $\delta=\delta_{2p^e}(g)$，需要证明 $\delta=\varphi(2p^e)$．由欧拉定理，$\delta\mid\varphi(2p^e)$．同时，根据定义 $g^\delta\equiv 1\pmod{2p^e}$，所以，$g^\delta\equiv 1\pmod{p^e}$，因此，由阶的 [性质 2](#幂的循环结构) 和 $g$ 的选取可知，$\delta_{p^e}(g)=\varphi(p^e)\mid \delta$．由欧拉函数表达式可知，$\varphi(2p^e) = \varphi(p^e)$．所以，$\delta=\delta_{2p^e}(g)=\varphi(p^e)=\varphi(2p^e)$．这就说明 $g$ 是模 $2p^e$ 的原根．
+    ??? note "Proof"
+        Let $g$ be a primitive root modulo $p^{e}$; then $g+p^e$ is also a primitive root modulo $p^{e}$. One of the two must be odd; without loss of generality, call it $g$. Clearly $(g,2p^e)=1$. Let $\delta=\delta_{2p^e}(g)$; we need to show $\delta=\varphi(2p^e)$. By Euler's theorem, $\delta\mid\varphi(2p^e)$. Also, by definition $g^\delta\equiv 1\pmod{2p^e}$, so $g^\delta\equiv 1\pmod{p^e}$. Hence, by [Property 2](#cyclic-structure-of-powers) of the order and the choice of $g$, $\delta_{p^e}(g)=\varphi(p^e)\mid \delta$. From the formula for Euler's totient function, $\varphi(2p^e) = \varphi(p^e)$. So $\delta=\delta_{2p^e}(g)=\varphi(p^e)=\varphi(2p^e)$. This shows that $g$ is a primitive root modulo $2p^e$.
 
-4.  $m\ne 1,2,4,p^{e},2p^{e}$，其中，$p$ 为奇素数，$e\in\mathbf N_+$．
+4.  $m\ne 1,2,4,p^{e},2p^{e}$, where $p$ is an odd prime and $e\in\mathbf N_+$.
 
-    ???+ note "引理 4"
-        假设 $m\neq 1,2,4$ 且不存在奇素数 $p$ 和正整数 $e$ 使得 $m=p^e$ 或 $m=2p^e$．那么，模 $m$ 的原根不存在．
+    ???+ note "Lemma 4"
+        Suppose $m\neq 1,2,4$ and there is no odd prime $p$ and positive integer $e$ with $m=p^e$ or $m=2p^e$. Then no primitive root modulo $m$ exists.
 
-    ??? note "证明"
-        对于 $m=2^e$ 且 $e\ge 3$，假设模 $m$ 的原根 $g$ 存在．由于 $g\perp m$，它一定是奇数．假设 $g=2k+1$ 且 $k\in\mathbf N$，那么，有
+    ??? note "Proof"
+        For $m=2^e$ with $e\ge 3$, suppose a primitive root $g$ modulo $m$ exists. Since $g\perp m$, it must be odd. Write $g=2k+1$ with $k\in\mathbf N$; then
         
         $$
         \begin{aligned}
@@ -364,145 +364,145 @@ $$
         \end{aligned}
         $$
         
-        倒数第二行中，因为 $k$ 与 $(2^{e-2}-1)k^2$ 奇偶性相同，所以它们的和是偶数．由阶的定义可知，$\delta_{2^{e}}(g)\le 2^{e-2}< \varphi(2^{e}) = 2^{e-1}$．这与假设中 $g$ 是原根矛盾．由反证法，这样的原根并不存在．
+        In the second-to-last line, $k$ and $(2^{e-2}-1)k^2$ have the same parity, so their sum is even. By the definition of the order, $\delta_{2^{e}}(g)\le 2^{e-2}< \varphi(2^{e}) = 2^{e-1}$. This contradicts the assumption that $g$ is a primitive root. So by contradiction, no such primitive root exists.
         
-        假设 $m$ 满足所述条件，且不是 $2$ 的幂，那么，一定存在 $2 < m_1 < m_2$ 且 $m_1\perp m_2$ 使得 $m=m_1m_2$ 成立．假设模 $m$ 的原根 $g$ 存在．因为 $g\perp m$，所以对于 $i=1,2$，都有 $g\perp m_i$．由欧拉定理可知，
+        Suppose $m$ satisfies the stated condition and is not a power of $2$. Then there exist $2 < m_1 < m_2$ with $m_1\perp m_2$ and $m=m_1m_2$. Suppose a primitive root $g$ modulo $m$ exists. Since $g\perp m$, we have $g\perp m_i$ for $i=1,2$. By Euler's theorem,
         
         $$
         g^{\varphi(m_i)} \equiv 1 \pmod{m_i}.
         $$
         
-        由于 $m_i > 2$，所以 $\varphi(m_i)$ 为偶数，所以，对于 $i=1,2$，有
+        Since $m_i > 2$, $\varphi(m_i)$ is even, so for $i=1,2$,
         
         $$
         g^{\frac{1}{2}\varphi(m_1)\varphi(m_2)} \equiv 1 \pmod{m_i}.
         $$
         
-        由 [中国剩余定理](./crt.md) 可知
+        By the [Chinese remainder theorem](./crt.md),
         
         $$
         g^{\frac{1}{2}\varphi(m_1)\varphi(m_2)} \equiv 1 \pmod{m}.
         $$
         
-        又因为 $\varphi(m)=\varphi(m_1)\varphi(m_2)$，所以由阶的定义可知
+        Also, since $\varphi(m)=\varphi(m_1)\varphi(m_2)$, by the definition of the order,
         
         $$
         \delta_m(g) \le \frac{1}{2}\varphi(m_1)\varphi(m_2) = \dfrac{1}{2}\varphi(m) < \varphi(m).
         $$
         
-        这与 $g$ 是模 $m$ 的原根的假设矛盾．故而，由反证法知，模 $m$ 的原根不存在．
+        This contradicts the assumption that $g$ is a primitive root modulo $m$. So by contradiction, no primitive root modulo $m$ exists.
 
-综合以上四种情形，我们便给出了一个数存在原根的充要条件．
+Combining the four cases above gives a necessary and sufficient condition for a number to have a primitive root.
 
-### 求原根的算法
+### Algorithms for finding primitive roots
 
-对于任何存在原根的模数 $m$，要求得它的原根 $g$，只需要枚举可能的正整数，并逐个判断它是否为原根即可．枚举时，通常有两种处理方式：从小到大逐一枚举、随机生成一些正整数．这两种枚举方式的实际效率相当．
+For any modulus $m$ that has a primitive root, to find a primitive root $g$ it is enough to enumerate candidate positive integers and check each one. There are usually two ways to enumerate: go through them one by one from small to large, or generate random positive integers. In practice, the two are about equally efficient.
 
-从小到大逐一枚举时，得到的是模 $m$ 的最小原根 $g_m$，因此，枚举部分的复杂度取决于 $g_m$ 的大小．对此，有如下估计：
+Enumerating from small to large finds the smallest primitive root $g_m$ modulo $m$, so the cost of the enumeration depends on the size of $g_m$. The following estimates are known:
 
--   上界的估计：王元[^yuan1959note]和 Burgess[^burgess1962character]证明了素数 $p$ 的最小原根 $g_p=O\left(p^{0.25+\epsilon}\right)$，其中 $\epsilon>0$．Cohen, Odoni, and Stothers[^cohen1974least]和 Elliott and Murata[^elliott1998least]分别证明了该估计对于模数 $p^2$ 和 $2p^2$ 也成立，其中，$p$ 是奇素数．由于对于 $e>2$，模 $p^2$（或 $2p^2$）的原根也是模 $p^e$（或 $2p^e$）的原根，所以，最小原根的上界 $O\left(p^{0.25+\epsilon}\right)$ 对于所有情形都成立．
--   下界的估计：Fridlender[^fridlender1949least]和 Salié[^salie1949kleinsten]证明了存在 $C>0$，使得对于无穷多素数 $p$，都有最小原根 $g_p > C\log p$ 成立．
--   平均情形的估计：Burgess and Elliott[^burgess1968average]证明了平均情形下素数 $p$ 的最小原根 $g_p=O((\log p)^2(\log\log p)^4)$．Elliott and Murata[^elliott1997average]进一步猜想素数 $p$ 的最小原根的平均值是一个常数，且通过数值验证[^more-evidence]得到它大概为 $4.926$．随后，Elliott and Murata[^elliott1998least]将这一猜想推广到模 $2p^2$ 的情形．
+-   Upper bound: Wang Yuan[^yuan1959note] and Burgess[^burgess1962character] proved that the smallest primitive root of a prime $p$ is $g_p=O\left(p^{0.25+\epsilon}\right)$, where $\epsilon>0$. Cohen, Odoni, and Stothers[^cohen1974least] and Elliott and Murata[^elliott1998least] proved that the same estimate holds for the moduli $p^2$ and $2p^2$ respectively, where $p$ is an odd prime. Since for $e>2$ a primitive root modulo $p^2$ (or $2p^2$) is also a primitive root modulo $p^e$ (or $2p^e$), the upper bound $O\left(p^{0.25+\epsilon}\right)$ on the smallest primitive root holds in all cases.
+-   Lower bound: Fridlender[^fridlender1949least] and Salié[^salie1949kleinsten] proved that there is a $C>0$ such that for infinitely many primes $p$, the smallest primitive root satisfies $g_p > C\log p$.
+-   Average case: Burgess and Elliott[^burgess1968average] proved that on average, the smallest primitive root of a prime $p$ is $g_p=O((\log p)^2(\log\log p)^4)$. Elliott and Murata[^elliott1997average] further conjectured that the average of the smallest primitive root of a prime $p$ is a constant, and numerical checks[^more-evidence] put it at about $4.926$. Later, Elliott and Murata[^elliott1998least] extended this conjecture to the modulus $2p^2$.
 
-根据这些分析，暴力寻找最小原根时，枚举部分的复杂度 $O(g_m(\log m)^2)$ 是可以接受的．
+From this analysis, when searching for the smallest primitive root by brute force, the enumeration cost $O(g_m(\log m)^2)$ is acceptable.
 
-除了从小到大枚举外，还可以通过随机生成正整数并验证的方法寻找原根．原根的密度并不低：[^density-prim-root]
+Besides enumerating from small to large, primitive roots can also be found by generating random positive integers and checking them. Primitive roots are not rare:[^density-prim-root]
 
 $$
 \dfrac{\varphi(\varphi(m))}{m} = \Omega\left(\dfrac{1}{\log\log m}\right).
 $$
 
-所以，通过随机方法寻找原根时，枚举部分的期望复杂度为 $O((\log m)^2\log\log m)$．
+So when searching for a primitive root randomly, the expected cost of the enumeration is $O((\log m)^2\log\log m)$.
 
-需要注意的是，判定原根时需要已知 $\varphi(m)$ 的素因数分解．算法竞赛 [常用素因数分解算法](./pollard-rho.md) 中，复杂度最优的 Pollard Rho 算法也需要 $O(m^{1/4+\epsilon})$ 的时间．因此，只要 $\varphi(m)$ 的素因数分解是未知的，无论采用哪种枚举方式，求原根的复杂度瓶颈都在于素因数分解这一步，而非枚举验证的部分．
+Note that testing for a primitive root requires the prime factorization of $\varphi(m)$. Among the [prime factorization algorithms common in contests](./pollard-rho.md), even the fastest, Pollard Rho, needs $O(m^{1/4+\epsilon})$ time. So whenever the prime factorization of $\varphi(m)$ is unknown, no matter which enumeration method is used, the bottleneck of finding a primitive root is the factorization step, not the enumeration and checking.
 
-## Carmichael 函数
+## Carmichael function
 
-相对于模 $m$ 元素的阶这一局部概念，Carmichael 函数是一个全局概念．它是所有与 $m$ 互素的整数的幂次的最小公共循环节．
+While the order of an element modulo $m$ is a local concept, the Carmichael function is a global one. It is the smallest common cycle length of the powers of all integers coprime to $m$.
 
-???+ abstract "Carmichael 函数"
-    对于 $m\in\mathbf N_+$，定义 $\lambda(m)$ 为能够使得同余关系 $a^n\equiv 1\pmod m$ 对于所有 $a\perp m$ 都成立的最小正整数 $n$．函数 $\lambda:\mathbf N_+\to\mathbf N_+$ 就称为 **Carmichael 函数**．
+???+ abstract "Carmichael function"
+    For $m\in\mathbf N_+$, define $\lambda(m)$ as the smallest positive integer $n$ such that the congruence $a^n\equiv 1\pmod m$ holds for all $a\perp m$. The function $\lambda:\mathbf N_+\to\mathbf N_+$ is called the **Carmichael function**.
 
-根据 [性质 2](#幂的循环结构)，能够使得 $a^n\equiv 1\pmod m$ 对于所有 $a\perp m$ 都成立，意味着 $\delta_m(a)\mid n$ 对于所有 $a\perp m$ 都成立．也就是说，符合这一条件的正整数 $n$，一定是全体 $\delta_m(a)$ 的公倍数．因此，最小的这样的 $n$ 就是它们的最小公倍数：
+By [Property 2](#cyclic-structure-of-powers), $a^n\equiv 1\pmod m$ holding for all $a\perp m$ means $\delta_m(a)\mid n$ for all $a\perp m$. That is, any positive integer $n$ meeting this condition must be a common multiple of all $\delta_m(a)$. So the smallest such $n$ is their least common multiple:
 
 $$
 \lambda(m) = \operatorname{lcm}\{\delta_m(a) : a\perp m\}.
 $$
 
-这也常用作 Carmichael 函数的等价定义．
+This is also often used as an equivalent definition of the Carmichael function.
 
-反复应用 [性质 5](#乘积的阶) 可知，一定存在某个元素 $a\perp m$ 使得 $\delta_m(a)=\lambda(m)$．因此，上式也可以写作
+Applying [Property 5](#order-of-a-product) repeatedly shows that there is always some element $a\perp m$ with $\delta_m(a)=\lambda(m)$. So the formula above can also be written as
 
 $$
 \lambda(m) = \max\{\delta_m(a) : a\perp m\}.
 $$
 
-取得这一最值的元素 $a\perp m$ 也称为模 $m$ 的 **$\lambda$‑原根**．它对于所有模数 $m$ 都存在．
+An element $a\perp m$ attaining this maximum is also called a **$\lambda$-primitive root** modulo $m$. It exists for every modulus $m$.
 
-### 递推公式
+### Recursive formula
 
-Carmichael 函数是一个 [数论函数](./basic.md#数论函数)．本节讨论它的一个递推公式，并由此给出原根存在定理的另一个证明．
+The Carmichael function is an [arithmetic function](./basic.md#数论函数). This section derives a recursive formula for it, and from it gives another proof of the existence theorem for primitive roots.
 
-虽然不是积性函数，但是计算 Carmichael 函数时，同样可以对互素的因子分别处理．
+Although it is not a multiplicative function, the Carmichael function can still be computed by handling coprime factors separately.
 
-???+ note "引理"
-    对于互素的正整数 $m_1,m_2$，有 $\lambda(m_1m_2)=[\lambda(m_1),\lambda(m_2)]$．
+???+ note "Lemma"
+    For coprime positive integers $m_1,m_2$, $\lambda(m_1m_2)=[\lambda(m_1),\lambda(m_2)]$.
 
-??? note "证明"
-    设 $a_1$ 和 $a_2$ 分别为模 $m_1$ 和模 $m_2$ 的 $\lambda$‑原根．令 $m=m_1m_2$，由 [中国剩余定理](./crt.md) 可知，存在 $a\perp m$ 使得 $a\equiv a_i\pmod{m_i}$ 对于 $i=1,2$ 都成立．由于 $a^{\lambda(m)}\equiv 1\pmod m$，所以对于 $i=1,2$，都有 $a_i^{\lambda(m)} \equiv 1\pmod{m_i}$，进而由 [性质 2](#幂的循环结构) 和 $a_i$ 的选取可知，$\lambda(m_i)=\delta_{m_i}(a_i)\mid \lambda(m)$．这就说明 $[\lambda(m_1),\lambda(m_2)]\mid\lambda(m)$．
+??? note "Proof"
+    Let $a_1$ and $a_2$ be $\lambda$-primitive roots modulo $m_1$ and $m_2$ respectively. Let $m=m_1m_2$. By the [Chinese remainder theorem](./crt.md), there is $a\perp m$ with $a\equiv a_i\pmod{m_i}$ for $i=1,2$. Since $a^{\lambda(m)}\equiv 1\pmod m$, we have $a_i^{\lambda(m)} \equiv 1\pmod{m_i}$ for $i=1,2$, and then by [Property 2](#cyclic-structure-of-powers) and the choice of $a_i$, $\lambda(m_i)=\delta_{m_i}(a_i)\mid \lambda(m)$. This shows $[\lambda(m_1),\lambda(m_2)]\mid\lambda(m)$.
     
-    反过来，对于任意 $a\perp m$ 和 $i=1,2$，都有 $a^{[\lambda(m_1),\lambda(m_2)]} \equiv 1 \pmod{m_i}$．应用中国剩余定理，就得到 $a^{[\lambda(m_1),\lambda(m_2)]} \equiv 1 \pmod{m}$ 对于所有 $a\perp m$ 都成立．根据 Carmichael 函数的定义可知，$\lambda(m)\mid [\lambda(m_1),\lambda(m_2)]$．
+    Conversely, for any $a\perp m$ and $i=1,2$, we have $a^{[\lambda(m_1),\lambda(m_2)]} \equiv 1 \pmod{m_i}$. By the Chinese remainder theorem, $a^{[\lambda(m_1),\lambda(m_2)]} \equiv 1 \pmod{m}$ holds for all $a\perp m$. By the definition of the Carmichael function, $\lambda(m)\mid [\lambda(m_1),\lambda(m_2)]$.
     
-    由此，命题中的等式成立．
+    So the equality in the claim holds.
 
-因此，接下来只要计算 Carmichael 函数在素数幂处的取值．首先，处理 $2$ 的幂次的情形．
+So it remains to compute the Carmichael function at prime powers. First, handle powers of $2$.
 
-???+ note "引理"
-    对于 $m=2^e$ 且 $e\in\mathbf N_+$，有 $\lambda(2)=1$，$\lambda(4)=2$，且对于 $e\ge 3$ 都有 $\lambda(m)=2^{e-2}$．
+???+ note "Lemma"
+    For $m=2^e$ with $e\in\mathbf N_+$, $\lambda(2)=1$, $\lambda(4)=2$, and $\lambda(m)=2^{e-2}$ for all $e\ge 3$.
 
-??? note "证明"
-    对于 $m=2,4$ 的情形，单独讨论即可．对于 $m=2^e$ 且 $e\ge 3$ 的情形，首先重复前文 [引理 4](#原根存在定理) 的证明的第一部分，就得到 $\lambda(m)\le 2^{e-2}$．进而，只需要证明存在 $2^{e-2}$ 阶元素即可．为此，有
+??? note "Proof"
+    The cases $m=2,4$ can be checked directly. For $m=2^e$ with $e\ge 3$, first repeat the first part of the proof of [Lemma 4](#existence-theorem-for-primitive-roots) above to get $\lambda(m)\le 2^{e-2}$. Then it suffices to show that an element of order $2^{e-2}$ exists. Indeed,
     
     $$
     5^{2^{e-3}} = (1 + 2^2)^{2^{e-3}} \equiv 1 + 2^2\times 2^{e-3} = 1 + 2^{e-1} \not\equiv 1 \pmod{2^e}.
     $$
     
-    这说明 $\delta_m(5)\nmid 2^{e-3}$，又因为 $\delta_m(5) \mid 2^{e-2}$，所以，$5$ 只能是 $2^{e-2}$ 阶元素．这就说明，$\lambda(m)=2^{e-2}$．
+    This shows $\delta_m(5)\nmid 2^{e-3}$; since also $\delta_m(5) \mid 2^{e-2}$, $5$ must have order $2^{e-2}$. So $\lambda(m)=2^{e-2}$.
 
-在这个引理的证明过程中，实际上得到了关于模 $2^e$ 既约剩余系结构的刻画：
+The proof of this lemma actually describes the structure of the reduced residue system modulo $2^e$:
 
-???+ note "推论"
-    设模数为 $2^e$ 且 $e \ge 2$．那么，所有奇数都同余于唯一一个 $\pm 5^k$ 形式的整数，其中，$k\in\mathbf N$ 且 $k < 2^{e-2}$．也就是说，$\pm 1,\pm 5,\cdots,\pm 5^{2^{e-2}-1}$ 两两不同余，且构成一个既约剩余系．
+???+ note "Corollary"
+    Let the modulus be $2^e$ with $e \ge 2$. Then every odd number is congruent to exactly one integer of the form $\pm 5^k$, where $k\in\mathbf N$ and $k < 2^{e-2}$. That is, $\pm 1,\pm 5,\cdots,\pm 5^{2^{e-2}-1}$ are pairwise incongruent and form a reduced residue system.
 
-??? note "证明"
-    容易验证，$e=2$ 的情形成立．对于 $e \ge 3$ 的情形，由于前述证明中已经得到 $5$ 模 $2^e$ 的阶是 $2^{e-2}$，所以，$1,5,\cdots,5^{2^{e-2}-1}$ 两两不同余．因为这些整数都模 $4$ 余 $1$，它们的相反数都模 $4$ 余 $3$，所以 $\pm 1,\pm 5,\cdots,\pm 5^{2^{e-2}-1}$ 模 $2^e$ 两两不同余．由于它们共计 $2^{e-1}$ 个，恰为模 $2^{e}$ 的既约剩余系的大小，所以，它们就构成了既约剩余系本身．
+??? note "Proof"
+    The case $e=2$ is easy to check. For $e \ge 3$, the proof above already shows that the order of $5$ modulo $2^e$ is $2^{e-2}$, so $1,5,\cdots,5^{2^{e-2}-1}$ are pairwise incongruent. Since all these integers are $1$ modulo $4$ and their negatives are all $3$ modulo $4$, the numbers $\pm 1,\pm 5,\cdots,\pm 5^{2^{e-2}-1}$ are pairwise incongruent modulo $2^e$. There are $2^{e-1}$ of them, exactly the size of the reduced residue system modulo $2^{e}$, so they form the reduced residue system itself.
 
-然后，处理奇素数幂的情形．
+Next, handle powers of odd primes.
 
-???+ note "引理"
-    对于 $m=p^e$，其中，$p$ 是奇素数且 $e\in\mathbf N_+$，有 $\lambda(m)=p^{e-1}(p-1)$．
+???+ note "Lemma"
+    For $m=p^e$, where $p$ is an odd prime and $e\in\mathbf N_+$, $\lambda(m)=p^{e-1}(p-1)$.
 
-??? note "证明"
-    首先证明命题对于 $e=1$，即 $m=p$ 是奇素数的情形成立．为此，由 Carmichael 函数的定义可知，与 $p$ 互素的所有整数 $a$ 都是同余方程 $x^{\lambda(p)}\equiv 1\pmod{p}$ 的解．在模 $p$ 的意义下，该方程共有 $p-1$ 个互不相同的解．根据 [Lagrange 定理](./congruence-equation.md#素数模同余方程) 可知，$p-1\le\lambda(p)$．同时，欧拉定理要求，$\lambda(p)\mid\varphi(p)=p-1$．因此，$\lambda(p)=p-1$．
+??? note "Proof"
+    First prove the claim for $e=1$, that is, when $m=p$ is an odd prime. By the definition of the Carmichael function, every integer $a$ coprime to $p$ is a solution of $x^{\lambda(p)}\equiv 1\pmod{p}$. Modulo $p$, this equation has $p-1$ distinct solutions. By [Lagrange's theorem](./congruence-equation.md#素数模同余方程), $p-1\le\lambda(p)$. Also, Euler's theorem requires $\lambda(p)\mid\varphi(p)=p-1$. So $\lambda(p)=p-1$.
     
-    对于 $m=p^e$ 且 $e> 1$ 的情形，可以从证明 $1+p$ 是 $p^{e-1}$ 阶元开始．为此，有
+    For $m=p^e$ with $e> 1$, start by showing that $1+p$ has order $p^{e-1}$. Indeed,
     
     $$
     (1+p)^{p^{e-1}} \equiv 1,\quad (1+p)^{p^{e-2}} \equiv 1 + p^{e-1} \not\equiv 1 \pmod{p^e}.
     $$
     
-    所以，$\delta_m(1+p)=p^{e-1}$．另外，设模 $p$ 的原根为 $g$，那么，由于 $g^{\delta_m(g)}\equiv 1 \pmod{p}$，所以，由阶的 [性质 2](#幂的循环结构) 可知，$p-1\mid\delta_m(g)$．由 Carmichael 函数的定义和欧拉定理可知
+    So $\delta_m(1+p)=p^{e-1}$. Also, let $g$ be a primitive root modulo $p$. Since $g^{\delta_m(g)}\equiv 1 \pmod{p}$, [Property 2](#cyclic-structure-of-powers) of the order gives $p-1\mid\delta_m(g)$. By the definition of the Carmichael function and Euler's theorem,
     
     $$
     p^{e-1}(p-1) \mid [\delta_m(1+p),\delta_m(g)] \mid \lambda(m) \mid \varphi(m) = p^{e-1}(p-1).
     $$
     
-    因此，$\lambda(m)=p^{e-1}(p-1)$．
+    So $\lambda(m)=p^{e-1}(p-1)$.
 
-将本节的结果简单归纳，就得到 Carmichael 函数的递推公式：
+Summing up the results of this section gives the recursive formula for the Carmichael function:
 
-???+ note "定理"
-    对于任意正整数 $m$，有
+???+ note "Theorem"
+    For any positive integer $m$,
     
     $$
     \lambda(m) = \begin{cases}
@@ -512,54 +512,54 @@ Carmichael 函数是一个 [数论函数](./basic.md#数论函数)．本节讨�
     \end{cases}
     $$
 
-利用该递推公式可以加强前文的结果：
+This recursive formula strengthens the earlier result:
 
-???+ note "推论"
-    对于正整数 $m_1,m_2$，有 $\lambda([m_1,m_2])=[\lambda(m_1),\lambda(m_2)]$．
+???+ note "Corollary"
+    For positive integers $m_1,m_2$, $\lambda([m_1,m_2])=[\lambda(m_1),\lambda(m_2)]$.
 
-比较原根和 Carmichael 函数的定义可知，模 $m$ 的原根存在，当且仅当 $\lambda(m)=\varphi(m)$．从 Carmichael 函数的递推公式中，容易归纳出如下结果：
+Comparing the definitions of primitive roots and the Carmichael function, a primitive root modulo $m$ exists if and only if $\lambda(m)=\varphi(m)$. The recursive formula for the Carmichael function easily gives the following result:
 
-???+ note "推论"
-    模 $m$ 的原根存在，当且仅当 $m=1,2,4,p^e,2p^e$，其中，$p$ 是奇素数且 $e\in\mathbf N_+$．
+???+ note "Corollary"
+    A primitive root modulo $m$ exists if and only if $m=1,2,4,p^e,2p^e$, where $p$ is an odd prime and $e\in\mathbf N_+$.
 
-由于本节对于递推公式的证明并没有用到原根存在定理，因此，这就构成了对该定理的又一个证明．
+Since the proof of the recursive formula in this section did not use the existence theorem for primitive roots, this gives another proof of that theorem.
 
-### Carmichael 数
+### Carmichael numbers
 
-利用 Carmichael 函数，可以讨论 Carmichael 数（卡迈克尔数，OEIS:[A002997](https://oeis.org/A002997)）的性质与分布．这是 [Fermat 素性测试](./prime.md#fermat-素性测试) 一定无法正确排除的合数．
+The Carmichael function lets us discuss the properties and distribution of Carmichael numbers (OEIS: [A002997](https://oeis.org/A002997)). These are the composites that the [Fermat primality test](./prime.md#fermat-素性测试) can never correctly rule out.
 
-???+ abstract "Carmichael 数"
-    对于合数 $n$，如果对于所有整数 $a\perp n$ 都有同余式 $a^{n-1} \equiv 1 \pmod n$ 成立，就称 $n$ 为 **Carmichael 数**．
+???+ abstract "Carmichael number"
+    A composite $n$ is called a **Carmichael number** if the congruence $a^{n-1} \equiv 1 \pmod n$ holds for all integers $a\perp n$.
 
-最小的 Carmichael 数是 $561 = 3 \times 11 \times 17$．
+The smallest Carmichael number is $561 = 3 \times 11 \times 17$.
 
-由 Carmichael 函数的定义可知，合数 $n$ 是 Carmichael 数当且仅当 $\lambda(n)\mid n-1$，其中 $\lambda(n)$ 为 Carmichael 函数．进一步地，可以得到如下判断合数 $n$ 是否为 Carmichael 数的方法：
+By the definition of the Carmichael function, a composite $n$ is a Carmichael number if and only if $\lambda(n)\mid n-1$, where $\lambda(n)$ is the Carmichael function. Going further, we get the following way to decide whether a composite $n$ is a Carmichael number:
 
-???+ note "Korselt 判别法[^korselt1899probleme]"
-    合数 $n$ 是 Carmichael 数当且仅当 $n$ 无平方因子且对 $n$ 的任意素因子 $p$ 均有 $(p-1) \mid (n-1)$．
+???+ note "Korselt's criterion[^korselt1899probleme]"
+    A composite $n$ is a Carmichael number if and only if $n$ is squarefree and $(p-1) \mid (n-1)$ for every prime factor $p$ of $n$.
 
-??? note "证明"
-    首先证明条件的必要性．假设 $\lambda(n)\mid (n-1)$．检查 Carmichael 函数的递推公式可知，如果 $n$ 有平方因子 $p^2$，那么，一定有 $p\mid \lambda(n)$．但是 $p\nmid (n-1)$，矛盾．同理，对于 $n$ 的任意素因子 $p$，Carmichael 函数的递推公式说明，$(p-1)\mid \lambda(n)$，所以，也有 $(p-1) \mid (n-1)$．
+??? note "Proof"
+    First, necessity. Suppose $\lambda(n)\mid (n-1)$. Checking the recursive formula for the Carmichael function shows that if $n$ has a square factor $p^2$, then $p\mid \lambda(n)$. But $p\nmid (n-1)$, a contradiction. Similarly, for any prime factor $p$ of $n$, the recursive formula shows $(p-1)\mid \lambda(n)$, so $(p-1) \mid (n-1)$ as well.
     
-    然后证明条件的充分性．因为 $n$ 是无平方因子的合数，所以它至少有两个不同的素因子，其中一定有奇素因子 $p$，由 $(p-1)\mid(n-1)$ 可知 $n-1$ 是偶数，$n$ 也就一定是奇数．对于无平方因子的奇合数 $n$，由 Carmichael 函数的递推公式可知，$\lambda(n)=\operatorname{lcm}\{p-1:p\mid n\}$．因此，只要 $(p-1) \mid (n-1)$ 对于所有素因子 $p$ 都成立，就一定有 $\lambda(n)\mid (n-1)$．
+    Next, sufficiency. Since $n$ is a squarefree composite, it has at least two distinct prime factors, so it has an odd prime factor $p$. From $(p-1)\mid(n-1)$, $n-1$ is even, so $n$ is odd. For a squarefree odd composite $n$, the recursive formula gives $\lambda(n)=\operatorname{lcm}\{p-1:p\mid n\}$. So as long as $(p-1) \mid (n-1)$ for every prime factor $p$, we have $\lambda(n)\mid (n-1)$.
 
-从这一判别法出发，可以建立 Carmichael 数的一些简单性质：
+From this criterion, we get some simple properties of Carmichael numbers:
 
-???+ note "推论"
-    Carmichael 数是奇数，没有平方因子，而且至少有 $3$ 个不同的素因子．
+???+ note "Corollary"
+    Carmichael numbers are odd, squarefree, and have at least $3$ distinct prime factors.
 
-??? note "证明"
-    前两条性质可以直接从 Korselt 判别法及其证明中得到．要得到第三条性质，只需要再证明：互异素数 $p_1,p_2$ 的乘积 $n=p_1p_2$ 一定不是 Carmichael 数．假设 $n=p_1p_2$ 是 Carmichael 数．由 Korselt 判别法可知，$(p_i-1)\mid (n-1)$．但是，有
+??? note "Proof"
+    The first two properties follow directly from Korselt's criterion and its proof. For the third, it remains to show that a product $n=p_1p_2$ of two distinct primes $p_1,p_2$ is never a Carmichael number. Suppose $n=p_1p_2$ is a Carmichael number. By Korselt's criterion, $(p_i-1)\mid (n-1)$. But
     
     $$
     n-1=p_1p_2-1\equiv p_2-1 \pmod{p_1-1}.
     $$
     
-    因此，$(p_1-1)\mid(p_2-1)$．同理，$(p_2-1)\mid(p_1-1)$．也就是说，$p_1=p_2$．这与假设矛盾．因此，Carmichael 数 $n$ 至少有 $3$ 个互异素因子．
+    So $(p_1-1)\mid(p_2-1)$. Similarly, $(p_2-1)\mid(p_1-1)$. That is, $p_1=p_2$, contradicting the assumption. So a Carmichael number $n$ has at least $3$ distinct prime factors.
 
-利用解析数论还可以得到 Carmichael 数分布的一些性质．设 $C(n)$ 为小于等于 $n$ 的 Carmichael 数个数．Alford, Granville, and Pomerance[^alford1994infinitely]证明，对于充分大的 $n$，有 $C(n)>n^{2/7}$．由此，Carmichael 数有无限多个．在这之前，Erdős[^erdos1956pseudoprimes]已经证明，$C(n) < n\exp\left(-c\dfrac{\ln n\ln\ln\ln n}{\ln\ln n}\right)$，其中 $c$ 为常数．因此，Carmichael 数的分布（相对于素数来说）十分稀疏．实际上，有[^pinchcarmichael] $C(10^9)=646$，$C(10^{18})=1~401~644$．
+Analytic number theory gives some further properties of the distribution of Carmichael numbers. Let $C(n)$ be the number of Carmichael numbers less than or equal to $n$. Alford, Granville, and Pomerance[^alford1994infinitely] proved that $C(n)>n^{2/7}$ for sufficiently large $n$. So there are infinitely many Carmichael numbers. Before that, Erdős[^erdos1956pseudoprimes] had already proved $C(n) < n\exp\left(-c\dfrac{\ln n\ln\ln\ln n}{\ln\ln n}\right)$, where $c$ is a constant. So Carmichael numbers are very sparse (compared with primes). In fact,[^pinchcarmichael] $C(10^9)=646$ and $C(10^{18})=1~401~644$.
 
-## 参考资料与注释
+## References and notes
 
 -   [Primitive root modulo n - Wikipedia](https://en.wikipedia.org/wiki/Primitive_root_modulo_n)
 -   [The order of a unit - Course Notes](https://crypto.stanford.edu/pbc/notes/numbertheory/order.html)
@@ -585,9 +585,9 @@ Carmichael 函数是一个 [数论函数](./basic.md#数论函数)．本节讨�
 
 [^elliott1997average]: Elliott, Peter DTA, and Leo Murata. "On the average of the least primitive root modulo p." Journal of The London Mathematical Society 56, no. 3 (1997): 435-454.
 
-[^more-evidence]: 更多结果可以参考 [Least prime primitive root of prime numbers](https://sweet.ua.pt/tos/p_roots.html)．
+[^more-evidence]: For more results, see [Least prime primitive root of prime numbers](https://sweet.ua.pt/tos/p_roots.html).
 
-[^density-prim-root]: 如果模 $m$ 的原根存在，那么，$\varphi(m)\ge\dfrac{1}{3}m$，且等号仅在 $m=2\times 3^e~(e\in\mathbf N_+)$ 处取得．进一步地，当 $m > 2$ 时，对欧拉函数 $\varphi(m)$ 有估计：$\varphi(m)>\dfrac{m}{e^{\gamma}\log\log m+\frac{3}{\log\log m}}$．将这两者结合，就得到文中的表达式．关于欧拉函数的该估计，可以参考论文 Rosser, J. Barkley, and Lowell Schoenfeld. "Approximate formulas for some functions of prime numbers." Illinois Journal of Mathematics 6, no. 1 (1962): 64-94．
+[^density-prim-root]: If a primitive root modulo $m$ exists, then $\varphi(m)\ge\dfrac{1}{3}m$, with equality only at $m=2\times 3^e~(e\in\mathbf N_+)$. Moreover, for $m > 2$, Euler's totient function satisfies the estimate $\varphi(m)>\dfrac{m}{e^{\gamma}\log\log m+\frac{3}{\log\log m}}$. Combining the two gives the expression in the text. For this estimate of Euler's totient function, see Rosser, J. Barkley, and Lowell Schoenfeld. "Approximate formulas for some functions of prime numbers." Illinois Journal of Mathematics 6, no. 1 (1962): 64-94.
 
 [^korselt1899probleme]: Korselt, A. R. (1899). "Problème chinois." L'Intermédiaire des Mathématiciens. 6: 142–143.
 

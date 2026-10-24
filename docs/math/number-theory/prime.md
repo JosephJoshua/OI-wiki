@@ -1,23 +1,23 @@
 author: Ir1d, Tiphereth-A, c-forrest, Xeonacid, Enter-tainer, StudyingFather, iamtwz, ksyx, Marcythm, MegaOwIer, 383494, Alpacabla, HeRaNO, abc1763613206, alphagocc, Backl1ght, CCXXXI, drkelo, Early0v0, Great-designer, greyqz, GuanghaoYe, H-J-Granger, HHH2309, isdanni, kenlig, lazyasn, Menci, ouuan, r-value, shawlleyw, shopee-jin, shuzhouliu, Siger Young, TrisolarisHD, untitledunrevised, void-mian, Voileexperiments, weilycoder, xtlsoft, yusancky, YuzhenQin1, sun2snow
 
-素数与合数的定义，见 [数论基础](./basic.md)．
+For the definitions of prime and composite numbers, see [Number theory basics](./basic.md).
 
-素数计数函数：小于或等于 $x$ 的素数的个数，用 $\pi(x)$ 表示．随着 $x$ 的增大，有这样的近似结果：$\pi(x) \sim \dfrac{x}{\ln(x)}$．
+The prime counting function, written $\pi(x)$, is the number of primes less than or equal to $x$. As $x$ grows, it satisfies the approximation $\pi(x) \sim \dfrac{x}{\ln(x)}$.
 
-## 素性测试
+## Primality testing
 
-**素性测试**（Primality test）可以用于判定所给自然数是否为素数．
+A **primality test** decides whether a given natural number is prime.
 
-素性测试有两种：
+There are two kinds of primality tests:
 
-1.  确定性测试：绝对确定一个数是否为素数．常见例子包括试除法、Lucas–Lehmer 测试和椭圆曲线素性证明．
-2.  概率性测试：通常比确定性测试快很多，但有可能（尽管概率很小）错误地将 [合数](./basic.md#素数与合数) 识别为素数（尽管反之则不会）．因此，通过概率素性测试的数字被称为 **可能素数**，直到它们的素性可以被确定性地证明．而通过测试但实际上是合数的数字则被称为 **伪素数**．有许多特定类型的伪素数，最常见的是费马伪素数，它们是满足费马小定理的合数．概率性测试的常见例子包括 Miller–Rabin 测试．
+1.  Deterministic tests: decide with certainty whether a number is prime. Common examples include trial division, the Lucas–Lehmer test and elliptic curve primality proving.
+2.  Probabilistic tests: usually much faster than deterministic tests, but they may (with small probability) wrongly report a [composite number](./basic.md#素数与合数) as prime (though never the other way around). So numbers that pass a probabilistic primality test are called **probable primes** until their primality is proven deterministically. Numbers that pass the test but are actually composite are called **pseudoprimes**. There are many specific kinds of pseudoprimes; the most common are Fermat pseudoprimes, which are composite numbers that satisfy Fermat's little theorem. A common example of a probabilistic test is the Miller–Rabin test.
 
-### 试除法
+### Trial division
 
-暴力做法自然可以枚举从小到大的每个数看是否能整除．
+The brute-force approach is to try every number from small to large and see whether it divides the input.
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     === "C++"
         ```cpp
         bool isPrime(int a) {
@@ -39,20 +39,20 @@ author: Ir1d, Tiphereth-A, c-forrest, Xeonacid, Enter-tainer, StudyingFather, ia
             return True
         ```
 
-这样做是十分稳妥了，但是真的有必要每个数都去判断吗？
+This is certainly safe, but do we really need to check every number?
 
-很容易发现这样一个事实：如果 $x$ 是 $a$ 的约数，那么 $\frac{a}{x}$ 也是 $a$ 的约数．
+It is easy to see that if $x$ is a divisor of $a$, then $\frac{a}{x}$ is also a divisor of $a$.
 
-这个结论告诉我们，对于每一对 $(x, \frac{a}{x} )$，只检验其中的一个就足够了．为了方便起见，我们只考察每一对的较小数．不难发现，所有这些较小数都在 $[1, \sqrt{a}]$ 这个区间里．
+This tells us that for each pair $(x, \frac{a}{x} )$, checking just one of them is enough. For convenience, we only check the smaller number of each pair. It is easy to see that all these smaller numbers lie in the interval $[1, \sqrt{a}]$.
 
-由于 $1$ 肯定是约数，所以不检验它．
+Since $1$ is always a divisor, we do not check it.
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     === "C++"
         ```cpp
         bool isPrime(int a) {
           if (a < 2) return 0;
-          for (int i = 2; (long long)i * i <= a; ++i)  // 防溢出
+          for (int i = 2; (long long)i * i <= a; ++i)  // avoid overflow
             if (a % i == 0) return 0;
           return 1;
         }
@@ -69,21 +69,21 @@ author: Ir1d, Tiphereth-A, c-forrest, Xeonacid, Enter-tainer, StudyingFather, ia
             return True
         ```
 
-### Fermat 素性测试
+### Fermat primality test
 
-**Fermat 素性检验** 是最简单的概率性素性检验．
+The **Fermat primality test** is the simplest probabilistic primality test.
 
-我们可以根据 [费马小定理](./fermat.md#费马小定理) 得出一种检验素数的思路：
+[Fermat's little theorem](./fermat.md#费马小定理) suggests a way to test for primes:
 
-基本思想是不断地选取在 $[2, n-1]$ 中的基底 $a$，并检验是否每次都有 $a^{n-1} \equiv 1 \pmod n$．
+The basic idea is to repeatedly pick a base $a$ in $[2, n-1]$ and check whether $a^{n-1} \equiv 1 \pmod n$ holds every time.
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     === "C++"
         ```cpp
         bool fermat(int n) {
           if (n < 3) return n == 2;
-          // test_time 为测试次数,建议设为不小于 8
-          // 的整数以保证正确率,但也不宜过大,否则会影响效率
+          // test_time is the number of rounds; it should be an integer of at
+          // least 8 for accuracy, but not too large, or it will be slow
           for (int i = 1; i <= test_time; ++i) {
             int a = rand() % (n - 2) + 2;
             if (quickPow(a, n - 1, n) != 1) return false;
@@ -97,8 +97,8 @@ author: Ir1d, Tiphereth-A, c-forrest, Xeonacid, Enter-tainer, StudyingFather, ia
         def fermat(n):
             if n < 3:
                 return n == 2
-            # test_time 为测试次数,建议设为不小于 8
-            # 的整数以保证正确率,但也不宜过大,否则会影响效率
+            # test_time is the number of rounds; it should be an integer of at
+            # least 8 for accuracy, but not too large, or it will be slow
             for i in range(1, test_time + 1):
                 a = random.randint(0, 32767) % (n - 2) + 2
                 if quickPow(a, n - 1, n) != 1:
@@ -106,39 +106,39 @@ author: Ir1d, Tiphereth-A, c-forrest, Xeonacid, Enter-tainer, StudyingFather, ia
             return True
         ```
 
-如果 $a^{n-1} \equiv 1 \pmod n$ 但 $n$ 不是素数，则称 $n$ 为以 $a$ 为底的 **Fermat 伪素数**．我们在实践中观察到，如果 $a^{n-1} \equiv 1 \pmod n$，那么 $n$ 通常是素数．但其实存在反例：对于 $n = 341$ 且 $a = 2$，虽然有 $2^{340}\equiv 1 {\pmod {341}}$，但是 $341 = 11 \cdot 31$ 是合数．事实上，对于任何固定的基底 $a$，这样的反例都有无穷多个[^inf-fermat-pp]．
+If $a^{n-1} \equiv 1 \pmod n$ but $n$ is not prime, then $n$ is called a **Fermat pseudoprime** to base $a$. In practice we observe that if $a^{n-1} \equiv 1 \pmod n$, then $n$ is usually prime. But counterexamples exist: for $n = 341$ and $a = 2$, we have $2^{340}\equiv 1 {\pmod {341}}$, yet $341 = 11 \cdot 31$ is composite. In fact, for any fixed base $a$, there are infinitely many such counterexamples[^inf-fermat-pp].
 
-既然对于单个基底，Fermat 素性测试无法保证正确性，一个自然的想法就是多检查几组基底．但是，即使检查了所有可能的与 $n$ 互素的基底 $a$，依然无法保证 $n$ 是素数．也就是说，费马小定理的逆命题并不成立：即使对于所有 $a\perp n$，都有 $a^{n-1}\equiv 1\pmod n$，$n$ 也不一定是素数．这样的数称为 [Carmichael 数](./primitive-root.md#carmichael-数)．它也有无穷多个．这迫使我们寻找更为严格的素性测试．
+Since the Fermat test cannot guarantee correctness for a single base, a natural idea is to check several bases. However, even checking every base $a$ coprime to $n$ still does not guarantee that $n$ is prime. In other words, the converse of Fermat's little theorem is false: even if $a^{n-1}\equiv 1\pmod n$ for all $a\perp n$, $n$ is not necessarily prime. Such numbers are called [Carmichael numbers](./primitive-root.md#carmichael-数), and there are infinitely many of them as well. This forces us to look for a stricter primality test.
 
-### Miller–Rabin 素性测试
+### Miller–Rabin primality test
 
-**Miller–Rabin 素性测试**（Miller–Rabin primality test）是更好的素数判定方法．它是由 Miller 和 Rabin 二人根据 Fermat 素性测试优化得到的．和其它概率性素数测试一样，它也只能检测出可能素数．要确保是素数，需要用慢得多的确定性算法．然而，目前还没有发现能够通过 Miller–Rabin 测试等高级概率性测试的合数，因此我们可以放心使用．
+The **Miller–Rabin primality test** is a better way to test primality. Miller and Rabin obtained it by improving the Fermat test. Like other probabilistic tests, it can only detect probable primes; to be sure a number is prime, a much slower deterministic algorithm is needed. However, no composite number is currently known to pass advanced probabilistic tests such as Miller–Rabin, so we can use it with confidence.
 
-在不考虑乘法的复杂度时，对数 $n$ 进行 $k$ 轮测试的时间复杂度是 $O(k \log n)$．Miller–Rabin 素性测试常用于对高精度数进行测试，此时时间复杂度是 $O(k \log^3n)$，利用 FFT 等技术可以优化到 [$O(k \log^2n \log \log n \log \log \log n)$](https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test#Complexity)．
+Ignoring the cost of multiplication, running $k$ rounds of the test on $n$ takes $O(k \log n)$ time. The Miller–Rabin test is often used on big integers, where it takes $O(k \log^3n)$ time; with techniques such as FFT this can be improved to [$O(k \log^2n \log \log n \log \log \log n)$](https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test#Complexity).
 
-为了解决 Carmichael 数带来的挑战，Miller–Rabin 素性测试进一步考虑了素数的如下性质：
+To deal with the challenge posed by Carmichael numbers, the Miller–Rabin test also uses the following property of primes:
 
-???+ note "二次探测定理"
-    如果 $p$ 是奇素数，则 $x^2 \equiv 1 \pmod p$ 的解为 $x \equiv 1 \pmod p$ 或者 $x \equiv p - 1 \pmod p$．
+???+ note "Quadratic probing theorem"
+    If $p$ is an odd prime, then the solutions of $x^2 \equiv 1 \pmod p$ are $x \equiv 1 \pmod p$ and $x \equiv p - 1 \pmod p$.
 
-??? note "证明"
-    容易验证，$p$ 为奇素数时，$x\equiv 1\pmod p$ 和 $x\equiv p-1\pmod p$ 都可以使得上式成立．由 [Lagrange 定理](./congruence-equation.md#素数模同余方程) 可知，这就是该方程的所有解．
+??? note "Proof"
+    It is easy to check that when $p$ is an odd prime, both $x\equiv 1\pmod p$ and $x\equiv p-1\pmod p$ satisfy the equation. By [Lagrange's theorem](./congruence-equation.md#素数模同余方程), these are all of its solutions.
 
-将费马小定理和二次探测定理结合起来使用，就得到 Miller–Rabin 素性测试：
+Combining Fermat's little theorem with the quadratic probing theorem gives the Miller–Rabin test:
 
-1.  将 $a^{n-1} \equiv 1 \pmod n$ 中的指数 $n-1$ 分解为 $n-1=u \times 2^t$，其中 $u$ 为奇数；
-2.  在每轮测试中对随机出来的 $a$ 先求出 $v = a^{u} \bmod n$，之后对这个值执行最多 $t$ 次平方操作；
-3.  在整个过程中，如果发现 $1$ 的非平凡平方根（即除了 $\pm 1$ 之外的其他根），就可以判断该数不是素数；
-4.  否则，再使用 Fermat 素性测试判断．
+1.  Write the exponent $n-1$ in $a^{n-1} \equiv 1 \pmod n$ as $n-1=u \times 2^t$, where $u$ is odd;
+2.  In each round, for a random $a$, first compute $v = a^{u} \bmod n$, then square this value at most $t$ times;
+3.  If at any point a nontrivial square root of $1$ (a root other than $\pm 1$) is found, the number is not prime;
+4.  Otherwise, finish with the Fermat test.
 
-还有一些实现上的小细节：
+There are also a few small implementation details:
 
--   对于一轮测试，如果某一时刻 $a^{u \times 2^s} \equiv n-1 \pmod n$，则之后的平方操作全都会得到 $1$，则可以直接通过本轮测试．
--   如果找出了一个非平凡平方根，即 $a^{u \times 2^s} \not\equiv n-1 \text{ or } 1 \pmod n$ 而 $a^{u \times 2^{s+1}} \equiv 1 \pmod n$，则之后的平方操作全都会得到 $1$．可以选择直接返回 `false`，也可以放到 $t$ 次平方操作后再返回 `false`．
+-   In a round, if at some point $a^{u \times 2^s} \equiv n-1 \pmod n$, all later squarings give $1$, so the number passes this round right away.
+-   If a nontrivial square root is found, that is, $a^{u \times 2^s} \not\equiv n-1 \text{ or } 1 \pmod n$ but $a^{u \times 2^{s+1}} \equiv 1 \pmod n$, all later squarings give $1$. You can return `false` right away, or return `false` after the $t$ squarings.
 
-这样得到了较正确的 Miller–Rabin：（来自 fjzzq2002）
+This gives a fairly correct Miller–Rabin (from fjzzq2002):
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     === "C++"
         ```cpp
         bool millerRabin(int n) {
@@ -146,19 +146,19 @@ author: Ir1d, Tiphereth-A, c-forrest, Xeonacid, Enter-tainer, StudyingFather, ia
           if (n % 3 == 0) return n == 3;
           int u = n - 1, t = 0;
           while (u % 2 == 0) u /= 2, ++t;
-          // test_time 为测试次数，建议设为不小于 8
-          // 的整数以保证正确率，但也不宜过大，否则会影响效率
+          // test_time is the number of rounds; it should be an integer of at
+          // least 8 for accuracy, but not too large, or it will be slow
           for (int i = 0; i < test_time; ++i) {
-            // 0, 1, n-1 可以直接通过测试, a 取值范围 [2, n-2]
+            // 0, 1, n-1 pass the test directly, so a is taken from [2, n-2]
             int a = rand() % (n - 3) + 2, v = quickPow(a, u, n);
             if (v == 1) continue;
             int s;
             for (s = 0; s < t; ++s) {
-              if (v == n - 1) break;  // 得到平凡平方根 n-1，通过此轮测试
+              if (v == n - 1) break;  // got the trivial square root n-1, passes this round
               v = (long long)v * v % n;
             }
-            // 如果找到了非平凡平方根，则会由于无法提前 break; 而运行到 s == t
-            // 如果 Fermat 素性测试无法通过，则一直运行到 s == t 前 v 都不会等于 -1
+            // if a nontrivial square root was found, we cannot break early, so s reaches t
+            // if the Fermat test fails, v never equals -1 before s reaches t
             if (s == t) return 0;
           }
           return 1;
@@ -176,10 +176,10 @@ author: Ir1d, Tiphereth-A, c-forrest, Xeonacid, Enter-tainer, StudyingFather, ia
             while u % 2 == 0:
                 u = u // 2
                 t = t + 1
-            # test_time 为测试次数,建议设为不小于 8
-            # 的整数以保证正确率,但也不宜过大,否则会影响效率
+            # test_time is the number of rounds; it should be an integer of at
+            # least 8 for accuracy, but not too large, or it will be slow
             for i in range(test_time):
-                # 0, 1, n-1 可以直接通过测试, a 取值范围 [2, n-2]
+                # 0, 1, n-1 pass the test directly, so a is taken from [2, n-2]
                 a = random.randint(2, n - 2)
                 v = pow(a, u, n)
                 if v == 1:
@@ -190,201 +190,201 @@ author: Ir1d, Tiphereth-A, c-forrest, Xeonacid, Enter-tainer, StudyingFather, ia
                         break
                     v = v * v % n
                     s = s + 1
-                # 如果找到了非平凡平方根，则会由于无法提前 break; 而运行到 s == t
-                # 如果 Fermat 素性测试无法通过，则一直运行到 s == t 前 v 都不会等于 -1
+                # if a nontrivial square root was found, we cannot break early, so s reaches t
+                # if the Fermat test fails, v never equals -1 before s reaches t
                 if s == t:
                     return False
             return True
         ```
 
-可以证明[^millerrabinproof]，奇合数 $n > 9$ 通过随机选取的一个基底 $a$ 的 Miller–Rabin 素性测试的概率至多为四分之一．因此，随机选取 $k$ 个基底后，仍将合数误判为素数的概率不超过 $1/4^k$．
+It can be shown[^millerrabinproof] that an odd composite $n > 9$ passes the Miller–Rabin test for a randomly chosen base $a$ with probability at most one quarter. So after $k$ random bases, the probability of still misjudging a composite as prime is at most $1/4^k$.
 
-??? note "证明"
-    设 $n-1=u2^t$，其中，$u$ 是奇数且 $t$ 是正整数．那么，整数 $n$ 可以通过基底为 $a$ 的 Miller–Rabin 素性测试说明
+??? note "Proof"
+    Let $n-1=u2^t$, where $u$ is odd and $t$ is a positive integer. Then the integer $n$ passes the Miller–Rabin test with base $a$ means
     
     $$
     a^u\equiv 1{\textstyle\pmod n},\text{ or }a^{u2^i}\equiv -1{\textstyle\pmod n}\text{ for some }0\le i < t.
     $$
     
-    记这样的 $a$（的同余类）集合为 $S$，要说明的是
+    Let $S$ be the set of such $a$ (as residue classes). We want to show
     
     $$
     |S| \le \dfrac14\varphi(n).
     $$
     
-    其中，$\varphi(n)$ 是 [欧拉函数](./euler-totient.md)．证明分为三步．
+    Here $\varphi(n)$ is [Euler's totient function](./euler-totient.md). The proof has three steps.
     
-    **第一步**：设 $\ell$ 是使得 $2^\ell \mid p-1$ 对所有 $n$ 的素因子 $p$ 都成立的最大正整数．那么，可以证明
+    **Step 1**: Let $\ell$ be the largest positive integer such that $2^\ell \mid p-1$ for every prime factor $p$ of $n$. Then we can show
     
     $$
     S\subseteq S' = \{a\bmod n:a^{u2^{\ell-1}}\equiv\pm 1{\textstyle\pmod n}\}.
     $$
     
-    集合 $S$ 中的元素 $a$ 只有两种可能．如果 $a^u\equiv 1\pmod n$，那么，显然 $a^{u2^{\ell-1}}\equiv 1\pmod n$ 也成立，亦即 $a\in S'$．如果对于 $0\le i < t$ 成立 $a^{u2^i}\equiv -1\pmod n$，那么，对于任意素因子 $p\mid n$，都有 $a^{u2^i}\equiv-1\pmod p$．设 $\delta_p(a)$ 是 $a$ 模 $p$ 的 [阶](./primitive-root.md#阶)，那么，显然有 $\delta_p(a)\mid u2^{i+1}$ 但是 $\delta_p(a)\nmid u2^{i}$，这说明，$\delta_p(a)$ 的素因数分解中，$2$ 的指数恰为 $i+1$，因而 $2^{i+1}\mid\delta_p(a)$．由费马小定理可知，$\delta_p(a)\mid p-1$，所以，$2^{i+1}\mid p-1$．这一点对于 $n$ 的所有素因子 $p$ 都成立．因此，$i+1\le\ell$．这说明 $a^{u2^{\ell-1}} = (a^{u2^i})^{2^{\ell-1-i}} \equiv \pm 1 \pmod n$，同样有 $a\in S'$．综合两种可能，就得到 $S\subseteq S'$．
+    An element $a$ of $S$ falls into one of two cases. If $a^u\equiv 1\pmod n$, then clearly $a^{u2^{\ell-1}}\equiv 1\pmod n$ too, so $a\in S'$. If $a^{u2^i}\equiv -1\pmod n$ for some $0\le i < t$, then for every prime factor $p\mid n$ we have $a^{u2^i}\equiv-1\pmod p$. Let $\delta_p(a)$ be the [order](./primitive-root.md#阶) of $a$ modulo $p$. Clearly $\delta_p(a)\mid u2^{i+1}$ but $\delta_p(a)\nmid u2^{i}$, so the exponent of $2$ in the prime factorization of $\delta_p(a)$ is exactly $i+1$, and hence $2^{i+1}\mid\delta_p(a)$. By Fermat's little theorem, $\delta_p(a)\mid p-1$, so $2^{i+1}\mid p-1$. This holds for every prime factor $p$ of $n$. Therefore $i+1\le\ell$. This means $a^{u2^{\ell-1}} = (a^{u2^i})^{2^{\ell-1-i}} \equiv \pm 1 \pmod n$, so again $a\in S'$. Combining the two cases gives $S\subseteq S'$.
     
-    **第二步**：计算 $|S'|$ 的大小．
+    **Step 2**: Compute $|S'|$.
     
-    假设 $n$ 有素因数分解 $n = p_1^{e_1}p_2^{e_2}\cdots p_k^{e_k}$，那么，由 [中国剩余定理](./crt.md) 可知，条件 $a^{u2^{\ell - 1}}\equiv 1\pmod n$ 等价于 $a^{u2^{\ell - 1}}\equiv 1\pmod{p_i^{e_i}}$ 对所有 $p_i^{e_i}$ 都成立．由于模奇素数幂 $p_i^{e_i}$ 的 [原根](./primitive-root.md#原根) 总是存在的，所以，同余方程 $a^{u2^{\ell - 1}}\equiv 1\pmod{p_i^{e_i}}$ 的 [解的数量](./residue.md#性质) 为
+    Suppose $n$ has the prime factorization $n = p_1^{e_1}p_2^{e_2}\cdots p_k^{e_k}$. By the [Chinese remainder theorem](./crt.md), the condition $a^{u2^{\ell - 1}}\equiv 1\pmod n$ is equivalent to $a^{u2^{\ell - 1}}\equiv 1\pmod{p_i^{e_i}}$ for every $p_i^{e_i}$. Since a [primitive root](./primitive-root.md#原根) modulo an odd prime power $p_i^{e_i}$ always exists, the [number of solutions](./residue.md#性质) of the congruence $a^{u2^{\ell - 1}}\equiv 1\pmod{p_i^{e_i}}$ is
     
     $$
     \gcd(u2^{\ell-1},p_i^{e_i-1}(p_i-1)) = \gcd(u2^{\ell-1},p_i-1) = 2^{\ell-1}\gcd(u,p_i-1).
     $$
     
-    第一个等号成立，是因为 $u$ 是 $n-1$ 的因子，不可能是 $p_i$ 的倍数；第二个等号成立，是因为 $\ell$ 的选取方式．所以，由中国剩余定理可知，同余方程 $a^{u2^{\ell-1}}\equiv 1\pmod n$ 的解的数量为
+    The first equality holds because $u$ is a factor of $n-1$ and so cannot be a multiple of $p_i$; the second holds because of how $\ell$ was chosen. So by the Chinese remainder theorem, the number of solutions of $a^{u2^{\ell-1}}\equiv 1\pmod n$ is
     
     $$
     \prod_{p\mid n}2^{\ell-1}\gcd(u,p-1).
     $$
     
-    同理，条件 $a^{u2^{\ell - 1}}\equiv -1\pmod n$ 等价于 $a^{u2^{\ell - 1}}\equiv -1\pmod{p_i^{e_i}}$ 对所有 $p_i^{e_i}$ 都成立．对于任意因子 $p_i^{e_i}$，条件 $a^{u2^{\ell - 1}}\equiv -1\pmod{p_i^{e_i}}$ 都等价于 $a^{u2^{\ell - 1}}\not\equiv 1\pmod{p_i^{e_i}}$ 且 $a^{u2^{\ell}}\equiv 1\pmod{p_i^{e_i}}$ 成立．类似上文，可以计算出同余方程 $a^{u2^{\ell}}\equiv 1\pmod{p_i^{e_i}}$ 的解的数量为 $2^{\ell}\gcd(u,p_i-1)$，因此，同余方程 $a^{u2^{\ell - 1}}\equiv -1\pmod{p_i^{e_i}}$ 的解的数量也等于
+    Similarly, the condition $a^{u2^{\ell - 1}}\equiv -1\pmod n$ is equivalent to $a^{u2^{\ell - 1}}\equiv -1\pmod{p_i^{e_i}}$ for every $p_i^{e_i}$. For any factor $p_i^{e_i}$, the condition $a^{u2^{\ell - 1}}\equiv -1\pmod{p_i^{e_i}}$ is equivalent to $a^{u2^{\ell - 1}}\not\equiv 1\pmod{p_i^{e_i}}$ together with $a^{u2^{\ell}}\equiv 1\pmod{p_i^{e_i}}$. As above, the congruence $a^{u2^{\ell}}\equiv 1\pmod{p_i^{e_i}}$ has $2^{\ell}\gcd(u,p_i-1)$ solutions, so the number of solutions of $a^{u2^{\ell - 1}}\equiv -1\pmod{p_i^{e_i}}$ is
     
     $$
     2^{\ell}\gcd(u,p_i-1) - 2^{\ell-1}\gcd(u,p_i-1) = 2^{\ell-1}\gcd(u,p_i-1).
     $$
     
-    再次应用中国剩余定理，就得到同余方程 $a^{u2^{\ell - 1}}\equiv -1\pmod n$ 的解的数量等于
+    Applying the Chinese remainder theorem again, the number of solutions of $a^{u2^{\ell - 1}}\equiv -1\pmod n$ is
     
     $$
     \prod_{p\mid n}2^{\ell-1}\gcd(u,p-1).
     $$
     
-    因此，综合两种情形，有
+    So, combining the two cases,
     
     $$
     |S'| = 2\prod_{p\mid n}2^{\ell-1}\gcd(u,p-1).
     $$
     
-    **第三步**：证明 $|S'|\le\varphi(n)/4$．
+    **Step 3**: Prove $|S'|\le\varphi(n)/4$.
     
-    结合欧拉函数的表达式 $\varphi(n)=\prod_ip_i^{e_i-1}(p_i-1)$ 可知
+    Using the formula for Euler's totient function $\varphi(n)=\prod_ip_i^{e_i-1}(p_i-1)$, we get
     
     $$
     \dfrac{\varphi(n)}{|S'|} = \dfrac{1}{2}\prod_ip_i^{e_i-1}\dfrac{p_i-1}{2^{\ell-1}\gcd(u,p_i-1)}.
     $$
     
-    对于每一个 $i$，相应的因子 $p_i^{e_i-1}\dfrac{p_i-1}{2^{\ell-1}\gcd(u,p_i-1)}$ 都是一个偶数，所以，$\varphi(n)/|S'|$ 是一个整数．假设 $|S'|\le\varphi(n)/4$ 不成立．必然有 $\varphi(n)/|S'|=1,2,3$，亦即
+    For each $i$, the factor $p_i^{e_i-1}\dfrac{p_i-1}{2^{\ell-1}\gcd(u,p_i-1)}$ is even, so $\varphi(n)/|S'|$ is an integer. Suppose $|S'|\le\varphi(n)/4$ is false. Then $\varphi(n)/|S'|=1,2,3$, that is,
     
     $$
     \prod_ip_i^{e_i-1}\dfrac{p_i-1}{2^{\ell-1}\gcd(u,p_i-1)} = 2,4,6.
     $$
     
-    由于连乘式中的每个因子都是偶数，所以，这个连乘式要么只有一个因子且这个因子就等于 $2,4,6$，要么就只有两个因子且都等于 $2$．
+    Since every factor of the product is even, either the product has a single factor equal to $2,4,6$, or it has exactly two factors, both equal to $2$.
     
-    首先考虑有两个因子的情形．此时，两个因子都没有奇素因子，所以，$p_i^{e_i-1}=1$，亦即 $n$ 没有平方因子．不妨设 $n=p_1p_2$ 且 $p_1<p_2$ 都是素数．两个因子都等于 $2$，所以，总有 $p_i-1=2^{\ell}\gcd(u,p_i-1)$．因此，$p_i=1+2^\ell m_i$，其中，$m_i$ 是奇数，而且 $m_i\mid u$．将 $p_1p_2=n=1+u2^t$ 对 $m_1$ 取模就得到 $p_1p_2\equiv 1\pmod{m_1}$，故而 $p_2\equiv 1\pmod{m_1}$，这说明，$m_1\mid m_2$．反过来也成立．这就说明 $m_1=m_2$，也就是 $p_1=p_2$．这与 $p_1<p_2$ 矛盾．这一情形不成立．
+    First consider the case of two factors. Then neither factor has an odd prime factor, so $p_i^{e_i-1}=1$, that is, $n$ is squarefree. Without loss of generality, let $n=p_1p_2$ with primes $p_1<p_2$. Both factors equal $2$, so $p_i-1=2^{\ell}\gcd(u,p_i-1)$. Hence $p_i=1+2^\ell m_i$, where $m_i$ is odd and $m_i\mid u$. Reducing $p_1p_2=n=1+u2^t$ modulo $m_1$ gives $p_1p_2\equiv 1\pmod{m_1}$, so $p_2\equiv 1\pmod{m_1}$, which means $m_1\mid m_2$. The converse also holds. So $m_1=m_2$, that is, $p_1=p_2$. This contradicts $p_1<p_2$, so this case is impossible.
     
-    最后，考虑只有一个因子的情形，亦即合数 $n=p^e$ 且 $e>1$．此时，必然有 $p^{e-1}\mid 2,4,6$．因此，唯一的情形是 $p=3,e=2$，亦即 $n=9$，与命题所设相矛盾．这一情形也不成立．
+    Finally, consider the case of a single factor, that is, a composite $n=p^e$ with $e>1$. Then $p^{e-1}\mid 2,4,6$ must hold. The only possibility is $p=3,e=2$, that is, $n=9$, which contradicts the assumption. So this case is impossible too.
     
-    综合所有情形可知，$|S'|\le\varphi(n)/4$ 成立．
+    Combining all cases, $|S'|\le\varphi(n)/4$ holds.
     
-    结合上述三个步骤可知，$|S|\le |S'|\le \varphi(n)/4$ 对于所有奇合数 $n>9$ 都成立．
+    Putting the three steps together, $|S|\le |S'|\le \varphi(n)/4$ holds for every odd composite $n>9$.
 
-另外，假设 [广义 Riemann 猜想](https://en.wikipedia.org/wiki/Generalized_Riemann_hypothesis)（generalized Riemann hypothesis, GRH）成立，则对数 $n$ 最多只需要测试 $[2, \min\{n-2, \lfloor 2\ln^2 n \rfloor\}]$ 中的全部整数即可 **确定** 数 $n$ 的素性．[^deterministic-proof]
+Moreover, if the [generalized Riemann hypothesis](https://en.wikipedia.org/wiki/Generalized_Riemann_hypothesis) (GRH) holds, then to **determine** the primality of $n$ it is enough to test all integers in $[2, \min\{n-2, \lfloor 2\ln^2 n \rfloor\}]$.[^deterministic-proof]
 
-而在 OI 范围内，通常都是对 $[1, 2^{64})$ 范围内的数进行素性检验．对于 $[1, 2^{32})$ 范围内的数，选取 $\{2, 7, 61\}$ 三个数作为基底进行 Miller–Rabin 素性检验就可以确定素性；对于 $[1, 2^{64})$ 范围内的数，选取 $\{2, 325, 9375, 28178, 450775, 9780504, 1795265022\}$ 七个数作为基底进行 Miller–Rabin 素性检验就可以确定素性．[^witnesses]
+In OI, primality tests are usually for numbers in $[1, 2^{64})$. For numbers in $[1, 2^{32})$, running Miller–Rabin with the three bases $\{2, 7, 61\}$ determines primality; for numbers in $[1, 2^{64})$, running Miller–Rabin with the seven bases $\{2, 325, 9375, 28178, 450775, 9780504, 1795265022\}$ determines primality.[^witnesses]
 
-也可以选取 $\{2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37\}$（即前 $12$ 个素数）检验 $[1, 2^{64})$ 范围内的素数．
+You can also use $\{2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37\}$ (the first $12$ primes) to test primes in $[1, 2^{64})$.
 
-注意如果要使用上面的数列中的数 $a$ 作为基底判断 $n$ 的素性：
+Note that when using the numbers $a$ in the lists above as bases to test $n$:
 
--   所有的数都要取一遍，不能只选小于 $n$ 的；
--   把 $a$ 换成 $a \bmod n$；
--   如果 $a \equiv 0 \pmod n$ 或 $a \equiv \pm 1 \pmod n$，则直接通过该轮测试．
+-   Use every number in the list, not just the ones less than $n$;
+-   Replace $a$ with $a \bmod n$;
+-   If $a \equiv 0 \pmod n$ or $a \equiv \pm 1 \pmod n$, the round passes directly.
 
-## 反素数
+## Antiprimes
 
-顾名思义，素数就是因子只有两个的数，那么反素数，就是因子最多的数（并且因子个数相同的时候值最小），所以反素数是相对于一个集合来说的．
+As the name suggests: a prime is a number with only two divisors, while an antiprime is a number with the most divisors (and the smallest value among numbers with the same number of divisors). So antiprimes are defined relative to a set.
 
-一种符合直觉的反素数定义是：在一个正整数集合中，因子最多并且值最小的数，就是反素数．
+An intuitive definition of an antiprime: in a set of positive integers, the number with the most divisors and the smallest value is the antiprime.
 
-???+ abstract "反素数"
-    对于某个正整数 $n$，如果任何小于 $n$ 的正整数的约数个数都小于 $n$ 的约数个数，则称 $n$ 为 **反素数**（anti-prime, a.k.a. highly composite number）．
+???+ abstract "Antiprime"
+    A positive integer $n$ is called an **antiprime** (anti-prime, a.k.a. highly composite number) if every positive integer less than $n$ has fewer divisors than $n$.
 
-???+ warning "注意"
-    注意区分 [emirp](https://en.wikipedia.org/wiki/Emirp)，它表示的是逐位反转后是不同素数的素数（如 149 和 941 均为 emirp，101 不是 emirp）．
+???+ warning "Note"
+    Do not confuse this with [emirp](https://en.wikipedia.org/wiki/Emirp), which means a prime whose digit reversal is a different prime (for example, 149 and 941 are both emirps, but 101 is not).
 
-### 过程
+### How it works
 
-那么，如何来求解反素数呢？
+So how do we find antiprimes?
 
-首先，既然要求因子数，首先要做的就是素因子分解．把 $n$ 分解成 $n=p_{1}^{k_{1}}p_{2}^{k_{2}} \cdots p_{m}^{k_{m}}$ 的形式，其中 $p$ 是素数，$k$ 为它的指数．这样的话总因子个数就是 $(k_1+1) \times (k_2+1) \times \cdots \times (k_m+1)$．
+First, since we need the number of divisors, the first step is prime factorization. Write $n$ as $n=p_{1}^{k_{1}}p_{2}^{k_{2}} \cdots p_{m}^{k_{m}}$, where each $p$ is a prime and $k$ is its exponent. Then the total number of divisors is $(k_1+1) \times (k_2+1) \times \cdots \times (k_m+1)$.
 
-但是显然素因子分解的复杂度是很高的，并且前一个数的结果不能被后面利用．所以要换个方法．
+But prime factorization is clearly expensive, and the result for one number cannot be reused for the next. So we need a different approach.
 
-我们来观察一下反素数的特点．
+Let us look at the features of antiprimes.
 
-1.  反素数肯定是从 $2$ 开始的连续素数的幂次形式的乘积．
+1.  An antiprime must be a product of powers of consecutive primes starting from $2$.
 
-2.  数值小的素数的幂次大于等于数值大的素数的幂次，即 $n=p_{1}^{k_{1}}p_{2}^{k_{2}} \cdots p_{m}^{k_{m}}$ 中，有 $k_1 \geq k_2 \geq k_3 \geq \cdots \geq k_m$．
+2.  Smaller primes have exponents at least as large as larger primes, that is, in $n=p_{1}^{k_{1}}p_{2}^{k_{2}} \cdots p_{m}^{k_{m}}$ we have $k_1 \geq k_2 \geq k_3 \geq \cdots \geq k_m$.
 
-解释：
+Explanation:
 
-1.  如果不是从 $2$ 开始的连续素数，那么如果幂次不变，把素数变成数值更小的素数，那么此时因子个数不变，但是 $n$ 的数值变小了．交换到从 $2$ 开始的连续素数的时候 $n$ 值最小．
+1.  If the primes are not consecutive primes starting from $2$, then keeping the exponents and replacing a prime with a smaller prime keeps the number of divisors the same but makes $n$ smaller. $n$ is smallest when the primes are the consecutive primes starting from $2$.
 
-2.  如果数值小的素数的幂次小于数值大的素数的幂，那么如果把这两个素数交换位置（幂次不变），那么所得的 $n$ 因子数量不变，但是 $n$ 的值变小．
+2.  If a smaller prime has a smaller exponent than a larger prime, then swapping the two primes (keeping the exponents) gives an $n$ with the same number of divisors but a smaller value.
 
-另外还有两个问题，
+There are two more questions:
 
-1.  对于给定的 $n$，要枚举到哪一个素数呢？
+1.  For a given $n$, up to which prime do we enumerate?
 
-    最极端的情况大不了就是 $n=p_{1}p_{2} \cdots p_{m}$，所以只要连续素数连乘到刚好小于等于 $n$ 即可．如果枚举到更大的素数，则意味着必定某个之前素数的幂次为 $0$，那么就不可能成为反素数．
+    In the most extreme case, $n=p_{1}p_{2} \cdots p_{m}$, so we only need to multiply consecutive primes until the product is just at most $n$. Enumerating a larger prime would mean some earlier prime has exponent $0$, so the result cannot be an antiprime.
 
-2.  我们要枚举到多少次幂呢？
+2.  Up to which exponent do we enumerate?
 
-    我们考虑一个极端情况，当我们最小的素数的某个幂次已经比所给的 $n$（的最大值）大的话，那么展开成其他的形式，最大幂次一定小于这个幂次．极端情况下 $n$ 分解为 $2$ 的次幂，那么枚举到 $\lfloor\log_2 n\rfloor$ 即可．
+    Consider an extreme case: if some power of the smallest prime already exceeds the given $n$ (its maximum value), then any other factorization has a smaller maximum exponent. In the extreme case $n$ is a power of $2$, so enumerating up to $\lfloor\log_2 n\rfloor$ is enough.
 
-细节有了，那么我们具体如何实现呢？
+Now that we have the details, how do we implement it?
 
-我们可以把当前走到每一个素数前面的时候列举成一棵树的根节点，然后一层层地去找．找到什么时候停止呢？
+We can treat the point just before each prime as the root of a tree and search level by level. When do we stop?
 
-1.  当前走到的数字已经大于我们想要的数字了；
+1.  The current number is already larger than the number we want;
 
-2.  当前枚举的因子已经用不到了；
+2.  The current divisor can no longer be used;
 
-3.  当前因子大于我们想要的因子了；
+3.  The current number of divisors is larger than what we want;
 
-4.  当前因子正好是我们想要的因子（此时判断是否需要更新最小 $\mathit{ans}$）．
+4.  The current number of divisors is exactly what we want (then check whether to update the minimum $\mathit{ans}$).
 
-然后 dfs 里面不断一层一层枚举次数继续往下迭代即可．
+Then, in the DFS, keep enumerating exponents level by level and recurse downward.
 
-### 例题
+### Example problems
 
 ???+ example "[Codeforces 27E. A number with a given number of divisors](https://codeforces.com/problemset/problem/27/E)"
-    求具有给定除数个数的最小自然数．答案保证不超过 $10^{18}$．
+    Find the smallest natural number with a given number of divisors. The answer is guaranteed not to exceed $10^{18}$.
 
-??? note "解题思路"
-    对于这种题，我们只要以因子数为 dfs 的返回条件基准，不断更新找到的最小值就可以了．
+??? note "Solution idea"
+    For this kind of problem, just use the number of divisors as the DFS stopping condition and keep updating the smallest value found.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/math/code/prime/prime_1.cpp"
     ```
 
 ???+ example "[ZOJ 2562 More Divisors](https://pintia.cn/problem-sets/91827364500/exam/problems/type/7?problemSetProblemId=91827366061)"
-    求不超过 $n$ 的数中，除数最多的数．
+    Among the numbers not exceeding $n$, find the one with the most divisors.
 
-??? note "解题思路"
-    思路同上，只不过要改改 dfs 的返回条件．注意这样的题目的数据范围，32 位整数可能溢出．
+??? note "Solution idea"
+    Same idea as above, only the DFS stopping condition needs to change. Watch the data range for such problems: 32-bit integers may overflow.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/math/code/prime/prime_2.cpp"
     ```
 
-## 参考资料与注释
+## References and notes
 
 1.  Rui-Juan Jing, Marc Moreno-Maza, Delaram Talaashrafi, "[Complexity Estimates for Fourier-Motzkin Elimination](https://arxiv.org/abs/1811.01510)", Journal of Functional Programming 16:2 (2006) pp 197-217.
-2.  [数论部分第一节：素数与素性测试](http://www.matrix67.com/blog/archives/234)
-3.  [Miller–Rabin 与 Pollard–Rho 学习笔记 - Bill Yang's Blog](https://blog.bill.moe/miller-rabin-notes/)
+2.  [Number theory, part 1: primes and primality testing](http://www.matrix67.com/blog/archives/234)
+3.  [Miller–Rabin and Pollard–Rho study notes - Bill Yang's Blog](https://blog.bill.moe/miller-rabin-notes/)
 4.  [Primality test - Wikipedia](https://en.wikipedia.org/wiki/Primality_test)
 5.  [Fermat pseudoprime - Wikipedia](https://en.wikipedia.org/wiki/Fermat_pseudoprime)
-6.  [桃子的算法笔记——反素数详解（acm/OI）](https://zhuanlan.zhihu.com/p/41759808)
+6.  [Taozi's algorithm notes: antiprimes explained (ACM/OI)](https://zhuanlan.zhihu.com/p/41759808)
 7.  [The Rabin-Miller Primality Test](http://home.sandiego.edu/~dhoffoss/teaching/cryptography/10-Rabin-Miller.pdf)
 8.  [Highly composite number - Wikipedia](https://en.wikipedia.org/wiki/Highly_composite_number)
 
-[^inf-fermat-pp]: Pomerance, Carl, John L. Selfridge, and Samuel S. Wagstaff. "The pseudoprimes to 25⋅ 10⁹." Mathematics of Computation 35, no. 151 (1980): 1003-1026. 的定理 1 说明了，对于固定的基底 $a$，能够通过更强的 Miller–Rabin 素性测试的合数也是无穷多的．
+[^inf-fermat-pp]: Theorem 1 of Pomerance, Carl, John L. Selfridge, and Samuel S. Wagstaff. "The pseudoprimes to 25⋅ 10⁹." Mathematics of Computation 35, no. 151 (1980): 1003-1026. shows that for a fixed base $a$, there are also infinitely many composites that pass the stronger Miller–Rabin test.
 
-[^millerrabinproof]: 本结论及其证明参考了 Crandall, Richard, and Carl Pomerance. Prime numbers: a computational perspective. New York, NY: Springer New York, 2005. 的第 3.5 节．
+[^millerrabinproof]: This result and its proof follow Section 3.5 of Crandall, Richard, and Carl Pomerance. Prime numbers: a computational perspective. New York, NY: Springer New York, 2005.
 
 [^deterministic-proof]: Bach, Eric , "[Explicit bounds for primality testing and related problems](https://doi.org/10.2307%2F2008811)", Mathematics of Computation, 55:191 (1990) pp 355–380.
 
-[^witnesses]: 更多类似的结果请参考 [Deterministic variant of the Miller–Rabin primality test](https://miller-rabin.appspot.com/#)．
+[^witnesses]: For more results like this, see [Deterministic variant of the Miller–Rabin primality test](https://miller-rabin.appspot.com/#).
