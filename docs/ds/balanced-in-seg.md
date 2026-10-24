@@ -6,7 +6,7 @@ In competitive programming, we sometimes need to maintain information in several
 
 ## Process
 
-We use **Er-Bi Balanced Tree** (a classic problem) as an example to explain how it works.
+We use **Second-Rate Balanced Tree** (a classic problem) as an example to explain how it works.
 
 To build the tree-in-tree, we build the outer segment tree as usual. For each node of the segment tree, we build a balanced tree that contains the part of the sequence covered by that node. In practice, we can insert the sequence elements one by one: for each segment tree node we pass through, we add the element to that node's balanced tree.
 
@@ -31,7 +31,7 @@ Each element is added to $O(\log n)$ balanced trees, so the space complexity is 
 
 ## Classic example problem
 
-[Er-Bi Balanced Tree](https://loj.ac/problem/106): segment tree outside, balanced tree inside.
+[Second-Rate Balanced Tree](https://loj.ac/problem/106): segment tree outside, balanced tree inside.
 
 ## Implementation
 
