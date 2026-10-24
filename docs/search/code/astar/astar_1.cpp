@@ -34,12 +34,12 @@ struct node {
   bool operator<(node x) const { return t + h(a) > x.t + h(x.a); }
 } x;
 
-priority_queue<node> q;  // 搜索队列
-set<matrix> s;           // 防止搜索队列重复
+priority_queue<node> q;  // search queue
+set<matrix> s;           // avoid duplicates in the search queue
 
 int main() {
   cin.tie(nullptr)->sync_with_stdio(false);
-  st.a[1][1] = 1;  // 定义标准表
+  st.a[1][1] = 1;  // define the target board
   st.a[1][2] = 2;
   st.a[1][3] = 3;
   st.a[2][1] = 8;
@@ -48,7 +48,7 @@ int main() {
   st.a[3][1] = 7;
   st.a[3][2] = 6;
   st.a[3][3] = 5;
-  for (int i = 1; i <= 3; i++)  // 输入
+  for (int i = 1; i <= 3; i++)  // input
     for (int j = 1; j <= 3; j++) {
       cin >> ch;
       f.a[i][j] = ch - '0';
@@ -58,21 +58,21 @@ int main() {
   while (!q.empty()) {
     x = q.top();
     q.pop();
-    if (!h(x.a)) {  // 判断是否与标准矩阵一致
+    if (!h(x.a)) {  // check whether it matches the target matrix
       cout << x.t << '\n';
       return 0;
     }
     for (int i = 1; i <= 3; i++)
       for (int j = 1; j <= 3; j++)
-        if (!x.a.a[i][j]) fx = i, fy = j;  // 查找空格子（0号点）的位置
-    for (int i = 0; i < 4; i++) {  // 对四种移动方式分别进行搜索
+        if (!x.a.a[i][j]) fx = i, fy = j;  // find the position of the empty cell (cell 0)
+    for (int i = 0; i < 4; i++) {  // search each of the four moves
       int xx = fx + dx[i], yy = fy + dy[i];
       if (1 <= xx && xx <= 3 && 1 <= yy && yy <= 3) {
         swap(x.a.a[fx][fy], x.a.a[xx][yy]);
         if (!s.count(x.a))
           s.insert(x.a),
-              q.push({x.a, x.t + 1});  // 这样移动后，将新的情况放入搜索队列中
-        swap(x.a.a[fx][fy], x.a.a[xx][yy]);  // 如果不这样移动的情况
+              q.push({x.a, x.t + 1});  // after this move, push the new state into the search queue
+        swap(x.a.a[fx][fy], x.a.a[xx][yy]);  // the case where we do not make this move
       }
     }
   }

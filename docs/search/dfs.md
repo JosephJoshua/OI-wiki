@@ -1,17 +1,17 @@
-## 引入
+## Introduction
 
-DFS 为图论中的概念，详见 [DFS（图论）](../graph/dfs.md) 页面．在 **搜索算法** 中，该词常常指利用递归函数方便地实现暴力枚举的算法，与图论中的 DFS 算法有一定相似之处，但并不完全相同．
+DFS is a concept from graph theory; see the [DFS (graph theory)](../graph/dfs.md) page for details. In **search algorithms**, the term usually means an algorithm that uses a recursive function to conveniently implement brute-force enumeration. It has some similarities to DFS in graph theory, but they are not exactly the same.
 
-## 解释
+## Explanation
 
-考虑这个例子：
+Consider this example:
 
-???+ note "例题"
-    把正整数 $n$ 分解为 $3$ 个正整数，如 $6=1+2+3$，排在后面的数必须大于等于前面的数，输出所有方案．
+???+ note "Example problem"
+    Split a positive integer $n$ into $3$ positive integers, such as $6=1+2+3$, where each number must be greater than or equal to the one before it. Output all ways.
 
-对于这个问题，如果不知道搜索，应该怎么办呢？当然是三重循环，参考代码如下：
+If you didn't know about search, how would you solve this? With three nested loops, of course. Here is the reference code:
 
-???+ note "实现"
+???+ note "Implementation"
     === "C++"
         ```cpp
         for (int i = 1; i <= n; ++i)
@@ -40,20 +40,20 @@ DFS 为图论中的概念，详见 [DFS（图论）](../graph/dfs.md) 页面．�
         }
         ```
 
-那如果是分解成四个整数呢？再加一重循环？那分解成小于等于 $m$ 个整数呢？
+What if we split it into four integers? Add another loop? And what about splitting it into at most $m$ integers?
 
-这时候就需要用到递归搜索了．该类搜索算法的特点在于，将要搜索的目标分成若干「层」，每层基于前几层的状态进行决策，直到达到目标状态．
+This is where recursive search comes in. The key feature of this kind of search is that the goal is split into several "levels". Each level makes a decision based on the states of the previous levels, until the goal state is reached.
 
-考虑上述问题，即将正整数 $n$ 分解成不超过 $m$ 个正整数之和，且排在后面的数必须大于等于前面的数，并输出所有方案．
+Consider the problem above: split a positive integer $n$ into a sum of at most $m$ positive integers, where each number must be greater than or equal to the one before it, and output all ways.
 
-设一组方案将正整数 $n$ 分解成 $k$ 个正整数 $a_1, a_2, \ldots, a_k$ 的和．将问题分层，第 $i$ 层决定 $a_i$．则为了进行第 $i$ 层决策，我们需要记录三个状态变量：$n-\sum_{j=1}^i{a_j}$，表示后面所有正整数的和；$a_{i-1}$，表示前一层的正整数，以确保正整数递增；以及 $i$，确保我们最多输出 $m$ 个正整数．为了记录方案，我们用 `arr` 数组，第 $i$ 项表示 $a_i$. 注意到 `arr` 实际上是一个长度为 $i$ 的栈．
+Suppose one way splits $n$ into the sum of $k$ positive integers $a_1, a_2, \ldots, a_k$. Split the problem into levels, where level $i$ decides $a_i$. To make the decision at level $i$, we need three state variables: $n-\sum_{j=1}^i{a_j}$, the sum of all the remaining positive integers; $a_{i-1}$, the integer from the previous level, to make sure the integers are non-decreasing; and $i$, to make sure we output at most $m$ integers. To record the way, we use the array `arr`, whose $i$-th entry is $a_i$. Note that `arr` is really a stack of length $i$.
 
-代码如下：
+The code is as follows:
 
-???+ note "实现"
+???+ note "Implementation"
     === "C++"
         ```cpp
-        int m, arr[103];  // arr 用于记录方案
+        int m, arr[103];  // arr records the current way
         
         void dfs(int n, int i, int a) {
           if (n == 0) {
@@ -63,19 +63,19 @@ DFS 为图论中的概念，详见 [DFS（图论）](../graph/dfs.md) 页面．�
           if (i <= m) {
             for (int j = a; j <= n; ++j) {
               arr[i] = j;
-              dfs(n - j, i + 1, j);  // 请仔细思考该行含义．
+              dfs(n - j, i + 1, j);  // Think carefully about what this line means.
             }
           }
         }
         
-        // 主函数
+        // main function
         scanf("%d%d", &n, &m);
         dfs(n, 1, 1);
         ```
     
     === "Python"
         ```python
-        arr = [0] * 103  # arr 用于记录方案
+        arr = [0] * 103  # arr records the current way
         
         
         def dfs(n, i, a):
@@ -84,10 +84,10 @@ DFS 为图论中的概念，详见 [DFS（图论）](../graph/dfs.md) 页面．�
             if i <= m:
                 for j in range(a, n + 1):
                     arr[i] = j
-                    dfs(n - j, i + 1, j)  # 请仔细思考该行含义．
+                    dfs(n - j, i + 1, j)  # Think carefully about what this line means.
         
         
-        # 主函数
+        # main function
         n, m = map(int, input().split())
         dfs(n, 1, 1)
         ```
@@ -96,7 +96,7 @@ DFS 为图论中的概念，详见 [DFS（图论）](../graph/dfs.md) 页面．�
         ```Java
         static int m;
         
-        // arr 用于记录方案
+        // arr records the current way
         static int[] arr = new int[103];
         
         public static void dfs(int n, int i, int a) {
@@ -107,20 +107,20 @@ DFS 为图论中的概念，详见 [DFS（图论）](../graph/dfs.md) 页面．�
             if (i <= m) {
                 for (int j = a; j <= n; ++j) {
                     arr[i] = j;
-                    dfs(n - j, i + 1, j); // 请仔细思考该行含义．
+                    dfs(n - j, i + 1, j); // Think carefully about what this line means.
                 }
             }
         }
         
-        // 主函数
+        // main function
         final int N = new Scanner(System.in).nextInt();
         m = new Scanner(System.in).nextInt();
         dfs(N, 1, 1);
         ```
 
-## 例题
+## Example problem
 
-???+ note "[Luogu P1706 全排列问题](https://www.luogu.com.cn/problem/P1706)"
+???+ note "[Luogu P1706 Full Permutation Problem](https://www.luogu.com.cn/problem/P1706)"
     ```cpp
     --8<-- "docs/search/code/dfs/dfs_1.cpp"
     ```

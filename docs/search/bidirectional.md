@@ -1,48 +1,48 @@
 author: FFjet, ChungZH, frank-xjh, hsfzLZH1, Xarfa, AndrewWayne, hcx1204
 
-本页面将简要介绍两种双向搜索算法：「双向同时搜索」和「Meet in the middle」．
+This page gives a short introduction to two bidirectional search algorithms: "simultaneous bidirectional search" and "meet in the middle".
 
-## 双向同时搜索
+## Simultaneous bidirectional search
 
-### 定义
+### Definition
 
-双向同时搜索的基本思路是从状态图上的起点和终点同时开始进行 [广搜](./bfs.md) 或 [深搜](./dfs.md)．
+The basic idea of simultaneous bidirectional search is to start a [BFS](./bfs.md) or [DFS](./dfs.md) from both the start and the end of the state graph at the same time.
 
-如果发现搜索的两端相遇了，那么可以认为是获得了可行解．
+If the two searches meet, we can consider a feasible solution found.
 
-### 过程
+### Process
 
-双向广搜的步骤：
+Steps of bidirectional BFS:
 
 ```text
-将开始结点和目标结点加入队列 q
-标记开始结点为 1
-标记目标结点为 2
-while (队列 q 不为空)
+push the start node and the target node into queue q
+mark the start node as 1
+mark the target node as 2
+while (queue q is not empty)
 {
-  从 q.front() 扩展出新的 s 个结点
+  expand s new nodes from q.front()
   
-  如果 新扩展出的结点已经被其他数字标记过
-    那么 表示搜索的两端碰撞
-    那么 循环结束
+  if a newly expanded node is already marked with the other number
+    then the two ends of the search have met
+    then end the loop
   
-  如果 新的 s 个结点是从开始结点扩展来的
-    那么 将这个 s 个结点标记为 1 并且入队 q 
+  if the s new nodes were expanded from the start node
+    then mark these s nodes as 1 and push them into q 
   
-  如果 新的 s 个结点是从目标结点扩展来的
-    那么 将这个 s 个结点标记为 2 并且入队 q
+  if the s new nodes were expanded from the target node
+    then mark these s nodes as 2 and push them into q
 }
 ```
 
-### 例题
+### Example problem
 
-???+ note "例题 [八数码难题](https://www.luogu.com.cn/problem/P1379)"
-    在 $3\times 3$ 的棋盘上，摆有八个棋子，每个棋子上标有 $1$ 至 $8$ 的某一数字．棋盘中留有一个空格，空格用 $0$ 来表示．空格周围的棋子可以移到空格中．要求解的问题是：给出一种初始布局（初始状态）和目标布局（为了使题目简单，设目标状态为 $123804765$），找到一种最少步骤的移动方法，实现从初始布局到目标布局的转变．
+???+ note "Example problem [8-Puzzle](https://www.luogu.com.cn/problem/P1379)"
+    On a $3\times 3$ board there are eight pieces, each labeled with a number from $1$ to $8$. One cell of the board is empty, shown as $0$. A piece next to the empty cell can move into it. The task: given a starting layout (initial state) and a target layout (to keep the problem simple, the target state is fixed as $123804765$), find a way to transform the starting layout into the target layout in the fewest moves.
 
-??? note "解题思路"
-    很好想出暴力 bfs．本题使用暴力 bfs 也不会超时．但是这里把它作为双向同时搜索的例题．我们可以使用两个 bfs，一个从起点状态开始正着搜，一个从终点状态开始反着搜，交替使用两个 bfs，搜索树的大小会大大减小．当其中一个 bfs 搜出另一个 bfs 已经搜出的状态，即可得到答案．
+??? note "Solution idea"
+    A brute-force BFS is easy to come up with, and brute-force BFS will not even time out on this problem. Here, though, we use it as an example of simultaneous bidirectional search. We can run two BFS searches: one forward from the start state, and one backward from the end state. By alternating between the two, the search trees become much smaller. As soon as one BFS reaches a state that the other BFS has already reached, we have the answer.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/search/code/bidirectional/bidirectional_1.cpp"
     ```
@@ -50,38 +50,38 @@ while (队列 q 不为空)
 ## Meet in the middle
 
 ???+ warning "Warning"
-    本节要介绍的不是 [**二分搜索**](../basic/binary.md)（二分搜索的另外一个译名为「折半搜索」）．
+    This section is not about [**binary search**](../basic/binary.md) (one Chinese name for binary search, "half search", is the same as a common Chinese name for meet in the middle).
 
-### 引入
+### Introduction
 
-Meet in the middle 算法没有正式译名，常见的翻译为「折半搜索」、「双向搜索」或「中途相遇」．
+Meet in the middle has no official Chinese name; it is commonly translated as "half search", "bidirectional search", or "meeting halfway".
 
-它适用于输入数据较小，但还没小到能直接使用暴力搜索的情况．
+It suits cases where the input is small, but not small enough for brute-force search to work directly.
 
-### 过程
+### Process
 
-Meet in the middle 算法的主要思想是将整个搜索过程分成两半，分别搜索，最后将两半的结果合并．
+The main idea of meet in the middle is to split the whole search into two halves, search each half separately, and finally combine the results of the two halves.
 
-### 性质
+### Properties
 
-暴力搜索的复杂度往往是指数级的，而改用 meet in the middle 算法后复杂度的指数可以减半，即让复杂度从 $O(a^b)$ 降到 $O(a^{b/2})$．
+The complexity of brute-force search is often exponential. With meet in the middle, the exponent can be halved, bringing the complexity down from $O(a^b)$ to $O(a^{b/2})$.
 
-### 例题
+### Example problem
 
-???+ note "例题 [「USACO09NOV」灯 Lights](https://www.luogu.com.cn/problem/P2962)"
-    有 $n$ 盏灯，每盏灯与若干盏灯相连，每盏灯上都有一个开关，如果按下一盏灯上的开关，这盏灯以及与之相连的所有灯的开关状态都会改变．一开始所有灯都是关着的，你需要将所有灯打开，求最小的按开关次数．
+???+ note "Example problem [USACO09NOV Lights](https://www.luogu.com.cn/problem/P2962)"
+    There are $n$ lights. Each light is connected to some other lights, and each light has a switch. Pressing a light's switch toggles the state of that light and of every light connected to it. At the start all lights are off. You need to turn all lights on. Find the minimum number of switch presses.
     
-    $1\le n\le 35$．
+    $1\le n\le 35$.
 
-??? note "解题思路"
-    如果这道题暴力 DFS 找开关灯的状态，时间复杂度就是 $O(2^{n})$, 显然超时．不过，如果我们用 meet in middle 的话，时间复杂度可以优化至 $O(n2^{n/2})$．meet in middle 就是让我们先找一半的状态，也就是找出只使用编号为 $1$ 到 $\mathrm{mid}$ 的开关能够到达的状态，再找出只使用另一半开关能到达的状态．如果前半段和后半段开启的灯互补，将这两段合并起来就得到了一种将所有灯打开的方案．具体实现时，可以把前半段的状态以及达到每种状态的最少按开关次数存储在 map 里面，搜索后半段时，每搜出一种方案，就把它与互补的第一段方案合并来更新答案．
+??? note "Solution idea"
+    If we use brute-force DFS over the switch states, the time complexity is $O(2^{n})$, which clearly times out. But with meet in the middle, the time complexity can be reduced to $O(n2^{n/2})$. Meet in the middle means we first find the states for one half: the states reachable using only switches $1$ to $\mathrm{mid}$. Then we find the states reachable using only the other half of the switches. If the lights turned on by the first half and by the second half complement each other, combining the two gives a way to turn on all lights. In the implementation, we can store the states of the first half, along with the minimum number of presses to reach each state, in a map. When searching the second half, every time we find a result, we combine it with the complementary first-half result to update the answer.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/search/code/bidirectional/bidirectional_2.cpp"
     ```
 
-## 外部链接
+## External links
 
 -   [What is meet in the middle algorithm w.r.t. competitive programming? - Quora](https://www.quora.com/What-is-meet-in-the-middle-algorithm-w-r-t-competitive-programming)
 -   [Meet in the Middle Algorithm - YouTube](https://www.youtube.com/watch?v=57SUNQL4JFA)

@@ -1,45 +1,45 @@
-## 引入
+## Introduction
 
-BFS（广度优先搜索）为图论中的基础算法，详见 [BFS（图论）](../graph/bfs.md) 页面．在 **搜索算法** 中，该算法通常指利用队列结构逐层扩展状态的搜索方式，与图论中的 BFS 算法思想一致，特别适合求解 **最短路径** 或 **最少步骤** 类问题．
+BFS (breadth-first search) is a basic algorithm in graph theory; see the [BFS (graph theory)](../graph/bfs.md) page for details. In **search algorithms**, BFS usually means a search that uses a queue to expand states level by level. It follows the same idea as BFS in graph theory and is especially good for **shortest path** or **fewest steps** problems.
 
-## 解释
+## Explanation
 
-BFS 的核心思想是 **按层扩展**，从起点开始逐层扫描可到达的位置．首次遇到终点时的路径长度即为最短路径．这种方式保证了搜索的层次性与最优性．
+The core idea of BFS is **expanding level by level**: starting from the start point, it scans reachable positions one level at a time. The path length when the target is first reached is the shortest path. This guarantees that the search is layered and optimal.
 
-在实际执行中，BFS 会从起点出发，先访问起点的所有直接可到达结点，这些可到达结点构成了搜索的第一层；接着，再以这些可到达结点为新的起点，依次访问它们的邻居，形成第二层；以此类推，不断向外扩展，直至找到目标结点或遍历完所有可达结点．这个过程中，算法会借助队列和访问数组，将每一层新发现的结点（访问数组中还没有记录过的）依次入队，确保同一层的结点按照访问顺序依次被处理，从而严格遵循「按层扩展」的逻辑．
+In practice, BFS starts from the start point and first visits every vertex directly reachable from it; these vertices form the first level of the search. Then it uses these vertices as new starting points and visits their neighbors in turn, forming the second level, and so on. It keeps expanding outward until it finds the target vertex or has visited every reachable vertex. During this process, the algorithm uses a queue and a visited array. It pushes the newly found vertices of each level (those not yet recorded in the visited array) into the queue in order, so vertices on the same level are processed in the order they were visited. This strictly follows the "expand level by level" logic.
 
-BFS 非常擅于快速求解 **最短路径** 或 **最少步骤**．当算法在某一层首次遇到目标时，此时经过的路径长度（步骤数）必然是最短的．这是因为 BFS 算法的「按层扩展」机制保证了每个结点都是通过最少的步数被访问到：就像从起点出发，沿着最直接的路径不断搜索，直到抵达终点，不会出现绕路或走多余步骤的情况．在这类问题中，BFS 通常也比 DFS 的效率更高．
+BFS is very good at quickly finding the **shortest path** or **fewest steps**. When the algorithm first meets the target at some level, the path length (number of steps) so far must be the shortest. This is because the "expand level by level" mechanism ensures that every vertex is reached with the fewest possible steps: it is like searching outward from the start along the most direct routes until reaching the end, with no detours or extra steps. For this kind of problem, BFS is usually also more efficient than DFS.
 
-但是，相较于 DFS，BFS 也有其缺点．通常情况下，BFS 需要更大的内存，缺乏天然的回溯过程，且深度剪枝相对没有 DFS 灵活．
+However, BFS also has drawbacks compared with DFS. BFS usually needs more memory, has no natural backtracking process, and its depth-based pruning is less flexible than in DFS.
 
-## 例题
+## Example problems
 
-???+ example "例题 [Luogu B3625 迷宫寻路](https://www.luogu.com.cn/problem/B3625)"
-    在一个 $n \times m$ 的迷宫矩阵中，`.` 表示可通行区域，`#` 表示障碍物．从起点 $(1,1)$ 出发，每次可向上下左右四个方向移动，问是否能到达终点 $(n,m)$．
+???+ example "Example problem [Luogu B3625 Maze Pathfinding](https://www.luogu.com.cn/problem/B3625)"
+    In an $n \times m$ maze grid, `.` is a passable cell and `#` is an obstacle. Starting from $(1,1)$, you can move up, down, left or right each step. Can you reach the end $(n,m)$?
 
-??? note "解答"
-    实现时需要维护一个队列来存储待处理的坐标，并配合访问标记数组避免重复计算．一个结点扩展可到达结点的时候，需要向上下左右拓展，这四个方向分别为 $(x, y + 1)$，$(x, y - 1)$，$(x + 1, y)$，$(x - 1, y)$，在代码中使用了方向数组．注意判断不能拓展到有障碍物的位置．
+??? note "Solution"
+    The implementation keeps a queue of coordinates waiting to be processed, together with a visited array to avoid repeated work. When a vertex expands to reachable vertices, it moves up, down, left and right; the four directions are $(x, y + 1)$, $(x, y - 1)$, $(x + 1, y)$, $(x - 1, y)$. The code uses a direction array for them. Be careful not to expand into cells with obstacles.
 
-??? note "参考实现"
+??? note "Reference implementation"
     ```cpp
     --8<-- "docs/search/code/bfs/bfs-1.cpp"
     ```
 
-???+ example "例题 [Luogu P1135 奇怪的电梯](https://www.luogu.com.cn/problem/P1135)"
-    有 $n$ 层楼和一架电梯．电梯位于第 $i$ 层楼时，向上或向下移动的层数等于一个固定的数字 $k_i$．如果到达的层数不合法，即不在 $1$ 和 $n$ 之间，相应的操作就无法进行．问：从第 $a$ 楼到第 $b$ 楼至少操作几次电梯？如果无法到达，输出 $-1$．
+???+ example "Example problem [Luogu P1135 The Strange Elevator](https://www.luogu.com.cn/problem/P1135)"
+    There are $n$ floors and one elevator. When the elevator is on floor $i$, it moves up or down by exactly a fixed number of floors $k_i$. If the target floor is invalid, that is, not between $1$ and $n$, that move cannot be made. What is the minimum number of elevator moves to get from floor $a$ to floor $b$? If it is impossible, output $-1$.
 
-??? note "解答"
-    本题需要计算最短路径，这正是 BFS 擅长解决的问题．实现时，需要在队列中同时维护需要处理的楼层位置和从起点 $a$ 出发到达当前楼层的最短距离，并配合访问标记数组避免重复加入同一个元素．一个结点 $i$ 扩展可到达结点的时候，需要向 $i + k_i$ 和 $i - k_i$ 扩展，注意不能到达非法楼层．当扩展到尚未到达的合法楼层时，需要将它加入队列，并记录到达该楼层的最短距离为到达当前所在楼层的最短距离加一．当首次到达结点 $b$ 时，记录的最短距离就是最终答案．
+??? note "Solution"
+    This problem asks for a shortest path, which is exactly what BFS is good at. In the implementation, the queue stores both the floor to be processed and the shortest distance from the start $a$ to that floor, and a visited array prevents the same element from being pushed twice. When vertex $i$ expands to reachable vertices, it goes to $i + k_i$ and $i - k_i$; be careful not to reach an invalid floor. When we reach a valid floor that has not been visited yet, we push it into the queue and record its shortest distance as the current floor's shortest distance plus one. When vertex $b$ is reached for the first time, its recorded shortest distance is the answer.
     
-    代码中，直接记录距离数组，并利用距离是否为默认值（即 $-1$）来判断结点是否尚未访问．
+    In the code, we store a distance array directly and check whether a vertex is unvisited by whether its distance still has the default value (that is, $-1$).
 
-??? note "参考实现"
+??? note "Reference implementation"
     ```cpp
     --8<-- "docs/search/code/bfs/bfs-2.cpp"
     ```
 
-## 习题
+## Exercises
 
--   [Luogu P1443 马的遍历](https://www.luogu.com.cn/problem/P1443)
--   [Luogu P3956 \[NOIP 2017 普及组\] 棋盘](https://www.luogu.com.cn/problem/P3956)
--   [Luogu P1126 机器人搬重物](https://www.luogu.com.cn/problem/P1126)
+-   [Luogu P1443 Knight's Traversal](https://www.luogu.com.cn/problem/P1443)
+-   [Luogu P3956 \[NOIP 2017 Junior Group\] Chessboard](https://www.luogu.com.cn/problem/P3956)
+-   [Luogu P1126 Robot Moving Heavy Objects](https://www.luogu.com.cn/problem/P1126)

@@ -1,29 +1,29 @@
 #include <iostream>
 constexpr int N = 16;
-int is_working[N] = {0};  // 某项工作是否被分配
-int tm[N][N];             // 完成某项工作所需的时间
-int cost_time_total_min;  // 完成 n 份工作的最小时间总和
+int is_working[N] = {0};  // whether each job is assigned
+int tm[N][N];             // time needed to finish each job
+int cost_time_total_min;  // minimum total time to finish the n jobs
 
-// i 表示第几个人，count 表示工作费用总和
+// i is the person index, count is the total cost so far
 void work(int i, int count, int n) {
-  // 如果 i 超出了所能分配的最大工作件数，表示分配完成，并且 count 比原来
-  // cost_time_total_min 花费少，则更新 cost_time_total_min 的值
+  // if i exceeds the number of jobs, assignment is done; and if count is less
+  // than the previous cost_time_total_min, update cost_time_total_min
   if (i > n && count < cost_time_total_min) {
     cost_time_total_min = count;
     return;
   }
-  // 回溯思想
+  // backtracking
   if (count < cost_time_total_min) {
-    // j 表示第几件工作
+    // j is the job index
     for (int j = 1; j <= n; j++) {
-      // 如果工作未被分配 is_working = 0
+      // if the job is not assigned, is_working = 0
       if (is_working[j] == 0) {
-        // 分配工作 is_working = 1
+        // assign the job, is_working = 1
         is_working[j] = 1;
-        // 工作交给第 i + 1 个人
+        // move on to person i + 1
         work(i + 1, count + tm[i][j], n);
-        // 在一轮迭代完成之后，返回到上一个人，要对此次的工作进行重新分配
-        // 将 is_working[j] 重设为 0
+        // after one round, go back to the previous person and reassign this job
+        // reset is_working[j] to 0
         is_working[j] = 0;
       }
     }

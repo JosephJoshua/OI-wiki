@@ -2,23 +2,23 @@
 #include <iostream>
 using namespace std;
 int n;
-bool vis[50];  // 访问标记数组
-int a[50];     // 排列数组，按顺序储存当前搜索结果
+bool vis[50];  // visited array
+int a[50];     // permutation array, stores the current result in order
 
 void dfs(int step) {
-  if (step == n + 1) {  // 边界
+  if (step == n + 1) {  // base case
     for (int i = 1; i <= n; i++) {
-      cout << setw(5) << a[i];  // 保留5个场宽
+      cout << setw(5) << a[i];  // field width of 5
     }
     cout << endl;
     return;
   }
   for (int i = 1; i <= n; i++) {
-    if (!vis[i]) {  // 判断数字i是否在正在进行的全排列中
+    if (!vis[i]) {  // check whether number i is already in the current permutation
       vis[i] = true;
       a[step] = i;
       dfs(step + 1);
-      vis[i] = false;  // 这一步不使用该数 置0后允许下一步使用
+      vis[i] = false;  // not using this number at this step; reset to 0 so later steps can use it
     }
   }
   return;

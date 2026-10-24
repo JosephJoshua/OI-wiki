@@ -1,26 +1,26 @@
-本页面将简要介绍启发式搜索及其用法．
+This page gives a short introduction to heuristic search and how to use it.
 
-## 定义
+## Definition
 
-启发式搜索（英文：heuristic search）是一种在普通搜索算法的基础上引入了启发式函数的搜索算法．
+Heuristic search is a search algorithm that adds a heuristic function on top of an ordinary search algorithm.
 
-启发式函数的作用是基于已有的信息对搜索的每一个分支选择都做估价，进而选择分支．简单来说，启发式搜索就是对取和不取都做分析，从中选取更优解或删去无效解．
+The heuristic function uses the information we already have to estimate the value of each branch choice in the search, and then picks branches based on that estimate. Simply put, heuristic search analyzes both "take" and "don't take", and keeps the better option or removes invalid ones.
 
-## 例题
+## Example problem
 
-由于概念过于抽象，这里使用例题讲解．
+The idea is quite abstract, so we explain it with an example problem.
 
-???+ note "[「NOIP2005 普及组」采药](https://www.luogu.com.cn/problem/P1048)"
-    题目大意：有 $N$ 种物品和一个容量为 $W$ 的背包，每种物品有重量 $w_i$ 和价值 $v_i$ 两种属性，要求选若干个物品（每种物品只能选一次）放入背包，使背包中物品的总价值最大，且背包中物品的总重量不超过背包的容量．
+???+ note "[NOIP 2005 Junior Group — Herb Picking](https://www.luogu.com.cn/problem/P1048)"
+    Summary: there are $N$ items and a knapsack of capacity $W$. Each item has a weight $w_i$ and a value $v_i$. Choose some items (each item can be chosen at most once) to put into the knapsack so that the total value is as large as possible and the total weight does not exceed the capacity.
 
-??? note "解题思路"
-    我们写一个估价函数 $f$，可以剪掉所有无效的 $0$ 枝条（就是剪去大量无用不选枝条）．
+??? note "Solution idea"
+    We write an evaluation function $f$ that can cut off all useless $0$ branches (that is, prune the many useless "don't take" branches).
     
-    估价函数 $f$ 的运行过程如下：
+    The evaluation function $f$ works like this:
     
-    我们在取的时候判断一下是不是超过了规定体积（可行性剪枝）；在不取的时候判断一下不取这个时，剩下的药所有的价值 + 现有的价值是否大于目前找到的最优解（最优性剪枝）．
+    When we take an item, we check whether it exceeds the allowed volume (feasibility pruning). When we don't take an item, we check whether the total value of all remaining herbs plus the current value is greater than the best solution found so far (optimality pruning).
 
-??? note "示例代码"
+??? note "Sample code"
     ```cpp
     --8<-- "docs/search/code/heuristic/heuristic_1.cpp"
     ```
