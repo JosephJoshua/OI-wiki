@@ -1,30 +1,30 @@
 author: Enter-tainer, ouuan, Xeonacid, Ir1d, partychicken, ChungZH, LuoshuiTianyi, Kewth, s0cks5, Doveqise, StudyingFather, SukkaW, SodaCris, SkyeYoung, 383494, danielqfmai, yui-ng
 
-Vim - 无处不在的文本编辑器．
+Vim - the ubiquitous text editor.
 
-## 简介
+## Introduction
 
-Vim 是从 vi 发展出来的一个文本编辑器．其代码补完、编译及错误跳转等方便编程的功能特别丰富，在程序员群体中被广泛使用．
+Vim is a text editor that grew out of vi. It has a very rich set of programming-friendly features, such as code completion, compiling and jumping to errors, and is widely used among programmers.
 
-## 安装
+## Installation
 
-Linux 系统通常自带 Vim，打开终端输入 `vim` 即可启用，输入 `vim filename` 来直接打开文件，也可以进入 Vim 后 `:e filename` 打开．
+Linux systems usually come with Vim. Open a terminal and type `vim` to start it, or `vim filename` to open a file directly. You can also open a file from inside Vim with `:e filename`.
 
-若需手动安装，Vim 的 [官方网站](https://www.vim.org/) 提供了下载的 [说明文档](https://www.vim.org/download.php)，按照需求编译安装即可．
+If you need to install it manually, Vim's [official website](https://www.vim.org/) has [download instructions](https://www.vim.org/download.php); compile and install it as needed.
 
-## Vim 的模式与常用键位
+## Vim's modes and common keys
 
-Vim 的基础操作在 Vim 自带的教程里将会讲述．打开终端输入 `vimtutor` 即可进入教程．
+Vim's basic operations are covered in its built-in tutorial. Open a terminal and type `vimtutor` to start it.
 
-这些操作通常需要二三十分钟来大致熟悉．
+It usually takes twenty or thirty minutes to get a rough feel for these operations.
 
-### 命令模式 (Command Mode)
+### Command Mode
 
-进入 Vim 后的默认模式．
+This is the default mode after you start Vim.
 
-此状态下敲击键盘动作会被 Vim 识别为命令，而非输入字符，比如我们此时按下<kbd>i</kbd>，并不会输入一个字符，<kbd>i</kbd>被当作了一个命令．
+In this mode, Vim treats your keystrokes as commands, not as text to insert. For example, if you press <kbd>i</kbd> now, no character is typed; <kbd>i</kbd> is treated as a command.
 
-Vim 的方向键是<kbd>↑</kbd>、<kbd>↓</kbd>、<kbd>←</kbd>、<kbd>→</kbd>，或者<kbd>h</kbd>、<kbd>j</kbd>、<kbd>k</kbd>、<kbd>l</kbd>．
+Vim's direction keys are <kbd>↑</kbd>, <kbd>↓</kbd>, <kbd>←</kbd>, <kbd>→</kbd>, or <kbd>h</kbd>, <kbd>j</kbd>, <kbd>k</kbd>, <kbd>l</kbd>.
 
 ```text
         ↑(k)
@@ -34,148 +34,148 @@ Vim 的方向键是<kbd>↑</kbd>、<kbd>↓</kbd>、<kbd>←</kbd>、<kbd>→</
         ↓(j)
 ```
 
-以下是命令模式常用的命令：
+Common commands in command mode:
 
--   `i` 切换到输入模式，在 **光标当前位置** 开始输入文本．按<kbd>Esc</kbd>键可回到普通模式．
--   `r` 替换光标下的字符，按下此按键后按下其他按键来替换，按<kbd>Esc</kbd>键取消．
--   `R` 切换到替换模式，在光标当前位置开始替换后面的文本．按<kbd>Esc</kbd>键可回到普通模式．
--   `x` 用于删除光标下的一个字符．
--   `:` 切换到底线命令模式，以在最底一行输入命令．
--   `a` 切换到输入模式，在 **光标后** 开始输入文本．
--   `o` 切换到输入模式，在光标下插入新的一行
--   `O` 切换到输入模式，在光标上插入新的一行．
--   `p` 粘贴剪贴板内容到光标下方；`P` 粘贴剪贴板内容到光标上方．
--   `dd` 删除光标所在的一整行．
--   `d` 命令也是删除，通常配合移动命令使用，也可以使用可视模式．
--   `c` 命令用于修改，`cX` 大致相当于 `dX` 后再按 `i` 进入输入模式．但 `cw`/`cW` 是特例，等价于 `ce`/`cE`，只修改到单词末尾，不会像 `dw` 那样把单词后的空白也删掉．
--   `u` 撤销上一次对文本的更改．
--   `y` 命令可以复制被选中的区域．需要按 `v` 进入可视模式操作．
--   `yy` 复制当前行．
--   `Ctrl + r` 重做上次撤销的操作．
--   `:w` 保存文件，常配合 q 保存退出．
--   `:q` 退出 Vim．
--   `:q!` 强制退出 Vim，不保存修改．
+-   `i` switches to insert mode and starts inserting text **at the cursor**. Press <kbd>Esc</kbd> to return to normal mode.
+-   `r` replaces the character under the cursor: press it, then press another key to replace with. Press <kbd>Esc</kbd> to cancel.
+-   `R` switches to replace mode and starts overwriting text from the cursor. Press <kbd>Esc</kbd> to return to normal mode.
+-   `x` deletes the character under the cursor.
+-   `:` switches to command-line mode, where you type a command on the bottom line.
+-   `a` switches to insert mode and starts inserting text **after the cursor**.
+-   `o` switches to insert mode and opens a new line below the cursor
+-   `O` switches to insert mode and opens a new line above the cursor.
+-   `p` pastes the clipboard below the cursor; `P` pastes it above the cursor.
+-   `dd` deletes the whole line the cursor is on.
+-   `d` also deletes. It is usually combined with a motion command, or used in visual mode.
+-   `c` changes text: `cX` is roughly `dX` followed by `i` to enter insert mode. But `cw`/`cW` are special cases equivalent to `ce`/`cE`: they only change up to the end of the word, and don't also delete the whitespace after it as `dw` does.
+-   `u` undoes the last change to the text.
+-   `y` copies (yanks) the selected region. You need to press `v` to enter visual mode first.
+-   `yy` copies the current line.
+-   `Ctrl + r` redoes the last undone change.
+-   `:w` saves the file; often combined with q to save and quit.
+-   `:q` quits Vim.
+-   `:q!` force-quits Vim without saving changes.
 
-??? info "关于剪贴板"
-    原生 Vim 中的剪贴板是和外界隔离的，可以在插入/替换模式按下<kbd>Ctrl</kbd>+<kbd>V</kbd>（类 Unix 中是<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd>）粘贴外部内容．
+??? info "About the clipboard"
+    Vim's built-in clipboard is isolated from the outside world. To paste external content, press <kbd>Ctrl</kbd>+<kbd>V</kbd> in insert/replace mode (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd> on Unix-like systems).
 
-移动命令（单独按下为移动，可以和 `c`、`d`、`y` 命令组合使用）：
+Motion commands (pressed alone they move the cursor; they can be combined with `c`, `d` and `y`):
 
--   `w` 下个单词的开头
--   `e` 当前单词或下个单词的结尾
--   `b` 当前单词或上个单词的开头
--   `0` 行首
--   `$` 行尾
--   `gg` 文件的第一行
--   `G` 最后一行
+-   `w` start of the next word
+-   `e` end of the current or next word
+-   `b` start of the current or previous word
+-   `0` start of the line
+-   `$` end of the line
+-   `gg` first line of the file
+-   `G` last line
 
-比如如下的场景：
+For example, consider this situation:
 
 ```cpp
 int a = 1 << 32;
 ```
 
-找到这一行，按下 `0` 跳到开头，按下 `cw` 修改单词，输入 `long long`，按下<kbd>Esc</kbd>即可完成修改．
+Go to this line, press `0` to jump to the start, press `cw` to change the word, type `long long`, and press <kbd>Esc</kbd> to finish.
 
-部分其他命令：
+Some other commands:
 
--   `=` 命令可以以默认格式对选中行应用自动缩进．
--   `==` 自动缩进当前行．
--   `.` 命令可以重复上次执行的命令．（参见「进阶知识」）
+-   `=` auto-indents the selected lines using the default format.
+-   `==` auto-indents the current line.
+-   `.` repeats the last command. (See "Advanced topics".)
 
-命令模式下按<kbd>/</kbd>，下方即会出现查找框，输入需要查找的字符，按回车后就能查看搜索结果．如果有多个查找结果，按<kbd>n</kbd>即可跳至下一个查找结果；按<kbd>N</kbd>可跳至上一个．
+Press <kbd>/</kbd> in command mode and a search box appears at the bottom. Type what you want to find and press Enter to see the results. If there are several matches, press <kbd>n</kbd> to jump to the next one and <kbd>N</kbd> to jump to the previous one.
 
-命令模式下按<kbd>\*</kbd>可以查找当前光标下的单词．
+Press <kbd>\*</kbd> in command mode to search for the word under the cursor.
 
-在输入某个命令前，输入一个数字 n 的话，命令就会重复 n 次．
+If you type a number n before a command, the command is repeated n times.
 
-### 输入模式 (Insert Mode)
+### Insert Mode
 
-在命令模式下按下<kbd>i</kbd>就进入了输入模式，按<kbd>Esc</kbd>键可以返回到命令模式．
+Press <kbd>i</kbd> in command mode to enter insert mode, and press <kbd>Esc</kbd> to return to command mode.
 
-在输入模式中，可以使用以下按键：
+In insert mode, you can use these keys:
 
--   字符按键以及<kbd>Shift</kbd>组合，输入字符
--   <kbd>ENTER</kbd>，回车键，换行
--   <kbd>BACK SPACE</kbd>，退格键，删除光标前一个字符
--   <kbd>DEL</kbd>，删除键，删除光标后一个字符
--   方向键，在文本中移动光标
--   <kbd>HOME/END</kbd>，移动光标到行首/行尾
--   <kbd>Page Up/Page Down</kbd>，上/下翻页
--   <kbd>Insert</kbd>，切换光标为输入/替换模式，光标将变成竖线/下划线
--   <kbd>ESC</kbd>，退出输入模式，切换到命令模式
+-   Character keys, with or without <kbd>Shift</kbd>: type characters
+-   <kbd>ENTER</kbd>, the Enter key: new line
+-   <kbd>BACK SPACE</kbd>, the Backspace key: delete the character before the cursor
+-   <kbd>DEL</kbd>, the Delete key: delete the character after the cursor
+-   Arrow keys: move the cursor through the text
+-   <kbd>HOME/END</kbd>: move the cursor to the start/end of the line
+-   <kbd>Page Up/Page Down</kbd>: scroll up/down a page
+-   <kbd>Insert</kbd>: toggle between insert and replace mode; the cursor becomes a vertical bar/underline
+-   <kbd>ESC</kbd>: leave insert mode and switch to command mode
 
-在输入模式下按<kbd>Ctrl</kbd>+<kbd>o</kbd>即可进入「输入 - 命令模式」，执行完一次操作后又会自动回到输入模式．
+In insert mode, press <kbd>Ctrl</kbd>+<kbd>o</kbd> to enter "insert-command mode": after running one command, you automatically return to insert mode.
 
-### 底线命令行模式
+### Command-line mode
 
-命令模式下按<kbd>:</kbd>，进入底线命令模式．
+Press <kbd>:</kbd> in command mode to enter command-line mode.
 
-底线命令模式可以输入单个或多个字符的命令，可用的命令非常多．
+In command-line mode you can type commands of one or more characters, and there are a great many of them.
 
-在底线命令模式中，基本的命令有：
+The basic commands in command-line mode are:
 
--   `:help`/`:h` 查看英文版 Vim 在线帮助文档．
--   `:e` 打开文件，输入不存在的文件名来创建文件
--   `:split` 在下方开一个分屏打开文件
--   `:vsplit` 在左侧开一个分屏打开文件
--   `:w` 保存文件．
--   `:q` 退出 Vim．
--   `:wq` 保存文件，退出 Vim．
--   `:q!` 强制退出 Vim，不保存修改．
--   `:read src` 读取指定内容到光标下，可以是文件，也可以是 `!command` 命令输出．
--   `:s` 命令是替换．
+-   `:help`/`:h` view Vim's online help (in English).
+-   `:e` open a file; type a file name that doesn't exist to create a new file
+-   `:split` open a file in a new split below
+-   `:vsplit` open a file in a new split on the left
+-   `:w` save the file.
+-   `:q` quit Vim.
+-   `:wq` save the file and quit Vim.
+-   `:q!` force-quit Vim without saving changes.
+-   `:read src` read the given content below the cursor; it can be a file or the output of a `!command`.
+-   `:s` is the substitute command.
 
 ```vim
-" 把当前行第一个匹配的 str1 替换成 str2
+" replace the first str1 on the current line with str2
 :s/str1/str2/
-" 把当前行所有的 str1 替换成 str2
+" replace every str1 on the current line with str2
 :s/str1/str2/g
-" 把当前行所有的 str1 替换成 str2，在替换前询问
+" replace every str1 on the current line with str2, asking before each replacement
 :s/str1/str2/gc
-" 把第 x1 行至 x2 行中，每一行第一个匹配的 str1 替换成 str2
+" on lines x1 to x2, replace the first str1 on each line with str2
 :x1,x2 s/str1/str2/
-" 把第 x1 行至 x2 行中所有的 str1 替换成 str2
+" on lines x1 to x2, replace every str1 with str2
 :x1,x2 s/str1/str2/g
-" 第 x1 行至 x2 行中所有的 str1 替换成 str2，在替换前询问
+" on lines x1 to x2, replace every str1 with str2, asking before each replacement
 :x1,x2 s/str1/str2/gc
-" 把所有行第一个匹配的 str1 替换成 str2
+" on every line, replace the first str1 with str2
 :%s/str1/str2/
-" 把全文件所有的 str1 替换成 str2
+" replace every str1 in the whole file with str2
 :%s/str1/str2/g
-" 把全文件所有的 str1 替换成 str2，在替换前询问
+" replace every str1 in the whole file with str2, asking before each replacement
 :%s/str1/str2/gc
 ```
 
-如果命令形式是 `:!command`，则命令将在 bash 终端执行．
+If the command has the form `:!command`, it is run in a bash terminal.
 
-按<kbd>Esc</kbd>键可以退出底线命令模式．
+Press <kbd>Esc</kbd> to leave command-line mode.
 
-### 可视模式 (Visual mode)
+### Visual mode
 
-按 `v` 进入可视模式，多用于选中区域．按 `V`（`Shift+v`）进入行可视模式，用于选中行．
+Press `v` to enter visual mode, mostly used for selecting a region. Press `V` (`Shift+v`) to enter visual line mode, for selecting whole lines.
 
-按<kbd>Ctrl</kbd>+<kbd>v</kbd>或<kbd>Ctrl</kbd>+<kbd>q</kbd>进入块可视模式 (visual block)．
+Press <kbd>Ctrl</kbd>+<kbd>v</kbd> or <kbd>Ctrl</kbd>+<kbd>q</kbd> to enter visual block mode.
 
-进入块可视模式后，按<kbd>I</kbd>或<kbd>A</kbd>进入插入模式（相当于 `i` 和 `a`），退出插入模式后对本行所做的改动将被应用到选中的每一行同一位置．常用于批量添加注释．
+In visual block mode, press <kbd>I</kbd> or <kbd>A</kbd> to enter insert mode (like `i` and `a`). When you leave insert mode, the change you made to this line is applied at the same position on every selected line. This is often used to comment out many lines at once.
 
-选中后输入 `y` 或 `d` 亦可执行相应命令．
+After selecting, you can also type `y` or `d` to run those commands.
 
-三种可视模式可以通过按键相互转化．
+You can switch between the three visual modes with keystrokes.
 
-## Vim 的快捷键
+## Vim shortcuts
 
-可参考 [史上最全 Vim 快捷键键位图—入门到进阶](https://cenalulu.github.io/linux/all-vim-cheatsheat/)
+See [The most complete Vim keyboard cheat sheet ever: from beginner to advanced](https://cenalulu.github.io/linux/all-vim-cheatsheat/)
 
-## 进阶知识
+## Advanced topics
 
-### `.` 命令
+### The `.` command
 
-Vim 的使用者不可避免地会抗拒重复的文本修改，因为 Vim 注定比其他编辑器会多出两次按键——<kbd>Esc</kbd>与<kbd>i</kbd>．但是，Vim 其实提供了重复命令 `.`，它适用于重复的添加、修改、删除文本操作．
+Vim users naturally dislike repetitive text edits, because Vim always needs two more keystrokes than other editors: <kbd>Esc</kbd> and <kbd>i</kbd>. However, Vim provides the repeat command `.`, which works for repeated insertions, changes and deletions.
 
-`.` 命令可以重复上次执行的命令．但是这个「命令」并不只限于单一的命令，它也可以是 `数字 + 命令` 的组合；`进入插入模式 + 输入文本 + Esc` 也是命令的一种．所以，适当使用 `.` 命令才能达到最高的效率．
+The `.` command repeats the last command. But this "command" isn't limited to a single command: it can be a `number + command` combination, and `enter insert mode + type text + Esc` also counts as one command. So using `.` well is the key to working efficiently.
 
-例如，如下代码的每一行末尾都少了分号：
+For example, every line in the following code is missing a semicolon at the end:
 
 ```text
 int a, b
@@ -184,15 +184,15 @@ cout << a + b
 return 0
 ```
 
-将 `.` 与搭配移动到行尾插入命令 `A` 使用，就能高效地补上末尾的分号．
+Using `.` together with `A`, the command that moves to the end of the line and starts inserting, you can add the missing semicolons efficiently.
 
 ```vim
 A;<Esc>
-" 重复下面的命令
+" repeat the command below
 j.
 ```
 
-再例如，如下代码中，后面五个赋值语句的数组名全部写错了：
+As another example, in the code below the array name in the last five assignments is misspelled:
 
 ```cpp
 int check() {
@@ -202,64 +202,64 @@ int check() {
 }
 ```
 
-一个个改过于麻烦，而命令行模式的 `s` 命令又会全部改掉．
+Fixing them one by one is tedious, but the `s` command in command-line mode would change all of them.
 
-第一种改法是搭配普通模式下的 `s` 命令（删除光标处字符并进入插入模式）使用．来到第一个错误的数组名首字母处，按下 `3s`/`cw`，输入正确的数组名并退出．之后把光标一个个移过去，再使用 `.` 命令．
+The first way is to use the `s` command in normal mode (delete the character under the cursor and enter insert mode). Go to the first letter of the first wrong array name, press `3s`/`cw`, type the correct name and leave insert mode. Then move the cursor to each remaining one and use the `.` command.
 
-第二种比较节省时间的改法是利用查找模式修改．键入 `/bok`，接着按下回车，并使用 `n` 键来到第一个错误的数组名首字母处，键入 `3s 新数组名 <Esc>`，最后重复 `n.`．
+The second, faster way is to use search. Type `/bok`, press Enter, use `n` to get to the first letter of the first wrong array name, type `3s new_name <Esc>`, and finally repeat `n.`.
 
-第三种改法是简易查找命令 `f`．在一行中普通模式下，`f + 单个字符` 即可查找此行中出现的这个字符并将光标移至字符处；按 `;` 查找下一个，`,` 查找上一个．所以对于上面的代码，只需键入 `fb;;;` 之后进入插入模式修改，然后 `;.` 即可．这种改法适用于只需行内移动的情况．
+The third way uses the simple find command `f`. In normal mode on a line, `f + a single character` finds that character on the line and moves the cursor to it; press `;` to find the next one and `,` to find the previous one. So for the code above, type `fb;;;`, enter insert mode to make the change, and then repeat `;.`. This works when you only need to move within one line.
 
-### 宏
+### Macros
 
-Vim 的宏功能可以重复任意长的命令．
+Vim's macro feature can repeat commands of any length.
 
-使用宏之前要先「录制」，即把一串按键操作录下来再回放，这样就达到了重复的效果．录制的方法很简单，普通模式下键入 `q` 开始录制．下一步，为录制的宏指定一个执行的命令键，可以按下 26 个字母中的任意一个来指定．这时左下方会显示 `记录中 @刚刚选择的字母`．然后就可以开始录制命令了．同理，普通模式下按 `q` 暂停录制．
+Before using a macro, you "record" it: you record a sequence of keystrokes and play it back, which gives you repetition. Recording is simple: type `q` in normal mode to start recording. Next, choose a register for the macro by pressing any of the 26 letters. The bottom-left will then show `recording @<the letter you chose>`. Now you can start recording commands. Likewise, press `q` in normal mode to stop recording.
 
-使用方法为按下 `:` 进入命令行模式，键入 `@选择的记录字母`，然后之前录制的命令就被调用了．
+To use it, press `:` to enter command-line mode and type `@<the letter you chose>`; the commands you recorded are then run.
 
-将 `.` 和宏组合，即录制宏 → 调用宏 →`.` 重复命令 → 数字 +`.`，可以达到非常高的效率．
+Combining `.` and macros, that is, record a macro → run the macro → repeat with `.` → number + `.`, makes you very efficient.
 
-### normal 命令
+### The normal command
 
-该命令与普通模式有关，效果是在指定行重复命令．
+This command is related to normal mode. It repeats a command on the given lines.
 
-按 `:` 进入命令行模式，输入如下命令：
+Press `:` to enter command-line mode and type the following command:
 
 ```vim
 :a,b normal command
 ```
 
-或者：
+or:
 
 ```vim
 :a,b norm command
 ```
 
-以上命令的意思是在普通模式下，对 a\~b 行执行 `command` 命令．
+This runs `command` in normal mode on lines a\~b.
 
-由于 `normal` 命令可以被 `.` 命令重复调用，且其易于理解，它的使用频率甚至更高于宏．
+Because the `normal` command can be repeated with `.` and is easy to understand, it is used even more often than macros.
 
-### 数字 +`.`+ 宏 + normal
+### Number + `.` + macros + normal
 
-以上三种命令可以组合使用．例如：
+The three commands above can be combined. For example:
 
-> 我下载了一本书，我需要它的每一个章节都变成「标题」，以方便转换成 mobi 之类的格式，或者方便生成 TOC 目录跳转，怎么办呢？
+> I downloaded a book and want every chapter to become a "heading", so that I can convert it to formats like mobi or generate a clickable table of contents. How do I do that?
 
-以下是用 Vim 处理的过程：
+Here is how to do it with Vim:
 
-1.  按下<kbd>/</kbd>调出查找框，输入正则表达式进行查找；
-2.  用 `q` 命令开始录制宏；
-3.  键入 `I#` 命令，然后按下<kbd>ESC</kbd>；
-4.  用 `q` 命令结束宏录制；
-5.  键入 `normal n@字母` 转到下一处并重复上一步操作；
-6.  键入 `数字 + .` 多次重复．
+1.  Press <kbd>/</kbd> to open the search box and search with a regular expression;
+2.  Start recording a macro with the `q` command;
+3.  Type the `I#` command, then press <kbd>ESC</kbd>;
+4.  Stop recording with the `q` command;
+5.  Type `normal n@<letter>` to go to the next match and repeat the previous step;
+6.  Type `number + .` to repeat it many times.
 
-## 外部链接
+## External links
 
--   [Vim 官网](https://www.vim.org/)
--   [原作者提供的配置](https://github.com/LuoshuiTianyi/Vim-for-OIWiki)
--   [Vim 调试：termdebug 入门](https://fzheng.me/2018/05/28/termdebug/)
+-   [Vim official website](https://www.vim.org/)
+-   [The original author's configuration](https://github.com/LuoshuiTianyi/Vim-for-OIWiki)
+-   [Vim debugging: getting started with termdebug](https://fzheng.me/2018/05/28/termdebug/)
 -   [Vim scripting cheatsheet](https://devhints.io/vimscript)
 -   [Learn Vimscript the Hard Way](https://learnvimscriptthehardway.stevelosh.com)
--   [Linux vi/vim | 菜鸟教程](https://www.runoob.com/linux/linux-vim.html)
+-   [Linux vi/vim | Runoob Tutorial](https://www.runoob.com/linux/linux-vim.html)

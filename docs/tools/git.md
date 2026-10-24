@@ -1,26 +1,26 @@
 ???+ note "Note"
-    本页面将着重介绍 Git 这一版本控制系统，与 GitHub 相关的内容，请参考 [GitHub 帮助](https://docs.github.com/cn) 和 [如何参与 - OI Wiki](../intro/htc.md)．
+    This page focuses on the Git version control system. For GitHub-related topics, see [GitHub Docs](https://docs.github.com/cn) and [How to contribute - OI Wiki](../intro/htc.md).
 
-Git 是目前使用最广泛的版本控制系统之一．**OI Wiki** 也使用了 Git 作为版本控制系统．
+Git is one of the most widely used version control systems today. **OI Wiki** also uses Git for version control.
 
-## 安装
+## Installation
 
-参见 [Git - Downloads](https://git-scm.com/downloads)．
+See [Git - Downloads](https://git-scm.com/downloads).
 
-## 配置
+## Configuration
 
-Git 根据配置文件的应用范围，将配置文件分为不同的等级，其中较常用的有两个级别[^note1]：
+Git splits configuration files into levels according to their scope. The two most commonly used levels are[^note1]:
 
-1.  适用于当前用户的全局配置文件，该用户操作本系统上的所有仓库时都会查询该配置文件．
-2.  适用于当前仓库的配置文件．
+1.  The global configuration file for the current user. Git reads it whenever this user works with any repository on the system.
+2.  The configuration file for the current repository.
 
-当多个配置文件对同一个选项作出设置的时候，局部设置会自动覆盖全局设置．因此如果需要在某个仓库应用特定的设置的话，只需更改该仓库下的特定设置即可，不会对全局设置造成影响．
+When several configuration files set the same option, the more local setting automatically overrides the global one. So if you need a particular setting in one repository, just change that repository's setting; the global settings are not affected.
 
-修改配置文件需要用到 `git config` 命令．
+You change configuration files with the `git config` command.
 
-### 设置用户信息
+### Setting your user information
 
-安装 Git 后，第一件事情就是设置你的用户名和邮箱．这些信息在每次提交时都会用到．
+The first thing to do after installing Git is to set your user name and email. Git uses them in every commit.
 
 ```console
 $ git config --global user.name "OI Wiki"
@@ -28,58 +28,58 @@ $ git config --global user.email oi-wiki@example.com
 ```
 
 ???+ note "Note"
-    这里给出的用户名和邮箱仅供演示．您在根据本页面的内容配置时，请记得将这里的用户名和邮箱改成自己的信息．
+    The user name and email here are only for demonstration. When you follow this page, remember to replace them with your own information.
 
-这里的 `--global` 表示修改的是全局配置，即该设置对当前用户下的所有仓库均有效．如果不添加 `--global` 选项，则会默认修改当前仓库下的配置文件．
+Here `--global` means you're changing the global configuration, so the setting applies to all repositories of the current user. Without the `--global` option, Git changes the current repository's configuration file by default.
 
-如果想要修改某个仓库的特定设置，只需在该仓库下执行不带 `--global` 的命令即可．
+To change a setting for one particular repository, just run the command without `--global` inside that repository.
 
-### 配置编辑器
+### Configuring the editor
 
 ```console
 $ git config --global core.editor emacs
 ```
 
-执行如上命令可以将编辑器更改为 [Emacs](./editor/emacs.md)．
+Running the command above changes the editor to [Emacs](./editor/emacs.md).
 
-在 Windows 下，Git 的默认编辑器可以在安装 Git 时选择（见前文）．之后若要修改，在 Git Bash 里输入如上命令，将编辑器名换成编辑器的绝对路径，运行命令即可．
+On Windows, you can choose Git's default editor when installing Git (see above). To change it later, run the command above in Git Bash with the editor name replaced by the editor's absolute path.
 
-### 显示配置
+### Viewing the configuration
 
-可以通过 `git config -l` 列出当前已经设置的所有配置参数．使用 `git config --global -l` 可以列出所有全局配置．
+`git config -l` lists all configuration options that are currently set. `git config --global -l` lists all global options.
 
-## 仓库操作基础
+## Repository basics
 
-### 新建 Git 仓库
+### Creating a Git repository
 
-新建一个 Git 仓库非常简单，只需在想要建立仓库的文件夹输入如下命令：
+Creating a Git repository is very easy. Just run this command in the folder where you want the repository:
 
 ```console
 $ git init
 ```
 
-Git 将在当前文件夹新建一个 `.git` 文件夹，一个仓库就这样建好了．
+Git creates a `.git` folder in the current folder, and the repository is ready.
 
-如果想把一个仓库克隆到自己的电脑上（比如将 **OI Wiki** 的代码拷贝到本地上进行编辑），采用 `git clone` 命令即可．
+To clone a repository to your computer (for example, to copy **OI Wiki**'s code locally to edit it), use the `git clone` command.
 
 ```console
 $ git clone https://github.com/OI-wiki/OI-wiki
 ```
 
-???+ note "远程仓库的链接"
-    这里给出的仓库链接是 HTTP(S) 链接，也即我们采用了 HTTP(S) 方式连接到远程仓库．
+???+ note "Remote repository URLs"
+    The repository URL here is an HTTP(S) URL, meaning we connect to the remote repository over HTTP(S).
     
-    事实上，连接到远程仓库的方式还有多种．其中使用 ssh 连接到远程仓库的方法更为方便和安全，在「远程仓库的管理」部分我们会简单介绍使用 ssh 连接到远程仓库的方法．
+    In fact, there are several ways to connect to a remote repository. Connecting over ssh is more convenient and secure; we briefly explain how to do it in the section on managing remote repositories.
 
-这样，被克隆的仓库的内容就会被储存到当前文件夹下一个与仓库同名的新文件夹．在本例中，当前文件夹下会出现一个名为 `OI-wiki` 的新文件夹．
+The contents of the cloned repository are then stored in a new folder, with the same name as the repository, inside the current folder. In this example, a new folder named `OI-wiki` appears in the current folder.
 
-### 跟踪文件
+### Tracking files
 
-在对仓库的文件做出了一些更改后，这些更改需要被纳入到版本管理当中去．
+After you make changes to files in a repository, those changes need to be brought under version control.
 
-使用 `git status` 命令可以查看当前仓库文件的状态．
+The `git status` command shows the state of the files in the current repository.
 
-举个例子，在一个空仓库中新增了一个 `README.md` 文件后，执行 `git status` 命令的效果如下：
+For example, after adding a `README.md` file to an empty repository, `git status` shows this:
 
 <!-- scripts.linter.preprocess.fix_details off -->
 
@@ -99,14 +99,14 @@ nothing added to commit but untracked files present (use "git add" to track)
 
 <!-- scripts.linter.preprocess.fix_details on -->
 
-这里的 Untracked files 指的是 Git 之前没有纳入版本跟踪的文件．如果文件没有纳入版本跟踪，对该文件的更改不会被 Git 记录．
+Untracked files are files that Git hasn't been tracking. If a file isn't tracked, Git doesn't record changes to it.
 
-执行 `git add <文件>` 命令可以将指定的文件纳入到版本跟踪中．
+Running `git add <file>` starts tracking the given file.
 
 <!-- scripts.linter.preprocess.fix_details off -->
 
 ```console
-$ git add README.md # 将这个文件纳入到版本跟踪中
+$ git add README.md # start tracking this file
 $ git status
 On branch master
 
@@ -120,14 +120,14 @@ Changes to be committed:
 
 <!-- scripts.linter.preprocess.fix_details on -->
 
-这时 `README.md` 已经纳入了版本跟踪，放入了暂存区．接下来只需执行 `git commit` 命令就可以提交这次更改了．
+Now `README.md` is tracked and has been put in the staging area. Next, you just need to run `git commit` to commit this change.
 
-但在进行这一工作之前，让我们先对 `README.md` 做点小更改．
+But before doing that, let's make a small change to `README.md`.
 
 <!-- scripts.linter.preprocess.fix_details off -->
 
 ```console
-$ vim README.md # 随便更改点东西
+$ vim README.md # change something
 $ git status
 On branch master
 
@@ -147,50 +147,50 @@ Changes not staged for commit:
 
 <!-- scripts.linter.preprocess.fix_details on -->
 
-你会发现 `README.md` 同时处于暂存区和非暂存区．实际上，是否处于暂存区是对于更改而言的，而不是对于文件而言的，所以对 `README.md` 的前一次更改已被纳入暂存区，而后一次更改还没有．如果这时候执行 `git commit` 命令，只有处于暂存区的更改会被提交，而非暂存区的更改，则不会被提交．
+You'll notice that `README.md` is both staged and unstaged. In fact, being staged applies to changes, not to files: the earlier change to `README.md` is staged, while the later one isn't yet. If you run `git commit` now, only the staged changes are committed; the unstaged changes are not.
 
-Git 给了一条提示，执行 `git add README.md` 就可以将非暂存区的更改放入暂存区了．
+As Git suggests, running `git add README.md` moves the unstaged changes into the staging area.
 
-???+ note "一次性将所有更改放入暂存区"
-    `git add` 命令会将对指定的文件的更改放入暂存区中．
+???+ note "Staging all changes at once"
+    The `git add` command stages the changes to the given files.
     
-    在多数情况下，用户更期望一次性将所有更改都放入暂存区中，这时候可以应用 `git add -A` 命令．该命令会将所有更改（包括未被纳入版本跟踪的文件，不包括被忽略的文件）放入暂存区．
+    Most of the time, you'll want to stage all changes at once. For that, use `git add -A`. It stages all changes (including untracked files, but not ignored files).
     
-    如果只需更新已被纳入版本跟踪的文件，而不将未纳入版本跟踪的文件加入暂存区，可以使用 `git add -u`．
+    If you only want to update tracked files without adding untracked files to the staging area, use `git add -u`.
 
-???+ note "忽略文件"
-    有些时候我们并不希望将一些文件（如可执行文件等）纳入到版本跟踪中．这时候可以在仓库根目录下创建 `.gitignore` 文件，在该文件里写下想要忽略的文件．Git 将不会将这些文件纳入到版本跟踪中．
+???+ note "Ignoring files"
+    Sometimes we don't want to track certain files (such as executables). In that case, create a `.gitignore` file in the repository's root directory and list the files you want to ignore. Git will then not track them.
     
-    例如，`*.exe` 将自动忽略仓库里的所有扩展名为 `.exe` 的文件．
+    For example, `*.exe` automatically ignores all files with the `.exe` extension in the repository.
 
-现在将非暂存区的文件加入暂存区，将所有更改一并提交（commit）．
+Now stage the unstaged changes and commit all the changes together.
 
 ```console
 $ git add README.md
-$ git commit # 接下来会弹出编辑器页面，你需要写下 commit 信息
+$ git commit # an editor will open; write your commit message there
 [master (root-commit) f992763] initial commit
  1 file changed, 2 insertions(+)
  create mode 100644 README.md
 ```
 
-现在重点观察一下这一次 commit 的信息．
+Let's look closely at the output of this commit.
 
-`master` 表示当前位于 `master` 分支（关于分支的问题，下文将会详细介绍），`f992763` 表示本次提交的 SHA-1 校验和的前几位，后面则是本次提交的信息．
+`master` means we're on the `master` branch (branches are covered in detail below), `f992763` is the first few characters of this commit's SHA-1 checksum, and what follows is the commit message.
 
-需要特别关注的是这里的 SHA-1 校验码，每个校验码都与某个时刻仓库的一个快照相对应．利用这一特性我们可以访问历史某个时刻的仓库快照，并在该快照上进行更改．
+Pay special attention to the SHA-1 checksum: each checksum corresponds to a snapshot of the repository at some moment. Using it, we can go back to a snapshot of the repository at some point in history and make changes on top of it.
 
-接下来两行则详细说明了本次更新涉及的文件更改．
+The next two lines describe the file changes in this commit.
 
-另外，commit 过程中可以利用几个参数来简化提交过程：
+You can also use a few options to make committing simpler:
 
--   `-a`：在提交前将所有已跟踪的文件的更改放入暂存区．需要注意的是未被跟踪的文件（新创建的文件）不会被自动加入暂存区，需要用 `git add` 命令手动添加．
--   `-m`：该参数后跟提交信息，表示以该提交信息提交本次更改．例如 `git commit -m "fix: typo"` 会创建一条标题为 `fix: typo` 的 commit．
+-   `-a`: stage the changes to all tracked files before committing. Note that untracked files (newly created files) are not staged automatically; you have to add them by hand with `git add`.
+-   `-m`: followed by a commit message, commits the changes with that message. For example, `git commit -m "fix: typo"` creates a commit titled `fix: typo`.
 
-### 查看提交记录
+### Viewing the commit history
 
-使用 `git log` 命令可以查看仓库的提交历史记录．
+The `git log` command shows the repository's commit history.
 
-可以看到，提交历史里记录了每次提交时的 SHA-1 校验和，提交的作者，提交时间和 commit 信息．
+As you can see, the history records each commit's SHA-1 checksum, author, time and commit message.
 
 ```console
 $ git log
@@ -207,34 +207,34 @@ Date:   Sun Sep 13 00:06:07 2020 +0800
     initial commit
 ```
 
-## 分支管理
+## Branches
 
-为什么版本管理中需要分支管理呢？答案主要有两点：
+Why does version control need branches? There are two main reasons:
 
-1.  直接更改主分支不仅会使历史记录混乱，也可能会造成一些危险的后果．
-2.  通过分支，我们可以专注于当前的工作．如果我们需要完成两个不同的工作，只需开两个分支即可，两个分支间的工作互不干扰．
+1.  Changing the main branch directly not only messes up the history but can also have dangerous consequences.
+2.  Branches let us focus on the current task. If we have two different tasks, we just create two branches, and the work on them doesn't interfere.
 
-在 Git 中，简单来说，分支就是指向某个快照的指针．每次提交时，Git 都会为这次提交创建一个快照，并将当前分支的指针移动到该快照．
+Simply put, in Git a branch is a pointer to a snapshot. On every commit, Git creates a snapshot for that commit and moves the current branch's pointer to it.
 
-另外还有一个 HEAD 指针，它指向当前所在的分支．
+There is also a HEAD pointer, which points to the branch you're currently on.
 
-切换分支的过程，简单来说就是将 HEAD 指针，从指向当前所在的分支，改为指向另外一个分支．在这一过程中，Git 会自动完成文件的更新，使得切换分支后仓库的状态与目标分支指向的快照一致．
+Switching branches simply means changing HEAD from pointing to the current branch to pointing to another branch. During this, Git updates the files automatically, so after the switch the repository matches the snapshot the target branch points to.
 
-### 分支的创建
+### Creating branches
 
-利用 `git branch` 命令可以创建分支，`git switch` 命令可以切换分支，`git switch -c` 命令可以创建分支并切换到这个新分支．
+`git branch` creates a branch, `git switch` switches branches, and `git switch -c` creates a branch and switches to it.
 
 ```console
-$ git switch -c dev # 创建一个叫做 dev 的新分支并切换当前分支到 dev
+$ git switch -c dev # create a new branch called dev and switch to it
 Switched to branch 'dev'
-$ git branch # 查看分支列表
+$ git branch # list the branches
   master
 * dev
 ```
 
-`dev` 前面的星号代表该仓库的当前分支为 `dev`，接下来对这个仓库的更改都将记录在这个分支上．
+The asterisk before `dev` means the repository's current branch is `dev`; from now on, changes to the repository are recorded on this branch.
 
-试着创建一个新文件 `aplusb.cpp`．
+Try creating a new file `aplusb.cpp`.
 
 ```console
 $ vim aplusb.cpp
@@ -245,34 +245,34 @@ $ git commit -m "feat: add A+B Problem code"
  create mode 100644 aplusb.cpp
 ```
 
-现在切换回 `master` 分支，这时候文件夹中没有了 `aplusb.cpp`，一切都回到了刚刚创建 `dev` 分支时的状态．这时候可以在 `master` 分支上继续完成其他的工作．
+Now switch back to the `master` branch. `aplusb.cpp` is gone from the folder, and everything is back to how it was when the `dev` branch was created. You can now continue other work on the `master` branch.
 
 ```console
 $ git switch master
 Switched to branch 'master'
-$ vim README.md # 对 README 做些小改动
+$ vim README.md # make a small change to README
 $ git commit -a -m "feat: update README.md"
 [master 5ca15f0] feat: update README.md
  1 file changed, 1 insertion(+), 1 deletion(-)
 ```
 
-下面用一张图来解释刚才的操作过程．
+The picture below explains what we just did.
 
 ![](./images/git1.svg)
 
-`master` 分支被标红，表明在这几次操作后，它是当前分支（即 HEAD 指向的位置）．
+The `master` branch is shown in red, meaning that after these operations it is the current branch (where HEAD points).
 
--   最开始时 `master` 指向 `ae9dd37` 这一快照．
--   接下来在 `master` 所在的位置创建了一个新的 dev 分支，该分支一开始和 master 指向相同位置．
--   在 `dev` 分支上作了一些更改（创建了 `aplusb.cpp`），进行了一次提交，本次提交后，`dev` 分支指向 `5da093b` 这一快照．
--   切换回 `master` 分支后，因为 `master` 分支还指向 `ae9dd37`，还没有创建 `aplusb.cpp`，因此仓库中没有这一文件．
--   接下来在 `master` 分支上进行更改（更新了 `README.md`），进行了一次提交，`master` 分支指向了 `5ca15f0` 这一快照．
+-   At first, `master` points to the snapshot `ae9dd37`.
+-   Next, a new dev branch is created where `master` is; at first it points to the same place as master.
+-   Some changes are made on the `dev` branch (creating `aplusb.cpp`) and committed. After this commit, `dev` points to the snapshot `5da093b`.
+-   After switching back to `master`, since `master` still points to `ae9dd37`, where `aplusb.cpp` hadn't been created yet, the file is not in the repository.
+-   Next, changes are made on the `master` branch (updating `README.md`) and committed, and `master` now points to the snapshot `5ca15f0`.
 
-### 分支的合并
+### Merging branches
 
-当一个分支上的工作已经完成，就可以将这些工作合并到另外一个分支上去．
+Once the work on a branch is finished, you can merge it into another branch.
 
-还是接着上面这个例子，`dev` 分支的工作已经完成，通过 `git merge` 命令可以将该分支合并到当前分支（`master`）上：
+Continuing the example above, the work on `dev` is done. The `git merge` command merges that branch into the current branch (`master`):
 
 ```console
 $ git merge dev
@@ -284,29 +284,29 @@ Merge made by the 'recursive' strategy.
 
 ![](./images/git2.svg)
 
-这次合并具体是怎么执行的呢？
+How exactly does this merge work?
 
-在合并之前，`master` 指向 `5ca15f0`，而 `dev` 指向 `5da093b`，这两个状态并不在一条链上．
+Before the merge, `master` points to `5ca15f0` and `dev` points to `5da093b`; these two states are not on the same chain.
 
-Git 会找到这两个状态的最近公共祖先（在上图中是 `ae9dd37`），并对这三个快照进行一次合并．三个快照合并的结果作为一个新的快照，并将当前分支指向这一快照．
+Git finds the lowest common ancestor of the two states (`ae9dd37` in the picture above) and does a merge of these three snapshots. The result of merging the three snapshots becomes a new snapshot, and the current branch is moved to point to it.
 
-合并过程本身也是一次提交，不过与常规提交不同的是，合并提交有不止一个前驱提交，它是多个提交状态合并后的结果．
+The merge itself is also a commit, but unlike a normal commit, a merge commit has more than one parent: it is the result of merging several commit states.
 
-在合并完成后，`dev` 分支就完成了它的使命，这时候可以利用下面的命令删除 `dev` 分支：
+After the merge, the `dev` branch has done its job, and you can delete it with this command:
 
 ```console
-$ git branch -d dev # 对于未合并的分支，可以使用 -D 参数强制删除
+$ git branch -d dev # for an unmerged branch, use -D to force deletion
 ```
 
-不过合并过程并非总是这么顺利，在某些情况下，合并过程可能会出现冲突，这个问题接下来会讲到．
+But merging doesn't always go this smoothly. Sometimes a merge produces conflicts, which we cover next.
 
-### 解决合并冲突
+### Resolving merge conflicts
 
-如果在两个分支中，对同一个文件的同一部分进行了不同的更改，Git 就无法自动合并这两个分支，也就是发生了合并冲突．
+If two branches make different changes to the same part of the same file, Git can't merge them automatically. This is a merge conflict.
 
-接着上面的例子，假如你在合并后的 `master` 分支的基础上，新开了一个 `readme-refactor` 分支，准备重写一份自述文件．但因为一些疏忽，你同时更改了 `readme-refactor` 和 `master` 分支的自述文件．
+Continuing the example above, suppose you create a new `readme-refactor` branch from the merged `master` to rewrite the README. But by mistake, you change the README on both `readme-refactor` and `master`.
 
-刚开始自述文件是这样的：
+At first the README looks like this:
 
 ```markdown
 # This is a test repo.
@@ -314,7 +314,7 @@ $ git branch -d dev # 对于未合并的分支，可以使用 -D 参数强制删
 This repo includes some c++ codes.
 ```
 
-在 `readme-refactor` 分支下的自述文件是这样的：
+On the `readme-refactor` branch, the README looks like this:
 
 ```markdown
 # Code Library
@@ -322,7 +322,7 @@ This repo includes some c++ codes.
 This repo includes some c++ codes.
 ```
 
-在 `master` 分支下的自述文件是这样的：
+On the `master` branch, the README looks like this:
 
 ```markdown
 # This is a code library.
@@ -330,9 +330,9 @@ This repo includes some c++ codes.
 This repo includes some c++ codes.
 ```
 
-这时候运行 `git merge readme-refactor` 命令，Git 提示出现了合并冲突．
+Now run `git merge readme-refactor`, and Git reports a merge conflict.
 
-执行一下 `git status` 命令，可以查看是哪些文件引发了冲突．
+Run `git status` to see which files caused the conflict.
 
 <!-- scripts.linter.preprocess.fix_details off -->
 
@@ -352,7 +352,7 @@ no changes added to commit (use "git add" and/or "git commit -a")
 
 <!-- scripts.linter.preprocess.fix_details on -->
 
-如何解决冲突？对于每个发生了合并冲突的文件，Git 都会在这些文件中加入标准的冲突解决标记．比如这个例子中的 `README.md` 文件，打开后它长这个样子：
+How do you resolve a conflict? In every file with a merge conflict, Git adds standard conflict markers. For example, the `README.md` file in this example looks like this when you open it:
 
 ```markdown
 <<<<<< HEAD
@@ -364,72 +364,72 @@ no changes added to commit (use "git add" and/or "git commit -a")
 This repo includes some c++ codes.
 ```
 
-`======` 作为分界线将两个分支的内容隔开，`<<<<<< HEAD` 标记和 `======` 之间的部分是 HEAD 指针（`master` 分支）的内容，而 `======` 和 `>>>>>> readme-refactor` 标记之间的部分是 `readme-refactor` 分支的内容．
+`======` is the divider between the two branches' contents. The part between the `<<<<<< HEAD` marker and `======` is the content of HEAD (the `master` branch), and the part between `======` and the `>>>>>> readme-refactor` marker is the content of the `readme-refactor` branch.
 
-通过编辑文本来处理冲突，删除这些冲突标记，保存文件，将这些文件纳入暂存区后提交，就可以解决合并冲突了．
+To resolve the merge conflict, edit the text to settle the conflict, remove the conflict markers, save the file, stage it, and commit.
 
 ```console
-$ git add README.md # 将发生冲突的文件纳入暂存区
+$ git add README.md # stage the conflicted file
 $ git commit
 [master fe92c6b] Merge branch readme-refactor into master
 ```
 
-### 其他合并方式
+### Other ways to merge
 
-默认情况下，Git 采用 Merge（合并）的方式合并两个分支．使用该方法将分支 B 并入分支 A 时，会将 B 分支的所有 commit 并入 A 分支的提交历史中．
+By default, Git merges two branches with Merge. When you merge branch B into branch A this way, all of B's commits are added to A's commit history.
 
-除此以外，Git 还提供了两种合并分支的方式：Squash（压缩）和 Rebase（变基）．
+Git also offers two other ways to combine branches: Squash and Rebase.
 
-#### Squash（压缩）
+#### Squash
 
-使用 Squash 方式将分支 B 并入分支 A 时，在 B 分支上的所有更改会被合并为一次 commit 提交到 A 分支．
+When you squash branch B into branch A, all the changes on B are combined into a single commit on A.
 
-在 `git merge` 中加入 `--squash` 参数即可使用 Squash 方式进行分支合并．
+Add the `--squash` option to `git merge` to merge with Squash.
 
 ```console
 $ git merge <branch> --squash
 ```
 
-需要注意的是，在执行上述命令后，Git 只会将 B 分支的所有更改存入 A 分支的缓冲区内，接下来还需要执行一次 `git commit` 命令完成合并工作．
+Note that after running the command above, Git only puts all of B's changes into A's staging area; you still need to run `git commit` to finish the merge.
 
-使用 Squash 方式合并可以简化 commit 记录，但是会丢失具体到每一次 commit 的信息（每次 commit 的提交者，每次 commit 的更改等等），只留下合并为一个整体的信息（每次 commit 的提交者会以 "Co-authored-by" 的形式在提交信息中列出）．但如果是在 GitHub 上进行 Squash and Merge，原有的信息都可以在 Pull Request 中查看．
+Merging with Squash keeps the commit history simple, but it loses the per-commit details (who made each commit, what each commit changed, and so on), leaving only the combined information (the author of each commit is listed in the commit message as "Co-authored-by"). However, if you use Squash and Merge on GitHub, the original information can still be seen in the Pull Request.
 
-#### Rebase（变基）
+#### Rebase
 
-使用 Rebase 方式将分支 B 并入分支 A 时，在 B 分支上的每一次 commit 都会单独添加到 A 分支，而不再像 Merge 方式那样创建一个合并 commit 来合并两个分支的内容[^note2]．
+When you rebase branch B onto branch A, each commit on B is added to A separately, instead of creating a merge commit that combines the two branches as Merge does[^note2].
 
-首先，切换到 B 分支，接下来将 B 分支变基到 A 分支：
+First switch to branch B, then rebase B onto A:
 
 ```console
 $ git checkout B
 $ git rebase A
 ```
 
-现在切回到 A 分支，再执行一次 `git merge` 命令，即可完成将 B 分支的内容合并到 A 分支的工作．
+Now switch back to branch A and run `git merge` once more to finish merging B's content into A.
 
 ```console
 $ git checkout A
 $ git merge B
 ```
 
-使用 Rebase 完成合并可以让提交历史线性化，在适当的场景下正确地使用 Rebase 可以达到比 Merge 更好的效果．但是这样做会改变提交历史，在进行 Rebase 时和 Rebase 后再进行相关合并操作时都会增加出现冲突的可能，如果操作不当可能反而会使提交历史变得杂乱．因此，如果对 Rebase 操作没有充分的了解，不建议使用．
+Merging with Rebase keeps the commit history linear, and using Rebase correctly in the right situations can work better than Merge. But it rewrites the commit history, which increases the chance of conflicts both during the Rebase and in later merges, and done carelessly it can make the history messier instead. So if you don't fully understand Rebase, it's better not to use it.
 
-## 管理远程仓库
+## Managing remote repositories
 
-在本地完成更改后，你可能会需要将这些更改推送到 GitHub 等 Git 仓库托管平台上．托管在这些平台上的仓库就归属于远程仓库的范畴——你可以从这些仓库中获取信息，也可以将你作出的更改推送到远程仓库上．与其他人的协作往往离不开远程仓库，因此学会管理远程仓库很有必要．
+After making changes locally, you may want to push them to a Git hosting platform such as GitHub. Repositories hosted on such platforms are remote repositories: you can fetch information from them and push your changes to them. Working with others usually involves remote repositories, so it's worth learning to manage them.
 
-### 远程仓库的查看
+### Viewing remote repositories
 
-使用 `git remote` 命令可以查看当前仓库的远程仓库列表．
+The `git remote` command lists the current repository's remotes.
 
-如果当前仓库是克隆来的，那么应该会有一个叫做 origin 的远程仓库，它的链接就是克隆时用的链接．
+If the current repository was cloned, there should be a remote called origin, whose URL is the one you cloned from.
 
 ```console
 $ git remote
 origin
 ```
 
-如果要查看某个远程仓库的详细信息的话，可以这样操作：
+To see details about a remote, do this:
 
 ```console
 $ git remote show origin
@@ -443,104 +443,104 @@ $ git remote show origin
   ...
 ```
 
-### 远程仓库的配置
+### Configuring remote repositories
 
-执行 `git remote add <name> <url>` 命令可以添加一个名字为 `name`，链接为 `url` 的远程仓库．
+`git remote add <name> <url>` adds a remote named `name` with the URL `url`.
 
-执行 `git remote rename <oldname> <newname>` 可以将名字为 `oldname` 的远程仓库改名为 `newname`．
+`git remote rename <oldname> <newname>` renames the remote `oldname` to `newname`.
 
-执行 `git remote rm <name>` 可以删除名字为 `name` 的远程仓库．
+`git remote rm <name>` removes the remote named `name`.
 
-执行 `git remote get-url <name>` 可以查看名字为 `name` 的远程仓库的链接．
+`git remote get-url <name>` shows the URL of the remote named `name`.
 
-执行 `git remote set-url <name> <newurl>` 可以将名字为 `name` 的远程仓库的链接更改为 `newurl`．
+`git remote set-url <name> <newurl>` changes the URL of the remote named `name` to `newurl`.
 
-### 从远程仓库获取更改
+### Fetching changes from a remote
 
-在远程仓库中，其他人可能会推送一些更改，执行 `git fetch` 命令可以将这些更改获取到本地．
-
-```console
-$ git fetch <remote-name> # 获取 <remote-name> 的更改
-```
-
-需要注意的是，`git fetch` 命令只会获取远程仓库的更改，而不会将这些更改合并到本地仓库中．如果需要将这些更改进行合并，可以使用 `git pull` 命令．在默认情况下，`git pull` 相当于 `git fetch` 后 `git merge FETCH_HEAD`．
+Other people may push changes to the remote repository. The `git fetch` command fetches those changes to your machine.
 
 ```console
-$ git pull <remote-name> <branch> # 获取 <remote-name> 的更改，然后将这些更改合并到 HEAD
+$ git fetch <remote-name> # fetch the changes from <remote-name>
 ```
 
-### 将更改推送到远程仓库
-
-当你完成了一些更改之后，使用 `git push` 命令可以将这些更改推送到远程仓库．
+Note that `git fetch` only fetches the remote's changes; it doesn't merge them into your local repository. To merge them, use `git pull`. By default, `git pull` is equivalent to `git fetch` followed by `git merge FETCH_HEAD`.
 
 ```console
-$ git push <remote> <from>:<to> # 将本地 <from> 分支的更改推送至 <remote> 的 <to> 分支
+$ git pull <remote-name> <branch> # fetch the changes from <remote-name>, then merge them into HEAD
 ```
 
-根据远程仓库的要求，可能会要求你输入远程仓库账户的用户名和密码．
+### Pushing changes to a remote
 
-需要注意的是，你的更改能成功推送，需要满足两个条件：你拥有向这个仓库（分支）的写入权限，且你的这个分支比远程仓库的相应分支新（可以理解为没有人在你进行更改的这段时间进行了推送）．当远程分支有当前分支没有的新更改时，可以执行 `git pull` 命令完成合并再提交．
+After you finish some changes, the `git push` command pushes them to the remote repository.
 
-如果你需要强制将本地分支的更改推送到远程仓库的话，可以加入 `-f` 参数．此时 **远程仓库的提交历史会被本地的提交历史覆盖**，因此该命令应谨慎使用．更好的选择是使用 `--force-with-lease` 参数，该参数仅在远程仓库没有更新时才会进行覆盖．需要注意的是，此处「更新」是相对于上一次 fetch 而言的，如果使用了 VS Code 提供的 Auto Fetch 功能，可能会没有注意到更新而使 `--force-with-lease` 和 `-f` 一样危险．
+```console
+$ git push <remote> <from>:<to> # push the changes on local branch <from> to branch <to> on <remote>
+```
 
-### 追踪远程分支
+Depending on the remote, you may be asked for the user name and password of your account there.
 
-通过将一个本地分支设定为追踪远程分支，可以方便地查看本地分支与远程分支的差别，并能简化与远程分支交互时的操作．
+Note that your push only succeeds if two conditions hold: you have write access to the repository (branch), and your branch is newer than the corresponding remote branch (roughly, nobody else pushed while you were making your changes). When the remote branch has new changes that your current branch doesn't, run `git pull` to merge them first, then push.
 
-在开始追踪前，你需要先执行 `git fetch <remote-name>` 将远程仓库的信息抓取到本地．
+If you need to force-push your local branch's changes to the remote, add the `-f` option. Then **the remote's commit history is overwritten by your local history**, so use this command with care. A better choice is the `--force-with-lease` option, which only overwrites if the remote hasn't been updated. Note that "updated" here is relative to your last fetch: if you use VS Code's Auto Fetch feature, you might miss an update, making `--force-with-lease` as dangerous as `-f`.
 
-接下来执行 `git switch <remote-branch>`，会在本地自动创建名字为 `<remote-branch>` 的新分支，并设定该分支自动追踪相应的远程分支．
+### Tracking remote branches
+
+Setting a local branch to track a remote branch makes it easy to see the differences between them, and simplifies working with the remote branch.
+
+Before you start tracking, run `git fetch <remote-name>` to get the remote's information.
+
+Then run `git switch <remote-branch>`. Git automatically creates a new local branch named `<remote-branch>` and sets it to track the corresponding remote branch.
 
 ???+ note "Note"
-    需要注意，只有当本地不存在该分支，且恰好只有一个远程分支的名字与该分支匹配时，Git 才会自动创建该分支且设定其追踪相应的远程分支．
+    Note that Git only creates the branch automatically and sets it to track the remote branch when no local branch with that name exists and exactly one remote branch matches the name.
 
-这时候执行 `git status` 命令，会提示当前分支与远程分支之间的差别．
+Now `git status` will show the differences between the current branch and the remote branch.
 
-因为设定了本地分支追踪的远程分支，向远程分支推送的命令也被简化了．只需要执行 `git push` 命令，在本地分支上作出的更改就能被推送至其追踪的远程分支．
+Since the local branch tracks a remote branch, pushing is also simpler: just run `git push`, and the changes on the local branch are pushed to the remote branch it tracks.
 
-对于本地已有的分支，设定其对应的远程追踪分支也很容易．只需在当前分支下执行 `git branch -u <remote-name>/<remote-branch>`，就可以设定当前的本地分支追踪 `<remote-name>/<remote-branch>` 这一远程分支．
+For an existing local branch, setting its upstream is also easy. Just run `git branch -u <remote-name>/<remote-branch>` on that branch, and the current local branch will track the remote branch `<remote-name>/<remote-branch>`.
 
-### 使用 ssh 连接
+### Connecting over ssh
 
-与 HTTP(S) 相比，使用 ssh 连接到远程仓库更为方便安全．
+Compared with HTTP(S), connecting to a remote repository over ssh is more convenient and secure.
 
-在使用 ssh 连接到远程仓库之前，需要先在本地添加 ssh 密钥．接下来需要将本地添加的 ssh 密钥的 **公钥** 上传到远程仓库账户．
+Before connecting over ssh, you need to add an ssh key on your machine. Then upload the **public key** of that ssh key to your account on the remote platform.
 
-考虑到本文主要是给 **OI Wiki** 的贡献者提供一个使用 Git 的教程，这里直接给出 [GitHub Docs 提供的教程](https://docs.github.com/cn/github/authenticating-to-github/connecting-to-github-with-ssh)，供各位读者参考．
+Since this page is mainly a Git tutorial for **OI Wiki** contributors, we simply point you to [the tutorial in GitHub Docs](https://docs.github.com/cn/github/authenticating-to-github/connecting-to-github-with-ssh) for reference.
 
-完成以上步骤后，你就可以通过 ssh 连接到远程仓库了．下面就是一条通过 ssh 连接 clone **OI Wiki** 仓库的命令：
+Once you've done the steps above, you can connect to remote repositories over ssh. Here is a command that clones the **OI Wiki** repository over ssh:
 
 ```console
 $ git clone git@github.com:OI-wiki/OI-wiki.git
 ```
 
-将更改推送至远程仓库的过程与使用 HTTP(S) 连接类似．但使用 ssh 连接可以免去验证远程仓库账号密码的过程．
+Pushing changes to a remote works the same way as with HTTP(S). But with ssh, you don't have to enter your account name and password.
 
 ## Git GUI Tools
 
-对于不熟悉命令行的同学，纯命令行的 Git 的上手难度可能会偏高，而借助 GUI 工具可以一定程度上降低 Git 的上手难度．此外，相比于命令行，GUI 工具在查看 diff 以及 log 时在体验上有一定程度的提高．
+For those not familiar with the command line, command-line-only Git can be hard to get started with, and GUI tools can make it somewhat easier. GUI tools also give a better experience than the command line when viewing diffs and logs.
 
-Git 本身自带有 GUI，市面上也有很多优秀的 Git GUI 工具，例如针对 Windows 用户的 TortoiseGit[^note3]，支持 Windows 和 Mac 的 Sourcetree[^note4]等．
+Git comes with its own GUI, and there are also many good Git GUI tools, such as TortoiseGit[^note3] for Windows users and Sourcetree[^note4] for Windows and Mac.
 
-这里简单介绍一下 TortoiseGit 的使用．下载并安装好 TortoiseGit 之后，在本地仓库的目录下，单击鼠标右键，在右键菜单中就可以看到 Git 的各个功能．
+Here is a quick introduction to TortoiseGit. After downloading and installing TortoiseGit, right-click inside the local repository's folder, and you'll see Git's features in the context menu.
 
 ![TortoiseGit Example](images/git11.png)
 
-详细的使用方法这里不再赘述，可以参考官网里的使用文档或者通过搜索引擎学习，例如 [TortoiseGit Manual](https://tortoisegit.org/docs/tortoisegit/index.html)．
+We won't go into the details here; see the documentation on the official website, such as the [TortoiseGit Manual](https://tortoisegit.org/docs/tortoisegit/index.html), or search online.
 
-很多 GUI 工具都有官方中文支持，例如 Git Desktop 以及 TortoiseGit．但是还是会有部分翻译看起来较为变扭，推荐使用英文版本．
+Many GUI tools officially support Chinese, such as Git Desktop and TortoiseGit. But some translations read awkwardly, so the English versions are recommended.
 
-## 外部链接
+## External links
 
 -   [Git Reference](https://git-scm.com/docs)
 -   [Pro Git Book](https://git-scm.com/book/zh/v2)
 -   [Learn Git Branching](https://learngitbranching.js.org/)
 
-## 参考资料与注释
+## References and notes
 
-[^note1]: 事实上 Git 还有一个针对系统上每一个用户及系统上所有仓库的通用配置文件，该配置文件覆盖范围最广，等级在用户配置文件之上．因为该配置实践中较少使用，这里不再展开．
+[^note1]: In fact, Git also has a system-wide configuration file that applies to every user and every repository on the system. It has the broadest scope and sits above the user configuration file. Since it is rarely used in practice, we won't go into it here.
 
-[^note2]: [Pro Git Book](https://git-scm.com/book/zh/v2/Git-%E5%88%86%E6%94%AF-%E5%8F%98%E5%9F%BA) 中提供了可视化的 Rebase 过程图，借助图片读者可以更好地理解 Rebase 的机制．
+[^note2]: The [Pro Git Book](https://git-scm.com/book/zh/v2/Git-%E5%88%86%E6%94%AF-%E5%8F%98%E5%9F%BA) has diagrams that visualize the Rebase process; they can help you understand how Rebase works.
 
 [^note3]: [TortoiseGit](https://tortoisegit.org/)
 

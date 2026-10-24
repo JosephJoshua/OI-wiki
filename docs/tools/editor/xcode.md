@@ -1,113 +1,113 @@
 author: shenyouran, Xeonacid, StudyingFather, CoelacanthusHex
 
-## 简介
+## Introduction
 
-Xcode 是一个运行在 macOS 上的集成开发工具（IDE），由 Apple Inc. 开发．
+Xcode is an integrated development environment (IDE) for macOS, developed by Apple Inc.
 
-## 安装
+## Installation
 
-### 方法一
+### Method 1
 
-打开苹果电脑自带的 App Store（或者尝试 [快捷链接](https://apps.apple.com/cn/app/xcode/id497799835?mt=12)）下载 Xcode．点击获取，然后输入苹果账号密码开始下载安装．
+Open the App Store that comes with your Mac (or try this [quick link](https://apps.apple.com/cn/app/xcode/id497799835?mt=12)) and download Xcode. Click Get, then enter your Apple ID password to start downloading and installing.
 
 ![](images/xcode-1.jpg)
 
-### 方法二
+### Method 2
 
-访问 [苹果开发者下载页面](https://developer.apple.com/download/more/)，用苹果账号登录，然后找到 Xcode 最新的稳定版本安装包（即不含 Beta 的最新版本，此处为 11.6）：
+Visit the [Apple Developer downloads page](https://developer.apple.com/download/more/), sign in with your Apple ID, and find the installer for the latest stable version of Xcode (the latest version without "Beta"; here it is 11.6):
 
 ![](images/xcode-2.jpg)
 
-点击弹出框内蓝色的文件名即可下载．得到压缩包之后，用系统自带的工具进行解压，然后得到文件 Xcode.app．把这个文件移动到【应用程序】文件夹后即可使用．
+Click the blue file name in the pop-up to download it. Once you have the archive, extract it with the system's built-in tool to get Xcode.app. Move this file into the Applications folder and it's ready to use.
 
-## 基础配置
+## Basic setup
 
-首次打开 Xcode 时，可能会遇到下列弹出窗口：
+The first time you open Xcode, you may see this pop-up window:
 
 ![](images/xcode-3.jpg)
 
-这个窗口是 Xcode 元件的安装引导．点击 `Install` 并输入当前用户密码即可．
+This window guides you through installing Xcode components. Click `Install` and enter your user password.
 
-安装完毕后，界面左侧显示：
+After installation, the left side of the window shows:
 
 ![](images/xcode-4.jpg)
 
-点击 `Create a new Xcode project`（创建一个新的 Xcode 项目），然后选择上方 `macOS` 中的 `Command Line Tool`（命令行工具），并点击右下角的 `Next`．
+Click `Create a new Xcode project`, choose `Command Line Tool` under `macOS` at the top, and click `Next` in the bottom-right corner.
 
 ![](images/xcode-5.jpg)
 
-接下来，我们可以给项目命名，但最重要的是选择项目的语言．我们可以根据自己的需求，在最下方 `Language` 处选择 C 或者 C++：
+Next, you can name the project, but the most important thing is to choose the project's language. Pick C or C++ under `Language` at the bottom, depending on what you need:
 
 ![](images/xcode-6.jpg)
 
-项目的目录可以根据需要选择．创建完毕后，Xcode 会自动打开这个项目，并自动创建一个 `main` 文件（C 语言的后缀为 `.c`，C++ 语言的后缀为 `.cpp`）．
+Choose the project directory as you like. After it's created, Xcode opens the project automatically and creates a `main` file (with the extension `.c` for C and `.cpp` for C++).
 
-点击这个文件，就可以打开编辑区域：
+Click this file to open the editor area:
 
 ![](images/xcode-7.jpg)
 
-编写代码后，可以按⌘B 编译（Build），⌘R 运行（Run）．运行后拖动，得到三个部分：
+After writing code, press ⌘B to build and ⌘R to run. After running, drag the panes apart and you get three areas:
 
 ![](images/xcode-8.jpg)
 
-一般来说我们只使用【编辑区】和【运行区】．若程序有输入，那么在【运行区】中进行输入之后，就可以得到输出．界面呈现效果：
+Usually we only use the editor area and the run (console) area. If the program reads input, type it in the run area and you'll get the output. It looks like this:
 
 ![](images/xcode-9.jpg)
 
-仿照这种方式，我们就可以运行任何的单个 C/C++ 程序．
+In the same way, you can run any single C/C++ program.
 
-## 万能头文件的使用
+## Using the all-in-one header
 
-在编写代码过程中，我们可能会使用到很多头文件．常用的解决方法是使用万能头文件．
+While writing code, we may need many header files. A common solution is to use the all-in-one header.
 
-我们在源代码第一行引入万能头文件，然而编译过程中却提示：`'bits/stdc++.h' file not found`．即该头文件未找到．
+We include the all-in-one header on the first line of the source, but compiling reports `'bits/stdc++.h' file not found`, meaning the header file can't be found.
 
 ![](images/xcode-10.jpg)
 
-这是因为在 macOS 上默认使用 [libc++](https://libcxx.llvm.org/) 作为 C++ 标准库实现，而万能头 `bits/stdc++.h` 是 [GNU libstdc++](https://gcc.gnu.org/onlinedocs/libstdc++/) 所独有的．
+This is because macOS uses [libc++](https://libcxx.llvm.org/) as its C++ standard library implementation by default, while the all-in-one header `bits/stdc++.h` exists only in [GNU libstdc++](https://gcc.gnu.org/onlinedocs/libstdc++/).
 
-不过，我们可以手动编写一个万能头文件来使用．
+However, we can write an all-in-one header ourselves.
 
-### 步骤 1
+### Step 1
 
-打开终端（Terminal.app），前往 Xcode 存储头文件的文件夹，即：
+Open Terminal (Terminal.app) and go to the folder where Xcode stores its header files:
 
 ```bash
 cd /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1
 ```
 
-如果 Xcode 版本大于等于 12.5，那么
+If your Xcode version is 12.5 or later, use
 
 ```bash
 cd /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/
 ```
 
-### 步骤 2
+### Step 2
 
-创建 `bits` 文件夹并进入：
+Create a `bits` folder and enter it:
 
 ```bash
 mkdir bits
 cd bits
 ```
 
-用 vim 创建 stdc++.h 文件：
+Create the stdc++.h file with vim:
 
 ```bash
 vim stdc++.h
 ```
 
-界面如下：
+You'll see this:
 
 ![](images/xcode-11.jpg)
 
-接着，我们需要通过 vim 编辑文件．敲击 i（insert）键盘即可进入插入/编辑模式（下方出现 `-- INSERT --`）：
+Next, we edit the file with vim. Press the i (insert) key to enter insert/edit mode (`-- INSERT --` appears at the bottom):
 
 ![](images/xcode-12.jpg)
 
-将下面这段代码块复制并粘贴到终端中：
+Copy the code block below and paste it into the terminal:
 
-??? note "万能头文件代码块"
+??? note "All-in-one header code"
     ```cpp
     // C++ includes used for precompiling -*- C++ -*-
     
@@ -260,18 +260,18 @@ vim stdc++.h
     #endif
     ```
 
-该文件来源于 [10.2.0 版本的 libstdc++](https://github.com/gcc-mirror/gcc/blob/ee5c3db6c5b2c3332912fb4c9cfa2864569ebd9a/libstdc++-v3/include/precompiled/stdc++.h) 并经少许修改以兼容 libc++．
+The file comes from [libstdc++ version 10.2.0](https://github.com/gcc-mirror/gcc/blob/ee5c3db6c5b2c3332912fb4c9cfa2864569ebd9a/libstdc++-v3/include/precompiled/stdc++.h), with small changes to make it work with libc++.
 
-按键盘左上角的<kbd>Esc</kbd>退出编辑模式，然后直接输入 `:wq` 并换行即可保存文件．
+Press <kbd>Esc</kbd> in the top-left corner of the keyboard to leave edit mode, then type `:wq` and press Enter to save the file.
 
-### 步骤 3
+### Step 3
 
-关闭终端，回到 Xcode．重新按下 ⌘B/⌘R 进行编译，发现编译成功：
+Close the terminal and go back to Xcode. Press ⌘B/⌘R again to build, and this time it succeeds:
 
 ![](images/xcode-13.jpg)
 
-## 优缺点
+## Pros and cons
 
-优点：由苹果开发，适合 Mac 用户，界面齐全、美观．
+Pros: developed by Apple, well suited to Mac users, with a complete and good-looking interface.
 
-缺点：Xcode 主要用来苹果程序的开发，对于竞赛来说功能冗余，安装包大小较大，而且仅能在 Mac 端上使用．
+Cons: Xcode is mainly for developing Apple apps, so for contests most of its features are unnecessary. The installer is large, and it only runs on Mac.

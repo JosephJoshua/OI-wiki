@@ -1,8 +1,8 @@
-???+ failure "新增信息收录限制"
-    由于 [OI Wiki 不是宣传工具](../intro/what-oi-wiki-is-not.md#oi-wiki-不是宣传工具)，除确有特殊原因外，「工具软件」一章 **一律不接受任何新增页面**，且本章所有页面 **一律不接受任何具有宣传性质的新增信息**．
+???+ failure "Restrictions on adding new information"
+    Because [OI Wiki is not a promotional tool](../intro/what-oi-wiki-is-not.md#oi-wiki-不是宣传工具), the "Tools" chapter **does not accept any new pages** unless there is a truly special reason, and no page in this chapter **accepts any newly added promotional information**.
 
-本章主要介绍与竞赛有关的工具软件，包括一些代码编辑器的介绍和 OJ 相关工具．
+This chapter introduces software tools related to competitive programming, including several code editors and OJ-related tools.
 
-程序是解决 OI 问题的工具，熟练运用代码编辑器是学习 OI 的前提．
+Programs are the tools we use to solve OI problems, so being comfortable with a code editor is a prerequisite for learning OI.
 
-了解 OJ 相关的工具能让 OI 之旅更加舒适、便捷．
+Knowing the OJ-related tools makes your OI journey more comfortable and convenient.

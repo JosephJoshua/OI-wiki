@@ -3,38 +3,38 @@ author: Ir1d, HeRaNO, NachtgeistW, i-Yirannn, bear-good, ranwen, CoelacanthusHex
 ## Lemon
 
 ???+ warning "Warning"
-    macOS 下 Lemon 可能会出现内存测试不准确的情况，因为 macOS 缺少部分 Linux 的监测工具，且 Lemon-Linux 也没有针对 macOS 进行优化．
+    On macOS, Lemon may measure memory usage inaccurately, because macOS lacks some of the monitoring tools Linux has, and Lemon-Linux is not optimized for macOS.
 
-**Lemon** 是 zhipeng-jia 编写的开源评测工具，源代码托管于 [zhipeng-jia/project-lemon](https://github.com/zhipeng-jia/project-lemon)．
+**Lemon** is an open-source judging tool written by zhipeng-jia. Its source code is hosted at [zhipeng-jia/project-lemon](https://github.com/zhipeng-jia/project-lemon).
 
-### 可直接运行的版本
+### Ready-to-run versions
 
--   Ir1d 提供了一份 Linux 下编译好的版本，源代码托管于 [FreestyleOJ/Project\_lemon](https://github.com/FreestyleOJ/Project_lemon/tree/Built)．
--   （已停止维护）Menci 提供了一份更新的版本，源代码托管于 [Menci/Lemon](https://github.com/Menci/Lemon/)．
--   （已停止维护）Dust1404 维护了一份支持子文件夹和单题测试等功能的版本，源代码托管于 [Dust1404/Project\_LemonPlus](https://github.com/Dust1404/Project_LemonPlus)．
--   iotang 和 Coelacanthus 维护了一份支持子文件夹和单题测试等功能的版本，源代码托管于 [Project-LemonLime/Project\_LemonLime](https://github.com/Project-LemonLime/Project_LemonLime)．
+-   Ir1d provides a prebuilt version for Linux. Its source code is hosted at [FreestyleOJ/Project\_lemon](https://github.com/FreestyleOJ/Project_lemon/tree/Built).
+-   (No longer maintained) Menci provides an updated version. Its source code is hosted at [Menci/Lemon](https://github.com/Menci/Lemon/).
+-   (No longer maintained) Dust1404 maintains a version that supports subfolders, testing a single problem, and more. Its source code is hosted at [Dust1404/Project\_LemonPlus](https://github.com/Dust1404/Project_LemonPlus).
+-   iotang and Coelacanthus maintain a version that supports subfolders, testing a single problem, and more. Its source code is hosted at [Project-LemonLime/Project\_LemonLime](https://github.com/Project-LemonLime/Project_LemonLime).
 
-### 自行编译
+### Building it yourself
 
-Ubuntu：
+Ubuntu:
 
 ```bash
 sudo apt update
 sudo apt install qt5-default build-essential git -y
 git clone --depth=1 https://github.com/Menci/Lemon.git
 cd lemon
-# 可以修改 -j 后面的数字来调整 make job 的线程数
+# Change the number after -j to set the number of parallel make jobs
 ./make -j2
 sudo install -Dm755 -t /usr/bin/ Lemon
 ```
 
-如要编译 LemonLime，请参阅 LemonLime 的 [编译手册](https://github.com/Project-LemonLime/Project_LemonLime/blob/master/BUILD.md)．
+To build LemonLime, see LemonLime's [build guide](https://github.com/Project-LemonLime/Project_LemonLime/blob/master/BUILD.md).
 
-### 数据格式
+### Data format
 
-首先打开 lemon 选择「新建试题」，然后打开新建试题的文件夹．
+First open lemon and choose "New Problem", then open the folder of the new problem.
 
-题目和数据应该如以下格式所示：
+Problems and data should be laid out as follows:
 
 ```text
 ├── data
@@ -48,4 +48,4 @@ sudo install -Dm755 -t /usr/bin/ Lemon
 ...
 ```
 
-当所有试题添加完成后，回到 lemon 选择「自动添加试题」．此时题目和数据点将显示在 lemon 当中．
+After all problems are added, go back to lemon and choose "Add Problems Automatically". The problems and test cases will then show up in lemon.

@@ -2,17 +2,17 @@ author: Ir1d, HeRaNO, NachtgeistW, i-Yirannn, bear-good, ranwen, CoelacanthusHex
 
 ## Arbiter
 
-**Arbiter** 为北京航空航天大学为 NOI Linux 开发的评测工具，现已用于各大 NOI 系列程序设计竞赛的评测．据吕凯风在 2016 年冬令营上的讲稿《下一代测评系统》，Arbiter 是由北京航空航天大学的团队（GAIT）在尹宝林老师的带领下开发完成的．
+**Arbiter** is a judging tool developed by Beihang University (Beijing University of Aeronautics and Astronautics) for NOI Linux. It is now used to judge all the major NOI-series programming contests. According to Lü Kaifeng's talk "The Next-Generation Judging System" at the 2016 Winter Camp, Arbiter was developed by a Beihang University team (GAIT) led by Professor Yin Baolin.
 
-在 NOI Linux 更新到 2.0 版本后，Arbiter 也用 Qt 5.12.8 重新编译，并发布为 Arbiter 2.0．因为之后的测评环境均使用 NOI Linux 2.0，因此以下介绍使用的 Arbiter 版本均为 NOI Linux 2.0 中自带的 Arbiter 2.0．
+After NOI Linux was updated to version 2.0, Arbiter was also recompiled with Qt 5.12.8 and released as Arbiter 2.0. Since all later judging environments use NOI Linux 2.0, everything below refers to Arbiter 2.0, the version bundled with NOI Linux 2.0.
 
-此测评软件仅能在 NOI Linux 下找到．二进制文件位置为 `/usr/local/arbiter/local/arbiter_local`．
+This judging software is only available on NOI Linux. The binary is located at `/usr/local/arbiter/local/arbiter_local`.
 
-### 使用方法
+### Usage
 
-#### 配置程序
+#### Setting up
 
-配置选手源程序文件夹和选手名单．选手文件夹如 NOIP 格式创建：
+Set up the folder of contestants' source code and the contestant list. Create the contestant folders in the NOIP format:
 
 ```text
 players/
@@ -45,9 +45,9 @@ players/
 ...
 ```
 
-其中，`day<x>` 中的 `<x>` 是场次编号，`<contestant_x's ID>` 指的是选手编号，形如 `<省份>-<编号>`，例如 HL-001，JL-125 等等；`<problem_x>` 指的是题目名称．在自测时可以使用字母、短线（即 `-`）和数字的组合作为选手编号．
+Here, the `<x>` in `day<x>` is the session number, `<contestant_x's ID>` is the contestant ID in the form `<province>-<number>`, such as HL-001 or JL-125, and `<problem_x>` is the problem name. For self-testing, you can use any combination of letters, hyphens (`-`) and digits as the contestant ID.
 
-选手名单格式如下：
+The contestant list has the following format:
 
 ```text
 <contestant_1's ID>,<contestant_1's name>
@@ -55,41 +55,41 @@ players/
 ...
 ```
 
-其中，`<contestant_x's name>` 表示选手姓名．保存这个文件为纯文本文件或 csv 文件，可以使用 `UTF-8` 编码．
+Here, `<contestant_x's name>` is the contestant's name. Save this file as plain text or CSV; `UTF-8` encoding works.
 
-选手名单也可以在启动 Arbiter 后手动添加．
+You can also add contestants manually after starting Arbiter.
 
-接下来配置测试数据．每组数据的命名格式如下：
+Next, set up the test data. Each test case is named like this:
 
 ```text
 <problem_x><y>.in <problem_x><y>.ans
 ```
 
-其中，`<y>` 是数据编号，编号从 1 开始．默认测试数据后缀名是 `.ans`，选手输出的后缀名是 `.out`，不能混淆．
+Here, `<y>` is the test case number, starting from 1. By default, the expected output files have the extension `.ans`, and contestants' output files have the extension `.out`. Don't mix them up.
 
-如果需要将之前生成的 out 格式修改为 ans 格式，在 NOI Linux 2.0 中可以使用 `rename` 命令批量修改，而在 Windows 中可以使用 `ren` 命令批量修改．我们将在后面介绍这些命令的用法．
+If you need to rename previously generated .out files to .ans, you can rename them in bulk with the `rename` command on NOI Linux 2.0, or with the `ren` command on Windows. How to use these commands is explained later.
 
-不用将每题的测试数据放置在各题的文件夹里，只需要放在一起即可．
+You don't need to put each problem's test data in its own folder; just put all of it together.
 
-然后开始测评文件夹的配置．
+Then set up the contest folder.
 
-左下角「显示应用程序」-「全部」-「Arbiter\_local」，启动 Arbiter．
+Start Arbiter from the bottom-left corner via "Show Applications" (显示应用程序) - "All" (全部) - "Arbiter\_local".
 
 ![Arbiter\_Home](./images/arbiter_home.png)
 
-点击 OPEN 可以打开已经建立的比赛，之后需选择对应比赛文件夹下的 `setup.cfg` 文件；点击 NEW 可以新建一个竞赛，并设置名称和比赛目录．注意，需要在用户 **主目录下** 新建一个文件夹，然后选择其为比赛目录，如果在桌面上建立比赛目录的话无法测评．出现这种问题很有可能是因为比赛文件夹路径中不能包含中文．
+Click OPEN to open an existing contest; you then need to select the `setup.cfg` file in that contest's folder. Click NEW to create a new contest and set its name and contest directory. Note that you should create a new folder **in your home directory** and choose it as the contest directory; if you create the contest directory on the desktop, judging will not work. This is most likely because the contest folder path must not contain Chinese characters.
 
 ![add\_problem](./images/arbiter_addproblem.png)
 
-在左边试题概要里「右键」-「添加考试」，再在考试标签上「右键」-「添加试题」，新建出试题即可．
+In the problem overview on the left, right-click and choose "Add Exam" (添加考试), then right-click the exam label and choose "Add Problem" (添加试题) to create a problem.
 
-单击考试左边的向下箭头即可全部显示，单击试题标签对试题名称进行修改，改为题目的英文名称，同时修改题目时间与空间限制和比较方式．比较方式十分不推荐用「全文完全直接比较」，对于 Windows 下制作的数据十分不友好．可以根据题目自主选择比较器，但是需要注意必须选择一个比较器，否则测评结果将是 `No Score.`．
+Click the down arrow to the left of the exam to expand everything. Click a problem label to rename it to the problem's English name, and set the problem's time limit, memory limit and comparison method. Using "full-text exact comparison" (全文完全直接比较) as the comparison method is strongly discouraged, because it handles data made on Windows very badly. You can pick whichever comparator suits the problem, but you must pick one; otherwise the result will be `No Score.`.
 
 ![problem\_list](./images/arbiter_problem.png)
 
-点击「文件」-「保存」．该操作不可省略，否则程序将不会生成题目配置文件．注意每一次对题目配置的修改都要保存．
+Click "File" (文件) - "Save" (保存). Don't skip this step, or the program will not generate the problem configuration files. Remember to save after every change to the problem configuration.
 
-此时，打开考试文件夹，会发现有如下内容．
+If you now open the exam folder, you will find the following:
 
 ```text
 <name>/
@@ -108,106 +108,106 @@ players/
 `-- team.info
 ```
 
-`filter` 文件夹放置了一些比较器；`result` 文件夹存放选手的测评结果；`tmp` 文件夹是测评时的缓存文件夹．其中 `day<x>.info` 为场次配置文件，`<x>` 为场次编号；`task<x>_<y>.info` 文件为题目配置文件，`<x>` 为场次编号，`<y>` 为题目序号．
+The `filter` folder holds some comparators; the `result` folder stores contestants' judging results; the `tmp` folder is a cache used during judging. `day<x>.info` is the session configuration file, where `<x>` is the session number; `task<x>_<y>.info` is a problem configuration file, where `<x>` is the session number and `<y>` is the problem number.
 
-把已经建好的选手程序文件夹放在 `players/` 目录下，注意最外层应按照考试日建立相应的 `day<x>` 文件夹．将所有测试数据（不放在文件夹里）放在 `evaldata` 中．如果使用了自定义校验器，则需要将自定义校验器放在 `filter` 中．
+Put the contestant program folders you prepared under `players/`. Note that the outermost level should have a `day<x>` folder for each exam day. Put all the test data (not inside subfolders) into `evaldata`. If you use a custom checker, put it in `filter`.
 
-#### 正式测评
+#### Judging
 
-点开「试题评测」标签，会出现如下页面：
+Open the "Problem Judging" (试题评测) tab and you will see the following page:
 
 ![Pretest](./images/arbiter_pretest.png)
 
-如果选手名单已经建立了，直接选择右边的「导入名单」进行导入．如果人数较少，可以选择右边的「添加选手」进行导入．
+If you already have a contestant list, choose "Import List" (导入名单) on the right to import it. If there are only a few contestants, you can choose "Add Contestant" (添加选手) on the right instead.
 
-导入后的页面如图．
+The page after importing looks like this.
 
 ![Test](./images/arbiter_test.png)
 
-示例中的编号是 `HL-001`，程序会自动识别出「所属」一栏．如果不是 NOIP 规范的编号是识别不出来的．
+The ID in the example is `HL-001`, and the program automatically fills in the "Affiliation" (所属) column. IDs that don't follow the NOIP convention cannot be recognized.
 
-把测评第 0 场变为测评第 1 场（或者其他场次）．然后选择右边的全选（或选择指定的选手），再选择下面的评测选定选手，选择要测评的题目（或全部试题），最后等待测评结束即可．
+Change "judge session 0" to "judge session 1" (or another session). Then choose Select All on the right (or select specific contestants), choose "Judge Selected Contestants" below, select the problems to judge (or all problems), and wait for judging to finish.
 
-测试点详细信息需要在 `result` 文件夹下查看，文件夹下会有选手的结果文件夹，结果文件的后缀名为 `.result`，用纯文本方式查看即可．如果出现 `No score file.` 的错误，可以检查测评时是否生成了 `/tmp/_eval.score` 文件．
+Detailed per-test-case results are in the `result` folder, which contains a result folder for each contestant. The result files have the extension `.result` and can be viewed as plain text. If you get the error `No score file.`, check whether the file `/tmp/_eval.score` was generated during judging.
 
-### 自定义校验器的编写
+### Writing a custom checker
 
-反编译其他校验器，可以知道运行自定义校验器的命令是 `<problem>_e <in> <out> <ans>`．后三个参数分别代表输入，选手输出和答案文件．最终的评分结果需写入 `/tmp/_eval.score` 文件中，第一行是测评信息，第二行是分数，10 分为满分．
+By decompiling other checkers, you can find that the command used to run a custom checker is `<problem>_e <in> <out> <ans>`. The last three arguments are the input file, the contestant's output and the answer file. The final score must be written to the file `/tmp/_eval.score`: the first line is the judging message and the second line is the score, with 10 being full marks.
 
-编译后自定义校验器的名称必须为 `<problem>_e`，其中 `<problem>` 为题目名称．在配置题目时选择自定义校验器，然后选择需要的自定义校验器即可．
+After compiling, the custom checker must be named `<problem>_e`, where `<problem>` is the problem name. When configuring the problem, choose the custom checker option and then select the checker you need.
 
-在试题管理中题目配置的地方将提交方式由源代码改为答案文件，然后选择自定义校验器，可以测试提交答案题．
+To judge output-only problems, go to the problem configuration in problem management, change the submission type from source code to answer file, and then select a custom checker.
 
-### 注意事项
+### Things to watch out for
 
-已确认需要注意的内容：
+Confirmed issues:
 
--   需要注意及时保存比赛，否则操作时可能闪退．为了确保不会闪退可以尝试多次保存比赛，或进行一次修改时就保存比赛．
--   没有进行过评测时不要点击上面的成绩统计，否则将会导致 Arbiter 直接闪退．
--   由于 Linux 运行时栈限制，如果要开无限栈，应在终端先输入 `ulimit -s unlimited` 后执行 `arbiter_local` 打开测评器，否则可能出现 `Exceeding memory limit` 的问题．
--   对于正式测评，在题目准备时需要让所有题目空间限制一致．测评时将命令中的 `unlimited` 换为题目空间限制的千字节数（KiB），如：题目空间限制为 512 MiB，则命令为 `ulimit -s $((512 * 1024))`．导致这一问题的主要原因是直接启动 Arbiter，其父进程为 GNOME，子进程继承了父进程的栈空间限制．
--   软件的工作目录不建议包含空格，若包含空格的话很可能会导致创建比赛时所有的默认校验器都无法拷贝进 filter 目录中（即 filter 目录为空）．此时进行评测会出现全部爆 0 的情况，同时生成的 result 文件中可以看到 `Compile Failed.` 的提示．
--   查看代码时提示「未找到答案文件」指的是没有找到选手的源代码．
+-   Save the contest often, or Arbiter may crash while you work. To be safe, save the contest several times, or save after every change.
+-   Don't click the score statistics button at the top before any judging has been done, or Arbiter will crash immediately.
+-   Because of the Linux runtime stack limit, if you want an unlimited stack, first run `ulimit -s unlimited` in a terminal and then run `arbiter_local` to open the judge; otherwise you may get `Exceeding memory limit`.
+-   For official judging, give all problems the same memory limit when preparing them. When judging, replace `unlimited` in the command with the problem's memory limit in kibibytes (KiB). For example, if the memory limit is 512 MiB, the command is `ulimit -s $((512 * 1024))`. The main cause of this issue is that when Arbiter is launched directly, its parent process is GNOME, and child processes inherit the parent's stack size limit.
+-   The software's working directory should not contain spaces. If it does, all the default checkers will likely fail to be copied into the filter directory when a contest is created (that is, the filter directory will be empty). Every submission will then score 0, and the generated result files will show `Compile Failed.`.
+-   When viewing code, the message "Answer file not found" (未找到答案文件) actually means the contestant's source code was not found.
 
-存疑的内容：
+Unconfirmed issues:
 
--   很容易死机，如大量测评时移动鼠标会导致死机．
--   不定时闪退（一部分原因是没有及时保存比赛）．
--   修改比较方式后有概率会出现修改失败的情况，即比较方式修改后未被应用．
--   配置时需要注意权限问题，但确保使用同一用户建立比赛，拷贝数据和进行测评的情况下不会出现权限问题．
+-   It freezes easily; for example, moving the mouse during a large judging run can freeze it.
+-   It crashes at random times (partly because the contest was not saved in time).
+-   After changing the comparison method, the change sometimes fails, that is, the new comparison method is not applied.
+-   Watch out for permission problems during setup. However, if the same user creates the contest, copies the data and runs the judging, there will be no permission problems.
 
-### 漏洞
+### Loopholes
 
-由于长期缺乏维护，系统存在一些漏洞，如可以使用 `#pragma G++ optimize("O2")` 和 `__attribute__((__optimize__("-O2")))` 等．可以使用 [gcc-plugins-for-oi](https://github.com/xdu-icpc/gcc-plugins-for-oi) 在编译期实现对这些命令的检测．
+Because it has gone unmaintained for a long time, the system has some loopholes. For example, `#pragma G++ optimize("O2")` and `__attribute__((__optimize__("-O2")))` can be used. You can use [gcc-plugins-for-oi](https://github.com/xdu-icpc/gcc-plugins-for-oi) to detect these directives at compile time.
 
-### 评价
+### Assessment
 
-Arbiter 1.0.2 在开发完成后就一直没有实质性更新，导致测评体验极差，UI 脱离现代审美．在 NOI Linux 1.4.1 中，它和 NOI Linux 自带的 GUIDE 一样沦为选手与教练疯狂吐槽的对象．在 NOI Linux 2.0 中，除了比较器移除了源代码和软件整体使用 Qt 5 重新编译外，并没有很大的变化，一些稳定性问题仍未得到解决．
+Arbiter 1.0.2 received no substantial updates after it was finished, so the judging experience is very poor and the UI is far from modern design. In NOI Linux 1.4.1, it became, together with the GUIDE editor bundled with NOI Linux, a favorite target of complaints from contestants and coaches. In NOI Linux 2.0, apart from removing the comparators' source code and recompiling the whole program with Qt 5, not much has changed, and some stability problems remain unsolved.
 
-??? note "附：ren 和 rename 命令的使用方法"
-    在 Windows 操作系统中自带了一个修改文件名称的命令：`ren`．
+??? note "Appendix: how to use the ren and rename commands"
+    Windows comes with a built-in command for renaming files: `ren`.
     
-    命令语法如下：
+    Its syntax is:
     
     ```shell
     ren [<drive>:][<path>]<filename1> <filename2>
     ```
     
-    如果我们需要对当前工作目录下的所有的文件进行修改，比如将所有的 out 文件修改为 ans 文件，可以执行如下命令：
+    To rename all files in the current working directory, for example to change all .out files to .ans files, run:
     
     ```shell
     ren *.out *.ans
     ```
     
-    如果是在 NOI Linux 2.0 环境中进行此类修改，似乎目前比较好用的是 `rename` 命令，但它不是 NOI Linux 2.0 环境内自带的命令，所以你要先进行安装：
+    To do this on NOI Linux 2.0, the most convenient option right now seems to be the `rename` command. It is not included in NOI Linux 2.0, so you need to install it first:
     
     ```shell
     sudo apt install rename
     ```
     
-    注：如果执行后提示 `E: Unable to locate package package_name`，你需要先执行这个命令：`sudo apt-get update`
+    Note: if you see `E: Unable to locate package package_name`, run this command first: `sudo apt-get update`
     
-    安装完成后，就可以正常使用 `rename` 命令了．`rename` 命令的使用类似于直接的文本替换，其在 NOI Linux 2.0 环境下的命令语法如下：
+    Once installed, you can use `rename` normally. `rename` works like a plain text substitution. Its syntax on NOI Linux 2.0 is:
     
     ```shell
-    rename 's/<修改前的文本>/<修改后的文本>/' <filename>
+    rename 's/<text before>/<text after>/' <filename>
     ```
     
-    其中 `<filename>` 可以使用通配符 `*`，也可以指定其中一类文件（比如 `*.out`)．
+    Here `<filename>` can use the wildcard `*`, or name one kind of file (such as `*.out`).
     
-    请注意在引号内末尾还有一个 `/`，如果少写了一个 `/`，`rename` 命令将会报错：`Substitution replacement not terminated at (user-supplied code)`．
+    Note that there is one more `/` at the end inside the quotes. If you leave it out, `rename` will report the error `Substitution replacement not terminated at (user-supplied code)`.
     
-    此时如果我们需要对当前工作目录下的所有的文件进行修改，比如将所有的 out 文件修改为 ans 文件，可以这么写：
+    So, to rename all files in the current working directory, for example changing all .out files to .ans files, you can write:
     
     ```shell
     rename 's/\.out/\.ans/' *
     ```
     
-    其中 `\.` 表示对 `.` 进行转义．
+    Here `\.` escapes the `.`.
     
-    （温馨提示：如果少写了 `\.`，假如你的文件里有个 `outtest.out`，这条命令执行过后文件将会被修改成 `anstest.out`)
+    (Tip: if you leave out the `\.` and one of your files is named `outtest.out`, this command will rename it to `anstest.out`.)
     
-    类似的，如果你需要对所有名为 `atmost<x>.ans` 的文件进行统一修改（其中 `<x>` 代表测试点编号），将它们都修改为 `test<x>.ans`，不妨这么写：
+    Similarly, to rename all files named `atmost<x>.ans` (where `<x>` is the test case number) to `test<x>.ans`, you can write:
     
     ```shell
     rename 's/atmost/test/' *.ans
