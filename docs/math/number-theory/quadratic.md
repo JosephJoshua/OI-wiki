@@ -1,40 +1,40 @@
-本文简要介绍二次域的相关概念．与之相关的两个重要例子是 Gauss 整数和 Eisenstein 整数，它们可以用于解决一些数论问题．
+This page gives a short introduction to the concepts around quadratic fields. Two important examples are the Gaussian integers and the Eisenstein integers, which can be used to solve some number theory problems.
 
-## 基本概念
+## Basic concepts
 
-本节首先介绍一系列基本概念．二次域和二次整数环都是更一般的代数扩域和代数整数环的概念的特例，因此本节的几乎所有定义和结论都可以恰当地推广到一般的情形．本节的讨论将限于二次域这一特殊情形，而不引入过多的代数数论内容．
+This section first introduces a series of basic concepts. Quadratic fields and rings of quadratic integers are special cases of the more general algebraic extension fields and rings of algebraic integers, so almost every definition and result in this section extends naturally to the general case. Here we only discuss the special case of quadratic fields and avoid bringing in too much algebraic number theory.
 
-### 二次域
+### Quadratic fields
 
-二次域的元素都是二次代数数．
+The elements of a quadratic field are all quadratic algebraic numbers.
 
-**二次代数数**（quadratic algebraic number）是可以表示为整系数一元二次方程的解的复数．由一元二次方程的求根公式可知，所有二次代数数均可以表示成
+A **quadratic algebraic number** is a complex number that is a root of a quadratic equation in one variable with integer coefficients. By the quadratic formula, every quadratic algebraic number can be written in the form
 
 $$
 a+b\sqrt{d}
 $$
 
-的形式，其中，$a$ 与 $b$ 为有理数，$d$ 为整数且无平方因子．任意这种形式的数也都是二次代数数．二次代数数可以分为有理数和 **二次无理数**（quadratic irrational number）．显然，二次无理数表示成上述形式的方法是唯一的．
+where $a$ and $b$ are rational numbers and $d$ is a square-free integer. Every number of this form is also a quadratic algebraic number. Quadratic algebraic numbers split into rational numbers and **quadratic irrational numbers**. Clearly, a quadratic irrational number can be written in this form in only one way.
 
-对于任意无平方因子的整数 $d\neq 0,1$，都可以验证集合 $\mathbf Q(\sqrt{d})=\{a+b\sqrt{d}:a,b\in\mathbf Q\}$ 对于加、减、乘、除是封闭的．由于对于四则运算封闭的集合称为 [域](../algebra/basic.md#域)，集合 $\mathbf Q(\sqrt{d})$ 就称为 **二次域**（quadratic field）．每一个二次域都包含全体有理数，因此它们都是有理数域 $\mathbf Q$ 的 [二次扩域](../algebra/field-theory.md#域的扩张)．当 $d>0$ 时，二次域 $\mathbf Q(\sqrt{d})$ 中所有数都是实数，此时的 $\mathbf Q(\sqrt{d})$ 称为实二次域；当 $d<0$ 时，二次域中除了有理数都不是实数，此时的 $\mathbf Q(\sqrt{d})$ 称为虚二次域．
+For any square-free integer $d\neq 0,1$, one can check that the set $\mathbf Q(\sqrt{d})=\{a+b\sqrt{d}:a,b\in\mathbf Q\}$ is closed under addition, subtraction, multiplication and division. A set closed under the four arithmetic operations is called a [field](../algebra/basic.md#域), so the set $\mathbf Q(\sqrt{d})$ is called a **quadratic field**. Every quadratic field contains all rational numbers, so each one is a [quadratic extension](../algebra/field-theory.md#域的扩张) of the field of rational numbers $\mathbf Q$. When $d>0$, all numbers in the quadratic field $\mathbf Q(\sqrt{d})$ are real, and $\mathbf Q(\sqrt{d})$ is called a real quadratic field. When $d<0$, no number in the quadratic field is real except the rational numbers, and $\mathbf Q(\sqrt{d})$ is called an imaginary quadratic field.
 
-### 共轭与范数
+### Conjugates and norms
 
-二次无理数 $a+b\sqrt{d}$ 的 **共轭**（conjugate）定义为 $a-b\sqrt{d}$．共轭的二次无理数是同一个整系数二次方程的两个相异的根．在实二次域中，二次无理数的共轭与它作为复数的共轭并不一致；在虚二次域中，二次无理数的共轭就是它作为复数的共轭．最后，有理数的共轭规定为它自身．这样就对于全体二次代数数定义了共轭的概念．
+The **conjugate** of a quadratic irrational number $a+b\sqrt{d}$ is defined as $a-b\sqrt{d}$. Conjugate quadratic irrational numbers are the two distinct roots of the same quadratic equation with integer coefficients. In a real quadratic field, the conjugate of a quadratic irrational number is not the same as its conjugate as a complex number. In an imaginary quadratic field, the conjugate of a quadratic irrational number is exactly its complex conjugate. Finally, the conjugate of a rational number is defined to be itself. This defines conjugates for all quadratic algebraic numbers.
 
-任意二次域中，由加减乘除四则运算产生的等式，无法区分共轭关系．也就是说，在等式中将每一个数换成它的共轭，即将每一个二次根号的符号改变，等式仍然成立．
+In any quadratic field, equations built from addition, subtraction, multiplication and division cannot tell conjugates apart. That is, if you replace every number in such an equation by its conjugate, i.e., flip the sign of every quadratic square root, the equation still holds.
 
-利用共轭，可以构造若干个从二次代数数到有理数的映射，它们可以将对二次代数数进行的讨论转化为对有理数的讨论．较为简单的是二次代数数 $\alpha$ 的 **迹**（trace），即一个数与它的共轭的和，记作 $\operatorname{tr}(\alpha)$．因为这其实就是它的有理数部分的 $2$ 倍，所以并没有提供太多信息．
+Using conjugates, we can build several maps from quadratic algebraic numbers to rational numbers. They let us turn questions about quadratic algebraic numbers into questions about rational numbers. The simplest is the **trace** of a quadratic algebraic number $\alpha$, the sum of the number and its conjugate, written $\operatorname{tr}(\alpha)$. It is just $2$ times the rational part, so it does not carry much information.
 
-更为有用的是二次代数数的范数．二次代数数与它的共轭的积称为它的 **范数**（norm）：
+The norm of a quadratic algebraic number is more useful. The product of a quadratic algebraic number and its conjugate is called its **norm**:
 
 $$
 N(a+b\sqrt{d})=a^2-db^2
 $$
 
-显然，在虚二次域中，范数的概念，与复数的模的平方的概念一致；但是，在实二次域中这两个概念并不一致．
+Clearly, in an imaginary quadratic field the norm agrees with the squared modulus of a complex number. In a real quadratic field, however, the two concepts differ.
 
-范数具有良好的性质．首先，因为 $d$ 不含平方因子，不可能是平方数，所以只有 $0$ 的范数是 $0$．其次，范数保持乘法和除法：
+The norm has nice properties. First, $d$ is square-free, so it cannot be a perfect square, and therefore only $0$ has norm $0$. Second, the norm preserves multiplication and division:
 
 $$
 N(a_1+b_1\sqrt{d})N(a_2+b_2\sqrt{d})=N((a_1+b_1\sqrt{d})(a_2+b_2\sqrt{d})),
@@ -44,44 +44,44 @@ $$
 \frac{N(a_1+b_1\sqrt{d})}{N(a_2+b_2\sqrt{d})}=N\left(\frac{a_1+b_1\sqrt{d}}{a_2+b_2\sqrt{d}}\right).
 $$
 
-另外，二次代数数的倒数就是它的共轭与它的范数之比：
+Also, the reciprocal of a quadratic algebraic number is its conjugate divided by its norm:
 
 $$
 \dfrac{1}{a+b\sqrt{d}}=\frac{a-b\sqrt{d}}{N(a+b\sqrt{d})}.
 $$
 
-利用 Vieta 定理可知，二次代数数 $\alpha$ 实际上是方程
+By Vieta's formulas, a quadratic algebraic number $\alpha$ is in fact a root of the equation
 
 $$
 x^2-\operatorname{tr}(\alpha)x+N(\alpha)=0
 $$
 
-的根．该方程的判别式也称为该二次代数数的 **判别式**（discriminant），记作 $\operatorname{disc}(\alpha)$，取值为 $4db^2$．
+The discriminant of this equation is also called the **discriminant** of the quadratic algebraic number, written $\operatorname{disc}(\alpha)$. Its value is $4db^2$.
 
-???+ note "矩阵表示"
-    类似于复数，二次代数数也可以用矩阵表示．令 $d\neq 0,1$ 为无平方因子的整数且 $a,b$ 为有理数，则 $a+b\sqrt{d}$ 可以表示为矩阵
+???+ note "Matrix representation"
+    Like complex numbers, quadratic algebraic numbers can be represented by matrices. Let $d\neq 0,1$ be a square-free integer and $a,b$ rational numbers. Then $a+b\sqrt{d}$ can be represented by the matrix
     
     $$
     \begin{pmatrix}a & b \\ db & a\end{pmatrix}.
     $$
     
-    可以验证，该矩阵的加、减、乘、除四则运算的结果就对应于二次代数数的运算结果．该矩阵的迹和行列式分别对应了二次代数数的迹和范数，该矩阵的特征多项式的判别式就是二次代数数的判别式．矩阵的伴随矩阵对应着二次代数数的共轭．
+    One can check that adding, subtracting, multiplying and dividing these matrices matches the corresponding operations on quadratic algebraic numbers. The trace and determinant of the matrix match the trace and norm of the quadratic algebraic number, and the discriminant of the matrix's characteristic polynomial is the discriminant of the quadratic algebraic number. The adjugate matrix corresponds to the conjugate of the quadratic algebraic number.
 
-### 二次整数环
+### Rings of quadratic integers
 
-二次代数数中较为特殊的是二次整数．**二次整数**（quadratic integer）指可以表示为二次项系数为一的整系数一元二次方程的解的复数．与二次代数数的唯一不同就是对于二次项系数的限制．根据求根公式，二次方程 $x^2+px+q=0$ 的两个根是
+Quadratic integers are a special kind of quadratic algebraic number. A **quadratic integer** is a complex number that is a root of a quadratic equation in one variable with integer coefficients and leading coefficient one. The only difference from quadratic algebraic numbers is this restriction on the leading coefficient. By the quadratic formula, the two roots of $x^2+px+q=0$ are
 
 $$
 \frac{-p\pm\sqrt{p^2-4q}}{2}.
 $$
 
-如果 $p$ 是偶数，即 $p=2k$，那么两个根可以写作 $-k\pm\sqrt{k^2-q}$；如果 $p$ 是奇数，即 $p=2k+1$，那么两个根可以写作 $-k-\dfrac{1\pm\sqrt{4(k^2+k-q)+1}}{2}$．从这两种情形中可以归纳出 $\mathbf Q(\sqrt{d})$ 中的二次整数必然可以写作
+If $p$ is even, i.e., $p=2k$, the two roots can be written as $-k\pm\sqrt{k^2-q}$. If $p$ is odd, i.e., $p=2k+1$, the two roots can be written as $-k-\dfrac{1\pm\sqrt{4(k^2+k-q)+1}}{2}$. From these two cases we conclude that every quadratic integer in $\mathbf Q(\sqrt{d})$ can be written in the form
 
 $$
 a+b\omega
 $$
 
-的形式，其中，$a$ 和 $b$ 是整数，而
+where $a$ and $b$ are integers and
 
 $$
 \omega=\begin{cases}
@@ -90,27 +90,27 @@ $$
 \end{cases}
 $$
 
-反过来，任何这种形式的复数都是二次整数．每个非有理数的二次整数写成该形式的方法都是唯一的．
+Conversely, every complex number of this form is a quadratic integer. Every irrational quadratic integer can be written in this form in only one way.
 
-二次域 $\mathbf Q(\sqrt{d})$ 中的全体二次整数构成的集合记作 $\mathbf Z[\omega]$．因为这个集合对于加、减、乘都是封闭的，所以它也称为 **二次整数环**（quadratic integer ring）．二次整数环中的有理数恰为全体整数．如果考察 $\mathbf Z[\omega]$ 中的二次整数的全体比值构成的集合，就得到相应的二次域 $\mathbf Q(\sqrt{d})$．
+The set of all quadratic integers in the quadratic field $\mathbf Q(\sqrt{d})$ is written $\mathbf Z[\omega]$. This set is closed under addition, subtraction and multiplication, so it is also called a **ring of quadratic integers**. The rational numbers in a ring of quadratic integers are exactly the integers. If we take the set of all ratios of quadratic integers in $\mathbf Z[\omega]$, we get the corresponding quadratic field $\mathbf Q(\sqrt{d})$.
 
-二次整数的迹、范数和判别式都是整数．二次整数环 $\mathbf Z[\omega]$ 中全体二次无理数的判别式中绝对值最小者也称为相应的二次域 $\mathbf Q(\sqrt{d})$ 的判别式．当 $d\equiv 1\pmod 4$ 时，判别式是 $d$；当 $d\equiv 2,3\pmod 4$ 时，判别式是 $4d$．
+The trace, norm and discriminant of a quadratic integer are all integers. Among all quadratic irrational numbers in the ring $\mathbf Z[\omega]$, the discriminant with the smallest absolute value is also called the discriminant of the corresponding quadratic field $\mathbf Q(\sqrt{d})$. When $d\equiv 1\pmod 4$, the discriminant is $d$. When $d\equiv 2,3\pmod 4$, the discriminant is $4d$.
 
-### 整除、相伴与单位数
+### Divisibility, associates and units
 
-类似于整数，对于二次整数同样可以建立整除理论．当然，讨论必须在同一个二次整数环内进行．
+Just as for integers, we can build a theory of divisibility for quadratic integers. Of course, everything has to happen inside one ring of quadratic integers.
 
-对于二次整数环 $\mathbf Z[\omega]$ 中的二次整数 $\alpha$ 和 $\beta$，如果存在同一个环中的二次整数 $\gamma$ 使得 $\beta=\alpha\gamma$ 成立，就称 $\alpha$ 整除 $\beta$，记作 $\alpha\mid\beta$．整除关系是二次整数环上的 [预序](../order-theory.md#二元关系) 关系．如果同时有 $\alpha\mid\beta$ 和 $\beta\mid\alpha$，那么 $\alpha$ 和 $\beta$ 在研究整除理论时就可以视作同一个数，它们称为 **相伴**（associate）．相伴关系是二次整数环上的等价关系．
+For quadratic integers $\alpha$ and $\beta$ in the ring $\mathbf Z[\omega]$, if there is a quadratic integer $\gamma$ in the same ring with $\beta=\alpha\gamma$, we say $\alpha$ divides $\beta$ and write $\alpha\mid\beta$. Divisibility is a [preorder](../order-theory.md#二元关系) on the ring of quadratic integers. If both $\alpha\mid\beta$ and $\beta\mid\alpha$ hold, then $\alpha$ and $\beta$ can be treated as the same number in divisibility theory, and they are called **associates**. Being associates is an equivalence relation on the ring.
 
-类比到整数的整除理论上，相伴关系就是互为相反数．整除理论通常只需要考虑自然数就好了，而不必考察负数的情形．对于二次整数而言，相伴关系可能更为复杂一些．如果二次整数 $\alpha$ 和 $\beta$ 相伴，则存在二次整数 $\gamma$ 和 $\delta$ 使得 $\beta=\alpha\gamma$ 和 $\alpha=\beta\delta$ 成立．因此，$\beta$ 和 $\alpha$ 的比值 $\gamma$ 必然是特殊的二次整数，即存在二次整数 $\delta$ 使得 $\gamma\delta=1$．这样的二次整数 $\gamma$ 称为 **单位数**（unit），也称为可逆元．两个二次整数相伴，当且仅当它们的比值是单位数．因此，要理解二次整数环上的相伴关系，就要理解它的单位数的结构．
+For integers, being associates just means being negatives of each other. Divisibility theory for integers usually only needs natural numbers, so we don't have to consider negative numbers. For quadratic integers, associates can be more complicated. If quadratic integers $\alpha$ and $\beta$ are associates, there are quadratic integers $\gamma$ and $\delta$ with $\beta=\alpha\gamma$ and $\alpha=\beta\delta$. So the ratio $\gamma$ of $\beta$ to $\alpha$ must be a special quadratic integer: there is a quadratic integer $\delta$ with $\gamma\delta=1$. Such a quadratic integer $\gamma$ is called a **unit**, or an invertible element. Two quadratic integers are associates if and only if their ratio is a unit. So to understand associates in a ring of quadratic integers, we need to understand the structure of its units.
 
-因为范数可以保持乘法运算，且二次整数的范数总是整数，所以利用范数可以将二次整数的整除关系转化为整数的整除关系．也就是说，如果 $\alpha\mid\beta$，那么必然有 $N(\alpha)\mid N(\beta)$．同样地，二次整数 $\alpha$ 是单位数，当且仅当它的范数 $N(\alpha)=\pm 1$．因此，要获得二次整数环 $\mathbf Z[\omega]$ 中的全体单位数，只需要求解不定方程：
+The norm preserves multiplication, and the norm of a quadratic integer is always an integer, so the norm turns divisibility of quadratic integers into divisibility of integers. That is, if $\alpha\mid\beta$, then $N(\alpha)\mid N(\beta)$. Likewise, a quadratic integer $\alpha$ is a unit if and only if its norm is $N(\alpha)=\pm 1$. So to find all units in the ring $\mathbf Z[\omega]$, we only need to solve the Diophantine equation:
 
 $$
 N(a+b\omega)=\pm 1,
 $$
 
-其中，范数的表达式为
+where the norm is given by
 
 $$
 N(a+b\omega)=\begin{cases}
@@ -119,43 +119,43 @@ a^2-db^2, & d\equiv 2,3\pmod 4.
 \end{cases}
 $$
 
-对于虚二次整数环，即 $d<0$ 时，因为范数必然是非负整数，容易验证对于所有的无平方因子的负数 $d\neq -1,-3$，解都只有 $(a,b)=(\pm 1,0)$，即除了 $\mathbf Z[\sqrt{-1}]$ 和 $\mathbf Z[\frac{1+\sqrt{-3}}{2}]$，虚二次整数环的单位数都只有 $\pm 1$．记 $\mathrm{i}=\sqrt{-1}$，则二次整数环 $\mathbf Z[\mathrm{i}]$ 又称作 Gauss 整数环，它的单位数的集合为 $\{\pm 1,\pm\mathrm{i}\}$．记 $\omega=\frac{1+\sqrt{-3}}{2}$，则二次整数环 $\mathbf Z[\omega]$ 又称为 Eisenstein 整数环，它的单位数的集合为 $\{\pm 1,\pm\omega,\pm\omega^2\}$．
+For imaginary rings of quadratic integers, i.e., when $d<0$, the norm is always a non-negative integer. It is easy to check that for every square-free negative $d\neq -1,-3$, the only solutions are $(a,b)=(\pm 1,0)$. That is, apart from $\mathbf Z[\sqrt{-1}]$ and $\mathbf Z[\frac{1+\sqrt{-3}}{2}]$, the only units of an imaginary ring of quadratic integers are $\pm 1$. Write $\mathrm{i}=\sqrt{-1}$. The ring $\mathbf Z[\mathrm{i}]$ is also called the ring of Gaussian integers, and its set of units is $\{\pm 1,\pm\mathrm{i}\}$. Write $\omega=\frac{1+\sqrt{-3}}{2}$. The ring $\mathbf Z[\omega]$ is also called the ring of Eisenstein integers, and its set of units is $\{\pm 1,\pm\omega,\pm\omega^2\}$.
 
-对于实二次整数环，即 $d>0$ 时，情形较为复杂，可以转化为对相应的 [Pell 方程](./pell-equation.md) 的讨论．由 Pell 方程的相关结论可知，此时的全体单位数的集合可以写作 $\{\pm u^k:k\in\mathbf Z\}$，其中的 $u$ 称为 **基本单位数**（fundamental unit）．基本单位数可以通过相应的 Pell 方程进行求解．基本单位数并不是唯一的：如果 $u$ 是基本单位数，那么它的共轭 $\bar u$ 以及 $-u$ 和 $-\bar u$ 都是基本单位数．
+For real rings of quadratic integers, i.e., when $d>0$, things are more complicated. The question turns into a study of the corresponding [Pell equation](./pell-equation.md). From the results on Pell equations, the set of all units can be written as $\{\pm u^k:k\in\mathbf Z\}$, where $u$ is called a **fundamental unit**. A fundamental unit can be found by solving the corresponding Pell equation. The fundamental unit is not unique: if $u$ is a fundamental unit, then its conjugate $\bar u$, as well as $-u$ and $-\bar u$, are also fundamental units.
 
-二次整数环的单位数的结构可以推广到一般的 [代数整数环](../algebra/field-theory.md#代数扩张)．代数数论中的 [Dirichlet 单位定理](https://en.wikipedia.org/wiki/Dirichlet%27s_unit_theorem) 指出，所有代数整数环的全体单位数都构成 [有限生成 Abel 群](../algebra/group-theory.md#有限生成-abel-群)，同时这一定理也给出了这个群的秩．
+The structure of units in rings of quadratic integers extends to general [rings of algebraic integers](../algebra/field-theory.md#代数扩张). [Dirichlet's unit theorem](https://en.wikipedia.org/wiki/Dirichlet%27s_unit_theorem) in algebraic number theory says that the units of any ring of algebraic integers form a [finitely generated abelian group](../algebra/group-theory.md#有限生成-abel-群), and it also gives the rank of this group.
 
-整数的整除理论中的最大公因数、带余除法、Bezout 定理、唯一分解定理等内容都可以推广到部分或全部的二次整数环上．在某个二次整数环上能否进行这样的推广，其实反映了该二次整数环性质是否足够接近于整数环．并非所有二次整数环上都成立唯一分解定理；在成立唯一分解定理的二次整数环中，也只有一部分二次整数环上可以进行带余除法．对于这部分内容的讨论，可以参考环论部分的 [二次整数环](../algebra/ring-theory.md#例子二次整数环) 一节或相关书籍．
+Ideas from integer divisibility theory, such as the greatest common divisor, division with remainder, Bézout's theorem and the unique factorization theorem, can be extended to some or all rings of quadratic integers. Whether such an extension works in a given ring reflects how close that ring is to the ring of integers. Unique factorization does not hold in every ring of quadratic integers, and among the rings where it does hold, only some allow division with remainder. For more on this, see the [rings of quadratic integers](../algebra/ring-theory.md#例子二次整数环) section on the ring theory page or related books.
 
-### 唯一分解
+### Unique factorization
 
-整数的唯一分解定理如果可以推广到二次整数环上，应当具有这样的形式：环 $\mathbf Z[\omega]$ 中的每个二次整数都可以写成若干个不可约元的乘积，且这个分解在不计相伴和次序的意义下唯一．其中的 [不可约元](../algebra/ring-theory.md#整除关系) 是指不能够继续分解为非单位数的乘积的二次整数，类似于整数唯一分解定理中的素数．前文已经提及，并非所有的二次整数环都成立唯一分解定理．
+If unique factorization for integers extends to a ring of quadratic integers, it should look like this: every quadratic integer in the ring $\mathbf Z[\omega]$ can be written as a product of irreducible elements, and this factorization is unique up to associates and order. Here an [irreducible element](../algebra/ring-theory.md#整除关系) is a quadratic integer that cannot be split further into a product of non-units, much like a prime in the integer unique factorization theorem. As mentioned above, unique factorization does not hold in every ring of quadratic integers.
 
-例如，在 $\mathbf Z[\sqrt{-5}]$ 中有分解 $9=3\times 3=(2+\sqrt{-5})\times(2-\sqrt{-5})$，但是，$3$ 和 $2\pm\sqrt{-5}$ 都已经是不可约元，因而分解并不唯一．要说明这三个数都是不可约元，可以通过考察它们的范数：它们的范数都是 $9$，如果它们可以分解成非单位数的乘积，那么分解得到的因子的范数只能是 $3$，但是 $\mathbf Z[\sqrt{-5}]$ 中并没有范数为 $3$ 的二次整数．
+For example, in $\mathbf Z[\sqrt{-5}]$ we have $9=3\times 3=(2+\sqrt{-5})\times(2-\sqrt{-5})$, but $3$ and $2\pm\sqrt{-5}$ are all irreducible, so the factorization is not unique. To see that these three numbers are irreducible, look at their norms: each has norm $9$. If one of them could be factored into non-units, each factor would have norm $3$, but $\mathbf Z[\sqrt{-5}]$ has no quadratic integer with norm $3$.
 
-一般的二次整数环中唯一分解定理不成立的主要原因是仅仅使用二次整数进行的分解是不够彻底的．例如要分解乘积 $abcd$，但是可选的基本元素只有 $\{ab,cd,ac,bd\}$ 时，得到的分解自然不唯一；要得到唯一分解定理，必须进一步考虑 $\{a,b,c,d\}$．在二次整数环中，比二次整数更为细致的结构就是二次整数环的 [理想](../algebra/ring-theory.md#理想)，将二次整数映射至它对应的主理想可以将它所在的相伴等价类嵌入到理想的集合中，因而整数的分解只是理想的分解的特殊情形．如果考虑二次整数环中理想的分解，那么可以证明所有二次整数环的理想都可以唯一地分解为若干个素理想的乘积．这说明，二次整数环都是 [Dedekind 整环](https://en.wikipedia.org/wiki/Dedekind_domain)．更一般地，所有的代数整数环都是 Dedekind 整环．
+The main reason unique factorization fails in general rings of quadratic integers is that factoring with quadratic integers alone does not go deep enough. For example, if we want to factor the product $abcd$ but the only building blocks available are $\{ab,cd,ac,bd\}$, the factorization will naturally not be unique. To get unique factorization, we have to go further and consider $\{a,b,c,d\}$. In a ring of quadratic integers, the finer structure beyond quadratic integers is the [ideals](../algebra/ring-theory.md#理想) of the ring. Mapping a quadratic integer to its principal ideal embeds its class of associates into the set of ideals, so factoring numbers is just a special case of factoring ideals. If we factor ideals in a ring of quadratic integers, we can prove that every ideal factors uniquely into a product of prime ideals. This shows that every ring of quadratic integers is a [Dedekind domain](https://en.wikipedia.org/wiki/Dedekind_domain). More generally, every ring of algebraic integers is a Dedekind domain.
 
-如果一个二次整数环上成立唯一分解定理，那么它的素理想和不可约元（在相伴意义下的等价类）一一对应，因此，对于这一类二次整数环，将理想分解为素理想就等价于将二次整数分解为不可约元．而且，此时的不可约元也称为 [素元](../algebra/ring-theory.md#整除关系)，它就相当于整数中的素数的概念．下面的讨论将使用素理想及其相关概念，不熟悉这一概念的读者，可以将它们逐字逐句替换成素元，那么这些论述在唯一分解定理成立的情形下也是对的．
+If unique factorization holds in a ring of quadratic integers, then its prime ideals correspond one-to-one to its irreducible elements (up to associates). So for such rings, factoring ideals into prime ideals is the same as factoring quadratic integers into irreducible elements. In this case, irreducible elements are also called [prime elements](../algebra/ring-theory.md#整除关系), which play the role of primes among the integers. The discussion below uses prime ideals and related concepts. Readers not familiar with them can replace them word for word with prime elements; the statements are still correct when unique factorization holds.
 
-要完全地搞清楚一般的二次整数环 $\mathbf Z[\omega]$ 上的唯一分解，需要知道 $\mathbf Z[\omega]$ 中的素理想都有哪些．首先，$\mathbf Z[\omega]$ 中的每个素理想都整除它的范数（的主理想）．将它的范数在整数内分解为若干素数的乘积，则根据唯一分解定理，该素理想必然整除这些素数因子中的某个（的主理想）．因此，$\mathbf Z[\omega]$ 中的素理想一定是将整数中的素数进一步分解得到的．要列举出 $\mathbf Z[\omega]$ 中的全部素理想，只要给出 $\mathbf Z$ 中的素数 $p$（的主理想）在 $\mathbf Z[\omega]$ 中的唯一分解就可以了．因为素数 $p$（的主理想）在 $\mathbf Z[\omega]$ 中的范数是 $p^2$，而它分解成素理想意味着素理想的范数必然是 $p^2$ 的因子，故而只能是 $p$ 或 $p^2$．这说明只有如下三种可能性：
+To fully understand unique factorization in a general ring of quadratic integers $\mathbf Z[\omega]$, we need to know what the prime ideals of $\mathbf Z[\omega]$ are. First, every prime ideal of $\mathbf Z[\omega]$ divides (the principal ideal of) its norm. Factor the norm into primes over the integers. By unique factorization, the prime ideal must divide (the principal ideal of) one of these prime factors. So every prime ideal of $\mathbf Z[\omega]$ comes from further factoring a prime of the integers. To list all prime ideals of $\mathbf Z[\omega]$, we only need the unique factorization of (the principal ideal of) each prime $p$ of $\mathbf Z$ in $\mathbf Z[\omega]$. The norm of (the principal ideal of) $p$ in $\mathbf Z[\omega]$ is $p^2$, and factoring it into prime ideals means each prime ideal's norm divides $p^2$, so it must be $p$ or $p^2$. This leaves only three possibilities:
 
-1.  $p$ 在 $\mathbf Z[\omega]$ 中是 **惯性**（inert）的，即 $(p)$ 在 $\mathbf Z[\omega]$ 中仍然是素理想；
-2.  $p$ 在 $\mathbf Z[\omega]$ 中 **分裂**（split），即 $(p)$ 在 $\mathbf Z[\omega]$ 中可以写成两个不同的共轭素理想的乘积；
-3.  $p$ 在 $\mathbf Z[\omega]$ 中 **分歧**（ramify），即 $(p)$ 在 $\mathbf Z[\omega]$ 中可以写成某个素理想的平方．
+1.  $p$ is **inert** in $\mathbf Z[\omega]$, i.e., $(p)$ is still a prime ideal in $\mathbf Z[\omega]$;
+2.  $p$ **splits** in $\mathbf Z[\omega]$, i.e., $(p)$ can be written in $\mathbf Z[\omega]$ as the product of two distinct conjugate prime ideals;
+3.  $p$ **ramifies** in $\mathbf Z[\omega]$, i.e., $(p)$ can be written in $\mathbf Z[\omega]$ as the square of a prime ideal.
 
-进一步可以证明，要判定某个素数 $p$ 落入这三种情形中的哪一种，只需要对 $\mathbf Z[\omega]$ 所在的二次域的判别式 $D$ 和该素数 $p$ 计算 [Kronecker 符号](https://en.wikipedia.org/wiki/Kronecker_symbol) $\left(\dfrac{D}{p}\right)$ 就可以了．这三种情形分别对应着 Kronecker 符号的三种取值：$-1$，$+1$ 和 $0$．当 $p$ 是奇素数时，Kronecker 符号就是 [Legendre 符号](./quad-residue.md#legendre-符号)，这三种情形分别对应于 $D$ 是 $p$ 的 [二次非剩余](./quad-residue.md)，$D$ 是 $p$ 的 [二次剩余](./quad-residue.md) 以及 $p$ 整除 $D$．当 $p=2$ 时，这三种情形分别对应于 $D\equiv \pm 3\pmod 8$，$D\equiv \pm 1\pmod 8$ 和 $2$ 整除 $D$．
+One can further prove that to decide which of the three cases a prime $p$ falls into, we only need to compute the [Kronecker symbol](https://en.wikipedia.org/wiki/Kronecker_symbol) $\left(\dfrac{D}{p}\right)$, where $D$ is the discriminant of the quadratic field containing $\mathbf Z[\omega]$. The three cases correspond to the three values of the Kronecker symbol: $-1$, $+1$ and $0$. When $p$ is an odd prime, the Kronecker symbol is the [Legendre symbol](./quad-residue.md#legendre-符号), and the three cases correspond to $D$ being a [quadratic non-residue](./quad-residue.md) modulo $p$, $D$ being a [quadratic residue](./quad-residue.md) modulo $p$, and $p$ dividing $D$. When $p=2$, the three cases correspond to $D\equiv \pm 3\pmod 8$, $D\equiv \pm 1\pmod 8$ and $2$ dividing $D$.
 
-## Gauss 整数
+## Gaussian integers
 
-本节中，令 $\mathrm{i}=\sqrt{-1}$ 表示虚数单位．二次域 $\mathbf Q(\mathrm{i})$ 也称为 Gauss 域，它也是四次 [分圆域](../algebra/field-theory.md#分圆域)．相应的二次整数环 $\mathbf Z[\mathrm{i}]$ 也称为 Gauss 整数环，其中的元素称为 **Gauss 整数**（Gaussian integer）．Gauss 整数的单位数共四个，即 $\pm 1$ 和 $\pm\mathrm{i}$，因而每个非零的 Gauss 整数有四个相伴元（含自身）．在复平面上，Gauss 整数表示的是全体整点，而 Gauss 整数的范数 $N(a+b\mathrm{i})=a^2+b^2$ 就是复平面上的范数．
+In this section, $\mathrm{i}=\sqrt{-1}$ denotes the imaginary unit. The quadratic field $\mathbf Q(\mathrm{i})$ is also called the Gaussian field, and it is also the fourth [cyclotomic field](../algebra/field-theory.md#分圆域). The corresponding ring of quadratic integers $\mathbf Z[\mathrm{i}]$ is called the ring of Gaussian integers, and its elements are called **Gaussian integers**. There are four Gaussian integer units, $\pm 1$ and $\pm\mathrm{i}$, so each nonzero Gaussian integer has four associates (including itself). In the complex plane, Gaussian integers are exactly the lattice points, and the norm of a Gaussian integer $N(a+b\mathrm{i})=a^2+b^2$ is the norm in the complex plane.
 
 ![](./images/gaussian-integer.svg)
 
-Gauss 整数上可以做带余除法：对于 Gauss 整数 $a$ 和 $b\neq 0$，总存在 Gauss 整数 $q$ 和 $r$ 使得 $a=bq+r$ 成立，且 $N(r)<N(b)$．要计算这样的带余除法，可以首先在 $\mathbf Q(\mathrm{i})$ 内计算 $\dfrac{a}{b}$，再在复平面内寻找最近的整点作为 $q$，然后计算 $r=a-bq$；这样得到的余数总是满足 $N(r)\le\dfrac{1}{2}N(b)$．利用带余除法，可以将辗转相除法（Euclid 算法）和 Bezout 定理等迁移到 Gauss 整数上，进而建立唯一分解定理．
+Gaussian integers support division with remainder: for Gaussian integers $a$ and $b\neq 0$, there are always Gaussian integers $q$ and $r$ with $a=bq+r$ and $N(r)<N(b)$. To compute such a division, first compute $\dfrac{a}{b}$ in $\mathbf Q(\mathrm{i})$, then take the nearest lattice point in the complex plane as $q$, and then compute $r=a-bq$. The remainder obtained this way always satisfies $N(r)\le\dfrac{1}{2}N(b)$. With division with remainder, the Euclidean algorithm and Bézout's theorem carry over to Gaussian integers, and from there we get unique factorization.
 
-### Gauss 素数
+### Gaussian primes
 
-利用上节的结论可以求出 Gauss 整数内的素元（也称为 Gauss 素数）．因为 Gauss 整数环的判别式是 $-4$，而 Kronecker 符号 $\left(\dfrac{-4}{n}\right)$ 在偶数 $n$ 上取值为 $0$，在奇数 $n$ 上取值等于 $\left(\dfrac{-1}{n}\right)=(-1)^{(n-1)/2}$，故而有
+Using the results of the previous section, we can find the prime elements of the Gaussian integers (also called Gaussian primes). The discriminant of the ring of Gaussian integers is $-4$. The Kronecker symbol $\left(\dfrac{-4}{n}\right)$ is $0$ for even $n$, and for odd $n$ it equals $\left(\dfrac{-1}{n}\right)=(-1)^{(n-1)/2}$. So
 
 $$
 \left(\dfrac{-4}{n}\right) = \begin{cases}
@@ -165,121 +165,121 @@ $$
 \end{cases}
 $$
 
-所以 Gauss 素数总共有如下三类：
+So there are three kinds of Gaussian primes:
 
-1.  整数中 $4k+3$ 型素数；
-2.  整数中 $4k+1$ 型素数的两个共轭的 Gauss 素数因子；
-3.  素数 $2$ 的因子 $1+\mathrm{i}$，它的共轭与它相伴．
+1.  Integer primes of the form $4k+3$;
+2.  The two conjugate Gaussian prime factors of an integer prime of the form $4k+1$;
+3.  The factor $1+\mathrm{i}$ of the prime $2$, whose conjugate is its associate.
 
-比如在 $\mathbf Z[\mathrm{i}]$ 中，有分解 $60=2^2\times 3\times 5=-(1+\mathrm{i})^4\times 3\times(2+\mathrm{i})\times(2-\mathrm{i})$．
+For example, in $\mathbf Z[\mathrm{i}]$ we have the factorization $60=2^2\times 3\times 5=-(1+\mathrm{i})^4\times 3\times(2+\mathrm{i})\times(2-\mathrm{i})$.
 
-此处讨论素数 $p$ 能够在 $\mathbf Z[\mathrm{i}]$ 中进一步分解，其实等价于讨论素数 $p$ 能够写成整数平方和 $a^2+b^2$ 的形式．因此，由此处的结论可以推得，素数 $p$ 可以写成平方和的形式，当且仅当 $p=2$ 或 $p\equiv 1\pmod 4$．这就是 [Fermat 平方和定理](https://en.wikipedia.org/wiki/Fermat%27s_theorem_on_sums_of_two_squares)．
+Asking whether a prime $p$ factors further in $\mathbf Z[\mathrm{i}]$ is really the same as asking whether $p$ can be written as a sum of two squares $a^2+b^2$. So from the result here, a prime $p$ is a sum of two squares if and only if $p=2$ or $p\equiv 1\pmod 4$. This is [Fermat's theorem on sums of two squares](https://en.wikipedia.org/wiki/Fermat%27s_theorem_on_sums_of_two_squares).
 
-### 圆上整点问题
+### Lattice points on a circle
 
-在复平面上，Gauss 整数表示了所有整点．Gauss 整数的范数就是格点到原点 Euclid 距离的平方．因此，具有相同范数的二次整数对应着复平面以原点为圆心的圆上的整点．也就是说，圆 $x^2+y^2=n$ 上的整点个数就是范数等于 $n$ 的 Gauss 整数 $x+y\mathrm{i}$ 的个数．
+In the complex plane, Gaussian integers are all the lattice points. The norm of a Gaussian integer is the squared Euclidean distance from the lattice point to the origin. So quadratic integers with the same norm correspond to the lattice points on a circle centered at the origin. That is, the number of lattice points on the circle $x^2+y^2=n$ is the number of Gaussian integers $x+y\mathrm{i}$ with norm $n$.
 
-要求解方程 $N(x+y\mathrm{i})=n$，可以考虑 Gauss 整数 $x+y\mathrm{i}$ 分解成素因子，则这些素因子的范数的乘积就等于 $n$．因此，只要首先得到 $n$ 的因式分解，就能够根据 $n$ 的素因子判断出 $x+y\mathrm{i}$ 可能具有的素因子．设整数 $n$ 的素因数分解为
+To solve $N(x+y\mathrm{i})=n$, factor the Gaussian integer $x+y\mathrm{i}$ into primes. The product of the norms of these prime factors equals $n$. So once we have the factorization of $n$, the prime factors of $n$ tell us which prime factors $x+y\mathrm{i}$ can have. Let the prime factorization of the integer $n$ be
 
 $$
 n=2^kp_1^{r_1}\cdots p_\ell^{r_\ell}q_1^{s_1}\cdots q_{m}^{s_m},
 $$
 
-其中，$p_1,\cdots,p_\ell$ 为 $4k+1$ 型素因子，$q_1,\cdots,q_m$ 为 $4k+3$ 型素因子．
+where $p_1,\cdots,p_\ell$ are prime factors of the form $4k+1$ and $q_1,\cdots,q_m$ are prime factors of the form $4k+3$.
 
-首先，方程 $N(x+y\mathrm{i})=n$ 有解，当且仅当 $n$ 的 $4k+3$ 型素因子的指数 $s_1,\cdots,s_m$ 都是偶数；这是因为 $q_1,\cdots,q_m$ 也是 Gauss 素数，它们的范数等于自身的平方，因此范数的素因数分解中它们必然成对出现．
+First, $N(x+y\mathrm{i})=n$ has a solution if and only if the exponents $s_1,\cdots,s_m$ of the $4k+3$ prime factors of $n$ are all even. This is because $q_1,\cdots,q_m$ are also Gaussian primes and their norms are their squares, so they must appear in pairs in the prime factorization of the norm.
 
-现在假设方程有解．那么，方程的解必然具有形式
+Now suppose the equation has solutions. Then every solution has the form
 
 $$
 u(1+\mathrm{i})^k(a_1+b_1\mathrm{i})^{r_{1}^+}(a_1-b_1\mathrm{i})^{r_{1}^-}\cdots(a_\ell+ b_\ell\mathrm{i})^{r_\ell^+}(a_\ell-b_\ell\mathrm{i})^{r_\ell^-}q_1^{s_1/2}\cdots q_{m}^{s_m/2},
 $$
 
-其中，$u$ 是单位数，$a_j\pm b_j\mathrm{i}$ 是 $p_j$ 在 Gauss 整数环中的共轭素因子，且 $r_j^++r_j^-=r_j$．因此，方程的解的个数就等于
+where $u$ is a unit, $a_j\pm b_j\mathrm{i}$ are the conjugate prime factors of $p_j$ in the Gaussian integers, and $r_j^++r_j^-=r_j$. So the number of solutions is
 
 $$
 4(1+r_1)\cdots(1+r_\ell).
 $$
 
-令 $f(n)$ 表示方程 $x^2+y^2=n$ 的整数解的个数．当它有解时，$f(n)$ 由上述表达式给出；否则，$f(n)=0$．容易验证，$\dfrac14f(n)$ 是 [积性函数](./basic.md#积性函数)．积性函数的值由它在素数幂上的取值确定．根据 $f(n)$ 的表达式可以确定，$\dfrac14f(n)$ 在素数幂 $p^k$ 上的取值如下：
+Let $f(n)$ be the number of integer solutions of $x^2+y^2=n$. When there are solutions, $f(n)$ is given by the expression above; otherwise $f(n)=0$. It is easy to check that $\dfrac14f(n)$ is a [multiplicative function](./basic.md#积性函数). A multiplicative function is determined by its values at prime powers. From the expression for $f(n)$, the values of $\dfrac14f(n)$ at prime powers $p^k$ are:
 
-1.  若 $p$ 为 $4k+3$ 型素数，那么 $\dfrac14f(1)=1,\dfrac14f(p)=0,\dfrac14f(p^2)=1,\dfrac14f(p^3)=0,\cdots$；
-2.  若 $p$ 为 $4k+1$ 型素数，那么 $\dfrac14f(p^k)=k+1$；
-3.  若 $p=2$，那么 $\dfrac14f(2^k)=1$．
+1.  If $p$ is a prime of the form $4k+3$, then $\dfrac14f(1)=1,\dfrac14f(p)=0,\dfrac14f(p^2)=1,\dfrac14f(p^3)=0,\cdots$;
+2.  If $p$ is a prime of the form $4k+1$, then $\dfrac14f(p^k)=k+1$;
+3.  If $p=2$, then $\dfrac14f(2^k)=1$.
 
-容易验证，这三种情形都可以写成
+It is easy to check that all three cases can be written as
 
 $$
 \dfrac14f(p^k) = \sum_{j=0}^k\left(\dfrac{-4}{p}\right)^j = \sum_{j=0}^k\left(\dfrac{-4}{p^j}\right) = \sum_{d\mid p^k}\left(\dfrac{-4}{d}\right).
 $$
 
-由于 Kronecker 符号 $\left(\dfrac{-4}{n}\right)$ 是完全积性函数，可以得到
+Since the Kronecker symbol $\left(\dfrac{-4}{n}\right)$ is completely multiplicative, we get
 
 $$
 f(n) = 4\sum_{d\mid n}\left(\dfrac{-4}{d}\right)=4\sum_{d\mid n}\chi_{4,3}(d).
 $$
 
-最右侧的求和式的记号利用了 Kronecker 符号 $\left(\dfrac{-4}{n}\right)$ 是模 $4$ 的实 [Dirichlet 特征](https://en.wikipedia.org/wiki/Dirichlet_character) 这一事实．
+The notation in the rightmost sum uses the fact that the Kronecker symbol $\left(\dfrac{-4}{n}\right)$ is a real [Dirichlet character](https://en.wikipedia.org/wiki/Dirichlet_character) modulo $4$.
 
-### 勾股方程
+### The Pythagorean equation
 
-利用 Gauss 整数可以求出勾股方程的通解．勾股方程指如下二次不定方程：
+Gaussian integers give the general solution of the Pythagorean equation. The Pythagorean equation is the following quadratic Diophantine equation:
 
 $$
 x^2+y^2=z^2.
 $$
 
-对比上一节的内容可知，这相当于求解方程 $N(x+y\mathrm{i})=z^2$．设 $z$ 在 $\mathbf Z$ 中有素因子分解
+Comparing with the previous section, this means solving $N(x+y\mathrm{i})=z^2$. Let $z$ have the prime factorization in $\mathbf Z$
 
 $$
 z=2^kp_1^{r_1}\cdots p_\ell^{r_\ell}q_1^{s_1}\cdots q_{m}^{s_m},
 $$
 
-因而它的解 $x+y\mathrm{i}$ 在 $\mathbf Z[\mathrm{i}]$ 中有素因子分解
+so a solution $x+y\mathrm{i}$ has the prime factorization in $\mathbf Z[\mathrm{i}]$
 
 $$
 x+y\mathrm{i} = u(1+\mathrm{i})^{2k}(a_1+b_1\mathrm{i})^{r_{1}^+}(a_1-b_1\mathrm{i})^{r_{1}^-}\cdots(a_\ell+ b_\ell\mathrm{i})^{r_\ell^+}(a_\ell-b_\ell\mathrm{i})^{r_\ell^-}q_1^{s_1}\cdots q_{m}^{s_m}
 $$
 
-且 $r_j^++r_j^-=2r_j$．可以计算 $x+y\mathrm{i}$ 和 $z$ 的最大公因子，得到如下整数：
+with $r_j^++r_j^-=2r_j$. We can compute the greatest common divisor of $x+y\mathrm{i}$ and $z$, which is the integer:
 
 $$
 \kappa = 2^kp_1^{\min\{r_1^+,r_1^-\}}\cdots p_\ell^{\min\{r_\ell^+,r_\ell^-\}}q_1^{s_1}\cdots q_m^{s_m}.
 $$
 
-消去这一公因子，那么 $\kappa^{-1}(x+y\mathrm{i})$ 中只含有 $a_j\pm b_j\mathrm{i}$ 形式的素因子，共轭的因子不会成对出现，且这些因子的指数 $|r_j^+-r_j^-|$ 必然是偶数（因为它们的和 $2r_j$ 是偶数）．因此，$\kappa^{-1}(x+y\mathrm{i})$ 是某个二次整数 $u+v\mathrm{i}$ 的平方．由此，得到如下方程：
+After removing this common factor, $\kappa^{-1}(x+y\mathrm{i})$ only has prime factors of the form $a_j\pm b_j\mathrm{i}$, conjugate factors no longer appear in pairs, and the exponents $|r_j^+-r_j^-|$ must be even (because their sum $2r_j$ is even). So $\kappa^{-1}(x+y\mathrm{i})$ is the square of some quadratic integer $u+v\mathrm{i}$. This gives:
 
 $$
 x+y\mathrm{i} = \kappa(u+v\mathrm{i})^2,\ z=\kappa N(u+v\mathrm{i}).
 $$
 
-在整数 $\mathbf Z$ 内，这相当于如下方程组：
+Over the integers $\mathbf Z$, this is the system:
 
 $$
 x = \kappa(u^2-v^2),\ y = 2\kappa uv,\ z = \kappa(u^2+v^2).
 $$
 
-反过来，对于任何整数 $u$ 和 $v$，上述表达式得到的 $(x,y,z)$ 都满足勾股方程．因此，这就是勾股方程的通解．
+Conversely, for any integers $u$ and $v$, the $(x,y,z)$ given by these expressions satisfies the Pythagorean equation. So this is the general solution of the Pythagorean equation.
 
-根据上面的过程可以知道，本原勾股数 $(x,y,z)$（即 $x,y,z$ 公因子为一）中的 $x,y$ 必然一奇一偶，$z$ 是奇数且只含有 $4k+1$ 型素因子．
+From this process we also see that in a primitive Pythagorean triple $(x,y,z)$ (that is, $x,y,z$ have no common factor other than one), one of $x,y$ is odd and the other is even, and $z$ is odd with only prime factors of the form $4k+1$.
 
-利用类似的方法还可以得到方程 $x^2+y^2=z^3$ 的通解，或者证明方程 $x^4+y^4=z^4$ 无解．当然，利用勾股方程的通解和无穷递降法，可以证明更强的结论，即方程 $x^4+y^4=z^2$ 无解．
+A similar method gives the general solution of $x^2+y^2=z^3$, or proves that $x^4+y^4=z^4$ has no solutions. Of course, using the general solution of the Pythagorean equation and infinite descent, we can prove a stronger result: $x^4+y^4=z^2$ has no solutions.
 
-## Eisenstein 整数
+## Eisenstein integers
 
-本节中，令 $\omega=\dfrac{-1+\sqrt{3}\mathrm{i}}{2}=e^{2\pi\mathrm{i}/3}$．[^omega]二次域 $\mathbf Q(\sqrt{3}\mathrm{i})$ 是三次和六次 [分圆域](../algebra/field-theory.md#分圆域)，其中的代数整数称为 Eisenstein 整数．全体 Eisenstein 整数构成的环 $\mathbf Z[\omega]$ 称为 Eisenstein 整数环．Eisenstein 整数环的单位数共六个，分别是 $\pm 1$，$\pm\omega$ 和 $\pm\omega^2$．在复平面上，所有 Eisenstein 整数构成三角形的格点．与 Gauss 整数不同，此处的格点一般不是整点．
+In this section, let $\omega=\dfrac{-1+\sqrt{3}\mathrm{i}}{2}=e^{2\pi\mathrm{i}/3}$.[^omega] The quadratic field $\mathbf Q(\sqrt{3}\mathrm{i})$ is the third and sixth [cyclotomic field](../algebra/field-theory.md#分圆域), and its algebraic integers are called Eisenstein integers. The ring $\mathbf Z[\omega]$ of all Eisenstein integers is called the ring of Eisenstein integers. It has six units: $\pm 1$, $\pm\omega$ and $\pm\omega^2$. In the complex plane, the Eisenstein integers form a triangular lattice. Unlike the Gaussian integers, these lattice points are usually not integer points.
 
 ![](./images/eisenstein-integer.svg)
 
-Eisenstein 整数的范数为
+The norm of an Eisenstein integer is
 
 $$
 N(a+b\omega) = a^2-ab+b^2,
 $$
 
-它也是复平面上上述格点到原点的距离的平方．
+which is also the squared distance from the lattice point to the origin in the complex plane.
 
-Eisenstein 整数与 Gauss 整数也十分相似．在 Eisenstein 整数上同样可以利用范数 $N(\cdot)$ 定义带余除法，并建立辗转相除法、Bezout 定理、唯一分解定理等结论．类似于上文，可以推导出素数在 Eisenstein 整数环中的因子．为此，注意到 $\mathbf Z[\omega]$ 的判别式是 $-3$，而 Kronecker 符号
+Eisenstein integers are very similar to Gaussian integers. On Eisenstein integers we can also use the norm $N(\cdot)$ to define division with remainder, and establish the Euclidean algorithm, Bézout's theorem, unique factorization and so on. As above, we can work out how primes factor in the ring of Eisenstein integers. For this, note that the discriminant of $\mathbf Z[\omega]$ is $-3$, and the Kronecker symbol is
 
 $$
 \left(\dfrac{-3}{n}\right) = \begin{cases}
@@ -289,33 +289,33 @@ $$
 \end{cases}
 $$
 
-因此，Eisenstein 整数环内的素元，亦即 Eisenstein 素数，有如下三类：
+So the prime elements of the ring of Eisenstein integers, i.e., the Eisenstein primes, come in three kinds:
 
-1.  整数中 $3k+2$ 型素数，即 $2$ 和 $6k+5$ 型素数；
-2.  整数中 $3k+1$ 型素数（也就是 $6k+1$ 型素数）的两个共轭的 Eisenstein 素数因子；
-3.  素数 $3$ 的因子 $(3+\sqrt{3}\mathrm{i})/2$，它的共轭与它相伴．
+1.  Integer primes of the form $3k+2$, i.e., $2$ and primes of the form $6k+5$;
+2.  The two conjugate Eisenstein prime factors of an integer prime of the form $3k+1$ (that is, of the form $6k+1$);
+3.  The factor $(3+\sqrt{3}\mathrm{i})/2$ of the prime $3$, whose conjugate is its associate.
 
-利用上一节的方法，可以求出范数为 $n$ 的 Eisenstein 整数的数目．设这个数目为 $f(n)$，则它就等于
+Using the method of the previous section, we can count the Eisenstein integers with norm $n$. Call this number $f(n)$. Then
 
 $$
 f(n)=6\sum_{d\mid n}\left(\dfrac{-3}{d}\right)=6\sum_{d\mid n}\chi_{3,2}(d). 
 $$
 
-其中，$\chi_{3,2}(n)=\left(\dfrac{-3}{n}\right)$ 是模 $3$ 的实 Dirichlet 特征．该表达式说明，这样的 Eisenstein 整数存在，当且仅当 $n$ 的全部 $3k+2$ 型素因子的指数都是偶数．
+Here $\chi_{3,2}(n)=\left(\dfrac{-3}{n}\right)$ is the real Dirichlet character modulo $3$. This expression shows that such Eisenstein integers exist if and only if every prime factor of $n$ of the form $3k+2$ has an even exponent.
 
-利用前文的范数公式，$f(n)$ 也是不定方程 $x^2-xy+y^2=n$ 或不定方程 $x^2+xy+y^2=n$ 的整数解的数目．它对应的几何意义是斜椭圆 $x^2\pm xy+y^2=n$ 上的整点数目．
+By the norm formula above, $f(n)$ is also the number of integer solutions of the Diophantine equation $x^2-xy+y^2=n$, or of $x^2+xy+y^2=n$. Geometrically, it is the number of lattice points on the tilted ellipse $x^2\pm xy+y^2=n$.
 
-与这些方程密切相关的是另一个不定方程 $x^2+3y^2=n$，它的整数解对应着标准椭圆上的整点．做变量代换 $x=(u+v)/2$ 和 $y=(u-v)/2$ 可以将它转化为已经解决的方程 $u^2-uv+v^2=n$．但是，虽然 $x^2+3y^2=n$ 的整数解总对应着 $u^2-uv+v^2=n$ 的整数解，反过来却不一定正确．如果 $n$ 是偶数，那么 $u$ 和 $v$ 必然都是偶数，这意味着 $x$ 和 $y$ 必然是整数，此时 $x^2+3y^2=n$ 的整数解的数目仍然是 $f(n)$．但是，如果 $n$ 是奇数，那么 $u$ 和 $v$ 可能一奇一偶，也可能都是奇数，因而相对应的 $x$ 和 $y$ 可能都是半整数或者都是整数．这种情形需要更细致的讨论．
+Closely related to these equations is another Diophantine equation, $x^2+3y^2=n$, whose integer solutions correspond to lattice points on an axis-aligned ellipse. The substitution $x=(u+v)/2$ and $y=(u-v)/2$ turns it into the already solved equation $u^2-uv+v^2=n$. However, while every integer solution of $x^2+3y^2=n$ gives an integer solution of $u^2-uv+v^2=n$, the converse is not always true. If $n$ is even, then $u$ and $v$ must both be even, which means $x$ and $y$ must be integers, so the number of integer solutions of $x^2+3y^2=n$ is still $f(n)$. But if $n$ is odd, $u$ and $v$ may be one odd and one even, or both odd, so the corresponding $x$ and $y$ may both be half-integers or both be integers. This case needs a closer look.
 
-当已知方程 $u^2-uv+v^2=n$ 一个整数解 $(u,v)$ 时，与 $u+v\omega$ 相伴的 Eisenstein 整数（含自身）对应的整数解分别是
+Given one integer solution $(u,v)$ of $u^2-uv+v^2=n$, the integer solutions corresponding to the Eisenstein integers associated with $u+v\omega$ (including itself) are
 
 $$
 (u,v),(u-v,u),(-v,u-v),(-u,-v),(v-u,-u),(v,v-u).
 $$
 
-因为 $u,v,u-v$ 三个整数只要不全是偶数，必然是两个奇数一个偶数，所以这六组整数解中必然有两组全是奇数，四组一奇一偶．这说明，当 $n$ 为奇数时，方程 $u^2-uv+v^2=n$ 的整数解中只有 $\dfrac13$ 全是奇数，此时它才能够对应 $x^2+3y^2=n$ 的整数解．因而，当 $n$ 为奇数时，$x^2+3y^2=n$ 的整数解的数目为 $\dfrac13f(n)$．
+If the three integers $u,v,u-v$ are not all even, then exactly two are odd and one is even. So among these six solutions, two have both entries odd and four have one odd and one even entry. This shows that when $n$ is odd, only $\dfrac13$ of the integer solutions of $u^2-uv+v^2=n$ have both entries odd, and only those correspond to integer solutions of $x^2+3y^2=n$. So when $n$ is odd, the number of integer solutions of $x^2+3y^2=n$ is $\dfrac13f(n)$.
 
-最后，类似于解决勾股方程的方法，可以利用 Eisenstein 整数解决如下不定方程：
+Finally, in the same way as for the Pythagorean equation, Eisenstein integers can solve the following Diophantine equations:
 
 $$
 x^2-xy+y^2=z^2
@@ -333,9 +333,9 @@ $$
 x^2+3y^2=z^3
 $$
 
-它们的通解在此不再赘述．类似的方法还可以用于证明 $x^3+y^3=z^3$ 无解．
+We won't write out their general solutions here. A similar method can also prove that $x^3+y^3=z^3$ has no solutions.
 
-## 参考文献与注释
+## References and notes
 
 -   [Quadratic field - Wikipedia](https://en.wikipedia.org/wiki/Quadratic_field)
 -   [Quadratic integer - Wikipedia](https://en.wikipedia.org/wiki/Quadratic_integer)
@@ -347,4 +347,4 @@ $$
 -   [Franz Lemmermeyer's Notes on Ideals in Quadratic Number Fields](http://www.fen.bilkent.edu.tr/~franz/ant/ant02.pdf)
 -   [J.S. Milne - Algebraic Number Theory](https://www.jmilne.org/math/CourseNotes/ANT301.pdf)
 
-[^omega]: 注意，此处 $\omega$ 的选择与上文的选择并不相同．按照惯例，在讨论一般的二次整数环时常规定 $\omega=(1+\sqrt{d})/2$（当 $d\equiv 1\pmod4$ 时），而对于 Eisenstein 整数环又往往规定 $\omega=(-1+\sqrt{-3})/2$．这个区别没有任何实质影响，但是可能会引起部分表达式的形式改变．注意，不应将 Eisenstein 整数环写成 $\mathbf Z[\sqrt{-3}]$．
+[^omega]: Note that this choice of $\omega$ differs from the one above. By convention, when discussing general rings of quadratic integers one usually sets $\omega=(1+\sqrt{d})/2$ (when $d\equiv 1\pmod4$), while for the ring of Eisenstein integers one usually sets $\omega=(-1+\sqrt{-3})/2$. The difference has no real effect, but it may change the form of some expressions. Note that the ring of Eisenstein integers should not be written as $\mathbf Z[\sqrt{-3}]$.

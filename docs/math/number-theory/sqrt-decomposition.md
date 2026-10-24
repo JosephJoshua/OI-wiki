@@ -1,142 +1,142 @@
-数论分块可以快速计算一些形如
+Number-theoretic sqrt decomposition (also known as division blocks) quickly computes sums of the form
 
 $$
 \sum_{i=1}^nf(i)g\left(\left\lfloor\dfrac ni\right\rfloor\right)
 $$
 
-的和式．如果可以在 $O(1)$ 时间内计算出 $\sum_{i=l}^{r}f(i)$ 或已经预处理出 $f$ 的前缀和，数论分块就可以在 $O(\sqrt{n})$ 时间内计算出上述和式的值．
+If $\sum_{i=l}^{r}f(i)$ can be computed in $O(1)$ time, or the prefix sums of $f$ have been precomputed, sqrt decomposition computes the value of this sum in $O(\sqrt{n})$ time.
 
-数论分块常与 [莫比乌斯反演](./mobius.md) 等技巧结合使用．
+Sqrt decomposition is often combined with techniques such as [Möbius inversion](./mobius.md).
 
-## 思路
+## Idea
 
-首先，本文通过一个简单的例子来说明数论分块的思路．假设要计算如图所示的双曲线下的整点个数：
+We start with a simple example to show the idea. Suppose we want to count the lattice points under the hyperbola shown below:
 
-![双曲线下整点](./images/sqrt-decomposition.svg)
+![Lattice points under a hyperbola](./images/sqrt-decomposition.svg)
 
-这相当于在计算和式：
+This is the same as computing the sum:
 
 $$
 \sum_{i=1}^{11}\left\lfloor\dfrac{11}{i}\right\rfloor.
 $$
 
-这是前文所示和式在 $f(k)=1,~g(k)=k$ 时的特殊情况．
+This is the special case of the sum above with $f(k)=1,~g(k)=k$.
 
-最简单的做法当然是逐列计算然后求和，但是这样需要计算第 $i=1,2,\cdots,11$ 列中每列整点的个数．观察图示可以发现，这些整点列可以分成 $5$ 块，每块内点列的高度是一致的，形成一个矩形点阵．所以，只要能够知道这些块的宽度，就能够通过计算这些矩形块的大小快速完成统计．
+The simplest approach is of course to count column by column and add up, but that needs the number of lattice points in each column $i=1,2,\cdots,11$. Looking at the figure, these columns can be grouped into $5$ blocks. Within each block, all columns have the same height, forming a rectangular grid of points. So if we know the widths of these blocks, we can count quickly by computing the sizes of these rectangles.
 
-这就是数论分块的基本思路．
+This is the basic idea of sqrt decomposition.
 
-## 性质
+## Properties
 
-本节讨论关于双曲线 $y = \dfrac{n}{x}$ 下整点分块的若干结论．具体地，需要将 $1\sim n$ 之间的整数按照 $\left\lfloor\dfrac{n}{i}\right\rfloor$ 的取值分为若干块．设
+This section gives some results about splitting the lattice points under the hyperbola $y = \dfrac{n}{x}$ into blocks. Specifically, we split the integers from $1$ to $n$ into blocks by the value of $\left\lfloor\dfrac{n}{i}\right\rfloor$. Let
 
 $$
 D(n) = \left\{\left\lfloor\dfrac{n}{i}\right\rfloor : 1 \le i \le n,~i\in\mathbf N_+\right\}.
 $$
 
-这就是 $\left\lfloor\dfrac{n}{i}\right\rfloor$ 所有可能的取值集合．
+This is the set of all possible values of $\left\lfloor\dfrac{n}{i}\right\rfloor$.
 
-首先，这样的不同取值只有 $O(\sqrt{n})$ 个．所以，数论分块得到的块的数目只有 $O(\sqrt{n})$ 个．
+First, there are only $O(\sqrt{n})$ distinct values. So sqrt decomposition produces only $O(\sqrt{n})$ blocks.
 
-???+ note "性质 1"
-    $|D(n)|\le 2\sqrt{n}$．
+???+ note "Property 1"
+    $|D(n)|\le 2\sqrt{n}$.
 
-??? note "证明"
-    分两种情况讨论：
+??? note "Proof"
+    There are two cases:
     
-    -   当 $i\le\sqrt{n}$ 时，$i$ 的取值至多 $\sqrt{n}$ 个，所以 $\left\lfloor\dfrac{n}{i}\right\rfloor$ 的取值也至多只有 $\sqrt{n}$ 个．
-    -   当 $i>\sqrt{n}$ 时，$\left\lfloor\dfrac{n}{i}\right\rfloor \le\dfrac{n}{i} < \sqrt{n}$ 也至多只有 $\sqrt{n}$ 个取值．
+    -   When $i\le\sqrt{n}$, $i$ takes at most $\sqrt{n}$ values, so $\left\lfloor\dfrac{n}{i}\right\rfloor$ also takes at most $\sqrt{n}$ values.
+    -   When $i>\sqrt{n}$, $\left\lfloor\dfrac{n}{i}\right\rfloor \le\dfrac{n}{i} < \sqrt{n}$, which also allows at most $\sqrt{n}$ values.
     
-    因此，所有可能取值的总数 $|D(n)|\le 2\sqrt{n}$．
+    So the total number of possible values is $|D(n)|\le 2\sqrt{n}$.
 
-通过更细致的分析，实际上可以精确地描述集合 $D(n)$ 及其大小．
+With a more careful analysis, we can describe the set $D(n)$ and its size exactly.
 
-???+ note "性质 2"
-    设 $s = \lfloor\sqrt{n}\rfloor$．集合 $D(n)$ 中的元素从小到大依次是
+???+ note "Property 2"
+    Let $s = \lfloor\sqrt{n}\rfloor$. The elements of $D(n)$ in increasing order are
     
     $$
     1 < 2 < \cdots < s-1 < s \le \left\lfloor\dfrac{n}{s}\right\rfloor < \left\lfloor\dfrac{n}{s-1}\right\rfloor < \cdots < \left\lfloor\dfrac{n}{2}\right\rfloor < \left\lfloor\dfrac{n}{1}\right\rfloor = n.
     $$
     
-    进而，$|D(n)| = \lfloor \sqrt{4n+1}\rfloor - 1$．
+    Hence $|D(n)| = \lfloor \sqrt{4n+1}\rfloor - 1$.
 
-??? note "证明"
-    首先，对于 $1 \le i \le s$，可以证明 $\left\lfloor\dfrac{n}{\lfloor n/i\rfloor}\right\rfloor = i$．令 $d = \left\lfloor\dfrac{n}{i}\right\rfloor$，需要证明 $\left\lfloor\dfrac{n}{d}\right\rfloor = i$．写成不等式，这相当于已知 $d \le \dfrac{n}{i} < d + 1$，需要证明 $i \le \dfrac{n}{d} < i + 1$．已知条件可以写作 $i\le\dfrac{n}{d} < i + \dfrac{i}{d}$，因此，只需要证明 $\dfrac{i}{d} \le 1$，亦即 $i \le d = \left\lfloor\dfrac{n}{i}\right\rfloor$．这等价于 $i \le \dfrac{n}{i}$，这对于所有 $1 \le i \le s \le \sqrt{n}$ 都成立．
+??? note "Proof"
+    First, for $1 \le i \le s$, we can show that $\left\lfloor\dfrac{n}{\lfloor n/i\rfloor}\right\rfloor = i$. Let $d = \left\lfloor\dfrac{n}{i}\right\rfloor$; we need to show $\left\lfloor\dfrac{n}{d}\right\rfloor = i$. As inequalities: given $d \le \dfrac{n}{i} < d + 1$, we need to show $i \le \dfrac{n}{d} < i + 1$. The given condition can be written as $i\le\dfrac{n}{d} < i + \dfrac{i}{d}$, so we only need $\dfrac{i}{d} \le 1$, that is, $i \le d = \left\lfloor\dfrac{n}{i}\right\rfloor$. This is equivalent to $i \le \dfrac{n}{i}$, which holds for all $1 \le i \le s \le \sqrt{n}$.
     
-    这一结果实际上说明，映射 $i \mapsto \left\lfloor\dfrac{n}{i}\right\rfloor$ 构成集合 $\{i:1\le i \le s\}$ 和集合 $\left\{\left\lfloor\dfrac{n}{i}\right\rfloor: 1\le i\le s\right\}$ 之间的双射．由于 $i$ 各不相同，$\left\lfloor\dfrac{n}{i}\right\rfloor$ 也各不相同．两个集合唯一有可能相同的元素就是 $s$ 与 $\left\lfloor\dfrac{n}{s}\right\rfloor$．所以，$|D(n)|=2s - \left[s = \lfloor n/s\rfloor\right]$．
+    This result shows that the map $i \mapsto \left\lfloor\dfrac{n}{i}\right\rfloor$ is a bijection between the set $\{i:1\le i \le s\}$ and the set $\left\{\left\lfloor\dfrac{n}{i}\right\rfloor: 1\le i\le s\right\}$. Since the $i$ are distinct, the values $\left\lfloor\dfrac{n}{i}\right\rfloor$ are distinct too. The only element the two sets might share is $s$ and $\left\lfloor\dfrac{n}{s}\right\rfloor$. So $|D(n)|=2s - \left[s = \lfloor n/s\rfloor\right]$.
     
-    要得到 $|D(n)|$ 最终的表达式，需要考察何时 $s = \left\lfloor\dfrac{n}{s}\right\rfloor$ 成立．
+    To get the final expression for $|D(n)|$, we need to find when $s = \left\lfloor\dfrac{n}{s}\right\rfloor$ holds.
     
-    -   当 $s = \left\lfloor\dfrac{n}{s}\right\rfloor$ 时，总有 $s \le \dfrac{n}{s} < s + 1$，亦即 $s^2 \le n < s^2+s$．此时，有 $4s^2 + 1 \le 4n + 1 < 4s^2+4s+1 = (2s+1)^2$．又因为 $4n+1$ 一定是奇数，左侧可以等价地松弛到 $4s^2$，所以该条件就等价于 $2s \le \sqrt{4n+1} < 2s+1$，亦即 $\lfloor \sqrt{4n+1}\rfloor = 2s$．
-    -   当 $s < \left\lfloor\dfrac{n}{s}\right\rfloor$ 时，总有 $s + 1 \le \dfrac{n}{s}$，亦即 $s^2 + s\le n$．又因为 $n < (s+1)^2$，就有 $s^2 + s\le n < (s+1)^2$．这就等价于 $(2s+1)^2\le 4n+1 < 4(s+1)^2+1$．再次利用 $4n+1$ 是奇数这一点，右侧可以等价地收紧到 $4(s+1)^2$，所以该条件就等价于 $2s+1\le\sqrt{4n+1} < 2s+2$，亦即 $\lfloor \sqrt{4n+1}\rfloor = 2s+1$．
+    -   When $s = \left\lfloor\dfrac{n}{s}\right\rfloor$, we have $s \le \dfrac{n}{s} < s + 1$, that is, $s^2 \le n < s^2+s$. Then $4s^2 + 1 \le 4n + 1 < 4s^2+4s+1 = (2s+1)^2$. Since $4n+1$ is always odd, the left side can be relaxed to $4s^2$ without changing anything, so the condition is equivalent to $2s \le \sqrt{4n+1} < 2s+1$, that is, $\lfloor \sqrt{4n+1}\rfloor = 2s$.
+    -   When $s < \left\lfloor\dfrac{n}{s}\right\rfloor$, we have $s + 1 \le \dfrac{n}{s}$, that is, $s^2 + s\le n$. Also $n < (s+1)^2$, so $s^2 + s\le n < (s+1)^2$. This is equivalent to $(2s+1)^2\le 4n+1 < 4(s+1)^2+1$. Using again that $4n+1$ is odd, the right side can be tightened to $4(s+1)^2$, so the condition is equivalent to $2s+1\le\sqrt{4n+1} < 2s+2$, that is, $\lfloor \sqrt{4n+1}\rfloor = 2s+1$.
     
-    总结这两种情形，就得到 $|D(n)| = \lfloor \sqrt{4n+1}\rfloor - 1$ 成立．
+    Putting the two cases together gives $|D(n)| = \lfloor \sqrt{4n+1}\rfloor - 1$.
 
-然后，单个块的左右端点都很容易确定．
+Next, the left and right endpoints of each block are easy to find.
 
-???+ note "性质 3"
-    对于 $d\in D(n)$，所有满足 $\left\lfloor\dfrac{n}{i}\right\rfloor=d$ 的整数 $i$ 的取值范围为
+???+ note "Property 3"
+    For $d\in D(n)$, the integers $i$ with $\left\lfloor\dfrac{n}{i}\right\rfloor=d$ are exactly those in the range
     
     $$
     \left\lfloor\dfrac{n}{d+1}\right\rfloor + 1\le i \le \left\lfloor\dfrac{n}{d}\right\rfloor.
     $$
 
-??? note "证明"
-    因为 $\left\lfloor\dfrac{n}{i}\right\rfloor=d$ 相当于不等式
+??? note "Proof"
+    $\left\lfloor\dfrac{n}{i}\right\rfloor=d$ is the same as the inequality
     
     $$
     d\le \dfrac{n}{i} < d+1.
     $$
     
-    这进一步等价于
+    This is further equivalent to
     
     $$
     \dfrac{n}{d+1} < i\le \dfrac{n}{d}.
     $$
     
-    利用 $i\in\mathbf N_+$ 这一点，可以对该不等式取整，它就等价于
+    Since $i\in\mathbf N_+$, we can take floors in this inequality, and it becomes
     
     $$
     \left\lfloor\dfrac{n}{d+1}\right\rfloor + 1 \le i\le \left\lfloor\dfrac{n}{d}\right\rfloor.
     $$
 
-这一性质还体现了图像的对称性：每个块的右端点（前文图中的绿点）的集合恰为 $D(n)$．这很容易理解，因为整个图像关于直线 $y=x$ 是对称的．
+This property also reflects the symmetry of the picture: the set of right endpoints of the blocks (the green points in the figure above) is exactly $D(n)$. This is easy to see, since the whole picture is symmetric about the line $y=x$.
 
-除了这些性质外，集合 $D(n)$ 还具有良好的递归性质：
+Besides these properties, the set $D(n)$ also has a nice recursive property:
 
-???+ note "性质 4"
-    对于 $m\in D(n)$，有 $D(m)\subseteq D(n)$．
+???+ note "Property 4"
+    For $m\in D(n)$, $D(m)\subseteq D(n)$.
 
-??? note "证明"
-    设 $m = \left\lfloor\dfrac{n}{k}\right\rfloor$，那么，因为对于所有 $i\in\mathbf N_+$，都有
+??? note "Proof"
+    Let $m = \left\lfloor\dfrac{n}{k}\right\rfloor$. Then for all $i\in\mathbf N_+$,
     
     $$
     \left\lfloor\dfrac{m}{i}\right\rfloor = \left\lfloor\dfrac{\lfloor n/k\rfloor}{i}\right\rfloor = \left\lfloor\dfrac{n}{ki}\right\rfloor \in D(n),
     $$
     
-    所以，$D(m)\subseteq D(n)$．其中，第二个等号用到了 [取整函数](./basic.md#取整函数) 关于嵌套分式的性质．
+    so $D(m)\subseteq D(n)$. The second equality uses the property of the [floor function](./basic.md#取整函数) for nested fractions.
 
-前文已经提到，$D(n)$ 既是每块中 $\left\lfloor\dfrac{n}{i}\right\rfloor$ 的取值集合，也是每块的右端点集合．这意味着，如果要递归地应用数论分块（即函数在 $n$ 处的值依赖于它在 $m\in D(n)\setminus\{n\}$ 处的值），那么在整个计算过程中所涉及的取值集合和右端点集合，其实都是 $D(n)$．一个典型的例子是 [杜教筛](./hyperbola.md#杜教筛)．
+As mentioned above, $D(n)$ is both the set of values of $\left\lfloor\dfrac{n}{i}\right\rfloor$ over the blocks and the set of right endpoints of the blocks. This means that if we apply sqrt decomposition recursively (i.e., the value of a function at $n$ depends on its values at $m\in D(n)\setminus\{n\}$), then the set of values and the set of right endpoints involved in the whole computation are both just $D(n)$. A typical example is [Du's sieve](./hyperbola.md#杜教筛).
 
-## 过程
+## Process
 
-利用上一节叙述的结论，就得到数论分块的具体过程．
+Using the results of the previous section, we get the concrete process of sqrt decomposition.
 
-为计算和式
+To compute the value of the sum
 
 $$
 \sum_{i=1}^nf(i)g\left(\left\lfloor\dfrac ni\right\rfloor\right)
 $$
 
-的取值，可以依据 $\left\lfloor\dfrac ni\right\rfloor$ 的取值将标号 $i=1,2,\cdots,n$ 分块．因为 $\left\lfloor\dfrac ni\right\rfloor$ 取值相同的标号是一段连续整数 $[l,r]$，所以该块中和式的取值为
+we can split the indices $i=1,2,\cdots,n$ into blocks by the value of $\left\lfloor\dfrac ni\right\rfloor$. The indices with the same value of $\left\lfloor\dfrac ni\right\rfloor$ form a range of consecutive integers $[l,r]$, so the contribution of this block to the sum is
 
 $$
 \left(\sum_{i=l}^rf(i)\right)\cdot g\left(\left\lfloor\dfrac nl\right\rfloor\right).
 $$
 
-为了快速计算该和式，通常需要能够快速计算左侧关于 $f$ 的和式．有些时候，该和式的表达式是已知的，可以在 $O(1)$ 时间内完成单次计算；有些时候，可以预处理出它的前缀和，仍然可以在 $O(1)$ 时间内完成单次查询．
+To compute this quickly, we usually need to compute the sum over $f$ on the left quickly. Sometimes a closed form for this sum is known, so each evaluation takes $O(1)$ time. Other times we can precompute its prefix sums, so each query still takes $O(1)$ time.
 
-在顺次计算每块左右端点时，当前块的左端点 $l$ 就等于前一块的右端点再加 $1$，而当前块的右端点就等于 $\left\lfloor\dfrac n{\lfloor n/l\rfloor}\right\rfloor$．由此，可以得到如下伪代码：
+When going through the blocks in order, the left endpoint $l$ of the current block is the right endpoint of the previous block plus $1$, and the right endpoint of the current block is $\left\lfloor\dfrac n{\lfloor n/l\rfloor}\right\rfloor$. This gives the following pseudocode:
 
 $$
 \begin{array}{l}
@@ -157,143 +157,143 @@ $$
 \end{array}
 $$
 
-假设单次计算 $s(\cdot)$ 的时间复杂度为 $O(1)$，则整个过程的时间复杂度为 $O(\sqrt{n})$．
+If each evaluation of $s(\cdot)$ takes $O(1)$ time, the whole process takes $O(\sqrt{n})$ time.
 
-## 扩展
+## Extensions
 
-前文讨论的是数论分块的最常见也最基本的形式．本节进一步讨论数论分块的扩展形式．
+So far we have covered the most common and basic form of sqrt decomposition. This section discusses extended forms.
 
-### 向上取整的数论分块
+### Sqrt decomposition with ceilings
 
-数论分块可以用于计算含有向上取整的和式：
+Sqrt decomposition can compute sums with ceilings:
 
 $$
 \sum_{i=1}^nf(i)g\left(\left\lceil\dfrac ni\right\rceil\right).
 $$
 
-因为 $\left\lceil\dfrac ni\right\rceil = \left\lfloor\dfrac {n-1}i\right\rfloor + 1$，该和式可以转化为向下取整的情形：
+Since $\left\lceil\dfrac ni\right\rceil = \left\lfloor\dfrac {n-1}i\right\rfloor + 1$, this sum can be turned into the floor case:
 
 $$
 f(n)g(1) + \sum_{i=1}^{n-1}f(i)g\left(\left\lfloor\dfrac {n-1}i\right\rfloor + 1\right).
 $$
 
-注意到求和的上限发生了变化，以及 $i=n$ 时单独的一项．
+Note the change in the upper limit of the sum, and the separate term for $i=n$.
 
-### 多维数论分块
+### Multi-dimensional sqrt decomposition
 
-数论分块还可以用于处理包含不止一个取整式的和式：
+Sqrt decomposition can also handle sums with more than one floor expression:
 
 $$
 \sum_{i=1}^{n}f(i)g\left(\left\lfloor\dfrac {n_1}i\right\rfloor,\left\lfloor\dfrac {n_2}i\right\rfloor,\cdots,\left\lfloor\dfrac {n_m}i\right\rfloor\right).
 $$
 
-其中，通常有 $n\le\min\{n_1,n_2,\cdots,n_m\}$，否则需要单独处理某个 $\lfloor n_j/i\rfloor=0$ 的情形．为了应用数论分块的思想，需要保证每块中所有取整式 $\left\lfloor\dfrac {n_1}i\right\rfloor,\left\lfloor\dfrac {n_2}i\right\rfloor,\cdots,\left\lfloor\dfrac {n_m}i\right\rfloor$ 的取值都不发生变化，也就是说，多维的块应当是所有一维的块的交集．为此，对于已知的左端点 $l$，相应的右端点为
+Usually $n\le\min\{n_1,n_2,\cdots,n_m\}$; otherwise the cases where some $\lfloor n_j/i\rfloor=0$ need separate handling. To apply the idea of sqrt decomposition, we need every floor expression $\left\lfloor\dfrac {n_1}i\right\rfloor,\left\lfloor\dfrac {n_2}i\right\rfloor,\cdots,\left\lfloor\dfrac {n_m}i\right\rfloor$ to stay constant within each block. In other words, the multi-dimensional blocks should be the intersections of all the one-dimensional blocks. So for a known left endpoint $l$, the corresponding right endpoint is
 
 $$
 \min\left\{\left\lfloor\dfrac {n_1}{\lfloor n_1/l\rfloor}\right\rfloor,\left\lfloor\dfrac {n_2}{\lfloor n_2/l\rfloor}\right\rfloor,\cdots,\left\lfloor\dfrac {n_m}{\lfloor n_m/l\rfloor}\right\rfloor\right\}.
 $$
 
-也就是说，对于所有一维分块的右端点取最小值，作为多维分块的右端点．可以借助下图理解：
+That is, take the minimum of the right endpoints of all one-dimensional blocks as the right endpoint of the multi-dimensional block. The figure below helps:
 
-![多维数论分块图解](./images/n-dimension-sqrt-decomposition.svg)
+![Illustration of multi-dimensional sqrt decomposition](./images/n-dimension-sqrt-decomposition.svg)
 
-较为常见的是二维形式，此时可将前述伪代码中 $r \gets \left\lfloor \dfrac{n}{\lfloor n/l \rfloor}\right\rfloor$ 替换成
+The two-dimensional form is the most common. In that case, replace $r \gets \left\lfloor \dfrac{n}{\lfloor n/l \rfloor}\right\rfloor$ in the pseudocode above with
 
 $$
 r \gets \min\left\{\left\lfloor \dfrac{n_1}{\lfloor n_1/l \rfloor}\right\rfloor,\left\lfloor \dfrac{n_2}{\lfloor n_2/l \rfloor}\right\rfloor\right\}.
 $$
 
-### 任意指数数论分块
+### Sqrt decomposition with arbitrary exponents
 
-数论分块可以用于含有任意指数的取整式的和式计算：
+Sqrt decomposition can compute sums whose floor expressions have arbitrary exponents:
 
 $$
 \sum_{i=1}^{\lfloor n^{\alpha/\beta}\rfloor}f(i)g\left(\left\lfloor\dfrac {n^\alpha}{i^\beta}\right\rfloor\right).
 $$
 
-其中，$\alpha,\beta$ 为正实数．本文讨论的基本形式中，$\alpha=\beta=1$．
+Here $\alpha,\beta$ are positive real numbers. The basic form discussed on this page has $\alpha=\beta=1$.
 
-???+ note "性质"
-    对于正整数 $n$ 和正实数 $\alpha, \beta$，设
+???+ note "Properties"
+    For a positive integer $n$ and positive real numbers $\alpha, \beta$, let
     
     $$
     D(n,\alpha,\beta) = \left\{\left\lfloor\dfrac{n^\alpha}{i^\beta}\right\rfloor: i=1,2,\cdots,\lfloor n^{\alpha/\beta}\rfloor\right\}.
     $$
     
-    那么，有
+    Then
     
-    1.  $|D(n,\alpha,\beta)|\le 2n^{\alpha/(1+\beta)}$．
-    2.  对于 $d\in D(n,\alpha,\beta)$，使得 $\left\lfloor\dfrac{n^\alpha}{i^\beta}\right\rfloor=d$ 成立的 $i$ 的取值范围为
+    1.  $|D(n,\alpha,\beta)|\le 2n^{\alpha/(1+\beta)}$.
+    2.  For $d\in D(n,\alpha,\beta)$, the values of $i$ with $\left\lfloor\dfrac{n^\alpha}{i^\beta}\right\rfloor=d$ are exactly those in the range
     
         $$
         \left\lfloor\dfrac{n^{\alpha/\beta}}{(d+1)^{1/\beta}}\right\rfloor + 1\le i \le \left\lfloor\dfrac{n^{\alpha/\beta}}{d^{1/\beta}}\right\rfloor.
         $$
 
-??? note "证明"
-    对于第一点，分两种情况：
+??? note "Proof"
+    For the first claim, there are two cases:
     
-    -   当 $i\le \dfrac{n^\alpha}{i^\beta}$ 时，有 $i\le n^{\alpha/(1+\beta)}$，所以 $\left\lfloor\dfrac{n^\alpha}{i^\beta}\right\rfloor$ 至多有 $n^{\alpha/(1+\beta)}$ 种取值．
-    -   当 $i > \dfrac{n^\alpha}{i^\beta}$ 时，有 $i> n^{\alpha/(1+\beta)}$，进而有 $\dfrac{n^\alpha}{i^\beta} < n^{\alpha/(1+\beta)}$，所以 $\left\lfloor\dfrac{n^\alpha}{i^\beta}\right\rfloor$ 也至多只有 $n^{\alpha/(1+\beta)}$ 种取值．
+    -   When $i\le \dfrac{n^\alpha}{i^\beta}$, we have $i\le n^{\alpha/(1+\beta)}$, so $\left\lfloor\dfrac{n^\alpha}{i^\beta}\right\rfloor$ takes at most $n^{\alpha/(1+\beta)}$ values.
+    -   When $i > \dfrac{n^\alpha}{i^\beta}$, we have $i> n^{\alpha/(1+\beta)}$, and so $\dfrac{n^\alpha}{i^\beta} < n^{\alpha/(1+\beta)}$. So $\left\lfloor\dfrac{n^\alpha}{i^\beta}\right\rfloor$ also takes at most $n^{\alpha/(1+\beta)}$ values.
     
-    综合两种情形，就有 $|D(n,\alpha,\beta)|\le 2n^{\alpha/(1+\beta)}$．
+    Combining the two cases gives $|D(n,\alpha,\beta)|\le 2n^{\alpha/(1+\beta)}$.
     
-    对于第二点，$\left\lfloor\dfrac{n^\alpha}{i^\beta}\right\rfloor=d$ 就等价于
+    For the second claim, $\left\lfloor\dfrac{n^\alpha}{i^\beta}\right\rfloor=d$ is equivalent to
     
     $$
     d \le \dfrac{n^\alpha}{i^\beta} < d+1 \iff \dfrac{n^{\alpha/\beta}}{(d+1)^{1/\beta}} < i \le \dfrac{n^{\alpha/\beta}}{d^{1/\beta}}.
     $$
     
-    对该不等式取整，就得到第二个命题．
+    Taking floors in this inequality gives the second claim.
 
-利用这些性质，就可以在 $O(n^{\alpha/(1+\beta)})$ 的时间复杂度下实现对任意指数的数论分块．
+With these properties, sqrt decomposition with arbitrary exponents runs in $O(n^{\alpha/(1+\beta)})$ time.
 
-???+ example "例子"
-    例如，对于 $\alpha=\beta=1/2$ 时的如下和式
+???+ example "Example"
+    For example, with $\alpha=\beta=1/2$, the sum
     
     $$
     \sum_{i=1}^nf(i)g\left(\left\lfloor\sqrt{\dfrac {n}{i}}\right\rfloor\right),
     $$
     
-    可以通过数论分块在 $O(n^{1/3})$ 时间内解决．已知块的左端点为 $l$ 时，可以计算右端点为 $r=\left\lfloor\dfrac{n}{\lfloor\sqrt{n/l}\rfloor^2}\right\rfloor$．
+    can be computed with sqrt decomposition in $O(n^{1/3})$ time. Given the left endpoint $l$ of a block, the right endpoint is $r=\left\lfloor\dfrac{n}{\lfloor\sqrt{n/l}\rfloor^2}\right\rfloor$.
 
-## 例题
+## Example problems
 
 ???+ example "[UVa11526 H(n)](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=27&page=show_problem&problem=2521)"
-    $T$ 组数据，每组一个整数 $n$．对于每组数据，输出 $\sum_{i=1}^n\left\lfloor\dfrac ni\right\rfloor$．
+    There are $T$ test cases, each with one integer $n$. For each test case, output $\sum_{i=1}^n\left\lfloor\dfrac ni\right\rfloor$.
 
-??? note "解答"
-    根据前文分析，可以对于每一块相同的 $\left\lfloor\dfrac ni\right\rfloor$ 一起计算．时间复杂度为 $O(T\sqrt n)$．
+??? note "Solution"
+    By the analysis above, we can handle each block with the same value of $\left\lfloor\dfrac ni\right\rfloor$ at once. The time complexity is $O(T\sqrt n)$.
 
-??? note "实现"
+??? note "Implementation"
     ```cpp
     --8<-- "docs/math/code/sqrt-decomposition/sqrt-decomposition_1.cpp"
     ```
 
 ???+ example "[Codeforces 1954E Chain Reaction](https://codeforces.com/contest/1954/problem/E)"
-    有一排 $n$ 只怪兽，每只怪兽初始血量为 $a_i$．一次攻击会使一段连续的存活的怪兽血量减 $k$，血量不大于 $0$ 视作死亡．对于所有 $k$ 求出击杀所有怪兽所需攻击次数．其中，$n,a_i\leq 10^5$．
+    There is a row of $n$ monsters, and monster $i$ starts with $a_i$ health. One attack reduces the health of a contiguous segment of living monsters by $k$; a monster whose health is at most $0$ dies. For every $k$, find the number of attacks needed to kill all monsters. Here $n,a_i\leq 10^5$.
 
-??? note "解答"
-    令 $a_0=0$．假设击杀所有前 $(i-1)$ 只怪兽需要 $T(k,i-1)$ 次攻击，第 $i$ 只怪兽的血量为 $a_i$．由于击杀第 $(i-1)$ 只怪兽时，需要攻击它 $\lceil a_{i-1}/k\rceil$ 次，这些攻击都可以延伸到第 $i$ 只怪兽．因此，要击杀第 $i$ 只怪兽，只需要再攻击 $\max\{0,\lceil a_i/k\rceil-\lceil a_{i-1}/k\rceil\}$ 次．由此，总的攻击次数为
+??? note "Solution"
+    Let $a_0=0$. Suppose killing the first $(i-1)$ monsters takes $T(k,i-1)$ attacks, and monster $i$ has health $a_i$. Killing monster $(i-1)$ takes $\lceil a_{i-1}/k\rceil$ attacks on it, and all of these attacks can be extended to monster $i$. So killing monster $i$ only takes $\max\{0,\lceil a_i/k\rceil-\lceil a_{i-1}/k\rceil\}$ more attacks. So the total number of attacks is
     
     $$
     T(k,n)=\sum_{i=1}^n\max\left\{0,\left\lceil\dfrac{a_i}{k}\right\rceil-\left\lceil\dfrac{a_{i-1}}{k}\right\rceil\right\}.
     $$
     
-    由于题目涉及的 $n,k$ 都比较大，对每个 $k$ 分别计算该和式并不可行．可以考虑对每个 $i=1,2,\cdots,n$，都维护数列 $\{T(k,i)\}_k$．初始时，设 $T(k,0)\equiv 0$．假设数列 $\{T(k,i-1)\}_k$ 已知，考虑如何对它进行修改才能得到数列 $\{T(k,i)\}_k$．根据前文分析，只需要对数列的第 $k$ 项增加 $\max\left\{0,\left\lceil\dfrac{a_i}{k}\right\rceil-\left\lceil\dfrac{a_{i-1}}{k}\right\rceil\right\}$ 即可．利用二维数论分块，可以将这一修改操作拆分成 $O(\sqrt{a_{i-1}}+\sqrt{a_i})$ 段区间修改操作，且每段区间上增加的值是固定的．最后得到的数列 $\{T(k,n)\}_k$ 就是答案．
+    Since $n$ and $k$ are both fairly large, computing this sum separately for each $k$ is too slow. Instead, for each $i=1,2,\cdots,n$, we maintain the sequence $\{T(k,i)\}_k$. Initially, $T(k,0)\equiv 0$. Suppose the sequence $\{T(k,i-1)\}_k$ is known; how do we update it to get $\{T(k,i)\}_k$? By the analysis above, we just add $\max\left\{0,\left\lceil\dfrac{a_i}{k}\right\rceil-\left\lceil\dfrac{a_{i-1}}{k}\right\rceil\right\}$ to the $k$-th term. Using two-dimensional sqrt decomposition, this update splits into $O(\sqrt{a_{i-1}}+\sqrt{a_i})$ range updates, each adding a fixed value to a range. The final sequence $\{T(k,n)\}_k$ is the answer.
     
-    由于题目涉及一系列区间加操作，且查询只发生在所有修改完成后．所以，可以通过维护差分序列进行区间加修改，最后通过求前缀和得到所求数列．总的时间复杂度为 $O(\max_i a_i+\sum_i\sqrt{a_i})$．本题也存在其他解法．
+    The problem involves a series of range additions, and all queries come after all updates. So we can do the range additions on a difference array and get the sequence we want with prefix sums at the end. The total time complexity is $O(\max_i a_i+\sum_i\sqrt{a_i})$. There are other solutions to this problem too.
 
-??? note "实现"
+??? note "Implementation"
     ```cpp
     --8<-- "docs/math/code/sqrt-decomposition/sqrt-decomposition_2.cpp"
     ```
 
-## 习题
+## Exercises
 
 -   [UVa11526 H(n)](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=27&page=show_problem&problem=2521)
--   [Luogu P2261 CQOI2007 余数求和](https://www.luogu.com.cn/problem/P2261)
+-   [Luogu P2261 CQOI2007 Sum of Remainders](https://www.luogu.com.cn/problem/P2261)
 -   [Luogu P3455 POI2007 ZAP-Queries](https://www.luogu.com.cn/problem/P3455)
 
-## 参考资料与注释
+## References and notes
 
--   [杜教筛的时空复杂度分析 by riteme](https://riteme.site/blog/2018-9-11/time-space-complexity-dyh-algo.html)
+-   [Time and space complexity analysis of Du's sieve, by riteme](https://riteme.site/blog/2018-9-11/time-space-complexity-dyh-algo.html)
