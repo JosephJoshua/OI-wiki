@@ -1,30 +1,30 @@
 author: sshwy, FFjet, qz-cqy
 
-## 引入
+## Introduction
 
-类欧几里得算法是洪华敦在 2016 年冬令营营员交流中提出的内容．它常用于解决形如
+The Euclidean-like algorithm was presented by Hong Huadun in a talk at the 2016 Winter Camp. It is mostly used to find sums of sequences (indexed by $i$) of the form
 
 $$
 \left\lfloor\dfrac{ai+b}{c}\right\rfloor
 $$
 
-结构的数列（下标为 $i$）的求和问题．它的主要想法是，利用分数自身的递归结构，将问题转化为更小规模的问题，递归求解．因为分数的递归结构和 [欧几里得算法](./gcd.md#欧几里得算法) 存在直接的 [联系](./continued-fraction.md#连分数表示的求法)，因此，这一求和方法也称为类欧几里得算法．
+The main idea is to use the recursive structure of fractions to reduce the problem to a smaller one and solve it recursively. Because the recursive structure of fractions is directly [related](./continued-fraction.md#连分数表示的求法) to the [Euclidean algorithm](./gcd.md#欧几里得算法), this summation method is called the Euclidean-like algorithm.
 
-因为 [连分数](./continued-fraction.md) 和 [Stern–Brocot 树](./stern-brocot.md) 等方法同样刻画了分数的递归结构，所以利用类欧几里得算法可以解决的问题，通常也可以用这些方法解决．与这些方法相比，类欧几里得算法通常更容易理解，它的实现也更为简明．
+Methods such as [continued fractions](./continued-fraction.md) and the [Stern–Brocot tree](./stern-brocot.md) describe the same recursive structure of fractions, so problems solvable with the Euclidean-like algorithm can usually be solved with them too. Compared with those methods, the Euclidean-like algorithm is usually easier to understand and simpler to implement.
 
-## 类欧几里得算法
+## Euclidean-like algorithm
 
-最简单的例子，就是求和问题：
+The simplest example is the sum:
 
 $$
 f(a,b,c,n)=\sum_{i=0}^n\left\lfloor \frac{ai+b}{c} \right\rfloor,
 $$
 
-其中，$a,b,c,n$ 都是正整数．
+where $a,b,c,n$ are all positive integers.
 
-### 代数解法
+### Algebraic approach
 
-首先，将 $a,b$ 对 $c$ 取模，可以简化问题，将问题转化为 $0\le a,b<c$ 的情形：
+First, reduce $a,b$ modulo $c$. This simplifies the problem to the case $0\le a,b<c$:
 
 $$
 \begin{aligned}
@@ -38,20 +38,20 @@ f(a,b,c,n)&=\sum_{i=0}^n\left\lfloor \frac{ai+b}{c} \right\rfloor\\
 \end{aligned}
 $$
 
-现在，考虑转化后的问题．令
+Now consider the reduced problem. Let
 
 $$
 m = \left\lfloor \frac{an+b}{c} \right\rfloor.
 $$
 
-那么，原问题可以写作二次求和式：
+Then the original sum can be written as a double sum:
 
 $$
 \sum_{i=0}^n\left\lfloor \frac{ai+b}{c} \right\rfloor
 =\sum_{i=0}^n\sum_{j=0}^{m-1}\left[j<\left\lfloor \frac{ai+b}{c} \right\rfloor\right].
 $$
 
-交换求和次序，这需要对于每个 $j$ 计算满足条件的 $i$ 的范围．为此，将条件变形：
+We want to swap the order of summation, which requires finding, for each $j$, the range of $i$ that satisfies the condition. To do this, rewrite the condition:
 
 $$
 \begin{aligned}
@@ -63,7 +63,7 @@ $$
 \end{aligned}
 $$
 
-变形过程中多次利用了 [取整函数](./basic.md#取整函数) 的性质．代入变形后的条件，原式可以写作：
+These steps use properties of the [floor and ceiling functions](./basic.md#取整函数) several times. Substituting the rewritten condition, the sum becomes:
 
 $$
 \begin{aligned}
@@ -74,79 +74,79 @@ f(a,b,c,n)&=\sum_{j=0}^{m-1}
 \end{aligned}
 $$
 
-令 $(a',b',c',n')=(c,c-b-1,a,m-1)$，这就又回到了前面讨论过的 $a'>c'$ 的情形．
+Let $(a',b',c',n')=(c,c-b-1,a,m-1)$. This brings us back to the case $a'>c'$ discussed above.
 
-将这两步转化结合在一起，可以发现在过程中，$(a,c)$ 不断地取模后交换位置，直到 $a=0$．这就类似于对 $(a,c)$ 进行辗转相除，这也是类欧几里得算法的得名．它的时间复杂度是 $O(\log\min\{a,c\})$ 的．
+Putting the two steps together, we see that $(a,c)$ is repeatedly reduced modulo and then swapped, until $a=0$. This is just like running the Euclidean algorithm on $(a,c)$, which is where the name comes from. The time complexity is $O(\log\min\{a,c\})$.
 
-在计算过程中，可能会出现 $m=0$ 的情形，此时内层递归会出现 $n=-1$．这并不影响最终的结果．但是，如果在出现 $m=0$ 时直接终止算法，那么算法的时间复杂度可以改良为 $O(\log\min\{a,c,n\})$ 的．
+During the computation, we may get $m=0$, in which case the inner recursive call has $n=-1$. This does not affect the final result. However, if we stop the algorithm as soon as $m=0$, the time complexity improves to $O(\log\min\{a,c,n\})$.
 
-??? note "对复杂度的解释"
-    利用该算法和欧几里得算法的相似性，很容易说明它的时间复杂度是 $O(\log\min\{a,c\})$ 的．因此，只需要说明，如果在 $m=0$ 时终止算法，那么它的时间复杂度也是 $O(\log n)$ 的．
+??? note "Complexity explanation"
+    Because of the similarity between this algorithm and the Euclidean algorithm, it is easy to see that the time complexity is $O(\log\min\{a,c\})$. So we only need to show that if we stop when $m=0$, the time complexity is also $O(\log n)$.
     
-    令 $m=\lfloor(an+b)/c\rfloor$，并记 $S=mn$，$k=m/n$，它们分别相当于几何直观（见下一节）中点阵图的面积和直线的斜率．对于充分大的 $n$，近似有 $k\doteq a/c$．
+    Let $m=\lfloor(an+b)/c\rfloor$, and write $S=mn$ and $k=m/n$. In the geometric view (see the next section), these are the area of the lattice region and the slope of the line. For large enough $n$, approximately $k\doteq a/c$.
     
-    考察 $S$ 和 $k$ 在算法过程中的变化．第一步取模时，$n$ 保持不变，$k$ 近似由 $a/c$ 变为 $(a\bmod c)/c$，相当于斜率由 $k$ 变为 $k-\lfloor k\rfloor$，而 $S$ 也近似变为原来的 $(k-\lfloor k\rfloor)/k$ 倍．第二步交换横纵坐标时，$S$ 近似保持不变，$k$ 则变为它的倒数．因此，若设两步操作后，二元组 $(k,S)$ 变为 $(k',S')$，则有 $k'=(k-\lfloor k\rfloor)^{-1}$ 且 $S'=\dfrac{k-\lfloor k\rfloor}{k}S\le (k-\lfloor k\rfloor)S$，因为从第二轮开始，每轮开始时总有 $k\ge 1$．
+    Look at how $S$ and $k$ change during the algorithm. In the first step (taking remainders), $n$ stays the same and $k$ changes from about $a/c$ to about $(a\bmod c)/c$; that is, the slope goes from $k$ to $k-\lfloor k\rfloor$, and $S$ becomes about $(k-\lfloor k\rfloor)/k$ times its old value. In the second step (swapping the axes), $S$ stays about the same and $k$ becomes its reciprocal. So if after these two steps the pair $(k,S)$ becomes $(k',S')$, then $k'=(k-\lfloor k\rfloor)^{-1}$ and $S'=\dfrac{k-\lfloor k\rfloor}{k}S\le (k-\lfloor k\rfloor)S$, because from the second round on, $k\ge 1$ at the start of each round.
     
-    因为 $1\le\lfloor k'\rfloor\le k'<\lfloor k'\rfloor+1$，所以，递归计算两轮后，$S$ 至多变为原来的
+    Since $1\le\lfloor k'\rfloor\le k'<\lfloor k'\rfloor+1$, after two rounds of recursion, $S$ becomes at most the following fraction of its old value:
     
     $$
     (k'-\lfloor k'\rfloor)(k-\lfloor k\rfloor) = 1-\dfrac{\lfloor k'\rfloor}{k'} < 1-\dfrac{\lfloor k'\rfloor}{\lfloor k'\rfloor+1} = \dfrac{1}{\lfloor k'\rfloor+1}\le \dfrac{1}{2}.
     $$
     
-    因此，至多 $O(\log S)$ 轮，算法必然终止．因为从第二轮开始，每轮开始时的 $S$ 总是不超过上一轮取模结束后的 $S$，而后者大致为 $kn^2$ 且 $k<1$，因而 $O(\log S)\subseteq O(\log n)$．这就得到了上述结论．
+    So the algorithm stops after at most $O(\log S)$ rounds. From the second round on, $S$ at the start of each round is at most the $S$ after the previous round's remainder step, which is about $kn^2$ with $k<1$. So $O(\log S)\subseteq O(\log n)$, which proves the claim.
 
-模板题的参考实现如下：
+A reference implementation for the template problem:
 
-??? example "模板题实现（[Library Checker - Sum of Floor of Linear](https://judge.yosupo.jp/problem/sum_of_floor_of_linear)）"
+??? example "Template problem implementation ([Library Checker - Sum of Floor of Linear](https://judge.yosupo.jp/problem/sum_of_floor_of_linear))"
     ```cpp
     --8<-- "docs/math/code/euclidean/euclidean-0.cpp:full-text"
     ```
 
-### 几何直观
+### Geometric view
 
-这个算法还可以从几何的角度理解．类欧几里得算法可以解决的问题主要是直线下整点计数问题．
+The algorithm can also be understood geometrically. The problems the Euclidean-like algorithm solves are mainly about counting lattice points under a line.
 
-如下图最左部分所示，该求和式相当于求直线
+As shown in the leftmost part of the figure below, the sum counts the lattice points below the line
 
 $$
 y = \dfrac{ax+b}{c}
 $$
 
-下方，$x$ 轴上方（不包括 $x$ 轴），且横坐标位于 $[0,n]$ 之间的格点数目．
+above the $x$-axis (not including the $x$-axis), with $x$-coordinate in $[0,n]$.
 
 ![](./images/euclidean-1.svg)
 
-首先，移除斜率和截距中的整数部分．这一步相当于将上图中间部分的蓝点数量单独计算出来．当斜率和截距都是整数时，蓝点一定构成一个梯形阵列，也就是说，不同纵列的格点形成等差数列，因而这些点的数量是容易计算的．将这些点移除后，剩余的格点和上图最右部分的红点数量一致．问题就转化成了斜率和截距都小于一的情形．因为梯形的高为 $n+1$ 且两个底边长度分别为 $\lfloor b/c\rfloor$ 和 $(\lfloor a/c\rfloor n+\lfloor b/c\rfloor)$，所以，利用梯形面积公式，这一步骤可以归纳为算式
+First, remove the integer parts of the slope and the intercept. This step counts the blue points in the middle part of the figure separately. When the slope and intercept are both integers, the blue points always form a trapezoid: the numbers of points in the columns form an arithmetic sequence, so they are easy to count. After removing them, the remaining lattice points match the red points in the rightmost part of the figure, and the problem becomes one where the slope and intercept are both less than one. The trapezoid has height $n+1$ and bases of length $\lfloor b/c\rfloor$ and $(\lfloor a/c\rfloor n+\lfloor b/c\rfloor)$, so by the trapezoid area formula, this step can be summarized as
 
 $$
 f(a,b,c,n) = f(a\bmod c,b\bmod c,c,n) + \dfrac{1}{2}(n+1)\left(\left\lfloor\dfrac{b}{c}\right\rfloor+\left(\left\lfloor\dfrac{a}{c}\right\rfloor n+\left\lfloor\dfrac{b}{c}\right\rfloor\right)\right).
 $$
 
-然后，翻转横纵坐标轴．如下图最左部分所示，图中的红点和蓝点构成了一个横向长度为 $n$、纵向长度为 $m=\lfloor(an+b)/c\rfloor$ 的矩形点阵．要计算红点的数量，只需要计算蓝点的数量，再用矩形点阵的数量减去蓝点的数量即可．翻转后，上图左半部分中的蓝点点阵就变成了某条直线下的红色点阵．而且，翻转后，斜率大于一，就又回到了上文已经处理过的情形．
+Next, swap the axes. As shown in the leftmost part of the figure below, the red and blue points together form a rectangular grid of width $n$ and height $m=\lfloor(an+b)/c\rfloor$. To count the red points, we can count the blue points and subtract that from the size of the rectangle. After swapping the axes, the blue points in the left part of the figure become the red points under some line. And after swapping, the slope is greater than one, so we are back to the case already handled above.
 
 ![](./images/euclidean-2.svg)
 
-关键在于如何计算新的红色点阵上方的直线的方程．将上图最左部分的横纵坐标轴翻转，就得到上图中间部分．翻转后的红色点阵上方的直线（中间部分的实线），并非对应翻转前的直线（最左部分的实线），而是翻转前的直线向左上平移一点点的结果（最左部分的虚线）．这是因为，如果直接将直线（最左部分的实线）翻转，将得到中间部分的虚线，但是按照定义，它下方的格点包括恰好落在直线上的格点，这就会导致直线上的格点重复计数．为了避免这一点，需要将翻转直线 $y=(ax+b)/c$ 后得到的直线 $y=(cx-b)/a$ 向下平移一点点，得到直线 $y=(cx-b-1)/a$，这样它下方的点阵才恰为翻转前的蓝色点阵．
+The key question is how to find the equation of the line above the new red points. Swapping the axes of the leftmost part of the figure gives the middle part. The line above the swapped red points (the solid line in the middle part) does not correspond to the original line (the solid line in the leftmost part), but to the original line shifted slightly up and to the left (the dashed line in the leftmost part). The reason is that if we swapped the original line (the solid line in the leftmost part) directly, we would get the dashed line in the middle part. But by definition, the points "under" a line include the lattice points lying exactly on it, so the lattice points on the line would be counted twice. To avoid this, we shift the swapped line $y=(cx-b)/a$ (obtained from $y=(ax+b)/c$) down slightly, to get $y=(cx-b-1)/a$. Then the points under it are exactly the blue points from before the swap.
 
-还有另一处细节需要处理．上图中间部分的直线的截距是负数，这意味着还没有回到之前的初始情形．要让截距恢复为非负数，只需要将直线（中间部分的实线）向左平移一个单位．这样做不会漏掉任何格点，因为翻转前的蓝色点阵中没有纵坐标为零的点，翻转后也就不存在横坐标为零的点．最后，直线方程就变为 $y=(cx+c-b-1)/a$；同时，点阵的横坐标的上界也从 $m$ 变成了 $m-1$．这一步骤可以归纳为算式
+There is one more detail. The line in the middle part has a negative intercept, which means we are not yet back to the initial form. To make the intercept nonnegative, shift the line (the solid line in the middle part) one unit to the left. This does not lose any lattice points: before the swap, no blue point has $y$-coordinate zero, so after the swap no point has $x$-coordinate zero. In the end, the line becomes $y=(cx+c-b-1)/a$, and the upper bound on the $x$-coordinates changes from $m$ to $m-1$. This step can be summarized as
 
 $$
 f(a,b,c,n) = mn - f(c,c-b-1,a,m-1).
 $$
 
-这种递归的算法行得通，主要有两个原因：
+This recursive algorithm works for two main reasons:
 
--   第一，直线的斜率不断地先取小数部分再取倒数，这等价于计算直线斜率 $k=a/c$ 的 [连分数展开](./continued-fraction.md#连分数表示的求法)．因为有理分数的连分数展开的长度是 $O(\log\min\{a,c\})$ 的，所以这一过程一定在 $O(\log\min\{a,c\})$ 步后终止；
--   第二，因为每次翻转坐标轴的时候，直线斜率都是小于一的，因此，直觉上应该有 $m<n$，也就是说，经过这样一轮迭代后，横坐标的范围一直是在缩小的．前文的复杂度计算中通过严格的分析说明，每两轮迭代后，$S=mn$ 至多为原来的一半，故而这一过程一定在 $O(\log n)$ 步后终止．
+-   First, the slope of the line repeatedly takes its fractional part and then its reciprocal. This is exactly computing the [continued fraction expansion](./continued-fraction.md#连分数表示的求法) of the slope $k=a/c$. The continued fraction of a rational number has length $O(\log\min\{a,c\})$, so the process ends after $O(\log\min\{a,c\})$ steps;
+-   Second, each time we swap the axes, the slope is less than one, so intuitively $m<n$. That is, after each round, the range of $x$-coordinates keeps shrinking. The complexity analysis above shows rigorously that every two rounds, $S=mn$ drops to at most half, so the process ends after $O(\log n)$ steps.
 
-这也是斜率为有理数时的类欧几里得算法的复杂度是 $O(\log\min\{a,c,n\})$ 的原因．
+This is why the Euclidean-like algorithm with rational slope runs in $O(\log\min\{a,c,n\})$.
 
-利用类似的几何直观，可以将类欧几里得算法推广到斜率为无理数的情形，具体分析请参考后文的例题．
+Using a similar geometric view, the Euclidean-like algorithm can be extended to irrational slopes. See the example problems below for details.
 
-### 例题
+### Example problems
 
-???+ example "[【模板】类欧几里得算法](https://www.luogu.com.cn/problem/P5170)"
-    多组询问．给定正整数 $a,b,c,n$，求
+???+ example "[[Template] Euclidean-like Algorithm](https://www.luogu.com.cn/problem/P5170)"
+    There are multiple queries. Given positive integers $a,b,c,n$, find
     
     $$
     \begin{aligned}
@@ -156,10 +156,10 @@ $$
     \end{aligned}
     $$
 
-??? note "解答一"
-    类似于 $f$ 的推导，可以得到 $g,h$ 的递归表达式．
+??? note "Solution 1"
+    Following the derivation for $f$, we can get recursive formulas for $g$ and $h$.
     
-    首先，利用取模，将问题转化为 $0\le a,b<c$ 的情形：
+    First, take remainders to reduce to the case $0\le a,b<c$:
     
     $$
     \begin{aligned}
@@ -173,13 +173,13 @@ $$
     \end{aligned}
     $$
     
-    然后，利用交换求和次序，可以进一步转化．同样地，令
+    Then swap the order of summation to transform further. Again, let
     
     $$
     m = \left\lfloor \frac{an+b}{c} \right\rfloor.
     $$
     
-    那么，对于和式 $g$，有
+    Then for the sum $g$,
     
     $$
     \begin{aligned}
@@ -193,7 +193,7 @@ $$
     \end{aligned}
     $$
     
-    对于和式 $h$，有
+    For the sum $h$,
     
     $$
     \begin{aligned}
@@ -206,29 +206,29 @@ $$
     \end{aligned}
     $$
     
-    从几何直观的角度看，这些非线性的求和式相当于给区域中的每个点 $(i,j)$ 都赋予了相应的权重 $w(i,j)$．除了这些权重之外，其余部分的计算过程是完全一致的．对于权重的选择，一般地，有
+    Geometrically, these nonlinear sums give each point $(i,j)$ in the region a weight $w(i,j)$. Apart from the weights, the computation is exactly the same. In general, the weights can be chosen as
     
     $$
     \sum_{i=0}^ni^r\left\lfloor \frac{ai+b}{c} \right\rfloor^s = \sum_{i=0}^n\sum_{j=0}^{m-1} i^r\left((j+1)^s-j^s\right)\left[j<\left\lfloor\frac{ai+b}{c}\right\rfloor\right].
     $$
     
-    本题的另一个特点是，$g$ 和 $h$ 在递归计算时，会相互交错．因此，需要将 $(f,g,h)$ 作为三元组同时递归．
+    Another feature of this problem is that the recursions for $g$ and $h$ call each other. So we need to recurse on the triple $(f,g,h)$ all at once.
     
     ```cpp
     --8<-- "docs/math/code/euclidean/euclidean-1.cpp"
     ```
 
-???+ example "[\[清华集训 2014\] Sum](https://www.luogu.com.cn/problem/P5172)"
-    多组询问．给定正整数 $n$ 和 $r$，求
+???+ example "[\[Tsinghua Training Camp 2014\] Sum](https://www.luogu.com.cn/problem/P5172)"
+    There are multiple queries. Given positive integers $n$ and $r$, find
     
     $$
     \sum_{d=1}^n(-1)^{\lfloor d\sqrt{r}\rfloor}.
     $$
 
-??? note "解答一"
-    如果 $r$ 是完全平方数，那么当 $\sqrt{r}$ 为偶数时，和式为 $n$；否则，和式依据 $n$ 奇偶性不同，在 $0$ 和 $-1$ 之间交替变化．下面考虑 $r$ 不是完全平方数的情形．
+??? note "Solution 1"
+    If $r$ is a perfect square, then when $\sqrt{r}$ is even the sum is $n$; otherwise the sum alternates between $0$ and $-1$ depending on the parity of $n$. Below we consider the case where $r$ is not a perfect square.
     
-    为了应用类欧几里得算法，首先将求和式转化为熟悉的形式：
+    To apply the Euclidean-like algorithm, first rewrite the sum in a familiar form:
     
     $$
     \begin{aligned}
@@ -239,19 +239,19 @@ $$
     \end{aligned}
     $$
     
-    其中的函数 $f$ 具有形式
+    Here the function $f$ has the form
     
     $$
     f(a,b,c,n) = \sum_{i=1}^n\left\lfloor\dfrac{a\sqrt{r}+b}{c}i\right\rfloor.
     $$
     
-    与正文中的算法不同的是，此处的斜率不再是有理数．设斜率
+    Unlike the algorithm in the main text, the slope here is no longer rational. Let the slope be
     
     $$
     k = \dfrac{a\sqrt{r}+b}{c}.
     $$
     
-    同样分为两种情形讨论．如果 $k\ge 1$，那么
+    Again there are two cases. If $k\ge 1$, then
     
     $$
     \begin{aligned}
@@ -260,7 +260,7 @@ $$
     \end{aligned}
     $$
     
-    问题转化为斜率小于一的情形．如果 $k<1$，那么设 $m=\lfloor nk\rfloor$，有
+    This reduces the problem to a slope less than one. If $k<1$, let $m=\lfloor nk\rfloor$. Then
     
     $$
     \begin{aligned}
@@ -269,190 +269,190 @@ $$
     \end{aligned}
     $$
     
-    此处的推导中，交换 $i$ 和 $j$ 的条件比正文中的情形更为简单，是因为直线 $y=kx$ 上没有除了原点之外的格点．关键在于交换后的求和式写成 $f(a,b,c,n)$ 的形式，这相当于要求 $a',b',c'$ 满足
+    In this derivation, swapping $i$ and $j$ is simpler than in the main text, because the line $y=kx$ passes through no lattice points other than the origin. The key is to write the swapped sum in the form $f(a,b,c,n)$, which means finding $a',b',c'$ with
     
     $$
     k^{-1} = \dfrac{a'\sqrt{r}+b'}{c'}.
     $$
     
-    这并不困难，只需要将分母有理化，就能得到
+    This is not hard: rationalizing the denominator gives
     
     $$
     k^{-1} = \dfrac{c}{a\sqrt{r}+b} = \dfrac{ca\sqrt{r}-cb}{a^2r-b^2}.
     $$
     
-    因此，有
+    So
     
     $$
     a'=ca,~b'=-cb,~c'=a^2r-b^2.
     $$
     
-    这说明
+    This means
     
     $$
     f(a,b,c,n) = nm - f(ca,-cb,a^2r-b^2,m).
     $$
     
-    为了避免整数溢出，需要每次都将 $a,b,c$ 同除以它们的最大公约数．因为这个计算过程和计算 $k$ 的连分数的过程完全一致，所以根据 [连分数理论](./continued-fraction.md#二次无理数)，只要保证 $\gcd(a,b,c)=1$，它们在计算过程中必然在整型范围内．另外，尽管 $(a,b,c,n)$ 不会溢出，但是在该题数据范围下，$f(a,b,c,n)$ 可能会超过 $64$ 位整数的范围，自然溢出即可，无需额外处理，最后结果一定在 $[-n,n]$ 之间．
+    To avoid integer overflow, divide $a,b,c$ by their greatest common divisor each time. This computation is exactly the same as computing the continued fraction of $k$, so by [continued fraction theory](./continued-fraction.md#二次无理数), as long as $\gcd(a,b,c)=1$, the values always stay within the integer range. Also, although $(a,b,c,n)$ never overflows, under this problem's constraints $f(a,b,c,n)$ may exceed the range of $64$-bit integers. Letting it overflow naturally is fine and needs no extra handling; the final result is always in $[-n,n]$.
     
-    尽管斜率不会变为零，算法的复杂度仍然是 $O(\log n)$ 的，这一点从前文关于算法复杂度的论证容易看出．
+    Even though the slope never becomes zero, the algorithm still runs in $O(\log n)$, which is easy to see from the complexity argument above.
     
     ```cpp
     --8<-- "docs/math/code/euclidean/euclidean-2.cpp"
     ```
 
 ???+ example "[Fraction](https://www.luogu.com.cn/problem/P5179)"
-    给定正整数 $a,b,c,d$，求所有满足 $a/b<p/q<c/d$ 的最简分数 $p/q$ 中 $(q,p)$ 的字典序最小的那个．
+    Given positive integers $a,b,c,d$, among all reduced fractions $p/q$ with $a/b<p/q<c/d$, find the one whose pair $(q,p)$ is lexicographically smallest.
 
-??? note "解答"
-    这道题目也是 [Stern–Brocot 树](./stern-brocot.md) 的经典应用，相关题解可以在 [此处](./continued-fraction.md#连分数的树) 找到．因为它只依赖于分数的递归结构，所以它同样可以利用类似欧几里得算法的方法求解，故而也可以视作类欧几里得算法的一个应用．
+??? note "Solution"
+    This problem is also a classic application of the [Stern–Brocot tree](./stern-brocot.md); a solution can be found [here](./continued-fraction.md#连分数的树). Since it only depends on the recursive structure of fractions, it can also be solved in a Euclidean-like way, so it can be seen as an application of the Euclidean-like algorithm as well.
     
-    如果 $a/b$ 和 $c/d$ 之间（不含端点）存在至少一个自然数，可以直接取 $(q,p)=(1,\lfloor a/b\rfloor+1)$．否则，必然有
+    If there is at least one natural number strictly between $a/b$ and $c/d$, we can directly take $(q,p)=(1,\lfloor a/b\rfloor+1)$. Otherwise, we must have
     
     $$
     \left\lfloor\dfrac{a}{b}\right\rfloor \le \dfrac{a}{b} <\dfrac{p}{q} <\dfrac{c}{d}\le\left\lfloor\dfrac{a}{b}\right\rfloor+1.
     $$
     
-    从这个不等式中可以看出，$p/q$ 的整数部分可以确定为 $\lfloor a/b\rfloor$，直接消去该整数部分，然后整体取倒数，用于确定它的小数部分．这正是确定 $p/q$ 的连分数的 [基本方法](./continued-fraction.md#连分数表示的求法)．若最终的答案是 $p/q$，那么算法的时间复杂度为 $O(\log\min\{p,q\})$．
+    From this inequality, the integer part of $p/q$ must be $\lfloor a/b\rfloor$. Remove this integer part and take reciprocals of everything to determine the fractional part. This is exactly the [standard method](./continued-fraction.md#连分数表示的求法) for finding the continued fraction of $p/q$. If the final answer is $p/q$, the time complexity is $O(\log\min\{p,q\})$.
     
-    此处，有一个细节问题，即取倒数之后得到的字典序最小的分数，是否是取倒数之前的字典序最小的分数．换句话说，满足 $a/b<p/q<c/d$ 的分数 $p/q$ 中，字典序 $(q,p)$ 最小的，是否也是字典序 $(p,q)$ 最小的．假设不然，设 $p/q$ 是字典序 $(q,p)$ 最小的，但是 $r/s\neq p/q$ 是字典序 $(r,s)$ 最小的．这必然有 $r<p$ 且 $q<s$．但是，这说明
+    There is one subtle point: is the lexicographically smallest fraction after taking reciprocals the same as the lexicographically smallest one before? In other words, among fractions $p/q$ with $a/b<p/q<c/d$, is the one with the smallest $(q,p)$ also the one with the smallest $(p,q)$? Suppose not: let $p/q$ have the smallest $(q,p)$, but $r/s\neq p/q$ have the smallest $(r,s)$. Then we must have $r<p$ and $q<s$. But this means
     
     $$
     \dfrac{a}{b} < \dfrac{r}{s} < \dfrac{r}{q} < \dfrac{p}{q} < \dfrac{c}{d}.
     $$
     
-    因此，$r/q$ 无论按照哪个字典序都严格小于当前解．这与所设条件矛盾．因此，上述算法是正确的．
+    So $r/q$ is strictly smaller than the current solution in either lexicographic order, which is a contradiction. Therefore the algorithm above is correct.
     
     ```cpp
     --8<-- "docs/math/code/euclidean/euclidean-3.cpp"
     ```
 
-## 万能欧几里得算法
+## Universal Euclidean algorithm
 
-上一节讨论的类欧几里得算法推导通常较为繁琐，而且能够解决的和式主要是可以转化为直线下（带权）整点计数问题的和式．本节讨论一种更为一般的方法，它进一步抽象了上述过程，从而可以解决更多的问题．因此，这一方法也称为万能欧几里得算法．它同样利用了分数的递归结构求解问题，但是与类欧几里得算法约化问题的思路稍有不同．
+The derivations for the Euclidean-like algorithm in the previous section are often tedious, and the sums it can handle are mainly those that turn into counting (weighted) lattice points under a line. This section covers a more general method that abstracts the process further, so it can solve more problems. That is why it is called the universal Euclidean algorithm. It also uses the recursive structure of fractions, but its way of reducing the problem is a bit different from the Euclidean-like algorithm.
 
-仍然考虑最经典的求和问题：
+Again consider the most classic sum:
 
 $$
 f(a,b,c,n)=\sum_{i=1}^n\left\lfloor \frac{ai+b}{c} \right\rfloor,
 $$
 
-其中，$a,b,c,n$ 都是正整数．
+where $a,b,c,n$ are all positive integers.
 
-### 问题转化
+### Reformulating the problem
 
-设参数为 $(a,b,c,n)$ 的线段为
+Let the segment with parameters $(a,b,c,n)$ be
 
 $$
 y = \frac{ax+b}{c},~0< x\le n.
 $$
 
-对于这条线段，可以按照如下方法定义一个由 $U$ 和 $R$ 组成的字符串 $S$，也称为 **操作序列**：
+For this segment, define a string $S$ of $U$s and $R$s, called the **operation sequence**, as follows:
 
--   字符串恰由 $n$ 个 $R$ 和 $m=\lfloor(an+b)/c\rfloor$ 个 $U$ 组成；
--   第 $i$ 个 $R$ 前方的 $U$ 的数量恰等于 $\lfloor(ai+b)/c\rfloor$，其中，$i=1,\cdots,n$．
+-   The string consists of exactly $n$ $R$s and $m=\lfloor(an+b)/c\rfloor$ $U$s;
+-   The number of $U$s before the $i$-th $R$ is exactly $\lfloor(ai+b)/c\rfloor$, for $i=1,\cdots,n$.
 
-从几何直观上看，这大致相当于从原点开始，每向右穿过一次竖向的网格线，就写下一个 $R$，每向上穿过一次横向的网格线，就写下一个 $U$．如下图所示：
+Geometrically, this is roughly: start at the origin, and every time the segment crosses a vertical grid line going right, write an $R$; every time it crosses a horizontal grid line going up, write a $U$. See the figure below:
 
 ![](./images/euclidean-universal.svg)
 
-当然，这样的定义还需要考量一系列特殊情形：
+Of course, this definition has a few special cases to handle:
 
--   经过整点（即同时上穿和右穿）时，需要先写 $U$ 再写 $R$；
--   字符串开始时，除了在 $(0,1]$ 区间内上穿网格线的次数外，还需要额外补充 $\lfloor b/c\rfloor$ 个 $U$；
--   字符串结束时，不能有额外的 $U$．
+-   When passing through a lattice point (crossing up and right at the same time), write $U$ first, then $R$;
+-   At the start of the string, besides the number of horizontal lines crossed in $(0,1]$, add $\lfloor b/c\rfloor$ extra $U$s;
+-   The string must not end with extra $U$s.
 
-如果对于几何直观的描述有任何不明晰的地方，可以参考上述代数方法的定义辅助理解．几何直观的描述，有助于理解下文的算法过程．
+If anything about the geometric description is unclear, refer to the algebraic definition above. The geometric description helps in understanding the algorithm below.
 
-万能欧几里得算法的基本思路，就是将操作序列中的 $U$ 和 $R$ 都视作某个 [幺半群](../algebra/basic.md#群) 内的元素，将整个操作序列视为幺半群内元素的乘积，而问题最终的答案与这个乘积有关．
+The basic idea of the universal Euclidean algorithm is to treat $U$ and $R$ in the operation sequence as elements of some [monoid](../algebra/basic.md#群), and the whole operation sequence as a product of monoid elements. The final answer is related to this product.
 
-比如，本题中，可以定义状态向量 $v = (1,y,\sum y)$，表示自原点开始，经历了若干次上穿和右穿网格线后，当前的状态．其中，第一个分量是常数，第二个分量是纵坐标 $y$，第三个分量是要求的和式．起始时，有 $v=(1,0,0)$．每向上穿过一次网格线，纵坐标就累加一，即相当于将状态向量右乘以矩阵
+For example, in this problem, we can define a state vector $v = (1,y,\sum y)$ representing the current state after starting at the origin and crossing some grid lines. The first component is a constant, the second is the $y$-coordinate, and the third is the sum we want. Initially $v=(1,0,0)$. Each time we cross a grid line going up, the $y$-coordinate increases by one, which is the same as right-multiplying the state vector by the matrix
 
 $$
 U = \begin{pmatrix}1 & 1 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1\end{pmatrix}.
 $$
 
-每向右穿过一次网格线，和式就累加一次纵坐标，即相当于将状态向量右乘以矩阵
+Each time we cross a grid line going right, the sum adds the current $y$-coordinate, which is the same as right-multiplying the state vector by the matrix
 
 $$
 R = \begin{pmatrix}1 & 0 & 0 \\ 0 & 1 & 1 \\ 0 & 0 & 1\end{pmatrix}.
 $$
 
-因此，最终的状态就是乘积 $(1,0,0)S$，其中，$S$ 理解为上述矩阵的乘积．所求的答案，就是最终状态的第三个分量．
+So the final state is the product $(1,0,0)S$, where $S$ is understood as the product of the matrices above. The answer is the third component of the final state.
 
-除了将幺半群中的元素定义为矩阵以外，还可以将它们定义为一段操作序列对于最终结果的贡献，然后将操作的乘积定义为两段操作序列的贡献的合并．
+Instead of defining monoid elements as matrices, we can also define them as the contribution of a piece of the operation sequence to the final result, and define the product of operations as merging the contributions of two pieces.
 
-本题中，可以定义每段操作序列的贡献为 $(x,y,\sum y)$．为了严谨地解释这些记号，可以将这些分量都看作是操作序列的函数，也就是说，对于操作序列 $S$，它的贡献可以写作 $(x(S),y(S),(\sum y)(S))$．其中，$x(S)$ 和 $y(S)$ 分别对应着操作序列 $S$ 中 $R$ 和 $U$ 的数量，也就是该线段右穿和上穿网格线的次数．最后一项中的求和符号，一般地，有如下定义：对于操作序列上的函数 $f(S)$，可以定义 $(\sum f)(S)$，或记作 $\sum_S f$，为下面的表达式：
+In this problem, we can define the contribution of each piece as $(x,y,\sum y)$. To make this notation precise, think of each component as a function of the operation sequence: for an operation sequence $S$, its contribution is $(x(S),y(S),(\sum y)(S))$. Here $x(S)$ and $y(S)$ are the numbers of $R$s and $U$s in $S$, i.e., the number of times the segment crosses grid lines going right and going up. The summation in the last component is defined in general as follows: for a function $f(S)$ of operation sequences, define $(\sum f)(S)$, also written $\sum_S f$, as
 
 $$
 \sum_S f := \sum\{f(S_{[1,r]}):S_r=R\}.
 $$
 
-其中，$S_r$ 是 $S$ 中的第 $r$ 个字符，$S_{[1,r]}$ 是 $S$ 中前 $r$ 个字符组成的前缀．也就是说，这个求和记号，可以看作是对于操作序列 $S$ 中所有以 $R$ 结尾的前缀进行的求和．比如说，有
+Here $S_r$ is the $r$-th character of $S$, and $S_{[1,r]}$ is the prefix of $S$ made of its first $r$ characters. In other words, this sum runs over all prefixes of $S$ that end in $R$. For example,
 
 $$
 \sum_S 1 = x,~ \sum_S x = \dfrac{1}{2}x(x+1).
 $$
 
-再比如说，$\sum y$ 就是操作序列中，每次右穿网格线时，之前上穿网格线的次数的累加．对于整段操作序列来说，$y$ 在所有以 $R$ 结尾的前缀处的值，就是在 $i=1,\cdots,n$ 处的所有 $\lfloor(ai+b)/c\rfloor$ 的值．因此，对于整段操作序列计算的 $\sum y$，就是本题最终要求的量．
+As another example, $\sum y$ adds up, at each crossing to the right, the number of upward crossings so far. For the whole operation sequence, the values of $y$ at the prefixes ending in $R$ are exactly the values $\lfloor(ai+b)/c\rfloor$ for $i=1,\cdots,n$. So $\sum y$ over the whole operation sequence is exactly the quantity we want.
 
-两个操作分别为 $U=(0,1,0)$ 和 $R=(1,0,0)$．进一步，可以将两个元素 $(x_1,y_1,s_1)$ 和 $(x_2,y_2,s_2)$ 的乘积定义为
+The two operations are $U=(0,1,0)$ and $R=(1,0,0)$. The product of two elements $(x_1,y_1,s_1)$ and $(x_2,y_2,s_2)$ is defined as
 
 $$
 (x_1,y_1,s_1)\cdot (x_2,y_2,s_2) = (x_1+x_2,y_1+y_2,s_1+s_2+x_2y_1).
 $$
 
-其中，最后一项贡献合并的结果可以通过如下计算得到：
+The merged value of the last component comes from:
 
 $$
 \sum_{S_1+S_2}y = \sum_{S_1}y + \sum_{S_2}(y+y_1) = \sum_{S_1}y + \sum_{S_2}y + y_1\sum_{S_2}1 = s_1+s_2+x_2y_1.
 $$
 
-容易验证，这个乘法运算满足结合律，且单位元为 $(0,0,0)$，所以这些元素在该乘法运算下构成幺半群．所求的答案，就是乘积的第三个分量．
+It is easy to check that this multiplication is associative with identity $(0,0,0)$, so these elements form a monoid under it. The answer is the third component of the product.
 
-这两种方法都可以得到正确的结果．但是，因为保留了较多的冗余信息，矩阵运算的常数较大，所以第二种方法在处理实际问题时更为实用．
+Both approaches give the correct result. But the matrix version keeps more redundant information and has a larger constant factor, so the second approach is more practical for real problems.
 
-### 算法过程
+### How it works
 
-与类欧几里得算法整体约化不同，万能欧几里得算法约化问题的手段是将这些操作分批次地合并．记字符串对应的操作的乘积为
+Unlike the Euclidean-like algorithm, which reduces the whole problem at once, the universal Euclidean algorithm reduces the problem by merging operations in batches. Write the product of the operations in the string as
 
 $$
 F(a,b,c,n,U,R).
 $$
 
-约化过程具体如下：
+The reduction goes as follows:
 
--   当 $b\ge c$ 时，操作序列的开始有 $\lfloor b/c\rfloor$ 个 $U$，直接计算它们的乘积，并将这些 $U$ 从操作序列中移除．此时，第 $i$ 个 $R$ 前方的 $U$ 的数量等于
+-   When $b\ge c$, the operation sequence starts with $\lfloor b/c\rfloor$ $U$s. Compute their product directly and remove these $U$s from the sequence. Now the number of $U$s before the $i$-th $R$ is
 
     $$
     \left\lfloor\dfrac{ai+b}{c}\right\rfloor - \left\lfloor\dfrac{b}{c}\right\rfloor = \left\lfloor\dfrac{ai+(b\bmod c)}{c}\right\rfloor.
     $$
 
-    因此，这相当于将线段参数由 $(a,b,c,n)$ 变为 $(a,b\bmod c,c,n)$．所以，对于这种情形，有
+    So this changes the segment parameters from $(a,b,c,n)$ to $(a,b\bmod c,c,n)$. Hence in this case,
 
     $$
     F(a,b,c,n,U,R) = U^{\lfloor b/c\rfloor}F(a,b\bmod c,c,n,U,R).
     $$
 
--   当 $a\ge c$ 时，操作序列中每个 $R$ 的前方都至少有 $\lfloor a/c\rfloor$ 个 $U$，可以将它们合并到 $R$ 上．也就是说，可以用 $U^{\lfloor a/c\rfloor}R$ 替代 $R$．合并后的字符串中，第 $i$ 个 $R$ 前方的 $U$ 的数量等于
+-   When $a\ge c$, every $R$ in the operation sequence has at least $\lfloor a/c\rfloor$ $U$s in front of it, and these can be merged into the $R$. That is, we can replace $R$ with $U^{\lfloor a/c\rfloor}R$. In the merged string, the number of $U$s before the $i$-th $R$ is
 
     $$
     \left\lfloor\dfrac{ai+b}{c}\right\rfloor - \left\lfloor\dfrac{a}{c}\right\rfloor i = \left\lfloor\dfrac{(a\bmod c)i+b}{c}\right\rfloor.
     $$
 
-    因此，这相当于将线段参数由 $(a,b,c,n)$ 变为 $(a\bmod c,b,c,n)$．所以，对于这种情形，有
+    So this changes the segment parameters from $(a,b,c,n)$ to $(a\bmod c,b,c,n)$. Hence in this case,
 
     $$
     F(a,b,c,n,U,R) = F(a\bmod c,b,c,n,U,U^{\lfloor a/c\rfloor}R).
     $$
 
--   对于剩下的情形，需要翻转横纵坐标，这基本是在交换 $U$ 和 $R$，只是翻转后线段的参数需要仔细计算．结合操作序列的定义可知，需要确定系数 $(a',b',c',n')$ 使得变换前的操作序列中，第 $j$ 个 $U$ 前方的 $R$ 的数量恰为 $\lfloor(a'j+b')/c'\rfloor$ 且总共有 $n'$ 个 $U$．根据定义可知，
+-   In the remaining case, we swap the axes. This basically swaps $U$ and $R$, but the parameters of the swapped segment need careful computation. From the definition of the operation sequence, we need coefficients $(a',b',c',n')$ such that, in the original operation sequence, the number of $R$s before the $j$-th $U$ is exactly $\lfloor(a'j+b')/c'\rfloor$, and there are $n'$ $U$s in total. By definition,
 
     $$
     n'=\left\lfloor\dfrac{an+b}{c}\right\rfloor = m,
     $$
 
-    而第 $j$ 个 $U$ 前方的 $R$ 的数量，就等于最大的 $i$ 使得
+    and the number of $R$s before the $j$-th $U$ is the largest $i$ such that
 
     $$
     \begin{aligned}
@@ -462,49 +462,49 @@ $$
     \end{aligned}
     $$
 
-    因此，$i = \lfloor(cj-b-1)/a\rfloor$．这一推导过程与前文类欧几里得算法的推导类似，同样利用了上下取整函数的性质．
+    So $i = \lfloor(cj-b-1)/a\rfloor$. This derivation is similar to the one for the Euclidean-like algorithm above and also uses properties of the floor and ceiling functions.
 
-    有两处细节需要处理：
+    There are two details to handle:
 
-    -   截距项 $-(b+1)/a$ 为负数．注意到，如果将线段向左平移一个单位，就可以让截距项恢复为非负数，因为总有 $(c-b-1)/a\ge 0$．因此，可以将交换前的第一段 $R^{\lfloor(c-b-1)/a\rfloor}U$ 提取出来，只交换剩余操作序列中的 $U$ 和 $R$；
-    -   交换 $U$ 和 $R$ 后，结尾存在多余的 $U$．因此，交换 $U$ 和 $R$ 之前，需要首先将最后一段 $R$ 提取出来，只交换剩余操作序列中的 $U$ 和 $R$．这一段 $R$ 的数量为 $n-\lfloor(cm-b-1)/a\rfloor$．
+    -   The intercept $-(b+1)/a$ is negative. If we shift the segment one unit to the left, the intercept becomes nonnegative, since $(c-b-1)/a\ge 0$ always holds. So we can pull out the first piece $R^{\lfloor(c-b-1)/a\rfloor}U$ before swapping, and swap $U$ and $R$ only in the rest of the sequence;
+    -   After swapping $U$ and $R$, there would be extra $U$s at the end. So before swapping, we also pull out the last run of $R$s, and swap $U$ and $R$ only in the rest of the sequence. This run has $n-\lfloor(cm-b-1)/a\rfloor$ $R$s.
 
-    去掉头尾若干个字符后，第 $j$ 个 $U$ 前方的 $R$ 的数量变为：
+    After removing these characters from both ends, the number of $R$s before the $j$-th $U$ becomes:
 
     $$
     \left\lfloor\dfrac{c(j+1)-b-1}{a}\right\rfloor - \left\lfloor\dfrac{c-b-1}{a}\right\rfloor = \left\lfloor\dfrac{cj+(c-b-1)\bmod a}{a}\right\rfloor.
     $$
 
-    回忆起，交换前的序列中 $U$ 的数量为 $m = \lfloor(an+b)/c\rfloor$．而上述左移一个单位的操作，要求保证交换前至少存在一个 $U$，也就是 $m>0$．利用这一条件，可以分为两种情形：
+    Recall that the number of $U$s in the sequence before swapping is $m = \lfloor(an+b)/c\rfloor$. Shifting one unit to the left requires at least one $U$ before swapping, that is, $m>0$. Based on this, there are two cases:
 
-    -   对于 $m>0$ 的情形，处理了上面的两点后，交换完 $U$ 和 $R$ 的操作序列就是对应着参数为 $(c,(c-b-1)\bmod a,a,m-1)$ 的线段的合法序列．所以，有
+    -   When $m>0$, after handling the two points above, the sequence with $U$ and $R$ swapped is exactly a valid sequence for the segment with parameters $(c,(c-b-1)\bmod a,a,m-1)$. So
 
         $$
         F(a,b,c,n,U,R) = R^{\lfloor(c-b-1)/a\rfloor}UF(c,(c-b-1)\bmod a,a,m-1,R,U)R^{n-\lfloor(cm-b-1)/a\rfloor}.
         $$
 
-    -   特别地，对于 $m=0$ 的情形，交换前的操作序列中只包含 $n$ 个 $R$，无需交换，可以直接返回：
+    -   In particular, when $m=0$, the sequence before swapping contains only $n$ $R$s. There is nothing to swap, and we can return directly:
 
         $$
         F(a,b,c,n,U,R) = R^n.
         $$
 
-        与类欧几里得算法不同，万能欧几里得算法的这一特殊情形需要单独处理，否则会因涉及负幂次而无法正确计算．
+        Unlike in the Euclidean-like algorithm, this special case must be handled separately in the universal Euclidean algorithm; otherwise negative powers would come up and the result would be wrong.
 
-利用这些讨论，就可以将问题递归地解决．
+With these cases, the problem can be solved recursively.
 
-假设幺半群内元素单次相乘的时间复杂度是 $O(1)$ 的．那么，如果计算过程中这些元素的幂次计算都使用 [快速幂](../binary-exponentiation.md) 进行，最终的算法复杂度就是 $O(\log\max\{a,c\}+\log(b/c))$ 的[^complexity]．
+Assume one multiplication of monoid elements takes $O(1)$ time. If all powers of these elements are computed with [binary exponentiation](../binary-exponentiation.md), the total complexity of the algorithm is $O(\log\max\{a,c\}+\log(b/c))$[^complexity].
 
-??? note "对复杂度的解释"
-    对比（类）欧几里得算法，万能欧几里得算法只是多了求快速幂的步骤．其余的计算过程的复杂度和类欧几里得算法相仿，已经说明是 $O(\log\min\{a,c,n\})$ 的．现在，需要计算这些快速幂的总复杂度．
+??? note "Complexity explanation"
+    Compared with the (Euclidean-like) Euclidean algorithm, the universal Euclidean algorithm only adds the binary exponentiation steps. The rest of the computation has the same complexity as the Euclidean-like algorithm, which we already showed is $O(\log\min\{a,c,n\})$. Now we need the total cost of the binary exponentiations.
     
-    除了第一轮迭代，都有 $b<c$，因此这些迭代每轮都涉及三次快速幂的计算，总的复杂度是：
+    Except in the first round, we always have $b<c$, so each of these rounds involves three binary exponentiations, with total cost:
     
     $$
     O\left(\log\left\lfloor\dfrac{a}{c}\right\rfloor+\log\left\lfloor\dfrac{c-b_1-1}{a_1}\right\rfloor+\log\left(n-\left\lfloor\dfrac{cm-b_1-1}{a_1}\right\rfloor\right)\right),
     $$
     
-    其中，$a_1=a\bmod c$，$b_1=b\bmod c$ 且 $m=\lfloor(a_1n+b_1)/c\rfloor$．后面两项，分别有估计：
+    where $a_1=a\bmod c$, $b_1=b\bmod c$, and $m=\lfloor(a_1n+b_1)/c\rfloor$. The last two terms can be bounded as follows:
     
     $$
     \begin{aligned}
@@ -515,36 +515,36 @@ $$
     \end{aligned}
     $$
     
-    因此，这两项的复杂度都是 $O(\log(c/a_1))$ 的．
+    So both terms are $O(\log(c/a_1))$.
     
-    每一轮迭代中，线段的参数都由 $(a,\cdot,c,\cdot)$ 变换为 $(c,\cdot,a\bmod c,\cdot)$，且该轮总的时间复杂度为
+    In each round, the segment parameters change from $(a,\cdot,c,\cdot)$ to $(c,\cdot,a\bmod c,\cdot)$, and the total time of the round is
     
     $$
     O\left(\log\dfrac{a}{c}+\log\dfrac{c}{a\bmod c}\right).
     $$
     
-    对于全部递归的轮次，这些项可以裂项相消，因此，最后总和复杂度就是 $O(\log a+\log c)=O(\log\max\{a,c\})$ 的．
+    Over all rounds of recursion, these terms telescope, so the total is $O(\log a+\log c)=O(\log\max\{a,c\})$.
     
-    最后，再加上第一轮迭代中快速幂 $U^{\lfloor b/c\rfloor}$ 的复杂度 $O(\log(b/c))$，就得到总的复杂度为 $O(\log\max\{a,c\}+\log(b/c))$．
+    Finally, adding the cost $O(\log(b/c))$ of the binary exponentiation $U^{\lfloor b/c\rfloor}$ in the first round, the total complexity is $O(\log\max\{a,c\}+\log(b/c))$.
 
-万能欧几里得算法的流程可以写成统一的模板，处理具体问题时只需要更改模板类型 `T` 的实现即可．
+The universal Euclidean algorithm can be written as a single template. For a specific problem, you only need to change the implementation of the template type `T`.
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     ```cpp
     --8<-- "docs/math/code/euclidean/euclidean-4.cpp:euclidean"
     ```
 
-利用万能欧几里得算法可以得到模板题的实现如下：
+Using the universal Euclidean algorithm, the template problem can be implemented as follows:
 
-??? example "模板题实现（[Library Checker - Sum of Floor of Linear](https://judge.yosupo.jp/problem/sum_of_floor_of_linear)）"
+??? example "Template problem implementation ([Library Checker - Sum of Floor of Linear](https://judge.yosupo.jp/problem/sum_of_floor_of_linear))"
     ```cpp
     --8<-- "docs/math/code/euclidean/euclidean-4.cpp:full-text"
     ```
 
-### 例题
+### Example problems
 
-???+ example "[【模板】类欧几里得算法](https://www.luogu.com.cn/problem/P5170)"
-    多组询问．给定正整数 $a,b,c,n$，求
+???+ example "[[Template] Euclidean-like Algorithm](https://www.luogu.com.cn/problem/P5170)"
+    There are multiple queries. Given positive integers $a,b,c,n$, find
     
     $$
     \begin{aligned}
@@ -554,10 +554,10 @@ $$
     \end{aligned}
     $$
 
-??? note "解答二"
-    为了应用万能欧几里得算法的模板，首先将 $i=0$ 的项提出来，单独考虑．对于剩下的部分，可以看作是对参数为 $(a,b,c,n)$ 的线段分别计算 $\sum y,\sum xy,\sum y^2$．如正文所言，有两种将操作序列转换为幺半群元素的方式．
+??? note "Solution 2"
+    To use the universal Euclidean template, first handle the $i=0$ term separately. The rest can be seen as computing $\sum y,\sum xy,\sum y^2$ for the segment with parameters $(a,b,c,n)$. As explained in the main text, there are two ways to turn the operation sequence into monoid elements.
     
-    **矩阵运算**：状态向量定义为 $(1,x,y,xy,y^2,\sum y,\sum xy,\sum y^2)$．初始状态为 $(1,0,0,0,0,0,0,0)$，两个操作分别为
+    **Matrix approach**: define the state vector as $(1,x,y,xy,y^2,\sum y,\sum xy,\sum y^2)$. The initial state is $(1,0,0,0,0,0,0,0)$, and the two operations are
     
     $$
     U =
@@ -584,17 +584,17 @@ $$
     \end{pmatrix}.
     $$
     
-    最终答案为初始状态右乘这些操作矩阵的乘积得到的向量末尾三个分量．
+    The answer is the last three components of the vector obtained by right-multiplying the initial state by the product of these operation matrices.
     
-    这个做法的常数巨大，并不能通过本题，这里给出细节仅仅是为了辅助理解．
+    This approach has a huge constant factor and does not pass this problem. The details are given here only to help understanding.
     
-    **贡献合并**：一段操作序列的贡献定义为 $(x,y,\sum y,\sum xy,\sum y^2)$．两个操作分别为
+    **Merging contributions**: define the contribution of a piece of the operation sequence as $(x,y,\sum y,\sum xy,\sum y^2)$. The two operations are
     
     $$
     U = (0,1,0,0,0),~ R = (1,0,0,0,0).
     $$
     
-    贡献合并时，有
+    When merging contributions,
     
     $$
     \begin{aligned}
@@ -611,7 +611,7 @@ $$
     \end{aligned}
     $$
     
-    这说明，应该将操作的乘法定义为
+    So the product of operations should be defined as
     
     $$
     \begin{aligned}
@@ -622,9 +622,9 @@ $$
     \end{aligned}
     $$
     
-    虽然直接验证较为繁琐，但是上述定义的贡献向量在该乘法下的确构成幺半群，单位元为 $(0,0,0,0,0)$．
+    Checking it directly is tedious, but the contribution vectors defined above do form a monoid under this multiplication, with identity $(0,0,0,0,0)$.
     
-    对于一般的情形，有
+    In general,
     
     $$
     \begin{aligned}
@@ -633,82 +633,82 @@ $$
     \end{aligned}
     $$
     
-    只要维护好所有更低幂次的贡献，就可以计算一般情形的和式．
+    As long as the contributions of all lower powers are maintained, the general sum can be computed.
     
     ```cpp
     --8<-- "docs/math/code/euclidean/euclidean-5.cpp"
     ```
 
-???+ example "[\[清华集训 2014\] Sum](https://www.luogu.com.cn/problem/P5172)"
-    多组询问．给定正整数 $n$ 和 $r$，求
+???+ example "[\[Tsinghua Training Camp 2014\] Sum](https://www.luogu.com.cn/problem/P5172)"
+    There are multiple queries. Given positive integers $n$ and $r$, find
     
     $$
     \sum_{d=1}^n(-1)^{\lfloor d\sqrt{r}\rfloor}.
     $$
 
-??? note "解答二"
-    首先，单独处理 $r$ 为完全平方数的情形，与前文完全一致，从略．此处，仅考虑 $r$ 不是完全平方数的情形．
+??? note "Solution 2"
+    First, the case where $r$ is a perfect square is handled exactly as before, so we skip it. Here we only consider $r$ that is not a perfect square.
     
-    本题应用万能欧几里得算法的方式有很多．比如说，可以为每个操作定义一个线性变换：
+    There are many ways to apply the universal Euclidean algorithm to this problem. For example, we can define a linear map for each operation:
     
     $$
     U(x) = -x,~ R(x) = x + 1.
     $$
     
-    操作的乘法定义为线性变换的复合．那么，最终的答案就是操作序列对应的变换的复合得到的函数在 $x=0$ 处的值．
+    The product of operations is the composition of linear maps. The answer is then the value at $x=0$ of the composition of the maps for the operation sequence.
     
-    还可以为每段操作序列定义它的贡献．贡献可以定义为 $((-1)^y,\sum(-1)^y)$．那么，两个操作分别取
+    We can also define the contribution of each piece of the operation sequence as $((-1)^y,\sum(-1)^y)$. Then the two operations are
     
     $$
     U = (-1,0),~ R = (1,1).
     $$
     
-    贡献的合并定义为
+    Contributions merge as
     
     $$
     (u_1,v_1)\cdot(u_2,v_2) = (u_1u_2,v_1+u_1v_2).
     $$
     
-    容易验证，在该乘法下，所有操作构成了幺半群，且单位元为 $(1,0)$．最终的答案就是所有元素乘积的第二个分量．
+    It is easy to check that all operations form a monoid under this multiplication, with identity $(1,0)$. The answer is the second component of the product of all elements.
     
-    这两种方法是一致的，因为如果将线性变换写作 $f(x)=ux+v$，那么线性变换的复合对应的系数的变化，恰恰就是上述操作的乘法．也就是说，这两个幺半群是同构的．
+    The two approaches agree: if we write a linear map as $f(x)=ux+v$, then the way the coefficients change under composition is exactly the multiplication above. In other words, the two monoids are isomorphic.
     
-    本题中，线段的参数为 $(k,n)$，其中，$k\in\mathbf R$ 为直线的斜率．设操作序列对应的乘积为 $F(k,n,U,R)$．那么，有如下递归算法：
+    In this problem, the segment parameters are $(k,n)$, where $k\in\mathbf R$ is the slope of the line. Let $F(k,n,U,R)$ be the product of the operation sequence. Then we have the following recursive algorithm:
     
-    -   如果 $k\ge 1$，那么操作序列中每个 $R$ 前方都有至少 $\lfloor k\rfloor$ 个 $U$，所以，有
+    -   If $k\ge 1$, every $R$ in the operation sequence has at least $\lfloor k\rfloor$ $U$s before it, so
     
         $$
         F(k,n,U,R) = F(k-\lfloor k\rfloor,n,U,U^{\lfloor k\rfloor} R).
         $$
-    -   如果 $k<1$，那么交换操作序列中的 $U$ 和 $R$，并舍去末尾的 $U$（即交换前的 $R$），那么，记 $m=\lfloor kn\rfloor$，就有
+    -   If $k<1$, swap $U$ and $R$ in the operation sequence and drop the trailing $U$s (the $R$s before the swap). Let $m=\lfloor kn\rfloor$. Then
     
         $$
         F(k,n,U,R) = F(k^{-1},m,R,U)R^{n-\lfloor k^{-1}m\rfloor}.
         $$
     
-    算法中，$k$ 的迭代过程其实就是在求 $\sqrt{r}$ 的连分数展开．为此，可以应用 [PQa 算法](./pell-equation.md#pqa-算法)．求连分数的过程和万能欧几里得算法迭代的过程可以同时进行．
+    In this algorithm, the iteration on $k$ is really computing the continued fraction expansion of $\sqrt{r}$. For this we can use the [PQa algorithm](./pell-equation.md#pqa-算法). Computing the continued fraction can be done at the same time as the iterations of the universal Euclidean algorithm.
     
-    和类欧几里得算法的情形一致，算法的复杂度仍然是 $O(\log n)$ 的．
+    As with the Euclidean-like algorithm, the complexity is still $O(\log n)$.
     
     ```cpp
     --8<-- "docs/math/code/euclidean/euclidean-6.cpp"
     ```
 
-## 习题
+## Exercises
 
-模板题：
+Template problems:
 
 -   [Library Checker - Sum of Floor of Linear](https://judge.yosupo.jp/problem/sum_of_floor_of_linear)
--   [Luogu P5170【模板】类欧几里得算法](https://www.luogu.com.cn/problem/P5170)
+-   [Luogu P5170 [Template] Euclidean-like Algorithm](https://www.luogu.com.cn/problem/P5170)
 -   [Luogu P5171 Earthquake](https://www.luogu.com.cn/problem/P5171)
--   [Luogu P5172 \[清华集训 2014\] Sum](https://www.luogu.com.cn/problem/P5172)
--   [Luogu P4132 \[BJOI2012\] 算不出的等式](https://www.luogu.com.cn/problem/P4132)
--   [LOJ 138. 类欧几里得算法](https://loj.ac/p/138)
--   [LOJ 6440. 万能欧几里得](https://loj.ac/p/6440)
+-   [Luogu P5172 \[Tsinghua Training Camp 2014\] Sum](https://www.luogu.com.cn/problem/P5172)
+-   [Luogu P4132 \[BJOI2012\] The Incomputable Equation](https://www.luogu.com.cn/problem/P4132)
+-   [LOJ 138. Euclidean-like Algorithm](https://loj.ac/p/138)
+-   [LOJ 6440. Universal Euclidean](https://loj.ac/p/6440)
 -   [Luogu P5179 Fraction](https://www.luogu.com.cn/problem/P5179)
 -   [Codeforces 1182 F. Maximum Sine](https://codeforces.com/problemset/problem/1182/F)
 
-应用题：
+Applications:
 
 -   [Luogu P4433 \[COCI 2009/2010 #1\] ALADIN](https://www.luogu.com.cn/problem/P4433)
 -   [AtCoder Beginner Contest 372 G - Ax + By < C](https://atcoder.jp/contests/abc372/tasks/abc372_g)
@@ -717,6 +717,6 @@ $$
 -   [Codeforces 1098 E. Fedya the Potter](https://codeforces.com/problemset/problem/1098/E)
 -   [Codeforces 868 G. El Toll Caves](https://codeforces.com/problemset/problem/868/G)
 
-## 参考资料与注释
+## References and notes
 
-[^complexity]: 通常考虑的问题中，$b$ 都与 $a$ 同阶，$O(\log(b/c))$ 这一项可以忽略．而且，如果在调用万能欧几里得算法前，首先进行了一轮类欧几里得算法的取模，消除 $b$ 的影响，这一项的快速幂的复杂度是可以规避的．这其实是因为通常的问题中，$U$ 的初始形式较为特殊，它的幂次有着更简单的形式，不需要通过快速幂计算．比如正文的例子中，$U^{\lfloor b/c\rfloor}$ 的结果，就是将 $U$ 中不在对角线上的那个 $1$ 替换成 $\lfloor b/c\rfloor$，而无需用快速幂计算．
+[^complexity]: In typical problems, $b$ is of the same order as $a$, so the $O(\log(b/c))$ term can be ignored. Moreover, if one round of Euclidean-like remainder-taking is done before calling the universal Euclidean algorithm, removing the effect of $b$, the binary exponentiation for this term can be avoided altogether. This is because in typical problems, the initial form of $U$ is special and its powers have a simpler closed form, so binary exponentiation is not needed. For example, in the main text, $U^{\lfloor b/c\rfloor}$ is just $U$ with its single off-diagonal $1$ replaced by $\lfloor b/c\rfloor$, with no binary exponentiation needed.

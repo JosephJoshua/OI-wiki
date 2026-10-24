@@ -1,75 +1,75 @@
 author: billchenchina, c-forrest, CCXXXI, danielqfmai, Enter-tainer, Great-designer, HeRaNO, lychees, Menci, Nanarikom, ouuan, shuzhouliu, sshwy, Tiphereth-A
 
-本文介绍 Dirichlet 卷积和 Dirichlet 生成函数．
+This page introduces Dirichlet convolution and Dirichlet generating functions.
 
-## Dirichlet 卷积
+## Dirichlet convolution
 
-数论函数 $f(n)$ 和 $g(n)$ 的 **Dirichlet 卷积**（Dirichlet convolution），记作 $f \ast g$，定义为数论函数
+The **Dirichlet convolution** of arithmetic functions $f(n)$ and $g(n)$, written $f \ast g$, is the arithmetic function defined by
 
 $$
 (f \ast g)(n) = \sum_{k\mid n}f(k)g\left(\dfrac{n}{k}\right) = \sum_{k\ell=n}f(k)g(\ell).
 $$
 
-Dirichlet 卷积是数论函数的重要运算．数论函数的许多性质都是通过这个运算挖掘出来的．
+Dirichlet convolution is an important operation on arithmetic functions. Many properties of arithmetic functions are discovered through it.
 
-???+ example "例子"
-    1.  单位函数 $\varepsilon$ 是莫比乌斯函数 $\mu$ 和常数函数 $1$ 的 Dirichlet 卷积：
+???+ example "Examples"
+    1.  The unit function $\varepsilon$ is the Dirichlet convolution of the Möbius function $\mu$ and the constant function $1$:
     
         $$
         \varepsilon=\mu \ast 1 \iff\varepsilon(n)=\sum_{d\mid n}\mu(d).
         $$
     
-    2.  除数个数函数 $\tau$ 是常数函数 $1$ 和它自身的 Dirichlet 卷积：
+    2.  The divisor-counting function $\tau$ is the Dirichlet convolution of the constant function $1$ with itself:
     
         $$
         \tau=1 \ast 1 \iff \tau(n)=\sum_{d\mid n}1.
         $$
     
-    3.  除数和函数 $\sigma$ 是恒等函数 $\mathrm{id}$ 和常数函数 $1$ 的 Dirichlet 卷积：
+    3.  The divisor-sum function $\sigma$ is the Dirichlet convolution of the identity function $\mathrm{id}$ and the constant function $1$:
     
         $$
         \sigma=\mathrm{id} \ast 1 \iff\sigma(n)=\sum_{d\mid n}d.
         $$
     
-    4.  欧拉函数 $\varphi$ 是恒等函数 $\mathrm{id}$ 和莫比乌斯函数 $\mu$ 的 Dirichlet 卷积：
+    4.  Euler's totient function $\varphi$ is the Dirichlet convolution of the identity function $\mathrm{id}$ and the Möbius function $\mu$:
     
         $$
         \varphi=\mathrm{id}\ast \mu \iff\varphi(n)=\sum_{d\mid n}d\cdot\mu\left(\frac{n}{d}\right).
         $$
 
-[莫比乌斯反演](./mobius.md) 就是利用 $\varepsilon=\mu \ast 1$ 对数论函数恒等式进行变形．
+[Möbius inversion](./mobius.md) is exactly the use of $\varepsilon=\mu \ast 1$ to transform identities between arithmetic functions.
 
-### 性质
+### Properties
 
-Dirichlet 卷积具有一系列代数性质．
+Dirichlet convolution has a number of algebraic properties.
 
-???+ note "定理"
-    设 $f,g,h$ 都是数论函数．那么，有：
+???+ note "Theorem"
+    Let $f,g,h$ be arithmetic functions. Then:
     
-    1.  **交换律**：$f\ast g=g\ast f$．
-    2.  **结合律**：$(f\ast g)\ast h=f\ast(g\ast h)$．
-    3.  **分配律**：$(f+g)\ast h = f\ast h + g\ast h$．
-    4.  **单位元**：$f\ast\varepsilon = \varepsilon \ast f = f$，其中，$\varepsilon(n) = [n=1]$ 是卷积单位元，$[\cdot]$ 是 Iverson 括号．
-    5.  **逆元**：当且仅当 $f(1)\neq 0$ 时，存在 $g$ 使得 $f\ast g=g\ast f=\varepsilon$，且 $g$ 称为 $f$ 的 **Dirichlet 逆元**（Dirichlet inverse），可以记作 $f^{-1}$．而且，逆元 $g$ 满足递推公式
+    1.  **Commutativity**: $f\ast g=g\ast f$.
+    2.  **Associativity**: $(f\ast g)\ast h=f\ast(g\ast h)$.
+    3.  **Distributivity**: $(f+g)\ast h = f\ast h + g\ast h$.
+    4.  **Identity**: $f\ast\varepsilon = \varepsilon \ast f = f$, where $\varepsilon(n) = [n=1]$ is the identity for convolution and $[\cdot]$ is the Iverson bracket.
+    5.  **Inverse**: there exists $g$ with $f\ast g=g\ast f=\varepsilon$ if and only if $f(1)\neq 0$. Such a $g$ is called the **Dirichlet inverse** of $f$ and can be written $f^{-1}$. Moreover, the inverse $g$ satisfies the recurrence
     
         $$
         g(n) = \dfrac{\varepsilon(n) - \sum_{k\ell = n,~k\neq 1}f(k)g(\ell)}{f(1)}.
         $$
 
-??? note "证明"
-    为验证交换律，直接计算可知
+??? note "Proof"
+    Commutativity follows from a direct computation:
     
     $$
     (f\ast g)(n) = \sum_{k\ell=n}f(k)g(\ell) = (g\ast f)(n).
     $$
     
-    为验证结合律，直接计算可知
+    Associativity follows from a direct computation:
     
     $$
     ((f\ast g)\ast h)(n) = \sum_{k\ell m = n}f(k)g(\ell)h(m) = (f\ast (g\ast h))(n).
     $$
     
-    为验证分配律，直接计算可知
+    Distributivity follows from a direct computation:
     
     $$
     \begin{aligned}
@@ -78,37 +78,37 @@ Dirichlet 卷积具有一系列代数性质．
     \end{aligned}
     $$
     
-    为验证 $\varepsilon(n)$ 是单位元，直接计算可知
+    To check that $\varepsilon(n)$ is the identity, compute directly:
     
     $$
     (f\ast\varepsilon)(n) = \sum_{k\ell = n}f(k)\varepsilon(\ell) = f(n).
     $$
     
-    第二个等号是因为 $\varepsilon(\ell)$ 仅在 $\ell=1$ 即 $k=n$ 时取得非零值．
+    The second equality holds because $\varepsilon(\ell)$ is nonzero only when $\ell=1$, that is, when $k=n$.
     
-    最后，需要证明 $f^{-1}$ 存在，当且仅当 $f(1)\neq 0$．对于任意 $f$，假设存在 $g$ 使得 $f\ast g=\varepsilon$．这意味着
+    Finally, we need to show that $f^{-1}$ exists if and only if $f(1)\neq 0$. For any $f$, suppose there is a $g$ with $f\ast g=\varepsilon$. This means
     
     $$
     (f\ast g)(n) = \sum_{k\ell = n}f(k)g(\ell) = \varepsilon(n).
     $$
     
-    这实际上给出了一系列关于 $g(n)$ 取值的方程组，从中可以直接求出 $g(n)$．特别地，当 $n=1$ 时，等式变为 $f(1)g(1)=1$，所以 $g$ 存在，至少要求 $f(1)\neq 0$．而只要 $f(1)\neq 0$，可以直接解出
+    This is really a system of equations in the values $g(n)$, and we can solve it for $g(n)$ directly. In particular, for $n=1$ the equation becomes $f(1)g(1)=1$, so for $g$ to exist we need at least $f(1)\neq 0$. And as long as $f(1)\neq 0$, we can solve directly:
     
     $$
     g(n) = \dfrac{\varepsilon(n) - \sum_{k\ell = n,~k\neq 1}f(k)g(\ell)}{f(1)}.
     $$
     
-    它可以用于递归计算 $g(n)$ 的取值．因此，逆元 $g$ 存在，当且仅当 $f(1)\neq 0$．
+    This can be used to compute the values $g(n)$ recursively. So the inverse $g$ exists if and only if $f(1)\neq 0$.
 
-用抽象代数的语言说，这些代数性质说明，全体数论函数在（逐点）加法运算和 Dirichlet 卷积运算下构成 [交换环](../algebra/basic.md#环)，且它的全体可逆元就是那些在 $n=1$ 处取非零值的函数．这个环称为 **Dirichlet 环**（Dirichlet ring）．
+In the language of abstract algebra, these properties say that all arithmetic functions, under (pointwise) addition and Dirichlet convolution, form a [commutative ring](../algebra/basic.md#环), and its units are exactly the functions that are nonzero at $n=1$. This ring is called the **Dirichlet ring**.
 
-积性函数是一类特殊的数论函数．它对于 Dirichlet 卷积和 Dirichlet 逆都是封闭的．
+Multiplicative functions are a special kind of arithmetic function. They are closed under Dirichlet convolution and Dirichlet inverse.
 
-???+ note "定理"
-    设 $f,g$ 是积性函数，那么，$f\ast g$ 也是积性函数．而且，逆元 $f^{-1}$ 一定存在，它也是积性函数．
+???+ note "Theorem"
+    Let $f,g$ be multiplicative functions. Then $f\ast g$ is also multiplicative. Moreover, the inverse $f^{-1}$ always exists, and it is also multiplicative.
 
-??? note "证明"
-    对于第一点，设 $h=f\ast g$，直接验证可知，对于 $n_1\perp n_2$，都有
+??? note "Proof"
+    For the first part, let $h=f\ast g$. A direct check shows that for all $n_1\perp n_2$,
     
     $$
     \begin{aligned}
@@ -119,15 +119,15 @@ Dirichlet 卷积具有一系列代数性质．
     \end{aligned}
     $$
     
-    其中，第三个等号利用了 $f,g$ 的积性，其改变求和顺序的逻辑是：当 $k$ 遍历 $n_1n_2$ 的因数时，$k$ 的素因子可以根据它是 $n_1$ 还是 $n_2$ 的素因子分为两类，将两类中的素因子（计重复）分别乘起来得到 $k_1$ 和 $k_2$，它们将分别遍历 $n_1$ 和 $n_2$ 的因数；反过来，根据 $n_1$ 和 $n_2$ 的因数 $k_1$ 和 $k_2$，总是可以得到 $n_1n_2$ 的因数 $k=k_1k_2$．
+    The third equality uses the multiplicativity of $f,g$. The reasoning behind the change in summation order is this: as $k$ runs over the divisors of $n_1n_2$, the prime factors of $k$ split into two groups depending on whether they divide $n_1$ or $n_2$. Multiplying the primes in each group (with multiplicity) gives $k_1$ and $k_2$, which run over the divisors of $n_1$ and $n_2$ respectively. Conversely, from divisors $k_1$ of $n_1$ and $k_2$ of $n_2$, we always get a divisor $k=k_1k_2$ of $n_1n_2$.
     
-    对于第二点，设 $g=f^{-1}$，考虑应用数学归纳法．首先，$g(1)=1/f(1)=1$．此时，逆元的递推公式可以写作
+    For the second part, let $g=f^{-1}$ and use mathematical induction. First, $g(1)=1/f(1)=1$. The recurrence for the inverse can then be written as
     
     $$
     g(n) = \varepsilon(n) - \sum_{k\ell = n,~k\neq 1} f(k)g(\ell).
     $$
     
-    所以，对于 $n_1\perp n_2$ 且 $n_1n_2 > 1$，有
+    So for $n_1\perp n_2$ with $n_1n_2 > 1$,
     
     $$
     \begin{aligned}
@@ -140,21 +140,21 @@ Dirichlet 卷积具有一系列代数性质．
     \end{aligned}
     $$
     
-    其中，第二个等号用到了归纳假设，即对于 $\ell_1\ell_2 < n_1n_2$ 且 $\ell_1\perp\ell_2$，条件 $g(\ell_1\ell_2)=g(\ell_1)g(\ell_2)$ 成立．
+    The second equality uses the induction hypothesis: for $\ell_1\ell_2 < n_1n_2$ with $\ell_1\perp\ell_2$, we have $g(\ell_1\ell_2)=g(\ell_1)g(\ell_2)$.
 
-用抽象代数的语言说，全体积性函数在 Dirichlet 卷积运算下构成 Dirichlet 环乘法群的 [子群](../algebra/group-theory.md#子群)．
+In the language of abstract algebra, the multiplicative functions under Dirichlet convolution form a [subgroup](../algebra/group-theory.md#子群) of the multiplicative group of the Dirichlet ring.
 
-更为特殊的是完全积性函数．
+Completely multiplicative functions are even more special.
 
-???+ note "定理"
-    设 $\alpha$ 是完全积性函数，$f,g$ 是数论函数．那么，有：
+???+ note "Theorem"
+    Let $\alpha$ be a completely multiplicative function and $f,g$ arithmetic functions. Then:
     
-    1.  分配律：$(\alpha f)\ast(\alpha g) = \alpha\cdot(f\ast g)$．
-    2.  逆元：$(\alpha f)^{-1}=\alpha f^{-1}$，只要 $f^{-1}$ 存在．
-    3.  积性函数 $f$ 是完全积性函数，当且仅当 $f^{-1}=\mu f$，其中，$\mu$ 是 [莫比乌斯函数](./mobius.md#莫比乌斯函数)．
+    1.  Distributivity: $(\alpha f)\ast(\alpha g) = \alpha\cdot(f\ast g)$.
+    2.  Inverse: $(\alpha f)^{-1}=\alpha f^{-1}$, provided $f^{-1}$ exists.
+    3.  A multiplicative function $f$ is completely multiplicative if and only if $f^{-1}=\mu f$, where $\mu$ is the [Möbius function](./mobius.md#莫比乌斯函数).
 
-??? note "证明"
-    对于第一条，直接验证可知
+??? note "Proof"
+    For the first part, check directly:
     
     $$
     \begin{aligned}
@@ -165,23 +165,23 @@ Dirichlet 卷积具有一系列代数性质．
     \end{aligned}
     $$
     
-    其中，第三个等号用到了完全积性函数的性质：$\alpha(n)=\alpha(k)\alpha(\ell)$ 对所有 $n=k\ell$ 都成立．
+    The third equality uses the defining property of a completely multiplicative function: $\alpha(n)=\alpha(k)\alpha(\ell)$ for all $n=k\ell$.
     
-    对于第二条，利用第一条就有
+    For the second part, the first part gives
     
     $$
     (\alpha f)\ast(\alpha f^{-1}) = \alpha(f\ast f^{-1}) = \alpha\varepsilon = \varepsilon.
     $$
     
-    其中，最后一个等号只利用了 $\alpha(1)=1$．由逆元定义，$(\alpha f)^{-1}=\alpha f^{-1}$．
+    The last equality only uses $\alpha(1)=1$. By the definition of the inverse, $(\alpha f)^{-1}=\alpha f^{-1}$.
     
-    对于第三条，利用第二条和 $1^{-1}=\mu$ 可知，如果 $f$ 是完全积性函数，那么
+    For the third part, the second part together with $1^{-1}=\mu$ shows that if $f$ is completely multiplicative, then
     
     $$
     f^{-1} = (1f)^{-1} = 1^{-1}\cdot f = \mu f.
     $$
     
-    其中，$1$ 是常数函数．反过来，如果 $f$ 是积性函数且 $f^{-1}=\mu f$，那么只需要证明对于所有素数 $p$ 和 $e\in\mathbf N_+$，都有 $f(p^e)=f(p)^e$ 成立，就能证明 $f$ 是完全积性函数．为此，对 $e\in\mathbf N_+$ 应用数学归纳法．归纳起点 $e=1$ 处命题显然成立．对于任意 $e > 1$，应用逆元递推公式，都有
+    Here $1$ is the constant function. Conversely, suppose $f$ is multiplicative and $f^{-1}=\mu f$. To show that $f$ is completely multiplicative, it suffices to show $f(p^e)=f(p)^e$ for every prime $p$ and every $e\in\mathbf N_+$. We use induction on $e\in\mathbf N_+$. The base case $e=1$ is obvious. For any $e > 1$, the recurrence for the inverse gives
     
     $$
     \begin{aligned}
@@ -192,41 +192,41 @@ Dirichlet 卷积具有一系列代数性质．
     \end{aligned}
     $$
     
-    其中，最后一个等号用到了归纳假设 $f(p^{e-1})=f(p)^{e-1}$．应用 $f^{-1}=\mu f$，就得到
+    The last equality uses the induction hypothesis $f(p^{e-1})=f(p)^{e-1}$. Using $f^{-1}=\mu f$, we get
     
     $$
     f^{-1}(p^e) = \mu(p^e)f(p^e) = 0.
     $$
     
-    代入前式，就得到
+    Substituting this into the previous equation gives
     
     $$
     f(p^e) = f(p)^e.
     $$
     
-    所以，归纳步骤成立．原命题得证．
+    So the inductive step holds, and the claim is proved.
 
-用抽象代数的语言说，如果 $\alpha$ 是完全积性函数，映射 $f\mapsto \alpha f$ 是 Dirichlet 环的 [自同态](../algebra/ring-theory.md#理想)．
+In the language of abstract algebra, if $\alpha$ is completely multiplicative, then the map $f\mapsto \alpha f$ is an [endomorphism](../algebra/ring-theory.md#理想) of the Dirichlet ring.
 
-## Dirichlet 生成函数
+## Dirichlet generating functions
 
-与 Dirichlet 卷积紧密相关的是 Dirichlet 生成函数．
+Closely related to Dirichlet convolution are Dirichlet generating functions.
 
-数论函数 $f(n)$——也就是数列 $\{f(n)\}$——对应的 **Dirichlet 生成函数**（Dirichlet series generating function，DGF）定义为形式 Dirichlet 级数（formal Dirichlet series）：
+The **Dirichlet generating function** (Dirichlet series generating function, DGF) of an arithmetic function $f(n)$ (that is, of the sequence $\{f(n)\}$) is defined as the formal Dirichlet series:
 
 $$
 F(s) = \sum_{n=1}^{\infty}\dfrac{f(n)}{n^s}.
 $$
 
-级数中的 $s$ 是形式变元．常见的 Dirichlet 生成函数中，$s$ 往往可以看作是复变量，进而讨论 Dirichlet 级数的解析性质，但这超出了算法竞赛的范围．
+Here $s$ is a formal variable. For common Dirichlet generating functions, $s$ can often be viewed as a complex variable, which leads to the analytic properties of Dirichlet series, but that is beyond the scope of competitive programming.
 
-Dirichlet 生成函数的乘积对应着相应的数论函数的 Dirichlet 卷积：
+The product of Dirichlet generating functions corresponds to the Dirichlet convolution of the arithmetic functions:
 
-???+ note "定理"
-    对于数论函数 $f,g$ 及其 Dirichlet 生成函数 $F,G$，它们的 Dirichlet 卷积 $f\ast g$ 的生成函数等于 $F\cdot G$．
+???+ note "Theorem"
+    For arithmetic functions $f,g$ with Dirichlet generating functions $F,G$, the generating function of their Dirichlet convolution $f\ast g$ is $F\cdot G$.
 
-??? note "证明"
-    直接验证：
+??? note "Proof"
+    Check directly:
     
     $$
     \begin{aligned}
@@ -235,11 +235,11 @@ Dirichlet 生成函数的乘积对应着相应的数论函数的 Dirichlet 卷�
     \end{aligned}
     $$
 
-利用 Dirichlet 卷积和 Dirichlet 生成函数乘积之间的对应关系，可以从 Dirichlet 生成函数的角度理解 Dirichlet 卷积的性质．由于形式 Dirichlet 级数的乘法运算满足交换律、结合律、对加法的分配律，数论函数的 Dirichlet 卷积运算满足同样的代数性质．
+Using this correspondence between Dirichlet convolution and products of Dirichlet generating functions, we can understand the properties of Dirichlet convolution through generating functions. Since multiplication of formal Dirichlet series is commutative, associative and distributive over addition, Dirichlet convolution of arithmetic functions has the same algebraic properties.
 
-### Euler 乘积
+### Euler product
 
-积性函数的特殊性同样反映在 Dirichlet 生成函数上．由于整数有 [唯一分解定理](./basic.md#算术基本定理)，积性函数 $f(n)$ 的生成函数 $F(s)$ 可写成如下形式：
+The special nature of multiplicative functions also shows up in their Dirichlet generating functions. Because integers have [unique factorization](./basic.md#算术基本定理), the generating function $F(s)$ of a multiplicative function $f(n)$ can be written as:
 
 $$
 \begin{aligned}
@@ -248,42 +248,42 @@ F(s) &= \sum_{n=1}^{\infty}\dfrac{f(n)}{n^s} = \sum_{n=1}^{\infty}\prod_{p\in\ma
 \end{aligned}
 $$
 
-其中，$\nu_p(n)$ 表示 $n$ 的素因数分解中 $p$ 的幂次．这意味着，$F(s)$ 可以分解为若干 $F_p(s)=\sum_{e=0}^{\infty}f(p^e)p^{-es}$ 的乘积，且每个 $F_p(s)$ 对应的数论函数都只在 $p$ 的幂次处可能取非零值．这一无穷乘积也称为 **Euler 乘积**（Euler product）．如果 $F(s)$ 和 $G(s)$ 都能分解成类似的形式，那么它们的乘积同样如此；将这一观察对应到数论函数上，就是积性函数的 Dirichlet 卷积仍然是积性函数．
+Here $\nu_p(n)$ is the exponent of $p$ in the prime factorization of $n$. This means $F(s)$ factors into a product of terms $F_p(s)=\sum_{e=0}^{\infty}f(p^e)p^{-es}$, where the arithmetic function of each $F_p(s)$ can be nonzero only at powers of $p$. This infinite product is called the **Euler product**. If $F(s)$ and $G(s)$ both factor this way, so does their product. Translated back to arithmetic functions, this says that the Dirichlet convolution of multiplicative functions is still multiplicative.
 
-进一步地，如果 $f(n)$ 还是完全积性函数，那么 $f(p^e)=f(p)^e$，上式可以继续简化：
+If $f(n)$ is also completely multiplicative, then $f(p^e)=f(p)^e$, and the formula simplifies further:
 
 $$
 F(s) = \prod_{p\in\mathbf P}\sum_{e=0}^{\infty}\dfrac{f(p)^e}{p^{es}} = \prod_{p\in\mathbf P}\left(1-\dfrac{f(p)}{p^s}\right)^{-1}.
 $$
 
-与积性函数不同，完全积性函数的 Dirichlet 生成函数的形式在乘法运算下并不具有封闭性，因此，完全积性函数的 Dirichlet 卷积和 Dirichlet 逆都未必是完全积性函数，但一定是积性函数．
+Unlike for multiplicative functions, this form of Dirichlet generating function for completely multiplicative functions is not closed under multiplication. So the Dirichlet convolution and Dirichlet inverse of completely multiplicative functions need not be completely multiplicative, but they are always multiplicative.
 
-???+ example "例子"
-    1.  单位函数 $\varepsilon(n)$ 是完全积性函数．它的 Dirichlet 生成函数是关于不定元 $s$ 的常值函数
+???+ example "Examples"
+    1.  The unit function $\varepsilon(n)$ is completely multiplicative. Its Dirichlet generating function is the constant function in the indeterminate $s$:
     
         $$
         E(s) = \sum_{n=1}^{\infty}\dfrac{\varepsilon(n)}{n^s} = 1.
         $$
     
-    2.  常数函数 $1(n)$ 是完全积性函数．它的 Dirichlet 生成函数是 Riemann ζ 函数
+    2.  The constant function $1(n)$ is completely multiplicative. Its Dirichlet generating function is the Riemann ζ function:
     
         $$
         I(s) = \sum_{n=1}^{\infty}\dfrac{1}{n^s} = \prod_{p\in\mathbf P}\dfrac{1}{1-p^{-s}} = \zeta(s).
         $$
     
-    3.  莫比乌斯函数 $\mu(n)$ 是常数函数的 Dirichlet 逆．它的 Dirichlet 生成函数是 $\zeta(s)$ 的倒数：
+    3.  The Möbius function $\mu(n)$ is the Dirichlet inverse of the constant function. Its Dirichlet generating function is the reciprocal of $\zeta(s)$:
     
         $$
         M(s) = \sum_{n=1}^{\infty}\dfrac{\mu(n)}{n^s} = \prod_{p\in\mathbf P}(1-p^{-s}) = \dfrac{1}{\zeta(s)}.
         $$
     
-    4.  幂函数 $\operatorname{id}_k(n)=n^k$ 是完全积性函数．特别地，当 $k=0$ 时，它就是常数函数；当 $k=1$ 时，它就是恒等函数．它的 Dirichlet 生成函数是
+    4.  The power function $\operatorname{id}_k(n)=n^k$ is completely multiplicative. In particular, for $k=0$ it is the constant function, and for $k=1$ it is the identity function. Its Dirichlet generating function is
     
         $$
         I_k(s) = \sum_{n=1}^{\infty}\dfrac{n^k}{n^s} = \prod_{p\in\mathbf P}\dfrac{1}{1-p^{k-s}} = \zeta(s-k).
         $$
     
-    5.  欧拉函数 $\varphi(n)$ 是积性函数．它的 Dirichlet 生成函数是
+    5.  Euler's totient function $\varphi(n)$ is multiplicative. Its Dirichlet generating function is
     
         $$
         \begin{aligned}
@@ -292,9 +292,9 @@ $$
         \end{aligned}
         $$
     
-        结合幂函数的 Dirichlet 生成函数表达式，就得到 $\mathrm{id} = \varphi\ast 1$．
+        Combined with the Dirichlet generating function of the power functions, this gives $\mathrm{id} = \varphi\ast 1$.
     
-    6.  约数函数 $\sigma_k(n)=\sum_{d\mid n}d^k$ 是积性函数．它的 Dirichlet 生成函数是
+    6.  The divisor function $\sigma_k(n)=\sum_{d\mid n}d^k$ is multiplicative. Its Dirichlet generating function is
     
         $$
         \begin{aligned}
@@ -305,146 +305,146 @@ $$
         \end{aligned}
         $$
     
-        结合幂函数的 Dirichlet 生成函数表达式，就得到 $\sigma_k = \mathrm{id}_k\ast 1$．这正是 $\sigma_k$ 的定义式．
+        Combined with the Dirichlet generating function of the power functions, this gives $\sigma_k = \mathrm{id}_k\ast 1$, which is exactly the definition of $\sigma_k$.
     
-    7.  无平方因子数的指示函数 $u(n)=|\mu(n)|=\mu^2(n)$ 是积性函数．它的 Dirichlet 生成函数是
+    7.  The indicator function of squarefree numbers, $u(n)=|\mu(n)|=\mu^2(n)$, is multiplicative. Its Dirichlet generating function is
     
         $$
         U(s) = \prod_{p\in\mathbf P}(1+p^{-s}) = \prod_{p\in\mathbf P}\dfrac{1-p^{-2s}}{1-p^{-s}} = \dfrac{\zeta(s)}{\zeta(2s)}.
         $$
 
-### Bell 级数
+### Bell series
 
-Euler 乘积说明，积性函数的 Dirichlet 生成函数可以分解为局部因子 $F_p(s)$ 的乘积．如果只关心单个素数处的信息，可以将 $p^{-s}$ 整体看作一个形式变元，这就得到了 Bell 级数．
+The Euler product shows that the Dirichlet generating function of a multiplicative function factors into local factors $F_p(s)$. If we only care about what happens at a single prime, we can treat $p^{-s}$ as one formal variable. This gives the Bell series.
 
-对于积性函数 $f$ 和素数 $p$，定义 $f$ 关于 $p$ 的 **Bell 级数**（Bell series）为形式幂级数
+For a multiplicative function $f$ and a prime $p$, the **Bell series** of $f$ at $p$ is the formal power series
 
 $$
 f_p(x) = \sum_{e=0}^{\infty} f(p^e)x^e = 1 + f(p)x + f(p^2)x^2 + \cdots.
 $$
 
-对比 Euler 乘积的表达式可知，$f_p(x)$ 就是将 $F_p(s)$ 中的 $p^{-s}$ 替换为 $x$ 的结果，即 $F_p(s) = f_p(p^{-s})$，从而
+Comparing with the Euler product, $f_p(x)$ is just $F_p(s)$ with $p^{-s}$ replaced by $x$, that is, $F_p(s) = f_p(p^{-s})$, so
 
 $$
 F(s) = \prod_{p\in\mathbf P}f_p(p^{-s}).
 $$
 
-引入这一记号后可以看出，Dirichlet 卷积在局部化之后就是普通的幂级数乘法．
+With this notation, we can see that Dirichlet convolution, once localized, is just ordinary multiplication of power series.
 
-将 Dirichlet 生成函数的结果转译到 Bell 级数上，就得到如下性质：
+Translating the results about Dirichlet generating functions to Bell series gives the following properties:
 
-1.  对于积性函数 $f,g$ 及任意素数 $p$，有 $(f\ast g)_p(x) = f_p(x)g_p(x)$．
-2.  积性函数 $f$ 是完全积性函数，当且仅当对每个素数 $p$ 都有 $f_p(x) = \dfrac{1}{1-f(p)x}$．
-3.  积性函数的 Dirichlet 逆总是存在，且 $(f^{-1})_p(x) = \dfrac{1}{f_p(x)}$．
+1.  For multiplicative functions $f,g$ and any prime $p$, $(f\ast g)_p(x) = f_p(x)g_p(x)$.
+2.  A multiplicative function $f$ is completely multiplicative if and only if $f_p(x) = \dfrac{1}{1-f(p)x}$ for every prime $p$.
+3.  The Dirichlet inverse of a multiplicative function always exists, and $(f^{-1})_p(x) = \dfrac{1}{f_p(x)}$.
 
-因为积性函数由它在素数幂处的取值唯一确定，所以积性函数与它的全体 Bell 级数 $\{f_p\}_{p\in\mathbf P}$ 是一一对应的．于是，关于积性函数的 Dirichlet 卷积的许多问题，都可以逐个素数地转化为形式幂级数的问题来讨论．相比直接使用 Dirichlet 生成函数，其形式上要简洁一些．例如，第三条性质说明，求 Dirichlet 逆只需逐个素数地求形式幂级数的逆；在实际计算中，因为只需要 $p^e\le n$ 的部分，每个素数至多截断到 $x^{\lfloor\log_p n\rfloor}$ 项．
+Since a multiplicative function is uniquely determined by its values at prime powers, multiplicative functions correspond one-to-one with their families of Bell series $\{f_p\}_{p\in\mathbf P}$. So many questions about Dirichlet convolution of multiplicative functions can be turned, prime by prime, into questions about formal power series. This is somewhat simpler in form than working with Dirichlet generating functions directly. For example, the third property says that to find a Dirichlet inverse, we only need to invert a formal power series for each prime. In actual computation, only the part with $p^e\le n$ is needed, so for each prime the series can be truncated at the $x^{\lfloor\log_p n\rfloor}$ term.
 
-???+ example "例子"
-    前文例子中的积性函数，对应的 Bell 级数如下：
+???+ example "Examples"
+    The Bell series of the multiplicative functions from the earlier examples are:
     
     |    $f$   | $\varepsilon$ |        $1$       | $\mu$ | $\operatorname{id}_k$ |      $\varphi$      |         $\sigma_k$         | $\lvert\mu\rvert=\mu^2$ |
     | :------: | :-----------: | :--------------: | :---: | :-------------------: | :-----------------: | :------------------------: | :---------------------: |
     | $f_p(x)$ |      $1$      | $\dfrac{1}{1-x}$ | $1-x$ |  $\dfrac{1}{1-p^kx}$  | $\dfrac{1-x}{1-px}$ | $\dfrac{1}{(1-x)(1-p^kx)}$ |          $1+x$          |
     
-    利用上表，常见的 Dirichlet 卷积关系都可以直接验证．例如 $\mu\ast 1=\varepsilon$ 对应
+    With this table, the common Dirichlet convolution identities can be checked directly. For example, $\mu\ast 1=\varepsilon$ corresponds to
     
     $$
     (1-x)\cdot\dfrac{1}{1-x} = 1,
     $$
     
-    而 $\varphi\ast 1=\operatorname{id}$ 对应
+    and $\varphi\ast 1=\operatorname{id}$ corresponds to
     
     $$
     \dfrac{1-x}{1-px}\cdot\dfrac{1}{1-x} = \dfrac{1}{1-px}.
     $$
 
-### 应用
+### Applications
 
-Dirichlet 生成函数可以用于将数论函数表示为 Dirichlet 卷积．
+Dirichlet generating functions can be used to express an arithmetic function as a Dirichlet convolution.
 
-例如在杜教筛的过程中，要计算数论函数 $f$ 的前缀和，需要找到另一个数论函数 $g$ 使得 $f\ast g$ 和 $g$ 都可以快速求前缀和．可以利用 Dirichlet 生成函数推导这一过程．
+For example, in Du's sieve, to compute prefix sums of an arithmetic function $f$, we need another arithmetic function $g$ such that both $f\ast g$ and $g$ have prefix sums that are fast to compute. Dirichlet generating functions can help find such a $g$.
 
-以杜教筛一节的例题 [Luogu P3768 简单的数学题](../number-theory/hyperbola.md#例题) 为例，需要对 $f(n)=n^2\varphi(n)$ 构造满足上述条件的数论函数 $g(n)$．由于 $f$ 是积性函数，它的 Dirichlet 生成函数为
+Take the example problem from the Du's sieve section, [Luogu P3768 A Simple Math Problem](../number-theory/hyperbola.md#例题). We need to construct an arithmetic function $g(n)$ that meets the conditions above for $f(n)=n^2\varphi(n)$. Since $f$ is multiplicative, its Dirichlet generating function is
 
 $$
 F(s) = \prod_{p\in\mathbf P}\left(1 + \sum_{k=1}^{\infty}\dfrac{p^{3k-1}(p-1)}{p^{ks}}\right) = \prod_{p\in\mathbf P}\dfrac{1-p^{2-s}}{1-p^{3-s}} = \dfrac{\zeta(s-3)}{\zeta(s-2)}.
 $$
 
-对比幂函数的 Dirichlet 生成函数可知，只要取 $g = \mathrm{id}_2$，就有 $f \ast g = \mathrm{id}_3$．两者都是可以快速计算前缀和的．
+Comparing with the Dirichlet generating functions of the power functions, if we take $g = \mathrm{id}_2$, then $f \ast g = \mathrm{id}_3$. Both have prefix sums that are fast to compute.
 
-由于常见问题中的数论函数都是积性函数，实践中利用 Bell 级数往往更加方便．例如，刚刚的例子中 $f(n)$ 的 Bell 级数可以直接由 $f(p^e)=p^{3e-1}(p-1)$ 推得为
+Since the arithmetic functions in typical problems are multiplicative, Bell series are often more convenient in practice. For example, the Bell series of $f(n)$ in the example above follows directly from $f(p^e)=p^{3e-1}(p-1)$:
 
 $$
 f_p(x) = 1 + \dfrac{p-1}{p}\sum_{e=1}^{\infty}(p^3x)^e = 1 + \dfrac{(p-1)p^2x}{1-p^3x} = \dfrac{1-p^2x}{1-p^3x}.
 $$
 
-对比幂函数的 Bell 级数立即得到 $f \ast \mathrm{id}_2 = \mathrm{id}_3$．
+Comparing with the Bell series of the power functions immediately gives $f \ast \mathrm{id}_2 = \mathrm{id}_3$.
 
-## Dirichlet 卷积的计算
+## Computing Dirichlet convolutions
 
-本节讨论 Dirichlet 卷积的计算问题，即给定序列 $\{f(k)\}_{k=1}^n$ 和 $\{g(k)\}_{k=1}^n$，求解 Dirichlet 卷积 $h=f\ast g$ 的前若干项 $\{h(k)\}_{k=1}^n$ 的问题．根据涉及到的函数性质，算法的复杂度也略有不同．
+This section is about computing Dirichlet convolutions: given sequences $\{f(k)\}_{k=1}^n$ and $\{g(k)\}_{k=1}^n$, find the first $n$ terms $\{h(k)\}_{k=1}^n$ of the Dirichlet convolution $h=f\ast g$. The complexity of the algorithm varies a little depending on the properties of the functions involved.
 
-### 一般情形
+### General case
 
-如果 $f,g,h$ 都没有特殊性质，那么 Dirichlet 卷积的计算只能利用其定义：
+If $f,g,h$ have no special properties, we can only compute the Dirichlet convolution from its definition:
 
 $$
 h(n) = \sum_{k\ell = n}f(k)g(\ell).
 $$
 
-枚举 $k$ 和 $\ell$，将贡献 $f(k)g(\ell)$ 累加到 $h(k\ell)$ 上即可．枚举复杂度为
+Enumerate $k$ and $\ell$, and add the contribution $f(k)g(\ell)$ to $h(k\ell)$. The enumeration takes
 
 $$
 O\left(\sum_{k=1}^{n}\dfrac{n}{k}\right) = O(n\log n).
 $$
 
-参考实现如下：
+Reference implementation:
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     ```cpp
     --8<-- "docs/math/code/dirichlet/dirichlet-1.cpp:core"
     ```
 
-### 与积性函数卷积的情形
+### Convolution with a multiplicative function
 
-如果 $g$ 是积性函数，那么可以利用 Euler 乘积加速 Dirichlet 卷积的计算．计算 $h$ 相当于计算它的 Dirichlet 生成函数 $H$ 中各项的系数．由于
+If $g$ is multiplicative, the Euler product can speed up the computation. Computing $h$ is the same as computing the coefficients of its Dirichlet generating function $H$. We have
 
 $$
 H(s) = F(s)G(s) = F(s)\prod_{p\in\mathbf P}G_p(s).
 $$
 
-其中，$G_p(s)$ 是 $G(s)$ 的 Euler 乘积分解中的因式，它只包含 $p$ 的幂次处的系数：
+Here $G_p(s)$ is a factor in the Euler product of $G(s)$. It contains only the coefficients at powers of $p$:
 
 $$
 G_p(s) = \sum_{p^k\le n}\dfrac{g(p^k)}{p^{ks}} = 1 + \dfrac{g(p)}{p^s} + \dfrac{g(p^2)}{p^{2s}} + \cdots.
 $$
 
-那么，从 $F(s)$ 开始，遍历所有不超过 $n$ 的素数 $p$，将 $G_p(s)$ 逐一乘上去，同样可以得到最终结果 $H(s)$．将 $G_p(s)$ 乘上去时，直接应用一般情形中的暴力枚举算法即可．总枚举次数
+So, starting from $F(s)$, we can go through every prime $p$ not exceeding $n$ and multiply in $G_p(s)$ one at a time; this also gives the final result $H(s)$. Each multiplication by $G_p(s)$ just uses the brute-force enumeration from the general case. The total number of steps is
 
 $$
 \sum_{p\in\mathbf P,~p\le n}\sum_{k=1}^{\infty}\left\lfloor\dfrac{n}{p^k}\right\rfloor \le \sum_{p\in\mathbf P,~p\le n}\dfrac{n}{p-1} \le \sum_{p\in\mathbf P,~p\le n}\dfrac{2n}{p} \in O(n\log\log n).
 $$
 
-最后一步复杂度的估计与 [Eratosthenes 筛法](./sieve.md#埃拉托斯特尼筛法) 复杂度的证明一致．所以，本算法的时间复杂度为 $O(n\log\log n)$．
+The estimate in the last step is the same as in the complexity proof of the [sieve of Eratosthenes](./sieve.md#埃拉托斯特尼筛法). So this algorithm runs in $O(n\log\log n)$ time.
 
-参考实现如下：
+Reference implementation:
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     ```cpp
     --8<-- "docs/math/code/dirichlet/dirichlet-2.cpp:core"
     ```
 
-特别地，当积性函数 $g$ 是完全积性函数或其 Dirichlet 逆时，例如当 $g = 1$ 或 $g = \mu$ 时，算法可以进一步简化．此时，Dirichlet 卷积 $h = f\ast g$ 的计算可以采用常数更小的 [Dirichlet 前缀和/差分](./mobius.md#dirichlet-前缀和) 算法，但是算法时间复杂度仍为 $O(n\log\log n)$．
+In particular, when the multiplicative function $g$ is completely multiplicative or the Dirichlet inverse of one, for example $g = 1$ or $g = \mu$, the algorithm can be simplified further. In that case, $h = f\ast g$ can be computed with the [Dirichlet prefix sum / difference](./mobius.md#dirichlet-前缀和) algorithm, which has a smaller constant factor, though the time complexity is still $O(n\log\log n)$.
 
-### 结果为积性函数的情形
+### When the result is multiplicative
 
-最后，考虑 $h$ 是积性函数的情形．特别地，当 $f,g$ 都是积性函数时，$h=f \ast g$ 就是积性函数．要计算 $h$，只需要确定它在素数幂处的取值，就可以通过 [线性筛](./sieve.md#线性筛法) 在 $O(n)$ 时间内计算．而对于素数幂 $p^e$ 处的取值 $h(p^e)$ 直接暴力计算即可：
+Finally, consider the case where $h$ is multiplicative. In particular, when $f,g$ are both multiplicative, $h=f \ast g$ is multiplicative. To compute $h$, we only need its values at prime powers; the rest can then be computed with a [linear sieve](./sieve.md#线性筛法) in $O(n)$ time. The value $h(p^e)$ at a prime power $p^e$ can be computed by brute force:
 
 $$
 h(p^e) = \sum_{i=0}^e f(p^i)g(p^{e-i}).
 $$
 
-这些暴力计算需要的枚举次数为
+These brute-force computations take this many steps:
 
 $$
 \begin{aligned}
@@ -453,20 +453,20 @@ $$
 \end{aligned}
 $$
 
-因此，这一算法的总时间复杂度为 $O(n)$．
+So the total time complexity of this algorithm is $O(n)$.
 
-参考实现如下：
+Reference implementation:
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     ```cpp
     --8<-- "docs/math/code/dirichlet/dirichlet-3.cpp:core"
     ```
 
-## 参考资料与注释
+## References and notes
 
 -   [Dirichlet convolution - Wikipedia](https://en.wikipedia.org/wiki/Dirichlet_convolution)
 -   [Dirichlet series - Wikipedia](https://en.wikipedia.org/wiki/Dirichlet_series)
 -   [Euler product - Wikipedia](https://en.wikipedia.org/wiki/Euler_product)
 -   [Bell series - Wikipedia](https://en.wikipedia.org/wiki/Bell_series)
--   [Dirichlet 積と、数論関数の累積和 by maspy](https://maspypy.com/dirichlet-%e7%a9%8d%e3%81%a8%e3%80%81%e6%95%b0%e8%ab%96%e9%96%a2%e6%95%b0%e3%81%ae%e7%b4%af%e7%a9%8d%e5%92%8c)
--   [杜教筛（+ 贝尔级数 + powerful number）by command\_block - 洛谷](https://www.luogu.com.cn/article/ygfzawod)
+-   [Dirichlet products and cumulative sums of arithmetic functions by maspy (Japanese)](https://maspypy.com/dirichlet-%e7%a9%8d%e3%81%a8%e3%80%81%e6%95%b0%e8%ab%96%e9%96%a2%e6%95%b0%e3%81%ae%e7%b4%af%e7%a9%8d%e5%92%8c)
+-   [Du's sieve (+ Bell series + powerful numbers) by command\_block - Luogu](https://www.luogu.com.cn/article/ygfzawod)

@@ -1,36 +1,36 @@
-## 定义
+## Definition
 
-前置知识：[阶与原根](./primitive-root.md)．
+Prerequisite: [Order and primitive roots](./primitive-root.md).
 
-离散对数的定义方式和对数类似．取有原根的正整数模数 $m$，设其一个原根为 $g$. 对满足 $(a,m)=1$ 的整数 $a$，我们知道必存在唯一的整数 $0\leq k<\varphi(m)$ 使得
+The discrete logarithm is defined much like the ordinary logarithm. Take a positive integer modulus $m$ that has a primitive root, and let $g$ be one of its primitive roots. For an integer $a$ with $(a,m)=1$, we know there is a unique integer $0\leq k<\varphi(m)$ such that
 
 $$
 g^k\equiv a\pmod m
 $$
 
-我们称这个 $k$ 为以 $g$ 为底，模 $m$ 的离散对数，记作 $k=\operatorname{ind}_g a$，在不引起混淆的情况下可记作 $\operatorname{ind} a$.
+We call this $k$ the discrete logarithm of $a$ to the base $g$ modulo $m$, written $k=\operatorname{ind}_g a$, or just $\operatorname{ind} a$ when there is no risk of confusion.
 
-显然 $\operatorname{ind}_g 1=0$，$\operatorname{ind}_g g=1$.
+Clearly $\operatorname{ind}_g 1=0$ and $\operatorname{ind}_g g=1$.
 
-## 性质
+## Properties
 
-离散对数的性质也和对数有诸多类似之处．
+Discrete logarithms share many properties with ordinary logarithms.
 
-???+ note "性质"
-    设 $g$ 是模 $m$ 的原根，$(a,m)=(b,m)=1$，则：
+???+ note "Properties"
+    Let $g$ be a primitive root modulo $m$, and $(a,m)=(b,m)=1$. Then:
     
     1.  $\operatorname{ind}_g(ab)\equiv\operatorname{ind}_g a+\operatorname{ind}_g b\pmod{\varphi(m)}$
     
-        进而 $(\forall n\in\mathbf{N}),~~\operatorname{ind}_g a^n\equiv n\operatorname{ind}_g a\pmod{\varphi(m)}$
-    2.  若 $g_1$ 也是模 $m$ 的原根，则 $\operatorname{ind}_g a\equiv\operatorname{ind}_{g_1}a \cdot \operatorname{ind}_g g_1\pmod{\varphi(m)}$
+        Hence $(\forall n\in\mathbf{N}),~~\operatorname{ind}_g a^n\equiv n\operatorname{ind}_g a\pmod{\varphi(m)}$
+    2.  If $g_1$ is also a primitive root modulo $m$, then $\operatorname{ind}_g a\equiv\operatorname{ind}_{g_1}a \cdot \operatorname{ind}_g g_1\pmod{\varphi(m)}$
     3.  $a\equiv b\pmod m\iff \operatorname{ind}_g a=\operatorname{ind}_g b$
 
-???+ note "证明"
+???+ note "Proof"
     1.  $g^{\operatorname{ind}_g(ab)}\equiv ab\equiv g^{\operatorname{ind}_g a}g^{\operatorname{ind}_g b}\equiv g^{\operatorname{ind}_g a+\operatorname{ind}_g b}\pmod m$
-    2.  令 $x=\operatorname{ind}_{g_1}a$，则 $a\equiv g_1^x\pmod m$. 又令 $y=\operatorname{ind}_g g_1$，则 $g_1\equiv g^y\pmod m$.
+    2.  Let $x=\operatorname{ind}_{g_1}a$, so $a\equiv g_1^x\pmod m$. Also let $y=\operatorname{ind}_g g_1$, so $g_1\equiv g^y\pmod m$.
     
-        故 $a\equiv g^{xy}\pmod m$，即 $\operatorname{ind}_g a\equiv xy\equiv\operatorname{ind}_{g_1}a \cdot \operatorname{ind}_g g_1\pmod{\varphi(m)}$
-    3.  注意到
+        Therefore $a\equiv g^{xy}\pmod m$, that is, $\operatorname{ind}_g a\equiv xy\equiv\operatorname{ind}_{g_1}a \cdot \operatorname{ind}_g g_1\pmod{\varphi(m)}$
+    3.  Note that
     
         $$
         \begin{aligned}
@@ -40,72 +40,72 @@ $$
         \end{aligned}
         $$
 
-## 大步小步算法
+## Baby-step giant-step
 
-目前离散对数问题仍不存在多项式时间经典算法（离散对数问题的输入规模是输入数据的位数）．在密码学中，基于这一点人们设计了许多非对称加密算法，如 [Ed25519](https://en.wikipedia.org/wiki/EdDSA#Ed25519)．
+No polynomial-time classical algorithm for the discrete logarithm problem is currently known (the input size of the problem is the number of bits in the input). In cryptography, many asymmetric encryption schemes are built on this fact, such as [Ed25519](https://en.wikipedia.org/wiki/EdDSA#Ed25519).
 
-在算法竞赛中，BSGS（baby-step giant-step，大步小步算法）常用于求解离散对数问题．形式化地说，对 $a,b,m\in\mathbf{Z}^+$，该算法可以在 $O(\sqrt{m})$ 的时间内求解
+In competitive programming, BSGS (baby-step giant-step) is the usual way to solve discrete logarithm problems. Formally, for $a,b,m\in\mathbf{Z}^+$, the algorithm solves
 
 $$
 a^x \equiv b \pmod m
 $$
 
-其中 $a\perp m$．方程的解 $x$ 满足 $0 \le x < m$.（注意 $m$ 不一定是素数）
+in $O(\sqrt{m})$ time, where $a\perp m$. The solution $x$ satisfies $0 \le x < m$. (Note that $m$ need not be prime.)
 
-### 算法描述
+### How it works
 
-令 $x = A \left \lceil \sqrt m \right \rceil - B$，其中 $0\le A,B \le \left \lceil \sqrt m \right \rceil$，则有 $a^{A\left \lceil \sqrt m \right \rceil -B} \equiv b \pmod m$，稍加变换，则有 $a^{A\left \lceil \sqrt m \right \rceil} \equiv ba^B \pmod m$.
+Let $x = A \left \lceil \sqrt m \right \rceil - B$, where $0\le A,B \le \left \lceil \sqrt m \right \rceil$. Then $a^{A\left \lceil \sqrt m \right \rceil -B} \equiv b \pmod m$, which rearranges to $a^{A\left \lceil \sqrt m \right \rceil} \equiv ba^B \pmod m$.
 
-我们已知的是 $a,b$，所以我们可以先算出等式右边的 $ba^B$ 的所有取值，枚举 $B$，用 `hash`/`map` 存下来，然后逐一计算 $a^{A\left \lceil \sqrt m \right \rceil}$，枚举 $A$，寻找是否有与之相等的 $ba^B$，从而我们可以得到所有的 $x$，$x=A \left \lceil \sqrt m \right \rceil - B$.
+We know $a$ and $b$, so we can first compute every value of the right-hand side $ba^B$ by enumerating $B$, and store them in a `hash`/`map`. Then we compute $a^{A\left \lceil \sqrt m \right \rceil}$ for each $A$ in turn and check whether some $ba^B$ equals it. This gives us every $x$, with $x=A \left \lceil \sqrt m \right \rceil - B$.
 
-注意到 $A,B$ 均小于 $\left \lceil \sqrt m \right \rceil$，所以时间复杂度为 $\Theta\left  (\sqrt m\right )$，用 `map` 则多一个 $\log$.
+Since $A$ and $B$ are both less than $\left \lceil \sqrt m \right \rceil$, the time complexity is $\Theta\left  (\sqrt m\right )$, with an extra $\log$ factor if you use `map`.
 
-??? note "为什么要求 $a$ 与 $m$ 互质"
-    注意到我们求出的是 $A,B$，我们需要保证从 $a^{A\left \lceil \sqrt m \right \rceil} \equiv ba^B \pmod m$ 可以推回 $a^{A\left \lceil \sqrt m \right \rceil -B} \equiv b \pmod m$，后式是前式左右两边除以 $a^B$ 得到，所以必须有 $a^B \perp m$ 即 $a\perp m$.
+??? note "Why $a$ must be coprime to $m$"
+    What we find are $A$ and $B$, and we need to be sure that $a^{A\left \lceil \sqrt m \right \rceil} \equiv ba^B \pmod m$ implies $a^{A\left \lceil \sqrt m \right \rceil -B} \equiv b \pmod m$. The second is obtained by dividing both sides of the first by $a^B$, so we need $a^B \perp m$, that is, $a\perp m$.
 
-## 扩展 BSGS 算法
+## Extended BSGS
 
-对 $a,b,m\in\mathbf{Z}^+$，求解
+For $a,b,m\in\mathbf{Z}^+$, solve
 
 $$
 a^x\equiv b\pmod m
 $$
 
-其中 $a,m$ 不一定互质．
+where $a$ and $m$ are not necessarily coprime.
 
-当 $(a, m)=1$ 时，在模 $m$ 意义下 $a$ 存在逆元，因此可以使用 BSGS 算法求解．于是我们想办法让他们变得互质．
+When $(a, m)=1$, $a$ has an inverse modulo $m$, so plain BSGS works. So we try to make them coprime.
 
-具体地，设 $d_1=(a, m)$. 如果 $d_1\nmid b$，则原方程无解．否则我们把方程同时除以 $d_1$，得到
+Specifically, let $d_1=(a, m)$. If $d_1\nmid b$, the equation has no solution. Otherwise, divide the whole equation by $d_1$ to get
 
 $$
 \frac{a}{d_1}\cdot a^{x-1}\equiv \frac{b}{d_1}\pmod{\frac{m}{d_1}}
 $$
 
-如果 $a$ 和 $\frac{m}{d_1}$ 仍不互质就再除，设 $d_2=\left(a, \frac{m}{d_1}\right)$. 如果 $d_2\nmid \frac{b}{d_1}$，则方程无解；否则同时除以 $d_2$ 得到
+If $a$ and $\frac{m}{d_1}$ are still not coprime, divide again. Let $d_2=\left(a, \frac{m}{d_1}\right)$. If $d_2\nmid \frac{b}{d_1}$, there is no solution; otherwise divide by $d_2$ to get
 
 $$
 \frac{a^2}{d_1d_2}\cdot a^{x-2}≡\frac{b}{d_1d_2} \pmod{\frac{m}{d_1d_2}}
 $$
 
-同理，这样不停的判断下去，直到 $a\perp \dfrac{m}{d_1d_2\cdots d_k}$.
+Keep going in the same way until $a\perp \dfrac{m}{d_1d_2\cdots d_k}$.
 
-记 $D=\prod_{i=1}^kd_i$，于是方程就变成了这样：
+Let $D=\prod_{i=1}^kd_i$. The equation becomes:
 
 $$
 \frac{a^k}{D}\cdot a^{x-k}\equiv\frac{b}{D} \pmod{\frac{m}{D}}
 $$
 
-由于 $a\perp\dfrac{m}{D}$，于是推出 $\dfrac{a^k}{D}\perp \dfrac{m}{D}$. 这样 $\dfrac{a^k}{D}$ 就有逆元了，于是把它丢到方程右边，这就是一个普通的 BSGS 问题了，于是求解 $x-k$ 后再加上 $k$ 就是原方程的解啦．
+Since $a\perp\dfrac{m}{D}$, it follows that $\dfrac{a^k}{D}\perp \dfrac{m}{D}$. So $\dfrac{a^k}{D}$ has an inverse, and we can move it to the right-hand side. Now it is an ordinary BSGS problem: solve for $x-k$, then add $k$ to get the solution of the original equation.
 
-注意，不排除解小于等于 $k$ 的情况，所以在消因子之前做一下 $\Theta(k)$ 枚举，直接验证 $a^i\equiv b \pmod m$，这样就能避免这种情况．
+Note that the solution may be less than or equal to $k$. To handle this, before removing factors, do a $\Theta(k)$ enumeration that checks $a^i\equiv b \pmod m$ directly.
 
-## 基于值域预处理的快速离散对数
+## Fast discrete logarithm with value-range preprocessing
 
-前文的 BSGS 算法时间复杂度为单次 $O(\sqrt m)$，在询问量级较大的时候效率较低．若每次求解的模数是一个固定的质数 $p$，我们就有一个基于值域预处理的快速算法．
+The BSGS algorithm above takes $O(\sqrt m)$ time per query, which is slow when there are many queries. If every query uses the same fixed prime modulus $p$, there is a faster algorithm based on preprocessing over the range of values.
 
-我们已经知道 $\operatorname{ind}_g(ab)\equiv\operatorname{ind}_g a+\operatorname{ind}_g b\pmod{p-1}$，所以我们可以只对所有质数通过 BSGS 算法计算离散对数，合数的离散对数则可通过该式转化为若干已知的质数离散对数值之和．此时复杂度仍然不优，我们考虑只预处理一部分的离散对数，具体来说，我们预处理 $1$ 到 $L = \lfloor\sqrt p\rfloor + 1$ 的离散对数．注意此时的 BSGS 块长 $B$  **不能取**  $O(\sqrt{L})$，因为 BSGS 预处理（插入哈希表）部分的复杂度是 $O(B)$，而查询一共需要 $O(\pi(L))$ 次，则总时间复杂度为 $O\left(B+\dfrac{\pi(L)p}{B}\right)$，此时取 $B=O(\sqrt{\pi(L)p})$ 才是最优．由 [素数定理](./prime.md) $\pi(n)\sim\dfrac{n}{\log n}$，则总的预处理时间复杂度可以平衡为 $O\left(\dfrac{p^{3/4}}{\log^{1/2} p}\right)$．
+We know $\operatorname{ind}_g(ab)\equiv\operatorname{ind}_g a+\operatorname{ind}_g b\pmod{p-1}$, so we could compute discrete logarithms with BSGS only for primes, and turn the discrete logarithm of a composite into a sum of known discrete logarithms of primes using this formula. That is still not fast enough, so we preprocess only some of the discrete logarithms: specifically, those of $1$ to $L = \lfloor\sqrt p\rfloor + 1$. Note that here the BSGS block length $B$ **must not be** $O(\sqrt{L})$. The BSGS preprocessing (inserting into the hash table) costs $O(B)$, and there are $O(\pi(L))$ queries in total, so the total time complexity is $O\left(B+\dfrac{\pi(L)p}{B}\right)$, which is optimal with $B=O(\sqrt{\pi(L)p})$. By the [prime number theorem](./prime.md), $\pi(n)\sim\dfrac{n}{\log n}$, so the total preprocessing time balances to $O\left(\dfrac{p^{3/4}}{\log^{1/2} p}\right)$.
 
-接下来是如何求答案．假设当前要求的是 $\operatorname{ind}_g y$，若 $y\le L$ 则直接返回，否则设 $p=vy+r$，则 $v=\left\lfloor\dfrac{p}{y}\right\rfloor<L$，$r=p\bmod y$，$y=\dfrac{p-r}{v}$，从而
+Next, how to answer a query. Suppose we want $\operatorname{ind}_g y$. If $y\le L$, return it directly. Otherwise write $p=vy+r$, so $v=\left\lfloor\dfrac{p}{y}\right\rfloor<L$, $r=p\bmod y$, and $y=\dfrac{p-r}{v}$. Then
 
 $$
 \begin{aligned}
@@ -115,39 +115,39 @@ $$
 \end{aligned}
 $$
 
-注意到 $\operatorname{ind}_g (p-1)=(p-1)/2$，因此只需递归计算 $r$ 的离散对数即可．
+Note that $\operatorname{ind}_g (p-1)=(p-1)/2$, so we only need to compute the discrete logarithm of $r$ recursively.
 
-我们还可以考虑 $y$ 的另一种表达方式，注意到 $p=vy+r=(v+1)y+r-y$，则 $y=\dfrac{p-r+y}{v+1}$，从而
+We can also write $y$ another way. Since $p=vy+r=(v+1)y+r-y$, we have $y=\dfrac{p-r+y}{v+1}$, so
 
 $$
 \operatorname{ind}_g y\equiv \operatorname{ind}_g (y-r)-\operatorname{ind}_g (v+1) \pmod{p-1}.
 $$
 
-我们有 $v+1 \le L$，因此只需要递归计算 $y-r$ 的离散对数即可．
+Here $v+1 \le L$, so we only need to compute the discrete logarithm of $y-r$ recursively.
 
-综合这两种计算方式，我们有 $\min\{r,y-r\}\le \dfrac{y}{2}$，所以递归计算较小的一方即可达到 $O(\log p)$ 的查询复杂度．
+Combining the two, we have $\min\{r,y-r\}\le \dfrac{y}{2}$, so recursing on the smaller one gives $O(\log p)$ time per query.
 
-至此我们得到了一个时间复杂度为 $O\left(\dfrac{p^{3/4}}{\log^{1/2} p}\right)-O(\log p)$ 的算法．
+This gives an algorithm with $O\left(\dfrac{p^{3/4}}{\log^{1/2} p}\right)$ preprocessing and $O(\log p)$ per query.
 
-??? example "[Luogu11175【模板】基于值域预处理的快速离散对数](https://www.luogu.com.cn/problem/P11175)"
+??? example "[Luogu P11175 [Template] Fast Discrete Logarithm with Value-Range Preprocessing](https://www.luogu.com.cn/problem/P11175)"
     ```cpp
     --8<-- "docs/math/code/discrete-logarithm/discrete-logarithm-1.cpp"
     ```
 
-## 习题
+## Exercises
 
--   [SPOJ MOD](https://www.spoj.com/problems/MOD/) 模板
--   [SDOI2013 随机数生成器](https://www.luogu.com.cn/problem/P3306)
--   [SGU261 Discrete Roots](https://codeforces.com/problemsets/acmsguru/problem/99999/261) 模板
--   [SDOI2011 计算器](https://loj.ac/problem/10214) 模板
--   [Luogu4195【模板】exBSGS/Spoj3105 Mod](https://www.luogu.com.cn/problem/P4195) 模板
+-   [SPOJ MOD](https://www.spoj.com/problems/MOD/) template
+-   [SDOI2013 Random Number Generator](https://www.luogu.com.cn/problem/P3306)
+-   [SGU261 Discrete Roots](https://codeforces.com/problemsets/acmsguru/problem/99999/261) template
+-   [SDOI2011 Calculator](https://loj.ac/problem/10214) template
+-   [Luogu P4195 [Template] exBSGS / SPOJ3105 Mod](https://www.luogu.com.cn/problem/P4195) template
 -   [Codeforces - Lunar New Year and a Recursive Sequence](https://codeforces.com/contest/1106/problem/F)
--   [LOJ6542 离散对数](https://loj.ac/problem/6542) index calculus 方法，非模板
+-   [LOJ6542 Discrete Logarithm](https://loj.ac/problem/6542) index calculus method, not a template problem
 
-**本页面部分内容以及代码译自博文 [Дискретное извлечение корня](http://e-maxx.ru/algo/discrete_root) 与其英文翻译版 [Discrete Root](https://cp-algorithms.com/algebra/discrete-root.html)．其中俄文版版权协议为 Public Domain + Leave a Link；英文版版权协议为 CC-BY-SA 4.0．**
+**Parts of this page and its code are translated from the article [Дискретное извлечение корня](http://e-maxx.ru/algo/discrete_root) and its English translation [Discrete Root](https://cp-algorithms.com/algebra/discrete-root.html). The Russian version is licensed under Public Domain + Leave a Link; the English version is licensed under CC-BY-SA 4.0.**
 
-## 参考资料
+## References
 
 1.  [Discrete logarithm - Wikipedia](https://en.wikipedia.org/wiki/Discrete_logarithm)
-2.  潘承洞，潘承彪．初等数论．
-3.  冯克勤．初等数论及其应用．
+2.  Pan Chengdong, Pan Chengbiao. *Elementary Number Theory* (in Chinese).
+3.  Feng Keqin. *Elementary Number Theory and Its Applications* (in Chinese).
