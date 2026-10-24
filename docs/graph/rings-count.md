@@ -1,133 +1,133 @@
-## 普通环计数
+## Counting simple cycles
 
-???+ note "[例题 1：Codeforces Beta Round 11 D. A Simple Task](https://codeforces.com/problemset/problem/11/D)"
-    给定一个简单图，求图中简单环的数目．简单环是指没有重复顶点或边的环．
+???+ note "[Example problem 1: Codeforces Beta Round 11 D. A Simple Task](https://codeforces.com/problemset/problem/11/D)"
+    Given a simple graph, count its simple cycles. A simple cycle is a cycle with no repeated vertices or edges.
     
-    结点数目 $1\leq n\leq 19$．
+    The number of vertices is $1\leq n\leq 19$.
 
-??? note "解题思路"
-    考虑状态压缩动态规划．记 $f(s,i)$ 表示满足当前经过结点集合为 $s$，且现在在结点 $i$ 上，且第一个结点为结点集合 $s$ 中 **编号最小的那个** 的路径条数．
+??? note "Solution"
+    Use bitmask DP. Let $f(s,i)$ be the number of paths that have visited exactly the vertex set $s$, are currently at vertex $i$, and whose first vertex is **the one with the smallest label** in $s$.
     
-    对于状态 $f(s,i)$，枚举下一个结点 $u$．若 $u$ 在集合 $s$ 中且是编号最小的那个（即起点），就将答案 $A$ 加上 $f(s,i)$．若 $u$ 不在 $s$ 中，就将 $f(s,i)$ 加到 $f(s\cup\{u\},u)$ 上．
+    For a state $f(s,i)$, enumerate the next vertex $u$. If $u$ is in $s$ and is the one with the smallest label (that is, the start), add $f(s,i)$ to the answer $A$. If $u$ is not in $s$, add $f(s,i)$ to $f(s\cup\{u\},u)$.
     
-    这样会把二元环（即重边）也算上，并且每个非二元环会被计算两次（因为固定起点可以向两个方向走），所以答案为 $\dfrac{A-m}2$，其中 $m$ 表示边数．时间复杂度 $O(2^nm)$．
+    This also counts cycles of length 2 (that is, single edges walked back and forth), and every longer cycle is counted twice (because from a fixed start you can go around in two directions). So the answer is $\dfrac{A-m}2$, where $m$ is the number of edges. The time complexity is $O(2^nm)$.
 
-??? note "示例代码"
+??? note "Sample code"
     ```cpp
     --8<-- "docs/graph/code/rings-count/rings-count_1.cpp"
     ```
 
-## 三元环计数
+## Counting triangles
 
-**三元环** 指的是一个简单图 $G$ 中的一个无序三元组 $(u,\ v,\ w)$ 满足存在三条边分别连接 $(u,\ v)$，$(v,\ w)$ 和 $(w,\ u)$．而 **三元环计数问题** 要求计算出图中所有三元环的数量．
+A **triangle** (3-cycle) in a simple graph $G$ is an unordered triple $(u,\ v,\ w)$ such that there are edges $(u,\ v)$, $(v,\ w)$ and $(w,\ u)$. The **triangle counting problem** asks for the number of all triangles in the graph.
 
-首先给所有边定向．我们规定从度数小的点指向度数大的点，度数相同就从编号小的点指向编号大的点．那么此时此图是一张有向无环图（DAG）．
+First, give every edge a direction. We direct each edge from the endpoint with smaller degree to the one with larger degree; if the degrees are equal, from the smaller label to the larger label. The resulting graph is a directed acyclic graph (DAG).
 
-??? note "该图没有环的证明"
-    反证法，假设存在环，那么环中的点度数一个比一个大，要形成环，所有点的度数必须相等，但是编号必定不同，矛盾．
+??? note "Proof that the graph has no cycles"
+    By contradiction: suppose there is a cycle. Along the cycle, the degrees never decrease, so to close the cycle, all vertices must have the same degree. But then their labels must keep increasing along the cycle, which is impossible.
     
-    所以定向后图肯定不存在环．
+    So after orienting the edges, the graph has no cycle.
     
-    事实上，可以根据上述定向规则构造一个 [偏序](../math/order-theory.md#二元关系)，所以按此规则构造的图（也即该偏序的 [Hasse 图](../math/order-theory.md#偏序集的可视化表示hasse-图)）一定是一个 DAG．
+    In fact, the orientation rule above defines a [partial order](../math/order-theory.md#二元关系), so the graph built by this rule (which is the [Hasse diagram](../math/order-theory.md#偏序集的可视化表示hasse-图) of that partial order) must be a DAG.
 
-枚举 $u$ 和 $u$ 指向的点 $v$，再在 $v$ 指向的点中枚举 $w$，检验 $u$ 是否与 $w$ 相连即可．
+Enumerate $u$ and each vertex $v$ that $u$ points to, then enumerate $w$ among the vertices that $v$ points to, and check whether $u$ is connected to $w$.
 
-这个算法的时间复杂度为 $O(m\sqrt m)$．
+The time complexity of this algorithm is $O(m\sqrt m)$.
 
-???+ note "时间复杂度证明"
-    对于定向部分，遍历了所有的边，时间复杂度 $O(n+m)$．
+???+ note "Proof of the time complexity"
+    Orienting the edges visits every edge once, which takes $O(n+m)$ time.
     
-    对于每一对 $(v,\ w)$，$u$ 的数量都不超过 $v$ 的入度 $d^-(v)$．
+    For each pair $(v,\ w)$, the number of $u$ is at most the in-degree $d^-(v)$ of $v$.
     
-    若 $d^-(v)\leq\sqrt m$，由于 $w$ 的个数至多为 $n$，所以这部分时间复杂度为 $O(n\sqrt m)$．
+    If $d^-(v)\leq\sqrt m$: since there are at most $n$ choices of $w$, this part takes $O(n\sqrt m)$ time.
     
-    若 $d^-(v) > \sqrt m$，由于 $v$ 指向 $w$，所以 $d(v) \leq d(w)$，得出 $d(w) > \sqrt m$，但是总边数只有 $m$，所以这样的 $w$ 的个数至多为 $\sqrt m$，故时间复杂度为 $O(m\sqrt m)$．
+    If $d^-(v) > \sqrt m$: since $v$ points to $w$, $d(v) \leq d(w)$, so $d(w) > \sqrt m$. But there are only $m$ edges in total, so there are at most $\sqrt m$ such $w$. So this part takes $O(m\sqrt m)$ time.
     
-    总时间复杂度为 $O(n+m+n\sqrt m+m\sqrt m)=O(m\sqrt m)$．
+    The total time complexity is $O(n+m+n\sqrt m+m\sqrt m)=O(m\sqrt m)$.
     
-    事实上，如果定向时从度数大的点指向度数小的点，复杂度也正确，只需要交换 $u,\ w$ 两个点，上述证明也成立．
+    In fact, directing edges from larger degree to smaller degree also gives the correct complexity: just swap $u$ and $w$, and the proof above still works.
 
-???+ note "示例代码（[洛谷 P1989 无向图三元环计数](https://www.luogu.com.cn/problem/P1989)）"
+???+ note "Sample code ([Luogu P1989 Counting Triangles in an Undirected Graph](https://www.luogu.com.cn/problem/P1989))"
     ```cpp
     --8<-- "docs/graph/code/rings-count/rings-count_2.cpp"
     ```
 
-### 例题 2
+### Example problem 2
 
 ???+ note "[HDU 6184 Counting Stars](https://acm.hdu.edu.cn/showproblem.php?pid=6184)"
-    给定一张有 $n$ 个点和 $m$ 条边的无向图，求下面图形的出现次数．
+    Given an undirected graph with $n$ vertices and $m$ edges, count how many times the shape below appears.
     
     ![](./images/rings-count1.svg)
     
-    $2\leq n\leq 10^5$，$1\leq m\leq\min\left\{2\times 10^5,\ \dfrac{n(n-1)}2\right\}$．
+    $2\leq n\leq 10^5$, $1\leq m\leq\min\left\{2\times 10^5,\ \dfrac{n(n-1)}2\right\}$.
 
-??? note "解题思路"
-    这个图形是两个三元环共用了一条边形成的．所以我们先跑一遍三元环计数，统计出一条边上三元环的数量，然后枚举共用的那条边，设有 $x$ 个三元环中有此边，那么对答案的贡献就是 $\dbinom x2$．
+??? note "Solution"
+    This shape is two triangles sharing one edge. So we first run triangle counting and count how many triangles each edge belongs to. Then we enumerate the shared edge: if $x$ triangles contain it, it contributes $\dbinom x2$ to the answer.
     
-    时间复杂度 $O(m\sqrt m)$．
+    The time complexity is $O(m\sqrt m)$.
 
-??? note "示例代码"
+??? note "Sample code"
     ```cpp
     --8<-- "docs/graph/code/rings-count/rings-count_3.cpp"
     ```
 
-## 四元环计数
+## Counting 4-cycles
 
-类似地，**四元环** 就是指四个点 $a,\ b,\ c,\ d$ 满足 $(a,\ b)$，$(b,\ c)$，$(c,\ d)$ 和 $(d,\ a)$ 均有边连接．
+Similarly, a **4-cycle** is four vertices $a,\ b,\ c,\ d$ such that the edges $(a,\ b)$, $(b,\ c)$, $(c,\ d)$ and $(d,\ a)$ all exist.
 
-考虑先对点进行排序．度数小的排在前面，度数大的排在后面．
+First, sort the vertices: vertices with smaller degree come first, and those with larger degree come later.
 
-考虑枚举排在最后面的点 $a$，此时只需要对于每个比 $a$ 排名更前的点 $c$，都求出有多少个排名比 $a$ 前的点 $b$ 满足 $(a,\ b)$，$(b,\ c)$ 有边．然后只需要从这些 $b$ 中任取两个都能成为一个四元环．求 $b$ 的数量只需要遍历一遍 $b$ 和 $c$ 即可．
+Enumerate the vertex $a$ that comes last in this order. Then for each vertex $c$ ranked before $a$, we only need to count how many vertices $b$ ranked before $a$ have edges $(a,\ b)$ and $(b,\ c)$. Any two of these $b$ together form a 4-cycle. Counting the $b$ only needs one pass over $b$ and $c$.
 
-注意到我们枚举的复杂度本质上与枚举三元环等价，所以时间复杂度也是 $O(m\sqrt m)$（假设 $n,\ m$ 同阶）．
+Notice that this enumeration is essentially the same as enumerating triangles, so the time complexity is also $O(m\sqrt m)$ (assuming $n$ and $m$ are of the same order).
 
-值得注意的是，$(a,\ b,\ c,\ d)$ 和 $(a,\ c,\ b,\ d)$ 可以是两个不同的四元环．
+Note that $(a,\ b,\ c,\ d)$ and $(a,\ c,\ b,\ d)$ can be two different 4-cycles.
 
-另外，度数相同的结点的排名将不相同，并且需要注意判断 $a\neq c$．
+Also, vertices with the same degree must still get different ranks, and remember to check that $a\neq c$.
 
-???+ note "示例代码（[LibreOJ P191 无向图四元环计数](https://loj.ac/p/191)）"
+???+ note "Sample code ([LibreOJ P191 Counting 4-Cycles in an Undirected Graph](https://loj.ac/p/191))"
     ```cpp
     --8<-- "docs/graph/code/rings-count/rings-count_4.cpp"
     ```
 
-### 例题 3
+### Example problem 3
 
 ???+ note "[Gym 102028L Connected Subgraphs](https://codeforces.com/gym/102028/problem/L)"
-    给定一张有 $n$ 个点和 $m$ 条边的无向图，求四条边的导出子图连通的情况数．
+    Given an undirected graph with $n$ vertices and $m$ edges, count the sets of four edges whose induced subgraph is connected.
     
-    $4\leq n\leq 10^5$，$4\leq m\leq 2\times 10^5$．
+    $4\leq n\leq 10^5$, $4\leq m\leq 2\times 10^5$.
 
-??? note "解题思路"
-    容易把情况分为五种：菊花图、四元环、三元环上一个点连出一条边、四个点构成的链中间一个点连出一条边以及五个点构成的链．
+??? note "Solution"
+    The cases split easily into five types: a star, a 4-cycle, a triangle with one extra edge hanging off one of its vertices, a path of four vertices with one extra edge hanging off a middle vertex, and a path of five vertices.
     
-    菊花图直接枚举点的度数，用组合数解决即可．四元环可以直接按照上述算法求得．三元环部分只需枚举三元环 $(u,\ v,\ w)$，那么对答案的贡献就是 $[d(u)-2]+[d(v)-2]+[d(w)-2]$．
+    For stars, just enumerate each vertex's degree and use binomial coefficients. 4-cycles can be counted directly with the algorithm above. For the triangle case, enumerate each triangle $(u,\ v,\ w)$; its contribution to the answer is $[d(u)-2]+[d(v)-2]+[d(w)-2]$.
     
-    下面考虑第四种情况．考虑枚举度数为 $2$ 的点 $x$，再枚举与它相邻的一个结点 $y$ 作为度数为 $3$ 的那个点．此时对答案的贡献为 $[d(x)-1]\cdot\dbinom{d(y)-1}2$．但是注意到 $y$ 的相邻节点可能会和 $x$ 的相邻结点重合，此时的图形等价于第三种情况．但是每种多算的第三种情况都会被多算两次（因为有两个度数为 $3$ 的点），所以应该减去第三种情况数目的两倍．
+    Now the fourth case. Enumerate a vertex $x$ of degree $2$ in the shape, then enumerate one of its neighbors $y$ as the vertex of degree $3$. The contribution is $[d(x)-1]\cdot\dbinom{d(y)-1}2$. But a neighbor of $y$ may coincide with the neighbor of $x$, and then the shape is really the third case. Each such wrongly counted third-case shape is counted twice (because it has two vertices of degree $3$), so we subtract twice the number of third-case shapes.
     
-    对于最后一种情况，先枚举中间的点 $x$，那么容易发现对答案的贡献是
+    For the last case, first enumerate the middle vertex $x$. It is easy to see that its contribution is
     
     $$
     \sum_{y\in son_x}\sum_{z\in son_x}[d(y)-1]\cdot[d(z)-1].
     $$
     
-    同样地，这其中有多算的部分．设 $y$ 的相邻结点为 $s$，$z$ 的相邻结点为 $t$，那么思考后发现多算的有如下几种情况：
+    Again, some shapes are counted wrongly here. Let the other neighbor of $y$ be $s$ and the other neighbor of $z$ be $t$. Thinking it through, the wrongly counted cases are:
     
-    1.  $y$ 与 $t$ 重合，但是 $s$ 与 $z$ 不重合时，等价于第三种情况；
-    2.  $s$ 与 $z$ 重合，但是 $y$ 与 $t$ 不重合时，同样等价于第三种情况；
-    3.  $y$ 与 $t$，$s$ 与 $z$ 都重合时，等价于一个三元环；
-    4.  $s$ 与 $t$ 重合时，等价于一个四元环（第二种情况）．
+    1.  $y$ coincides with $t$ but $s$ does not coincide with $z$: this is the third case;
+    2.  $s$ coincides with $z$ but $y$ does not coincide with $t$: this is also the third case;
+    3.  $y$ coincides with $t$ and $s$ coincides with $z$: this is a triangle;
+    4.  $s$ coincides with $t$: this is a 4-cycle (the second case).
     
-    考虑到第三种情况中两个度数 $2$ 的点作为 $x$ 时正好分别对应上述多算情况的 1 和 2，所以要额外减去第三种情况数目的两倍．对于一个三元环，三个结点都可以作为 $x$，多算了 $3$ 次．同样的，四元环的情况被多算了 $4$ 次．
+    In a third-case shape, taking each of the two vertices of degree $2$ as $x$ gives exactly the wrongly counted cases 1 and 2 above, so we subtract another two times the number of third-case shapes. For a triangle, each of its three vertices can be $x$, so it is counted $3$ extra times. Similarly, a 4-cycle is counted $4$ extra times.
     
-    于是我们就得出了所有情况的算法，时间复杂度为 $O(n+m\sqrt m)$．
+    So we now have an algorithm for every case, with time complexity $O(n+m\sqrt m)$.
 
-??? note "示例代码"
+??? note "Sample code"
     ```cpp
     --8<-- "docs/graph/code/rings-count/rings-count_5.cpp"
     ```
 
-## 习题
+## Exercises
 
-[洛谷 P3547 \[POI2013\] CEN-Price List](https://www.luogu.com.cn/problem/P3547)
+[Luogu P3547 \[POI2013\] CEN-Price List](https://www.luogu.com.cn/problem/P3547)
 
-[CodeForces 985G Team Players](https://codeforces.com/contest/985/problem/G)（容斥原理）
+[CodeForces 985G Team Players](https://codeforces.com/contest/985/problem/G) (inclusion–exclusion principle)

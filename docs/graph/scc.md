@@ -1,72 +1,72 @@
-## 简介
+## Introduction
 
-在阅读下列内容之前，请务必了解 [图论相关概念](./concept.md) 中的基础部分．
+Before reading the following, make sure you know the basics in [Graph theory concepts](./concept.md).
 
-强连通的定义是：有向图 G 强连通是指，G 中任意两个结点连通．
+Strong connectivity is defined as follows: a directed graph G is strongly connected if every two nodes in G are mutually reachable.
 
-强连通分量（Strongly Connected Components，SCC）的定义是：极大的强连通子图．
+A strongly connected component (SCC) is defined as a maximal strongly connected subgraph.
 
-这里要介绍的是如何来求强连通分量．
+This page explains how to find strongly connected components.
 
-## Tarjan 算法
+## Tarjan's algorithm
 
-### 引入
+### Introduction
 
-Robert E. Tarjan（罗伯特·塔扬，1948\~），生于美国加州波莫纳，计算机科学家．
+Robert E. Tarjan (1948\~), born in Pomona, California, USA, is a computer scientist.
 
-Tarjan 发明了很多算法和数据结构．不少他发明的算法都以他的名字命名，以至于有时会让人混淆几种不同的算法．比如求各种连通分量的 Tarjan 算法，求 LCA（Lowest Common Ancestor，最近公共祖先）的 Tarjan 算法．并查集、Splay、Toptree 也是 Tarjan 发明的．
+Tarjan invented many algorithms and data structures. Quite a few of them are named after him, which sometimes makes it easy to confuse different algorithms, for example Tarjan's algorithm for various kinds of connected components and Tarjan's algorithm for LCA (Lowest Common Ancestor). Disjoint set union, the splay tree and the top tree were also invented by Tarjan.
 
-我们这里要介绍的是在有向图中求强连通分量的 Tarjan 算法．
+Here we introduce Tarjan's algorithm for finding strongly connected components in a directed graph.
 
-### DFS 生成树
+### DFS spanning tree
 
-在介绍该算法之前，先来了解 **DFS 生成树**，我们以下面的有向图为例：
+Before introducing the algorithm, let us first look at the **DFS spanning tree**, using the directed graph below as an example:
 
-![DFS 生成树](./images/dfs-tree.svg)
+![DFS spanning tree](./images/dfs-tree.svg)
 
-在有向图 $G$ 上运行 DFS 算法时，由于边具有方向性，从单个结点出发可能无法访问到图中的全部结点．因此，我们需要遍历整个顶点集：对每个尚未被访问的结点，都重新发起一次 DFS．在每一次从某个起始结点出发并完成的 DFS 过程中，其所经过的树边（见下文）会构成一棵树，称为 **DFS 生成树**．当所有结点都被访问后，得到的 DFS 生成树的全体构成了该有向图的 **DFS 生成森林**．
+When running DFS on a directed graph $G$, the edges have directions, so starting from a single node may not reach every node of the graph. So we go through the whole vertex set: for every node that has not been visited yet, we start a new DFS. In each DFS run from some start node, the tree edges it uses (see below) form a tree, called a **DFS spanning tree**. Once all nodes have been visited, all the DFS spanning trees together form the **DFS spanning forest** of the directed graph.
 
-需要注意的是，生成树（以及生成森林）的具体结构，以及下文中的边分类，都依赖于 DFS 的起始结点选择和邻接点的访问顺序．
+Note that the exact shape of the spanning tree (and spanning forest), as well as the edge classification below, depends on which start nodes the DFS picks and the order in which neighbors are visited.
 
-有向图 $G$ 的边可分为四类：
+The edges of a directed graph $G$ fall into four types:
 
-1.  树边（tree edge）：示意图中以黑色边表示，每次搜索找到一个还没有访问过的结点的时候就形成了一条树边．所有相邻的树边组成 DFS 生成树．
-2.  返祖边（back edge）：也称回边，示意图中以红色边表示（即 $7 \rightarrow 1$），指在搜索过程中，从某个结点指向其祖先结点的非树边．
-3.  前向边（forward edge）：示意图中以绿色边表示（即 $3 \rightarrow 6$），指在搜索过程中，从某个结点指向其子树中后代结点的非树边．
-4.  横叉边（cross edge）：示意图中以蓝色边表示（即 $9 \rightarrow 7$），指在搜索过程中，从某个结点指向非祖先、非后代且已访问的结点的边，即不属于上述三类的边．
+1.  Tree edge: shown in black in the figure. Each time the search finds a node that has not been visited yet, it creates a tree edge. All the tree edges together form the DFS spanning tree.
+2.  Back edge: shown in red in the figure (that is, $7 \rightarrow 1$). It is a non-tree edge that, during the search, goes from a node to one of its ancestors.
+3.  Forward edge: shown in green in the figure (that is, $3 \rightarrow 6$). It is a non-tree edge that, during the search, goes from a node to a descendant in its subtree.
+4.  Cross edge: shown in blue in the figure (that is, $9 \rightarrow 7$). It is an edge that, during the search, goes from a node to an already visited node that is neither an ancestor nor a descendant; in other words, any edge not in the three types above.
 
-我们考虑 DFS 生成树与强连通分量之间的关系．
+Let us look at how DFS spanning trees relate to strongly connected components.
 
-如果结点 $u$ 是某个强连通分量在搜索树中遇到的第一个结点，那么这个强连通分量的其余结点肯定是在搜索树中以 $u$ 为根的子树中．结点 $u$ 被称为这个强连通分量的根．
+If node $u$ is the first node of some strongly connected component reached in the search tree, then all the other nodes of this component must be in the subtree rooted at $u$. Node $u$ is called the root of this strongly connected component.
 
-反证法：假设有个结点 $v$ 在该强连通分量中但是不在以 $u$ 为根的子树中，那么 $u$ 到 $v$ 的路径中肯定有一条离开子树的边．但是这样的边只可能是横叉边或者返祖边，然而这两条边都要求指向的结点已经被访问过了，这就和 $v$ 不在以 $u$ 为根的子树中矛盾了．得证．
+Proof by contradiction: suppose some node $v$ is in this component but not in the subtree rooted at $u$. Then the path from $u$ to $v$ must contain an edge that leaves the subtree. But such an edge can only be a cross edge or a back edge, and both of these point to nodes that have already been visited. This contradicts the fact that $v$ is not in the subtree rooted at $u$. This proves the claim.
 
-### Tarjan 算法求强连通分量
+### Finding SCCs with Tarjan's algorithm
 
-Tarjan 算法基于对图进行 [深度优先搜索](./dfs.md)．我们视每个连通分量为搜索树中的一棵子树，在搜索过程中，维护一个栈，每次把搜索树中尚未处理的节点加入栈中，并将确定下来答案的点从栈中弹出．
+Tarjan's algorithm is based on a [depth-first search](./dfs.md) of the graph. We treat each component as a subtree of the search tree. During the search, we keep a stack: each node of the search tree that has not been finished yet is pushed onto the stack, and nodes whose answer is determined are popped off.
 
-在 Tarjan 算法中为每个结点 $u$ 维护了以下几个变量：
+Tarjan's algorithm keeps the following values for each node $u$:
 
-1.  $\textit{dfn}_u$：深度优先搜索遍历时结点 $u$ 被搜索的次序．
-2.  $\textit{low}_u$：在 $u$ 的子树中能够回溯到的最早的已经在栈中的结点．设在搜索树中以 $u$ 为根的子树为 $\textit{Subtree}_u$．$\textit{low}_u$ 定义为以下结点的 $\textit{dfn}$ 的最小值：从 $\textit{Subtree}_u$ 通过一条不在搜索树上的边能到达的在栈中的结点．
+1.  $\textit{dfn}_u$: the order in which node $u$ is visited by the depth-first search.
+2.  $\textit{low}_u$: the earliest node still on the stack that can be reached back from the subtree of $u$. Let $\textit{Subtree}_u$ be the subtree rooted at $u$ in the search tree. $\textit{low}_u$ is defined as the minimum $\textit{dfn}$ over the following nodes: nodes on the stack that can be reached from $\textit{Subtree}_u$ through one edge that is not in the search tree.
 
-一个结点的子树内结点的 dfn 都大于该结点的 dfn．
+Every node in the subtree of a node has a larger dfn than that node.
 
-从根开始的一条路径上的 dfn 严格递增，low 严格非降．
+Along a path starting from the root, dfn strictly increases and low never decreases.
 
-按照深度优先搜索算法搜索的次序对图中所有的结点进行搜索，维护每个结点的 `dfn` 与 `low` 变量，且让搜索到的结点入栈．每当找到一个强连通元素，就按照该元素包含结点数目让栈中元素出栈．在搜索过程中，对于结点 $u$ 和与其相邻的结点 $v$（$v$ 不是 $u$ 的父节点）考虑 3 种情况：
+Visit all nodes of the graph in depth-first search order, keep the `dfn` and `low` values of each node, and push each visited node onto the stack. Each time a strongly connected component is found, pop as many elements from the stack as it has nodes. During the search, for a node $u$ and a neighbor $v$ ($v$ is not the parent of $u$), there are 3 cases:
 
-1.  $v$ 未被访问：继续对 $v$ 进行深度搜索．在回溯过程中，用 $\textit{low}_v$ 更新 $\textit{low}_u$．因为存在从 $u$ 到 $v$ 的直接路径，所以 $v$ 能够回溯到的已经在栈中的结点，$u$ 也一定能够回溯到．
-2.  $v$ 被访问过，已经在栈中：根据 low 值的定义，用 $\textit{dfn}_v$ 更新 $\textit{low}_u$．
-3.  $v$ 被访问过，已不在栈中：说明 $v$ 已搜索完毕，其所在连通分量已被处理，所以不用对其做操作．
+1.  $v$ has not been visited: keep searching deeper from $v$. When backtracking, update $\textit{low}_u$ with $\textit{low}_v$. Since there is a direct path from $u$ to $v$, any node on the stack that $v$ can reach back to can also be reached back to from $u$.
+2.  $v$ has been visited and is on the stack: by the definition of low, update $\textit{low}_u$ with $\textit{dfn}_v$.
+3.  $v$ has been visited and is no longer on the stack: this means $v$ is finished and its component has already been handled, so nothing needs to be done.
 
-对于一个连通分量图，我们很容易想到，在该连通图中有且仅有一个 $u$ 使得 $\textit{dfn}_u=\textit{low}_u$．该结点一定是在深度遍历的过程中，该连通分量中第一个被访问过的结点，因为它的 dfn 和 low 值最小，不会被该连通分量中的其他结点所影响．
+For a strongly connected component, it is easy to see that there is exactly one $u$ in it with $\textit{dfn}_u=\textit{low}_u$. This node must be the first node of the component visited during the depth-first traversal, because its dfn and low values are the smallest and cannot be affected by the other nodes of the component.
 
-因此，在回溯的过程中，判定 $\textit{dfn}_u=\textit{low}_u$ 是否成立，如果成立，则栈中 $u$ 及其上方的结点构成一个 SCC．
+So while backtracking, we check whether $\textit{dfn}_u=\textit{low}_u$ holds. If it does, $u$ and the nodes above it on the stack form an SCC.
 
-将上述算法写成伪代码：
+The algorithm above in pseudocode:
 
-???+ note "实现"
+???+ note "Implementation"
     ```text
     TARJAN_SEARCH(int u)
         vis[u]=true
@@ -74,8 +74,8 @@ Tarjan 算法基于对图进行 [深度优先搜索](./dfs.md)．我们视每个
         push u to the stack
         for each (u,v) then do
             if v hasn't been searched then
-                TARJAN_SEARCH(v) // 搜索
-                low[u]=min(low[u],low[v]) // 回溯
+                TARJAN_SEARCH(v) // search
+                low[u]=min(low[u],low[v]) // backtrack
             else if v has been in the stack then
                 low[u]=min(low[u],dfn[v])
         if dfn[u] equal to low[u] then
@@ -84,16 +84,16 @@ Tarjan 算法基于对图进行 [深度优先搜索](./dfs.md)．我们视每个
                 scc[top of stack] = scccnt
                 pop stack
             scc[u] = scccnt
-            pop stack // 处理并删除残余的 u
+            pop stack // handle and remove the remaining u
     ```
 
-### 实现
+### Implementation
 
 === "C++"
     ```cpp
     int dfn[N], low[N], dfncnt, s[N], in_stack[N], tp;
-    int scc[N], sc;  // 结点 i 所在 SCC 的编号
-    int sz[N];       // 强连通 i 的大小
+    int scc[N], sc;  // ID of the SCC that node i belongs to
+    int sz[N];       // size of SCC i
     
     void tarjan(int u) {
       low[u] = dfn[u] = ++dfncnt, s[++tp] = u, in_stack[u] = 1;
@@ -126,8 +126,8 @@ Tarjan 算法基于对图进行 [深度优先搜索](./dfs.md)．我们视每个
     in_stack = [0] * N
     tp = 0
     scc = [0] * N
-    sc = 0  # 结点 i 所在 SCC 的编号
-    sz = [0] * N  # 强连通 i 的大小
+    sc = 0  # ID of the SCC that node i belongs to
+    sz = [0] * N  # size of SCC i
     
     
     def tarjan(u):
@@ -158,37 +158,37 @@ Tarjan 算法基于对图进行 [深度优先搜索](./dfs.md)．我们视每个
             tp = tp - 1
     ```
 
-时间复杂度 $O(n + m)$．
+The time complexity is $O(n + m)$.
 
-### 分量标号和拓扑序的关系
+### Relation between component labels and topological order
 
-Tarjan 算法在处理过程中，实际上是按照某种 **逆拓扑序** 来发现强连通分量的，这是因为算法在深度优先搜索的过程中会先访问完那些没有出边的节点，而这与拓扑排序的过程是相反的．
+Tarjan's algorithm actually finds the strongly connected components in some **reverse topological order**. This is because the depth-first search finishes the nodes with no outgoing edges first, which is the opposite of how topological sorting works.
 
-如果我们将图中的所有强连通分量缩成单个节点，那么在这些缩点后的节点形成的 DAG 中进行拓扑排序，得到的顺序将与 Tarjan 算法给出的强连通分量的标号顺序相反．
+If we contract every strongly connected component of the graph into a single node and topologically sort the resulting DAG, the order we get is the reverse of the order in which Tarjan's algorithm labels the components.
 
-因此，可以说，在缩点后的 DAG 中，**强连通分量（缩点后）的标号顺序是其拓扑序的逆序**．但要注意的是，这种说法仅在考虑了强连通分量之间的依赖关系（即从一个强连通分量到另一个强连通分量的有向边）时才成立．单个强连通分量内部的节点由于存在环，所以内部并不满足拓扑序的定义．
+So we can say that in the contracted DAG, **the label order of the (contracted) strongly connected components is the reverse of a topological order**. But note that this only holds when we consider the dependencies between components (that is, directed edges from one strongly connected component to another). The nodes inside a single strongly connected component form cycles, so they do not satisfy the definition of a topological order.
 
-## Kosaraju 算法
+## Kosaraju's algorithm
 
-### 引入
+### Introduction
 
-Kosaraju 算法最早在 1978 年由 S. Rao Kosaraju 在一篇未发表的论文上提出，但 Micha Sharir 最早发表了它．
+Kosaraju's algorithm was first proposed by S. Rao Kosaraju in an unpublished paper in 1978, but Micha Sharir was the first to publish it.
 
-### 过程
+### Process
 
-该算法依靠两次简单的 DFS 实现：
+The algorithm uses two simple DFS passes:
 
-第一次 DFS，选取任意顶点作为起点，遍历所有未访问过的顶点，并在回溯之前给顶点编号，也就是后序遍历．
+First DFS: starting from any vertex, visit all unvisited vertices, and number each vertex just before backtracking from it, that is, in postorder.
 
-第二次 DFS，对于反向后的图，以标号最大的顶点作为起点开始 DFS．这样遍历到的顶点集合就是一个强连通分量．对于所有未访问过的结点，选取标号最大的，重复上述过程．
+Second DFS: on the reversed graph, start a DFS from the vertex with the largest number. The set of vertices it reaches is one strongly connected component. Among all unvisited nodes, pick the one with the largest number and repeat.
 
-两次 DFS 结束后，强连通分量就找出来了，Kosaraju 算法的时间复杂度为 $O(n+m)$．
+After the two DFS passes, all strongly connected components have been found. The time complexity of Kosaraju's algorithm is $O(n+m)$.
 
-### 实现
+### Implementation
 
 === "C++"
     ```cpp
-    // g 是原图，g2 是反图
+    // g is the original graph, g2 is the reversed graph
     
     void dfs1(int u) {
       vis[u] = true;
@@ -243,15 +243,15 @@ Kosaraju 算法最早在 1978 年由 S. Rao Kosaraju 在一篇未发表的论文
                 dfs2(s[i])
     ```
 
-## Garbow 算法
+## Garbow's algorithm
 
-### 过程
+### Process
 
-Garbow 算法是 Tarjan 算法的另一种实现，Tarjan 算法是用 dfn 和 low 来计算强连通分量的根，Garbow 维护一个节点栈，并用第二个栈来确定何时从第一个栈中弹出属于同一个强连通分量的节点．从节点 $w$ 开始的 DFS 过程中，当一条路径显示这组节点都属于同一个强连通分量时，只要栈顶节点的访问时间大于根节点 $w$ 的访问时间，就从第二个栈中弹出这个节点，那么最后只留下根节点 $w$．在这个过程中每一个被弹出的节点都属于同一个强连通分量．
+Garbow's algorithm is another way to implement Tarjan's algorithm. Tarjan's algorithm uses dfn and low to find the root of each strongly connected component. Garbow's algorithm keeps a stack of nodes, and uses a second stack to decide when to pop the nodes of one strongly connected component off the first stack. During the DFS from node $w$, when a path shows that a group of nodes all belong to the same strongly connected component, we keep popping the top node of the second stack as long as its visit time is greater than that of the root $w$, so in the end only the root $w$ remains. Every node popped in this process belongs to the same strongly connected component.
 
-当回溯到某一个节点 $w$ 时，如果这个节点在第二个栈的顶部，就说明这个节点是强连通分量的起始节点，在这个节点之后搜索到的那些节点都属于同一个强连通分量，于是从第一个栈中弹出那些节点，构成强连通分量．
+When backtracking to a node $w$, if this node is on top of the second stack, it is the starting node of a strongly connected component, and all nodes visited after it belong to the same component. So we pop those nodes off the first stack, and they form the strongly connected component.
 
-### 实现
+### Implementation
 
 === "C++"
     ```cpp
@@ -322,16 +322,16 @@ Garbow 算法是 Tarjan 算法的另一种实现，Tarjan 算法是用 dfn 和 l
                 garbow(i)
     ```
 
-## 应用
+## Applications
 
-我们可以将一张图的每个强连通分量都缩成一个点．
+We can contract each strongly connected component of a graph into a single node.
 
-然后这张图会变成一个 DAG，可以进行拓扑排序以及更多其他操作．
+The graph then becomes a DAG, on which we can do topological sorting and many other things.
 
-举个简单的例子，求一条路径，可以经过重复结点，要求经过的不同结点数量最多．
+A simple example: find a path, which may visit nodes more than once, that visits as many distinct nodes as possible.
 
-## 习题
+## Exercises
 
-[USACO Fall/HAOI 2006 受欢迎的牛](https://loj.ac/problem/10091)
+[USACO Fall/HAOI 2006 Popular Cows](https://loj.ac/problem/10091)
 
 [POJ1236 Network of Schools](http://poj.org/problem?id=1236)

@@ -1,85 +1,85 @@
 author: marscheng1
 
-## 定义
+## Definition
 
-拓扑排序（Topological sorting）要解决的问题是如何给一个有向无环图的所有节点排序．
+Topological sorting solves the problem of how to order all the nodes of a directed acyclic graph.
 
-我们可以拿大学每学期排课的例子来描述这个过程，比如学习大学课程中有：「程序设计」，「算法语言」，「高等数学」，「离散数学」，「编译技术」，「普通物理」，「数据结构」，「数据库系统」等．按照例子中的排课，当我们想要学习「数据结构」的时候，就必须先学会「离散数学」，学习完这门课后就获得了学习「编译技术」的前置条件．当然，「编译技术」还有一个更加前的课程「算法语言」．这些课程就相当于几个顶点 $u$, 顶点之间的有向边 $(u,v)$ 就相当于学习课程的顺序．教务处安排这些课程，使得在逻辑关系符合的情况下排出课表，就是拓扑排序的过程．
+We can describe this process with the example of scheduling university courses each semester. Suppose the university courses include "Programming", "Algorithmic Languages", "Advanced Mathematics", "Discrete Mathematics", "Compiler Techniques", "General Physics", "Data Structures", "Database Systems" and so on. Following the schedule in the example, to study "Data Structures" you must first learn "Discrete Mathematics", and after finishing that course you meet the prerequisite for "Compiler Techniques". Of course, "Compiler Techniques" also has an even earlier prerequisite, "Algorithmic Languages". These courses are like vertices $u$, and a directed edge $(u,v)$ between vertices is like the order in which the courses must be taken. When the academic office arranges these courses into a timetable that respects all these dependencies, it is doing a topological sort.
 
 ![topo](images/topo-example-1.svg)
 
-但是如果某一天排课的老师打瞌睡了，说想要学习 数据结构，还得先学 操作系统，而 操作系统 的前置课程又是 数据结构，那么到底应该先学哪一个（不考虑同时学习的情况）？在这里，数据结构 和 操作系统 间就出现了一个环，显然同学们现在没办法弄清楚自己需要先学什么了，也就没办法进行拓扑排序了．因为如果有向图中存在环路，那么我们就没办法进行拓扑排序．
+But suppose one day the teacher who makes the schedule dozes off and says that to study Data Structures you must first take Operating Systems, while the prerequisite of Operating Systems is Data Structures. Which one should be taken first (assuming you cannot take both at once)? Here, Data Structures and Operating Systems form a cycle. Clearly the students cannot figure out what to study first, so no topological sort is possible. This is because if a directed graph contains a cycle, it cannot be topologically sorted.
 
-因此我们可以说 在一个 [DAG（有向无环图）](./dag.md) 中，我们将图中的顶点以线性方式进行排序，使得对于任何的顶点 $u$ 到 $v$ 的有向边 $(u,v)$, 都可以有 $u$ 在 $v$ 的前面．
+So we can say: in a [DAG (directed acyclic graph)](./dag.md), we order the vertices linearly so that for every directed edge $(u,v)$ from vertex $u$ to $v$, $u$ comes before $v$.
 
-还有给定一个 DAG，如果从 $i$ 到 $j$ 有边，则认为 $j$ 依赖于 $i$．如果 $i$ 到 $j$ 有路径（$i$ 可达 $j$），则称 $j$ 间接依赖于 $i$．
+Also, given a DAG, if there is an edge from $i$ to $j$, we say $j$ depends on $i$. If there is a path from $i$ to $j$ ($j$ is reachable from $i$), we say $j$ indirectly depends on $i$.
 
-拓扑排序的目标是将所有节点排序，使得排在前面的节点不能依赖于排在后面的节点．
+The goal of topological sorting is to order all nodes so that no node depends on a node that comes after it.
 
-## AOV 网
+## AOV network
 
-日常生活中，一项大的工程可以看作是由若干个子工程组成的集合，这些子工程之间必定存在一定的先后顺序，即某些子工程必须在其他的一些子工程完成后才能开始．
+In daily life, a large project can be seen as a collection of smaller subprojects. These subprojects must happen in some order: some of them can only start after certain others are finished.
 
-我们用有向图来表现子工程之间的先后关系，子工程之间的先后关系为有向边，这种有向图称为顶点活动网络，即 **AOV 网  (Activity On Vertex Network)**．一个 AOV 网必定是一个有向无环图，即不带有回路．与 DAG 不同的是，AOV 的活动都表示在顶点上．（上面的例图即为一个 AOV 网）
+We use a directed graph to show the order between subprojects, where each ordering relation is a directed edge. Such a directed graph is called an activity-on-vertex network, or **AOV network (Activity On Vertex Network)**. An AOV network must be a directed acyclic graph, that is, it has no cycles. Unlike a general DAG, in an AOV network the activities are placed on the vertices. (The example graph above is an AOV network.)
 
-在 AOV 网中，顶点表示活动，弧表示活动间的优先关系．AOV 网中不应该出现环，这样就能够找到一个顶点序列，使得每个顶点代表的活动的前驱活动都排在该顶点的前面，这样的序列称为拓扑序列（一个 AOV 网的拓扑序列不是唯一的），由 AOV 网构造拓扑序列的过程称为拓扑排序．因此，拓扑排序也可以解释为将 AOV 网中所有活动排成一个序列，使得每个活动的前驱活动都排在该活动的前面（一个 AOV 网中的拓扑排序也不是唯一的）．
+In an AOV network, vertices represent activities and arcs represent precedence between activities. An AOV network should contain no cycle; then we can find a sequence of vertices in which all predecessor activities of each vertex's activity come before that vertex. Such a sequence is called a topological order (the topological order of an AOV network is not unique), and the process of building a topological order from an AOV network is called topological sorting. So topological sorting can also be described as arranging all activities of an AOV network in a sequence so that every activity's predecessor activities come before it (the topological sort of an AOV network is not unique either).
 
--   前驱活动：有向边起点的活动称为终点的前驱活动（只有当一个活动的前驱全部都完成后，这个活动才能进行）．
+-   Predecessor activity: the activity at the start of a directed edge is a predecessor activity of the activity at its end (an activity can only start after all its predecessors are finished).
 
--   后继活动：有向边终点的活动称为起点的后继活动．
+-   Successor activity: the activity at the end of a directed edge is a successor activity of the activity at its start.
 
-检测 AOV 网中是否带环的方式是构造拓扑序列，看是否包含所有顶点．
+To check whether an AOV network has a cycle, build a topological order and see whether it contains all vertices.
 
-### 构造拓扑序列步骤
+### Steps to build a topological order
 
-1.  从图中选择一个入度为零的点．
-2.  输出该顶点，从图中删除此顶点及其所有的出边．
+1.  Pick a vertex with in-degree zero from the graph.
+2.  Output this vertex, and delete it and all its outgoing edges from the graph.
 
-重复上面两步，直到所有顶点都输出，拓扑排序完成，或者图中不存在入度为零的点，此时说明图是有环图，拓扑排序无法完成，陷入死锁．
+Repeat these two steps until all vertices have been output, in which case the topological sort is complete, or until the graph has no vertex with in-degree zero. In the latter case the graph has a cycle, the topological sort cannot be completed, and the process is deadlocked.
 
-## 关键路径和 AOE 网
+## Critical path and AOE network
 
-与 AOV 网对应的是 **AOE 网（Activity On Edge Network)** 即边表示活动的网．AOE 网是一个带权的有向无环图，其中，顶点表示事件，弧表示活动持续的时间．通常，AOE 网可以用来估算工程的完成时间．AOE 网应该是无环的，且存在唯一入度为零的起始顶点（源点），以及唯一出度为零的完成顶点（汇点）．
+The counterpart of the AOV network is the **AOE network (Activity On Edge Network)**, a network in which edges represent activities. An AOE network is a weighted directed acyclic graph where vertices represent events and arcs represent how long activities take. AOE networks are commonly used to estimate how long a project will take to finish. An AOE network should be acyclic and have a unique start vertex with in-degree zero (the source) and a unique finish vertex with out-degree zero (the sink).
 
 ![topo](images/topo-example-2.svg)
 
-AOE 网中的有些活动是可以并行进行的，所以完成整个工程的最短时间是从开始点到完成点的最长活动路径长度（这里所说的路径长度是指路径上各活动的持续时间之和，即弧的权值之和，不是路径上弧的数目）．因为一项工程需要完成所有工程内的活动，所以最长的活动路径也是关键路径，它决定工程完成的总时间．
+Some activities in an AOE network can be done in parallel, so the shortest time to finish the whole project is the length of the longest activity path from the start to the finish (here the length of a path is the sum of the durations of the activities on it, that is, the sum of the arc weights, not the number of arcs). Since a project must complete all its activities, the longest activity path is also the critical path, which determines the total time to finish the project.
 
-### AOE 网的相关基本概念
+### Basic concepts of AOE networks
 
--   活动：AOE 网中，弧表示活动．弧的权值表示活动持续的时间，活动在其前驱事件（即该弧的起点）被触发后开始．
+-   Activity: in an AOE network, arcs represent activities. The weight of an arc is the duration of the activity. An activity starts once its preceding event (the start of the arc) has been triggered.
 
--   事件：AOE 网中，顶点表示事件，事件在它的所有前驱活动（即指向该边的弧）全部完成被触发．
+-   Event: in an AOE network, vertices represent events. An event is triggered once all its preceding activities (the arcs pointing to it) have finished.
 
--   事件（顶点）$v_i$ 的最早发生时间：该事件最早可能的发生时间，记为 $ve(i)$，它决定了以该顶点开始的活动的最早发生时间，显然源点的最早发生时间为 0．因为事件发生需要其所有前驱活动全部完成，所以它等于初始点到该顶点的路径长度的最大值，写成递推：$ve(i) = \max\{ve(j) + val^j_i ~\vert~ j \in pre_i\}$，其中 $val^j_i$ 表示 j 到 i 的边的权值（即 j 到 i 的活动的持续时间），$pre_i$ 表示 i 的所有前驱事件的集合．
+-   Earliest time of event (vertex) $v_i$: the earliest possible time the event can happen, written $ve(i)$. It determines the earliest start time of the activities that begin at this vertex. Clearly the earliest time of the source is 0. Since an event happens only after all its preceding activities finish, it equals the maximum length of a path from the start vertex to this vertex. As a recurrence: $ve(i) = \max\{ve(j) + val^j_i ~\vert~ j \in pre_i\}$, where $val^j_i$ is the weight of the edge from j to i (the duration of the activity from j to i) and $pre_i$ is the set of all preceding events of i.
 
--   事件（顶点）$v_i$ 的最迟发生时间：在不推迟整个工期的前提下，该事件最晚能容忍的发生时间，记为 $vl(i)$，它决定了所有以该状态结束的活动的最迟发生时间，它等于事件的所有后继活动的最迟开始时间的最小值，即 $vl(i) = \min\{vl(j) - val^i_j ~\vert~ j \in nxt_i\}$，其中 $val^i_j$ 表示 i 到 j 的边的权值（即 i 到 j 的活动的持续时间），$nxt_i$ 表示 i 的所有后驱事件的集合．
+-   Latest time of event (vertex) $v_i$: the latest time the event can happen without delaying the whole project, written $vl(i)$. It determines the latest time of all activities that end at this event. It equals the minimum of the latest start times of all succeeding activities of the event, that is, $vl(i) = \min\{vl(j) - val^i_j ~\vert~ j \in nxt_i\}$, where $val^i_j$ is the weight of the edge from i to j (the duration of the activity from i to j) and $nxt_i$ is the set of all succeeding events of i.
 
--   活动（弧）$(u, v)$ 的最早开始时间：该活动最早可能的发生时间，记为 $e(u,v)$，显然，它等于其前驱事件的最早发生时间，即 $e(u,v)=ve(u)$．
+-   Earliest start time of activity (arc) $(u, v)$: the earliest possible time the activity can start, written $e(u,v)$. Clearly it equals the earliest time of its preceding event, that is, $e(u,v)=ve(u)$.
 
--   活动（弧）$(u, v)$ 的最迟开始时间：在不推迟整个工期的前提下，活动开始最晚能容忍的时间，记为 $l(u,v)$，它等于其后继事件的最迟发生时间 - 该事件的持续时间（权值），即 $l(u,v)=vl(v)-val^u_v$，其中 $val^u_v$ 表示 u 到 v 的边的权值（即 u 到 v 的活动的持续时间）．
+-   Latest start time of activity (arc) $(u, v)$: the latest time the activity can start without delaying the whole project, written $l(u,v)$. It equals the latest time of its succeeding event minus the duration (weight) of the activity, that is, $l(u,v)=vl(v)-val^u_v$, where $val^u_v$ is the weight of the edge from u to v (the duration of the activity from u to v).
 
--   关键路径：AOE 网中从源点到汇点的最长路径的长度．
+-   Critical path: the length of the longest path from the source to the sink in the AOE network.
 
--   关键活动：即关键路径上的活动，它的最早开始时间和最迟开始时间相等．
+-   Critical activity: an activity on the critical path. Its earliest start time equals its latest start time.
 
-### 递推求最早和最迟发生时间
+### Computing earliest and latest times by recurrence
 
-按拓扑顺序求，最早发生时间从前往后递推，最迟发生时间从后往前递推，递推公式如上 **AOE 网的相关基本概念** 所示．
+Compute them in topological order: earliest times are computed from front to back, and latest times from back to front, using the recurrences given in **Basic concepts of AOE networks** above.
 
-## Kahn 算法
+## Kahn's algorithm
 
-### 过程
+### Process
 
-初始状态下，集合 $S$ 装着所有入度为 $0$ 的点，$L$ 是一个空列表．
+At the start, the set $S$ holds all vertices with in-degree $0$, and $L$ is an empty list.
 
-每次从 $S$ 中取出一个点 $u$（可以随便取）放入 $L$, 然后将 $u$ 的所有边 $(u, v_1), (u, v_2), (u, v_3) \cdots$ 删除．对于边 $(u, v)$，若将该边删除后点 $v$ 的入度变为 $0$，则将 $v$ 放入 $S$ 中．
+Each time, take a vertex $u$ out of $S$ (any one will do) and put it into $L$, then delete all edges $(u, v_1), (u, v_2), (u, v_3) \cdots$ of $u$. For an edge $(u, v)$, if the in-degree of $v$ becomes $0$ after the edge is deleted, put $v$ into $S$.
 
-不断重复以上过程，直到集合 $S$ 为空．检查图中是否存在任何边，如果有，那么这个图一定有环路，否则返回 $L$，$L$ 中顶点的顺序就是构造拓扑序列的结果．
+Repeat this until $S$ is empty. Then check whether the graph still has any edges. If it does, the graph must have a cycle; otherwise return $L$, and the order of the vertices in $L$ is the resulting topological order.
 
-首先看来自 [Wikipedia](https://en.wikipedia.org/wiki/Topological_sorting#Kahn's_algorithm) 的伪代码
+First, look at the pseudocode from [Wikipedia](https://en.wikipedia.org/wiki/Topological_sorting#Kahn's_algorithm):
 
-???+ note "实现"
+???+ note "Implementation"
     ```text
     L ← Empty list that will contain the sorted elements
     S ← Set of all nodes with no incoming edges
@@ -96,27 +96,27 @@ AOE 网中的有些活动是可以并行进行的，所以完成整个工程的�
         return L (a topologically sorted order)
     ```
 
-代码的核心是维持一个入度为 0 的顶点的集合．
+The core of the code is keeping a set of vertices with in-degree 0.
 
-可以参考该图
+You can refer to this graph:
 
 ![topo](images/topo-example.svg)
 
-对其排序的结果就是：2 -> 8 -> 0 -> 3 -> 7 -> 1 -> 5 -> 6 -> 9 -> 4 -> 11 -> 10 -> 12
+The result of sorting it is: 2 -> 8 -> 0 -> 3 -> 7 -> 1 -> 5 -> 6 -> 9 -> 4 -> 11 -> 10 -> 12
 
-### 时间复杂度
+### Time complexity
 
-假设这个图 $G = (V, E)$ 在初始化入度为 $0$ 的集合 $S$ 的时候就需要遍历整个图，并检查每一条边，因而有 $O(E+V)$ 的复杂度．然后对该集合进行操作，显然也是需要 $O(E+V)$ 的时间复杂度．
+For a graph $G = (V, E)$, initializing the set $S$ of vertices with in-degree $0$ requires going over the whole graph and checking every edge, which takes $O(E+V)$ time. Then processing the set also clearly takes $O(E+V)$ time.
 
-因而总的时间复杂度就有 $O(E+V)$
+So the total time complexity is $O(E+V)$.
 
-### 实现
+### Implementation
 
 === "C++"
     ```cpp
     int n, m;
     vector<int> G[MAXN];
-    int in[MAXN];  // 存储每个结点的入度
+    int in[MAXN];  // in-degree of each node
     
     bool toposort() {
       vector<int> L;
@@ -165,13 +165,13 @@ AOE 网中的有些活动是可以并行进行的，所以完成整个工程的�
         return None if any(in_degree.values()) else lst
     ```
 
-## DFS 算法
+## DFS algorithm
 
-### 实现
+### Implementation
 
 === "C++"
     ```cpp
-    using Graph = vector<vector<int>>;  // 邻接表
+    using Graph = vector<vector<int>>;  // adjacency list
     
     struct TopoSort {
       enum class Status : uint8_t { to_visit, visiting, visited };
@@ -243,28 +243,28 @@ AOE 网中的有些活动是可以并行进行的，所以完成整个工程的�
         return order[::-1]
     ```
 
-时间复杂度：$O(E+V)$ 空间复杂度：$O(V)$
+Time complexity: $O(E+V)$. Space complexity: $O(V)$.
 
-### 合理性证明
+### Why it works
 
-考虑一个图，删掉某个入度为 $0$ 的节点之后，如果新图可以拓扑排序，那么原图一定也可以．反过来，如果原图可以拓扑排序，那么删掉后也可以．
+Consider a graph. After deleting a node with in-degree $0$, if the new graph can be topologically sorted, so can the original graph. Conversely, if the original graph can be topologically sorted, so can the graph after the deletion.
 
-### 应用
+### Applications
 
-拓扑排序可以判断图中是否有环，还可以用来判断图是否是一条链．拓扑排序可以用来求 AOE 网中的关键路径，估算工程完成的最短时间．
+Topological sorting can check whether a graph has a cycle, and whether a graph is a single chain. It can also be used to find the critical path in an AOE network and estimate the shortest time to finish a project.
 
-### 求字典序最大/最小的拓扑排序
+### Lexicographically largest/smallest topological order
 
-将 Kahn 算法中的队列替换成最大堆/最小堆实现的优先队列即可，此时总的时间复杂度为 $O(E+V \log{V})$．
+Just replace the queue in Kahn's algorithm with a priority queue implemented as a max-heap/min-heap. The total time complexity is then $O(E+V \log{V})$.
 
-## 习题
+## Exercises
 
-[CF 1385E](https://codeforces.com/problemset/problem/1385/E)：需要通过拓扑排序构造．
+[CF 1385E](https://codeforces.com/problemset/problem/1385/E): requires a construction using topological sorting.
 
-[Luogu P1347](https://www.luogu.com.cn/problem/P1347): 拓扑排序模板．
+[Luogu P1347](https://www.luogu.com.cn/problem/P1347): topological sorting template.
 
-## 参考
+## References
 
-1.  离散数学及其应用．ISBN:9787111555391
+1.  Discrete Mathematics and Its Applications. ISBN:9787111555391
 2.  [Topological sorting - Wikipedia](https://en.wikipedia.org/wiki/Topological_sorting)
-3.  [数据结构第九讲（图：拓扑排序，关键路径，最短路径）- 知乎专栏](https://zhuanlan.zhihu.com/p/164751109)
+3.  [Data Structures Lecture 9 (Graphs: Topological Sorting, Critical Path, Shortest Paths) - Zhihu Column](https://zhuanlan.zhihu.com/p/164751109)

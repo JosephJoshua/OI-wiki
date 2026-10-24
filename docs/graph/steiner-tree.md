@@ -1,78 +1,78 @@
-斯坦纳树问题是组合优化问题，与最小生成树相似，是最短网络的一种．最小生成树是在给定的点集和边中寻求最短网络使所有点连通．而最小斯坦纳树允许在给定点外增加额外的点，使生成的最短网络开销最小．
+The Steiner tree problem is a combinatorial optimization problem. Like the minimum spanning tree, it is a kind of shortest network problem. A minimum spanning tree looks for the shortest network that connects all points using only the given points and edges. A minimum Steiner tree allows extra points beyond the given ones, so that the resulting shortest network costs as little as possible.
 
-## 问题引入
+## Introduction to the problem
 
-19 世纪初叶，柏林大学几何方面的著名学者斯坦纳，研究了一个非常简单却很有启示性的问题：将三个村庄用总长为极小的道路连接起来．从数学上说，就是在平面内给定三个点 $A$、$B$、$C$ 找出平面内第四个点 $P$，使得和数 $a+b+c$ 为最短，这里 $a$、$b$、$c$ 分别表示从 $P$ 到 $A$、$B$、$C$ 的距离．
+In the early 19th century, Steiner, a famous geometer at the University of Berlin, studied a very simple but enlightening problem: connect three villages with roads of minimum total length. Mathematically, given three points $A$, $B$, $C$ in the plane, find a fourth point $P$ in the plane such that the sum $a+b+c$ is as small as possible, where $a$, $b$, $c$ are the distances from $P$ to $A$, $B$, $C$.
 
-问题的答案是：如果三角形 $\textit{ABC}$ 的每个内角都小于 $120^{\circ}$，那么 $P$ 就是使边 $\textit{AB}$、$\textit{BC}$、$\textit{AC}$ 对该点所张的角都是 $120^{\circ}$ 的点．如果三角形 $\textit{ABC}$ 的有一个角，例如 $C$ 角，大于或等于 $120^{\circ}$，那么点 $P$ 与顶点 $C$ 重合．
+The answer is: if every interior angle of triangle $\textit{ABC}$ is less than $120^{\circ}$, then $P$ is the point at which the sides $\textit{AB}$, $\textit{BC}$, $\textit{AC}$ each subtend an angle of $120^{\circ}$. If one angle of triangle $\textit{ABC}$, say angle $C$, is at least $120^{\circ}$, then $P$ coincides with vertex $C$.
 
-### 问题推广
+### Generalizations
 
-1.  在斯坦纳问题中，给定了三个固定点 $A,B,C$．很自然地可以把这个问题推广到给定 $n$ 个点 $A_1,A_2,\dots,A_n$ 的情形；我们要求出平面内的点 $P$，使距离和 $a_1+a_2+\dots+a_n$ 为极小，其中 $a_i$ 是距离 $PA_i$．
+1.  In Steiner's problem, three fixed points $A,B,C$ are given. It is natural to generalize this to $n$ given points $A_1,A_2,\dots,A_n$: find a point $P$ in the plane that minimizes the sum of distances $a_1+a_2+\dots+a_n$, where $a_i$ is the distance $PA_i$.
 
-2.  考虑到点的其他相关因素，加入了权重的表示．$n$ 个点的其他相关因素可以换算成一个权重表示，求出平面内的点 $P$，使距离与权重的乘积的总和 $a_1\cdot w_1+a_2\cdot w_2+\dots+a_n\cdot w_n$ 为极小，其中 $w_i$ 是每个点的权重．
+2.  To account for other factors related to the points, weights are added. Other factors of the $n$ points can be converted into a weight for each point. Find a point $P$ in the plane that minimizes the weighted sum of distances $a_1\cdot w_1+a_2\cdot w_2+\dots+a_n\cdot w_n$, where $w_i$ is the weight of each point.
 
-3.  库朗（R.Courant）和罗宾斯（H.Robbins）提出第一个定义的推广是肤浅的．为了求得斯坦纳问题真正有价值的推广，必须放弃寻找一个单独的点 $P$，而代之以具有最短总长的＂道路网＂．数学上表述成：给定 $n$ 个点 $A_1,A_2,\cdots,A_n$，试求连接此 $n$ 个点，总长最短的直线段连接系统，并且任意两点都可由系统中的直线段组成的折线连接起来．他们将此新问题称为 **斯坦纳树问题**．在给定 $n$ 个点的情形，最多将有 $n-2$ 个复接点（斯坦纳点）．过每一斯坦纳点，至多有三条边通过．若为三条边，则它们两两交成 $120^{\circ}$ 角；若为两条边，则此斯坦纳点必为某一已给定的点，且此两条边交成的角必大于或等于 $120^{\circ}$．
+3.  R. Courant and H. Robbins pointed out that the first generalization is superficial. To get a truly valuable generalization of Steiner's problem, we must give up looking for a single point $P$ and look instead for a "road network" with the shortest total length. Mathematically: given $n$ points $A_1,A_2,\cdots,A_n$, find a system of straight line segments with the shortest total length that connects these $n$ points, such that any two points can be joined by a polyline made of segments in the system. They called this new problem the **Steiner tree problem**. For $n$ given points, there are at most $n-2$ junction points (Steiner points). At most three edges pass through each Steiner point. If there are three edges, every two of them meet at an angle of $120^{\circ}$. If there are two edges, this Steiner point must be one of the given points, and the angle between the two edges must be at least $120^{\circ}$.
 
-连接三个以上的点的最短网络
+Shortest networks connecting more than three points
 
 ![steiner-tree1](./images/steiner-tree-1.svg)
 
-在第一种情形，解是由五条线段组成的，其中有两个斯坦纳点（红色 $s_1,s_2$），在那里有三条线段相交且相互间的交角为 $120^{\circ}$．第二种情形的解含有三个斯坦纳点．第三种情形，一个或几个斯坦纳点可能退化，或被一个或几个给定的点所代替．
+In the first case, the solution consists of five segments with two Steiner points (red $s_1,s_2$), where three segments meet at angles of $120^{\circ}$ to each other. The solution in the second case has three Steiner points. In the third case, one or more Steiner points may degenerate, that is, be replaced by one or more of the given points.
 
-我们将斯坦纳树的问题模型以图论形式呈现．
+Now let us state the Steiner tree problem in graph-theoretic form.
 
 ![steiner-tree2](./images/steiner-tree-2.svg)
 
-对于形式一，如果令关键点为 $\{1,2,3,4\}$，可以发现若直接将这四个关键点相连的最小边权和是 12，显然这不是最优的．如果考虑使用 5 号节点那么最小边权和就会是 9，得到一个更优的答案．
+For form one, let the key points be $\{1,2,3,4\}$. Connecting these four key points directly gives a minimum total edge weight of 12, which is clearly not optimal. If we also use node 5, the minimum total edge weight becomes 9, a better answer.
 
-对于形式二，如果令关键点为 $\{1,2,3,4\}$，可以发现这四个关键点中的一些点甚至没有直接相连的边，必须考虑使用复接点（斯坦纳点）．这时将 5 号考虑进去可以得到最小边权和 9．
+For form two, let the key points be $\{1,2,3,4\}$. Some of these key points are not even directly connected by an edge, so we must use junction points (Steiner points). Including node 5 gives a minimum total edge weight of 9.
 
-并且我们可以发现在两张图中 1 号和 4 号的斯坦纳点是退化的，被 1 号或 4 号代替了．
+We can also see that in both graphs, the Steiner points for nodes 1 and 4 have degenerated and are replaced by node 1 or node 4.
 
-## 例题
+## Example problems
 
-首先以一道模板题来带大家熟悉最小斯坦纳树问题．见 [【模板】最小斯坦纳树](https://www.luogu.com.cn/problem/P6192)．
+First, let us get familiar with the minimum Steiner tree problem through a template problem: [\[Template\] Minimum Steiner Tree](https://www.luogu.com.cn/problem/P6192).
 
-题意已经很明确了，给定连通图 $G$ 中的 $n$ 个点与 $k$ 个关键点，连接 $k$ 个关键点，使得生成树的所有边的权值和最小．
+The statement is clear: given $n$ vertices of a connected graph $G$ and $k$ key vertices, connect the $k$ key vertices so that the total weight of all edges of the resulting tree is as small as possible.
 
-结合上面的知识我们可以知道直接连接这 $k$ 个关键点生成的权值和不一定是最小的，或者这 $k$ 个关键点不会直接（相邻）连接．所以应当使用剩下的 $n-k$ 个点．
+From the discussion above, we know that connecting the $k$ key vertices directly does not always give the smallest total weight, and the $k$ key vertices may not even be directly (adjacently) connected. So we should use the remaining $n-k$ vertices.
 
-我们使用状态压缩动态规划来求解．用 $f(i,S)$ 表示以 $i$ 为根的一棵树，包含集合 $S$ 中所有点的最小边权值和．
+We solve it with bitmask DP. Let $f(i,S)$ be the minimum total edge weight of a tree rooted at $i$ that contains all vertices in set $S$.
 
-考虑状态转移：
+State transitions:
 
--   首先对连通的子集进行转移，$f(i,S)\leftarrow \min(f(i,S),f(i,T)+f(i,S-T))$．
+-   First, transition by merging connected subsets: $f(i,S)\leftarrow \min(f(i,S),f(i,T)+f(i,S-T))$.
 
--   在当前的子集连通状态下进行边的松弛操作，$f(i,S)\leftarrow \min(f(i,S),f(j,S)+w(j,i))$．在下面的代码中用一个 `tree[tot]` 来记录两个相连节点 $i,j$ 的相关信息．
+-   Then, for the current subset, relax edges: $f(i,S)\leftarrow \min(f(i,S),f(j,S)+w(j,i))$. In the code below, `tree[tot]` stores information about two connected vertices $i,j$.
 
-??? note "参考实现"
+??? note "Reference implementation"
     ```cpp
     --8<-- "docs/graph/code/steiner-tree/steiner-tree_1.cpp"
     ```
 
-另外一道经典例题 [\[WC2008\] 游览计划](https://www.luogu.com.cn/problem/P4294)．
+Another classic example problem is [\[WC2008\] Sightseeing Plan](https://www.luogu.com.cn/problem/P4294).
 
-这道题是求点权和最小的斯坦纳树，用 $f(i,S)$ 表示以 $i$ 为根的一棵树，包含集合 $S$ 中所有点的最小点权值和．$a_i$ 表示点权．
+This problem asks for the Steiner tree with the minimum total vertex weight. Let $f(i,S)$ be the minimum total vertex weight of a tree rooted at $i$ that contains all vertices in set $S$, and let $a_i$ be the vertex weight.
 
-考虑状态转移：
+State transitions:
 
--   $f(i,S)\leftarrow \min(f(i,S),f(i,T)+f(i,S-T)-a_i)$．由于此处合并时同一个点 $a_i$，会被加两次，所以减去．
+-   $f(i,S)\leftarrow \min(f(i,S),f(i,T)+f(i,S-T)-a_i)$. When merging here, the same vertex weight $a_i$ is added twice, so we subtract it once.
 
--   $f(i,S)\leftarrow \min(f(i,S),f(j,S)+w(j,i))$．
+-   $f(i,S)\leftarrow \min(f(i,S),f(j,S)+w(j,i))$.
 
-可以发现状态转移与上面的模板题是类似的，麻烦的是对答案的输出，在 DP 的过程中还要记录路径．
+The transitions are similar to the template problem above. The tricky part is outputting the answer: we also need to record the path during the DP.
 
-用 `pre[i][s]` 记录转移到 $i$ 为根，连通状态集合为 $s$ 时的点与集合的信息．在 DP 结束后从 `pre[root][S]` 出发，寻找与集合里的点相连的那些点并逐步分解集合 $S$，用 ans 数组来记录被使用的那些点，当集合分解完毕时搜索也就结束了．
+Use `pre[i][s]` to record the vertex and set information from which the state with root $i$ and connected set $s$ was reached. After the DP, start from `pre[root][S]`, find the vertices connected to the vertices in the set and split the set $S$ step by step, using the ans array to record the vertices that are used. The search ends when the set has been fully split.
 
-??? note "参考实现"
+??? note "Reference implementation"
     ```cpp
     --8<-- "docs/graph/code/steiner-tree/steiner-tree_2.cpp"
     ```
 
-## 习题
+## Exercises
 
--   [【模板】最小斯坦纳树](https://www.luogu.com.cn/problem/P6192)
--   [\[WC2008\] 游览计划](https://www.luogu.com.cn/problem/P4294)
--   [\[JLOI2015\] 管道连接](https://loj.ac/problem/2110)
--   [\[APIO2013\] 机器人](https://www.luogu.com.cn/problem/P3638)
+-   [\[Template\] Minimum Steiner Tree](https://www.luogu.com.cn/problem/P6192)
+-   [\[WC2008\] Sightseeing Plan](https://www.luogu.com.cn/problem/P4294)
+-   [\[JLOI2015\] Pipe Connection](https://loj.ac/problem/2110)
+-   [\[APIO2013\] Robots](https://www.luogu.com.cn/problem/P3638)

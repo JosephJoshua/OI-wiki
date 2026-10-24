@@ -1,20 +1,20 @@
 author: Ir1d, sshwy, Xeonacid, partychicken, Anguei, HeRaNO
 
-在 OI 中，想要对图进行操作，就需要先学习图的存储方式．
+In OI, before you can work with a graph, you first need to learn how to store it.
 
-## 约定
+## Conventions
 
-本文默认读者已阅读并了解了 [图论相关概念](./concept.md) 中的基础内容，如果在阅读中遇到困难，也可以在 [图论相关概念](./concept.md) 中进行查阅．
+This page assumes the reader has read and understood the basics in [Graph theory concepts](./concept.md). If you run into trouble while reading, you can also look things up in [Graph theory concepts](./concept.md).
 
-在本文中，用 $n$ 代指图的点数，用 $m$ 代指图的边数，用 $d^+(u)$ 代指点 $u$ 的出度，即以 $u$ 为出发点的边数．
+On this page, $n$ is the number of vertices, $m$ is the number of edges, and $d^+(u)$ is the out-degree of vertex $u$, that is, the number of edges starting at $u$.
 
-## 直接存边
+## Edge list
 
-### 方法
+### Method
 
-使用一个数组来存边，数组中的每个元素都包含一条边的起点与终点（带边权的图还包含边权）．（或者使用多个数组分别存起点，终点和边权．）
+Use an array to store the edges. Each element of the array holds the start and end of one edge (and its weight, for a weighted graph). (Or use several arrays to store the starts, ends and weights separately.)
 
-??? note "参考代码"
+??? note "Reference code"
     === "C++"
         ```cpp
         #include <iostream>
@@ -94,31 +94,31 @@ author: Ir1d, sshwy, Xeonacid, partychicken, Anguei, HeRaNO
                     dfs(e[i].v)
         ```
 
-### 复杂度
+### Complexity
 
-查询是否存在某条边：$O(m)$．
+Checking whether a given edge exists: $O(m)$.
 
-遍历一个点的所有出边：$O(m)$．
+Going through all outgoing edges of a vertex: $O(m)$.
 
-遍历整张图：$O(nm)$．
+Traversing the whole graph: $O(nm)$.
 
-空间复杂度：$O(m)$．
+Space complexity: $O(m)$.
 
-### 应用
+### Applications
 
-由于直接存边的遍历效率低下，一般不用于遍历图．
+Since traversal with an edge list is slow, it is usually not used to traverse graphs.
 
-在 [Kruskal 算法](./mst.md#kruskal-算法) 中，由于需要将边按边权排序，需要直接存边．
+In [Kruskal's algorithm](./mst.md#kruskal-算法), the edges must be sorted by weight, so an edge list is needed.
 
-在有的题目中，需要多次建图（如建一遍原图，建一遍反图），此时既可以使用多个其它数据结构来同时存储多张图，也可以将边直接存下来，需要重新建图时利用直接存下的边来建图．
+Some problems require building the graph several times (for example, once for the original graph and once for the reversed graph). You can either store several graphs at once using other data structures, or store the edges directly and rebuild the graph from them when needed.
 
-## 邻接矩阵
+## Adjacency matrix
 
-### 方法
+### Method
 
-使用一个二维数组 `adj` 来存边，其中 `adj[u][v]` 为 1 表示存在 $u$ 到 $v$ 的边，为 0 表示不存在．如果是带边权的图，可以在 `adj[u][v]` 中存储 $u$ 到 $v$ 的边的边权．
+Use a 2D array `adj` to store the edges, where `adj[u][v]` is 1 if there is an edge from $u$ to $v$ and 0 otherwise. For a weighted graph, you can store the weight of the edge from $u$ to $v$ in `adj[u][v]`.
 
-??? note "参考代码"
+??? note "Reference code"
     === "C++"
         ```cpp
         #include <iostream>
@@ -181,31 +181,31 @@ author: Ir1d, sshwy, Xeonacid, partychicken, Anguei, HeRaNO
                     dfs(v)
         ```
 
-### 复杂度
+### Complexity
 
-查询是否存在某条边：$O(1)$．
+Checking whether a given edge exists: $O(1)$.
 
-遍历一个点的所有出边：$O(n)$．
+Going through all outgoing edges of a vertex: $O(n)$.
 
-遍历整张图：$O(n^2)$．
+Traversing the whole graph: $O(n^2)$.
 
-空间复杂度：$O(n^2)$．
+Space complexity: $O(n^2)$.
 
-### 应用
+### Applications
 
-邻接矩阵只适用于没有重边（或重边可以忽略）的情况．
+An adjacency matrix only works when there are no parallel edges (or when parallel edges can be ignored).
 
-其最显著的优点是可以 $O(1)$ 查询一条边是否存在．
+Its biggest advantage is that it can check whether an edge exists in $O(1)$.
 
-由于邻接矩阵在稀疏图上效率很低（尤其是在点数较多的图上，空间无法承受），所以一般只会在稠密图上使用邻接矩阵．
+An adjacency matrix is very inefficient on sparse graphs (and on graphs with many vertices, it uses too much memory), so it is usually only used on dense graphs.
 
-## 邻接表
+## Adjacency list
 
-### 方法
+### Method
 
-使用一个支持动态增加元素的数据结构构成的数组，如 `vector<int> adj[n + 1]` 来存边，其中 `adj[u]` 存储的是点 $u$ 的所有出边的相关信息（终点、边权等）．
+Use an array of data structures that support adding elements dynamically, such as `vector<int> adj[n + 1]`, to store the edges. Here `adj[u]` stores information about all outgoing edges of vertex $u$ (end vertex, weight, and so on).
 
-??? note "参考代码"
+??? note "Reference code"
     === "C++"
         ```cpp
         #include <iostream>
@@ -273,61 +273,61 @@ author: Ir1d, sshwy, Xeonacid, partychicken, Anguei, HeRaNO
                 dfs(adj[u][i])
         ```
 
-### 复杂度
+### Complexity
 
-查询是否存在 $u$ 到 $v$ 的边：$O(d^+(u))$（如果事先进行了排序就可以使用 [二分查找](../basic/binary.md) 做到 $O(\log(d^+(u)))$）．
+Checking whether there is an edge from $u$ to $v$: $O(d^+(u))$ (if the lists are sorted in advance, [binary search](../basic/binary.md) brings this down to $O(\log(d^+(u)))$).
 
-遍历点 $u$ 的所有出边：$O(d^+(u))$．
+Going through all outgoing edges of vertex $u$: $O(d^+(u))$.
 
-遍历整张图：$O(n+m)$．
+Traversing the whole graph: $O(n+m)$.
 
-空间复杂度：$O(m)$．
+Space complexity: $O(m)$.
 
-### 应用
+### Applications
 
-存各种图都很适合，除非有特殊需求（如需要快速查询一条边是否存在，且点数较少，可以使用邻接矩阵）．
+It works well for storing all kinds of graphs, unless you have special needs (for example, if you need to check quickly whether an edge exists and there are few vertices, you can use an adjacency matrix).
 
-尤其适用于需要对一个点的所有出边进行排序的场合．
+It is especially suitable when you need to sort the outgoing edges of a vertex.
 
-## 链式前向星
+## Linked forward star
 
-### 方法
+### Method
 
-本质上是用链表实现的邻接表，核心代码如下：
+It is essentially an adjacency list implemented with linked lists. The core code is:
 
 === "C++"
     ```cpp
-    // head[u] 和 cnt 的初始值都为 -1
+    // head[u] and cnt both start at -1
     void add(int u, int v) {
-      nxt[++cnt] = head[u];  // 当前边的后继
-      head[u] = cnt;         // 起点 u 的第一条边
-      to[cnt] = v;           // 当前边的终点
+      nxt[++cnt] = head[u];  // next edge after the current one
+      head[u] = cnt;         // first edge of start vertex u
+      to[cnt] = v;           // end vertex of the current edge
     }
     
-    // 遍历 u 的出边
-    for (int i = head[u]; ~i; i = nxt[i]) {  // ~i 表示 i != -1
+    // Go through the outgoing edges of u
+    for (int i = head[u]; ~i; i = nxt[i]) {  // ~i means i != -1
       int v = to[i];
     }
     ```
 
 === "Python"
     ```python
-    # head[u] 和 cnt 的初始值都为 -1
+    # head[u] and cnt both start at -1
     def add(u, v):
         cnt = cnt + 1
-        nex[cnt] = head[u]  # 当前边的后继
-        head[u] = cnt  # 起点 u 的第一条边
-        to[cnt] = v  # 当前边的终点
+        nex[cnt] = head[u]  # next edge after the current one
+        head[u] = cnt  # first edge of start vertex u
+        to[cnt] = v  # end vertex of the current edge
     
     
-    # 遍历 u 的出边
+    # Go through the outgoing edges of u
     i = head[u]
-    while ~i:  # ~i 表示 i != -1
+    while ~i:  # ~i means i != -1
         v = to[i]
         i = nxt[i]
     ```
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     #include <iostream>
     #include <vector>
@@ -345,7 +345,7 @@ author: Ir1d, sshwy, Xeonacid, partychicken, Anguei, HeRaNO
     }
     
     bool find_edge(int u, int v) {
-      for (int i = head[u]; ~i; i = nxt[i]) {  // ~i 表示 i != -1
+      for (int i = head[u]; ~i; i = nxt[i]) {  // ~i means i != -1
         if (to[i] == v) {
           return true;
         }
@@ -375,18 +375,18 @@ author: Ir1d, sshwy, Xeonacid, partychicken, Anguei, HeRaNO
     }
     ```
 
-### 复杂度
+### Complexity
 
-查询是否存在 $u$ 到 $v$ 的边：$O(d^+(u))$．
+Checking whether there is an edge from $u$ to $v$: $O(d^+(u))$.
 
-遍历点 $u$ 的所有出边：$O(d^+(u))$．
+Going through all outgoing edges of vertex $u$: $O(d^+(u))$.
 
-遍历整张图：$O(n+m)$．
+Traversing the whole graph: $O(n+m)$.
 
-空间复杂度：$O(m)$．
+Space complexity: $O(m)$.
 
-### 应用
+### Applications
 
-存各种图都很适合，但不能快速查询一条边是否存在，也不能方便地对一个点的出边进行排序．
+It works well for storing all kinds of graphs, but it cannot quickly check whether an edge exists, and it is not convenient for sorting the outgoing edges of a vertex.
 
-优点是边是带编号的，有时会非常有用，而且如果 `cnt` 的初始值为奇数，存双向边时 `i ^ 1` 即是 `i` 的反边（常用于 [网络流](./flow.md)）．
+Its advantage is that the edges are numbered, which is sometimes very useful. Also, if `cnt` starts at an odd value, then when storing edges in both directions, `i ^ 1` is the reverse edge of `i` (often used in [network flow](./flow.md)).
