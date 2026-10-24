@@ -14,7 +14,7 @@ During the search, A\* repeatedly takes the vertex with the smallest $f$ out of 
 
 ## Properties
 
-The actual value of $h^*(x)$ is unknown during the search, so we use an easy-to-compute $h(x)$ as its estimate. The real cost of A\* search depends on the properties of this estimate function $h(x)$. It is easy to see that if $h\equiv h^*$, meaning the estimate is exact, the search moves strictly along the shortest path. If $h\equiv 0$, A\* reduces to [Dijkstra's algorithm](./../graph/shortest-path.md#dijkstra-算法); and when $h\equiv 0$ and every edge weight is $1$, it is just [BFS](./bfs.md).
+The actual value of $h^*(x)$ is unknown during the search, so we use an easy-to-compute $h(x)$ as its estimate. The real cost of A\* search depends on the properties of this estimate function $h(x)$. It is easy to see that if $h\equiv h^*$, meaning the estimate is exact, the search moves strictly along the shortest path. If $h\equiv 0$, A\* reduces to [Dijkstra's algorithm](./../graph/shortest-path.md#dijkstras-algorithm); and when $h\equiv 0$ and every edge weight is $1$, it is just [BFS](./bfs.md).
 
 Assume the graph has no negative-weight edges. If the estimate $h(x)$ never exceeds the real distance $h^*(x)$, that is, $0\le h\le h^*$, then A\* is guaranteed to find the optimal solution. An estimate function $h(x)$ that satisfies this condition is called **admissible**. From the discussion above, the closer $h$ is to $h^*$, the more efficient A\* is. In general, in the worst case the algorithm visits every vertex satisfying
 

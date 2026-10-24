@@ -54,7 +54,7 @@ $$
 \end{cases}
 $$
 
-Note that you should not enumerate all sets and then check whether each one is a subset. Instead, use [submask enumeration](../math/binary-set.md#遍历所有掩码的子掩码), which makes the time complexity $O(3^n)$.
+Note that you should not enumerate all sets and then check whether each one is a subset. Instead, use [submask enumeration](../math/binary-set.md#iterating-over-the-submasks-of-all-masks), which makes the time complexity $O(3^n)$.
 
 ### Implementation
 

@@ -10,7 +10,7 @@ For integers $a,b$ that are not both $0$, we write their greatest common divisor
 
 For integers $a_1,\dots,a_n$ that are not all $0$, we write their greatest common divisor as $\gcd(a_1,\dots,a_n)$. When there is no ambiguity, we can simply write $(a_1,\dots,a_n)$.
 
-For properties of the greatest common divisor and the least common multiple, see [Number Theory Basics](./basic.md#最大公约数与最小公倍数).
+For properties of the greatest common divisor and the least common multiple, see [Number Theory Basics](./basic.md#greatest-common-divisor-and-least-common-multiple).
 
 So how do we compute the greatest common divisor? Let's first look at the case of two numbers.
 
@@ -203,7 +203,7 @@ The big-integer type needs to support: subtraction, comparison, left shift, righ
 The code above is based on the C++17 `std::gcd` implementations in [libstdc++](https://github.com/gcc-mirror/gcc/blob/1667962ae755db27965778b8c8c684c6c0c4da21/libstdc%2B%2B-v3/include/std/numeric#L173) and [MSVC](https://github.com/microsoft/STL/blob/9aca22477df4eed3222b4974746ee79129eb44e7/stl/inc/numeric#L591). For values in the range of `unsigned int` and `unsigned long long`, if `countr_zero` can be computed very quickly, Stein's algorithm is faster than the Euclidean algorithm; otherwise it may be slower.
 
 ???+ note "About countr_zero"
-    1.  gcc has the [built-in functions](../bit.md#gcc-内建函数) `__builtin_ctz` (32-bit) and `__builtin_ctzll` (64-bit), which can replace `countr_zero` in the code above;
+    1.  gcc has the [built-in functions](../bit.md#gcc-built-in-functions) `__builtin_ctz` (32-bit) and `__builtin_ctzll` (64-bit), which can replace `countr_zero` in the code above;
     2.  Since C++20, the header `<bit>` provides [`std::countr_zero`](https://en.cppreference.com/w/cpp/numeric/countr_zero);
     3.  If you don't want to use non-standard functions and cannot use C++20, the code below is an implementation that runs in $O(1)$ after preprocessing, in the Word-RAM with multiplication model:
     

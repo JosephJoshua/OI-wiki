@@ -2,7 +2,7 @@ author: Early0v0
 
 ## Prerequisites
 
--   [Multiplicative functions](./basic.md#积性函数)
+-   [Multiplicative functions](./basic.md#multiplicative-functions)
 
 ## Definition
 

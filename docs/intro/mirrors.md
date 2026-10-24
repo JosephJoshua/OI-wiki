@@ -1,5 +1,5 @@
 ???+ failure "Restriction on adding new entries"
-    Because [OI Wiki is not a promotional tool](./what-oi-wiki-is-not.md#oi-wiki-不是宣传工具), this page **does not accept any new entries** unless there is a truly special reason.
+    Because [OI Wiki is not a promotional tool](./what-oi-wiki-is-not.md#oi-wiki-is-not-a-promotional-tool), this page **does not accept any new entries** unless there is a truly special reason.
 
 **OI Wiki** is hosted on servers outside mainland China, so for various reasons it can sometimes be hard to reach.
 

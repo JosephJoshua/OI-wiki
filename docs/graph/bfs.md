@@ -206,7 +206,7 @@ Of course, each node may be pushed into the queue several times, each time with 
 
 Compared with BFS using an ordinary queue, the time complexity gains a factor of $\log n$, since we have to maintain the priority queue. However, ordinary BFS on such graphs may push and pop each node many times, reaching $O(n^2)$ rather than $O(n)$. So priority queue BFS is usually still fast.
 
-Hey, doesn't this sound a lot like heap-optimized [Dijkstra](./shortest-path.md#dijkstra-算法)? In fact, heap-optimized Dijkstra is exactly priority queue BFS.
+Hey, doesn't this sound a lot like heap-optimized [Dijkstra](./shortest-path.md#dijkstras-algorithm)? In fact, heap-optimized Dijkstra is exactly priority queue BFS.
 
 ## Exercises
 

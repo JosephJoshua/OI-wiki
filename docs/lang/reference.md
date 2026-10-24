@@ -191,11 +191,11 @@ int main() {
 }
 ```
 
-But you don't always need to do this; see for example [return value optimization](./value-category.md#常见误区).
+But you don't always need to do this; see for example [return value optimization](./value-category.md#common-pitfalls).
 
 ### Extending the lifetime of temporaries with rvalue references
 
-Semantically, temporaries may cause extra copies or moves. In most cases the compiler can optimize them away with [copy elision](./value-category.md#复制消除), but a reference forces the compiler not to do these extra operations, which removes the uncertainty.
+Semantically, temporaries may cause extra copies or moves. In most cases the compiler can optimize them away with [copy elision](./value-category.md#copy-elision), but a reference forces the compiler not to do these extra operations, which removes the uncertainty.
 
 ## References
 

@@ -82,7 +82,7 @@ Below we introduce keeping balance by rotation and by merging, and implement the
 
 ### Keeping balance by rotation
 
-Rotation in a WBLT is exactly the same as [rotation in a Treap](./treap.md#旋转), and we can use exactly the same rotation strategy as in a Treap. Of course, a rotation can also be seen as redistributing subtree weights, so it can also be done by cutting and joining subtrees. The two implementations give exactly the same result, but the second one makes it easier to make a WBLT persistent.
+Rotation in a WBLT is exactly the same as [rotation in a Treap](./treap.md#rotation), and we can use exactly the same rotation strategy as in a Treap. Of course, a rotation can also be seen as redistributing subtree weights, so it can also be done by cutting and joining subtrees. The two implementations give exactly the same result, but the second one makes it easier to make a WBLT persistent.
 
 ???+ example "Reference code"
     === "Without joining"
@@ -647,7 +647,7 @@ If you want to implement them directly, note that equal keys may be stored in se
 
 ### Split
 
-Splitting a WBLT is similar to splitting a [non-rotating Treap](./treap.md#分裂split): based on subtree sizes or values, decide whether to recursively split the left or the right subtree. The difference is that a WBLT needs to **merge** the subtrees that are split off, to keep the final split trees balanced.
+Splitting a WBLT is similar to splitting a [non-rotating Treap](./treap.md#split): based on subtree sizes or values, decide whether to recursively split the left or the right subtree. The difference is that a WBLT needs to **merge** the subtrees that are split off, to keep the final split trees balanced.
 
 A reference implementation of splitting by subtree size:
 

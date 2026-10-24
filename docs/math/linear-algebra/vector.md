@@ -224,7 +224,7 @@ R=
 \end{bmatrix}.
 $$
 
-In three dimensions, rotating a vector needs two angle parameters, the change in the zenith (polar) angle and the change in the azimuth angle. The rotation can be done using [spherical coordinates](../coordinate.md#空间球坐标系).
+In three dimensions, rotating a vector needs two angle parameters, the change in the zenith (polar) angle and the change in the azimuth angle. The rotation can be done using [spherical coordinates](../coordinate.md#spherical-coordinates).
 
 #### Rotating a vector about a line
 

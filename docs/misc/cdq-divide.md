@@ -75,7 +75,7 @@ In practice, we usually use a function `solve(l,r)` to handle the pairs with $l 
 
 ## Optimizing 1D/1D dynamic programming transitions with CDQ divide and conquer
 
-Related content: [Optimizing DP with CDQ divide and conquer](../dp/opt/dp-opt.md#cdq-分治优化-dp)
+Related content: [Optimizing DP with CDQ divide and conquer](../dp/opt/dp-opt.md#dp-optimization-with-cdq-divide-and-conquer)
 
 1D/1D dynamic programming refers to a particular kind of DP problem: the DP array is one-dimensional and each transition takes $O(n)$. If the conditions are right, CDQ divide and conquer can sometimes reduce the time complexity from $O(n^2)$ to $O(n\log^2n)$.
 

@@ -53,12 +53,12 @@ int binary_search(int x, int l = 1, int r = n) {  // find the index of x in an a
 ```
 
 ???+ note "Note"
-    -   As explained in [Compiler optimizations #Shifts instead of multiplication](../lang/optimizations.md#移位代替乘法), when $s$ is a signed number and you can guarantee $s\ge 0$, `s >> 1` takes fewer instructions than `s / 2`.
+    -   As explained in [Compiler optimizations #Shifts instead of multiplication](../lang/optimizations.md#shifts-instead-of-multiplication), when $s$ is a signed number and you can guarantee $s\ge 0$, `s >> 1` takes fewer instructions than `s / 2`.
     
     -   When $l$ or $r$ is very large, $l+r$ may overflow. If $r-l$ does not overflow in that case, you can replace `(l + r) >> 1` in the code with `l + ((r - l) >> 1)`.
 
 ???+ warning "Warning"
-    When $s$ is a negative odd number, `s >> 1` and `s / 2` differ by $1$. This is because the former rounds toward negative infinity (standardized in C++20; implementation-defined before that), while the latter rounds toward zero. See [C++ bitwise operators](../lang/op.md#位操作符) for details. So when $l + r$ may be negative, `(l + r) / 2` may equal $r$, which leads to an **infinite loop** in code that uses `r = mid`. For example, when $l = -1,~r = 0$, `(l + r) / 2` equals $0$. Keep this difference in mind when writing code.
+    When $s$ is a negative odd number, `s >> 1` and `s / 2` differ by $1$. This is because the former rounds toward negative infinity (standardized in C++20; implementation-defined before that), while the latter rounds toward zero. See [C++ bitwise operators](../lang/op.md#bitwise-operators) for details. So when $l + r$ may be negative, `(l + r) / 2` may equal $r$, which leads to an **infinite loop** in code that uses `r = mid`. For example, when $l = -1,~r = 0$, `(l + r) / 2` equals $0$. Keep this difference in mind when writing code.
 
 ### bsearch
 
@@ -330,7 +330,7 @@ C++11 introduced [`std::partition_point`](https://zh.cppreference.com/w/cpp/algo
 `std::partition_point` takes three parameters:
 
 -   `first`, `last`: same as above.
--   `p`: a unary [predicate](../lang/csl/container.md#关联式容器). This is a callable object that takes one argument $v$ and returns a boolean saying whether $v$ meets the partition condition.
+-   `p`: a unary [predicate](../lang/csl/container.md#associative-containers). This is a callable object that takes one argument $v$ and returns a boolean saying whether $v$ meets the partition condition.
 
 Let the sequence passed in be $a$. The function returns an iterator to the first element that does not meet the partition condition, that is, an iterator to the element with the smallest index $x$ such that $p(a_x)$ is `false`.
 

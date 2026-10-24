@@ -2,7 +2,7 @@ author: ouuan, HeRaNO
 
 A heap is a tree in which every node has a key, and every node's key is greater than or equal to (or less than or equal to) its parent's key.
 
-A heap where every node's key is greater than or equal to its parent's key is called a min-heap; otherwise it is called a max-heap. [The STL `priority_queue`](../lang/csl/container-adapter.md#优先队列) is actually a max-heap.
+A heap where every node's key is greater than or equal to its parent's key is called a min-heap; otherwise it is called a max-heap. [The STL `priority_queue`](../lang/csl/container-adapter.md#priority-queue) is actually a max-heap.
 
 The main operations supported by a (min-)heap are: insert a number, find the minimum, delete the minimum, merge two heaps, and decrease the value of an element.
 

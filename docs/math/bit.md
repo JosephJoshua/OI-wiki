@@ -2,7 +2,7 @@ Bit manipulation means unary and binary operations on the binary representation 
 
 ## Integers and bit sequences
 
-See also: [integer types](../lang/var.md#整数类型), [complement representations](./numeral-sys/base.md#补数法)
+See also: [integer types](../lang/var.md#integer-types), [complement representations](./numeral-sys/base.md#method-of-complements)
 
 A fixed-length sequence made up only of `0` and `1` is called a bit sequence. The leftmost bit is called the most significant bit, and the rightmost bit is called the least significant bit.
 
@@ -39,7 +39,7 @@ Converting a bit sequence back to an integer is also easy: non-negative numbers 
 
 ## Bitwise operations
 
-A bitwise operation applies some [Boolean function](./boolean-algebra.md#布尔函数) to bit sequences bit by bit. Formally, for a Boolean function $f:\mathbf{B}^k\to \mathbf{B}$, a bitwise operation is a function of the form
+A bitwise operation applies some [Boolean function](./boolean-algebra.md#boolean-functions) to bit sequences bit by bit. Formally, for a Boolean function $f:\mathbf{B}^k\to \mathbf{B}$, a bitwise operation is a function of the form
 
 $$
 \begin{aligned}
@@ -100,7 +100,7 @@ When there is no ambiguity, we drop the word "bitwise" below.
 
 ## Shifts
 
-See also: [C++ bitwise operators](../lang/op.md#位操作符).
+See also: [C++ bitwise operators](../lang/op.md#bitwise-operators).
 
 A shift is a binary operation that "moves a bit sequence left or right bit by bit". The first argument is a bit sequence, and the second is usually a non-negative integer. Moving left is called a **left shift**, and moving right is called a **right shift**. Depending on how the vacated positions are filled, shifts are divided into **arithmetic shifts**, **logical shifts** and **circular shifts (rotations)**. Specifically,
 
@@ -119,7 +119,7 @@ For example, for the $8$-bit sequence `10 01 01 10`:
 | Circular left shift by $2$ | `01 01 10 10` |
 | Circular right shift by $2$ | `10 10 01 01` |
 
-In C++, `a << b` is a left shift and `a >> b` is a right shift. For which shift rules are used, see [C++ bitwise operators](../lang/op.md#位操作符).
+In C++, `a << b` is a left shift and `a >> b` is a right shift. For which shift rules are used, see [C++ bitwise operators](../lang/op.md#bitwise-operators).
 
 Circular shifts can be implemented with the following code:
 
@@ -132,7 +132,7 @@ Circular shifts can be implemented with the following code:
 
 Bit manipulation is generally used for three things:
 
-1.  Doing certain computations efficiently, replacing slower methods. See [compiler optimizations #strength reduction](../lang/optimizations.md#强度削减-strength-reduction).
+1.  Doing certain computations efficiently, replacing slower methods. See [compiler optimizations #strength reduction](../lang/optimizations.md#strength-reduction).
 2.  [Representing sets](./binary-set.md) (often used in [bitmask DP](../dp/state.md)).
 3.  The problem itself asks for bit operations.
 

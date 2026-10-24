@@ -8,7 +8,7 @@ $$
 \left\lfloor\dfrac{ai+b}{c}\right\rfloor
 $$
 
-The main idea is to use the recursive structure of fractions to reduce the problem to a smaller one and solve it recursively. Because the recursive structure of fractions is directly [related](./continued-fraction.md#连分数表示的求法) to the [Euclidean algorithm](./gcd.md#欧几里得算法), this summation method is called the Euclidean-like algorithm.
+The main idea is to use the recursive structure of fractions to reduce the problem to a smaller one and solve it recursively. Because the recursive structure of fractions is directly [related](./continued-fraction.md#computing-the-continued-fraction-representation) to the [Euclidean algorithm](./gcd.md#euclidean-algorithm), this summation method is called the Euclidean-like algorithm.
 
 Methods such as [continued fractions](./continued-fraction.md) and the [Stern–Brocot tree](./stern-brocot.md) describe the same recursive structure of fractions, so problems solvable with the Euclidean-like algorithm can usually be solved with them too. Compared with those methods, the Euclidean-like algorithm is usually easier to understand and simpler to implement.
 
@@ -63,7 +63,7 @@ $$
 \end{aligned}
 $$
 
-These steps use properties of the [floor and ceiling functions](./basic.md#取整函数) several times. Substituting the rewritten condition, the sum becomes:
+These steps use properties of the [floor and ceiling functions](./basic.md#floor-and-ceiling-functions) several times. Substituting the rewritten condition, the sum becomes:
 
 $$
 \begin{aligned}
@@ -136,7 +136,7 @@ $$
 
 This recursive algorithm works for two main reasons:
 
--   First, the slope of the line repeatedly takes its fractional part and then its reciprocal. This is exactly computing the [continued fraction expansion](./continued-fraction.md#连分数表示的求法) of the slope $k=a/c$. The continued fraction of a rational number has length $O(\log\min\{a,c\})$, so the process ends after $O(\log\min\{a,c\})$ steps;
+-   First, the slope of the line repeatedly takes its fractional part and then its reciprocal. This is exactly computing the [continued fraction expansion](./continued-fraction.md#computing-the-continued-fraction-representation) of the slope $k=a/c$. The continued fraction of a rational number has length $O(\log\min\{a,c\})$, so the process ends after $O(\log\min\{a,c\})$ steps;
 -   Second, each time we swap the axes, the slope is less than one, so intuitively $m<n$. That is, after each round, the range of $x$-coordinates keeps shrinking. The complexity analysis above shows rigorously that every two rounds, $S=mn$ drops to at most half, so the process ends after $O(\log n)$ steps.
 
 This is why the Euclidean-like algorithm with rational slope runs in $O(\log\min\{a,c,n\})$.
@@ -293,7 +293,7 @@ Using a similar geometric view, the Euclidean-like algorithm can be extended to 
     f(a,b,c,n) = nm - f(ca,-cb,a^2r-b^2,m).
     $$
     
-    To avoid integer overflow, divide $a,b,c$ by their greatest common divisor each time. This computation is exactly the same as computing the continued fraction of $k$, so by [continued fraction theory](./continued-fraction.md#二次无理数), as long as $\gcd(a,b,c)=1$, the values always stay within the integer range. Also, although $(a,b,c,n)$ never overflows, under this problem's constraints $f(a,b,c,n)$ may exceed the range of $64$-bit integers. Letting it overflow naturally is fine and needs no extra handling; the final result is always in $[-n,n]$.
+    To avoid integer overflow, divide $a,b,c$ by their greatest common divisor each time. This computation is exactly the same as computing the continued fraction of $k$, so by [continued fraction theory](./continued-fraction.md#quadratic-irrationals), as long as $\gcd(a,b,c)=1$, the values always stay within the integer range. Also, although $(a,b,c,n)$ never overflows, under this problem's constraints $f(a,b,c,n)$ may exceed the range of $64$-bit integers. Letting it overflow naturally is fine and needs no extra handling; the final result is always in $[-n,n]$.
     
     Even though the slope never becomes zero, the algorithm still runs in $O(\log n)$, which is easy to see from the complexity argument above.
     
@@ -305,7 +305,7 @@ Using a similar geometric view, the Euclidean-like algorithm can be extended to 
     Given positive integers $a,b,c,d$, among all reduced fractions $p/q$ with $a/b<p/q<c/d$, find the one whose pair $(q,p)$ is lexicographically smallest.
 
 ??? note "Solution"
-    This problem is also a classic application of the [Stern–Brocot tree](./stern-brocot.md); a solution can be found [here](./continued-fraction.md#连分数的树). Since it only depends on the recursive structure of fractions, it can also be solved in a Euclidean-like way, so it can be seen as an application of the Euclidean-like algorithm as well.
+    This problem is also a classic application of the [Stern–Brocot tree](./stern-brocot.md); a solution can be found [here](./continued-fraction.md#continued-fractions-and-trees). Since it only depends on the recursive structure of fractions, it can also be solved in a Euclidean-like way, so it can be seen as an application of the Euclidean-like algorithm as well.
     
     If there is at least one natural number strictly between $a/b$ and $c/d$, we can directly take $(q,p)=(1,\lfloor a/b\rfloor+1)$. Otherwise, we must have
     
@@ -313,7 +313,7 @@ Using a similar geometric view, the Euclidean-like algorithm can be extended to 
     \left\lfloor\dfrac{a}{b}\right\rfloor \le \dfrac{a}{b} <\dfrac{p}{q} <\dfrac{c}{d}\le\left\lfloor\dfrac{a}{b}\right\rfloor+1.
     $$
     
-    From this inequality, the integer part of $p/q$ must be $\lfloor a/b\rfloor$. Remove this integer part and take reciprocals of everything to determine the fractional part. This is exactly the [standard method](./continued-fraction.md#连分数表示的求法) for finding the continued fraction of $p/q$. If the final answer is $p/q$, the time complexity is $O(\log\min\{p,q\})$.
+    From this inequality, the integer part of $p/q$ must be $\lfloor a/b\rfloor$. Remove this integer part and take reciprocals of everything to determine the fractional part. This is exactly the [standard method](./continued-fraction.md#computing-the-continued-fraction-representation) for finding the continued fraction of $p/q$. If the final answer is $p/q$, the time complexity is $O(\log\min\{p,q\})$.
     
     There is one subtle point: is the lexicographically smallest fraction after taking reciprocals the same as the lexicographically smallest one before? In other words, among fractions $p/q$ with $a/b<p/q<c/d$, is the one with the smallest $(q,p)$ also the one with the smallest $(p,q)$? Suppose not: let $p/q$ have the smallest $(q,p)$, but $r/s\neq p/q$ have the smallest $(r,s)$. Then we must have $r<p$ and $q<s$. But this means
     
@@ -364,7 +364,7 @@ Of course, this definition has a few special cases to handle:
 
 If anything about the geometric description is unclear, refer to the algebraic definition above. The geometric description helps in understanding the algorithm below.
 
-The basic idea of the universal Euclidean algorithm is to treat $U$ and $R$ in the operation sequence as elements of some [monoid](../algebra/basic.md#群), and the whole operation sequence as a product of monoid elements. The final answer is related to this product.
+The basic idea of the universal Euclidean algorithm is to treat $U$ and $R$ in the operation sequence as elements of some [monoid](../algebra/basic.md#groups), and the whole operation sequence as a product of monoid elements. The final answer is related to this product.
 
 For example, in this problem, we can define a state vector $v = (1,y,\sum y)$ representing the current state after starting at the origin and crossing some grid lines. The first component is a constant, the second is the $y$-coordinate, and the third is the sum we want. Initially $v=(1,0,0)$. Each time we cross a grid line going up, the $y$-coordinate increases by one, which is the same as right-multiplying the state vector by the matrix
 
@@ -686,7 +686,7 @@ Using the universal Euclidean algorithm, the template problem can be implemented
         F(k,n,U,R) = F(k^{-1},m,R,U)R^{n-\lfloor k^{-1}m\rfloor}.
         $$
     
-    In this algorithm, the iteration on $k$ is really computing the continued fraction expansion of $\sqrt{r}$. For this we can use the [PQa algorithm](./pell-equation.md#pqa-算法). Computing the continued fraction can be done at the same time as the iterations of the universal Euclidean algorithm.
+    In this algorithm, the iteration on $k$ is really computing the continued fraction expansion of $\sqrt{r}$. For this we can use the [PQa algorithm](./pell-equation.md#the-pqa-algorithm). Computing the continued fraction can be done at the same time as the iterations of the universal Euclidean algorithm.
     
     As with the Euclidean-like algorithm, the complexity is still $O(\log n)$.
     

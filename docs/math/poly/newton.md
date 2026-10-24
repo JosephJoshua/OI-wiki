@@ -54,7 +54,7 @@ $$
 
 ## Example problems
 
-### [Polynomial inverse](./elementary-func.md#多项式求逆)
+### [Polynomial inverse](./elementary-func.md#polynomial-inverse)
 
 Let the given function be $h\left(x\right)$. Then:
 
@@ -77,7 +77,7 @@ $$
 T\left(n\right)=T\left(\frac{n}{2}\right)+O\left(n\log{n}\right)=O\left(n\log{n}\right)
 $$
 
-### [Polynomial square root](./elementary-func.md#多项式开方)
+### [Polynomial square root](./elementary-func.md#polynomial-square-root)
 
 Let the given function be $h\left(x\right)$. Then:
 
@@ -100,7 +100,7 @@ $$
 T\left(n\right)=T\left(\frac{n}{2}\right)+O\left(n\log{n}\right)=O\left(n\log{n}\right)
 $$
 
-### [Polynomial exponential](./elementary-func.md#多项式对数函数--指数函数)
+### [Polynomial exponential](./elementary-func.md#polynomial-logarithm--exponential)
 
 Let the given function be $h\left(x\right)$. Then:
 
@@ -219,7 +219,7 @@ This section extends the discussion above. Using the language of abstract algebr
 ### Proof that a solution exists
 
 ???+ note "Lemma 1"
-    Let $R$ be an [integral domain](../algebra/ring-theory.md#整环) with a polynomial or [formal power series](../algebra/ring-theory.md#形式幂级数环) $f(X) = \sum_{i\geq 0}a_iX^i$, and let $r,p\in R$ be such that $f(r)\in Rp$ (that is, $r$ is a root of $f(X)$ modulo $p$) and $f'(r)\in R$ is invertible modulo $p$. Here $f'(X) := \sum_{i\geq 0}(i+1)a_{i+1}X^i$ is the **formal derivative** of $f(X)$. Then $f\left(r-\dfrac{f(r)}{f'(r)}\right) \equiv 0\pmod {p^2}$.
+    Let $R$ be an [integral domain](../algebra/ring-theory.md#integral-domains) with a polynomial or [formal power series](../algebra/ring-theory.md#formal-power-series-rings) $f(X) = \sum_{i\geq 0}a_iX^i$, and let $r,p\in R$ be such that $f(r)\in Rp$ (that is, $r$ is a root of $f(X)$ modulo $p$) and $f'(r)\in R$ is invertible modulo $p$. Here $f'(X) := \sum_{i\geq 0}(i+1)a_{i+1}X^i$ is the **formal derivative** of $f(X)$. Then $f\left(r-\dfrac{f(r)}{f'(r)}\right) \equiv 0\pmod {p^2}$.
 
 ??? note "Proof"
     For all $s\in R$,
@@ -251,7 +251,7 @@ The doubling only needs the initial condition that there is $f_1\in k$ with $G(X
 ### Proof that all solutions are found
 
 ???+ note "Lemma 2"
-    Let $R$ be a [UFD](../algebra/ring-theory.md#唯一分解整环), and let $f,r,p$ be as in Lemma 1. Then the value $r-\dfrac{f(r)}{f'(r)}$ given by Lemma 1 is, modulo $p^{2}$, the unique value of $x$ satisfying both of the following conditions:
+    Let $R$ be a [UFD](../algebra/ring-theory.md#unique-factorization-domains), and let $f,r,p$ be as in Lemma 1. Then the value $r-\dfrac{f(r)}{f'(r)}$ given by Lemma 1 is, modulo $p^{2}$, the unique value of $x$ satisfying both of the following conditions:
     
     -   $f(x)\in Rp^{2}$
     -   $x-r\in Rp$

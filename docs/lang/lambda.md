@@ -4,7 +4,7 @@ The syntax in this article follows the **C++11** standard. Syntax from newer sta
 
 ## Lambda expressions
 
-Lambda expressions are named after the $\lambda$ calculus in mathematics and correspond directly to its lambda abstraction. At compile time, the compiler uses the syntax to generate an anonymous [**function object**](./new.md#函数对象). The captured variables become its members, and the parameters and function body are used to implement the `operator()` overload.
+Lambda expressions are named after the $\lambda$ calculus in mathematics and correspond directly to its lambda abstraction. At compile time, the compiler uses the syntax to generate an anonymous [**function object**](./new.md#function-objects). The captured variables become its members, and the parameters and function body are used to implement the `operator()` overload.
 
 ??? note "Function object"
     A function object is an object of a class, usually made by overloading `operator()`, so it can be called like a function. Compared with ordinary functions, function objects have many advantages. For example, they can store state, and they can be passed as arguments to other functions.

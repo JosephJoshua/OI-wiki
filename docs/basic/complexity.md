@@ -126,7 +126,7 @@ If we take the values of the input numbers $n$ and $m$ as the input size, then t
 
 ### DFS
 
-When we run a [DFS](../graph/dfs.md) on a [connected graph](../graph/concept.md#连通) with $n$ vertices and $m$ edges stored as an adjacency list, every vertex and every edge is visited only a constant number of times, so the complexity is $\Theta(n+m)$.
+When we run a [DFS](../graph/dfs.md) on a [connected graph](../graph/concept.md#connectivity) with $n$ vertices and $m$ edges stored as an adjacency list, every vertex and every edge is visited only a constant number of times, so the complexity is $\Theta(n+m)$.
 
 ## Which quantities are constants
 

@@ -26,7 +26,7 @@ There is also another way: run a [DFS](../search/dfs.md) on the graph and check 
 
 ### Longest (shortest) paths with DP
 
-On a general graph, the best time complexity for single-source longest (shortest) paths is $O(nm)$ ([Bellman–Ford algorithm](./shortest-path.md#bellmanford-算法), which works with negative weights) or $O(m \log m)$ ([Dijkstra's algorithm](./shortest-path.md#dijkstra-算法), which needs non-negative weights).
+On a general graph, the best time complexity for single-source longest (shortest) paths is $O(nm)$ ([Bellman–Ford algorithm](./shortest-path.md#bellmanford-algorithm), which works with negative weights) or $O(m \log m)$ ([Dijkstra's algorithm](./shortest-path.md#dijkstras-algorithm), which needs non-negative weights).
 
 On a DAG, however, we can find longest (shortest) paths with DP, bringing the time complexity down to $O(n+m)$. The transition is $dis_v = min(dis_v, dis_u + w_{u,v})$ or $dis_v = max(dis_v, dis_u + w_{u,v})$.
 

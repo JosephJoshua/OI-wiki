@@ -142,7 +142,7 @@ Below, let $p\in\mathbf{P}$ and let $f(x)=\sum_{i=0}^na_ix^i$ be a polynomial wi
     For a prime $p$,
     
     -   $(\forall x\in\mathbf{Z}),~~x^{p-1}-1 \equiv \prod_{i=1}^{p-1}(x-i)\pmod p$.
-    -   ([Wilson's theorem](./factorial.md#wilson-定理)) $(p-1)! \equiv -1 \pmod p$.
+    -   ([Wilson's theorem](./factorial.md#wilsons-theorem)) $(p-1)! \equiv -1 \pmod p$.
 
 ???+ note "Theorem 3 (Lagrange's theorem)"
     Equation $(6)$ has at most $n$ distinct solutions.

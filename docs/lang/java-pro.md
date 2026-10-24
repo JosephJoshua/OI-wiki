@@ -413,7 +413,7 @@ public class Main {
 }
 ```
 
-For more on Miller-Rabin, see [Miller–Rabin primality test](../math/number-theory/prime.md#millerrabin-素性测试).
+For more on Miller-Rabin, see [Miller–Rabin primality test](../math/number-theory/prime.md#millerrabin-primality-test).
 
 ## Primitive types and wrapper types
 

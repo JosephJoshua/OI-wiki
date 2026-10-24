@@ -50,7 +50,7 @@ A: Because we want to truly help more contestants and anyone interested in these
 
 Q: How do I communicate with the team?
 
-A: You can contact us using the [ways to get in touch on the About page](./about.md#交流方式).
+A: You can contact us using the [ways to get in touch on the About page](./about.md#how-to-get-in-touch).
 
 ***
 
@@ -79,7 +79,7 @@ Q: How do I add a topic?
 A: There are two options:
 
 -   Open an Issue describing the content you would like added.
--   Open a Pull Request that adds the new topic to the table of contents [(mkdocs.yml)](https://github.com/OI-wiki/OI-wiki/blob/master/mkdocs.yml) and creates an empty `.md` file at the matching place in the [docs](https://github.com/OI-wiki/OI-wiki/tree/master/docs) folder. For formatting details, see the [Format guide](./format.md#贡献文档要求).
+-   Open a Pull Request that adds the new topic to the table of contents [(mkdocs.yml)](https://github.com/OI-wiki/OI-wiki/blob/master/mkdocs.yml) and creates an empty `.md` file at the matching place in the [docs](https://github.com/OI-wiki/OI-wiki/tree/master/docs) folder. For formatting details, see the [Format guide](./format.md#requirements-for-contributed-documents).
 
 ***
 
@@ -280,7 +280,7 @@ Note: the default is CC BY-SA 4.0 and SATA.
 
 Q: Why is my name missing from the author list?
 
-A: If you wrote part of a page but were not recorded in the author list, you can add your GitHub ID to the [author field](./htc.md#author-字段) in the file header.
+A: If you wrote part of a page but were not recorded in the author list, you can add your GitHub ID to the [author field](./htc.md#the-author-field) in the file header.
 
 ***
 

@@ -10,7 +10,7 @@ An expression contains two kinds of symbols: operands and operators. For an expr
 
 One way to parse an expression recursively is to treat the expression like ordinary grammar rules, split it into an expression tree as shown in the figure, and then evaluate bottom-up on the tree.![](./images/bet.png)
 
-Doing a [tree traversal](../graph/tree-basic.md#树的遍历) on the expression tree gives different kinds of expressions. Arithmetic expressions come in three forms: prefix, infix and postfix. Infix expressions are the ones used most in daily life; postfix expressions are the ones easiest for computers to understand.
+Doing a [tree traversal](../graph/tree-basic.md#tree-traversal) on the expression tree gives different kinds of expressions. Arithmetic expressions come in three forms: prefix, infix and postfix. Infix expressions are the ones used most in daily life; postfix expressions are the ones easiest for computers to understand.
 
 -   Preorder traversal gives the prefix expression (Polish notation)
 -   Inorder traversal gives the infix expression

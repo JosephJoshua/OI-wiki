@@ -133,7 +133,7 @@ When you plan to contribute to some part of the content, you should get as famil
 
 -   <span id="SAVE-6">SAVE-6</span>: Make sure the links cited in your document are stable. We **don't recommend** citing resources from **self-hosted** services (such as problems on a self-hosted OJ). When adding an external link, we recommend also saving it to the Internet Archive[^webarchive], in case an irreplaceable link stops working.
 
--   <span id="SAVE-7">SAVE-7</span>: For links within the site, drop the site's domain and link to the corresponding `.md` file with a relative path. For example, to link to the miscellaneous introduction (`misc`) from this page (`intro/format`), use `[Miscellaneous introduction](../misc/index.md)`. You can add a hash to the link to point to a section, for example [`[Pull Request message format](./htc.md#pull-request-信息格式规范)`](./htc.md#pull-request-信息格式规范). You can get the hash value from the button to the right of each heading or from the links in the table of contents on the right side of the page.
+-   <span id="SAVE-7">SAVE-7</span>: For links within the site, drop the site's domain and link to the corresponding `.md` file with a relative path. For example, to link to the miscellaneous introduction (`misc`) from this page (`intro/format`), use `[Miscellaneous introduction](../misc/index.md)`. You can add a hash to the link to point to a section, for example [`[Pull Request message format](./htc.md#pull-request-message-format)`](./htc.md#pull-request-message-format). You can get the hash value from the button to the right of each heading or from the links in the table of contents on the right side of the page.
 
 ### How reasonable the document is
 
@@ -157,7 +157,7 @@ When you plan to contribute to some part of the content, you should get as famil
 
         Example page: [WSL (Windows 10)](../tools/wsl.md)
 
-Unless the existing content is of low quality, we suggest contributing by **adding to** it rather than overwriting it. If you are unsure, see the [ways to get in touch on the About page](./about.md#交流方式) section and contact the **OI Wiki** team.
+Unless the existing content is of low quality, we suggest contributing by **adding to** it rather than overwriting it. If you are unsure, see the [ways to get in touch on the About page](./about.md#how-to-get-in-touch) section and contact the **OI Wiki** team.
 
 ### Basic format requirements for documents
 
@@ -442,7 +442,7 @@ If you have other questions about mkdocs-material (the theme we use), you can al
 
     -   <span id="CONT-10.2.4">CONT-10.2.4</span>: We don't recommend defining constants with macros; define them directly with keywords such as `constexpr`/`const`.
 
-    -   <span id="CONT-10.2.5">CONT-10.2.5</span>: We don't recommend using the `inline` keyword on functions; see [Compiler optimizations](../lang/optimizations.md#inline---内联).
+    -   <span id="CONT-10.2.5">CONT-10.2.5</span>: We don't recommend using the `inline` keyword on functions; see [Compiler optimizations](../lang/optimizations.md#inline).
 
     -   <span id="CONT-10.2.6">CONT-10.2.6</span>: Try to avoid complex template metaprogramming techniques such as type traits and partial specialization. If you really need them, add comments explaining what they mean.
 
@@ -677,7 +677,7 @@ If you need to add an example problem:
 -   <span id="CODE-3.7">CODE-3.7</span>: Don't use macros like `#define int long long`.
 -   <span id="CODE-3.8">CODE-3.8</span>: If you need C-style [formatted input/output](https://en.cppreference.com/w/cpp/io/c#Formatted_input.2Foutput), pay special attention to the format specifiers: for example, `size_t` uses `%zu` and `ptrdiff_t` uses `%td`. For instance, to print the size of an STL container, the code should look like `printf("%zu", container.size());`.
 -   <span id="CODE-3.9">CODE-3.9</span>: Because the `<chrono>` library of libstdc++ in the current test environment has a [BUG](https://github.com/actions/runner-images/issues/8659), please avoid the `<chrono>` library.
--   <span id="CODE-3.10">CODE-3.10</span>: Because `long` and `unsigned long` are 32 bits in some test environments and 64 bits in others, we don't recommend these two types, to keep the code's behavior the same on all platforms. We recommend [fixed-width integer types](../lang/var.md#定宽整数类型).
+-   <span id="CODE-3.10">CODE-3.10</span>: Because `long` and `unsigned long` are 32 bits in some test environments and 64 bits in others, we don't recommend these two types, to keep the code's behavior the same on all platforms. We recommend [fixed-width integer types](../lang/var.md#fixed-width-integer-types).
 -   <span id="CODE-3.11">CODE-3.11</span>: We don't recommend non-standard features such as `__gcd`, `__int128` and the `__builtin_` family of functions. If you need them, make sure your code passes the tests on all platforms. For example, [this code](https://github.com/OI-wiki/OI-wiki/blob/4af83d6db6017f4c36db6d4a7583bbc3f6257484/docs/ds/code/tree-decompose/tree-decompose_1.cpp#L24-L47) provides an all-platform implementation of `_Find_first()`, a member function specific to libstdc++'s [std::bitset](../lang/csl/bitset.md).
 
 Also, to make code more readable, we recommend following [CONT-10](#CONT-10).

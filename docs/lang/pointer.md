@@ -154,7 +154,7 @@ int main() {
 }
 ```
 
-C++ introduced references, which are easier and safer to use than pointers. For details, see [C++: References](./reference.md) and [Differences between C and C++: pointers and references](./cpp-other-langs.md#指针与引用).
+C++ introduced references, which are easier and safer to use than pointers. For details, see [C++: References](./reference.md) and [Differences between C and C++: pointers and references](./cpp-other-langs.md#pointers-and-references).
 
 ### Dynamic allocation
 

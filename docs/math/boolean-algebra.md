@@ -39,7 +39,7 @@ The matching truth tables (from [Wikipedia](https://commons.wikimedia.org/wiki/F
 
 ![](./images/logical-connectives-table.svg)
 
-The matching Venn diagrams and [Hasse diagram](./order-theory.md#偏序集的可视化表示hasse-图) (with set inclusion $\subseteq$ as the partial order, from [Wikipedia](https://en.wikipedia.org/wiki/File:Logical_connectives_Hasse_diagram.svg)):
+The matching Venn diagrams and [Hasse diagram](./order-theory.md#visualizing-posets-hasse-diagrams) (with set inclusion $\subseteq$ as the partial order, from [Wikipedia](https://en.wikipedia.org/wiki/File:Logical_connectives_Hasse_diagram.svg)):
 
 ![](./images/logical-connectives-hasse-diagram.svg)
 
@@ -47,7 +47,7 @@ An $n$-ary boolean function has $2^n$ possible inputs, so there are $2\uparrow (
 
 A combination of logical operators is called a **logical expression**.
 
-If we view $\mathbf{B}$ as the [residue classes](./number-theory/basic.md#同余类与剩余系) modulo $2$, then XOR is the same as addition modulo $2$, and AND is the same as multiplication modulo $2$. So we sometimes also write the boolean domain as $\mathbf{Z}_2$.
+If we view $\mathbf{B}$ as the [residue classes](./number-theory/basic.md#residue-classes-and-residue-systems) modulo $2$, then XOR is the same as addition modulo $2$, and AND is the same as multiplication modulo $2$. So we sometimes also write the boolean domain as $\mathbf{Z}_2$.
 
 ### Precedence
 
@@ -55,7 +55,7 @@ Unary logical operators have higher precedence than binary ones, that is, $\lnot
 
 There are several conventions for the precedence among binary logical operators. Some sources give $\land$, $\lor$, $\oplus$ higher precedence than $\to$, $\gets$, $\leftrightarrow$, while others say the opposite. So in practice, it is best to add extra parentheses to make the order clear.
 
-For the rules in C++, see the [C++ operator precedence table](../lang/op.md#c-运算符优先级总表).
+For the rules in C++, see the [C++ operator precedence table](../lang/op.md#c-operator-precedence-table).
 
 ### Sole sufficient operators and functionally complete operator sets
 
@@ -101,8 +101,8 @@ Below are the common minimal functionally complete operator sets[^vaughan1942com
 
 First, the properties related to algebraic structures:
 
--   AND and OR each form a [commutative monoid](./algebra/basic.md#群) on $\mathbf{B}$. That is, AND and OR are both commutative and associative, and both have an identity element ($x\land 1=x\lor 0=x$).
--   XOR and XNOR each form a [group](./algebra/basic.md#群) on $\mathbf{B}$. That is, XOR and XNOR are both commutative and associative, have an identity element ($x\oplus 0=x\odot 1=x$), and have inverses ($x\oplus x=0$, $x\odot x=1$).
+-   AND and OR each form a [commutative monoid](./algebra/basic.md#groups) on $\mathbf{B}$. That is, AND and OR are both commutative and associative, and both have an identity element ($x\land 1=x\lor 0=x$).
+-   XOR and XNOR each form a [group](./algebra/basic.md#groups) on $\mathbf{B}$. That is, XOR and XNOR are both commutative and associative, have an identity element ($x\oplus 0=x\odot 1=x$), and have inverses ($x\oplus x=0$, $x\odot x=1$).
 -   NAND and NOR are not associative, so they do not form semigroups.
 
 For $\land$ and $\lor$, we have

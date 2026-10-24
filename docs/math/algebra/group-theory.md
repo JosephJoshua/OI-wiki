@@ -111,7 +111,7 @@ The order of an element is never larger than the order of the group. In fact, we
 
     In particular, the number of generators of $C_n$ is $\varphi(n)$, where $\varphi(\cdot)$ is [Euler's totient function](../number-theory/euler-totient.md).
 
-As an application of this discussion, note that the multiplicative group of integers modulo $n$ has order $\varphi(n)$, and the order of any element $a$ of the group divides it, so we must have $a^{\varphi(n)}=1$. This is [Euler's theorem](../number-theory/fermat.md#欧拉定理), since the elements of this group are exactly the integers coprime to $n$.
+As an application of this discussion, note that the multiplicative group of integers modulo $n$ has order $\varphi(n)$, and the order of any element $a$ of the group divides it, so we must have $a^{\varphi(n)}=1$. This is [Euler's theorem](../number-theory/fermat.md#eulers-theorem), since the elements of this group are exactly the integers coprime to $n$.
 
 ### Cosets
 
@@ -667,7 +667,7 @@ Given a cyclic group $C_{n}$, if $n=p_1^{r_1}\cdots p_k^{r_k}$ by the fundamenta
 
 [^cayley]: Cayley's theorem itself does not say much about the structure of a group, because the group $S_G$ is usually huge, and it is hard to say what definite properties a subgroup of size exactly $|G|$ in it has. However, early group theory focused mainly on permutation groups. So Cayley's theorem is really saying that every possible group structure is one of these already well-studied objects, even though actual research needs more refined tools.
 
-[^conjugate]: More generally, conjugate elements in a permutation group must have the same [cycle type](../permutation.md#置换的型).
+[^conjugate]: More generally, conjugate elements in a permutation group must have the same [cycle type](../permutation.md#cycle-type).
 
 [^proof-abelian]: See Milne, J.S. (2021) Group Theory, page 25.
 

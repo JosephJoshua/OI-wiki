@@ -532,7 +532,7 @@ for i in range(4):  # assume 4 lines of input here
 print(u, v, w)
 ```
 
-Note that the for loop in Python is quite different from C/C++. It works like the ["range-based for loop"](./new.md#基于范围的-for-循环) introduced in C++ 11: it really iterates over the elements of a sequence. For example, to loop over array indices you iterate over `range(len(lst))` instead of actually defining start and end conditions, so it is less flexible than in C/C++.
+Note that the for loop in Python is quite different from C/C++. It works like the ["range-based for loop"](./new.md#range-based-for-loops) introduced in C++ 11: it really iterates over the elements of a sequence. For example, to loop over array indices you iterate over `range(len(lst))` instead of actually defining start and end conditions, so it is less flexible than in C/C++.
 
 Below we use a while loop to show how to read input when the number of lines is unknown:
 

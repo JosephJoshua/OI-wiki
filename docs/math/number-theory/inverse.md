@@ -15,7 +15,7 @@ With the extended Euclidean algorithm or fast exponentiation, the inverse of a s
 
 ### Extended Euclidean algorithm
 
-Finding an inverse is the same as solving a linear congruence. So we can use the [extended Euclidean algorithm](./gcd.md#扩展欧几里得算法) to find the inverse in $O(\log\min\{a,m\})$ time. Also, since the linear equation for an inverse is a special case, the steps can be simplified a bit.
+Finding an inverse is the same as solving a linear congruence. So we can use the [extended Euclidean algorithm](./gcd.md#extended-euclidean-algorithm) to find the inverse in $O(\log\min\{a,m\})$ time. Also, since the linear equation for an inverse is a special case, the steps can be simplified a bit.
 
 ???+ example "Reference implementation"
     === "C++"
@@ -32,7 +32,7 @@ This algorithm works in every case where the inverse exists.
 
 ### Fast exponentiation
 
-This method mainly applies when the modulus is a prime $p$. In this case, by [Fermat's little theorem](./fermat.md#费马小定理), for any $a\perp p$ we have
+This method mainly applies when the modulus is a prime $p$. In this case, by [Fermat's little theorem](./fermat.md#fermats-little-theorem), for any $a\perp p$ we have
 
 $$
 a\cdot a^{p-2} = a^{p-1} \equiv 1 \pmod p.
@@ -51,7 +51,7 @@ Since the inverse is unique, the inverse $a^{-1}\bmod p$ equals $a^{p-2}\bmod p$
         --8<-- "docs/math/code/inverse/inverse-2.py:core"
         ```
 
-Of course, in theory this method can be extended to a general modulus $m$ using [Euler's theorem](./fermat.md#欧拉定理), i.e., computing the inverse as $a^{\varphi(m)-1}\bmod m$. However, computing [Euler's totient function](./euler-totient.md) $\varphi(m)$ for a single value is not easy, so this algorithm is usually not efficient in the general case.
+Of course, in theory this method can be extended to a general modulus $m$ using [Euler's theorem](./fermat.md#eulers-theorem), i.e., computing the inverse as $a^{\varphi(m)-1}\bmod m$. However, computing [Euler's totient function](./euler-totient.md) $\varphi(m)$ for a single value is not easy, so this algorithm is usually not efficient in the general case.
 
 ## Computing many inverses
 

@@ -231,7 +231,7 @@ The `void` type means "no type". Unlike the types above, you cannot declare a va
 
 ### The null pointer type
 
-See the [corresponding section](./pointer.md#空指针) on pointers.
+See the [corresponding section](./pointer.md#null-pointers) on pointers.
 
 ## Fixed-width integer types
 
@@ -539,4 +539,4 @@ If you try to change the value of a constant, you get an error at compile time: 
 
 [^note15]: More precisely, the [point of declaration](https://zh.cppreference.com/w/cpp/language/scope#.E5.A3.B0.E6.98.8E.E7.82.B9).
 
-[^note16]: Before C++20, signed integers were only required to cover at least the range of [ones' complement](../math/bit.md#整数与位序列) (that is, $-2^{x-1}+1\sim 2^{x-1}-1$), but in practice nearly all implementations use [two's complement](../math/bit.md#整数与位序列). Since C++20, signed integers are required to use two's complement. For details, see [Range of values - cppreference](https://en.cppreference.com/w/cpp/language/types.html#Range_of_values).
+[^note16]: Before C++20, signed integers were only required to cover at least the range of [ones' complement](../math/bit.md#integers-and-bit-sequences) (that is, $-2^{x-1}+1\sim 2^{x-1}-1$), but in practice nearly all implementations use [two's complement](../math/bit.md#integers-and-bit-sequences). Since C++20, signed integers are required to use two's complement. For details, see [Range of values - cppreference](https://en.cppreference.com/w/cpp/language/types.html#Range_of_values).

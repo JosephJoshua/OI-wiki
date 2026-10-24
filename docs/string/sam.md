@@ -25,7 +25,7 @@ Intuitively, the SAM of a string can be seen as a compressed form of **all subst
 
 ## Definition
 
-The SAM of a string $s$ is the minimal [DFA](../misc/fsm.md#确定性有限状态自动机) that accepts all suffixes of $s$.
+The SAM of a string $s$ is the minimal [DFA](../misc/fsm.md#deterministic-finite-automata) that accepts all suffixes of $s$.
 
 In other words:
 
@@ -79,7 +79,7 @@ In the last example, if we built the trie of all suffixes directly, the paths $\
 
 ## A linear-time construction algorithm
 
-Before describing the algorithm that builds a SAM in linear time, we need to introduce two concepts that are very important for understanding the construction, and briefly prove their properties. The end-position set $\operatorname{endpos}$ defines the nodes of the SAM (that is, it gives the necessary and sufficient condition for nodes to be merged), while the suffix link $\operatorname{link}$ is simply the natural counterpart in the SAM of the [fail pointer](./ac-automaton.md#失配指针) in the Aho–Corasick automaton.
+Before describing the algorithm that builds a SAM in linear time, we need to introduce two concepts that are very important for understanding the construction, and briefly prove their properties. The end-position set $\operatorname{endpos}$ defines the nodes of the SAM (that is, it gives the necessary and sufficient condition for nodes to be merged), while the suffix link $\operatorname{link}$ is simply the natural counterpart in the SAM of the [fail pointer](./ac-automaton.md#failure-pointers) in the Aho–Corasick automaton.
 
 ### End positions `endpos`
 
@@ -89,7 +89,7 @@ Two substrings $t_1$ and $t_2$ may have exactly the same end positions: $\operat
 
 It turns out that each such equivalence class corresponds to one state of the SAM[^state-endpos]. That is, whenever two substrings have the same end positions, their paths in the SAM lead to the same state. In other words, each non-initial state of the SAM corresponds to one or more non-empty substrings with the same $\operatorname{endpos}$. In short, the states of the SAM are exactly the equivalence classes of all non-empty substrings, plus the initial state.
 
-Let's accept this fact for now; we will build the SAM construction algorithm on it. We will also show that the result satisfies all the properties a SAM must have except minimality, and minimality follows from the [Myhill–Nerode theorem](../misc/fsm.md#myhillnerode-定理).
+Let's accept this fact for now; we will build the SAM construction algorithm on it. We will also show that the result satisfies all the properties a SAM must have except minimality, and minimality follows from the [Myhill–Nerode theorem](../misc/fsm.md#myhillnerode-theorem).
 
 From the values of $\operatorname{endpos}$ we can draw some important conclusions, which explain how the different substrings of the same state relate to each other.
 

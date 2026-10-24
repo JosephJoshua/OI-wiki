@@ -169,7 +169,7 @@ The compiler can't find these mistakes; you have to track them down yourself.
         ```
 
 -   Arithmetic mistakes caused by not using `unsigned` when hashing.
-    -   Right-shifting a negative number fills the highest bit with 1. See: [Bitwise operators](../lang/op.md#位操作符).
+    -   Right-shifting a negative number fills the highest bit with 1. See: [Bitwise operators](../lang/op.md#bitwise-operators).
 
 -   Not deleting or commenting out debug output statements.
 
@@ -226,7 +226,7 @@ The compiler can't find these mistakes; you have to track them down yourself.
 ???+ warning "Warning"
     In official contests, the environment where contestants solve problems is kept as close as possible to the final judging environment.
     
-    This section only applies to cases like mock contests, and we also recommend that problem setters make their data follow the [data format](problemsetting.md#数据的格式) as much as possible.
+    This section only applies to cases like mock contests, and we also recommend that problem setters make their data follow the [data format](problemsetting.md#data-format) as much as possible.
 
 Different operating systems use different characters to mark a newline. Here are the newline characters of some common systems:
 

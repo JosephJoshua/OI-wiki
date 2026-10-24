@@ -65,13 +65,13 @@ where $f(x) \in \mathbb{C}\left\lbrack x\right\rbrack_{< n}$ and $q \in \mathbb{
 
 ### Bostan–Schost algorithm
 
-Recall the [Lagrange interpolation formula](../numerical/interp.md#lagrange-插值法):
+Recall the [Lagrange interpolation formula](../numerical/interp.md#lagrange-interpolation):
 
 $$
 f(x) = \sum_{i = 0}^{n - 1}\left(f\left(x_i\right)\prod_{0 \leq j < n \atop j \neq i} \frac{x - x_j}{x_i - x_j}\right)
 $$
 
-where $x_i \neq x_j$ for all $i \neq j$. As in [fast polynomial interpolation](./multipoint-eval-interpolation.md#多项式的快速插值), let $M(x) := \prod_{i = 0}^{n - 1}\left(x - x_i\right)$. By L'Hôpital's rule,
+where $x_i \neq x_j$ for all $i \neq j$. As in [fast polynomial interpolation](./multipoint-eval-interpolation.md#fast-polynomial-interpolation), let $M(x) := \prod_{i = 0}^{n - 1}\left(x - x_i\right)$. By L'Hôpital's rule,
 
 $$
 M'(x_i) = \lim_{x \to x_i} \frac{M(x)}{x - x_i} = \prod_{0 \leq j < n \atop j \neq i}\left(x_i - x_j\right)

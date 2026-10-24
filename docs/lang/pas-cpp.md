@@ -60,7 +60,7 @@ std::cout << "Hello World!" << std::endl;
 `std::cout` is the output command. You may have seen some C++ programs that just write `cout`.
 
 ??? note "About the std:: prefix"
-    For the `std::` prefix, see the note "What is std?" at the bottom of [this section](basic.md#cin-与-cout).
+    For the `std::` prefix, see the note "What is std?" at the bottom of [this section](basic.md#cin-and-cout).
 
 The `<<` in the middle is a vivid picture of flow; it shows how the output "flows". This line means that `"Hello World!"` is pushed to the output stream first, and then `std::endl` is pushed to the output stream.
 
@@ -135,7 +135,7 @@ int a = 0, b = 0, c = 0;
 #### Simple exercises
 
 1.  Rewrite the code, submit it to an OJ, and get AC.
-2.  For more input/output syntax, see [this section](basic.md#scanf-与-printf), and try to learn about formatted output in C++.
+2.  For more input/output syntax, see [this section](basic.md#scanf-and-printf), and try to learn about formatted output in C++.
 
 ### Wrap-up and next steps
 
@@ -387,7 +387,7 @@ C-style arrays are closely tied to pointers, so we won't go into them here.
 
 ### Variable scope: global and local variables
 
-In C++ you can declare variables almost **anywhere**. See [variable scope](var.md#变量作用域).
+In C++ you can declare variables almost **anywhere**. See [variable scope](var.md#variable-scope).
 
 When writing Pascal procedures/functions, it is easy to forget to declare local variables `i` or `j`. The main program usually has loops, so in most cases `i` and `j` end up being global variables, and operating on `i` inside a procedure/function then very easily goes wrong. Worse, if you forget to declare such a local variable, the compiler doesn't report an error and the program runs. (Many hard-to-find bugs come from this.)
 

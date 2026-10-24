@@ -1,4 +1,4 @@
-Prerequisites: [Bitwise operations](./bit.md#位运算), [Integers and bit sequences](./bit.md#整数与位序列).
+Prerequisites: [Bitwise operations](./bit.md#bitwise-operations), [Integers and bit sequences](./bit.md#integers-and-bit-sequences).
 
 The binary representation of a number can be viewed as a set ($0$ means the element is not in the set, $1$ means it is). For example, the set $\{1,3,4,8\}$ can be written as $(100011010)_2$. Bitwise operations can then be viewed as operations on sets.
 

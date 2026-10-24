@@ -4,7 +4,7 @@ This page discusses Fermat's little theorem, Euler's theorem and its extension. 
 
 ## Fermat's little theorem
 
-**Fermat's little theorem** is one of the most basic theorems in number theory. It is also the theoretical basis of the [Fermat primality test](./prime.md#fermat-素性测试).
+**Fermat's little theorem** is one of the most basic theorems in number theory. It is also the theoretical basis of the [Fermat primality test](./prime.md#fermat-primality-test).
 
 ???+ note "Fermat's little theorem"
     Let $p$ be a prime. For any integer $a$ with $p\nmid a$, we have $a^{p-1}\equiv 1\pmod p$.
@@ -54,7 +54,7 @@ These two congruences are equivalent when $p\nmid a$; and when $p\mid a$, $a^p\e
     
     The second step uses the induction hypothesis. So by mathematical induction, Fermat's little theorem holds.
 
-The converse of Fermat's little theorem is false. Even if $a^{n-1}\equiv 1\pmod n$ for every $a$ coprime to $n$, $n$ need not be prime. See the section on the [Fermat primality test](./prime.md#fermat-素性测试) for details.
+The converse of Fermat's little theorem is false. Even if $a^{n-1}\equiv 1\pmod n$ for every $a$ coprime to $n$, $n$ need not be prime. See the section on the [Fermat primality test](./prime.md#fermat-primality-test) for details.
 
 ## Euler's theorem
 
@@ -70,7 +70,7 @@ The converse of Fermat's little theorem is false. Even if $a^{n-1}\equiv 1\pmod 
     R = \{r\in\mathbf N : 0 < r < m,~\gcd(r,m)=1\}.
     $$
     
-    This is a [reduced residue system](./basic.md#同余类与剩余系) modulo $m$. By the definition of Euler's totient function, $|R|=\varphi(m)$. As above, multiplying them by $a$ just permutes the set:
+    This is a [reduced residue system](./basic.md#residue-classes-and-residue-systems) modulo $m$. By the definition of Euler's totient function, $|R|=\varphi(m)$. As above, multiplying them by $a$ just permutes the set:
     
     $$
     R = \{ar\bmod m: r\in R\}.
@@ -84,7 +84,7 @@ The converse of Fermat's little theorem is false. Even if $a^{n-1}\equiv 1\pmod 
     
     Repeating the earlier argument and cancelling $\prod_{r\in R}r$ gives $a^{\varphi(m)}\equiv 1\pmod m$.
 
-For a prime $p$, $\varphi(p)=p-1$, so Fermat's little theorem is a special case of Euler's theorem. Also, the exponent $\varphi(m)$ in Euler's theorem is in general not the smallest exponent for which the congruence holds. It can be improved to $\lambda(m)$, where $\lambda(\cdot)$ is the [Carmichael function](./primitive-root.md#carmichael-函数). For the algebraic background of these results, see the section on the [multiplicative group of integers modulo $m$](../algebra/ring-theory.md#应用整数同余类的乘法群).
+For a prime $p$, $\varphi(p)=p-1$, so Fermat's little theorem is a special case of Euler's theorem. Also, the exponent $\varphi(m)$ in Euler's theorem is in general not the smallest exponent for which the congruence holds. It can be improved to $\lambda(m)$, where $\lambda(\cdot)$ is the [Carmichael function](./primitive-root.md#carmichael-function). For the algebraic background of these results, see the section on the [multiplicative group of integers modulo $m$](../algebra/ring-theory.md#application-the-multiplicative-group-of-integers-modulo-n).
 
 ## Extended Euler's theorem
 

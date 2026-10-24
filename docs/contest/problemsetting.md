@@ -104,7 +104,7 @@ In ordinary OI contests, thinking difficulty should make up the main part. Of co
 
 There are many LaTeX tutorials online, for example:
 
--   [Getting started with LaTeX](../tools/latex.md#图表)
+-   [Getting started with LaTeX](../tools/latex.md#figures)
 -   [A complete list of LaTeX math formulas](https://www.luogu.com.cn/blog/IowaBattleship/latex-gong-shi-tai-quan)
 -   [Various LaTeX commands and symbols](https://blog.csdn.net/anxiaoxi45/article/details/39449445)
 

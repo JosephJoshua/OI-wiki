@@ -255,7 +255,7 @@ Using these results together with a prime factorization algorithm, we get the fo
     --8<-- "docs/math/code/combinatorics/fibonacci/pisano_estimate.cpp:pisano"
     ```
 
-The period found this way may only be a multiple of the Pisano period. To get the exact Pisano period, we can further check the divisors of this period, or compute it directly in $O(\sqrt{m})$ time with the [BSGS algorithm](../number-theory/discrete-logarithm.md#大步小步算法).
+The period found this way may only be a multiple of the Pisano period. To get the exact Pisano period, we can further check the divisors of this period, or compute it directly in $O(\sqrt{m})$ time with the [BSGS algorithm](../number-theory/discrete-logarithm.md#baby-step-giant-step).
 
 ### Proof
 
@@ -269,7 +269,7 @@ $$
 A^k = \begin{pmatrix} 1&1\\1&0 \end{pmatrix}^k \equiv I \pmod{m}.
 $$
 
-In other words, it is the [order](../algebra/group-theory.md#阶) of the matrix $A$ modulo $m$[^mod-m].
+In other words, it is the [order](../algebra/group-theory.md#order) of the matrix $A$ modulo $m$[^mod-m].
 
 For prime power moduli $m=p^e$, a classic lifting-the-exponent argument relates it to the case of the corresponding prime modulus. Let $k=\pi(p^e)$. Then there is a $2\times 2$ matrix $\Lambda$ such that
 
@@ -277,13 +277,13 @@ $$
 A^k = p^e\Lambda + I 
 $$
 
-holds. So by the [binomial theorem](./combination.md#二项式定理),
+holds. So by the [binomial theorem](./combination.md#binomial-theorem),
 
 $$
 A^{kp} = (p^e\Lambda + I)^p = I + \sum_{i=1}^p\binom{p}{i}(p^e\Lambda)^i \equiv I\pmod{p^{e+1}}. 
 $$
 
-So, by the [properties of the order](../number-theory/primitive-root.md#幂的循环结构), we have $\pi(p^{e+1})\mid kp = p\pi(p^e)$. By induction on $e$, $\pi(p^e)\mid p^{e-1}\pi(p)$ always holds.
+So, by the [properties of the order](../number-theory/primitive-root.md#cyclic-structure-of-powers), we have $\pi(p^{e+1})\mid kp = p\pi(p^e)$. By induction on $e$, $\pi(p^e)\mid p^{e-1}\pi(p)$ always holds.
 
 For a prime modulus $p$, we give two proofs.
 
@@ -311,7 +311,7 @@ For a prime modulus $p$, we give two proofs.
         \end{aligned}
         $$
     
-        This simplification uses the following facts: by [Lucas's theorem](../number-theory/lucas.md), $\dbinom{p}{k}\equiv 0\pmod{p}$ for $0 < k < p$, and $\dbinom{p+1}{k}\equiv 0\pmod{p}$ for $1 < k < p$; by [Fermat's little theorem](../number-theory/fermat.md#费马小定理), $2^{p-1}\equiv 5^{p-1}\equiv 1\pmod{p}$; for $p\equiv 1,4\pmod{5}$, $p$ is a quadratic residue modulo $5$, so by [quadratic reciprocity](../number-theory/quad-residue.md#二次互反律), $5$ is also a quadratic residue modulo $p$, hence $5^{(p-1)/2} \equiv 1\pmod{p}$. So $(F_p,F_{p+1}) \equiv (F_1,F_2) \pmod{p}$, which means $(p-1)$ is a period modulo $p$. So $\pi(p)\mid(p-1)$.
+        This simplification uses the following facts: by [Lucas's theorem](../number-theory/lucas.md), $\dbinom{p}{k}\equiv 0\pmod{p}$ for $0 < k < p$, and $\dbinom{p+1}{k}\equiv 0\pmod{p}$ for $1 < k < p$; by [Fermat's little theorem](../number-theory/fermat.md#fermats-little-theorem), $2^{p-1}\equiv 5^{p-1}\equiv 1\pmod{p}$; for $p\equiv 1,4\pmod{5}$, $p$ is a quadratic residue modulo $5$, so by [quadratic reciprocity](../number-theory/quad-residue.md#quadratic-reciprocity), $5$ is also a quadratic residue modulo $p$, hence $5^{(p-1)/2} \equiv 1\pmod{p}$. So $(F_p,F_{p+1}) \equiv (F_1,F_2) \pmod{p}$, which means $(p-1)$ is a period modulo $p$. So $\pi(p)\mid(p-1)$.
     -   If $p\equiv 2,3\pmod{5}$, then
     
         $$
@@ -326,7 +326,7 @@ For a prime modulus $p$, we give two proofs.
     This completes the proof. The limitation of this method is that it relies heavily on the closed form of the Fibonacci sequence, so it is hard to extend directly to the general case.
 
 === "Using a field extension"
-    The other proof tries to compute the order of the matrix $A=\begin{pmatrix}1&1\\1&0\end{pmatrix}$ directly. Its [characteristic polynomial](../linear-algebra/char-poly.md) is $f(x) = x^2-x-1$, with discriminant $\Delta = 5$. For the modulus $p=5$, we have $\Delta\equiv 0\pmod{5}$, so the matrix $A$ has a repeated eigenvalue $\lambda=3$ and cannot be diagonalized; this case is computed separately. For moduli $p\equiv 1,4\pmod{5}$, quadratic reciprocity shows that the discriminant $\Delta=5$ is a quadratic residue modulo $p$, so $A$ has two distinct eigenvalues $\lambda_1\neq\lambda_2$ in the field $\mathbf F_p$. The order of $A$ is then $\operatorname{lcm}(\operatorname{ord}(\lambda_1),\operatorname{ord}(\lambda_2))$, which must divide $|\mathbf F_p^\times|=p-1$. For moduli $p\equiv 2,3\pmod{5}$, quadratic reciprocity shows that the discriminant $\Delta=5$ is a quadratic non-residue modulo $p$, so $A$ has no eigenvalues in $\mathbf F_p$; it only has two distinct eigenvalues $\lambda_1\neq\lambda_2$ in the [field extension](../algebra/field-theory.md#域的扩张) $\mathbf F_p[\sqrt{5}]$. Since the Frobenius endomorphism $x\mapsto x^p$ swaps the two roots, we have $\lambda_2=\lambda_1^p$, so $\lambda_1^{p+1}=\lambda_2^{p+1}=\lambda_1\lambda_2=-1$, that is, $\lambda_1^{2(p+1)}=\lambda_2^{2(p+1)}=1$. So the order of $A$ is $\operatorname{lcm}(\operatorname{ord}(\lambda_1),\operatorname{ord}(\lambda_2))$, which must divide $2(p+1)$. This gives the same result as the first method.
+    The other proof tries to compute the order of the matrix $A=\begin{pmatrix}1&1\\1&0\end{pmatrix}$ directly. Its [characteristic polynomial](../linear-algebra/char-poly.md) is $f(x) = x^2-x-1$, with discriminant $\Delta = 5$. For the modulus $p=5$, we have $\Delta\equiv 0\pmod{5}$, so the matrix $A$ has a repeated eigenvalue $\lambda=3$ and cannot be diagonalized; this case is computed separately. For moduli $p\equiv 1,4\pmod{5}$, quadratic reciprocity shows that the discriminant $\Delta=5$ is a quadratic residue modulo $p$, so $A$ has two distinct eigenvalues $\lambda_1\neq\lambda_2$ in the field $\mathbf F_p$. The order of $A$ is then $\operatorname{lcm}(\operatorname{ord}(\lambda_1),\operatorname{ord}(\lambda_2))$, which must divide $|\mathbf F_p^\times|=p-1$. For moduli $p\equiv 2,3\pmod{5}$, quadratic reciprocity shows that the discriminant $\Delta=5$ is a quadratic non-residue modulo $p$, so $A$ has no eigenvalues in $\mathbf F_p$; it only has two distinct eigenvalues $\lambda_1\neq\lambda_2$ in the [field extension](../algebra/field-theory.md#field-extensions) $\mathbf F_p[\sqrt{5}]$. Since the Frobenius endomorphism $x\mapsto x^p$ swaps the two roots, we have $\lambda_2=\lambda_1^p$, so $\lambda_1^{p+1}=\lambda_2^{p+1}=\lambda_1\lambda_2=-1$, that is, $\lambda_1^{2(p+1)}=\lambda_2^{2(p+1)}=1$. So the order of $A$ is $\operatorname{lcm}(\operatorname{ord}(\lambda_1),\operatorname{ord}(\lambda_2))$, which must divide $2(p+1)$. This gives the same result as the first method.
 
 In summary, for the different cases we have:
 

@@ -364,11 +364,11 @@ The time of `Access` mainly comes from the many splay operations and from visiti
 
     -   Define the potential function $\Phi = \sum_{x \in T} w(x)$, where $T$ is the set of all nodes.
 
-    From the analysis of [the time complexity of Splay](./splay.md#时间复杂度), it is easy to see that a splay operation takes amortized $O(\log n)$ time.
+    From the analysis of [the time complexity of Splay](./splay.md#time-complexity), it is easy to see that a splay operation takes amortized $O(\log n)$ time.
 
 2.  Visiting virtual edges
 
-    Following [heavy-light decomposition](../graph/hld.md#重链剖分), we define two kinds of virtual edges:
+    Following [heavy-light decomposition](../graph/hld.md#heavy-light-decomposition), we define two kinds of virtual edges:
 
     -   **Heavy virtual edge**: a virtual edge from node $v$ to its parent where $size(v) > \frac{1}{2} size(parent(v))$.
 

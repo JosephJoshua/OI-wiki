@@ -93,7 +93,7 @@ $$
 a_k = \left\lfloor\frac{p_k}{q_k}\right\rfloor,\ r_{k+1} = \dfrac{1}{r_k-a_k} = \dfrac{q_k}{p_k-a_kq_k} = \dfrac{q_k}{p_k\bmod q_k}.
 $$
 
-This computation is really just the [Euclidean algorithm](./gcd.md#欧几里得算法) applied to $p$ and $q$. It also shows that for a rational number $x=\dfrac{p}{q}$, the length of the continued fraction representation is $O(\log\min\{p, q\})$. The complexity of computing it for $\dfrac{p}{q}$ is also $O(\log\min\{p, q\})$.
+This computation is really just the [Euclidean algorithm](./gcd.md#euclidean-algorithm) applied to $p$ and $q$. It also shows that for a rational number $x=\dfrac{p}{q}$, the length of the continued fraction representation is $O(\log\min\{p, q\})$. The complexity of computing it for $\dfrac{p}{q}$ is also $O(\log\min\{p, q\})$.
 
 ???+ example "Reference implementation"
     Given the numerator $p$ and denominator $q$ of a fraction, output the coefficient sequence $[a_0,a_1,\ldots,a_n]$ of its continued fraction.
@@ -570,7 +570,7 @@ In fact, linear Diophantine equations in two variables can be solved with contin
     Given $A, B, C \in \mathbf Z$, find $x, y \in \mathbf Z$ such that $Ax + By = C$.
 
 ??? note "Solution"
-    Although this problem is usually solved with the [extended Euclidean algorithm](./bezouts.md#两个变量的情形), it can also be solved with continued fractions.
+    Although this problem is usually solved with the [extended Euclidean algorithm](./bezouts.md#two-variables), it can also be solved with continued fractions.
     
     Let $\dfrac{A}{B}=[a_0, a_1, \ldots, a_k]$. We proved above that $p_k q_{k-1} - p_{k-1} q_k = (-1)^{k-1}$. Replacing $p_k$ and $q_k$ with $A$ and $B$, we get
     
@@ -1006,7 +1006,7 @@ Most of the earlier results about continued fractions have a geometric interpret
 
 ??? note "Geometric interpretation"
     -   Each fraction $\nu=\dfrac{p}{q}$ corresponds to a lattice point $\vec\nu=(q,p)$ in the first quadrant, and the value of the fraction corresponds to the slope of the line through it and the origin.
-    -   The direction vector of the line $y=\xi x$ is $\vec\xi=(1,\xi)$. Using the [cross product](../linear-algebra/product.md#二维向量的情形) $(x_1,y_1)\times(x_2,y_2)=x_1y_2-x_2y_1$, we can tell whether a point is above or below the line from the sign of $\vec\xi\times\vec\nu=p-q\xi$. So points above the line correspond to fractions greater than or equal to $\xi$, and points below the line correspond to fractions less than or equal to $\xi$. The absolute value of the cross product $|\vec\xi\times\vec\nu|$ is proportional to the distance from the point $\vec\nu$ to the line $y=\xi x$
+    -   The direction vector of the line $y=\xi x$ is $\vec\xi=(1,\xi)$. Using the [cross product](../linear-algebra/product.md#the-2d-case) $(x_1,y_1)\times(x_2,y_2)=x_1y_2-x_2y_1$, we can tell whether a point is above or below the line from the sign of $\vec\xi\times\vec\nu=p-q\xi$. So points above the line correspond to fractions greater than or equal to $\xi$, and points below the line correspond to fractions less than or equal to $\xi$. The absolute value of the cross product $|\vec\xi\times\vec\nu|$ is proportional to the distance from the point $\vec\nu$ to the line $y=\xi x$
     
         $$
         \dfrac{|p-q\xi|}{\sqrt{1+\xi^2}},
@@ -1089,7 +1089,7 @@ Viewing a continued fraction representation as a path in the Stern–Brocot tree
     Given continued fractions $\alpha=[\alpha_0,\alpha_1,\ldots,\alpha_n]$ and $\beta=[\beta_0,\beta_1,\ldots,\beta_m]$, compare them.
 
 ??? note "Solution"
-    First convert both continued fraction representations to the form ending in $1$. Without loss of generality, assume the given continued fractions are already in this form, that is, $\alpha_n=\beta_m=1$. Since even positions (indexed from $0$) are the numbers of steps to the right, and odd positions are the numbers of steps to the left, $\alpha<\beta$ if and only if, in [lexicographic order](../../string/basic.md#字典序),
+    First convert both continued fraction representations to the form ending in $1$. Without loss of generality, assume the given continued fractions are already in this form, that is, $\alpha_n=\beta_m=1$. Since even positions (indexed from $0$) are the numbers of steps to the right, and odd positions are the numbers of steps to the left, $\alpha<\beta$ if and only if, in [lexicographic order](../../string/basic.md#lexicographic-order),
     
     $$
     (\alpha_0,-\alpha_1,\alpha_2,\ldots,(-1)^{n-1}\alpha_{n-1},0,\ldots)<(\beta_0,-\beta_1,\beta_2,\ldots,(-1)^{m-1}\beta_{m-1},0,\ldots).
@@ -1177,7 +1177,7 @@ Fractional linear transformations have the following properties:
     
     Then they have the following properties:[^pgl2]
     
-    1.  The composition $L_1\circ L_2$ and the inverse $L_1^{-1}$ of fractional linear transformations are still fractional linear transformations; that is, all fractional linear transformations form a [group](../algebra/basic.md#群);
+    1.  The composition $L_1\circ L_2$ and the inverse $L_1^{-1}$ of fractional linear transformations are still fractional linear transformations; that is, all fractional linear transformations form a [group](../algebra/basic.md#groups);
     2.  A fractional linear transformation does not change when all its coefficients are multiplied by the same non-zero constant; that is, for any $\lambda\neq 0$, if $M_2=\lambda M_1$, then $L_2=L_1$;
     3.  The coefficient matrix of a composition of fractional linear transformations corresponds to the product of the coefficient matrices; that is, if $M_1M_2=M_3$, then $L_1\circ L_2=L_3$;
     4.  The coefficient matrix of the inverse of a fractional linear transformation corresponds to the inverse of the coefficient matrix; that is, if $M_1^{-1}=M_2$, then $L_1^{-1}=L_2$.

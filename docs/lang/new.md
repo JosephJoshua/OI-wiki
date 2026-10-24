@@ -40,7 +40,7 @@ int main() {
 
 ## constexpr
 
-> See also [Constant expressions: constexpr (C++11)](const.md#常量表达式-constexprc11)
+> See also [Constant expressions: constexpr (C++11)](const.md#constant-expressions-constexpr-c11)
 
 ## Range-based `for` loops
 
@@ -262,7 +262,7 @@ A [lambda](./lambda.md) is a typical function object of the second kind. It stor
 ## std::function
 
 ???+ warning "Watch out for the performance cost"
-    `std::function` adds some performance overhead. In [benchmarks](./lambda.md#lambda-中的递归), it usually makes code 2 to 3 times slower or worse.
+    `std::function` adds some performance overhead. In [benchmarks](./lambda.md#recursion-in-lambdas), it usually makes code 2 to 3 times slower or worse.
     
     This is because it uses type erasure, which is usually implemented with virtual functions, and calling a virtual function adds extra [overhead](https://stackoverflow.com/questions/5057382/what-is-the-performance-overhead-of-stdfunction).
     

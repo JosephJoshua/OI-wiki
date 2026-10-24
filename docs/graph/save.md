@@ -108,7 +108,7 @@ Space complexity: $O(m)$.
 
 Since traversal with an edge list is slow, it is usually not used to traverse graphs.
 
-In [Kruskal's algorithm](./mst.md#kruskal-算法), the edges must be sorted by weight, so an edge list is needed.
+In [Kruskal's algorithm](./mst.md#kruskals-algorithm), the edges must be sorted by weight, so an edge list is needed.
 
 Some problems require building the graph several times (for example, once for the original graph and once for the reversed graph). You can either store several graphs at once using other data structures, or store the edges directly and rebuild the graph from them when needed.
 

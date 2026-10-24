@@ -152,7 +152,7 @@ It is worth noting that some data structures do bit packing automatically, such 
 
 Also, `vector<bool>` and `bitset<>` give constant-factor speedups. With `bitset<>` or `vector<bool>`, the $O(n \log \log n)$ sieve of Eratosthenes can even outperform the $O(n)$ Euler sieve.
 
-See [bitset: combining with the sieve of Eratosthenes](../../lang/csl/bitset.md#与埃氏筛结合).
+See [bitset: combining with the sieve of Eratosthenes](../../lang/csl/bitset.md#combining-with-the-sieve-of-eratosthenes).
 
 #### Segmented sieve
 
@@ -548,7 +548,7 @@ $f_i$ is the sum of divisors of $i$, and $g_i$ is $p^0+p^1+p^2+\dots p^k$ for th
 
 ## General multiplicative functions
 
-Suppose a [multiplicative function](./basic.md#积性函数)  $f$ has the property that, for any prime $p$ and positive integer $k$, $f(p^k)$ can be computed in time polynomial of low degree in $k$. Then we can sieve the values $f(1),f(2),\dots,f(n)$ in $O(n)$ time.
+Suppose a [multiplicative function](./basic.md#multiplicative-functions)  $f$ has the property that, for any prime $p$ and positive integer $k$, $f(p^k)$ can be computed in time polynomial of low degree in $k$. Then we can sieve the values $f(1),f(2),\dots,f(n)$ in $O(n)$ time.
 
 Let the prime factorization of a composite number $n$ be $\prod_{i=1}^k p_i^{\alpha_i}$, where $p_1<p_2<\dots<p_k$ are primes. In the linear sieve we record $g_n=p_1^{\alpha_1}$. If $n$ is sieved out as $x\cdot p$ ($p$ prime), then $g$ satisfies the recurrence:
 

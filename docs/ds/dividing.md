@@ -4,7 +4,7 @@ author: Xarfa
 
 The partition tree is a data structure for finding the $K$-th largest value in a range. Both its constant factor and its difficulty to understand are much lower than those of a persistent segment tree. Since the partition tree is built around the "$K$-th largest", it is a data structure based on sorting.
 
-Prerequisite: [persistent segment tree](persistent-seg.md#主席树)
+Prerequisite: [persistent segment tree](persistent-seg.md#persistent-segment-tree-chairman-tree)
 
 ## Process
 

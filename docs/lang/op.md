@@ -29,7 +29,7 @@ The value of `op` follows the usual order of operations from math: higher-preced
 
 ### Type conversion in arithmetic
 
-For binary arithmetic operators, if the two operands have the same type, no [type conversion](./var.md#类型转换) happens, and the result has the same type as the operands. Otherwise a type conversion happens so that both operands have the same type. For the conversion rules, see [type conversion](./var.md#类型转换).
+For binary arithmetic operators, if the two operands have the same type, no [type conversion](./var.md#type-conversion) happens, and the result has the same type as the operands. Otherwise a type conversion happens so that both operands have the same type. For the conversion rules, see [type conversion](./var.md#type-conversion).
 
 For example, for an integer (`int`) variable $x$ and a double-precision floating-point (`double`) variable $y$:
 
@@ -41,7 +41,7 @@ For example, for an integer (`int`) variable $x$ and a double-precision floating
 
 ## Bitwise operators
 
-See also: [Bitwise operations](../math/bit.md#位运算).
+See also: [Bitwise operations](../math/bit.md#bitwise-operations).
 
 | Operator       | Meaning      |
 | -------------- | ------------ |
@@ -253,10 +253,10 @@ Note that the table does not list operators such as `const_cast`, `static_cast`,
 
 ## References and notes
 
-[^note1]: Before C++20: if the original value has a signed type and the shifted result fits in the unsigned version of that type, the result is [converted](../lang/var.md#类型转换) to the corresponding signed value; otherwise the behavior is undefined. For unsigned numbers, a left shift drops the bits shifted out of the result type. Since C++20, `a << b` is defined as $a\cdot 2^b$ modulo $2^N$ (where $N$ is the bit width of the result type). That is, for both signed and unsigned numbers, a left shift simply drops the bits shifted out of the result type (i.e. an [arithmetic/logical left shift](../math/bit.md#移位)).
+[^note1]: Before C++20: if the original value has a signed type and the shifted result fits in the unsigned version of that type, the result is [converted](../lang/var.md#type-conversion) to the corresponding signed value; otherwise the behavior is undefined. For unsigned numbers, a left shift drops the bits shifted out of the result type. Since C++20, `a << b` is defined as $a\cdot 2^b$ modulo $2^N$ (where $N$ is the bit width of the result type). That is, for both signed and unsigned numbers, a left shift simply drops the bits shifted out of the result type (i.e. an [arithmetic/logical left shift](../math/bit.md#shifts)).
 
 [^note2]: Before C++20. For the behavior since C++20, see[^note1].
 
-[^note3]: That is, a [logical right shift](../math/bit.md#移位).
+[^note3]: That is, a [logical right shift](../math/bit.md#shifts).
 
-[^note4]: That is, an [arithmetic right shift](../math/bit.md#移位). Before C++20, signed right shift was implementation-defined, and most implementations used an arithmetic right shift. Since C++20, `a >> b` is defined as $\lfloor a/2^b\rfloor$, so right-shifting a signed number is an arithmetic right shift.
+[^note4]: That is, an [arithmetic right shift](../math/bit.md#shifts). Before C++20, signed right shift was implementation-defined, and most implementations used an arithmetic right shift. Since C++20, `a >> b` is defined as $\lfloor a/2^b\rfloor$, so right-shifting a signed number is an arithmetic right shift.

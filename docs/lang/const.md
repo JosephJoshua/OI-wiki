@@ -190,7 +190,7 @@ The `constexpr` function `fib0` is called in only one place, with a constant arg
 Notice also that in the assembly there is no initialization code for `v0`. In the code that calls `cout` to print `v0`, `v0` has already been replaced by the final result. This shows that the value was computed at compile time and the runtime computation was optimized away.
 The initialization of `v1`, on the other hand, is still an ordinary recursive call to `fib1`.
 
-So `constexpr` can replace constants defined with macros and avoid the [risks of macros](./basic.md#define-命令).
+So `constexpr` can replace constants defined with macros and avoid the [risks of macros](./basic.md#the-define-directive).
 
 In algorithm problems you can use `constexpr` to store variables for small data sizes, removing the corresponding runtime computation cost. This is especially common with the "[precomputed table](../contest/dictionary.md)" trick, where answers are stored in arrays or other containers marked `constexpr`.
 

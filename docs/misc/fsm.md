@@ -1,6 +1,6 @@
 author: CCXXXI, countercurrent-time, Enter-tainer, FFjet, H-J-Granger, Ir1d, mgt, NachtgeistW, orzAtalod, ouuan, SukkaW
 
-Prerequisites: [languages and decision problems](./cc-basic.md#问题)
+Prerequisites: [languages and decision problems](./cc-basic.md#problems)
 
 A **finite state machine** (FSM, also called a finite automaton, or just an automaton below) is the simplest kind of computational model: both its descriptive power and its resources are extremely limited. Automata are widely used in OI and computer science, and the idea shows up in many string algorithms. So we recommend learning about automata before studying string algorithms such as [KMP](../string/kmp.md), the [Aho–Corasick automaton](../string/ac-automaton.md) and the [SAM](../string/sam.md).
 

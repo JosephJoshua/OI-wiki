@@ -86,7 +86,7 @@ This way, the preprocessing time of Four Russian is reduced to $O(n)$.
 
 If you are not familiar with Cartesian trees, please see [Cartesian tree](../ds/cartesian-tree.md).
 
-It is easy to see that the min/max between two positions in the original sequence equals the value of the LCA of those two nodes in the Cartesian tree. Based on this, we can solve RMQ by computing the LCA of two tree nodes in $O(n) \sim O(1)$. The $O(n) \sim O(1)$ tree LCA is already described in [LCA - Standard RMQ](../graph/lca.md#标准-rmq), so we will not go into it here.
+It is easy to see that the min/max between two positions in the original sequence equals the value of the LCA of those two nodes in the Cartesian tree. Based on this, we can solve RMQ by computing the LCA of two tree nodes in $O(n) \sim O(1)$. The $O(n) \sim O(1)$ tree LCA is already described in [LCA - Standard RMQ](../graph/lca.md#standard-rmq), so we will not go into it here.
 
 To sum up, using the Cartesian tree for RMQ means turning a general RMQ problem into an LCA problem, and then into a ±1 RMQ problem. The time complexity is $O(n) \sim O(1)$. Of course, because of the many conversion steps, this $O(n) \sim O(1)$ RMQ has a large constant factor.
 

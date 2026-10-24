@@ -593,8 +593,8 @@ For example, Floyd's algorithm records `pre[i][j] = k;`, while Bellman–Ford an
 
 ## Some special cases
 
--   Shortest paths in a graph whose edge weights are only $0$ and $1$: [0-1 BFS](./bfs.md#双端队列-bfs);
--   Shortest path problems that allow changing path costs or similar operations at most $k$ times: [shortest paths on a layered graph](./node.md#分层图最短路).
+-   Shortest paths in a graph whose edge weights are only $0$ and $1$: [0-1 BFS](./bfs.md#0-1-bfs-deque-bfs);
+-   Shortest path problems that allow changing path costs or similar operations at most $k$ times: [shortest paths on a layered graph](./node.md#shortest-paths-on-a-layered-graph).
 
 ## References and notes
 

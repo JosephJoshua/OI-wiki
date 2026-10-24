@@ -77,7 +77,7 @@ The discussion so far simply assumed that the fundamental solution exists. Now w
     The Pell equation $x^2-Dy^2=1$ always has integer solutions other than $(\pm 1,0)$.
 
 ??? note "Proof"
-    First, [Dirichlet's theorem](./continued-fraction.md#用渐近分数逼近实数) says there are infinitely many pairs of positive integers $(x,y)$ such that
+    First, [Dirichlet's theorem](./continued-fraction.md#approximating-real-numbers-by-convergents) says there are infinitely many pairs of positive integers $(x,y)$ such that
     
     $$
     \left|\dfrac{x}{y}-\sqrt{D}\right| \le \dfrac{1}{y^2}
@@ -146,13 +146,13 @@ $$
 \omega=\dfrac{P_0+\sqrt{D}}{Q_0}
 $$
 
-can be computed with the following [recurrence](./continued-fraction.md#二次无理数):
+can be computed with the following [recurrence](./continued-fraction.md#quadratic-irrationals):
 
 $$
 a_k = \left\lfloor\dfrac{P_k+\sqrt{D}}{Q_k}\right\rfloor,\ P_{k+1} = a_kQ_k - P_k,\ Q_{k+1} = \dfrac{D-P_{k+1}^2}{Q_k}.
 $$
 
-Then the numerator $A_k$ and denominator $B_k$ of the $k$-th convergent of $\omega$ are given by the [recurrence](./continued-fraction.md#递推关系)
+Then the numerator $A_k$ and denominator $B_k$ of the $k$-th convergent of $\omega$ are given by the [recurrence](./continued-fraction.md#recurrence)
 
 $$
 A_k = a_kA_{k-1} + A_{k-2},\ B_k = a_kB_{k-1} + B_{k-2}
@@ -160,7 +160,7 @@ $$
 
 with $A_{-1} = 1$, $A_{-2}=0$, $B_{-1}=0$, $B_{-2}=1$.
 
-These formulas are proved in the continued fractions article. It also shows that, because a quadratic irrational has a [periodic continued fraction](./continued-fraction.md#二次无理数), the triple $(P_k,Q_k,a_k)$ eventually becomes periodic, so the algorithm always ends in a finite number of steps. Let the minimal period length be $\ell$, and let the earliest start of the period be $k_0$. Then the continued fraction expansion of the quadratic irrational can be written as
+These formulas are proved in the continued fractions article. It also shows that, because a quadratic irrational has a [periodic continued fraction](./continued-fraction.md#quadratic-irrationals), the triple $(P_k,Q_k,a_k)$ eventually becomes periodic, so the algorithm always ends in a finite number of steps. Let the minimal period length be $\ell$, and let the earliest start of the period be $k_0$. Then the continued fraction expansion of the quadratic irrational can be written as
 
 $$
 \omega=[a_0,\cdots,a_{k_0-1},\overline{a_{k_0},\cdots,a_{k_0+\ell-1}}].
@@ -209,7 +209,7 @@ To solve the Pell equation with the PQa algorithm, we need the following result:
     \end{aligned}
     $$
     
-    The last step uses the [difference formula](./continued-fraction.md#误差估计) for convergents. This proves the first claim.
+    The last step uses the [difference formula](./continued-fraction.md#error-estimates) for convergents. This proves the first claim.
     
     To prove the second claim, substitute the expression for $G_k$ into the first claim:
     
@@ -233,7 +233,7 @@ This idea is the core of solving the Pell equation and the generalized Pell equa
 
 To solve the Pell equation $x^2-Dy^2=1$, just run the PQa algorithm on $(P_0,Q_0,D)=(0,1,D)$ until $(-1)^kQ_k=1$; then $(A_{k-1},B_{k-1})$ is a solution of the Pell equation (because $G_{k-1}$ is then just $A_{k-1}$). Of course, for the Pell equation this process can be described more precisely.
 
-First, the solution always appears at the end of a period. The process above amounts to the continued fraction expansion of $\sqrt{D}$. For it, we already have the [result](./continued-fraction.md#纯循环连分数):
+First, the solution always appears at the end of a period. The process above amounts to the continued fraction expansion of $\sqrt{D}$. For it, we already have the [result](./continued-fraction.md#purely-periodic-continued-fractions):
 
 $$
 \sqrt{D} = [\lfloor\sqrt{D}\rfloor,\overline{a_1,\cdots,a_{\ell-1},2\lfloor\sqrt{D}\rfloor}].
@@ -253,15 +253,15 @@ Next we show that the solution just found is always the fundamental solution. Th
     \left|\dfrac{x}{y}-\sqrt{D}\right| = \dfrac{N}{y(x+y\sqrt{D})}<\dfrac{N}{2y^2\sqrt{D}}<\dfrac{1}{2y^2}.
     $$
     
-    By [Legendre's criterion](./continued-fraction.md#渐近分数的判定), $\dfrac{x}{y}$ is a convergent of $\sqrt{D}$.
+    By [Legendre's criterion](./continued-fraction.md#recognizing-convergents), $\dfrac{x}{y}$ is a convergent of $\sqrt{D}$.
     
-    When $N<0$, $x>y\sqrt{D}$ no longer holds. So consider instead solutions of $y^2-\dfrac{1}{D}x^2=-\dfrac{N}{D}$. Since $\dfrac{|N|}{D}<\sqrt{\dfrac{1}{D}}$, the argument above still works. This shows that $\dfrac{y}{x}$ is a convergent of $\dfrac{1}{\sqrt{D}}$. By the [reciprocal theorem](./continued-fraction.md#递推关系), $\dfrac{x}{y}$ is also a convergent of $\sqrt{D}$.
+    When $N<0$, $x>y\sqrt{D}$ no longer holds. So consider instead solutions of $y^2-\dfrac{1}{D}x^2=-\dfrac{N}{D}$. Since $\dfrac{|N|}{D}<\sqrt{\dfrac{1}{D}}$, the argument above still works. This shows that $\dfrac{y}{x}$ is a convergent of $\dfrac{1}{\sqrt{D}}$. By the [reciprocal theorem](./continued-fraction.md#recurrence), $\dfrac{x}{y}$ is also a convergent of $\sqrt{D}$.
 
 ???+ note "Theorem"
     When running the PQa algorithm above on $(P_0,Q_0,D)=(0,1,D)$, $Q_k=1$ implies $\ell\mid k$.
 
 ??? note "Proof"
-    In the continued fraction expansion of $\sqrt{D}$, every remainder except the $0$-th is a [purely periodic continued fraction](./continued-fraction.md#纯循环连分数). Suppose $Q_k=1$. By Galois's result, the remainder $\omega_k=P_k+\sqrt{D}>1$ and its conjugate satisfies $-1<P_k-\sqrt{D}<0$, so $P_k=\lfloor\sqrt{D}\rfloor$. Hence the remainder $\omega_k$ equals $\omega_\ell$. But a repeated remainder means the continued fraction repeats from there, so if $k$ is not a multiple of $\ell$, this contradicts $\ell$ being the minimal period. So $\ell\mid k$.
+    In the continued fraction expansion of $\sqrt{D}$, every remainder except the $0$-th is a [purely periodic continued fraction](./continued-fraction.md#purely-periodic-continued-fractions). Suppose $Q_k=1$. By Galois's result, the remainder $\omega_k=P_k+\sqrt{D}>1$ and its conjugate satisfies $-1<P_k-\sqrt{D}<0$, so $P_k=\lfloor\sqrt{D}\rfloor$. Hence the remainder $\omega_k$ equals $\omega_\ell$. But a repeated remainder means the continued fraction repeats from there, so if $k$ is not a multiple of $\ell$, this contradicts $\ell$ being the minimal period. So $\ell\mid k$.
 
 Putting this section together: just expand $\sqrt{D}$ as a continued fraction, that is, run the PQa algorithm starting from $(P_0,Q_0,D)=(0,1,D)$. The first time you get $Q_\ell=1$, you have reached the end of the first period. Then, if $\ell$ is even, $(A_{\ell-1},B_{\ell-1})$ is the fundamental solution of the Pell equation; otherwise $(A_{2\ell-1},B_{2\ell-1})$ is. When the period length $\ell$ is odd, you do not need to continue the PQa algorithm to twice the period: as shown shortly, $A_{2\ell-1}+B_{2\ell-1}\sqrt{D}=(A_{\ell-1}+B_{\ell-1}\sqrt{D})^2$, so the fundamental solution of the Pell equation can be computed directly from $(A_{\ell-1},B_{\ell-1})$. All other solutions of the Pell equation can be computed from the fundamental solution.
 
@@ -378,7 +378,7 @@ The correctness of this algorithm relies on the following facts:
     \left|\dfrac{(x+y)/2}{y}-\dfrac{1+\sqrt{D}}{2}\right| = \dfrac{2}{y(x+y\sqrt{D})}<\dfrac{1}{2y^2}.
     $$
     
-    By [Legendre's criterion](./continued-fraction.md#渐近分数的判定), $\dfrac{(x+y)/2}{y}$ is a convergent of $\dfrac{1+\sqrt{D}}{2}$.
+    By [Legendre's criterion](./continued-fraction.md#recognizing-convergents), $\dfrac{(x+y)/2}{y}$ is a convergent of $\dfrac{1+\sqrt{D}}{2}$.
     
     If $(x,y)$ is a solution of $x^2-Dy^2=-4$, then to establish the inequality above, it suffices to show $4y<x+y\sqrt{D}$. This holds at least for all cases except $D=5,13$. For $D=5,13$, substituting $x=\sqrt{Dy^2-4}$ into the inequality shows it is equivalent to $2(\sqrt{D}-2)y^2>1$. Except for $(D,y)=(5,1)$, this inequality holds for $D=5,13$ and all positive integers $y$. What remains is $(D,y)=(5,1)$: here the solution of $x^2-5y^2=-4$ is $(x,y)=(1,1)$, and we need to check that $\dfrac{1}{1}$ is a convergent of $\dfrac{1+\sqrt{5}}{2}=[\overline{1}]$, which is obviously true.
 
@@ -392,7 +392,7 @@ The correctness of this algorithm relies on the following facts:
     where $\ell$ is the period length, and $a_k=a_{\ell-k}$ for all $1\le k<\ell$.
 
 ??? note "Proof"
-    Since $\lfloor\omega\rfloor-1+\omega>1$ and its conjugate equals $\lfloor\omega\rfloor - \omega$, which lies between $-1$ and $0$, by [Galois's result](./continued-fraction.md#纯循环连分数) $\lfloor\omega\rfloor-1+\omega$ is a purely periodic continued fraction and can be written as
+    Since $\lfloor\omega\rfloor-1+\omega>1$ and its conjugate equals $\lfloor\omega\rfloor - \omega$, which lies between $-1$ and $0$, by [Galois's result](./continued-fraction.md#purely-periodic-continued-fractions) $\lfloor\omega\rfloor-1+\omega$ is a purely periodic continued fraction and can be written as
     
     $$
     \lfloor\omega\rfloor-1+\omega = [\overline{2\lfloor\omega\rfloor-1,a_1,\cdots,a_{\ell-1}}].
@@ -416,7 +416,7 @@ The correctness of this algorithm relies on the following facts:
     Let $D\equiv 1\pmod 4$. When running the PQa algorithm above on $(P_0,Q_0,D)=(1,2,D)$, $Q_k=2$ implies $\ell\mid k$.
 
 ??? note "Proof"
-    In the continued fraction expansion of $\dfrac{1+\sqrt{D}}{2}$, every remainder except the $0$-th is a [purely periodic continued fraction](./continued-fraction.md#纯循环连分数). Suppose $Q_k=2$. By Galois's result, the conjugate of the remainder $\omega_k=\dfrac{P_k+\sqrt{D}}{2}$ satisfies $-1<\dfrac{P_k-\sqrt{D}}{2}<0$, that is, $\sqrt{D}-2<P_k<\sqrt{D}$. Since the PQa algorithm always has $Q_k\mid P_k^2-D$ (see the [proof of correctness](./continued-fraction.md#二次无理数)), $P_k$ must be odd, so $P_k$ is uniquely determined: $P_k=P_0+2(\lfloor\omega\rfloor-1)$. That is, the remainder $\omega_k=\omega_\ell$. But a repeated remainder means the continued fraction repeats from there, so if $k$ is not a multiple of $\ell$, this contradicts $\ell$ being the minimal period. So $\ell\mid k$.
+    In the continued fraction expansion of $\dfrac{1+\sqrt{D}}{2}$, every remainder except the $0$-th is a [purely periodic continued fraction](./continued-fraction.md#purely-periodic-continued-fractions). Suppose $Q_k=2$. By Galois's result, the conjugate of the remainder $\omega_k=\dfrac{P_k+\sqrt{D}}{2}$ satisfies $-1<\dfrac{P_k-\sqrt{D}}{2}<0$, that is, $\sqrt{D}-2<P_k<\sqrt{D}$. Since the PQa algorithm always has $Q_k\mid P_k^2-D$ (see the [proof of correctness](./continued-fraction.md#quadratic-irrationals)), $P_k$ must be odd, so $P_k$ is uniquely determined: $P_k=P_0+2(\lfloor\omega\rfloor-1)$. That is, the remainder $\omega_k=\omega_\ell$. But a repeated remainder means the continued fraction repeats from there, so if $k$ is not a multiple of $\ell$, this contradicts $\ell$ being the minimal period. So $\ell\mid k$.
 
 ???+ note "Theorem"
     Let $(x_1,y_1)$ be the smallest positive integer solution of $x^2-Dy^2=\pm 4$. Then all its solutions are
@@ -606,13 +606,13 @@ The correctness of this algorithm is guaranteed by the following theorem:
     \dfrac{P\zeta+R}{Q\zeta+S} = \dfrac{(x+P_0y)\sqrt{D}+(P_0x+Dy)}{(x+y\sqrt{D})Q_0} = \dfrac{P_0+\sqrt{D}}{Q_0} = \omega.
     $$
     
-    Now we show that $\dfrac{P}{Q}$ is a convergent of $\omega$. Suppose $\dfrac{P}{Q}$ has the [continued fraction expansion](./continued-fraction.md#简单连分数)
+    Now we show that $\dfrac{P}{Q}$ is a convergent of $\omega$. Suppose $\dfrac{P}{Q}$ has the [continued fraction expansion](./continued-fraction.md#simple-continued-fractions)
     
     $$
     \dfrac{P}{Q} = [a_0,a_1,\cdots,a_k]
     $$
     
-    with $PS-QR = (-1)^{k-1}$. Let $\dfrac{p_k}{q_k}$ be its $k$-th convergent; then $(p_k,q_k)=(P,Q)$, and by the [difference formula for convergents](./continued-fraction.md#误差估计), $p_kq_{k-1}-q_kp_{k-1}=(-1)^{k-1}$. This means
+    with $PS-QR = (-1)^{k-1}$. Let $\dfrac{p_k}{q_k}$ be its $k$-th convergent; then $(p_k,q_k)=(P,Q)$, and by the [difference formula for convergents](./continued-fraction.md#error-estimates), $p_kq_{k-1}-q_kp_{k-1}=(-1)^{k-1}$. This means
     
     $$
     p_k(S-q_{k-1}) = q_k(R-p_{k-1}).

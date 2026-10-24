@@ -206,7 +206,7 @@ Sorting code:
     ```
 
 ???+ warning "Small detail"
-    When using `sort` to compare two structs, $a < b$ and $b < a$ must never both be true; otherwise you get a runtime error. See [common mistakes](../contest/common-mistakes.md#会导致-re) for details.
+    When using `sort` to compare two structs, $a < b$ and $b < a$ must never both be true; otherwise you get a runtime error. See [common mistakes](../contest/common-mistakes.md#mistakes-that-cause-re) for details.
 
 For the compact version, without the special check `r == x.r`, when the l values are in the same odd block and the r values are equal, the problem from the small detail above occurs (simulate it by hand). For the expanded version, writing <= (>=) causes the same problem.
 

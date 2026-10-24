@@ -2,7 +2,7 @@ author: aofall, c-forrest, CoelacanthusHex, Early0v0, Enter-tainer, Great-design
 
 ## Introduction
 
-This page discusses results about computing factorials modulo a number, and gives a method whose time complexity is linear in the size of the modulus. So the method is mainly suited to moduli that are not too large ($\sim 10^6$). Besides the method on this page, depending on the situation, [polynomial techniques](../poly/shift.md#模素数意义下阶乘) can also be used for fast computation.
+This page discusses results about computing factorials modulo a number, and gives a method whose time complexity is linear in the size of the modulus. So the method is mainly suited to moduli that are not too large ($\sim 10^6$). Besides the method on this page, depending on the situation, [polynomial techniques](../poly/shift.md#factorial-modulo-a-prime) can also be used for fast computation.
 
 By the [Chinese remainder theorem](./crt.md), computing factorials modulo a number reduces to the case where the modulus is a prime power $p^\alpha$. For such problems, given a prime $p$ and a positive integer $n$, we often need to pull all factors of $p$ out of $n!$, giving the decomposition:
 
@@ -24,7 +24,7 @@ Wilson's theorem gives a necessary and sufficient condition for a natural number
     For a natural number $n>1$, $(n-1)!\equiv -1\pmod n$ if and only if $n$ is prime.
 
 ??? note "Proof"
-    First, we show that $(p-1)!\equiv -1\pmod{p}$ for a prime $p$. There are two short proofs of this using [congruence equations](./congruence-equation.md#素数模同余方程) or [primitive roots](./primitive-root.md), which we omit here. Below is a proof that needs less background:
+    First, we show that $(p-1)!\equiv -1\pmod{p}$ for a prime $p$. There are two short proofs of this using [congruence equations](./congruence-equation.md#congruence-equations-modulo-primes) or [primitive roots](./primitive-root.md), which we omit here. Below is a proof that needs less background:
     
     The claim is clear for $p=2$. Now let $p\geq 3$. We need to show that the product of all nonzero elements (i.e., residue classes) of $\mathbf{Z}_p$ is $\overline{-1}$. Every nonzero element $\overline{a}$ of $\mathbf{Z}_p$ has an inverse $\overline{a}^{-1}$, so the product of each pair of mutually inverse elements is $\overline{1}$. But note that $\overline{a}$ and $\overline{a}^{-1}$ may be equal: $\overline{a}=\overline{a}^{-1}$ if and only if $a^2\equiv 1\pmod p$, that is,
     
@@ -49,10 +49,10 @@ Wilson's theorem can be generalized to arbitrary moduli.
     \prod_{1\le k<m,\ k\perp m} k \equiv \pm 1 \pmod{m}.
     $$
     
-    Moreover, the remainder is $-1$ if and only if a [primitive root exists](./primitive-root.md#原根存在定理) modulo $m$, that is, when $m=2,4,p^\alpha,2p^\alpha$, where $p$ is an odd prime and $\alpha$ is a positive integer.
+    Moreover, the remainder is $-1$ if and only if a [primitive root exists](./primitive-root.md#existence-theorem-for-primitive-roots) modulo $m$, that is, when $m=2,4,p^\alpha,2p^\alpha$, where $p$ is an odd prime and $\alpha$ is a positive integer.
 
 ??? note "Proof"
-    This theorem can be proved easily using the structure of the [multiplicative group of integers modulo $m$](../algebra/ring-theory.md#应用整数同余类的乘法群). Here we give a more elementary proof along similar lines.
+    This theorem can be proved easily using the structure of the [multiplicative group of integers modulo $m$](../algebra/ring-theory.md#application-the-multiplicative-group-of-integers-modulo-n). Here we give a more elementary proof along similar lines.
     
     For $m=2$, $1!=1\equiv -1\pmod{2}$. For the other cases where a primitive root exists, let $g$ be a primitive root. Then every positive integer $k$ less than $m$ and coprime to $m$ can be written uniquely as $g^i\bmod m$, where $0\le i<\varphi(m)$ and $\varphi(m)$ is [Euler's totient function](./euler-totient.md). A direct check shows that $\varphi(m)$ is always even. Since $g^i$ and $g^{\varphi(m)-i}$ are multiplicative inverses of each other, pairing them up in the product gives
     

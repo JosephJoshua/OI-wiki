@@ -273,7 +273,7 @@ Given a polynomial $f(x)$, find $\ln{f(x)}$ and $\exp{f(x)}$ modulo $x^{n}$.
 #### Basic method
 
 === "Polynomial logarithm"
-    First, for a polynomial $f(x)$, if $\ln{f(x)}$ exists, then by its [definition](./intro.md#复合) it must satisfy:
+    First, for a polynomial $f(x)$, if $\ln{f(x)}$ exists, then by its [definition](./intro.md#composition) it must satisfy:
     
     $$
     [x^{0}]f(x)=1
@@ -412,7 +412,7 @@ Given a polynomial $f\left(x\right)$, find $\sin{f\left(x\right)}, \cos{f\left(x
 
 ### Solution
 
-First, from [Euler's formula](../complex.md#欧拉公式) $\left(\mathrm{e}^{\mathrm{i}x} = \cos{x} + \mathrm{i}\sin{x}\right)$ we get [another expression for the trigonometric functions](https://en.wikipedia.org/wiki/Trigonometric_functions#Relationship_to_exponential_function_and_complex_numbers):
+First, from [Euler's formula](../complex.md#eulers-formula) $\left(\mathrm{e}^{\mathrm{i}x} = \cos{x} + \mathrm{i}\sin{x}\right)$ we get [another expression for the trigonometric functions](https://en.wikipedia.org/wiki/Trigonometric_functions#Relationship_to_exponential_function_and_complex_numbers):
 
 $$
 \begin{aligned}

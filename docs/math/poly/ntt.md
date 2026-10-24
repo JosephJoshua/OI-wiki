@@ -16,7 +16,7 @@ To learn the number-theoretic transform, you need: the discrete Fourier transfor
 
 ### Number-theoretic transform
 
-In mathematics, the NTT is the discrete Fourier transform (DFT) over an arbitrary [ring](../algebra/basic.md#环). In the case of a finite field, it is usually called the number-theoretic transform (NTT).
+In mathematics, the NTT is the discrete Fourier transform (DFT) over an arbitrary [ring](../algebra/basic.md#rings). In the case of a finite field, it is usually called the number-theoretic transform (NTT).
 
 The **number-theoretic transform** (NTT) is obtained by moving the discrete Fourier transform to $F={\mathbb {Z}/p}$, the integers modulo a prime $p$. This is a **finite field**, and as long as $n$ divides $p-1$, a primitive $n$-th root of unity exists, so we have $p=\xi n+1$ for a positive integer $\xi$. Concretely, for a prime $p=qn+1, (n=2^m)$, the primitive root $g$ satisfies $g^{qn} \equiv 1 \pmod p$. Treat $g_n=g^q\pmod p$ as the equivalent of $\omega_n$; it has similar properties, such as $g_n^n \equiv 1 \pmod p, g_n^{n/2} \equiv -1 \pmod p$.
 

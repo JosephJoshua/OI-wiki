@@ -1,11 +1,11 @@
-Prerequisites: [Dijkstra's algorithm](./shortest-path.md#dijkstra-算法), [A\* algorithm](../search/astar.md), [persistent mergeable heaps](../ds/persistent-heap.md)
+Prerequisites: [Dijkstra's algorithm](./shortest-path.md#dijkstras-algorithm), [A\* algorithm](../search/astar.md), [persistent mergeable heaps](../ds/persistent-heap.md)
 
 ## Problem statement
 
 Given a directed graph with $n$ nodes and $m$ edges, find the length of the $k$-th shortest path among all distinct paths from $s$ to $t$.
 
 ???+ info "On the word 'path'"
-    The "paths" on this page may use the same edge or the same node more than once, so strictly speaking they should be called "[walks](./concept.md#路径)" rather than "paths". Strictly speaking, the problem discussed here is also the **$k$ shortest walk** problem. However, following common usage, this page still uses the word "path", and calls paths that do not intersect themselves "simple paths".
+    The "paths" on this page may use the same edge or the same node more than once, so strictly speaking they should be called "[walks](./concept.md#paths)" rather than "paths". Strictly speaking, the problem discussed here is also the **$k$ shortest walk** problem. However, following common usage, this page still uses the word "path", and calls paths that do not intersect themselves "simple paths".
 
 ## A\* algorithm
 

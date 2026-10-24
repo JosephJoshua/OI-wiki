@@ -26,14 +26,14 @@ assert(-5 % -3 == -2);
 
 ## Modular integer class
 
-Modular arithmetic can be viewed as doing operations on the [residue classes](./basic.md#同余类与剩余系) under some modulus. If you represent a residue class with a struct, and wrap addition, subtraction, multiplication and so on between residue classes as methods or operator overloads, modular arithmetic naturally becomes a modular integer class. Below is a simple example. It supports addition, subtraction, multiplication and fast exponentiation of $32$-bit signed integers under a modulus $M < 2^{30}$:
+Modular arithmetic can be viewed as doing operations on the [residue classes](./basic.md#residue-classes-and-residue-systems) under some modulus. If you represent a residue class with a struct, and wrap addition, subtraction, multiplication and so on between residue classes as methods or operator overloads, modular arithmetic naturally becomes a modular integer class. Below is a simple example. It supports addition, subtraction, multiplication and fast exponentiation of $32$-bit signed integers under a modulus $M < 2^{30}$:
 
 ???+ example "A simple modular integer class"
     ```cpp
     --8<-- "docs/math/code/mod-arithmetic/mod-arithmetic.cpp:core"
     ```
 
-This implementation deliberately reduces the number of modulo operations, because taking a remainder is usually much slower than an ordinary addition, subtraction, multiplication or comparison. The code comments give equivalent, more direct implementations. The main idea of these simple optimizations is: when you add or subtract two integers in $[0,M)$, the result always lies in $(-M,2M)$, so a single addition or subtraction brings it back into $[0,M)$. Exponentiation in this implementation uses the [fast exponentiation](../binary-exponentiation.md#模意义下取幂) technique.
+This implementation deliberately reduces the number of modulo operations, because taking a remainder is usually much slower than an ordinary addition, subtraction, multiplication or comparison. The code comments give equivalent, more direct implementations. The main idea of these simple optimizations is: when you add or subtract two integers in $[0,M)$, the result always lies in $(-M,2M)$, so a single addition or subtraction brings it back into $[0,M)$. Exponentiation in this implementation uses the [fast exponentiation](../binary-exponentiation.md#modular-exponentiation) technique.
 
 Besides these basic operations, you can also do the following under various moduli:
 
@@ -41,9 +41,9 @@ Besides these basic operations, you can also do the following under various modu
 -   [Division](./linear-equation.md)
 -   [Factorials](./factorial.md)
 -   [Binomial coefficients](./lucas.md)
--   [Square roots](./quad-residue.md#模意义下开平方)
+-   [Square roots](./quad-residue.md#modular-square-roots)
 -   [Logarithms](./discrete-logarithm.md)
--   [Roots](./residue.md#模意义下开方)
+-   [Roots](./residue.md#modular-roots)
 
 These operations are usually easier when the modulus is prime. For a composite modulus, you often need an extended version of the corresponding algorithm together with the [Chinese remainder theorem](./crt.md). Most of these modular operations can be seen as solving some kind of congruence equation. For general methods of solving congruence equations, see the [congruence equations](./congruence-equation.md) page.
 
@@ -107,7 +107,7 @@ $$
 
 If we choose $R = 2^k$, then $\left\lfloor\dfrac{R}{m}\right\rfloor$ on the right can be precomputed, and dividing by $R$ is just a shift. So computing the quotient with the right-hand side needs only one multiplication and one shift. Plugging it into the expression for $a\bmod m$ gives an estimate $z'$ of the remainder.
 
-Now let us analyze the error. The [floor function](./basic.md#取整函数) has the property that for $x > y > 0$, $\lfloor x\rfloor - \lfloor y\rfloor \le \lceil x - y\rceil$. So the error is
+Now let us analyze the error. The [floor function](./basic.md#floor-and-ceiling-functions) has the property that for $x > y > 0$, $\lfloor x\rfloor - \lfloor y\rfloor \le \lceil x - y\rceil$. So the error is
 
 $$
 \begin{aligned}
@@ -233,7 +233,7 @@ As an example, here is a reference implementation of inversion modulo $2^{32}$:
     --8<-- "docs/math/code/mod-arithmetic/mod-32-inv-pow.cpp:inv"
     ```
 
-Next, exponentiation: given $x,a,b$ and modulus $m=2^e~(e > 2)$, find $xa^b\bmod m$, where $a$ is odd. From the [analysis](./primitive-root.md#递推公式) of the multiplicative structure of integers modulo $2^e$, $a$ can always be written as $\pm g^{\ell}$[^mod-2-g], and the minus sign appears exactly when $a\equiv 3\pmod 4$. In that case, replace $a$ with $-a$ and multiply the final result by $(-1)^b$. So from now on we may assume $a\equiv 1\pmod 4$. The core idea of the algorithm is to write $a$ as $g^{L(a)}\bmod m$, and then compute the power as $xg^{bL(a)}\bmod m$.
+Next, exponentiation: given $x,a,b$ and modulus $m=2^e~(e > 2)$, find $xa^b\bmod m$, where $a$ is odd. From the [analysis](./primitive-root.md#recursive-formula) of the multiplicative structure of integers modulo $2^e$, $a$ can always be written as $\pm g^{\ell}$[^mod-2-g], and the minus sign appears exactly when $a\equiv 3\pmod 4$. In that case, replace $a$ with $-a$ and multiply the final result by $(-1)^b$. So from now on we may assume $a\equiv 1\pmod 4$. The core idea of the algorithm is to write $a$ as $g^{L(a)}\bmod m$, and then compute the power as $xg^{bL(a)}\bmod m$.
 
 Computing $L(a)$ means computing the discrete logarithm $\operatorname{ind}_ga$. Note that as long as $a\equiv 1\pmod 4$, $a$ can always be written as
 
@@ -241,7 +241,7 @@ $$
 a \equiv (2^{e_1}+1)(2^{e_2}+1)\cdots(2^{e_s}+1) \pmod{m},
 $$
 
-where $1 < e_1 < e_2 < \cdots < e_s < e$. To see this, expand the product: the second-lowest $1$ bit in the binary representation of $a$ is exactly bit $e_1$ (indices start from $0$), and from this the representation can be found recursively. By the [properties](./discrete-logarithm.md#性质) of discrete logarithms,
+where $1 < e_1 < e_2 < \cdots < e_s < e$. To see this, expand the product: the second-lowest $1$ bit in the binary representation of $a$ is exactly bit $e_1$ (indices start from $0$), and from this the representation can be found recursively. By the [properties](./discrete-logarithm.md#properties) of discrete logarithms,
 
 $$
 4L(a) \equiv 4L(2^{e_1}+1) + 4L(2^{e_2}+1) + \cdots + 4L(2^{e_s}+1) \pmod{m}. 
@@ -249,7 +249,7 @@ $$
 
 The discrete logarithm is taken modulo the order $\delta_m(g)=2^{e-2}=m/4$, so here the whole congruence is multiplied by $4$, so that the computation can be done modulo $m$. So once you precompute all $4L(2^d+1)$ for $1 < d < e$, you can quickly compute $4L(a)$.
 
-Conversely, getting $g^{L(a)}\bmod{m}$ from $L(a)$ is also easy. By the [binomial theorem](../combinatorics/combination.md#二项式定理), for $1 < d < e$ we have
+Conversely, getting $g^{L(a)}\bmod{m}$ from $L(a)$ is also easy. By the [binomial theorem](../combinatorics/combination.md#binomial-theorem), for $1 < d < e$ we have
 
 $$
 \begin{aligned}

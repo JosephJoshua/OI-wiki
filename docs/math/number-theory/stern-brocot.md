@@ -185,7 +185,7 @@ The naive fraction-finding algorithm is implemented as follows:
 
 This algorithm runs in $O(p+q)$ time, so it is not practical in competitive programming.
 
-In the Stern–Brocot number system, every positive irrational number corresponds to a unique infinite string, which can be built with the same algorithm. Every prefix of this infinite string corresponds to a rational fraction in lowest terms. If you list these fractions in order, their denominators are strictly increasing, and the limit of the sequence is the irrational number. So the Stern–Brocot tree can be used to find rational approximations of an irrational number to any precision. Note, however, that the distance between this sequence of rationals and the irrational number is not strictly decreasing. For the rigorous theory of rational approximation, see the [Diophantine approximation](./continued-fraction.md#丢番图逼近) section of the continued fractions page. When you use the Stern–Brocot tree to find the best approximation of a real number with denominator below some bound, remember at the end to compare the distances from both endpoints of the interval to that real number.
+In the Stern–Brocot number system, every positive irrational number corresponds to a unique infinite string, which can be built with the same algorithm. Every prefix of this infinite string corresponds to a rational fraction in lowest terms. If you list these fractions in order, their denominators are strictly increasing, and the limit of the sequence is the irrational number. So the Stern–Brocot tree can be used to find rational approximations of an irrational number to any precision. Note, however, that the distance between this sequence of rationals and the irrational number is not strictly decreasing. For the rigorous theory of rational approximation, see the [Diophantine approximation](./continued-fraction.md#diophantine-approximation) section of the continued fractions page. When you use the Stern–Brocot tree to find the best approximation of a real number with denominator below some bound, remember at the end to compare the distances from both endpoints of the interval to that real number.
 
 #### Fast algorithm
 
@@ -226,7 +226,7 @@ $$
 \dfrac{p_k}{q_k} = \dfrac{t_kp_{k-1}+p_{k-2}}{t_kq_{k-1}+q_{k-2}}.
 $$
 
-By the [recurrence](./continued-fraction.md#递推关系) for continued fractions, the endpoint is
+By the [recurrence](./continued-fraction.md#recurrence) for continued fractions, the endpoint is
 
 $$
 \dfrac{p_k}{q_k} = [t_0,t_1,\cdots,t_k].
@@ -238,7 +238,7 @@ $$
 \dfrac{p}{q} = \dfrac{p_n+p_{n-1}}{q_n+q_{n-1}} = [t_0,t_1,\cdots,t_{n-1},t_n,1].
 $$
 
-So, in the [continued fraction representation](./continued-fraction.md#简单连分数) of the target fraction that ends in one, the terms before the final one encode the path in the Stern–Brocot tree from the root to the node. The even-indexed terms (indices start at $0$) are edges to right children, and the odd-indexed terms are edges to left children.
+So, in the [continued fraction representation](./continued-fraction.md#simple-continued-fractions) of the target fraction that ends in one, the terms before the final one encode the path in the Stern–Brocot tree from the root to the node. The even-indexed terms (indices start at $0$) are edges to right children, and the odd-indexed terms are edges to left children.
 
 The continued fraction of a rational number can be computed with the Euclidean algorithm, so fraction finding based on continued fractions runs in $O(\log\min\{p,q\})$ time.
 
@@ -365,7 +365,7 @@ $$
 \end{aligned}
 $$
 
-Here $\varphi(n)$ is [Euler's totient function](./euler-totient.md). This sum can be computed in $O(n)$ with a [linear sieve](./sieve.md#筛法求欧拉函数), and the [Du's sieve](./hyperbola.md#杜教筛) brings it down to $O(n^{2/3})$.
+Here $\varphi(n)$ is [Euler's totient function](./euler-totient.md). This sum can be computed in $O(n)$ with a [linear sieve](./sieve.md#sieving-eulers-totient-function), and the [Du's sieve](./hyperbola.md#dus-sieve) brings it down to $O(n^{2/3})$.
 
 More often than the length itself, you need the index of some fraction $r=\dfrac{p}{q}$ in $F_n$. This means computing
 
@@ -415,7 +415,7 @@ Each of the two equations has exactly one positive integer solution with $y<q$, 
 
 Of course, the fractions $\dfrac{a}{b}<\dfrac{c}{d}$ found this way are exactly the left and right neighbors of $\dfrac{p}{q}$ at the moment it is inserted into the sequence. So they are themselves Farey neighbors, and $\dfrac{p}{q}$ is their mediant. If $\dfrac{p}{q}=[t_0,t_1,\cdots,t_n,1]$, then these two Farey neighbors with smaller denominators are $[t_0,t_1,\cdots,t_n]$ and $[t_0,t_1,\cdots,t_{n-1}]$.
 
-To find the other Farey neighbors of $\dfrac{p}{q}$, use the [extended Euclidean algorithm](./bezouts.md#两个变量的情形) to find all valid solutions.
+To find the other Farey neighbors of $\dfrac{p}{q}$, use the [extended Euclidean algorithm](./bezouts.md#two-variables) to find all valid solutions.
 
 ### Recurrence
 

@@ -102,7 +102,7 @@ $$
 D(n) = \left\{\left\lfloor\dfrac{n}{x}\right\rfloor : 1 \le x \le n,~x\in\mathbf N_+\right\}
 $$
 
-This set is both the set of all block heights and the set of all right endpoints of blocks. Note that by the [properties](./sqrt-decomposition.md#性质) of number-theoretic blocking, this set contains every integer $1\le x\le\sqrt{n}$, so knowing $F,G$ on $D(n)$ is the same as knowing $f,g$ at every $1\le x\le\sqrt{n}$. This set has size $\Theta(\sqrt{n})$, so to compute $H(n)$ we only need the values of $F,G$ on a sparse set. This observation is the key to speeding up prefix sums of arithmetic functions.
+This set is both the set of all block heights and the set of all right endpoints of blocks. Note that by the [properties](./sqrt-decomposition.md#properties) of number-theoretic blocking, this set contains every integer $1\le x\le\sqrt{n}$, so knowing $F,G$ on $D(n)$ is the same as knowing $f,g$ at every $1\le x\le\sqrt{n}$. This set has size $\Theta(\sqrt{n})$, so to compute $H(n)$ we only need the values of $F,G$ on a sparse set. This observation is the key to speeding up prefix sums of arithmetic functions.
 
 ## Block sieves and their convolution
 
@@ -157,7 +157,7 @@ $$
 
 When $z=\left(\dfrac{n}{\log n}\right)^{2/3}$, the total time complexity reaches its minimum $O\left(n^{2/3}(\log n)^{1/3}\right)$.
 
-Of course, the complexity of [computing values](./dirichlet.md#dirichlet-卷积的计算) of a Dirichlet convolution depends on the properties of $f,g,h$. When $f,g,h$ have special properties, the best split point and the complexity are slightly different:
+Of course, the complexity of [computing values](./dirichlet.md#computing-dirichlet-convolutions) of a Dirichlet convolution depends on the properties of $f,g,h$. When $f,g,h$ have special properties, the best split point and the complexity are slightly different:
 
 -   If $f$ or $g$ is multiplicative, then with $z=\left(\dfrac{n}{\log\log n}\right)^{2/3}$, the total time complexity reaches its minimum $O\left(n^{2/3}(\log\log n)^{1/3}\right)$.
 -   If $h$ is multiplicative, then with $z=n^{2/3}$, the total time complexity reaches its minimum $O(n^{2/3})$.
@@ -248,7 +248,7 @@ $$
 G(n) = \dfrac{1}{f(1)}\left(H(n)-\sum_{x=2}^{\lfloor x_0\rfloor}f(x)G\left(\left\lfloor\dfrac{n}{x}\right\rfloor\right) - \sum_{y=1}^{\lfloor y_0\rfloor}F\left(\left\lfloor\dfrac{n}{y}\right\rfloor\right)g(y) + F(\lfloor x_0\rfloor)G(\lfloor y_0\rfloor)\right).
 $$
 
-Either way, this is a recurrence for $G(n)$. To compute $G(n)$, we need the values of $G$ on $D(n)\setminus\{n\}$. Since $D(n)$ has a [recursive structure](./sqrt-decomposition.md#性质), namely $D(m)\subseteq D(n)$ for every $m\in D(n)$, the whole recursive computation only needs to compute $G$ once at each element of $D(n)$. In other words, computing $G(n)$ actually gives us the block sieve $\mathcal S_g(n)$ of $g$.
+Either way, this is a recurrence for $G(n)$. To compute $G(n)$, we need the values of $G$ on $D(n)\setminus\{n\}$. Since $D(n)$ has a [recursive structure](./sqrt-decomposition.md#properties), namely $D(m)\subseteq D(n)$ for every $m\in D(n)$, the whole recursive computation only needs to compute $G$ once at each element of $D(n)$. In other words, computing $G(n)$ actually gives us the block sieve $\mathcal S_g(n)$ of $g$.
 
 In practice, we can use recursion with memoization to avoid repeated work. Alternatively, we can iterate and compute the value of $G$ at each point of $D(n)$ from small to large. In this case, the sums in the expression can be computed with either number-theoretic blocking or the Dirichlet hyperbola method.
 
@@ -349,7 +349,7 @@ This section presents several problems about computing prefix sums of arithmetic
     
     Here $F(n) = \dfrac{1}{2}n(n+1)$. This sum can be computed with number-theoretic blocking, but we need the prefix sums of $d^2\varphi(d)$.
     
-    For this, we can use Du's sieve. Let $f(n)=(\operatorname{id}^2\varphi)(n)$ and $S(n)=\sum_{i=1}^n f(i)$. The key to Du's sieve is to construct a function $g$ such that both $f\ast g$ and $g$ have easy prefix sums. Above, we already discussed using Du's sieve to precompute prefix sums of $\varphi$, which only uses the identity $\operatorname{id} = \varphi\ast 1$. Compared with $\varphi$, the $f$ here has an extra factor $\operatorname{id}^2$. Since $\operatorname{id}$ is completely multiplicative, by a [property](./dirichlet.md#性质) of Dirichlet convolution, we just multiply every term by $\operatorname{id}^2$ in the same way and get
+    For this, we can use Du's sieve. Let $f(n)=(\operatorname{id}^2\varphi)(n)$ and $S(n)=\sum_{i=1}^n f(i)$. The key to Du's sieve is to construct a function $g$ such that both $f\ast g$ and $g$ have easy prefix sums. Above, we already discussed using Du's sieve to precompute prefix sums of $\varphi$, which only uses the identity $\operatorname{id} = \varphi\ast 1$. Compared with $\varphi$, the $f$ here has an extra factor $\operatorname{id}^2$. Since $\operatorname{id}$ is completely multiplicative, by a [property](./dirichlet.md#properties) of Dirichlet convolution, we just multiply every term by $\operatorname{id}^2$ in the same way and get
     
     $$
     \operatorname{id}^3 = f \ast \operatorname{id}^2.
@@ -357,7 +357,7 @@ This section presents several problems about computing prefix sums of arithmetic
     
     Since the prefix sums of $\operatorname{id}^2(n)=n^2$ and $\operatorname{id}^3(n)=n^3$ can both be computed in $O(1)$ time, the prefix sums of $f$ can be precomputed in $O(n^{2/3})$ time. Adding number-theoretic blocking, the overall time complexity is still $O(n^{2/3})$.
     
-    Another way to express a similar multiplicative function as the quotient (under Dirichlet convolution) of two functions is to use the [Dirichlet generating function](./dirichlet.md#dirichlet-生成函数).
+    Another way to express a similar multiplicative function as the quotient (under Dirichlet convolution) of two functions is to use the [Dirichlet generating function](./dirichlet.md#dirichlet-generating-functions).
 
 ??? note "Reference implementation"
     ```cpp

@@ -36,9 +36,9 @@ Groups are very common. Informally, all transformations that preserve some struc
 
 ???+ example "Examples of groups"
     -   **Symmetric group**: all [permutations](../permutation.md) of a set $M$, that is, all bijections from $M$ to itself, form a group $S_M$ under composition of maps. The identity element is the identity map, and the inverse is the inverse map (a bijection always has an inverse map). If $M$ is finite with size $n$, the group is often written $S_n$ and called the symmetric group of degree $n$.
-    -   Symmetry group: for a geometric figure, all transformations that map the figure onto itself also form a group under composition of maps. This describes the spatial symmetry of the figure. For concrete examples, see [common symmetry groups](../combinatorics/polya.md#常见空间对称群).
+    -   Symmetry group: for a geometric figure, all transformations that map the figure onto itself also form a group under composition of maps. This describes the spatial symmetry of the figure. For concrete examples, see [common symmetry groups](../combinatorics/polya.md#common-symmetry-groups).
     -   The additive group of integers: the set of integers $\mathbf Z$ forms a group $(\mathbf Z,+)$ under addition $+$. The identity element is $0$, and the inverse of a number is its negative.
-    -   Multiplicative group of integers modulo $n$: for a modulus $n$, the [residue classes](../number-theory/basic.md#同余类与剩余系) of all integers coprime to $n$ form a group $((\mathbf Z/n\mathbf Z)^\times,\times)$ under multiplication. The identity element is $\bar 1$, and the inverse is (the residue class of) the [modular multiplicative inverse](../number-theory/inverse.md) modulo $n$, whose existence is guaranteed by [Bézout's identity](../number-theory/bezouts.md). For an analysis of its structure, see [multiplicative group of integers modulo $n$](./ring-theory.md#应用整数同余类的乘法群).
+    -   Multiplicative group of integers modulo $n$: for a modulus $n$, the [residue classes](../number-theory/basic.md#residue-classes-and-residue-systems) of all integers coprime to $n$ form a group $((\mathbf Z/n\mathbf Z)^\times,\times)$ under multiplication. The identity element is $\bar 1$, and the inverse is (the residue class of) the [modular multiplicative inverse](../number-theory/inverse.md) modulo $n$, whose existence is guaranteed by [Bézout's identity](../number-theory/bezouts.md). For an analysis of its structure, see [multiplicative group of integers modulo $n$](./ring-theory.md#application-the-multiplicative-group-of-integers-modulo-n).
     -   General linear group: all invertible $n\times n$ square matrices over a field $F$ form a group $GL_n(F)$ under multiplication. The identity element is the identity matrix, and the inverse is the inverse matrix.
 
 To understand the definition of a group better, it helps to compare with some examples that are not groups.
@@ -133,7 +133,7 @@ Here are some of the simplest examples of rings.
 ???+ example "Examples of rings"
     -   Zero ring: the set $\{0\}$ forms a ring under the usual addition $+$ and multiplication $\times$, called the zero ring. It is the only ring with exactly one element, and also the only ring whose additive identity equals its multiplicative identity.
     -   Ring of integers: the set of integers $\mathbf Z$ with the usual addition $+$ and multiplication $\times$ forms a ring $(\mathbf Z,+,\times)$. In fact, it is an integral domain, but it is not a division ring.
-    -   Polynomial ring: for a ring $R$, we can define the [polynomial ring](./ring-theory.md#多项式环)  $R[x]$ over it. If $R$ is an integral domain, then this polynomial ring is also an integral domain.
+    -   Polynomial ring: for a ring $R$, we can define the [polynomial ring](./ring-theory.md#polynomial-rings)  $R[x]$ over it. If $R$ is an integral domain, then this polynomial ring is also an integral domain.
     -   Quaternions: by analogy with complex numbers, consider the set $\mathbf H=\{a+b\mathrm{i}+c\mathrm{j}+d\mathrm{k}:a,b,c,d\in\mathbf R\}$ and define addition and multiplication on it, where multiplication of $\mathrm{i},\mathrm{j},\mathrm{k}$ satisfies
     
         $$
@@ -260,7 +260,7 @@ Finally, let's use the following problem to show how abstract algebraic objects 
 -   Dummit, D.S. and Foote, R.M. (2004) Abstract Algebra. 3rd Edition, John Wiley & Sons, Inc.
 -   [Tropical semiring - Wikipedia](https://en.wikipedia.org/wiki/Tropical_semiring)
 
-[^oi-wiki-not-wikipedia]: Because [OI Wiki is not an encyclopedia](../../intro/what-oi-wiki-is-not.md#oi-wiki-不是百科全书).
+[^oi-wiki-not-wikipedia]: Because [OI Wiki is not an encyclopedia](../../intro/what-oi-wiki-is-not.md#oi-wiki-is-not-an-encyclopedia).
 
 [^ring-wiki]: [Ring (mathematics) - Wikipedia](https://en.wikipedia.org/wiki/Ring_%28mathematics%29)
 

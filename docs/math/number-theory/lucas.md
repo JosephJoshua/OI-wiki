@@ -8,7 +8,7 @@ $$
 \binom{n}{k} = \dfrac{n!}{k!(n-k)!}.
 $$
 
-When the input is small, binomial coefficients can be computed with the [recurrence](../combinatorics/combination.md#组合数性质--二项式推论) in $O(nk)$ time; or, under a large prime modulus $p>n$, by computing the factorials in the numerator and denominator in $O(n)$ time. But when the input is very large ($n\sim 10^{18}$), these methods no longer work.
+When the input is small, binomial coefficients can be computed with the [recurrence](../combinatorics/combination.md#properties-of-binomial-coefficients--corollaries-of-the-binomial-theorem) in $O(nk)$ time; or, under a large prime modulus $p>n$, by computing the factorials in the numerator and denominator in $O(n)$ time. But when the input is very large ($n\sim 10^{18}$), these methods no longer work.
 
 Based on Lucas's theorem and its generalization, this article discusses a method that computes binomial coefficients when the modulus is not too large ($m \sim 10^6$). More precisely, the method works as long as the sum of all prime powers in the factorization $m=\prod p_i^{e_i}$ (i.e., $\sum p_i^{e_i}$) is on the order of $10^6$, since the algorithm's preprocessing is roughly of that size.
 
@@ -38,7 +38,7 @@ First, consider the case where the modulus is a prime $p$. Here we have Lucas's 
     \binom{p}{n} \equiv [n=0\lor n=p] \pmod p.
     $$
     
-    Let $f(x) = ax^n + bx^m$. In general, by the [binomial expansion](../combinatorics/combination.md#二项式定理) and [Fermat's little theorem](./fermat.md#费马小定理),
+    Let $f(x) = ax^n + bx^m$. In general, by the [binomial expansion](../combinatorics/combination.md#binomial-theorem) and [Fermat's little theorem](./fermat.md#fermats-little-theorem),
     
     $$
     \begin{aligned}
@@ -77,7 +77,7 @@ First, consider the case where the modulus is a prime $p$. Here we have Lucas's 
     Setting the coefficients on both sides equal gives Lucas's theorem.
 
 ??? note "Proof using results on factorials modulo a number"
-    Here is a proof based on results about [factorials modulo a number](./factorial.md#素数模的情形), which makes it easier to connect with the exLucas method later. Recall that the binomial coefficient is
+    Here is a proof based on results about [factorials modulo a number](./factorial.md#prime-modulus), which makes it easier to connect with the exLucas method later. Recall that the binomial coefficient is
     
     $$
     \binom{n}{k} = \dfrac{n!}{k!(n-k)!}.
@@ -187,7 +187,7 @@ $$
 \binom{n}{k} = p^{\nu_p(n!)-\nu_p(k!)-\nu_p((n-k)!)}\dfrac{(n!)_p}{(k!)_p((n-k)!)_p}.
 $$
 
-Terms like $\nu_p(n!)$ can be computed with [Legendre's formula](./factorial.md#legendre-公式), and terms like $(n!)_p$ can be computed with a [recurrence](./factorial.md#素数幂模的情形). Since the latter are coprime to $p^\alpha$, the inverse of the product in the denominator can be computed with the [extended Euclidean algorithm](./inverse.md#扩展欧几里得算法). This solves the problem.
+Terms like $\nu_p(n!)$ can be computed with [Legendre's formula](./factorial.md#legendres-formula), and terms like $(n!)_p$ can be computed with a [recurrence](./factorial.md#prime-power-modulus). Since the latter are coprime to $p^\alpha$, the inverse of the product in the denominator can be computed with the [extended Euclidean algorithm](./inverse.md#extended-euclidean-algorithm). This solves the problem.
 
 Note that if the exponent $\nu_p(n!)-\nu_p(k!)-\nu_p((n-k)!)\ge\alpha$, the remainder must be zero, and no further computation is needed.
 

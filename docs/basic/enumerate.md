@@ -127,4 +127,4 @@ Here is an example of solving a problem by enumeration and then shrinking the en
 
 ## References and notes
 
-[^1]: [Bucket sort](../basic/bucket-sort.md), the [majority element problem](../misc/main-element.md#离线算法), and [an explanation of the bucket data structure on Stack Overflow](https://stackoverflow.com/questions/42399355/what-is-a-bucket-or-double-bucket-data-structure) (in English)
+[^1]: [Bucket sort](../basic/bucket-sort.md), the [majority element problem](../misc/main-element.md#offline-algorithm), and [an explanation of the bucket data structure on Stack Overflow](https://stackoverflow.com/questions/42399355/what-is-a-bucket-or-double-bucket-data-structure) (in English)

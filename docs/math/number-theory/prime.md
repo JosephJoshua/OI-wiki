@@ -11,7 +11,7 @@ A **primality test** decides whether a given natural number is prime.
 There are two kinds of primality tests:
 
 1.  Deterministic tests: decide with certainty whether a number is prime. Common examples include trial division, the Lucas–Lehmer test and elliptic curve primality proving.
-2.  Probabilistic tests: usually much faster than deterministic tests, but they may (with small probability) wrongly report a [composite number](./basic.md#素数与合数) as prime (though never the other way around). So numbers that pass a probabilistic primality test are called **probable primes** until their primality is proven deterministically. Numbers that pass the test but are actually composite are called **pseudoprimes**. There are many specific kinds of pseudoprimes; the most common are Fermat pseudoprimes, which are composite numbers that satisfy Fermat's little theorem. A common example of a probabilistic test is the Miller–Rabin test.
+2.  Probabilistic tests: usually much faster than deterministic tests, but they may (with small probability) wrongly report a [composite number](./basic.md#primes-and-composites) as prime (though never the other way around). So numbers that pass a probabilistic primality test are called **probable primes** until their primality is proven deterministically. Numbers that pass the test but are actually composite are called **pseudoprimes**. There are many specific kinds of pseudoprimes; the most common are Fermat pseudoprimes, which are composite numbers that satisfy Fermat's little theorem. A common example of a probabilistic test is the Miller–Rabin test.
 
 ### Trial division
 
@@ -73,7 +73,7 @@ Since $1$ is always a divisor, we do not check it.
 
 The **Fermat primality test** is the simplest probabilistic primality test.
 
-[Fermat's little theorem](./fermat.md#费马小定理) suggests a way to test for primes:
+[Fermat's little theorem](./fermat.md#fermats-little-theorem) suggests a way to test for primes:
 
 The basic idea is to repeatedly pick a base $a$ in $[2, n-1]$ and check whether $a^{n-1} \equiv 1 \pmod n$ holds every time.
 
@@ -108,7 +108,7 @@ The basic idea is to repeatedly pick a base $a$ in $[2, n-1]$ and check whether 
 
 If $a^{n-1} \equiv 1 \pmod n$ but $n$ is not prime, then $n$ is called a **Fermat pseudoprime** to base $a$. In practice we observe that if $a^{n-1} \equiv 1 \pmod n$, then $n$ is usually prime. But counterexamples exist: for $n = 341$ and $a = 2$, we have $2^{340}\equiv 1 {\pmod {341}}$, yet $341 = 11 \cdot 31$ is composite. In fact, for any fixed base $a$, there are infinitely many such counterexamples[^inf-fermat-pp].
 
-Since the Fermat test cannot guarantee correctness for a single base, a natural idea is to check several bases. However, even checking every base $a$ coprime to $n$ still does not guarantee that $n$ is prime. In other words, the converse of Fermat's little theorem is false: even if $a^{n-1}\equiv 1\pmod n$ for all $a\perp n$, $n$ is not necessarily prime. Such numbers are called [Carmichael numbers](./primitive-root.md#carmichael-数), and there are infinitely many of them as well. This forces us to look for a stricter primality test.
+Since the Fermat test cannot guarantee correctness for a single base, a natural idea is to check several bases. However, even checking every base $a$ coprime to $n$ still does not guarantee that $n$ is prime. In other words, the converse of Fermat's little theorem is false: even if $a^{n-1}\equiv 1\pmod n$ for all $a\perp n$, $n$ is not necessarily prime. Such numbers are called [Carmichael numbers](./primitive-root.md#carmichael-numbers), and there are infinitely many of them as well. This forces us to look for a stricter primality test.
 
 ### Miller–Rabin primality test
 
@@ -122,7 +122,7 @@ To deal with the challenge posed by Carmichael numbers, the Miller–Rabin test 
     If $p$ is an odd prime, then the solutions of $x^2 \equiv 1 \pmod p$ are $x \equiv 1 \pmod p$ and $x \equiv p - 1 \pmod p$.
 
 ??? note "Proof"
-    It is easy to check that when $p$ is an odd prime, both $x\equiv 1\pmod p$ and $x\equiv p-1\pmod p$ satisfy the equation. By [Lagrange's theorem](./congruence-equation.md#素数模同余方程), these are all of its solutions.
+    It is easy to check that when $p$ is an odd prime, both $x\equiv 1\pmod p$ and $x\equiv p-1\pmod p$ satisfy the equation. By [Lagrange's theorem](./congruence-equation.md#congruence-equations-modulo-primes), these are all of its solutions.
 
 Combining Fermat's little theorem with the quadratic probing theorem gives the Miller–Rabin test:
 
@@ -220,11 +220,11 @@ It can be shown[^millerrabinproof] that an odd composite $n > 9$ passes the Mill
     S\subseteq S' = \{a\bmod n:a^{u2^{\ell-1}}\equiv\pm 1{\textstyle\pmod n}\}.
     $$
     
-    An element $a$ of $S$ falls into one of two cases. If $a^u\equiv 1\pmod n$, then clearly $a^{u2^{\ell-1}}\equiv 1\pmod n$ too, so $a\in S'$. If $a^{u2^i}\equiv -1\pmod n$ for some $0\le i < t$, then for every prime factor $p\mid n$ we have $a^{u2^i}\equiv-1\pmod p$. Let $\delta_p(a)$ be the [order](./primitive-root.md#阶) of $a$ modulo $p$. Clearly $\delta_p(a)\mid u2^{i+1}$ but $\delta_p(a)\nmid u2^{i}$, so the exponent of $2$ in the prime factorization of $\delta_p(a)$ is exactly $i+1$, and hence $2^{i+1}\mid\delta_p(a)$. By Fermat's little theorem, $\delta_p(a)\mid p-1$, so $2^{i+1}\mid p-1$. This holds for every prime factor $p$ of $n$. Therefore $i+1\le\ell$. This means $a^{u2^{\ell-1}} = (a^{u2^i})^{2^{\ell-1-i}} \equiv \pm 1 \pmod n$, so again $a\in S'$. Combining the two cases gives $S\subseteq S'$.
+    An element $a$ of $S$ falls into one of two cases. If $a^u\equiv 1\pmod n$, then clearly $a^{u2^{\ell-1}}\equiv 1\pmod n$ too, so $a\in S'$. If $a^{u2^i}\equiv -1\pmod n$ for some $0\le i < t$, then for every prime factor $p\mid n$ we have $a^{u2^i}\equiv-1\pmod p$. Let $\delta_p(a)$ be the [order](./primitive-root.md#order) of $a$ modulo $p$. Clearly $\delta_p(a)\mid u2^{i+1}$ but $\delta_p(a)\nmid u2^{i}$, so the exponent of $2$ in the prime factorization of $\delta_p(a)$ is exactly $i+1$, and hence $2^{i+1}\mid\delta_p(a)$. By Fermat's little theorem, $\delta_p(a)\mid p-1$, so $2^{i+1}\mid p-1$. This holds for every prime factor $p$ of $n$. Therefore $i+1\le\ell$. This means $a^{u2^{\ell-1}} = (a^{u2^i})^{2^{\ell-1-i}} \equiv \pm 1 \pmod n$, so again $a\in S'$. Combining the two cases gives $S\subseteq S'$.
     
     **Step 2**: Compute $|S'|$.
     
-    Suppose $n$ has the prime factorization $n = p_1^{e_1}p_2^{e_2}\cdots p_k^{e_k}$. By the [Chinese remainder theorem](./crt.md), the condition $a^{u2^{\ell - 1}}\equiv 1\pmod n$ is equivalent to $a^{u2^{\ell - 1}}\equiv 1\pmod{p_i^{e_i}}$ for every $p_i^{e_i}$. Since a [primitive root](./primitive-root.md#原根) modulo an odd prime power $p_i^{e_i}$ always exists, the [number of solutions](./residue.md#性质) of the congruence $a^{u2^{\ell - 1}}\equiv 1\pmod{p_i^{e_i}}$ is
+    Suppose $n$ has the prime factorization $n = p_1^{e_1}p_2^{e_2}\cdots p_k^{e_k}$. By the [Chinese remainder theorem](./crt.md), the condition $a^{u2^{\ell - 1}}\equiv 1\pmod n$ is equivalent to $a^{u2^{\ell - 1}}\equiv 1\pmod{p_i^{e_i}}$ for every $p_i^{e_i}$. Since a [primitive root](./primitive-root.md#primitive-root) modulo an odd prime power $p_i^{e_i}$ always exists, the [number of solutions](./residue.md#properties) of the congruence $a^{u2^{\ell - 1}}\equiv 1\pmod{p_i^{e_i}}$ is
     
     $$
     \gcd(u2^{\ell-1},p_i^{e_i-1}(p_i-1)) = \gcd(u2^{\ell-1},p_i-1) = 2^{\ell-1}\gcd(u,p_i-1).

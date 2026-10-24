@@ -1,6 +1,6 @@
 author: hydingsy, hyp1231, ranwen, 383494
 
-Prerequisites: [number-theoretic blocking](./sqrt-decomposition.md), [Dirichlet convolution](./dirichlet.md#dirichlet-卷积)
+Prerequisites: [number-theoretic blocking](./sqrt-decomposition.md), [Dirichlet convolution](./dirichlet.md#dirichlet-convolution)
 
 Möbius inversion is an important topic in number theory. For some functions $f(n)$ whose values are hard to compute directly, but whose sums over multiples or divisors $g(n)$ are easy to compute, Möbius inversion can simplify the computation and give the values of $f(n)$.
 
@@ -41,7 +41,7 @@ It is easy to check from the definition that the Möbius function $\mu(n)$ is mu
     Here $[\cdot]$ is the Iverson bracket.
 
 ??? note "Proof"
-    Let $n=\prod_{i=1}^kp_i^{e_i}$ and $n' = \prod_{i=1}^kp_i$. By the [binomial theorem](../combinatorics/combination.md#二项式定理),
+    Let $n=\prod_{i=1}^kp_i^{e_i}$ and $n' = \prod_{i=1}^kp_i$. By the [binomial theorem](../combinatorics/combination.md#binomial-theorem),
     
     $$
     \sum_{d\mid n}\mu(d) = \sum_{d\mid n'}\mu(d) = \sum_{i=0}^k\binom{k}{i}(-1)^i = (1 + (-1))^k = [k = 0] = [n = 1].
@@ -72,7 +72,7 @@ To compute the Möbius function $\mu(n)$ for a single $n$, we can use its [prime
         --8<-- "docs/math/code/mobius/mobius-func-1.py:core"
         ```
 
-To precompute $\mu(n)$ for the first $n$ positive integers, we can use the fact that it is multiplicative and compute it with a [linear sieve](./sieve.md#筛法求莫比乌斯函数) in $O(n)$ time.
+To precompute $\mu(n)$ for the first $n$ positive integers, we can use the fact that it is multiplicative and compute it with a [linear sieve](./sieve.md#sieving-the-möbius-function) in $O(n)$ time.
 
 ???+ example "Reference implementation"
     === "C++"
@@ -201,7 +201,7 @@ Besides the basic form above, Möbius inversion has some common extended forms. 
     
     This is exactly dual to the derivation of the basic form.
 
-Second, Möbius inversion is not limited to addition; it actually holds for the operation of any [abelian group](../algebra/basic.md#群). For example, it has the following multiplicative form:
+Second, Möbius inversion is not limited to addition; it actually holds for the operation of any [abelian group](../algebra/basic.md#groups). For example, it has the following multiplicative form:
 
 ???+ note "Extension 2"
     Let $f(n),g(n)$ be two arithmetic functions. Then
@@ -226,7 +226,7 @@ Second, Möbius inversion is not limited to addition; it actually holds for the 
     
     Here $a\uparrow b = a^b$ is Knuth's arrow notation. Compared with the proof of the basic form, the only difference is that addition is replaced by multiplication, and multiplication by exponentiation.
 
-From the viewpoint of Dirichlet convolution, Möbius inversion only uses the fact that "the Möbius function is the Dirichlet inverse of the constant function". It is easy to imagine that relations similar to Möbius inversion also hold for a general [Dirichlet inverse](./dirichlet.md#dirichlet-卷积).
+From the viewpoint of Dirichlet convolution, Möbius inversion only uses the fact that "the Möbius function is the Dirichlet inverse of the constant function". It is easy to imagine that relations similar to Möbius inversion also hold for a general [Dirichlet inverse](./dirichlet.md#dirichlet-convolution).
 
 ???+ note "Extension 3"
     Let $f(n),g(n),\alpha(n)$ be arithmetic functions, and let $\alpha^{-1}(n)$ be the Dirichlet inverse of $\alpha(n)$, i.e.,
@@ -265,7 +265,7 @@ From the viewpoint of Dirichlet convolution, Möbius inversion only uses the fac
     $$
 
 ??? note "Proof"
-    By a [property](./dirichlet.md#性质) of Dirichlet convolution, for a completely multiplicative function $t(n)$, its Dirichlet inverse is $\mu(n)t(n)$.
+    By a [property](./dirichlet.md#properties) of Dirichlet convolution, for a completely multiplicative function $t(n)$, its Dirichlet inverse is $\mu(n)t(n)$.
 
 Finally, Möbius inversion can also be generalized to complex-valued functions on $[1,+\infty)$, not just arithmetic functions. The basic form of Möbius inversion can be seen as the special case where the complex-valued functions are zero at every non-integer point.
 
@@ -323,7 +323,7 @@ $$
 
 In the left-hand equation, $f(n)$ is the sum of $g$ over all divisors of $n$. If we think of $a\mid b$ as "$a$ comes before $b$", then $f(n)$ can be seen as a kind of prefix sum of $g(n)$. So in the Chinese competitive programming community, computing $\{f(k)\}_{k=1}^n$ from $\{g(k)\}_{k=1}^n$ is also called the **Dirichlet prefix sum**, and the reverse process is called the Dirichlet difference. These methods mostly appear when we need to precompute an arithmetic function at the first $N$ points.
 
-Next, let's discuss how to compute Dirichlet prefix sums. If we treat each prime as a dimension, this is a kind of high-dimensional prefix sum. Recall the [dimension-by-dimension prefix sum algorithm](../../basic/prefix-sum.md#dimension-by-dimension) for high-dimensional prefix sums: go through the dimensions one by one, and add the value at each position to its successor position along that dimension. For arithmetic functions, this means going through all primes $p$ from small to large and adding the function value at $n$ to the value at $np$. This is the same order as in the [sieve of Eratosthenes](./sieve.md#埃拉托斯特尼筛法). So this algorithm computes the Dirichlet prefix sums of a sequence of length $n$ in $O(n\log\log n)$ time. Similarly, the Dirichlet difference of a sequence can be computed with dimension-by-dimension differences in the same time complexity.
+Next, let's discuss how to compute Dirichlet prefix sums. If we treat each prime as a dimension, this is a kind of high-dimensional prefix sum. Recall the [dimension-by-dimension prefix sum algorithm](../../basic/prefix-sum.md#dimension-by-dimension) for high-dimensional prefix sums: go through the dimensions one by one, and add the value at each position to its successor position along that dimension. For arithmetic functions, this means going through all primes $p$ from small to large and adding the function value at $n$ to the value at $np$. This is the same order as in the [sieve of Eratosthenes](./sieve.md#sieve-of-eratosthenes). So this algorithm computes the Dirichlet prefix sums of a sequence of length $n$ in $O(n\log\log n)$ time. Similarly, the Dirichlet difference of a sequence can be computed with dimension-by-dimension differences in the same time complexity.
 
 ???+ example "Reference implementation"
     === "Dirichlet prefix sum"
@@ -397,7 +397,7 @@ This section uses example problems to show how to apply Möbius inversion, along
     --8<-- "docs/math/code/mobius/mobius_1.cpp"
     ```
 
-The next two example problems show how to handle enumerating the common divisor, and use a [sieve](./sieve.md#一般的积性函数) to compute the values of a general multiplicative function.
+The next two example problems show how to handle enumerating the common divisor, and use a [sieve](./sieve.md#general-multiplicative-functions) to compute the values of a general multiplicative function.
 
 ???+ example "[SPOJ LCMSUM](https://www.spoj.com/problems/LCMSUM/)"
     There are $T$ test cases. For each test case, compute:
@@ -594,7 +594,7 @@ The next two example problems show how to handle enumerating the common divisor,
     \sum_{i=1}^{\lfloor n/k\rfloor}i[d\mid i] = d\sum_{i=1}^{\lfloor\lfloor n/k\rfloor/d\rfloor}i = dG\left(\left\lfloor\dfrac{\lfloor n/k\rfloor}{d}\right\rfloor\right) = dG\left(\left\lfloor\dfrac{n}{kd}\right\rfloor\right).
     $$
     
-    Here $G(n)=\dfrac{1}{2}n(n+1)$ is the sum of an arithmetic sequence, and the last equality uses a property of the [floor function](./basic.md#取整函数). The other sum is computed symmetrically. Substituting back into the expression above gives
+    Here $G(n)=\dfrac{1}{2}n(n+1)$ is the sum of an arithmetic sequence, and the last equality uses a property of the [floor function](./basic.md#floor-and-ceiling-functions). The other sum is computed symmetrically. Substituting back into the expression above gives
     
     $$
     f(n,m) = \sum_k k\sum_{d}\mu(d)d^2G\left(\left\lfloor\dfrac{n}{kd}\right\rfloor\right)G\left(\left\lfloor\dfrac{m}{kd}\right\rfloor\right).
@@ -743,7 +743,7 @@ The last example problem shows how to apply the multiplicative version of Möbiu
     g(n) = \prod_k\prod_d\prod_{i=1}^{\lfloor n/k\rfloor}\prod_{j=1}^{\lfloor n/k\rfloor}k\uparrow(\mu(d)[d\mid i][d\mid j]).
     $$
     
-    Factor out further (i.e., let $i=di'$, $j=dj'$) and apply a property of the [floor function](./basic.md#取整函数) to get:
+    Factor out further (i.e., let $i=di'$, $j=dj'$) and apply a property of the [floor function](./basic.md#floor-and-ceiling-functions) to get:
     
     $$
     g(n) = \prod_k\prod_d\prod_{i=1}^{\lfloor n/(kd)\rfloor}\prod_{j=1}^{\lfloor n/(kd)\rfloor}k\uparrow\mu(d).

@@ -4,7 +4,7 @@ author: Ir1d, ouuan, qinggniq, i-Yirannn, minghu6
 
 ### Alphabet
 
-An **alphabet** (character set) $\Sigma$ is a set with a [total order](../math/order-theory.md#偏序集) on it. That is, any two different elements $\alpha$ and $\beta$ of $\Sigma$ can be compared: either $\alpha<\beta$ or $\beta<\alpha$. The elements of the alphabet $\Sigma$ are called characters.
+An **alphabet** (character set) $\Sigma$ is a set with a [total order](../math/order-theory.md#partially-ordered-sets) on it. That is, any two different elements $\alpha$ and $\beta$ of $\Sigma$ can be compared: either $\alpha<\beta$ or $\beta<\alpha$. The elements of the alphabet $\Sigma$ are called characters.
 
 ### String
 

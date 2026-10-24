@@ -191,7 +191,7 @@ Note that here it is not a good idea to add yet another dimension for the item i
     
     The goal is to maximize the sum of $v_i \times p_i$ over all purchased items.
 
-Just treat it as a [knapsack on a tree](../tree.md#树上背包). Remember to merge all the knapsacks together at the end.
+Just treat it as a [knapsack on a tree](../tree.md#knapsack-on-a-tree). Remember to merge all the knapsacks together at the end.
 
 ## References and notes
 

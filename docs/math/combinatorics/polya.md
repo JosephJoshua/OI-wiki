@@ -14,7 +14,7 @@ The Pólya enumeration theorem is usually used to solve counting problems that a
 
 ## Burnside's lemma
 
-Related reading: [Burnside's lemma](../algebra/group-theory.md#burnside-引理)
+Related reading: [Burnside's lemma](../algebra/group-theory.md#burnsides-lemma)
 
 The Pólya enumeration theorem is an application and generalization of Burnside's lemma. Before introducing the Pólya enumeration theorem, we briefly review Burnside's lemma.
 
@@ -127,7 +127,7 @@ The analysis in the example generalizes to the general case.
     
     Here $X^g=\{x\in X:gx=x\}$ is the set of fixed points under the action of $g\in G$.
 
-Its proof is almost the same as the analysis in the example above. However, the example relied on an observation: the action of $G$ on a single element $x$ has a kind of "periodicity", so the number of repeats equals the number of operations that map $x$ to itself. This observation is true in general, but since the structure of $G$ can be complicated, its "periodicity" is not always as direct as in the example. Stating this observation rigorously requires the [orbit-stabilizer theorem](../algebra/group-theory.md#稳定化子) from group theory.
+Its proof is almost the same as the analysis in the example above. However, the example relied on an observation: the action of $G$ on a single element $x$ has a kind of "periodicity", so the number of repeats equals the number of operations that map $x$ to itself. This observation is true in general, but since the structure of $G$ can be complicated, its "periodicity" is not always as direct as in the example. Stating this observation rigorously requires the [orbit-stabilizer theorem](../algebra/group-theory.md#stabilizers) from group theory.
 
 To apply it, we just need to list all the symmetry operations and give the number of fixed points of each one; this solves the counting problem. Here is a slightly more complex application.
 
@@ -163,7 +163,7 @@ This can be seen intuitively from the cube coloring example above. For every sym
 
 In mathematical language, choosing a coloring of a structure means choosing a map $f:X\rightarrow C$ from the set $X$ of colorable objects of the structure (such as the beads of a necklace or the faces of a cube) to the set of colors $C$. So the set of colorings is $C^X$. The symmetry group $G$ of the structure acts on the structure, and so it naturally acts on the set $X$ as well. Each such symmetry operation corresponds to a bijection on $X$, i.e. a **permutation**.[^perm-group]
 
-Now let us analyze the structure of the fixed-point set $(C^X)^g$. View a given $g$ as a permutation on $X$. As in the example, if position $x$ in $X$ can be moved to position $y$ by applying $g$ a finite number of times, then a fixed point $f\in (C^X)^g$ must satisfy $f(x)=f(y)$. In the language of orbits from the previous section, positions $x$ and $y$ lie in the same orbit under the action of $g$[^g-act], so they must have the same color. In the language of permutations, in the [cycle decomposition](../permutation.md#轮换表示) of $g$, positions $x$ and $y$ are in the same cycle, so they must have the same color. Different cycles in the decomposition need not share a color and can be colored independently. So the number of independently colorable regions is $c(g)$, the number of cycles in the cycle decomposition of $g$.
+Now let us analyze the structure of the fixed-point set $(C^X)^g$. View a given $g$ as a permutation on $X$. As in the example, if position $x$ in $X$ can be moved to position $y$ by applying $g$ a finite number of times, then a fixed point $f\in (C^X)^g$ must satisfy $f(x)=f(y)$. In the language of orbits from the previous section, positions $x$ and $y$ lie in the same orbit under the action of $g$[^g-act], so they must have the same color. In the language of permutations, in the [cycle decomposition](../permutation.md#cycle-notation) of $g$, positions $x$ and $y$ are in the same cycle, so they must have the same color. Different cycles in the decomposition need not share a color and can be colored independently. So the number of independently colorable regions is $c(g)$, the number of cycles in the cycle decomposition of $g$.
 
 Therefore the number of fixed points of operation $g$ is $|C|^{c(g)}$. Substituting this into Burnside's lemma gives the unweighted version of the **Pólya enumeration theorem**.
 
@@ -221,7 +221,7 @@ The unweighted Pólya enumeration theorem can only count all essentially differe
 
 From this example we get the following method. When the number of each color is restricted, we still color each cycle of each permutation in the symmetry group, but each color must be used exactly the given number of times. Such combinatorial problems usually have no explicit solution. Apart from special cases that can be computed with [combinatorics](../combinatorics/combination.md), they usually need to be solved as a [knapsack problem](../../dp/knapsack/basic.md).
 
-Generating functions give the answer to this kind of counting problem. Given a permutation $g$ whose [type](../permutation.md#置换的型) is $1^{\alpha_1}2^{\alpha_2}\cdots n^{\alpha_n}$, i.e. it has $\alpha_k$ cycles of length $k$, and each cycle can be colored with one of $m$ colors, then in the generating function
+Generating functions give the answer to this kind of counting problem. Given a permutation $g$ whose [type](../permutation.md#cycle-type) is $1^{\alpha_1}2^{\alpha_2}\cdots n^{\alpha_n}$, i.e. it has $\alpha_k$ cycles of length $k$, and each cycle can be colored with one of $m$ colors, then in the generating function
 
 $$
 \prod_{k=1}^n\left(\sum_{i=1}^mx_i^k\right)^{\alpha_k}
@@ -275,7 +275,7 @@ The statement of the theorem uses the cycle index of a permutation group. It has
 
 ### Applications
 
-The weighted Pólya enumeration theorem plays an important role in combinatorial counting. Here we briefly discuss its applications; for a more general discussion see [Formal Methods for Combinatorial Problems](../poly/symbolic-method.md#有限制的构造).
+The weighted Pólya enumeration theorem plays an important role in combinatorial counting. Here we briefly discuss its applications; for a more general discussion see [Formal Methods for Combinatorial Problems](../poly/symbolic-method.md#restricted-constructions).
 
 ???+ example "Diamond necklace"
     A necklace has four identical beads, and each bead can hold any number of diamonds. If there are four diamonds, how many essentially different ways are there to set them? (Two settings are considered the same if one can be turned into the other by rotating the necklace.)
@@ -308,7 +308,7 @@ This example shows that the weighted Pólya enumeration theorem can solve far mo
 
 ## Common symmetry groups
 
-One of the difficulties in Pólya counting problems is analyzing the structure of the permutation group. Here we briefly discuss the structure of common symmetry groups and describe them by their cycle indices. Note that for the symmetry group of the same structure, if it acts on different sets of objects, the corresponding [group actions](../algebra/group-theory.md#群作用) are different, and so are their permutation representations. For example, the actions of the cube's symmetry group on its vertices, edges and faces correspond to the vertex, edge and face permutation groups of the cube. The numbers of vertices, edges and faces are all different, so these permutation groups and their cycle indices are of course also different. So when solving a concrete problem, do not forget to specify what the group acts on.
+One of the difficulties in Pólya counting problems is analyzing the structure of the permutation group. Here we briefly discuss the structure of common symmetry groups and describe them by their cycle indices. Note that for the symmetry group of the same structure, if it acts on different sets of objects, the corresponding [group actions](../algebra/group-theory.md#group-actions) are different, and so are their permutation representations. For example, the actions of the cube's symmetry group on its vertices, edges and faces correspond to the vertex, edge and face permutation groups of the cube. The numbers of vertices, edges and faces are all different, so these permutation groups and their cycle indices are of course also different. So when solving a concrete problem, do not forget to specify what the group acts on.
 
 ??? info "Relation between symmetry groups and permutation groups"
     Although the two concepts are very similar, they are definitely not the same object. In group theory terms, given a symmetry group $G$ and its action on a set $X$, the permutation representation of the action gives a homomorphism $\varphi$ from $G$ to the symmetric group $S_X$. In combinatorial counting, this permutation representation is usually faithful, i.e. $\ker\varphi=\{e\}$, so $\varphi$ is really an embedding of $G$ into $S_X$. The permutation group in this article is the image of this embedding, $\varphi(G)$, which is isomorphic to the symmetry group $G$ itself. So for the same symmetry group $G$ of a structure, different choices of group action give different permutation groups $\varphi(G)$, and thus different cycle indices (isomorphic permutation groups do not necessarily have the same cycle index).
@@ -320,7 +320,7 @@ Given a structure, its symmetry group is the set of all operations that map it o
 -   There is an identity symmetry operation, i.e. leaving the structure unchanged also counts as an operation;
 -   Every operation has an inverse operation that undoes its effect.
 
-A [group](../algebra/basic.md#群) is the abstraction of everything that satisfies these conditions. Studying the structure of groups is the main subject of [group theory](../algebra/group-theory.md). Here we focus on symmetry groups, and our discussion of their structure mainly takes a geometric view. We give common examples, from which readers should learn the usual way of thinking about such problems.
+A [group](../algebra/basic.md#groups) is the abstraction of everything that satisfies these conditions. Studying the structure of groups is the main subject of [group theory](../algebra/group-theory.md). Here we focus on symmetry groups, and our discussion of their structure mainly takes a geometric view. We give common examples, from which readers should learn the usual way of thinking about such problems.
 
 ### Cyclic group
 
@@ -388,7 +388,7 @@ $$
 
 Given $n$ elements, all permutations of them form a group, called the symmetric group of degree $n$, written $S_n$. It describes all the symmetries these $n$ elements can have. It is also the permutation representation of the action of these symmetry operations on the set of elements.
 
-From the analysis in [Permutations and Arrangements](../permutation.md#置换的型), its cycle index is
+From the analysis in [Permutations and Arrangements](../permutation.md#cycle-type), its cycle index is
 
 $$
 Z(S_n)=\sum_{\alpha_1+2\alpha_2+\cdots+n\alpha_n=n}\frac{t_1^{\alpha_1}t_2^{\alpha_2}\cdots t_n^{\alpha_n}}{1^{\alpha_1}2^{\alpha_2}\cdots n^{\alpha_n}\alpha_1!\alpha_2!\cdots\alpha_n!}.

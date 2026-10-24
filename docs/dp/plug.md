@@ -203,7 +203,7 @@ In the code above:
 -   `push()` is the transition function, where `d` is a global variable (a shortcut) holding the increment of each transition. If the state is found, we do `+=`; otherwise we create a new node with state `s` and key `d`.
 -   `roll()` rolls the contour line after a whole row has been processed.
 
-For the complexity analysis of hash tables and the difference between open and closed hashing, see the chapter on hash tables in [Introduction to Algorithms](../contest/resources.md#书籍).
+For the complexity analysis of hash tables and the difference between open and closed hashing, see the chapter on hash tables in [Introduction to Algorithms](../contest/resources.md#books).
 
 #### Transitions
 
@@ -795,7 +795,7 @@ Plug DP problems are usually hard to code and involve many cases, so they are a 
 
 ### Domino tiling
 
-['HDU 1400' Mondriaan’s Dream](https://acm.hdu.edu.cn/showproblem.php?pid=1400) also appears in [Training Guide for Algorithm Competitions](../contest/resources.md#书籍), as an example problem in the section "Dynamic programming on contour lines". [Domino tiling](https://en.wikipedia.org/wiki/Domino_tiling) is a family of classic math problems. Changing the constraints slightly gives subproblems of different difficulty that need different algorithms.
+['HDU 1400' Mondriaan’s Dream](https://acm.hdu.edu.cn/showproblem.php?pid=1400) also appears in [Training Guide for Algorithm Competitions](../contest/resources.md#books), as an example problem in the section "Dynamic programming on contour lines". [Domino tiling](https://en.wikipedia.org/wiki/Domino_tiling) is a family of classic math problems. Changing the constraints slightly gives subproblems of different difficulty that need different algorithms.
 
 When $m=2$, domino tiling is equivalent to the Fibonacci sequence. [Concrete Mathematics](https://www.csie.ntu.edu.tw/~r97002/temp/Concrete%20Mathematics%202e.pdf) uses this problem to introduce the Fibonacci numbers and derives their closed form in several ways.
 

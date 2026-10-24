@@ -9,11 +9,11 @@ This page discusses the maximum matching problem in a bipartite graph $G=(X,Y,E)
 A typical real-life example of bipartite matching is pairing up boys and girls. Suppose there are some boys ($X$) and some girls ($Y$). Each person can be paired at most once, and the allowed pairs are given by a list ($E$). The task of a bipartite maximum matching algorithm is to find as many pairs as possible under these constraints, so that as many people as possible get paired.
 
 ???+ info "Tip"
-    This page assumes that a partition (coloring) of the vertex set $V$ of the bipartite graph is already known: $V=X\cup Y$. If you do not know the partition of $V$ in advance, you can find one in $O(|V|+|E|)$ time with the [bipartite coloring algorithm](../bi-graph.md#判定).
+    This page assumes that a partition (coloring) of the vertex set $V$ of the bipartite graph is already known: $V=X\cup Y$. If you do not know the partition of $V$ in advance, you can find one in $O(|V|+|E|)$ time with the [bipartite coloring algorithm](../bi-graph.md#testing).
 
 ## Kuhn's algorithm
 
-Kuhn's algorithm is a direct application of [Berge's lemma](./graph-match.md#berge-引理). It is also a part of the [Hungarian algorithm](./bigraph-weight-match.md#hungarian-algorithm-kuhnmunkres-algorithm).
+Kuhn's algorithm is a direct application of [Berge's lemma](./graph-match.md#berges-lemma). It is also a part of the [Hungarian algorithm](./bigraph-weight-match.md#hungarian-algorithm-kuhnmunkres-algorithm).
 
 ### How it works
 
@@ -27,7 +27,7 @@ To find augmenting paths, we can orient the bipartite graph based on the current
 
 At the start, all edges point toward the right side. Each time an augmenting path is found, we reverse every edge along it, to show that their matched status has flipped. When the algorithm ends, the edges pointing toward the left side are exactly the matched edges.
 
-We only need to try each of $O(|V|)$ left vertices [once](./graph-match.md#berge-引理), so the total time complexity of the algorithm is $O(|V||E|)$.
+We only need to try each of $O(|V|)$ left vertices [once](./graph-match.md#berges-lemma), so the total time complexity of the algorithm is $O(|V||E|)$.
 
 ### Optimization
 
@@ -52,7 +52,7 @@ In the implementation, you do not need to actually maintain the orientation. It 
 
 ## The Hopcroft–Karp algorithm
 
-The Hopcroft–Karp algorithm further optimizes how Kuhn's algorithm searches for augmenting paths. It cuts the total number of rounds to $O(|V|^{1/2})$, which gives a time complexity of $O(|V|^{1/2}|E|)$. This algorithm is actually a special case of [Dinic's algorithm](../flow/max-flow.md#dinic-算法).
+The Hopcroft–Karp algorithm further optimizes how Kuhn's algorithm searches for augmenting paths. It cuts the total number of rounds to $O(|V|^{1/2})$, which gives a time complexity of $O(|V|^{1/2}|E|)$. This algorithm is actually a special case of [Dinic's algorithm](../flow/max-flow.md#dinics-algorithm).
 
 ### How it works
 
@@ -71,7 +71,7 @@ Compared with Kuhn's algorithm, the key change in Hopcroft–Karp is the extra s
     
     Suppose the BFS in the current round extends $\ell$ levels. Since the unmatched right vertices found by the BFS all lie on the same level, every augmenting path the DFS finds in this round has length $\ell$. We need to show that after augmenting along this set of paths $\{P_i\}$, the re-oriented directed graph no longer has any augmenting path of length at most $\ell$.
     
-    In fact, if $P$ is a shortest augmenting path with respect to $M$ and $P'$ is an augmenting path with respect to $M\oplus P$, then $|P'|\ge |P| + 2|P\cap P'|$ always holds. This is because $N=(M\oplus P)\oplus P'$ is obtained from $M$ by augmenting twice, so, as in the [proof of Berge's lemma](./graph-match.md#berge-引理), the symmetric difference $M\oplus N=P\oplus P'$ contains at least two disjoint augmenting paths $P_1$ and $P_2$ with respect to $M$. Since $P$ is shortest, we have
+    In fact, if $P$ is a shortest augmenting path with respect to $M$ and $P'$ is an augmenting path with respect to $M\oplus P$, then $|P'|\ge |P| + 2|P\cap P'|$ always holds. This is because $N=(M\oplus P)\oplus P'$ is obtained from $M$ by augmenting twice, so, as in the [proof of Berge's lemma](./graph-match.md#berges-lemma), the symmetric difference $M\oplus N=P\oplus P'$ contains at least two disjoint augmenting paths $P_1$ and $P_2$ with respect to $M$. Since $P$ is shortest, we have
     
     $$
     2|P|\le |P_1|+|P_2|\le |P\oplus P'| = |P| + |P'| - 2|P\cap P'|.
@@ -109,7 +109,7 @@ The bipartite maximum matching problem can be reduced to the maximum flow proble
 
 As shown in the figure, add two vertices as the source and the sink. Add an edge from the source to each left vertex, an edge from each right vertex to the sink, and for each undirected edge of the bipartite graph, an edge from its left vertex to its right vertex. All edges have capacity $1$. Every integer flow in this directed graph corresponds one-to-one to a matching in the bipartite graph, and the value of the flow is the size of the matching. So finding a maximum bipartite matching is the same as finding a maximum flow in this directed graph.
 
-Any algorithm that solves maximum flow can be used to solve bipartite maximum matching. It is easy to see that Kuhn's algorithm and Hopcroft–Karp are special cases of the corresponding maximum flow algorithms. Likewise, the [push-relabel algorithm](../flow/max-flow.md#push-relabel-预流推进算法) and others can also be used for bipartite maximum matching. Note, however, that any maximum flow algorithm needs to be specifically optimized when applied to bipartite matching, to avoid a large constant factor.
+Any algorithm that solves maximum flow can be used to solve bipartite maximum matching. It is easy to see that Kuhn's algorithm and Hopcroft–Karp are special cases of the corresponding maximum flow algorithms. Likewise, the [push-relabel algorithm](../flow/max-flow.md#push-relabel-preflow-push-algorithms) and others can also be used for bipartite maximum matching. Note, however, that any maximum flow algorithm needs to be specifically optimized when applied to bipartite matching, to avoid a large constant factor.
 
 ### Linear programming formulation
 
@@ -165,7 +165,7 @@ One can prove that these three vertex sets $\mathcal E,\mathcal O,\mathcal U$ ha
 ??? note "Proof"
     1.  By definition, $\mathcal U$ is disjoint from $\mathcal E\cup\mathcal O$. We only need to show that $\mathcal E$ and $\mathcal O$ are disjoint. Suppose not. For a vertex $v\in\mathcal E\cap\mathcal O$, there is an even-length alternating path from an unmatched vertex $a$ to $v$, and an odd-length alternating path from an unmatched vertex $b$ to $v$. Since $G$ is bipartite, $a\neq b$, and the two paths reach $v$ through a matched edge and an unmatched edge, respectively. So joining the two paths gives an alternating path from $a$ through $v$ to $b$. This is an augmenting path, which contradicts $M$ being a maximum matching. So $\mathcal E\cap\mathcal O=\varnothing$.
     
-        Let $M'$ be a maximum matching different from $M$. Repeating the [proof of Berge's lemma](./graph-match.md#berge-引理) shows that $M'\oplus M$ consists only of even-length paths and even cycles. Starting from the maximum matching $M$, we can flip the edges of these components (paths and cycles) one by one (swapping matched and unmatched edges) to get the maximum matching $M'$. When flipping an even cycle, unmatched vertices stay unmatched, and the parity of the lengths of alternating paths from them does not change. When flipping an even-length path, the matched status of its two endpoints swaps, but the parity of the path length from either of them to any vertex on the path is the same. So the sets $\mathcal E,\mathcal O,\mathcal U$ never change during the flipping. This shows the decomposition does not depend on the choice of the maximum matching $M$.
+        Let $M'$ be a maximum matching different from $M$. Repeating the [proof of Berge's lemma](./graph-match.md#berges-lemma) shows that $M'\oplus M$ consists only of even-length paths and even cycles. Starting from the maximum matching $M$, we can flip the edges of these components (paths and cycles) one by one (swapping matched and unmatched edges) to get the maximum matching $M'$. When flipping an even cycle, unmatched vertices stay unmatched, and the parity of the lengths of alternating paths from them does not change. When flipping an even-length path, the matched status of its two endpoints swaps, but the parity of the path length from either of them to any vertex on the path is the same. So the sets $\mathcal E,\mathcal O,\mathcal U$ never change during the flipping. This shows the decomposition does not depend on the choice of the maximum matching $M$.
     2.  If a matched edge appears on some alternating path starting from an unmatched vertex $v$, then its two endpoints have distances to $v$ of different parity, so one is in $\mathcal E$ and the other in $\mathcal O$. Otherwise, both endpoints must be in $\mathcal U$. This shows that matched edges of a maximum matching are always $\mathcal E\mathcal O$ edges or $\mathcal U\mathcal U$ edges. On the other hand, an unmatched vertex can be reached by the zero-length alternating path starting from itself, so it only appears in $\mathcal E$. This shows that all vertices in $\mathcal O$ and $\mathcal U$ are matched. Simple counting shows that the size of a maximum matching is $|\mathcal O|+|\mathcal U|/2$.
     3.  By definition, any vertex $a$ in $\mathcal E$ can be reached from an unmatched vertex $v$ along an even-length alternating path. That is, a vertex of $\mathcal E$ is either unmatched, or the alternating path $P$ reaching it ends with a matched edge. If $G$ has an edge between $a$ and some vertex $b$ in $\mathcal E\cup\mathcal U$, then by the discussion above this edge must be unmatched, and we can extend the alternating path $P$ along it. This shows that $b$ also belongs to $\mathcal O$, which contradicts the first property. So $G$ has no edge between a vertex of $\mathcal E$ and a vertex of $\mathcal E\cup\mathcal U$.
 
@@ -191,14 +191,14 @@ Similarly, if an edge $e$ is matched in every maximum matching of the bipartite 
     Let the Dulmage–Mendelsohn decomposition of the bipartite graph $G=(X,Y,E)$ be $V=\mathcal E\cup\mathcal O\cup\mathcal U$, and let $M$ be one of its maximum matchings. Then an edge $e\in E$ is critical if and only if both endpoints of $e$ are in $\mathcal U$, $e$ is a matched edge of $M$, and there is no alternating cycle with respect to $M$ that contains $e$.
 
 ??? note "Proof"
-    The endpoints of a critical edge must be critical vertices. By the properties of the Dulmage–Mendelsohn decomposition, edges of a maximum matching can only be $\mathcal E\mathcal O$ edges or $\mathcal U\mathcal U$ edges. But $\mathcal E$ has no critical vertices, so a critical edge can only be a $\mathcal U\mathcal U$ edge. Of course, a critical edge must also be a matched edge of $M$. Let $e\in M$ be a $\mathcal U\mathcal U$ edge. It is not critical if and only if there is another maximum matching $M'\neq M$ with $e\in M\oplus M'$. Repeating the [proof of Berge's lemma](./graph-match.md#berge-引理) shows that $M'\oplus M$ consists only of even-length paths and even cycles. One endpoint of each such path is unmatched with respect to $M$, so no vertex on the path is in $\mathcal U$, which contradicts the choice of $e$. So $e$ can only appear in an even cycle. Therefore a $\mathcal U\mathcal U$ edge $e\in M$ is not critical if and only if there is an alternating cycle with respect to $M$ that contains $e$. This is what we wanted to prove.
+    The endpoints of a critical edge must be critical vertices. By the properties of the Dulmage–Mendelsohn decomposition, edges of a maximum matching can only be $\mathcal E\mathcal O$ edges or $\mathcal U\mathcal U$ edges. But $\mathcal E$ has no critical vertices, so a critical edge can only be a $\mathcal U\mathcal U$ edge. Of course, a critical edge must also be a matched edge of $M$. Let $e\in M$ be a $\mathcal U\mathcal U$ edge. It is not critical if and only if there is another maximum matching $M'\neq M$ with $e\in M\oplus M'$. Repeating the [proof of Berge's lemma](./graph-match.md#berges-lemma) shows that $M'\oplus M$ consists only of even-length paths and even cycles. One endpoint of each such path is unmatched with respect to $M$, so no vertex on the path is in $\mathcal U$, which contradicts the choice of $e$. So $e$ can only appear in an even cycle. Therefore a $\mathcal U\mathcal U$ edge $e\in M$ is not critical if and only if there is an alternating cycle with respect to $M$ that contains $e$. This is what we wanted to prove.
 
 So to find the critical edges of maximum matchings, follow these steps:
 
 1.  Find a maximum matching $M$ of $G$;
 2.  Orient the edges of $G$ according to $M$ to get the directed graph $G_M$;
 3.  Run a BFS to find the set $\mathcal U$ of the Dulmage–Mendelsohn decomposition, that is, the set of vertices that cannot be reached from unmatched vertices along alternating paths;
-4.  Use [Tarjan's algorithm](../scc.md#tarjan-算法) to find all strongly connected components of the directed graph $G_M$;
+4.  Use [Tarjan's algorithm](../scc.md#tarjans-algorithm) to find all strongly connected components of the directed graph $G_M$;
 5.  Go through the edges of the matching $M$. If both endpoints of an edge are in $\mathcal U$ but not in the same strongly connected component, it is a critical edge.
 
 After the maximum matching is found, the remaining steps take $O(|V|+|E|)$ time.
@@ -225,7 +225,7 @@ Minimum vertex cover in general graphs is NP-hard, but for bipartite graphs, Kő
     
     Next, we show that $C$ is a minimum vertex cover. To cover all edges of the maximum matching $M$, any vertex cover needs at least $|M|$ vertices. So it suffices to prove $|C|=|M|$. This is the same as proving that $C$ contains nothing besides one endpoint of each matched edge, that is, $C$ contains no unmatched vertex. Suppose not; then there is an unmatched vertex $v\in C$. If $v\in X$, then $v\in U\subseteq Z$, which contradicts the construction of $C$. If $v\in Y$, then an alternating path reaching $v$ is an augmenting path with respect to $M$, which by Berge's lemma contradicts $M$ being a maximum matching. These contradictions show that there is no such unmatched vertex, so $C$ is a minimum vertex cover.
 
-From the network flow point of view, minimum vertex cover is a minimum cut problem: choosing a left vertex means cutting its edge from the source, and choosing a right vertex means cutting its edge to the sink. From the linear programming point of view, minimum vertex cover is the dual of maximum matching. So Kőnig's theorem can be seen as a special case of the [max-flow min-cut theorem](../flow/max-flow.md#最大流最小割定理), or more generally, a special case of the strong duality theorem of linear programming.
+From the network flow point of view, minimum vertex cover is a minimum cut problem: choosing a left vertex means cutting its edge from the source, and choosing a right vertex means cutting its edge to the sink. From the linear programming point of view, minimum vertex cover is the dual of maximum matching. So Kőnig's theorem can be seen as a special case of the [max-flow min-cut theorem](../flow/max-flow.md#max-flow-min-cut-theorem), or more generally, a special case of the strong duality theorem of linear programming.
 
 ### Maximum independent set in bipartite graphs
 
@@ -263,7 +263,7 @@ This gives the following result:
 
 The proof is constructive, so it is easy to build the corresponding minimum path cover from the maximum matching found. Also, this construction shows why the reduction fails for general directed graphs: a matching in the bipartite graph may correspond to a cycle in the directed graph.
 
-In particular, for a set $X$ with a partial order $P$ on it, we can build the DAG $G=(X,P)$. Then by [Dilworth's theorem](../../math/order-theory.md#dilworth-定理与-mirsky-定理), the size of a minimum path cover of $G$ equals the size of its largest antichain, which is the width of the poset $(X,P)$. So this section actually gives an efficient way to compute the width of any poset.
+In particular, for a set $X$ with a partial order $P$ on it, we can build the DAG $G=(X,P)$. Then by [Dilworth's theorem](../../math/order-theory.md#dilworths-theorem-and-mirskys-theorem), the size of a minimum path cover of $G$ equals the size of its largest antichain, which is the width of the poset $(X,P)$. So this section actually gives an efficient way to compute the width of any poset.
 
 ## Example problems
 

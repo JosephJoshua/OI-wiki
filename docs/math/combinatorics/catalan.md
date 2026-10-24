@@ -170,7 +170,7 @@ Next, check that these forms really solve the Catalan recurrence. To do this, we
     C(x) = \dfrac{1- \sqrt{1-4x}}{2x}.
     $$
     
-    Next, we need to expand it as a power series. Using the [power series expansion](../poly/intro.md#常见的幂级数展开式) of $(1+x)^a$, we get:
+    Next, we need to expand it as a power series. Using the [power series expansion](../poly/intro.md#common-power-series-expansions) of $(1+x)^a$, we get:
     
     $$
     \sqrt{1-4x} = \sum_{n=0}^{\infty} \dfrac{\left(\frac{1}{2}\right)_{-n}}{n!}(-4x)^n,

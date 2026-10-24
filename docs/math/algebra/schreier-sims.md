@@ -167,7 +167,7 @@ The question is what data structure to use to store the corresponding transversa
 
 #### Direct storage
 
-The simplest method, of course, is to store every element $t$ of the transversal $T$ directly. A single permutation stored in [one-line notation](../permutation.md#单行记号) takes exactly $n$ space, so storing such a transversal takes $O(|T|n)$ space. The advantage is that accessing a single coset representative takes $O(1)$ time; the cost is that computing these coset representatives the first time takes $O(|T|n)$ time.
+The simplest method, of course, is to store every element $t$ of the transversal $T$ directly. A single permutation stored in [one-line notation](../permutation.md#one-line-notation) takes exactly $n$ space, so storing such a transversal takes $O(|T|n)$ space. The advantage is that accessing a single coset representative takes $O(1)$ time; the cost is that computing these coset representatives the first time takes $O(|T|n)$ time.
 
 #### Schreier tree
 

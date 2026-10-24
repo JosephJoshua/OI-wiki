@@ -57,7 +57,7 @@ $$
 f(x)=\sum_{i=1}^ny_i\cdot\prod_{j\neq i}\dfrac{x-x_j}{x_i-x_j}
 $$
 
-A naive implementation takes $O(n^2)$ time. This can be improved to $O(n\log^2 n)$; see [fast polynomial interpolation](../poly/multipoint-eval-interpolation.md#多项式的快速插值).
+A naive implementation takes $O(n^2)$ time. This can be improved to $O(n\log^2 n)$; see [fast polynomial interpolation](../poly/multipoint-eval-interpolation.md#fast-polynomial-interpolation).
 
 ???+ note "[Luogu P4781 [Template] Lagrange Interpolation](https://www.luogu.com.cn/problem/P4781)"
     You are given $n$ point pairs $(x_i,y_i)$ and $k$, where $\forall i,j$ we have $i\neq j \iff x_i\neq x_j$, $f(x_i)\equiv y_i\pmod{998244353}$ and $\deg(f(x)) < n$ (with $\deg(0)=-\infty$). Find $f(k)\bmod{998244353}$.

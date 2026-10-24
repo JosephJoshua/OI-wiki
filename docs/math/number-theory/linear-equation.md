@@ -12,7 +12,7 @@ is called a **linear congruence equation**.
 
 To solve a linear congruence, we need to find all solutions $x$ in the range $[0,n-1]$. Of course, adding or subtracting any multiple of $n$ to them still gives solutions. Modulo $n$, these are all the solutions of the equation.
 
-The rest of this article introduces two ways to solve linear congruences, one using modular inverses and one using Diophantine equations. In the general case, both computing inverses and solving Diophantine equations rely on the [extended Euclidean algorithm](./gcd.md#扩展欧几里得算法), so the two approaches are really the same.
+The rest of this article introduces two ways to solve linear congruences, one using modular inverses and one using Diophantine equations. In the general case, both computing inverses and solving Diophantine equations rely on the [extended Euclidean algorithm](./gcd.md#extended-euclidean-algorithm), so the two approaches are really the same.
 
 ## Solving with inverses
 
@@ -50,7 +50,7 @@ Putting the two cases together, the **number of solutions** of a linear congruen
 
 ## Solving with Diophantine equations
 
-A linear congruence is equivalent to the [linear Diophantine equation in two variables](./bezouts.md#两个变量的情形) $x,y$:
+A linear congruence is equivalent to the [linear Diophantine equation in two variables](./bezouts.md#two-variables) $x,y$:
 
 $$
 ax + ny = b.

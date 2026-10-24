@@ -49,7 +49,7 @@ The odd prime power case is simpler. In fact, whenever a primitive root exists, 
     g^{ky} \equiv g^{\operatorname{ind}_g a}\pmod m.
     $$
     
-    Here $\operatorname{ind}_g a$ is the discrete logarithm. By the [properties of the order](./primitive-root.md#幂的循环结构) and $\delta_m(g)=\varphi(m)$, this is equivalent to the congruence
+    Here $\operatorname{ind}_g a$ is the discrete logarithm. By the [properties of the order](./primitive-root.md#cyclic-structure-of-powers) and $\delta_m(g)=\varphi(m)$, this is equivalent to the congruence
     
     $$
     ky \equiv \operatorname{ind}_g a \pmod{\varphi(m)}.
@@ -61,15 +61,15 @@ The odd prime power case is simpler. In fact, whenever a primitive root exists, 
     y \equiv y_0 + id' \pmod{\varphi(m)},~0\le y_0 < d',~i=0,1,\cdots,d-1.
     $$
     
-    This gives almost everything in the theorem. The only thing left to explain is the test $a^{d'} \equiv 1 \pmod m$. By [property 3 of the order](./primitive-root.md#幂的循环结构),
+    This gives almost everything in the theorem. The only thing left to explain is the test $a^{d'} \equiv 1 \pmod m$. By [property 3 of the order](./primitive-root.md#cyclic-structure-of-powers),
     
     $$
     \delta_m(a) = \delta_m(g^{\operatorname{ind}_g a}) = \dfrac{\varphi(m)}{\gcd(\varphi(m),\operatorname{ind}_g a)}.
     $$
     
-    We also know the equation has a solution if and only if $d\mid \operatorname{ind}_g a$, that is, $\delta_m(a)\mid d'$. By [property 2 of the order](./primitive-root.md#幂的循环结构), this is equivalent to the test.
+    We also know the equation has a solution if and only if $d\mid \operatorname{ind}_g a$, that is, $\delta_m(a)\mid d'$. By [property 2 of the order](./primitive-root.md#cyclic-structure-of-powers), this is equivalent to the test.
 
-The case where the modulus is a power of $2$ is special. To handle it, we need a [result](./primitive-root.md#递推公式) about the structure of the reduced residue system modulo $2^e$: every odd number $a$ is congruent to exactly one integer of the form $(-1)^s5^r\bmod 2^e$, where $s\in\{0,1\}$ and $0\le r < 2^{e-2}$. With this result we get the following:
+The case where the modulus is a power of $2$ is special. To handle it, we need a [result](./primitive-root.md#recursive-formula) about the structure of the reduced residue system modulo $2^e$: every odd number $a$ is congruent to exactly one integer of the form $(-1)^s5^r\bmod 2^e$, where $s\in\{0,1\}$ and $0\le r < 2^{e-2}$. With this result we get the following:
 
 ???+ note "Theorem"
     Let $k\ge 2$ be an integer, $a$ an odd number, and $m=2^e$ a positive integer with $e \ge 2$. When $k$ is odd:
@@ -116,18 +116,18 @@ The case where the modulus is a power of $2$ is special. To handle it, we need a
     
         Combining them gives the general solution of the original equation.
 
-This fully settles how to test for $k$-th power residues under any modulus. The Legendre symbol, quadratic reciprocity and related ideas from quadratic residues also extend to higher-power residues, but this is not easy and needs concepts such as [cyclotomic fields](../algebra/field-theory.md#分圆域). In algebraic number theory, quadratic reciprocity is ultimately generalized to [Artin reciprocity](https://en.wikipedia.org/wiki/Artin_reciprocity).
+This fully settles how to test for $k$-th power residues under any modulus. The Legendre symbol, quadratic reciprocity and related ideas from quadratic residues also extend to higher-power residues, but this is not easy and needs concepts such as [cyclotomic fields](../algebra/field-theory.md#cyclotomic-fields). In algebraic number theory, quadratic reciprocity is ultimately generalized to [Artin reciprocity](https://en.wikipedia.org/wiki/Artin_reciprocity).
 
 ## Roots of unity
 
-As a special case of $k$-th roots, this section discusses $k$-th (primitive) roots of unity. They can be seen as the counterpart, in the reduced residue system $\mathbf Z_m^*$ modulo $m$, of $k$-th [roots of unity](../complex.md#单位根) in the complex numbers $\mathbf C$. For a suitable modulus $m$, using a $k$-th primitive root of unity modulo $m$ in place of the complex root $\omega_k$ can speed up computation.
+As a special case of $k$-th roots, this section discusses $k$-th (primitive) roots of unity. They can be seen as the counterpart, in the reduced residue system $\mathbf Z_m^*$ modulo $m$, of $k$-th [roots of unity](../complex.md#roots-of-unity) in the complex numbers $\mathbf C$. For a suitable modulus $m$, using a $k$-th primitive root of unity modulo $m$ in place of the complex root $\omega_k$ can speed up computation.
 
 As in the complex case, we have the following definition:
 
 ???+ abstract "$k$-th root of unity modulo $m$"
     For a modulus $m$, a $k$-th root of the element $1$ is called a **$k$-th root of unity modulo $m$**. In particular, if $x$ is a $k$-th root of unity modulo $m$ and is not a $k'$-th root of unity modulo $m$ for any $k' < k$, then $x$ is called a **$k$-th primitive root of unity modulo $m$**.
 
-Comparing with the [definition of a primitive root](./primitive-root.md#原根), a primitive root $g$ is exactly a $\varphi(m)$-th primitive root of unity modulo $m$, where $\varphi(m)$ is [Euler's totient function](./euler-totient.md).
+Comparing with the [definition of a primitive root](./primitive-root.md#primitive-root), a primitive root $g$ is exactly a $\varphi(m)$-th primitive root of unity modulo $m$, where $\varphi(m)$ is [Euler's totient function](./euler-totient.md).
 
 When a $k$-th primitive root of unity modulo $m$ exists, it has the same algebraic properties as the complex $k$-th primitive root of unity $\omega_k$, so it can replace $\omega_k$ in all kinds of calculations. For example, using it in the [fast Fourier transform](../poly/fft.md) gives the [number theoretic transform](../poly/ntt.md) over a finite field[^fnnt].
 
@@ -136,9 +136,9 @@ When a $k$-th primitive root of unity modulo $m$ exists, it has the same algebra
 In the complex numbers, (primitive) roots of unity of every order exist. This is not the case for (primitive) roots of unity in number theory.
 
 ???+ note "Properties"
-    For a modulus $m$, let $\lambda(m)$ be its [Carmichael function](./primitive-root.md#carmichael-函数). Then:
+    For a modulus $m$, let $\lambda(m)$ be its [Carmichael function](./primitive-root.md#carmichael-function). Then:
     
-    1.  Every integer $a$ coprime to $m$ is a $\delta_m(a)$-th primitive root of unity modulo $m$, where $\delta_m(a)$ is the [order](./primitive-root.md#阶) of $a$ modulo $m$.
+    1.  Every integer $a$ coprime to $m$ is a $\delta_m(a)$-th primitive root of unity modulo $m$, where $\delta_m(a)$ is the [order](./primitive-root.md#order) of $a$ modulo $m$.
     2.  If $a$ is a $k$-th root of unity modulo $m$ and $k'$ is any multiple of $k$, then $a$ is also a $k'$-th root of unity modulo $m$.
     3.  If $a$ is a $k$-th (primitive) root of unity modulo $m$, then $a^{\ell}$ is a $\dfrac{k}{\gcd(k,\ell)}$-th (primitive, respectively) root of unity modulo $m$.
     4.  As $k'$ runs over the divisors of $k$, the $k'$-th primitive roots of unity modulo $m$ form a partition of the $k$-th roots of unity modulo $m$. Moreover, for $\ell\perp k$, the map $x\mapsto x^\ell$ is a bijection on the $k$-th roots of unity and preserves this partition: it maps $k'$-th primitive roots of unity (for $k'\mid k$) to $k'$-th primitive roots of unity.
@@ -148,7 +148,7 @@ In the complex numbers, (primitive) roots of unity of every order exist. This is
 ??? note "Proof"
     By the definition of the order, every integer $a$ coprime to $m$ is a $\delta_m(a)$-th primitive root of unity modulo $m$, where $\delta_m(a)$ is the order of $a$ modulo $m$. Conversely, if $a$ is a $k$-th root of unity modulo $m$, then $\gcd(a^k,m)=1$, so $\gcd(a,m)=1$. So $a$ is a (primitive) root of unity modulo $m$ if and only if $a$ is coprime to $m$. This is property 1.
     
-    Checking the definition directly, whenever $k\mid k'$, $a^k\equiv 1\pmod m$ implies $a^{k'}\equiv 1\pmod m$. This is property 2. By the [properties of the order](./primitive-root.md#幂的循环结构),
+    Checking the definition directly, whenever $k\mid k'$, $a^k\equiv 1\pmod m$ implies $a^{k'}\equiv 1\pmod m$. This is property 2. By the [properties of the order](./primitive-root.md#cyclic-structure-of-powers),
     
     $$
     \delta_m(a^\ell) = \dfrac{\delta_m(a)}{\gcd(\delta_m(a),\ell)}.
@@ -172,7 +172,7 @@ In the complex numbers, (primitive) roots of unity of every order exist. This is
     
     So $a^{k'}$ is a $k$-th primitive root of unity. And by the definition of the Carmichael function, the order of every $x\perp m$ divides $\lambda(m)$. This gives property 5.
     
-    Property 6 follows by repeating, almost word for word, the proof of the [primitive root test](./primitive-root.md#原根判定定理). This test actually checks that $\delta_m(a)=k$.
+    Property 6 follows by repeating, almost word for word, the proof of the [primitive root test](./primitive-root.md#primitive-root-test). This test actually checks that $\delta_m(a)=k$.
 
 These properties show that $\lambda$-primitive roots modulo $m$ play a basic role similar to that of primitive roots when those exist. Unlike primitive roots, though, the powers of a $\lambda$-primitive root cannot generate all roots of unity modulo $m$. Still, $\lambda$-primitive roots are not rare[^lambda-density], so if we really need a $k$-th primitive root of unity, we can first find a $\lambda$-primitive root by random tries and then raise it to a suitable power to get a $k$-th primitive root of unity.
 
@@ -218,11 +218,11 @@ So far we have looked at the general case. When a primitive root exists, the str
     
     having a solution. Raising $g$ to both sides gives $a^x\equiv b\pmod{m}$, that is, $b$ is a power of $a$.
 
-This theorem shows that when a primitive root exists, the $k$-th roots of unity form a [cyclic group](../algebra/group-theory.md#循环群), and the $k$-th primitive roots of unity are its generators. As we will see later, the Tonelli–Shanks algorithm uses exactly this to speed up the discrete logarithm part of root extraction.
+This theorem shows that when a primitive root exists, the $k$-th roots of unity form a [cyclic group](../algebra/group-theory.md#cyclic-groups), and the $k$-th primitive roots of unity are its generators. As we will see later, the Tonelli–Shanks algorithm uses exactly this to speed up the discrete logarithm part of root extraction.
 
 ## Modular roots
 
-Finally, this page discusses how to find $k$-th roots. For $k=2$, there are [many efficient algorithms](./quad-residue.md#模意义下开平方) for taking square roots modulo $m$. For general $k$, however, no polynomial-time algorithm is known. This section introduces two common algorithms, which find one $k$-th root in $O(m^{1/2})$ and $O(m^{1/4+\varepsilon})$ time, respectively. The Chinese remainder theorem always reduces the problem to prime power moduli, so this section mainly deals with prime power moduli.
+Finally, this page discusses how to find $k$-th roots. For $k=2$, there are [many efficient algorithms](./quad-residue.md#modular-square-roots) for taking square roots modulo $m$. For general $k$, however, no polynomial-time algorithm is known. This section introduces two common algorithms, which find one $k$-th root in $O(m^{1/2})$ and $O(m^{1/4+\varepsilon})$ time, respectively. The Chinese remainder theorem always reduces the problem to prime power moduli, so this section mainly deals with prime power moduli.
 
 ### Naive algorithm
 
@@ -234,7 +234,7 @@ The [analysis](#properties) of $k$-th power residues above already gives a way t
     ky \equiv \operatorname{ind}_g a \pmod{\varphi(m)}.
     $$
 
-    Here $\operatorname{ind}_g a$ can be found with the [BSGS algorithm](./discrete-logarithm.md#大步小步算法), and all solutions of the [linear congruence](./linear-equation.md) are easy to find. This gives all $k$-th roots of $a$ as $x\equiv g^y\pmod m$.
+    Here $\operatorname{ind}_g a$ can be found with the [BSGS algorithm](./discrete-logarithm.md#baby-step-giant-step), and all solutions of the [linear congruence](./linear-equation.md) are easy to find. This gives all $k$-th roots of $a$ as $x\equiv g^y\pmod m$.
 
     There is another, similar approach. Again let $x\equiv g^y\pmod m$, and rewrite the equation as
 
@@ -274,7 +274,7 @@ Here is a reference implementation for $k$-th roots modulo a prime. (The code is
 
 ### Improved Tonelli–Shanks algorithm
 
-Suitably generalizing the [Tonelli–Shanks algorithm](./quad-residue.md#tonellishanks-算法) for modular square roots solves root extraction modulo prime powers. A fairly direct generalization is the Adleman–Manders–Miller algorithm[^amm], but its complexity is still not good enough[^amm-comp]. This section introduces the improved Tonelli–Shanks algorithm proposed by sugarknri, Min\_25, 37zigen and others. It finds one $k$-th root in $O(m^{1/4+\varepsilon})$ time.
+Suitably generalizing the [Tonelli–Shanks algorithm](./quad-residue.md#tonellishanks-algorithm) for modular square roots solves root extraction modulo prime powers. A fairly direct generalization is the Adleman–Manders–Miller algorithm[^amm], but its complexity is still not good enough[^amm-comp]. This section introduces the improved Tonelli–Shanks algorithm proposed by sugarknri, Min\_25, 37zigen and others. It finds one $k$-th root in $O(m^{1/4+\varepsilon})$ time.
 
 The core idea of Tonelli–Shanks is to move the discrete logarithm into a group of order $2^e$, which lowers the time complexity. Similarly, discrete logarithms in a group of any prime power order $p^e$ can also be computed fairly efficiently, but the algorithm costs $\Omega\left(\sqrt{p}\right)$. The Adleman–Manders–Miller algorithm splits finding a $k$-th root into several discrete logarithms in groups of prime power order, but it is limited by the size of the largest prime factor $p_\text{max}(k)$ of $k$, so its complexity is still $\Omega\left(\sqrt{p_\text{max}(k)}\right)$. The algorithm in this section improves this process further. It avoids computing discrete logarithms for large prime factors, which brings the overall complexity down to $O(m^{1/4+\varepsilon})$.
 
@@ -300,7 +300,7 @@ $$
 x^d\equiv x^{k\ell} \equiv a^{\ell} =: b \pmod{m}.
 $$
 
-The leftmost congruence uses [Euler's theorem](./fermat.md#欧拉定理) and the following congruence (with $c\in\mathbf Z$):
+The leftmost congruence uses [Euler's theorem](./fermat.md#eulers-theorem) and the following congruence (with $c\in\mathbf Z$):
 
 $$
 k\ell = d\left(\frac{k}{d}\ell\right) = d\left(c\dfrac{\varphi(m)}{d}+1\right) \equiv d \pmod{\varphi(m)}.
@@ -362,7 +362,7 @@ The time complexity of this algorithm is $O(m^{1/4+\varepsilon})$. In this analy
 
 First consider computing a single $p^e$-th root. Finding a $p$-th power non-residue needs to check $O(1)$ numbers on average, for a total of $O(\log m)$ time. Computing each of $s,r,\zeta,\eta,b^{qr}$ takes $O(\log m)$ time. When computing $h$, each digit needs $O(\log m)$ time for a power, and there are $(s-e)$ digits, so this takes $O((s-e)\log m)$ in total. As shown above, the precomputation and $(s-e)$ queries for the discrete logarithms take $O\left(\sqrt{(s-e)p}\right)$ in total. Since $s-e\in O(\log m)$, computing a single $p^e$-th root takes $O(p^{1/2+\varepsilon})$ time. In particular, when $s=e$, the time complexity drops further to $O(\log m)$.
 
-Now consider the total time complexity of the algorithm. Computing $\varphi(m),d,\ell$ takes $O(\log m)$ time each. Next we need the prime factorization $d=\prod_p{p^e}$, which the [Pollard Rho algorithm](./pollard-rho.md#pollard-rho-算法) does in $O(m^{1/4})$ time. Finally, taking the $p^e$-th roots one by one costs in total
+Now consider the total time complexity of the algorithm. Computing $\varphi(m),d,\ell$ takes $O(\log m)$ time each. Next we need the prime factorization $d=\prod_p{p^e}$, which the [Pollard Rho algorithm](./pollard-rho.md#pollard-rho-algorithm) does in $O(m^{1/4})$ time. Finally, taking the $p^e$-th roots one by one costs in total
 
 $$
 O\left(\sum_{e < s}p^{1/2+\varepsilon}\right).
@@ -432,7 +432,7 @@ Here is a reference implementation that finds all $k$-th roots under any modulus
 
 [^fnnt]: In fact, the modulus $m$ does not have to be prime. As long as $a$ is a $k=2^e$-th primitive root of unity modulo $m$, it can be used for the number theoretic transform modulo $m$. However, the $2^e$ we usually need is fairly large, which means every prime factor of $m$ has the form $c2^e+1$. So each prime factor is already large, and the modulus $m$ is usually even larger. That is why general moduli are used much less often than prime moduli.
 
-[^lambda-density]: By the [result on the number of primitive roots](./primitive-root.md#原根个数), there are exactly $\varphi(\lambda(m))$ $\lambda$-primitive roots, where $\varphi(\cdot)$ and $\lambda(\cdot)$ are Euler's totient function and the Carmichael function. For almost all integers $m$, $\lambda(m)/m = \exp(-(1+o(1))\log\log m\log\log\log m)$, and there is $C > 0$ such that $\varphi(m)/m \ge C / \log\log m$ for all integers $m > 2$. So for almost all integers $m$, $\varphi(\lambda(m))/m = \exp(-(1+o(1))\log\log m\log\log\log m)$. Here the $o(1)$ in the coefficient of the exponent absorbs the contribution of the factor $\varphi(\lambda(m))/\lambda(m)$. So a $\lambda$-primitive root can be found in $\exp((1+o(1))\log\log m\log\log\log m)$ tries on average. For estimates of Euler's totient function, see Rosser, J. Barkley, and Lowell Schoenfeld. "Approximate formulas for some functions of prime numbers." Illinois Journal of Mathematics 6, no. 1 (1962): 64-94. For estimates of the Carmichael function, see Erdos, Paul, Carl Pomerance, and Eric Schmutz. "Carmichael’s lambda function." Acta Arith 58, no. 4 (1991): 363-385.
+[^lambda-density]: By the [result on the number of primitive roots](./primitive-root.md#number-of-primitive-roots), there are exactly $\varphi(\lambda(m))$ $\lambda$-primitive roots, where $\varphi(\cdot)$ and $\lambda(\cdot)$ are Euler's totient function and the Carmichael function. For almost all integers $m$, $\lambda(m)/m = \exp(-(1+o(1))\log\log m\log\log\log m)$, and there is $C > 0$ such that $\varphi(m)/m \ge C / \log\log m$ for all integers $m > 2$. So for almost all integers $m$, $\varphi(\lambda(m))/m = \exp(-(1+o(1))\log\log m\log\log\log m)$. Here the $o(1)$ in the coefficient of the exponent absorbs the contribution of the factor $\varphi(\lambda(m))/\lambda(m)$. So a $\lambda$-primitive root can be found in $\exp((1+o(1))\log\log m\log\log\log m)$ tries on average. For estimates of Euler's totient function, see Rosser, J. Barkley, and Lowell Schoenfeld. "Approximate formulas for some functions of prime numbers." Illinois Journal of Mathematics 6, no. 1 (1962): 64-94. For estimates of the Carmichael function, see Erdos, Paul, Carl Pomerance, and Eric Schmutz. "Carmichael’s lambda function." Acta Arith 58, no. 4 (1991): 363-385.
 
 [^amm]: For the original paper, see Adleman, Leonard, Kenneth Manders, and Gary Miller. "On taking roots in finite fields." In 18th Annual Symposium on Foundations of Computer Science (sfcs 1977), pp. 175-178. IEEE Computer Society, 1977. A more readable introduction is Cao, Zhengjun, Qian Sha, and Xiao Fan. "Adleman-Manders-Miller root extraction method revisited." In International Conference on Information Security and Cryptology, pp. 77-85. Berlin, Heidelberg: Springer Berlin Heidelberg, 2011.
 

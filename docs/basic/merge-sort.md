@@ -96,11 +96,11 @@ Repeat until only one sorted piece is left. That piece is the original array, so
 
 ## Inversions
 
-Related reading and reference implementation: [Inversions](../math/permutation.md#逆序数)
+Related reading and reference implementation: [Inversions](../math/permutation.md#inversion-number)
 
 An inversion is an ordered pair $(i, j)$ with $i < j$ and $a_i > a_j$.
 
-A sorted array has no inversions. In the merge step of merge sort, each time the first element of the back part is taken out as the current minimum, the number of elements left in the front part is exactly the number of inversions removed by that step. So counting inversions with merge sort takes $\Theta (n \log n)$ time. Inversions can also be counted with a Fenwick tree or a segment tree, also in $O(n \log n)$ time; see the corresponding part of [Fenwick tree](../ds/fenwick.md#全局逆序对全局二维偏序) for a detailed explanation. Reference implementations of both algorithms are in the [Inversions](../math/permutation.md#逆序数) section.
+A sorted array has no inversions. In the merge step of merge sort, each time the first element of the back part is taken out as the current minimum, the number of elements left in the front part is exactly the number of inversions removed by that step. So counting inversions with merge sort takes $\Theta (n \log n)$ time. Inversions can also be counted with a Fenwick tree or a segment tree, also in $O(n \log n)$ time; see the corresponding part of [Fenwick tree](../ds/fenwick.md#global-inversions-global-2d-partial-order) for a detailed explanation. Reference implementations of both algorithms are in the [Inversions](../math/permutation.md#inversion-number) section.
 
 ## External links
 

@@ -58,7 +58,7 @@ So if you write `using namespace std;`, all the names in `std` are brought into 
     
     For this reason, the `using namespace namespace_name;` directive is not recommended in real-world projects.
 
-With the `using` directive, the code in [C++ basics](./basic.md#cin-与-cout) can be written in these two equivalent ways:
+With the `using` directive, the code in [C++ basics](./basic.md#cin-and-cout) can be written in these two equivalent ways:
 
 ```cpp
 #include <iostream>

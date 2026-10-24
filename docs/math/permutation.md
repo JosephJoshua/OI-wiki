@@ -10,7 +10,7 @@ Permutations are a common concept in all kinds of problems.
 
 ## Definition
 
-A bijection (one-to-one correspondence) $\sigma$ from a set $X$ to itself is called a **permutation** of $X$. If the set $X$ also has a [total order](./order-theory.md#二元关系), a permutation of it is often also called a **(full) arrangement**. This total order is called the natural order of the set.
+A bijection (one-to-one correspondence) $\sigma$ from a set $X$ to itself is called a **permutation** of $X$. If the set $X$ also has a [total order](./order-theory.md#binary-relations), a permutation of it is often also called a **(full) arrangement**. This total order is called the natural order of the set.
 
 ??? info "Permutation as a rearrangement vs. as an arrangement"
     In Chinese, two different words are used here: one usually means changing the order of elements (a rearrangement), and the other usually means putting the elements in a row (an arrangement). When the elements have a natural order, the two ideas are the same thing: an arrangement can be seen as the result of a rearrangement, and compared with the natural order of the elements, the order of elements in an arrangement determines the rearrangement. Whenever this page talks about arrangements, it assumes the set has a natural order, so the page does not distinguish between the two ideas.
@@ -128,7 +128,7 @@ Simply put, we first apply the map $\sigma$, then apply the map $\pi$. Note that
 
 Since the permutations $\sigma$ and $\pi$ are really two maps, $(\pi\circ\sigma)(x)=\pi(\sigma(x))$. Composition of permutations is evaluated from right to left. Multiplication of permutations is not commutative, so computing in the wrong order may give a wrong result.
 
-Composing the same permutation with itself many times gives a power of the permutation, which can be computed quickly with [fast exponentiation](./binary-exponentiation.md#多次置换).
+Composing the same permutation with itself many times gives a power of the permutation, which can be computed quickly with [fast exponentiation](./binary-exponentiation.md#applying-a-permutation-many-times).
 
 ### Inverse permutation
 
@@ -205,7 +205,7 @@ In other words, composing two permutations of the same parity gives an even perm
 
 In particular, a single transposition always changes the parity of a permutation. This also explains why, although the decomposition into transpositions is not unique, the parity of the number of transpositions needed is fixed.
 
-The sign of a permutation appears in the [Leibniz expansion of the determinant](./linear-algebra/determinant.md#全排列方法定义).
+The sign of a permutation appears in the [Leibniz expansion of the determinant](./linear-algebra/determinant.md#definition-via-permutations).
 
 ### Order of a permutation
 
@@ -236,7 +236,7 @@ $$
 ??? note "Analysis"
     Given any permutation of $1\sim n$, we can cut it into a cycle decomposition according to the cycle type. But the order among cycles of the same length does not affect the permutation, so the total must be divided by $\prod_k\alpha_k!$. Also, each cycle is really a circular arrangement, and the choice of its starting point does not affect the permutation, so we must also divide by $\prod_kk^{\alpha_k}$. This gives the formula above.
 
-If we only know the number $k$ of cycles in the decomposition, the number of different permutations is the [Stirling number of the first kind](./combinatorics/stirling.md#第一类斯特林数stirling-number) $\begin{bmatrix}n\\ k\end{bmatrix}$. The number of different cycle types is the [partition number](./combinatorics/partition.md)  $p_n$ of $n$.
+If we only know the number $k$ of cycles in the decomposition, the number of different permutations is the [Stirling number of the first kind](./combinatorics/stirling.md#stirling-numbers-of-the-first-kind-stirling-number) $\begin{bmatrix}n\\ k\end{bmatrix}$. The number of different cycle types is the [partition number](./combinatorics/partition.md)  $p_n$ of $n$.
 
 From the cycle type, it is easy to find properties of the permutation such as its order and parity.
 
@@ -272,7 +272,7 @@ In a permutation, if a larger number appears before a smaller number, the two nu
 
 The total number of inversions in a permutation is called its **inversion number**. The inversion number of a permutation is the minimum number of adjacent transpositions needed to sort it. So the parity of the inversion number equals the parity of the corresponding permutation. This can serve as an equivalent definition of the parity of a permutation.
 
-The inversion number can be computed with [merge sort](../basic/merge-sort.md#inversions) or a [Fenwick tree](../ds/fenwick.md#全局逆序对全局二维偏序), both in $O(n\log n)$ time. See the corresponding sections for explanations of the two algorithms; reference implementations are given here.
+The inversion number can be computed with [merge sort](../basic/merge-sort.md#inversions) or a [Fenwick tree](../ds/fenwick.md#global-inversions-global-2d-partial-order), both in $O(n\log n)$ time. See the corresponding sections for explanations of the two algorithms; reference implementations are given here.
 
 ??? example "Reference implementation"
     === "Merge sort"
@@ -287,7 +287,7 @@ The inversion number can be computed with [merge sort](../basic/merge-sort.md#in
 
 ### Ordering
 
-Permutations can be compared. Since each one-line notation is a string, the order of permutations is the [lexicographic order](../string/basic.md#字典序) on these strings.
+Permutations can be compared. Since each one-line notation is a string, the order of permutations is the [lexicographic order](../string/basic.md#lexicographic-order) on these strings.
 
 In the C++ standard library header `<algorithm>`, `prev_permutation` and `next_permutation` find the previous and next permutation of the current one in lexicographic order.
 
@@ -298,7 +298,7 @@ List all permutations of $n$ elements in increasing lexicographic order; the pos
 In the Chinese competitive programming community, this rank is often called the "Cantor expansion" of the permutation, but this name is not standard. More precisely, the **Cantor expansion** of the rank of a permutation corresponds to the **Lehmer code** of that permutation.
 
 ??? info "About the \"Cantor expansion\""
-    As the name suggests, the Cantor expansion is a way of expanding a natural number into a sequence of digits. It can be seen as a special numeral system, also called the [factorial number system](./numeral-sys/base.md#混合基数进制). In this system, different digit positions have different radixes. For example, the decimal number $463_{10}$ can be written in the factorial number system as
+    As the name suggests, the Cantor expansion is a way of expanding a natural number into a sequence of digits. It can be seen as a special numeral system, also called the [factorial number system](./numeral-sys/base.md#mixed-radix). In this system, different digit positions have different radixes. For example, the decimal number $463_{10}$ can be written in the factorial number system as
     
     $$
     463_{10}=341010_{!}.

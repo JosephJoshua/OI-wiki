@@ -61,7 +61,7 @@ Bézout's theorem reveals a deep connection between the greatest common divisor 
     
     This proves that there exist $x,y$ with $ax+by=d$. By the analysis above, this also proves the original statement.
 
-The existence proof here is constructive: it also gives a way to compute the coefficients. This method is the [extended Euclidean algorithm](./gcd.md#扩展欧几里得算法).
+The existence proof here is constructive: it also gives a way to compute the coefficients. This method is the [extended Euclidean algorithm](./gcd.md#extended-euclidean-algorithm).
 
 Looking at the special case $\gcd(a,b)=1$ of Bézout's theorem gives the following corollary:
 
@@ -296,7 +296,7 @@ $$
 \sum_{i=0}^{\lfloor k / a_1 \rfloor} \left(\left\lfloor\dfrac{k-ia_1}{a_2}\right\rfloor+1\right).
 $$
 
-This is the classic problem of counting lattice points under a line, which can be solved in $O(\log\min\{a_1,a_2,k\})$ time with the [floor sum (Euclidean-like) algorithm](./euclidean.md#类欧几里得算法).
+This is the classic problem of counting lattice points under a line, which can be solved in $O(\log\min\{a_1,a_2,k\})$ time with the [floor sum (Euclidean-like) algorithm](./euclidean.md#euclidean-like-algorithm).
 
 ### Exercises
 

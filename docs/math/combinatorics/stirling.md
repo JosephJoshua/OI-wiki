@@ -733,7 +733,7 @@ So
 
 $F_n(x)=\prod\limits_{i=0}^{n-1}(x+i)=\dfrac{(x+n-1)!}{(x-1)!}$
 
-This is the $n$-th rising factorial power of $x$, written $x^{\overline n}$. It can of course be computed by brute-force divide-and-conquer multiplication in $O(n\log^2n)$, but methods based on rising powers compute it in $O(n\log n)$. For details see [Polynomial Shifting | Shifting Consecutive Point Values](../poly/shift.md#同一行第一类无符号-stirling-数).
+This is the $n$-th rising factorial power of $x$, written $x^{\overline n}$. It can of course be computed by brute-force divide-and-conquer multiplication in $O(n\log^2n)$, but methods based on rising powers compute it in $O(n\log n)$. For details see [Polynomial Shifting | Shifting Consecutive Point Values](../poly/shift.md#unsigned-stirling-numbers-of-the-first-kind-in-one-row).
 
 ### Computing one column of Stirling numbers of the first kind
 

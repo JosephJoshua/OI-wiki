@@ -2,7 +2,7 @@ author: GavinZhengOI, PlanariaIce
 
 ## Introduction
 
-Discretization (coordinate compression) is a data-processing technique. In essence it can be seen as a kind of [hashing](../string/hash.md#hash-的思想) that guarantees the data keeps its original [total/partial order](../math/order-theory.md#偏序集) relation after hashing.
+Discretization (coordinate compression) is a data-processing technique. In essence it can be seen as a kind of [hashing](../string/hash.md#the-idea-of-hashing) that guarantees the data keeps its original [total/partial order](../math/order-theory.md#partially-ordered-sets) relation after hashing.
 
 Put simply: sometimes the values are too large, or of a type that cannot be used directly as an array index, so they are awkward to handle. If the final result only depends on the relative order of the elements, we can replace each value by its rank and work with ranks instead. This is discretization.
 

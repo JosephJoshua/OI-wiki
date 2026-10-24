@@ -35,7 +35,7 @@ When the modulus is an odd prime, we have the following theorem:
     2.  $a$ is a quadratic non-residue modulo $p$ if and only if $a^{\frac{p-1}{2}}\equiv -1 \pmod p$.
 
 ??? note "Proof"
-    First, by [Fermat's little theorem](./fermat.md#费马小定理), $a^{p-1}\equiv 1\pmod p$, so
+    First, by [Fermat's little theorem](./fermat.md#fermats-little-theorem), $a^{p-1}\equiv 1\pmod p$, so
     
     $$
     \left(a^{\frac{p-1}{2}}+1\right)\left(a^{\frac{p-1}{2}}-1\right)\equiv 0\pmod p,
@@ -58,7 +58,7 @@ When the modulus is an odd prime, we have the following theorem:
     \end{aligned}
     $$
     
-    By [Theorem 5 on congruence equations](./congruence-equation.md#素数模同余方程), $a$ is a quadratic residue modulo $p$ if and only if $a^{(p-1)/2}\equiv 1\pmod p$. Therefore $a$ is a quadratic non-residue modulo $p$ if and only if $a^{(p-1)/2}\equiv -1\pmod p$.
+    By [Theorem 5 on congruence equations](./congruence-equation.md#congruence-equations-modulo-primes), $a$ is a quadratic residue modulo $p$ if and only if $a^{(p-1)/2}\equiv 1\pmod p$. Therefore $a$ is a quadratic non-residue modulo $p$ if and only if $a^{(p-1)/2}\equiv -1\pmod p$.
 
 From Euler's criterion we get the following corollary:
 
@@ -68,7 +68,7 @@ From Euler's criterion we get the following corollary:
 ??? note "Proof"
     By Euler's criterion, consider $a^{\frac{p-1}{2}}\equiv 1\pmod p.$
     
-    Note that $\dfrac{p-1}{2}\mid (p-1)$. By [Theorem 6 on congruence equations](./congruence-equation.md#素数模同余方程), $a^{\frac{p-1}{2}}\equiv 1\pmod p$ has $\dfrac{p-1}{2}$ solutions. So there are $\dfrac{p-1}{2}$ quadratic residues and $\dfrac{p-1}{2}$ quadratic non-residues modulo $p$.
+    Note that $\dfrac{p-1}{2}\mid (p-1)$. By [Theorem 6 on congruence equations](./congruence-equation.md#congruence-equations-modulo-primes), $a^{\frac{p-1}{2}}\equiv 1\pmod p$ has $\dfrac{p-1}{2}$ solutions. So there are $\dfrac{p-1}{2}$ quadratic residues and $\dfrac{p-1}{2}$ quadratic non-residues modulo $p$.
 
 ## Legendre symbol
 
@@ -116,7 +116,7 @@ The table below shows some values of the Legendre symbol (from [Wikipedia](https
 
 2.  $a_1\equiv a_2\pmod p\implies \left(\dfrac{a_1}{p}\right)=\left(\dfrac{a_2}{p}\right).$
 
-3.  ([Completely multiplicative](./basic.md#积性函数)) For any integers $a_1,a_2$,
+3.  ([Completely multiplicative](./basic.md#multiplicative-functions)) For any integers $a_1,a_2$,
 
     $$
     \left(\frac{a_1a_2}{p}\right)=\left(\frac{a_1}{p}\right)\left(\frac{a_2}{p}\right).
@@ -161,7 +161,7 @@ The table below shows some values of the Legendre symbol (from [Wikipedia](https
         $$
     4.  See [Quadratic reciprocity](#quadratic-reciprocity).
 
-By these properties, if we can compute $\left(\dfrac{p}{q}\right)$ for any odd primes $p$ and $q$, then we can compute the Legendre symbol in every valid case. Next comes a beautiful theorem. It cleverly links $\left(\dfrac{p}{q}\right)$ and $\left(\dfrac{q}{p}\right)$, so we can compute the symbol with an approach similar to the [Euclidean algorithm](./gcd.md#欧几里得算法).
+By these properties, if we can compute $\left(\dfrac{p}{q}\right)$ for any odd primes $p$ and $q$, then we can compute the Legendre symbol in every valid case. Next comes a beautiful theorem. It cleverly links $\left(\dfrac{p}{q}\right)$ and $\left(\dfrac{q}{p}\right)$, so we can compute the symbol with an approach similar to the [Euclidean algorithm](./gcd.md#euclidean-algorithm).
 
 ### Quadratic reciprocity
 
@@ -300,7 +300,7 @@ We can generalize the modulus further to any **integer** (we only need to add de
 
 ## Modular square roots
 
-This section covers algorithms for taking square roots modulo a number. We mainly look at prime moduli. For general moduli, see the discussion in [modular higher-degree roots](./residue.md#模意义下开方).
+This section covers algorithms for taking square roots modulo a number. We mainly look at prime moduli. For general moduli, see the discussion in [modular higher-degree roots](./residue.md#modular-roots).
 
 ### Algorithms for special cases
 
@@ -349,7 +349,7 @@ Cipolla's algorithm solves the congruence $y^2\equiv a\pmod p$, where $p$ is an 
 In this section we work in $\mathbf{F}_p\lbrack x\rbrack /(x^2-g)$, where $g \in \mathbf{F}_p$.
 
 ??? note "How to compute"
-    If you are not familiar with [polynomial rings](../algebra/ring-theory.md#多项式环), you can simply think of every element of this set as having the form $a_0+a_1x$ with $a_0,a_1\in\mathbf F_p$, following these rules:
+    If you are not familiar with [polynomial rings](../algebra/ring-theory.md#polynomial-rings), you can simply think of every element of this set as having the form $a_0+a_1x$ with $a_0,a_1\in\mathbf F_p$, following these rules:
     
     $$
     \begin{aligned}

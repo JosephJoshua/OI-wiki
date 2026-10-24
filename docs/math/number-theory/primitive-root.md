@@ -1,6 +1,6 @@
-Prerequisites: [Fermat's little theorem](./fermat.md#费马小定理), [Euler's theorem](./fermat.md#欧拉定理), [Lagrange's theorem](./congruence-equation.md#素数模同余方程)
+Prerequisites: [Fermat's little theorem](./fermat.md#fermats-little-theorem), [Euler's theorem](./fermat.md#eulers-theorem), [Lagrange's theorem](./congruence-equation.md#congruence-equations-modulo-primes)
 
-Orders and primitive roots are key tools for understanding the multiplicative structure of the [reduced residue system](./basic.md#同余类与剩余系) $\mathbf Z_m^*$ modulo $m$. Building on them, one can define concepts such as the [discrete logarithm](./discrete-logarithm.md). For a more general treatment, see the related sections of the abstract algebra pages on [group theory](../algebra/group-theory.md#阶) and [ring theory](../algebra/ring-theory.md#应用整数同余类的乘法群).
+Orders and primitive roots are key tools for understanding the multiplicative structure of the [reduced residue system](./basic.md#residue-classes-and-residue-systems) $\mathbf Z_m^*$ modulo $m$. Building on them, one can define concepts such as the [discrete logarithm](./discrete-logarithm.md). For a more general treatment, see the related sections of the abstract algebra pages on [group theory](../algebra/group-theory.md#order) and [ring theory](../algebra/ring-theory.md#application-the-multiplicative-group-of-integers-modulo-n).
 
 ## Order
 
@@ -12,7 +12,7 @@ For $n\in\mathbf Z$, the powers $a^n\bmod m$ form a cycle. The minimum length of
     For $a\in\mathbf Z,m\in\mathbf N_+$ with $a\perp m$, the smallest positive integer $n$ satisfying the congruence $a^n \equiv 1 \pmod m$ is called **the order of $a$ modulo $m$**, written $\delta_m(a)$ or $\operatorname{ord}_m(a)$.
 
 ???+ tip "Note"
-    In [abstract algebra](../algebra/group-theory.md#阶), the "order" here is exactly the order of the element $a$ in the group formed by the reduced residue system modulo $m$ under multiplication. The notation $\delta$ for the order is only used for this particular group. Many of the properties below generalize directly to properties of the order of elements in abstract groups.
+    In [abstract algebra](../algebra/group-theory.md#order), the "order" here is exactly the order of the element $a$ in the group formed by the reduced residue system modulo $m$ under multiplication. The notation $\delta$ for the order is only used for this particular group. Many of the properties below generalize directly to properties of the order of elements in abstract groups.
     
     There is also the concept of a "half order", written $\delta^-$ in number theory. It is the smallest positive integer satisfying the congruence $a^n \equiv -1 \pmod m$. The half order is not a group-theoretic concept. The order always exists, but the half order may not.
 
@@ -44,7 +44,7 @@ So a power with any exponent can be shifted into the first nonnegative cycle. Th
 ??? note "Proof"
     As shown above, $a^{n}\equiv a^{n\bmod\delta_m(a)}\pmod m$. By Property 1, the only $r$ with $0\le r < \delta_m(a)$ and $a^r\equiv 1\pmod m$ is $r=0$. So $a^n \equiv 1 \pmod m$ if and only if $n\bmod \delta_m(a) = 0$, that is, $\delta_m(a)\mid n$.
 
-In [Euler's theorem](./fermat.md#欧拉定理), the congruence $a^{\varphi(m)}\equiv 1\pmod m$ holds for all $a\perp m$. Combined with Property 2, this means $\delta_m(a)\mid\varphi(m)$ for all $a\perp m$. In other words, $\varphi(m)$ is a common multiple of the orders of all $a\perp m$. For a positive integer $m$, the least common multiple of the orders $\delta_m(a)$ of all $a\perp m$, written $\lambda(m)$, is the [Carmichael function](#carmichael-function) of $m$. Its properties are discussed in detail later.
+In [Euler's theorem](./fermat.md#eulers-theorem), the congruence $a^{\varphi(m)}\equiv 1\pmod m$ holds for all $a\perp m$. Combined with Property 2, this means $\delta_m(a)\mid\varphi(m)$ for all $a\perp m$. In other words, $\varphi(m)$ is a common multiple of the orders of all $a\perp m$. For a positive integer $m$, the least common multiple of the orders $\delta_m(a)$ of all $a\perp m$, written $\lambda(m)$, is the [Carmichael function](#carmichael-function) of $m$. Its properties are discussed in detail later.
 
 As with other cyclic structures, the order of $a^k$ can be computed from the order of $a$.
 
@@ -209,7 +209,7 @@ Primitive roots are special elements whose order equals the number of elements i
 Not every positive integer $m$ has a primitive root modulo $m$. By [Property 1](#cyclic-structure-of-powers) above, if a primitive root $g$ modulo $m$ exists, then $g,g^2,\cdots,g^{\varphi(m)}$ lie in pairwise different residue classes and form a reduced residue system modulo $m$. In particular, for a prime $p$, the remainders $g^i\bmod p$ for $i=1,2,\cdots,p-1$ are pairwise distinct.
 
 ???+ tip "Note"
-    In [abstract algebra](../algebra/ring-theory.md#应用整数同余类的乘法群), a primitive root is a generator of a cyclic group. The name "primitive root" is only used for the group formed by the reduced residue system modulo $m$ under multiplication; in a general cyclic group it is called a "generator". Not every such group is cyclic: having a primitive root means the group is isomorphic to a cyclic group, and having none means it is not.
+    In [abstract algebra](../algebra/ring-theory.md#application-the-multiplicative-group-of-integers-modulo-n), a primitive root is a generator of a cyclic group. The name "primitive root" is only used for the group formed by the reduced residue system modulo $m$ under multiplication; in a general cyclic group it is called a "generator". Not every such group is cyclic: having a primitive root means the group is isomorphic to a cyclic group, and having none means it is not.
 
 When the modulus is $1$, the multiplicative group of integers modulo $1$ is $\{0\}$. This is clearly a cyclic group, so the primitive root is $0$.
 
@@ -285,7 +285,7 @@ To show this, we discuss the following four cases separately:
         f(x) = x^{d(k-1)} + x^{d(k-2)} + \cdots + x^d + 1. 
         $$
         
-        By [Euler's theorem](./fermat.md#欧拉定理), the congruence $(x^d-1)f(x)=x^{p-1}-1\equiv 0\pmod{p}$ has exactly $p-1$ distinct solutions. Each of these is a root of either $x^d-1$ or $f(x)$. By [Lagrange's theorem](./congruence-equation.md#素数模同余方程), these have at most $d$ and at most $d(k-1)$ distinct roots respectively. Since $d+d(k-1)=p-1$, the former must have exactly $d$ distinct roots. So the congruence $x^d\equiv 1\pmod p$ has exactly $d$ distinct solutions.
+        By [Euler's theorem](./fermat.md#eulers-theorem), the congruence $(x^d-1)f(x)=x^{p-1}-1\equiv 0\pmod{p}$ has exactly $p-1$ distinct solutions. Each of these is a root of either $x^d-1$ or $f(x)$. By [Lagrange's theorem](./congruence-equation.md#congruence-equations-modulo-primes), these have at most $d$ and at most $d(k-1)$ distinct roots respectively. Since $d+d(k-1)=p-1$, the former must have exactly $d$ distinct roots. So the congruence $x^d\equiv 1\pmod p$ has exactly $d$ distinct solutions.
         
         **Step 2**: For $d\mid(p-1)$, there are exactly $\varphi(d)$ elements of order $d$.
         
@@ -441,7 +441,7 @@ An element $a\perp m$ attaining this maximum is also called a **$\lambda$-primit
 
 ### Recursive formula
 
-The Carmichael function is an [arithmetic function](./basic.md#数论函数). This section derives a recursive formula for it, and from it gives another proof of the existence theorem for primitive roots.
+The Carmichael function is an [arithmetic function](./basic.md#arithmetic-functions). This section derives a recursive formula for it, and from it gives another proof of the existence theorem for primitive roots.
 
 Although it is not a multiplicative function, the Carmichael function can still be computed by handling coprime factors separately.
 
@@ -483,7 +483,7 @@ Next, handle powers of odd primes.
     For $m=p^e$, where $p$ is an odd prime and $e\in\mathbf N_+$, $\lambda(m)=p^{e-1}(p-1)$.
 
 ??? note "Proof"
-    First prove the claim for $e=1$, that is, when $m=p$ is an odd prime. By the definition of the Carmichael function, every integer $a$ coprime to $p$ is a solution of $x^{\lambda(p)}\equiv 1\pmod{p}$. Modulo $p$, this equation has $p-1$ distinct solutions. By [Lagrange's theorem](./congruence-equation.md#素数模同余方程), $p-1\le\lambda(p)$. Also, Euler's theorem requires $\lambda(p)\mid\varphi(p)=p-1$. So $\lambda(p)=p-1$.
+    First prove the claim for $e=1$, that is, when $m=p$ is an odd prime. By the definition of the Carmichael function, every integer $a$ coprime to $p$ is a solution of $x^{\lambda(p)}\equiv 1\pmod{p}$. Modulo $p$, this equation has $p-1$ distinct solutions. By [Lagrange's theorem](./congruence-equation.md#congruence-equations-modulo-primes), $p-1\le\lambda(p)$. Also, Euler's theorem requires $\lambda(p)\mid\varphi(p)=p-1$. So $\lambda(p)=p-1$.
     
     For $m=p^e$ with $e> 1$, start by showing that $1+p$ has order $p^{e-1}$. Indeed,
     
@@ -526,7 +526,7 @@ Since the proof of the recursive formula in this section did not use the existen
 
 ### Carmichael numbers
 
-The Carmichael function lets us discuss the properties and distribution of Carmichael numbers (OEIS: [A002997](https://oeis.org/A002997)). These are the composites that the [Fermat primality test](./prime.md#fermat-素性测试) can never correctly rule out.
+The Carmichael function lets us discuss the properties and distribution of Carmichael numbers (OEIS: [A002997](https://oeis.org/A002997)). These are the composites that the [Fermat primality test](./prime.md#fermat-primality-test) can never correctly rule out.
 
 ???+ abstract "Carmichael number"
     A composite $n$ is called a **Carmichael number** if the congruence $a^{n-1} \equiv 1 \pmod n$ holds for all integers $a\perp n$.

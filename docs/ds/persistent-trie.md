@@ -2,7 +2,7 @@
 
 A persistent trie works much like a persistent segment tree. Each time, we only create the nodes that are added or whose values change, and keep the unchanged nodes, linking edges onto the previous version. In the end, the trie reached by traversing from each version's root is complete and contains all the information of that version.
 
-In most persistent trie problems, the trie appears as a [01-trie (binary trie)](../string/trie.md#维护异或极值).
+In most persistent trie problems, the trie appears as a [01-trie (binary trie)](../string/trie.md#maximum-xor).
 
 ??? note "Example problem [Maximum XOR Sum](https://www.luogu.com.cn/problem/P4735)"
     Maintain the following operations on an array $a$ of length $n$:

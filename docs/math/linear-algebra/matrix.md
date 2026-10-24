@@ -279,7 +279,7 @@ Take the [Fibonacci sequence](../combinatorics/fibonacci.md) as an example. In t
 
 If a problem asks for the $n$-th Fibonacci number, the simplest way is to compute the recurrence directly. But if $n$ can be as large as $10^{18}$, direct computation is too slow, and we can use matrices to speed up the recurrence.
 
-By the [matrix form of the Fibonacci recurrence](../combinatorics/fibonacci.md#矩阵形式):
+By the [matrix form of the Fibonacci recurrence](../combinatorics/fibonacci.md#matrix-form):
 
 $$
 \begin{bmatrix}

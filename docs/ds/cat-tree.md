@@ -14,7 +14,7 @@ Building such a static segment tree takes $O(n\log{n})$ merges, but each query t
 
 For information with expensive merges such as matrix multiplication, a cat tree reduces the cost of a single query from $O(k^3 \log n)$ to $O(k^3)$.
 
-Note that for static range linear basis queries, although a cat tree can improve on a linear basis built with an ordinary segment tree, there is a method that is better in both time and space: the [prefix linear basis](../math/linear-algebra/basis.md#拓展前缀线性基). Also, an ordinary segment tree can handle dynamic range linear basis problems, while for static range linear basis queries a cat tree is more complicated to implement, is not the best solution, and offers no extra functionality.
+Note that for static range linear basis queries, although a cat tree can improve on a linear basis built with an ordinary segment tree, there is a method that is better in both time and space: the [prefix linear basis](../math/linear-algebra/basis.md#extension-prefix-linear-basis). Also, an ordinary segment tree can handle dynamic range linear basis problems, while for static range linear basis queries a cat tree is more complicated to implement, is not the best solution, and offers no extra functionality.
 
 ## How it works
 

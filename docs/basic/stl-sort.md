@@ -175,9 +175,9 @@ std::sort(da + 1, da + 1 + 10, cmp);  // compare using cmp; decreasing order
 
 ### Strict weak ordering
 
-See also: [Applications in C++ - Order theory](../math/order-theory.md#c-中的应用)
+See also: [Applications in C++ - Order theory](../math/order-theory.md#applications-in-c)
 
-The operator used for sorting must be a [strict weak ordering](../math/order-theory.md#二元关系). Otherwise, unpredictable things can happen (such as runtime errors or incorrect sorting).
+The operator used for sorting must be a [strict weak ordering](../math/order-theory.md#binary-relations). Otherwise, unpredictable things can happen (such as runtime errors or incorrect sorting).
 
 Common mistakes:
 

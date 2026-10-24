@@ -178,7 +178,7 @@ Without link, cut or similar operations, each query with a Link Cut Tree takes $
 
 As discussed above, the Euler tour turns the LCA problem into an RMQ problem, so the bottleneck is RMQ. If RMQ can be solved in $O(n) \sim O(1)$, then LCA can also be solved in $O(n) \sim O(1)$.
 
-Notice that adjacent values in the Euler tour differ by exactly 1 or -1, so we can use the $O(n) \sim O(1)$ [±1 RMQ](../topic/rmq.md#加减-1rmq).
+Notice that adjacent values in the Euler tour differ by exactly 1 or -1, so we can use the $O(n) \sim O(1)$ [±1 RMQ](../topic/rmq.md#1-rmq).
 
 The time complexity is $O(n) \sim O(1)$ and the space complexity is $O(n)$. It supports online queries, but the constant is large.
 

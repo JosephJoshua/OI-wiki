@@ -3,7 +3,7 @@
 The "Chairman tree" (the common Chinese nickname for this structure) is short for the persistent value-domain segment tree, that is, a persistent segment tree built over values; see [this Zhihu discussion](https://www.zhihu.com/question/59195374).
 
 ???+ warning "About functional segment trees"
-    A **functional segment tree** is a segment tree built with the ideas of functional programming. Functional programming treats computation as evaluating mathematical functions and avoids mutable state or variables. It is easy to see that a functional segment tree is [fully persistent](persistent.md#完全可持久化-fully-persistent).
+    A **functional segment tree** is a segment tree built with the ideas of functional programming. Functional programming treats computation as evaluating mathematical functions and avoids mutable state or variables. It is easy to see that a functional segment tree is [fully persistent](persistent.md#fully-persistent).
 
 ## Introduction
 

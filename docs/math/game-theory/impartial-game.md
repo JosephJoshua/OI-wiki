@@ -2,7 +2,7 @@ author: cutekibry, woruo27, tinjyu, 2008verser, Backl1ght, billchenchina, Enter-
 
 Prerequisites: [Introduction to game theory](./intro.md)
 
-This article discusses [impartial games](./intro.md#公平组合博弈).
+This article discusses [impartial games](./intro.md#impartial-games).
 
 Among impartial games, the most basic and most important one is the normal Nim game. The Sprague–Grundy theorem says that every impartial game under the normal play rule is equivalent to a single-pile Nim game. From this we get the concepts of the Sprague–Grundy function and nimbers, which completely describe an impartial game under normal play. So this article first establishes the results for normal Nim and the Sprague–Grundy theory. After that, it discusses some impartial games that are common in competitive programming.
 
@@ -67,7 +67,7 @@ By drawing the game graph, we can find out whether a position is a first-player 
 ???+ abstract "Nim sum"
     The **Nim sum** of natural numbers $a_1,a_2,\cdots,a_n$ is defined as $a_1\oplus a_2\oplus\cdots\oplus a_n$.
 
-The Nim sum is just the [XOR operation](../bit.md#位运算).
+The Nim sum is just the [XOR operation](../bit.md#bitwise-operations).
 
 ???+ note "Theorem"
     In Nim, the state $(a_1,a_2,\cdots,a_n)$ is a losing state $\mathcal P$ if and only if the Nim sum
@@ -154,7 +154,7 @@ This observation suggests that we can study a game by looking at its sums with o
 ???+ abstract "Equivalence of games"
     If for every game $H$, the games $G_1+H$ and $G_2+H$ are both losing or both winning, then games $G_1$ and $G_2$ are called **equivalent**, written $G_1\approx G_2$.
 
-It is easy to check that $\approx$ defined this way is indeed an [equivalence relation](../order-theory.md#二元关系) on all impartial games.
+It is easy to check that $\approx$ defined this way is indeed an [equivalence relation](../order-theory.md#binary-relations) on all impartial games.
 
 ### Sprague–Grundy function
 
@@ -289,7 +289,7 @@ Every impartial game corresponds to exactly one nimber. The set of (finite) nimb
     -   The Nim sum $a\oplus b=\operatorname{mex}(\{a'\oplus b:a'<a,~a'\in\mathbf N\}\cup\{a\oplus b':b'<b,~b'\in\mathbf N\})$,
     -   The Nim product $a\otimes b=\operatorname{mex}(\{(a'\otimes b)\oplus(a\otimes b')\oplus(a'\otimes b'):a'<a,~b'<b,~a',b'\in\mathbf N\})$.
 
-Under $\oplus$ and $\otimes$, the nimbers form a [field](../algebra/basic.md#域) of characteristic $2$. Moreover, these operations and their inverses are closed on the first $2^{2^n}$ nimbers; this gives a series of [finite fields](../algebra/field-theory.md#有限域) $\mathbf F_{2^{2^n}}$ of size $2^{2^n}$.
+Under $\oplus$ and $\otimes$, the nimbers form a [field](../algebra/basic.md#fields) of characteristic $2$. Moreover, these operations and their inverses are closed on the first $2^{2^n}$ nimbers; this gives a series of [finite fields](../algebra/field-theory.md#finite-fields) $\mathbf F_{2^{2^n}}$ of size $2^{2^n}$.
 
 ## Common impartial games
 
@@ -373,7 +373,7 @@ The result is:
     At the start of the game, the first player loses if and only if the number of stones $n$ is a [Fibonacci number](../combinatorics/fibonacci.md).
 
 ??? note "Proof"
-    Let $q$ be the quota: the maximum number of stones that can be taken in the current position. On the first turn, $q=n-1$; on later turns, $q$ is twice the number of stones the opponent took last time. Consider the [Fibonacci coding](../combinatorics/fibonacci.md#斐波那契编码) of the number of remaining stones $n$, that is, the unique way of writing $n$ as a sum of non-adjacent positive Fibonacci numbers. We need to prove that the current state is winning if and only if $q$ is at least the smallest Fibonacci number in the decomposition of $n$.
+    Let $q$ be the quota: the maximum number of stones that can be taken in the current position. On the first turn, $q=n-1$; on later turns, $q$ is twice the number of stones the opponent took last time. Consider the [Fibonacci coding](../combinatorics/fibonacci.md#fibonacci-coding) of the number of remaining stones $n$, that is, the unique way of writing $n$ as a sum of non-adjacent positive Fibonacci numbers. We need to prove that the current state is winning if and only if $q$ is at least the smallest Fibonacci number in the decomposition of $n$.
     
     The winning strategy is: if possible, take all remaining stones; otherwise, take the smallest Fibonacci number in the decomposition. In the decomposition, the second smallest Fibonacci number is always strictly greater than twice the smallest one. So whenever the player in a winning state cannot take all the stones this turn, the opponent cannot take the second smallest Fibonacci number (which becomes the smallest Fibonacci number on the next turn) either. So the opponent is always in a losing state.
     
@@ -487,14 +487,14 @@ The result is:
     
     Conversely, suppose there is a maximum matching $M$ in which $v$ is unmatched. Since $M$ does not contain $v$, it is also a maximum matching of the remaining graph $G'$. So every maximum matching $N$ of $G'$ is a maximum matching of $G$ that does not contain $v$. Every vertex $u$ adjacent to $v$ must be matched in $N$; otherwise, we could add the edge $(u,v)$ to $N$ and get a larger matching of $G$. This shows that $u$ is a critical vertex for maximum matchings of $G'$. So no matter what the first player chooses, the second player is in a winning state.
 
-For the algorithm that finds the critical vertices for maximum matchings of a bipartite graph, see the [maximum bipartite matching page](../../graph/graph-matching/bigraph-match.md#最大匹配关键点).
+For the algorithm that finds the critical vertices for maximum matchings of a bipartite graph, see the [maximum bipartite matching page](../../graph/graph-matching/bigraph-match.md#critical-vertices-of-maximum-matchings).
 
 There is also a variant of the bipartite graph game:
 
 ???+ abstract "Variant of the bipartite graph game"
     Let $G=(V,E)$ be an undirected graph with one stone on each vertex. Two players take turns removing stones. At the start of the game, the first player may remove any stone; on later turns, each player must remove a stone from a vertex adjacent to the vertex where the opponent removed a stone on the previous turn. The first player unable to remove a stone loses.
 
-Clearly, this variant is the same as letting the first player choose the initial position of the bipartite graph game described above, and then playing the bipartite graph game starting with the second player. So in this variant, the first player loses if and only if every vertex is a critical vertex for maximum matchings, that is, the graph $G$ has a [perfect matching](../../graph/graph-matching/graph-match.md#定义).
+Clearly, this variant is the same as letting the first player choose the initial position of the bipartite graph game described above, and then playing the bipartite graph game starting with the second player. So in this variant, the first player loses if and only if every vertex is a critical vertex for maximum matchings, that is, the graph $G$ has a [perfect matching](../../graph/graph-matching/graph-match.md#definition).
 
 ## Misère Nim
 

@@ -294,7 +294,7 @@ The merge works as follows:
     --8<-- "docs/ds/code/splay/splay-1.cpp:merge"
     ```
 
-Splitting is similar. So a Splay tree can imitate the approach of the [non-rotating treap](./treap.md#无旋-treap) to do all kinds of operations, including range operations. [Later](#sequence-operations) we will introduce a way to handle range operations that is more in the style of Splay trees.
+Splitting is similar. So a Splay tree can imitate the approach of the [non-rotating treap](./treap.md#non-rotating-treap) to do all kinds of operations, including range operations. [Later](#sequence-operations) we will introduce a way to handle range operations that is more in the style of Splay trees.
 
 ### Insertion
 
@@ -373,7 +373,7 @@ To end this section, here is a reference implementation for the template problem
 
 ## Sequence operations
 
-A Splay tree can also be used on sequences to maintain information about ranges. Compared with a segment tree, a Splay tree has a larger constant factor, but it supports more complex sequence operations, such as reversing a range. As mentioned above, a Splay tree also supports split and merge, so it can imitate the [non-rotating treap](./treap.md#无旋-treap) to do range operations; we will not go into that here. This section mainly discusses how to implement range operations based on the splay operation.
+A Splay tree can also be used on sequences to maintain information about ranges. Compared with a segment tree, a Splay tree has a larger constant factor, but it supports more complex sequence operations, such as reversing a range. As mentioned above, a Splay tree also supports split and merge, so it can imitate the [non-rotating treap](./treap.md#non-rotating-treap) to do range operations; we will not go into that here. This section mainly discusses how to implement range operations based on the splay operation.
 
 A Splay tree built from a sequence has the following properties:
 

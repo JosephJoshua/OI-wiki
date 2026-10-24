@@ -775,7 +775,7 @@ The whole process can be implemented recursively. For clarity, the code below us
     ```
 
 ??? note "About `new` and `delete`"
-    See [memory pool](../contest/common-tricks.md#内存池).
+    See [memory pool](../contest/common-tricks.md#memory-pools).
 
 However, this implementation has a problem: in base $b$, each coefficient of the polynomial can reach the order of $n \cdot b^2$, which may cause integer overflow in an implementation with digit packing. If instead we handle carries during the polynomial multiplication, $x_1 + x_0$ and $y_1 + y_0$ can reach $2 \cdot b^m$, adding one more digit (and if we compute $x_1 - x_0$ instead, we have to handle negative numbers specially). So you need to choose the implementation based on the actual use case.
 

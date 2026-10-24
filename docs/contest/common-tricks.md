@@ -6,7 +6,7 @@ This page lists some small tricks that are useful in contests.
 
 Locality means that a program tends to access data items near other recently accessed data items, or the recently accessed data items themselves. There are two kinds of locality: temporal locality and spatial locality.
 
-For details, see [Loop Unroll](../lang/optimizations.md#循环展开-loop-unroll), [Code Layout Optimizations](../lang/optimizations.md#代码布局优化-code-layout-optimizations) and similar sections.
+For details, see [Loop Unroll](../lang/optimizations.md#loop-unrolling), [Code Layout Optimizations](../lang/optimizations.md#code-layout-optimizations) and similar sections.
 
 ## Loop macros
 

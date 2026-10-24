@@ -55,14 +55,14 @@ Exercises:
 
 ### DP optimization with CDQ divide and conquer
 
-Main page: [DP optimization with CDQ divide and conquer](../../misc/cdq-divide.md#cdq-分治优化-1d1d-动态规划的转移)
+Main page: [DP optimization with CDQ divide and conquer](../../misc/cdq-divide.md#optimizing-1d1d-dynamic-programming-transitions-with-cdq-divide-and-conquer)
 
 As above, view the whole DP process as a sequence of queries and updates. For some problems, computing them in order is too slow; instead, we can process all queries and updates offline and use CDQ divide and conquer to speed things up.
 
 CDQ divide and conquer for DP optimization also often appears in the following kinds of problems:
 
--   [Convex hull trick DP based on CDQ divide and conquer](./slope.md#二分cdq平衡树优化-dp)
--   [Divide and conquer optimization for DP with monotonic slopes](./quadrangle.md#分治)
+-   [Convex hull trick DP based on CDQ divide and conquer](./slope.md#dp-optimization-with-binary-searchcdqbalanced-trees)
+-   [Divide and conquer optimization for DP with monotonic slopes](./quadrangle.md#divide-and-conquer)
 
 ### DP optimization with binary lifting
 
@@ -132,7 +132,7 @@ $$
 f(n) = F^n(f(0))
 $$
 
-and get the final answer. Since a single step $F$ can often be written as a matrix, this method is usually called fast matrix exponentiation DP optimization. In fact, any associative transformation (that is, any element of a [monoid](../../math/algebra/basic.md#群)) can be sped up this way.
+and get the final answer. Since a single step $F$ can often be written as a matrix, this method is usually called fast matrix exponentiation DP optimization. In fact, any associative transformation (that is, any element of a [monoid](../../math/algebra/basic.md#groups)) can be sped up this way.
 
 Exercises:
 
@@ -154,7 +154,7 @@ Exercises:
 
 ### DP optimization with Lagrange interpolation
 
-Related page: [Lagrange interpolation](../../math/numerical/interp.md#lagrange-插值法)
+Related page: [Lagrange interpolation](../../math/numerical/interp.md#lagrange-interpolation)
 
 In some DP problems, the state function $f(i,j)$ is a polynomial of degree $k$ in $j$. Then we can compute its values at $k+1$ points by brute force, and use Lagrange interpolation to find the expression of $f(i,\cdot)$. This speeds up transitions or even gives the answer directly.
 
@@ -170,7 +170,7 @@ Besides optimizing transitions, we can also lower the complexity by simplifying 
 
 ### DP of DP and DFA minimization
 
-Main pages: [DP of DP](../dp-of-dp.md), [DFA minimization](../../misc/fsm.md#dfa-最小化)
+Main pages: [DP of DP](../dp-of-dp.md), [DFA minimization](../../misc/fsm.md#dfa-minimization)
 
 In some DP problems, the state function can be written as $f(i,x)$, but the transitions of $x$ itself are complicated and may even depend on another DP problem. For such problems, we can first build an automaton for the transitions of state $x$, reduce the number of states with DFA minimization, and then run the outer DP.
 

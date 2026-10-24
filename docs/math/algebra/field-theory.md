@@ -153,7 +153,7 @@ The minimal polynomial here is exactly the irreducible polynomial $f(x)$ from th
     1.  $\sqrt 2$ is algebraic over $\mathbf Q$, with minimal polynomial $x^2-2$.
     2.  $\sqrt 2$ is algebraic over $\mathbf R$, with minimal polynomial $x-\sqrt 2$.
     3.  $\pi$ is transcendental over $\mathbf Q$.
-    4.  In general, elements algebraic over $\mathbf Q$ are called **algebraic numbers**, and transcendental elements are called **transcendental numbers**. In particular, if the minimal polynomial of an algebraic number has integer coefficients, it is called an **algebraic integer**. The algebraic integers in an algebraic extension form a ring. For example, the algebraic integers in the quadratic field $\mathbf Q(\sqrt{D})$ form the ring of quadratic integers $\mathbf Z[\omega]$. For the meaning of this notation, see [ring of quadratic integers](./ring-theory.md#例子二次整数环).
+    4.  In general, elements algebraic over $\mathbf Q$ are called **algebraic numbers**, and transcendental elements are called **transcendental numbers**. In particular, if the minimal polynomial of an algebraic number has integer coefficients, it is called an **algebraic integer**. The algebraic integers in an algebraic extension form a ring. For example, the algebraic integers in the quadratic field $\mathbf Q(\sqrt{D})$ form the ring of quadratic integers $\mathbf Z[\omega]$. For the meaning of this notation, see [ring of quadratic integers](./ring-theory.md#example-quadratic-integer-rings).
 
 ???+ abstract "Algebraic and transcendental extensions"
     For an extension $E/F$, if every element of $E$ is algebraic over $F$, then $E$ is called an **algebraic extension** of $F$. Otherwise $E$ is called a **transcendental extension** of $F$.
@@ -283,7 +283,7 @@ to lower the degree of the target polynomial. Also, for extensions of low degree
 
 For an example of a simple algebraic extension, see the finite field [reference implementation](#reference-implementation) below.
 
-In practice, the algorithms described here can only handle extensions of fairly low degree, which is enough for almost all applications in competitive programming. When the degree is high enough to become the complexity bottleneck, use suitable polynomial techniques ([Fast Fourier Transform](../poly/fft.md), [Number Theoretic Transform](../poly/ntt.md), [fast polynomial modulo](../poly/elementary-func.md#多项式除法--取模), [polynomial Euclidean algorithm](../poly/intro.md#因式分解和欧几里得), etc.) to speed things up.
+In practice, the algorithms described here can only handle extensions of fairly low degree, which is enough for almost all applications in competitive programming. When the degree is high enough to become the complexity bottleneck, use suitable polynomial techniques ([Fast Fourier Transform](../poly/fft.md), [Number Theoretic Transform](../poly/ntt.md), [fast polynomial modulo](../poly/elementary-func.md#polynomial-division--modulo), [polynomial Euclidean algorithm](../poly/intro.md#factorization-and-the-euclidean-algorithm), etc.) to speed things up.
 
 ### Splitting fields
 
@@ -592,7 +592,7 @@ A **finite field**, also called a **Galois field**, is a field with finitely man
 ??? note "Proof"
     The nonzero elements of a finite field are exactly the $q-1$ roots of $x^{q-1}-1$. Apply Vieta's formulas.
 
-In the prime field $\mathbf F_p$, the statement about the product is exactly (part of) [Wilson's theorem](../number-theory/factorial.md#wilson-定理) from number theory.
+In the prime field $\mathbf F_p$, the statement about the product is exactly (part of) [Wilson's theorem](../number-theory/factorial.md#wilsons-theorem) from number theory.
 
 ### Multiplicative structure
 
@@ -616,7 +616,7 @@ The cyclic group $\mathbf F_q^\times$ has $\varphi(q-1)$ generators, called the 
     Although they share the same name, a primitive element of a simple extension and a primitive element of a finite field are different things. A primitive element of a simple extension generates that simple extension, while a primitive element of a finite field generates its multiplicative group (as a cyclic group). A primitive element of a finite field viewed as a simple extension of its prime subfield need not be a primitive element of the finite field itself. For example, in $\mathbf F_{25}\cong\mathbf F_5[x]/(x^2+x+1)$, $\overline x$ is a primitive element of the field extension, but not a primitive element of the field $\mathbf F_{25}$, because its order is $3$.
 
 ??? warning "A primitive element of $\mathbf F_{q}$ is also not the same as a primitive root modulo $q$"
-    For a finite field $\mathbf F_{q}$ of odd characteristic, a [primitive root](./ring-theory.md#应用整数同余类的乘法群) modulo $q$ always exists. But it should not be confused with a primitive element of the finite field $\mathbf F_{q}$. Both are generators of the corresponding multiplicative structure as a cyclic group, but $(\mathbf Z/q\mathbf Z)^\times$ and $\mathbf F_q$ are different when $q$ itself is not prime. For example, the order of the former is $\varphi(q)$ while the order of the latter is $q-1$, so the two multiplicative groups do not even have the same size.
+    For a finite field $\mathbf F_{q}$ of odd characteristic, a [primitive root](./ring-theory.md#application-the-multiplicative-group-of-integers-modulo-n) modulo $q$ always exists. But it should not be confused with a primitive element of the finite field $\mathbf F_{q}$. Both are generators of the corresponding multiplicative structure as a cyclic group, but $(\mathbf Z/q\mathbf Z)^\times$ and $\mathbf F_q$ are different when $q$ itself is not prime. For example, the order of the former is $\varphi(q)$ while the order of the latter is $q-1$, so the two multiplicative groups do not even have the same size.
 
 Let $\alpha$ be a primitive element of the finite field $\mathbf F_q$. Then for every nonzero $x\in\mathbf F_q^\times$ there is a unique natural number $k<q-1$ with $x=\alpha^k$; this $k$ is called the **discrete logarithm** of $x$ in $\mathbf F_q$ to the base $\alpha$. As in $\mathbf F_p$, [algorithms for discrete logarithms](../number-theory/discrete-logarithm.md) all have fairly high complexity.
 
@@ -716,7 +716,7 @@ $$
 \frac1n\sum_{d\mid n}\mu(d)q^{n/d}
 $$
 
-. This is exactly the number of aperiodic necklaces of length $n$ that can be made from beads of $q$ colors, counted up to rotation ([proof](../combinatorics/polya.md#循环群)), so it is also called the necklace polynomial.
+. This is exactly the number of aperiodic necklaces of length $n$ that can be made from beads of $q$ colors, counted up to rotation ([proof](../combinatorics/polya.md#cyclic-group)), so it is also called the necklace polynomial.
 
 ???+ note "Theorem"
     Over a finite field $\mathbf F_q$ there are irreducible polynomials of every degree.
@@ -800,7 +800,7 @@ In general, if an expression can be computed in an extension of the rational fie
 
 ### Cipolla's algorithm
 
-This is a typical example of computing in an extension of a finite field. Given a quadratic residue $a$ modulo $p\neq 2$, we want to find its square root, that is, an $x$ with $x^2\equiv a\pmod p$. Although this is a problem in $\mathbf F_p$, [Cipolla's algorithm](../number-theory/quad-residue.md#cipolla-算法) computes in the finite field $\mathbf F_{p^2}$. This section explains the algorithm in the language of field theory. For a proof using elementary number theory, see the given link.
+This is a typical example of computing in an extension of a finite field. Given a quadratic residue $a$ modulo $p\neq 2$, we want to find its square root, that is, an $x$ with $x^2\equiv a\pmod p$. Although this is a problem in $\mathbf F_p$, [Cipolla's algorithm](../number-theory/quad-residue.md#cipollas-algorithm) computes in the finite field $\mathbf F_{p^2}$. This section explains the algorithm in the language of field theory. For a proof using elementary number theory, see the given link.
 
 Specifically, Cipolla's algorithm first picks $r$ such that $r^2-a$ is a quadratic non-residue modulo $p$, which means $x^2-(r^2-a)$ is an irreducible polynomial. So, letting $u=r^2-a$, we can consider the extension field $\mathbf F_p(\sqrt u)$. The Frobenius endomorphism can only map an element to one of its conjugates, and in a quadratic extension that conjugate is unique, so $(r-\sqrt u)^p=r+\sqrt u$. Hence $(r-\sqrt u)^{p+1}=(r+\sqrt u)(r-\sqrt u)=r^2-u=a$. So to find the square root, we just compute $(r-\sqrt u)^{(p+1)/2}$. This value must lie in $\mathbf F_p$, because the splitting field of $x^2-a$ is $\mathbf F_p$ itself.
 
@@ -838,7 +838,7 @@ Finally, here are some problems that directly apply the content of this page, to
 
 [^polynomial-universal]: Strictly speaking, this refers to the [universal property](https://en.wikipedia.org/wiki/Polynomial_ring#Polynomial_evaluation) of the polynomial ring $R[x]$.
 
-[^multi-poly-ring]: This polynomial ring has infinitely many indeterminates. To define such a ring, first define monomials. Let $X$ be the set of indeterminates. A monomial on $X$ is a function $\alpha:X\rightarrow\mathbf N$ that is nonzero at only finitely many indeterminates, and can be written $x_{i_1}^{\alpha(i_1)}\cdots x_{i_k}^{\alpha(i_k)}$, where $i_1,\cdots,i_k$ are the indices of all indeterminates where $\alpha$ is nonzero. A polynomial is a linear combination of finitely many monomials. With suitably defined addition and multiplication, these form a ring. For finitely many indeterminates, one can prove that this definition agrees with the recursive definition in the [multivariate polynomial ring](./ring-theory.md#多元多项式环) section.
+[^multi-poly-ring]: This polynomial ring has infinitely many indeterminates. To define such a ring, first define monomials. Let $X$ be the set of indeterminates. A monomial on $X$ is a function $\alpha:X\rightarrow\mathbf N$ that is nonzero at only finitely many indeterminates, and can be written $x_{i_1}^{\alpha(i_1)}\cdots x_{i_k}^{\alpha(i_k)}$, where $i_1,\cdots,i_k$ are the indices of all indeterminates where $\alpha$ is nonzero. A polynomial is a linear combination of finitely many monomials. With suitably defined addition and multiplication, these form a ring. For finitely many indeterminates, one can prove that this definition agrees with the recursive definition in the [multivariate polynomial ring](./ring-theory.md#multivariate-polynomial-rings) section.
 
 [^fundamental-algebra]: Despite its name, the fundamental theorem of algebra is not purely algebraic, because constructing the real numbers requires topology.
 

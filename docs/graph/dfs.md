@@ -89,7 +89,7 @@ DFS can be implemented with a [stack](../ds/stack.md) as the temporary container
 
 Evaluating recursive function calls follows the same order as pushing and popping elements of a stack, which is why the memory used by function calls is called the call stack. So DFS can be implemented with recursion.
 
-Using an [adjacency list](./save.md#邻接表) to store the graph:
+Using an [adjacency list](./save.md#adjacency-list) to store the graph:
 
 === "C++"
     ```cpp
@@ -116,7 +116,7 @@ Using an [adjacency list](./save.md#邻接表) to store the graph:
                 dfs(v)
     ```
 
-Using a [linked forward star](./save.md#链式前向星) as an example:
+Using a [linked forward star](./save.md#linked-forward-star) as an example:
 
 === "C++"
     ```cpp
@@ -175,4 +175,4 @@ Note: the DFS order of a tree is not unique either.
 
 During DFS, by recording for each node which node it was reached from, we can build a tree structure called the DFS tree. The DFS tree is a spanning tree of the original graph.
 
-The [DFS tree](./scc.md#dfs-生成树) has many properties; for example, it can be used to find [strongly connected components](./scc.md).
+The [DFS tree](./scc.md#dfs-spanning-tree) has many properties; for example, it can be used to find [strongly connected components](./scc.md).

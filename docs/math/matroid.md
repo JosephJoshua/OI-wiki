@@ -234,7 +234,7 @@ To state the minimum spanning tree problem as a matroid problem, build the graph
 
 **Greedy algorithm**:
 
-In the framework of graphical matroids, [Kruskal's algorithm](../graph/mst.md#kruskal-算法) is a typical greedy algorithm based on matroid theory and can be used to build a minimum spanning tree. [Prim's algorithm](../graph/mst.md#prim-算法) is also an effective greedy algorithm that finds a minimum spanning tree, but it does not strictly rely on the matroid greedy algorithm. So in discussions of matroid theory, Kruskal's algorithm is the main example of a greedy algorithm.
+In the framework of graphical matroids, [Kruskal's algorithm](../graph/mst.md#kruskals-algorithm) is a typical greedy algorithm based on matroid theory and can be used to build a minimum spanning tree. [Prim's algorithm](../graph/mst.md#prims-algorithm) is also an effective greedy algorithm that finds a minimum spanning tree, but it does not strictly rely on the matroid greedy algorithm. So in discussions of matroid theory, Kruskal's algorithm is the main example of a greedy algorithm.
 
 -   **Kruskal's algorithm**:
     1.  **Sort the edges**: sort all edges by weight in increasing order.

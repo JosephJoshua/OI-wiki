@@ -100,7 +100,7 @@ Dirichlet convolution has a number of algebraic properties.
     
     This can be used to compute the values $g(n)$ recursively. So the inverse $g$ exists if and only if $f(1)\neq 0$.
 
-In the language of abstract algebra, these properties say that all arithmetic functions, under (pointwise) addition and Dirichlet convolution, form a [commutative ring](../algebra/basic.md#环), and its units are exactly the functions that are nonzero at $n=1$. This ring is called the **Dirichlet ring**.
+In the language of abstract algebra, these properties say that all arithmetic functions, under (pointwise) addition and Dirichlet convolution, form a [commutative ring](../algebra/basic.md#rings), and its units are exactly the functions that are nonzero at $n=1$. This ring is called the **Dirichlet ring**.
 
 Multiplicative functions are a special kind of arithmetic function. They are closed under Dirichlet convolution and Dirichlet inverse.
 
@@ -142,7 +142,7 @@ Multiplicative functions are a special kind of arithmetic function. They are clo
     
     The second equality uses the induction hypothesis: for $\ell_1\ell_2 < n_1n_2$ with $\ell_1\perp\ell_2$, we have $g(\ell_1\ell_2)=g(\ell_1)g(\ell_2)$.
 
-In the language of abstract algebra, the multiplicative functions under Dirichlet convolution form a [subgroup](../algebra/group-theory.md#子群) of the multiplicative group of the Dirichlet ring.
+In the language of abstract algebra, the multiplicative functions under Dirichlet convolution form a [subgroup](../algebra/group-theory.md#subgroups) of the multiplicative group of the Dirichlet ring.
 
 Completely multiplicative functions are even more special.
 
@@ -151,7 +151,7 @@ Completely multiplicative functions are even more special.
     
     1.  Distributivity: $(\alpha f)\ast(\alpha g) = \alpha\cdot(f\ast g)$.
     2.  Inverse: $(\alpha f)^{-1}=\alpha f^{-1}$, provided $f^{-1}$ exists.
-    3.  A multiplicative function $f$ is completely multiplicative if and only if $f^{-1}=\mu f$, where $\mu$ is the [Möbius function](./mobius.md#莫比乌斯函数).
+    3.  A multiplicative function $f$ is completely multiplicative if and only if $f^{-1}=\mu f$, where $\mu$ is the [Möbius function](./mobius.md#möbius-function).
 
 ??? note "Proof"
     For the first part, check directly:
@@ -206,7 +206,7 @@ Completely multiplicative functions are even more special.
     
     So the inductive step holds, and the claim is proved.
 
-In the language of abstract algebra, if $\alpha$ is completely multiplicative, then the map $f\mapsto \alpha f$ is an [endomorphism](../algebra/ring-theory.md#理想) of the Dirichlet ring.
+In the language of abstract algebra, if $\alpha$ is completely multiplicative, then the map $f\mapsto \alpha f$ is an [endomorphism](../algebra/ring-theory.md#ideals) of the Dirichlet ring.
 
 ## Dirichlet generating functions
 
@@ -239,7 +239,7 @@ Using this correspondence between Dirichlet convolution and products of Dirichle
 
 ### Euler product
 
-The special nature of multiplicative functions also shows up in their Dirichlet generating functions. Because integers have [unique factorization](./basic.md#算术基本定理), the generating function $F(s)$ of a multiplicative function $f(n)$ can be written as:
+The special nature of multiplicative functions also shows up in their Dirichlet generating functions. Because integers have [unique factorization](./basic.md#fundamental-theorem-of-arithmetic), the generating function $F(s)$ of a multiplicative function $f(n)$ can be written as:
 
 $$
 \begin{aligned}
@@ -364,7 +364,7 @@ Dirichlet generating functions can be used to express an arithmetic function as 
 
 For example, in Du's sieve, to compute prefix sums of an arithmetic function $f$, we need another arithmetic function $g$ such that both $f\ast g$ and $g$ have prefix sums that are fast to compute. Dirichlet generating functions can help find such a $g$.
 
-Take the example problem from the Du's sieve section, [Luogu P3768 A Simple Math Problem](../number-theory/hyperbola.md#例题). We need to construct an arithmetic function $g(n)$ that meets the conditions above for $f(n)=n^2\varphi(n)$. Since $f$ is multiplicative, its Dirichlet generating function is
+Take the example problem from the Du's sieve section, [Luogu P3768 A Simple Math Problem](../number-theory/hyperbola.md#example-problems). We need to construct an arithmetic function $g(n)$ that meets the conditions above for $f(n)=n^2\varphi(n)$. Since $f$ is multiplicative, its Dirichlet generating function is
 
 $$
 F(s) = \prod_{p\in\mathbf P}\left(1 + \sum_{k=1}^{\infty}\dfrac{p^{3k-1}(p-1)}{p^{ks}}\right) = \prod_{p\in\mathbf P}\dfrac{1-p^{2-s}}{1-p^{3-s}} = \dfrac{\zeta(s-3)}{\zeta(s-2)}.
@@ -425,7 +425,7 @@ $$
 \sum_{p\in\mathbf P,~p\le n}\sum_{k=1}^{\infty}\left\lfloor\dfrac{n}{p^k}\right\rfloor \le \sum_{p\in\mathbf P,~p\le n}\dfrac{n}{p-1} \le \sum_{p\in\mathbf P,~p\le n}\dfrac{2n}{p} \in O(n\log\log n).
 $$
 
-The estimate in the last step is the same as in the complexity proof of the [sieve of Eratosthenes](./sieve.md#埃拉托斯特尼筛法). So this algorithm runs in $O(n\log\log n)$ time.
+The estimate in the last step is the same as in the complexity proof of the [sieve of Eratosthenes](./sieve.md#sieve-of-eratosthenes). So this algorithm runs in $O(n\log\log n)$ time.
 
 Reference implementation:
 
@@ -434,11 +434,11 @@ Reference implementation:
     --8<-- "docs/math/code/dirichlet/dirichlet-2.cpp:core"
     ```
 
-In particular, when the multiplicative function $g$ is completely multiplicative or the Dirichlet inverse of one, for example $g = 1$ or $g = \mu$, the algorithm can be simplified further. In that case, $h = f\ast g$ can be computed with the [Dirichlet prefix sum / difference](./mobius.md#dirichlet-前缀和) algorithm, which has a smaller constant factor, though the time complexity is still $O(n\log\log n)$.
+In particular, when the multiplicative function $g$ is completely multiplicative or the Dirichlet inverse of one, for example $g = 1$ or $g = \mu$, the algorithm can be simplified further. In that case, $h = f\ast g$ can be computed with the [Dirichlet prefix sum / difference](./mobius.md#dirichlet-prefix-sums) algorithm, which has a smaller constant factor, though the time complexity is still $O(n\log\log n)$.
 
 ### When the result is multiplicative
 
-Finally, consider the case where $h$ is multiplicative. In particular, when $f,g$ are both multiplicative, $h=f \ast g$ is multiplicative. To compute $h$, we only need its values at prime powers; the rest can then be computed with a [linear sieve](./sieve.md#线性筛法) in $O(n)$ time. The value $h(p^e)$ at a prime power $p^e$ can be computed by brute force:
+Finally, consider the case where $h$ is multiplicative. In particular, when $f,g$ are both multiplicative, $h=f \ast g$ is multiplicative. To compute $h$, we only need its values at prime powers; the rest can then be computed with a [linear sieve](./sieve.md#linear-sieve) in $O(n)$ time. The value $h(p^e)$ at a prime power $p^e$ can be computed by brute force:
 
 $$
 h(p^e) = \sum_{i=0}^e f(p^i)g(p^{e-i}).

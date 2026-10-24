@@ -353,7 +353,7 @@ As for the precomputation, $O(v\sqrt v)$ or $O(v^2)$ precomputation is fairly si
 
 ### Combining with the sieve of Eratosthenes
 
-Because `bitset` reads and writes consecutive bits quickly, it is well suited to building prime tables together with the [sieve of Eratosthenes](../../math/number-theory/sieve.md#埃拉托斯特尼筛法).
+Because `bitset` reads and writes consecutive bits quickly, it is well suited to building prime tables together with the [sieve of Eratosthenes](../../math/number-theory/sieve.md#sieve-of-eratosthenes).
 
 It is also simple to use: just replace the boolean array in the sieve of Eratosthenes with a `bitset`.
 

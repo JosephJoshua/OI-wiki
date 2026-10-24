@@ -91,7 +91,7 @@ One octal digit can be written as 3 binary digits (because $2^3 = 8$), and one h
 
 ## Method of complements
 
-See also: [ones' complement and two's complement](../bit.md#整数与位序列)
+See also: [ones' complement and two's complement](../bit.md#integers-and-bit-sequences)
 
 The **method of complements** represents negative numbers using positive numbers, so that subtraction can be done with the same algorithm, circuit or mechanism as addition of positive numbers. It is widely used in the design of calculators and computers to simplify their structure.
 
@@ -244,7 +244,7 @@ In a standard positional system, every digit has the same base. A mixed-radix sy
 
 In base $b$, $a_n\cdots a_1a_0$ represents $\sum_{i=0}^n a_ib^i$. In a mixed-radix system, it represents $\sum_{i=0}^n a_i\prod_{j=0}^{i-1}b_j$, where $b_j$ is the base of digit $a_j$.
 
-In competitive programming, the most common mixed-radix system is the [**factorial number system**](https://en.wikipedia.org/wiki/Factorial_number_system). A number in it can be written ${a_n\cdots a_1a_0}_{~!}$ and represents $\sum_{i=0}^na_i i!$[^note2]. For its uses in competitive programming, see [Lehmer code / Cantor expansion](../permutation.md#排名).
+In competitive programming, the most common mixed-radix system is the [**factorial number system**](https://en.wikipedia.org/wiki/Factorial_number_system). A number in it can be written ${a_n\cdots a_1a_0}_{~!}$ and represents $\sum_{i=0}^na_i i!$[^note2]. For its uses in competitive programming, see [Lehmer code / Cantor expansion](../permutation.md#rank).
 
 ???+ note "Implementation (decimal to factorial base)"
     ```cpp

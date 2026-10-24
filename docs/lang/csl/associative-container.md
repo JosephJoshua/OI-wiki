@@ -165,11 +165,11 @@ For any associative container, traversing it with iterators takes $O(n)$ time.
 
 ## Custom comparison
 
-By default, the comparison function of a `set` is `<` (for non-built-in types you need to [overload the `<` operator](../op-overload.md#比较运算符)). In some special cases, however, we want to customize how the `set` compares elements internally.
+By default, the comparison function of a `set` is `<` (for non-built-in types you need to [overload the `<` operator](../op-overload.md#comparison-operators)). In some special cases, however, we want to customize how the `set` compares elements internally.
 
 You can solve this by passing in a custom comparator.
 
-Specifically, we define a class and [overload the `()` operator](../op-overload.md#函数调用运算符) in it.
+Specifically, we define a class and [overload the `()` operator](../op-overload.md#the-function-call-operator) in it.
 
 For example, to keep a `set` of integers with larger values first, you can write:
 

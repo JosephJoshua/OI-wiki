@@ -186,7 +186,7 @@ Here is reference code using binary grouping.
     A single nearest-point query with a k-D Tree still takes $O(n)$ time in the worst case, but it is a very good partial-credit trick. Keep this in mind when you use it. The explanation of neighborhood queries here is only meant to deepen your understanding of the k-D Tree structure.
 
 ???+ note "Example problem [Luogu P1429 Closest Pair of Points in the Plane (Enhanced)](https://www.luogu.com.cn/problem/P1429)"
-    Given $n$ points $(x_i,y_i)$ in the plane, find the [Euclidean distance](../geometry/distance.md#欧氏距离) between the closest pair of points.
+    Given $n$ points $(x_i,y_i)$ in the plane, find the [Euclidean distance](../geometry/distance.md#euclidean-distance) between the closest pair of points.
     
     $2\le n\le 200000 , 0\le x_i,y_i\le 10^9$
 

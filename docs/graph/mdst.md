@@ -36,7 +36,7 @@ The absolute center may lie at a vertex. In that case, update the answer with th
 
 ### Process
 
-1.  Use an all-pairs shortest path algorithm ([Floyd](./shortest-path.md#floyd-算法), [Johnson](./shortest-path.md#johnson-全源最短路径算法), etc.) to compute the array $d$;
+1.  Use an all-pairs shortest path algorithm ([Floyd](./shortest-path.md#floyds-algorithm), [Johnson](./shortest-path.md#johnsons-all-pairs-shortest-path-algorithm), etc.) to compute the array $d$;
 
 2.  Compute $\textit{rk}(i,j)$ and sort it in ascending order;
 

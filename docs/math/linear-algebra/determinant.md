@@ -4,7 +4,7 @@ This page introduces three definitions of the determinant. One can prove that th
 
 ## Definition via permutations
 
-Prerequisites: [permutations](../permutation.md), [inversion number](../permutation.md#逆序数).
+Prerequisites: [permutations](../permutation.md), [inversion number](../permutation.md#inversion-number).
 
 This method works for computing low-order determinants by hand. Its time complexity is factorial.
 
@@ -122,7 +122,7 @@ The axiomatic definition says that an operation satisfying certain properties ca
 
 Prerequisites: [elementary operations](./elementary-operations.md).
 
-Let $D_i(k)$ be a [scaling matrix](./elementary-operations.md#倍乘矩阵), $P_{ij}$ a [swap matrix](./elementary-operations.md#对换矩阵), and $T_{ij}(k)$ a [row-addition matrix](./elementary-operations.md#倍加矩阵).
+Let $D_i(k)$ be a [scaling matrix](./elementary-operations.md#scaling-matrices), $P_{ij}$ a [swap matrix](./elementary-operations.md#swap-matrices), and $T_{ij}(k)$ a [row-addition matrix](./elementary-operations.md#row-addition-matrices).
 
 An operation $\det$ on $n\times n$ matrices $A$ is called the determinant if it satisfies the following four properties:
 
@@ -150,7 +150,7 @@ An operation $\det$ on $n\times n$ matrices $A$ is called the determinant if it 
     \det I = 1
     $$
 
-The properties of the determinant under elementary operations make it convenient to compute higher-order determinants by hand. [Computing the determinant with Gaussian elimination](../numerical/gauss.md#行列式计算) also uses these properties, with time complexity $O(n^3)$.
+The properties of the determinant under elementary operations make it convenient to compute higher-order determinants by hand. [Computing the determinant with Gaussian elimination](../numerical/gauss.md#computing-determinants) also uses these properties, with time complexity $O(n^3)$.
 
 These properties have several corollaries:
 

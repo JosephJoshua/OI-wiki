@@ -33,7 +33,7 @@ Similar to the case of groups, we can define subrings and ring homomorphisms.
 ???+ example "Example: the ring of integers $\mathbf Z$ (continued)"
     For any nonzero integer $n$, the map taking residues modulo $n$, that is, $\pi:\mathbf Z\rightarrow\mathbf Z/n\mathbf Z$ with $\pi(a)=\bar a$, is a ring homomorphism.
 
-The [discussion](./group-theory.md#群同态) of kernels and images of group homomorphisms carries over here almost unchanged. The (relative) size of the image decides whether the homomorphism is surjective, and whether the kernel is trivial decides whether it is injective. The kernel of a ring homomorphism is defined as follows:
+The [discussion](./group-theory.md#group-homomorphisms) of kernels and images of group homomorphisms carries over here almost unchanged. The (relative) size of the image decides whether the homomorphism is surjective, and whether the kernel is trivial decides whether it is injective. The kernel of a ring homomorphism is defined as follows:
 
 ???+ abstract "Kernel of a homomorphism"
     The **kernel** of a homomorphism $\pi:R\rightarrow S$ from a ring $R$ to a ring $S$ is $\{r\in R:\pi(r)=0\}$, written $\ker\pi$, where $0$ is the additive identity of $S$.
@@ -167,7 +167,7 @@ The condition for a field is stricter than that for an integral domain. An ideal
 ???+ abstract "Prime ideal"
     For a commutative ring $R$ and an ideal $P$, if $P\neq R$, and for any elements $a,b\in R$ of the ring, whenever $ab\in P$ we have $a\in P$ or $b\in P$, then $P$ is called a **prime ideal**.
 
-This definition may look a bit sudden, but compared with the [definition of a prime](../number-theory/basic.md#算术基本定理), this definition of a prime ideal is natural.
+This definition may look a bit sudden, but compared with the [definition of a prime](../number-theory/basic.md#fundamental-theorem-of-arithmetic), this definition of a prime ideal is natural.
 
 ???+ note "Theorem"
     Let $R$ be a commutative nonzero ring with unity and $P$ an ideal. Then the quotient ring $R/P$ is an integral domain if and only if $P$ is a prime ideal.
@@ -219,7 +219,7 @@ First, we generalize the relevant concepts from the divisibility theory of integ
 ???+ abstract "Associates"
     Let $R$ be a commutative ring with elements $a,b\in R$. If they differ only by a unit, that is, there exists a unit $u\in R$ with $a=bu$, then $a$ and $b$ are called **associates** (or **associate**).
 
-Divisibility is a [preorder](../order-theory.md#二元关系) relation on the ring, and being associates is an equivalence relation on the ring. In terms of ideals, $a\mid b$ is equivalent to $(b)\subseteq (a)$, and $a$ and $b$ being associates is equivalent to $(a)=(b)$. So when discussing elements of a ring, we usually don't care about the difference between associates. As with the integers, the greatest common divisor of $a$ and $b$ in a commutative ring is defined as the greatest lower bound (infimum) of $\{a,b\}$.
+Divisibility is a [preorder](../order-theory.md#binary-relations) relation on the ring, and being associates is an equivalence relation on the ring. In terms of ideals, $a\mid b$ is equivalent to $(b)\subseteq (a)$, and $a$ and $b$ being associates is equivalent to $(a)=(b)$. So when discussing elements of a ring, we usually don't care about the difference between associates. As with the integers, the greatest common divisor of $a$ and $b$ in a commutative ring is defined as the greatest lower bound (infimum) of $\{a,b\}$.
 
 ???+ abstract "Greatest common divisor"
     For a commutative ring $R$ and elements $a,b\in R$, if there exists a nonzero element $d\in R$ such that $d\mid a$ and $d\mid b$, and $d'\mid d$ for every $d'$ satisfying $d'\mid a$ and $d'\mid b$, then $d$ is called a **greatest common divisor** of $a$ and $b$, written $\gcd(a,b)$.
@@ -312,7 +312,7 @@ In other words, [Bézout's theorem](../number-theory/bezouts.md) still holds in 
 
 ### Unique factorization domains
 
-A more general concept than principal ideal domains is unique factorization domains. The unique factorization theorem for integers is called the [fundamental theorem of arithmetic](../number-theory/basic.md#算术基本定理). Similar unique factorization theorems actually still hold in some integral domains that are not principal ideal domains. Such integral domains are called unique factorization domains.
+A more general concept than principal ideal domains is unique factorization domains. The unique factorization theorem for integers is called the [fundamental theorem of arithmetic](../number-theory/basic.md#fundamental-theorem-of-arithmetic). Similar unique factorization theorems actually still hold in some integral domains that are not principal ideal domains. Such integral domains are called unique factorization domains.
 
 ???+ abstract "Unique factorization domain"
     For an integral domain $R$, if every nonzero non-unit element $r$ can be written as $r=p_1\cdots p_n$, where $p_1,\cdots,p_n$ are irreducible elements (possibly repeated), and such a factorization is unique up to associates and reordering, then $R$ is called a **unique factorization domain** (UFD).
@@ -481,7 +481,7 @@ However, such a sequence can only have finitely many nonzero terms. Two polynomi
 Sometimes we need to substitute an element of the ring for the indeterminate of a polynomial. For example, if $f(x)$ is a polynomial over $R$ and $a\in R$, the result of substituting $a$ into $f(x)$ is $f(a)$. This means: replacing $x$ with $a$ in the formal sum of the polynomial gives an arithmetic expression in $R$, and $f(a)$ is the result of evaluating this expression in $R$.
 
 ??? info "Polynomials and polynomial functions"
-    Readers should not confuse these two concepts. A polynomial is just a finite sequence of coefficients; it does not automatically become a function. Although substituting ring elements for the indeterminate does map polynomials to polynomial functions, this map is not necessarily injective. For example, $f(x)=x^p-x$ as a polynomial over the field $\mathbf F_p$ is clearly not the zero polynomial; but as a polynomial function $\mathbf F_p\rightarrow \mathbf F_p$, $f(x)$ is identically zero (this is Fermat's little theorem). Although the two concepts are different, many concepts for polynomial functions can be generalized to polynomials. For example, by imitating differentiation, indefinite integration and composition of polynomial functions, we can define (formal) [derivatives](../poly/intro.md#导数), [indefinite integrals](../poly/intro.md#导数), [composition](../poly/intro.md#复合) and so on for polynomials. These formal operations don't rely on any topological structure, but many rules of computation still hold.
+    Readers should not confuse these two concepts. A polynomial is just a finite sequence of coefficients; it does not automatically become a function. Although substituting ring elements for the indeterminate does map polynomials to polynomial functions, this map is not necessarily injective. For example, $f(x)=x^p-x$ as a polynomial over the field $\mathbf F_p$ is clearly not the zero polynomial; but as a polynomial function $\mathbf F_p\rightarrow \mathbf F_p$, $f(x)$ is identically zero (this is Fermat's little theorem). Although the two concepts are different, many concepts for polynomial functions can be generalized to polynomials. For example, by imitating differentiation, indefinite integration and composition of polynomial functions, we can define (formal) [derivatives](../poly/intro.md#derivative), [indefinite integrals](../poly/intro.md#derivative), [composition](../poly/intro.md#composition) and so on for polynomials. These formal operations don't rely on any topological structure, but many rules of computation still hold.
 
 For polynomials
 
@@ -564,7 +564,7 @@ The concept of a root can be extended to multiple roots.
 ??? note "Proof"
     It is enough to note that $F[x]$ is a unique factorization domain.
 
-Although unique factorization holds for polynomials over a field, there is no general way to decide whether a given polynomial is reducible. Low-degree cases are relatively easy. For example, every polynomial of degree one is irreducible. Over special fields, all irreducible polynomials have degree one. Such fields are called [algebraically closed fields](./field-theory.md#代数闭域). Over such a field, every polynomial of positive degree has a root, so any polynomial of degree greater than one can be factored further. One example is the field of complex numbers $\mathbf C$. Over the field of real numbers $\mathbf R$, there are irreducible polynomials of degree two; over the field of rational numbers $\mathbf Q$, the structure of irreducible polynomials is even more complicated. The [field theory](./field-theory.md) page has more discussion of polynomials over the rational numbers and over finite fields.
+Although unique factorization holds for polynomials over a field, there is no general way to decide whether a given polynomial is reducible. Low-degree cases are relatively easy. For example, every polynomial of degree one is irreducible. Over special fields, all irreducible polynomials have degree one. Such fields are called [algebraically closed fields](./field-theory.md#algebraically-closed-fields). Over such a field, every polynomial of positive degree has a root, so any polynomial of degree greater than one can be factored further. One example is the field of complex numbers $\mathbf C$. Over the field of real numbers $\mathbf R$, there are irreducible polynomials of degree two; over the field of rational numbers $\mathbf Q$, the structure of irreducible polynomials is even more complicated. The [field theory](./field-theory.md) page has more discussion of polynomials over the rational numbers and over finite fields.
 
 The results above are all about polynomials over fields. Polynomials over more general integral domains can often be reduced to this case.
 
@@ -684,7 +684,7 @@ For rings with unity, if we consider principal ideals $(a)$ and $(b)$, this cond
 
 ### Application: Lagrange interpolation formula
 
-Related reading: [Lagrange interpolation](../numerical/interp.md#lagrange-插值法), [Fast polynomial interpolation](../poly/multipoint-eval-interpolation.md#多项式的快速插值)
+Related reading: [Lagrange interpolation](../numerical/interp.md#lagrange-interpolation), [Fast polynomial interpolation](../poly/multipoint-eval-interpolation.md#fast-polynomial-interpolation)
 
 The interpolation problem is: given a set of point values $\{(x_i,y_i)\}_{i=1}^n$, find a polynomial $f(x)$ over a field $F$ such that $f(x_i)=y_i$ for all $i=1,\cdots,n$. Of course, we assume all $x_i$ are distinct. The Lagrange interpolation formula gives the general solution to this kind of problem.
 
@@ -727,7 +727,7 @@ In general, extending this method also leads to the [Hermite interpolation formu
 
 ### Application: the multiplicative group of integers modulo n
 
-Related reading: [Primitive roots](../number-theory/primitive-root.md), [Fundamental theorem of finitely generated Abelian groups](./group-theory.md#分类定理)
+Related reading: [Primitive roots](../number-theory/primitive-root.md), [Fundamental theorem of finitely generated Abelian groups](./group-theory.md#classification-theorem)
 
 As an application of the Chinese remainder theorem and group theory, here we discuss the structure of the multiplicative group of integers modulo $n$. In this section, we drop the bar notation for residue classes.
 
@@ -806,7 +806,7 @@ $$
 
 where $p$ is an odd prime; otherwise, the multiplicative group of integers modulo $n$ must contain a subgroup $C_2\times C_2$, so it cannot be cyclic. When the multiplicative group is cyclic, its generators are called **primitive roots** modulo $n$. So the theorem here gives exactly the necessary and sufficient condition for primitive roots to exist.
 
-Of course, analyzing the structure of the multiplicative group gives more information than just the condition for primitive roots to exist. It clearly shows the orders of different elements of the multiplicative group. In $(\mathbf Z/n\mathbf Z)^\times$, an element $x$ with $x^k=1$, that is, a solution of the congruence $x^k\equiv 1\pmod n$, is called a **$k$-th root of unity modulo $n$**; an element of order exactly $k$ is called a **primitive $k$-th root of unity modulo $n$**. Using the structure of the multiplicative group, the existence and number of these roots of unity can be computed exactly. Finally, the least common multiple of the orders of all elements of $(\mathbf Z/n\mathbf Z)^\times$, that is, the smallest positive integer $k$ with $x^k=1$ for all $x\in (\mathbf Z/n\mathbf Z)^\times$, viewed as a function of $n$, is the [Carmichael function](../number-theory/primitive-root.md#carmichael-函数). Its many properties can all be derived from the structure of the multiplicative group.
+Of course, analyzing the structure of the multiplicative group gives more information than just the condition for primitive roots to exist. It clearly shows the orders of different elements of the multiplicative group. In $(\mathbf Z/n\mathbf Z)^\times$, an element $x$ with $x^k=1$, that is, a solution of the congruence $x^k\equiv 1\pmod n$, is called a **$k$-th root of unity modulo $n$**; an element of order exactly $k$ is called a **primitive $k$-th root of unity modulo $n$**. Using the structure of the multiplicative group, the existence and number of these roots of unity can be computed exactly. Finally, the least common multiple of the orders of all elements of $(\mathbf Z/n\mathbf Z)^\times$, that is, the smallest positive integer $k$ with $x^k=1$ for all $x\in (\mathbf Z/n\mathbf Z)^\times$, viewed as a function of $n$, is the [Carmichael function](../number-theory/primitive-root.md#carmichael-function). Its many properties can all be derived from the structure of the multiplicative group.
 
 ## References and notes
 

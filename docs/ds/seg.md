@@ -29,7 +29,7 @@ In general, **range information** is a function of an interval, $\varphi:\mathca
 
 These properties guarantee that to query the information of an interval $I$, it is enough to find a set of nodes whose intervals form a partition of $I$; we can then merge the information stored at these nodes to get the information of $I$.
 
-Range information can be merged, merging is associative, and there is an identity element. This means the information space $M$ forms a [monoid](../math/algebra/basic.md#群) under the merge operation $\circ$.[^monoid]
+Range information can be merged, merging is associative, and there is an identity element. This means the information space $M$ forms a [monoid](../math/algebra/basic.md#groups) under the merge operation $\circ$.[^monoid]
 
 ???+ info "Convention"
     In the reference implementations of segment tree operations, this article assumes elements of the information space $M$ are stored in an `Info` struct. Its default constructor gives the identity element, and it overloads the addition operator to implement information merging.
@@ -180,7 +180,7 @@ To record range updates correctly, we need to understand the properties these up
 2.  The update must be compatible with merging range information. That is, if the information of an interval can be merged from the information of its subintervals, then the result of updating the interval can still be merged from the results of updating the subintervals. In other words, for $m_1,m_2\in M$ we always have $\pi(m_1\circ m_2) = \pi(m_1)\circ\pi(m_2)$.
 3.  In particular, updating the information of the empty interval still gives the information of the empty interval, that is, $\pi(e)=e$.[^endo]
 
-This means an update is an [endomorphism](../math/algebra/group-theory.md#群同态) of the monoid $M$. Moreover, consider the set $\Pi$ of these updates. As long as it is closed under composition, $\Pi$ is also a monoid, since composition of maps is associative and the identity map is the identity element.
+This means an update is an [endomorphism](../math/algebra/group-theory.md#group-homomorphisms) of the monoid $M$. Moreover, consider the set $\Pi$ of these updates. As long as it is closed under composition, $\Pi$ is also a monoid, since composition of maps is associative and the identity map is the identity element.
 
 ???+ info "Convention"
     In the reference implementations of segment tree operations, this article assumes updates are stored in a `Transform` struct. Its default constructor gives the identity operation; it overloads the addition operator to implement composition of operations, and overloads the call operator to apply the update to range information. To make it easy to check whether a lazy tag is empty (that is, does nothing), it also overloads an explicit conversion to bool.
@@ -555,7 +555,7 @@ The sections above covered the basic ideas of segment trees and gave several tem
     Find the area of the union of $n$ rectangles whose sides are parallel to the coordinate axes.
 
 ??? note "Solution"
-    This is a template problem for the [sweep line](../geometry/scanning.md#二维矩形面积并问题). For details of how the sweep line transforms the problem, see the linked page; here we only discuss the data structure needed afterward. After the transformation, we need a structure that supports adding to or subtracting from the cover count over a range: each operation adds one or subtracts one from the cover count of some range, and each query asks for the total length of positions with cover count at least one.
+    This is a template problem for the [sweep line](../geometry/scanning.md#area-of-a-union-of-rectangles-in-2d). For details of how the sweep line transforms the problem, see the linked page; here we only discuss the data structure needed afterward. After the transformation, we need a structure that supports adding to or subtracting from the cover count over a range: each operation adds one or subtracts one from the cover count of some range, and each query asks for the total length of positions with cover count at least one.
     
     Consider implementing these range operations with a segment tree. A natural idea is to store at each node the cover count of the interval and the total length with cover count at least one. But once a whole interval is covered, the coverage of its subintervals is lost from the total length, and when this layer of coverage is later removed, there is no way to recover it. The fix is to record the two kinds of things separately: the cover count only counts operations that cover exactly this whole interval, and the total length only counts the covered length recorded in the descendants. Then the actual covered length of the interval is the interval length if the cover count is positive, and the recorded total length otherwise. When merging, add up the actual lengths computed for the two children to get this node's total length. With this, the cover count cannot be pushed down, because the addition and the removal of each cover land on the same set of nodes, and they can cancel each other out only if the counts stay where they are. This is exactly permanent tags.
     

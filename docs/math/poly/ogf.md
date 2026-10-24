@@ -252,7 +252,7 @@ The binomial theorem is in fact a special case of Newton's binomial theorem.
 
 ## Generating function of the Catalan numbers
 
-See [the algebraic derivation of the Catalan numbers](../combinatorics/catalan.md#代数推演).
+See [the algebraic derivation of the Catalan numbers](../combinatorics/catalan.md#algebraic-derivation).
 
 ## Applications
 

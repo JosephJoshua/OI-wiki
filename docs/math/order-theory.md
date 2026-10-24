@@ -201,7 +201,7 @@ For a finite poset $S$ with partial order $\preceq$, we have the following pair 
         
         So it follows that $\{f^{-1}(\{i\}):1\leq i\leq d\}$ is an antichain cover, and hence the minimum number of antichains needed is at most $d$.
 
-Dilworth's theorem is equivalent to [Hall's marriage theorem](../graph/graph-matching/graph-match.md#hall-定理).
+Dilworth's theorem is equivalent to [Hall's marriage theorem](../graph/graph-matching/graph-match.md#halls-theorem).
 
 We can use Dilworth's theorem to prove the following theorem:
 
@@ -233,7 +233,7 @@ We can use Dilworth's theorem to prove the following theorem:
         (i,h_i)\preceq(j,h_j) \iff (i\leq j \land h_i\geq h_j)
         $$
         
-        By Dilworth's theorem: **the minimum number of non-increasing subsequences needed to cover the sequence equals the length of the longest strictly increasing subsequence**. So the problem can be solved with the [$O(n\log n)$ method for the longest non-decreasing subsequence](../dp/basic.md#算法二).
+        By Dilworth's theorem: **the minimum number of non-increasing subsequences needed to cover the sequence equals the length of the longest strictly increasing subsequence**. So the problem can be solved with the [$O(n\log n)$ method for the longest non-decreasing subsequence](../dp/basic.md#algorithm-2).
     
     ??? note "Reference code"
         ```cpp

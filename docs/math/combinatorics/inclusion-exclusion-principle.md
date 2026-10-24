@@ -367,7 +367,7 @@ Computing this takes $O(n^2)$.
 
 ## Min-max inclusion–exclusion
 
-For a sequence $\{x_i\}$ of length $n$ whose elements form a [total order](../order-theory.md#偏序集) and support addition and subtraction, let $S=\{1,2,3,\cdots,n\}$. Then:
+For a sequence $\{x_i\}$ of length $n$ whose elements form a [total order](../order-theory.md#partially-ordered-sets) and support addition and subtraction, let $S=\{1,2,3,\cdots,n\}$. Then:
 
 $$
 \max_{i\in S}{x_i}=\sum_{T\subseteq S}{(-1)^{|T|-1}\min_{j\in T}{x_j}}

@@ -124,7 +124,7 @@ $$
 f^{-1}_0=\dfrac{1}{f_0},f^{-1}_n=\dfrac{-1}{f_0}\sum_{k=0}^{n-1}f^{-1}_kf_{n-k}
 $$
 
-Computing the first $n$ terms directly with this recurrence takes $O(n^2)$. [Using FFT](./elementary-func.md#多项式求逆) gives an $O(n\log n)$ algorithm.
+Computing the first $n$ terms directly with this recurrence takes $O(n^2)$. [Using FFT](./elementary-func.md#polynomial-inverse) gives an $O(n\log n)$ algorithm.
 
 ???+ note "Note"
     It is easy to see that the reciprocal of $f(x)$ is just the infinite Maclaurin expansion of $\frac{1}{f(x)}$ (the infinite Taylor expansion at $x=0$).
@@ -397,7 +397,7 @@ where $k_n(x)$ is called the kernel function. Different kernel functions lead to
 
 1.  Ordinary generating function: $k_n(x)=x^n$.
 2.  Exponential generating function: $k_n(x)=\dfrac{x^n}{n!}$.
-3.  [Dirichlet generating function](../number-theory/dirichlet.md#dirichlet-生成函数): $k_n(x)=\dfrac{1}{n^x}$.
+3.  [Dirichlet generating function](../number-theory/dirichlet.md#dirichlet-generating-functions): $k_n(x)=\dfrac{1}{n^x}$.
 
 ## References and further reading
 

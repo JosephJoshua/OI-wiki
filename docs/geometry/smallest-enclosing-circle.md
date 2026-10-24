@@ -74,7 +74,7 @@ Here "in the circle" always includes the boundary, and the current circle at eac
 
 The geometric operations in Welzl's algorithm are fairly standard. There are three: testing whether a point is in a circle, the circle with two given points as diameter, and the circumcircle of three points. We skip the first two and focus on the third.
 
-Given three non-collinear points $A=(x_A,y_A), B=(x_B,y_B), C=(x_C,y_C)$, their circumcenter is the intersection of the perpendicular bisectors of segments $AB$ and $AC$. You can compute it with the method in [Intersection point of two lines](./2d.md#求两条直线的交点).
+Given three non-collinear points $A=(x_A,y_A), B=(x_B,y_B), C=(x_C,y_C)$, their circumcenter is the intersection of the perpendicular bisectors of segments $AB$ and $AC$. You can compute it with the method in [Intersection point of two lines](./2d.md#intersection-point-of-two-lines).
 
 You can also set up equations and solve them directly. Let the circumcenter be $O=(x,y)$. Then
 

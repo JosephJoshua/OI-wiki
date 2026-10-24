@@ -4,7 +4,7 @@ This page mainly describes the process of writing for **OI Wiki**. Before you wr
 
 ## Contribution guidelines
 
-Before editing, please read the [OI Wiki contribution guidelines](https://github.com/OI-wiki/OI-wiki/blob/master/.github/CONTRIBUTING.md) and the [project policies](./about.md#项目方针), so that you can work and communicate better with other community contributors.
+Before editing, please read the [OI Wiki contribution guidelines](https://github.com/OI-wiki/OI-wiki/blob/master/.github/CONTRIBUTING.md) and the [project policies](./about.md#project-policies), so that you can work and communicate better with other community contributors.
 
 ## Collaborating
 

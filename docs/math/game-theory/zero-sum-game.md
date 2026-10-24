@@ -1,6 +1,6 @@
 Prerequisites: [Introduction to game theory](./intro.md)
 
-This article discusses (two-player) [zero-sum games](./intro.md#零和非零和博弈).
+This article discusses (two-player) [zero-sum games](./intro.md#zero-sumnon-zero-sum-games).
 
 In a zero-sum game, the payoffs of the two players always add up to zero, so one player's gain is always the other player's loss. Zero-sum games can be seen as a special case of constant-sum games. Conversely, any constant-sum game can be turned into an equivalent zero-sum game by adding or subtracting a constant to all of one player's payoffs, so we only need to discuss zero-sum games.
 
@@ -20,13 +20,13 @@ v(s), & s \in S_0,\\
 \end{cases}
 $$
 
-Here $t\in s$ means that $t$ is a successor position of $s$. This is the [minimax idea](../../search/alpha-beta.md#minimax-算法).
+Here $t\in s$ means that $t$ is a successor position of $s$. This is the [minimax idea](../../search/alpha-beta.md#minimax-algorithm).
 
 When applying this algorithm to real problems, the usual concrete approaches are:
 
 -   If the game has few positions, just implement this algorithm directly by brute force.
 
--   If the game has a large number of positions and no special structure, consider [Alpha–Beta pruning](../../search/alpha-beta.md#alphabeta-剪枝), combined with other search pruning techniques.
+-   If the game has a large number of positions and no special structure, consider [Alpha–Beta pruning](../../search/alpha-beta.md#alphabeta-pruning), combined with other search pruning techniques.
 
 -   If a single position is often a successor of many positions, consider memoized search or another dynamic programming algorithm to avoid repeated search.
 
@@ -47,11 +47,11 @@ When applying this algorithm to real problems, the usual concrete approaches are
 
     Here $a_{s\to t}$ is a move that takes the state from $s$ to $t$. If there are several such moves, take the one with the highest payoff $w(a)$.
 
--   Impartial games are all sequential zero-sum games: just give the winner payoff $+1$ and the loser payoff $-1$. Then the recurrence for the payoff function $V(\cdot)$ is exactly the [lemma](./impartial-game.md#博弈图和状态) for determining winning and losing states.
+-   Impartial games are all sequential zero-sum games: just give the winner payoff $+1$ and the loser payoff $-1$. Then the recurrence for the payoff function $V(\cdot)$ is exactly the [lemma](./impartial-game.md#game-graphs-and-states) for determining winning and losing states.
 
     A common variant of such problems asks for the minimum number of turns the winner needs and the maximum number of turns the loser can hold out. For this, note the following: run a BFS starting from the terminal states, and classify states as winning or losing according to the lemma. The BFS round in which a state is classified as winning or losing is exactly the number of turns we want. This is because a state is classified as winning as soon as one successor is a losing state, so it is always reached from the losing successor with the smallest round number; and a state is classified as losing only when all of its successors are winning states, so it is always reached from the winning successor with the largest round number.
 
-    This method also extends to general [directed graph games](./impartial-game.md#有向图游戏).
+    This method also extends to general [directed graph games](./impartial-game.md#directed-graph-games).
 
 ### Example problem
 
@@ -146,7 +146,7 @@ $$
 w_+ = \min_{a_2\in A_2}\max_{a_1\in A_1} v(a_1,a_2)
 $$
 
-Since player $2$'s move is visible to player $1$ (but not the other way around), this should be the best outcome player $1$ can get. Player $1$ should expect the payoff $w$ in the actual game to satisfy $w\in[w_-,w_+]$. Although the inequality $w_-\le w_+$ always holds (for a proof, see the [weak duality theorem](../linear-programming.md#对偶原理)), equality does not necessarily hold. So in general, analyzing sequential games alone cannot uniquely determine the outcome of the game.
+Since player $2$'s move is visible to player $1$ (but not the other way around), this should be the best outcome player $1$ can get. Player $1$ should expect the payoff $w$ in the actual game to satisfy $w\in[w_-,w_+]$. Although the inequality $w_-\le w_+$ always holds (for a proof, see the [weak duality theorem](../linear-programming.md#duality-principle)), equality does not necessarily hold. So in general, analyzing sequential games alone cannot uniquely determine the outcome of the game.
 
 ???+ example "Example (continued)"
     In rock paper scissors, if the players move one after the other, the first player always loses and the second player always wins. In mathematical terms, this is the inequality:
@@ -213,7 +213,7 @@ Once mixed strategies are allowed, the maximin idea and the minimax idea give th
     \end{aligned}
     $$
     
-    This problem is clearly feasible and its objective is bounded, so an optimal solution exists. By the [duality principle](../linear-programming.md#对偶原理), its optimal value equals the optimal value of the dual problem:
+    This problem is clearly feasible and its objective is bounded, so an optimal solution exists. By the [duality principle](../linear-programming.md#duality-principle), its optimal value equals the optimal value of the dual problem:
     
     $$
     (D) \qquad

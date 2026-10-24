@@ -148,7 +148,7 @@ With a small change, the converse of the fundamental lemma of arithmetic gives a
     For an integer $p\ne 0,\pm 1$, if $p\mid a_1$ or $p\mid a_2$ holds for all integers $a_1,a_2$ with $p\mid a_1a_2$, we call $p$ a prime.
 
 ??? tip "Tip"
-    The motivation for this definition comes from [prime ideals](../algebra/ring-theory.md#素理想).
+    The motivation for this definition comes from [prime ideals](../algebra/ring-theory.md#prime-ideals).
 
 ???+ note "Fundamental theorem of arithmetic (unique factorization theorem)"
     Every positive integer $a$ can be written as
@@ -187,7 +187,7 @@ Here $b$ is a residue of $a$ modulo $m$, and this concept is exactly the same as
 
 Properties of congruence:
 
--   Congruence is an [equivalence relation](../order-theory.md#二元关系), that is, congruence is
+-   Congruence is an [equivalence relation](../order-theory.md#binary-relations), that is, congruence is
     -   Reflexive: $a\equiv a\pmod m$.
     -   Symmetric: if $a\equiv b\pmod m$, then $b\equiv a\pmod m$.
     -   Transitive: if $a\equiv b\pmod m,b\equiv c\pmod m$, then $a\equiv c\pmod m$.
@@ -236,7 +236,7 @@ It is easy to see that:
 -   for any integer $a$, $a+\mathbf{Z}_m=\mathbf{Z}_m$;
 -   for any integer $b$ coprime to $m$, $b\mathbf{Z}_m=\mathbf{Z}_m$.
 
-By the definition of a [quotient group](../algebra/group-theory.md#商群), $\mathbf{Z}_m=\mathbf{Z}/m\mathbf{Z}$, so we sometimes also write $\mathbf{Z}/m\mathbf{Z}$ for $\mathbf{Z}_m$.
+By the definition of a [quotient group](../algebra/group-theory.md#quotient-groups), $\mathbf{Z}_m=\mathbf{Z}/m\mathbf{Z}$, so we sometimes also write $\mathbf{Z}/m\mathbf{Z}$ for $\mathbf{Z}_m$.
 
 By the [pigeonhole principle](../combinatorics/drawer-principle.md):
 
@@ -518,11 +518,11 @@ For derivations of these and more general sums of this kind, see the [Floor Sum 
 
 For more properties and applications of floor and ceiling, see the following pages:
 
--   The modulo operation: $n\bmod m = n - \left\lfloor\dfrac{n}{m}\right\rfloor m$. It can be used to [speed up integer modulo operations](./mod-arithmetic.md#相关算法).
--   Using Gauss's lemma to prove the [law of quadratic reciprocity](./quad-residue.md#二次互反律).
+-   The modulo operation: $n\bmod m = n - \left\lfloor\dfrac{n}{m}\right\rfloor m$. It can be used to [speed up integer modulo operations](./mod-arithmetic.md#related-algorithms).
+-   Using Gauss's lemma to prove the [law of quadratic reciprocity](./quad-residue.md#quadratic-reciprocity).
 -   [Divisor blocks (sqrt decomposition in number theory)](./sqrt-decomposition.md), especially the proofs of its properties.
--   [Legendre's formula](./factorial.md#legendre-公式) for the exponent of a prime in a factorial.
--   [Beatty sequences](../game-theory/impartial-game.md#wythoff-游戏), Rayleigh's theorem, and Wythoff's game.
+-   [Legendre's formula](./factorial.md#legendres-formula) for the exponent of a prime in a factorial.
+-   [Beatty sequences](../game-theory/impartial-game.md#wythoffs-game), Rayleigh's theorem, and Wythoff's game.
 
 ## References and notes
 

@@ -230,7 +230,7 @@ for (int i = 0; i != arr.size(); ++i) cout << arr[i] << " ";
 
 ## `deque`
 
-`std::deque` is a [double-ended queue](../../ds/queue.md#双端队列) data structure provided by the STL. It supports insertion and deletion in linear time and random access in constant time.
+`std::deque` is a [double-ended queue](../../ds/queue.md#double-ended-queue) data structure provided by the STL. It supports insertion and deletion in linear time and random access in constant time.
 
 ### Using `deque`
 

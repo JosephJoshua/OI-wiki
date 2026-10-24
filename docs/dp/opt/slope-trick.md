@@ -217,7 +217,7 @@ is called the **infimal convolution**[^inf-conv] of $f$ and $g$. If $f$ and $g$ 
 ??? example "Explanation of the figure"
     As shown in the figure, to get the infimal convolution $h$ of $f$ and $g$, treat every point on the graph of $f$ (the red dashed line in the third figure) as an origin, and draw the graph of $g$ in the corresponding coordinate system (the blue dashed line in the third figure). As the origin moves along the graph of $f$, the outline of the region swept by the graph (epigraph) of $g$, that is, its lower convex hull, is the graph of $h$. You can see that each slope segment of $h$ is either a slope segment of $f$ or a slope segment of $g$, just re-sorted by slope. In this process, the roles of $f$ and $g$ can be swapped: moving the graph of $f$ along the graph of $g$ gives the same result.
 
-Geometrically, $\operatorname{epi}h$ is the [Minkowski sum](../../geometry/convex-hull.md#闵可夫斯基和) of $\operatorname{epi}f$ and $\operatorname{epi}g$. If $f$ and $g$ are both piecewise linear, then $h$ is also piecewise linear, and its slope segments can be seen as the result of merging (and re-sorting) the slope segments of $f$ and $g$.
+Geometrically, $\operatorname{epi}h$ is the [Minkowski sum](../../geometry/convex-hull.md#minkowski-sum) of $\operatorname{epi}f$ and $\operatorname{epi}g$. If $f$ and $g$ are both piecewise linear, then $h$ is also piecewise linear, and its slope segments can be seen as the result of merging (and re-sorting) the slope segments of $f$ and $g$.
 
 ??? note "Proof"
     Let $f,g$ be convex functions and $h$ their infimal convolution. Let $x_1<x_2$ and $\alpha\in(0,1)$. By the definition of infimal convolution, for any $\varepsilon>0$, there exist $y_i,z_i\in\mathbf R$ with $y_i+z_i=x_i$ and
@@ -407,7 +407,7 @@ Template problems:
     1.  Shift all negative slope segments left by $h$, and all positive slope segments right by $h$;
     2.  Insert $a_i$ twice.
     
-    Clearly, for this problem it is convenient to maintain the negative and positive slopes separately. Since the operations mostly happen near the zero-slope segment, we can use a [pair of opposite heaps](../../ds/binary-heap.md#对顶堆): a max-heap for the breakpoints of the negative slopes and a min-heap for those of the positive slopes. The global shifts of breakpoints are done with lazy tags. The second step inserts one $a_i$ into each heap; after inserting, the top of the max-heap may no longer be less than or equal to the top of the min-heap. In that case, swap the two tops until the order between them is restored.
+    Clearly, for this problem it is convenient to maintain the negative and positive slopes separately. Since the operations mostly happen near the zero-slope segment, we can use a [pair of opposite heaps](../../ds/binary-heap.md#two-heap-technique): a max-heap for the breakpoints of the negative slopes and a min-heap for those of the positive slopes. The global shifts of breakpoints are done with lazy tags. The second step inserts one $a_i$ into each heap; after inserting, the top of the max-heap may no longer be less than or equal to the top of the min-heap. In that case, swap the two tops until the order between them is restored.
     
     Finally, consider how to update the minimum during the operations. The shift in the first step does not change the minimum, so we only need to look at swapping the tops. Suppose $\xi_{-1}>\xi_1$. When we swap the tops $\xi_{-1}$ and $\xi_1$, the function goes from
     

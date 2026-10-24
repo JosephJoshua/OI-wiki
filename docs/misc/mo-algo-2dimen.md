@@ -38,7 +38,7 @@ In the end, the computation part takes $\Theta(n^2\cdot q^{\frac 34})$ time. Add
 
 First, as in the previous problem, compress the values of the whole matrix. But note that in this problem, besides splitting the positions into blocks, we also need sqrt decomposition over the range of values to get the answer.
 
-We also need odd-even sorting as an optimization here; see [ordinary Mo's algorithm](../misc/mo-algo.md#普通莫队的优化) for details.
+We also need odd-even sorting as an optimization here; see [ordinary Mo's algorithm](../misc/mo-algo.md#optimizing-ordinary-mos-algorithm) for details.
 
 The time limit for this problem is not very generous, so pay attention to the constant factor of your code. The computed block size is usually small: with $n,\ q$ both at their maximum, it is around $11$, so you can just hard-code it as a constant to save time.
 

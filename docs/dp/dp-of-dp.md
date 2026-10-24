@@ -14,7 +14,7 @@ This technique is mainly used for a class of **sequence counting**, **probabilit
 -   For each specific sequence $s\in\Sigma^n$, we can use dynamic programming to decide whether it is valid (i.e. $s\in A$), compute its weight, or find some related value.
 -   In the end, we want to compute the number of sequences in $A$, their total weight, the expected value, etc.
 
-Enumerating all sequences is infeasible here. So we abstract the process of "deciding whether a sequence is valid" (the inner DP) into a [deterministic finite automaton](../misc/fsm.md#确定性有限状态自动机) (DFA). In general, for a fixed sequence $s\in\Sigma^n$, the state function of the inner DP can be written as $g(i,x;s)$: the value of some quantity after processing the prefix of $s$ of length $i$, with the other state components equal to $x$. Correspondingly, the state transition equation of the inner DP is
+Enumerating all sequences is infeasible here. So we abstract the process of "deciding whether a sequence is valid" (the inner DP) into a [deterministic finite automaton](../misc/fsm.md#deterministic-finite-automata) (DFA). In general, for a fixed sequence $s\in\Sigma^n$, the state function of the inner DP can be written as $g(i,x;s)$: the value of some quantity after processing the prefix of $s$ of length $i$, with the other state components equal to $x$. Correspondingly, the state transition equation of the inner DP is
 
 $$
 g(i,\cdot;s) = G(g(i-1,\cdot;s),s_i).

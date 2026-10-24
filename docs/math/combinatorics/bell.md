@@ -40,7 +40,7 @@ $B_{n+1}$ is the number of partitions of a set with $n+1$ elements. Let the set 
 
 Continuing this way gives the formula above.
 
-Each Bell number is the sum of the corresponding [Stirling numbers of the second kind](./stirling.md#第二类斯特林数stirling-number),
+Each Bell number is the sum of the corresponding [Stirling numbers of the second kind](./stirling.md#stirling-numbers-of-the-second-kind-stirling-number),
 because a Stirling number of the second kind counts the ways to partition a set of $n$ elements into exactly $k$ non-empty subsets.
 
 $$
@@ -137,7 +137,7 @@ $$
 \hat B(x) = \exp\left(\mathrm{e}^x - 1\right)
 $$
 
-Precompute the first $n$ terms of $\mathrm{e}^x - 1$, then apply one [polynomial exp](../poly/elementary-func.md#多项式对数函数--指数函数) to get the first $n$ Bell numbers. The bottleneck is the polynomial exp, so the time complexity can be $O(n \log n)$.
+Precompute the first $n$ terms of $\mathrm{e}^x - 1$, then apply one [polynomial exp](../poly/elementary-func.md#polynomial-logarithm--exponential) to get the first $n$ Bell numbers. The bottleneck is the polynomial exp, so the time complexity can be $O(n \log n)$.
 
 ## References
 

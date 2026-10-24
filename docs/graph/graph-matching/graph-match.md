@@ -185,7 +185,7 @@ In a weighted general graph, the problem can be solved in $O(|V|^2|E|)$ time wit
 
 ## Related problems
 
-Maximum (weight) matching is closely connected to other graph problems. This section only discusses general graphs; for the results on bipartite graphs, see the [Maximum matching in bipartite graphs](./bigraph-match.md#相关问题) page.
+Maximum (weight) matching is closely connected to other graph problems. This section only discusses general graphs; for the results on bipartite graphs, see the [Maximum matching in bipartite graphs](./bigraph-match.md#related-problems) page.
 
 ### Maximum weight maximum cardinality matching
 

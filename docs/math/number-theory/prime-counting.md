@@ -13,7 +13,7 @@ This page uses the following notation:
 
 -   $\mathbf P$ is the set of (positive) primes, and $p_a$ is the $a$-th smallest prime (indexed from $1$). For convenience, also set $p_0=1$. On this page, the letters $p$ and $q$ always denote primes.
 -   $\operatorname{lpf}(n)$ is the least prime factor of $n$. Also set $\operatorname{lpf}(1)=+\infty$.
--   $D(x) = \{\lfloor x/i\rfloor : i = 1,2,\dots,\lfloor x\rfloor\}$. For its properties, see the section [properties of sqrt decomposition in number theory](./sqrt-decomposition.md#性质).
+-   $D(x) = \{\lfloor x/i\rfloor : i = 1,2,\dots,\lfloor x\rfloor\}$. For its properties, see the section [properties of sqrt decomposition in number theory](./sqrt-decomposition.md#properties).
 -   $\pi(x)$ is the number of primes not exceeding $x$.
 -   $\varphi(x,a)=\#\{n \in\mathbf N_+ : n \le x,~ (p\mid n \implies p > p_a)\}$ is the number of positive integers not exceeding $x$ whose prime factors are all greater than $p_a$.
 -   $P_k(x,a)=\#\{n\in\mathbf N_+ : n \le x,~ n = q_1q_2\cdots q_k,~ \forall i(q_i > p_a)\}$ is the number of positive integers not exceeding $x$ that have exactly $k$ prime factors (counted with multiplicity), all greater than $p_a$.
@@ -173,7 +173,7 @@ Below is a reference implementation of the algorithm with $c=0$:
     --8<-- "docs/math/code/prime-counting/lmo-offline.cpp:core"
     ```
 
-This offline approach uses a lot of memory and struggles with problems of size $10^{13}$. The bottleneck is that precomputation must store the $\operatorname{lpf}$ information for $[1,x/y]$. In fact, this information is only used by the later offline queries and is accessed once in order, so it can be computed during the queries with a [segmented sieve](./sieve.md#分块筛选).
+This offline approach uses a lot of memory and struggles with problems of size $10^{13}$. The bottleneck is that precomputation must store the $\operatorname{lpf}$ information for $[1,x/y]$. In fact, this information is only used by the later offline queries and is accessed once in order, so it can be computed during the queries with a [segmented sieve](./sieve.md#segmented-sieve).
 
 In fact, the original paper gives an implementation based entirely on the segmented sieve. Both $P_2(x,a)$ and $\varphi(x,a)$ are computed inside the segmented sieve, giving an algorithm with $\tilde O(x^{2/3})$ time and $\tilde O(x^{1/3})$ space. This requires enumerating all leaves directly in some way, turning the offline algorithm into an online one. A simple implementation is described next.
 
@@ -226,7 +226,7 @@ we get the value of the prime counting function $\pi(x)$ directly.
     
     That is, $S(30,2)=S(30,1)-\bigl(S(10,1)-(2-1)\bigr)=15-(5-1)=11$.
 
-This recurrence is easy to compute with dynamic programming. Since $S(x,a)=S(\lfloor x\rfloor,a)$, every division in the recurrence can be treated as integer division. By the [properties of sqrt decomposition in number theory](./sqrt-decomposition.md#性质), the first dimension of the DP always takes values in the set $D(x)$, which has only $\Theta(\sqrt{x})$ elements. Moreover, thanks to the special form of the recurrence, the values $S(\cdot,a)$ can be stored in a single array of length $|D(x)|$. For each $a$, go through the elements of $D(x)$ from largest to smallest and update the array with the recurrence, until the element is strictly smaller than $p_a^2$. Only $\pi(\sqrt{x})$ rounds of updates are needed to get the final result.
+This recurrence is easy to compute with dynamic programming. Since $S(x,a)=S(\lfloor x\rfloor,a)$, every division in the recurrence can be treated as integer division. By the [properties of sqrt decomposition in number theory](./sqrt-decomposition.md#properties), the first dimension of the DP always takes values in the set $D(x)$, which has only $\Theta(\sqrt{x})$ elements. Moreover, thanks to the special form of the recurrence, the values $S(\cdot,a)$ can be stored in a single array of length $|D(x)|$. For each $a$, go through the elements of $D(x)$ from largest to smallest and update the array with the recurrence, until the element is strictly smaller than $p_a^2$. Only $\pi(\sqrt{x})$ rounds of updates are needed to get the final result.
 
 The space complexity is clearly $O(x^{1/2})$. As for time, the precomputation takes $O(x^{1/2})$, and the DP part takes
 
@@ -420,7 +420,7 @@ Assume the arithmetic function $f$ satisfies:
 1.  $f$ is completely multiplicative, that is, $f(mn)=f(m)f(n)$ for all positive integers $m,n$;
 2.  the prefix sum $F(x)=\sum_{n \le x}f(n)$ is easy to compute.
 
-Common arithmetic functions satisfying these conditions include power functions and [Dirichlet characters](https://en.wikipedia.org/wiki/Dirichlet_character) (for example the [Legendre symbol](./quad-residue.md#legendre-符号)). Of course, if a function is a linear combination of functions satisfying these conditions, its prefix sum over primes can also be computed. So the method in this section handles the cases where $f$ is a polynomial or $f$ is periodic[^periodic]. Another, simpler way to handle periodic functions is shown in the example problems later.
+Common arithmetic functions satisfying these conditions include power functions and [Dirichlet characters](https://en.wikipedia.org/wiki/Dirichlet_character) (for example the [Legendre symbol](./quad-residue.md#legendre-symbol)). Of course, if a function is a linear combination of functions satisfying these conditions, its prefix sum over primes can also be computed. So the method in this section handles the cases where $f$ is a polynomial or $f$ is periodic[^periodic]. Another, simpler way to handle periodic functions is shown in the example problems later.
 
 Under these conditions, the recurrence above generalizes. Define $S(x,a)$ as the sum of $f(\cdot)$ over the integers in $[2,x]$ that remain after sieving with the first $a$ primes, that is,
 

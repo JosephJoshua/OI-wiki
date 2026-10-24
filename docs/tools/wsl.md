@@ -262,7 +262,7 @@ You can test it with `man help`.
 # apt install -y build-essential vim ddd gdb fpc emacs gedit anjuta lazarus
 ```
 
-To install GUIDE, see [Installing GUIDE on Debian or Ubuntu](./editor/guide.md#在-debian-或-ubuntu-安装).
+To install GUIDE, see [Installing GUIDE on Debian or Ubuntu](./editor/guide.md#installing-on-debian-or-ubuntu).
 
 This installs the basics plus the environment officially required by NOI. If needed, you can install other packages with `sudo apt install <package-name>`.
 To install other versions, see Debian's official [package management manual](https://www.debian.org/doc/manuals/debian-reference/ch02.zh-cn.html).

@@ -263,7 +263,7 @@ It is worth mentioning that the analysis above assumes a truly random map, but P
 
 Example problem: [Luogu P4718 [Template] Pollard-Rho algorithm](https://www.luogu.com.cn/problem/P4718)
 
-For a number $n$, use the [Miller–Rabin algorithm](./prime.md#millerrabin-素性测试) to check whether it is prime. If it is, return it directly. Otherwise use Pollard Rho to find a factor $p$, and divide $n$ by $p$. Then recursively factor $n$ and $p$, use Miller–Rabin to detect prime factors, and update max\_factor to get the largest prime factor. Since this problem's data is very large, Floyd's cycle detection is not fast enough; here we use the doubling optimization.
+For a number $n$, use the [Miller–Rabin algorithm](./prime.md#millerrabin-primality-test) to check whether it is prime. If it is, return it directly. Otherwise use Pollard Rho to find a factor $p$, and divide $n$ by $p$. Then recursively factor $n$ and $p$, use Miller–Rabin to detect prime factors, and update max\_factor to get the largest prime factor. Since this problem's data is very large, Floyd's cycle detection is not fast enough; here we use the doubling optimization.
 
 ??? note "Implementation"
     ```cpp

@@ -103,7 +103,7 @@ It has a simplified version, `ensure()`: we can write `ensure(x> y)` directly wi
     
     The global functions `::ensuref/ensure()` are mostly used in generators and validators; if a check fails, they always return `_fail`.
     
-    The member functions `InStream::ensuref/ensure()` are generally used to check whether the output of the contestant or the reference solution is valid. When the `InStream` is `ouf`, they return `_wa`; when it is `inf` (input data is generally not checked in a checker; that should be done in the validator) or `ans`, they return `_fail`. See [Checker - Writing a readAns function](./checker.md#好的实现) for details.
+    The member functions `InStream::ensuref/ensure()` are generally used to check whether the output of the contestant or the reference solution is valid. When the `InStream` is `ouf`, they return `_wa`; when it is `inf` (input data is generally not checked in a checker; that should be done in the validator) or `ans`, they return `_fail`. See [Checker - Writing a readAns function](./checker.md#a-good-implementation) for details.
 
 **This article is mainly translated and compiled from the [Testlib - Codeforces](https://codeforces.com/testlib) series. The GitHub repository of `testlib.h` is [MikeMirzayanov/testlib](https://github.com/MikeMirzayanov/testlib).**
 

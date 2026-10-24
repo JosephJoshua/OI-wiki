@@ -12,7 +12,7 @@ You can still use C-style pointers in C++, but for passing variables it is bette
 
 ### bool
 
-See also [Boolean type](var.md#布尔类型).
+See also [Boolean type](var.md#boolean-type).
 
 Unlike C++, C originally had no boolean type.
 
