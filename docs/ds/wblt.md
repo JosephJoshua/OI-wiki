@@ -1,316 +1,316 @@
 author: hsfzLZH1, cesonic, AtomAlpaca, caijianhong, Persdre, aofall, CoelacanthusHex, Marcythm, shuzhouliu, Tiphereth-A
 
-## 引入
+## Introduction
 
-**Weight Balanced Leafy Tree**，下称 **WBLT**，是一种平衡树，比起其它平衡树主要有实现简单、常数小的优点．它支持区间操作，而且可持久化．
+**Weight Balanced Leafy Tree**, called **WBLT** below, is a kind of balanced tree. Compared with other balanced trees, its main advantages are simple implementation and a small constant factor. It supports range operations and can be made persistent.
 
-Weight Balanced Leafy Tree 顾名思义是 Weight Balanced Tree 和 Leafy Tree 的结合．
+As the name suggests, a Weight Balanced Leafy Tree combines a Weight Balanced Tree and a Leafy Tree.
 
-Weight Balanced Tree 的每个节点储存这个节点下子树的大小，并且通过保持左右子树的大小关系在一定范围来保证树高．
+In a Weight Balanced Tree, each node stores the size of its subtree, and the tree height is kept small by keeping the sizes of the left and right subtrees within a certain ratio of each other.
 
-Leafy Tree 维护的原始信息仅存储在树的 **叶子节点** 上，而非叶子节点仅用于维护子节点信息和维持数据结构的形态．我们熟知的线段树就是一种 Leafy Tree．
+In a Leafy Tree, the original data is stored only in the **leaves** of the tree. Non-leaf nodes are only used to maintain information about their children and to hold the shape of the structure. The segment tree we know well is a kind of Leafy Tree.
 
 ![](images/leafy-tree-1.svg)
 
-本文的树均指的是二叉的 Leafy Tree，即每个节点的子节点数目只能是 $0$ 或者 $2$．本文中的 $n$，指的是树的叶子节点的数目．叶子节点数目为 $n$ 的树，总的节点数量是 $2n-1$，因此，WBLT 占用的空间是 $\Theta(n)$ 的．
+In this article, "tree" always means a binary Leafy Tree, i.e., every node has either $0$ or $2$ children. Here $n$ means the number of leaves in the tree. A tree with $n$ leaves has $2n-1$ nodes in total, so a WBLT uses $\Theta(n)$ space.
 
-## 基本结构及平衡维护
+## Basic structure and keeping balance
 
-本节介绍 WBLT 的基本结构，定义树的 $\alpha$‑平衡的概念，并解释如何通过旋转或合并的方式维护树的平衡．
+This section introduces the basic structure of a WBLT, defines what it means for a tree to be $\alpha$‑balanced, and explains how to keep the tree balanced by rotation or by merging.
 
-### 节点信息
+### Node information
 
-要实现一个基本的 WBLT，只需要记录每个节点的如下信息：
+To implement a basic WBLT, each node only needs to record the following:
 
--   `lc[x]`、`rc[x]`：左、右子节点；
--   `sz[x]`：以 $x$ 为根的子树中的叶子节点的数目．
+-   `lc[x]`, `rc[x]`: the left and right children;
+-   `sz[x]`: the number of leaves in the subtree rooted at $x$.
 
-利用 WBLT 实现平衡树，还需要在每个节点处记录与键值相关的信息：
+To use a WBLT as a balanced tree, each node also needs to store information about keys:
 
--   `val[x]`：节点 $x$ 处的键值．
+-   `val[x]`: the key at node $x$.
 
-因为只有叶子节点实际存储键值，所以其他节点处存储的信息是由它们的子节点合并得到的，以方便后续查询．
+Only leaves actually store keys, so the information at other nodes is obtained by combining their children, to make later queries easier.
 
-比如，一种常用的合并方式就是将两个子节点的键值中较大的那个存储于该节点．这样，每个节点存储的就是以它为根的子树中，所有叶子节点的键值的最大值．基于此，节点信息的更新方法如下：
+For example, a common way to combine is to store the larger of the two children's keys at the node. Then each node stores the maximum key among all leaves in its subtree. Based on this, a node's information is updated as follows:
 
-???+ example "参考代码"
+???+ example "Reference code"
     ```cpp
     --8<-- "docs/ds/code/wblt/wblt-1.cpp:push-up"
     ```
 
-当然，如果需要，还可以实现相应的 `push_down(x)` 函数．
+Of course, you can also implement a matching `push_down(x)` function if needed.
 
-### 辅助函数
+### Helper functions
 
-除了基本的节点信息维护外，WBLT 通常还需要实现如下辅助函数，用于内存管理：
+Besides maintaining the basic node information, a WBLT usually also needs the following helper functions for memory management:
 
--   `new_node()`：新建节点；
--   `del_node(x)`：删除节点 $x$；
--   `new_leaf(v)`：新建以 $v$ 为键值的叶子节点；
--   `join(x, y)`：连接子树，即分别以 $x$、$y$ 为左右子节点，新建节点 $z$；
--   `cut(x)`：拆分子树，即获得节点 $x$ 的两个子节点，并删除节点 $x$．
+-   `new_node()`: create a new node;
+-   `del_node(x)`: delete node $x$;
+-   `new_leaf(v)`: create a new leaf with key $v$;
+-   `join(x, y)`: join subtrees, i.e., create a new node $z$ with $x$ and $y$ as its left and right children;
+-   `cut(x)`: cut a subtree apart, i.e., get the two children of node $x$ and delete node $x$.
 
-如果 WBLT 的实现十分依赖于拆分和连接子树，会建立较多的新节点，并释放等量的旧节点．如果不及时回收旧的无用节点，会导致空间不再是线性的．以下是这些辅助函数的数组实现：
+If a WBLT implementation relies heavily on cutting and joining subtrees, it creates many new nodes and frees an equal number of old ones. If the old unused nodes are not recycled in time, the space usage will no longer be linear. Here is an array implementation of these helper functions:
 
-???+ example "参考代码"
+???+ example "Reference code"
     ```cpp
     --8<-- "docs/ds/code/wblt/wblt-1.cpp:helper"
     ```
 
-封装好这些辅助函数后，数组实现和指针实现在后续函数中就没有区别了．
+Once these helper functions are wrapped up, the array implementation and the pointer implementation look the same in all later functions.
 
-### 平衡的概念
+### What balance means
 
-对于一个树，可以定义它在一个非叶节点 $x$ 处的 **平衡度** 为
+For a tree, define its **balance** at a non-leaf node $x$ as
 
 $$
 \rho(x) = \dfrac{\min\{w(T_{\operatorname{left}(x)}),w(T_{\operatorname{right}(x)})\}}{w(T_x)}.
 $$
 
-其中，$T_x$ 表示以 $x$ 为根的子树，$w(\cdot)$ 表示子树的权重（它的叶子节点的数目），而 $\operatorname{left}(x)$ 和 $\operatorname{right}(x)$ 分别表示 $x$ 的左右子节点．特别地，叶子节点处规定 $\rho(x)=1/2$．
+Here $T_x$ is the subtree rooted at $x$, $w(\cdot)$ is the weight of a subtree (its number of leaves), and $\operatorname{left}(x)$ and $\operatorname{right}(x)$ are the left and right children of $x$. In particular, at a leaf we define $\rho(x)=1/2$.
 
-对于 $\alpha\in(0,1/2]$，如果某个节点 $x$ 处平衡度 $\rho(x)\ge\alpha$，就称该节点是 **$\alpha$‑平衡** 的．如果树的每个节点处都是 $\alpha$‑平衡的，就称树是 **$\alpha$‑平衡** 的．这样的树的集合记作 $BB[\alpha]$．一棵树是 **$\alpha$‑平衡** 的，当且仅当它是叶子节点，或者它的根节点处是 $\alpha$‑平衡的且它的左右子树都是 $\alpha$‑平衡的．
+For $\alpha\in(0,1/2]$, if the balance at some node $x$ satisfies $\rho(x)\ge\alpha$, we say the node is **$\alpha$‑balanced**. If every node of a tree is $\alpha$‑balanced, we say the tree is **$\alpha$‑balanced**. The set of such trees is written $BB[\alpha]$. A tree is **$\alpha$‑balanced** if and only if it is a leaf, or its root is $\alpha$‑balanced and both its left and right subtrees are $\alpha$‑balanced.
 
-树是 $\alpha$‑平衡的，有一个显然的好处是，它的高度是 $O(\log n)$ 的．这是因为，从叶子节点每向根移动一步，子树所包含的叶子节点数目就至少扩大到原来的 $1/(1-\alpha)$ 倍，因此只能移动 $O(\log_{\frac{1}{1-\alpha}}n) = O(\log n)$ 次．这就保证了在 $\alpha$‑平衡的树中，单次查询的复杂度总是严格 $O(\log n)$ 的，且算法的常数与 $\log(1/(1-\alpha))$（以 $2$ 为底）成反比．当 $\alpha$ 位于下文提供的合理范围内时，这个常数大致为 $2\sim 3.5$．
+An obvious benefit of an $\alpha$‑balanced tree is that its height is $O(\log n)$. This is because each step from a leaf toward the root multiplies the number of leaves in the subtree by at least $1/(1-\alpha)$, so we can take only $O(\log_{\frac{1}{1-\alpha}}n) = O(\log n)$ steps. This guarantees that in an $\alpha$‑balanced tree, a single query always takes strictly $O(\log n)$ time, and the constant factor of the algorithm is inversely proportional to $\log(1/(1-\alpha))$ (base $2$). When $\alpha$ is in the reasonable range given below, this constant is roughly $2\sim 3.5$.
 
-WBLT 的平衡维护通常可以通过旋转或合并的方式进行．两种方式实现的 WBLT，单次插入、删除等操作，复杂度都是严格 $O(\log n)$ 的．但是，与固定优先级的 [Treap](./treap.md) 不同，WBLT 的结构并不具有唯一性，因此，两种方式维护得到的树的结构并不相同，虽然这并不影响它们的使用．当然，平衡的维护还可以采取类似 [替罪羊树](./sgt.md) 的策略，利用重构达到均摊 $O(\log n)$ 的复杂度，但是这样就失去了 WBLT 可持久化和区间操作等优势，因而并不推荐．
+A WBLT is usually kept balanced either by rotation or by merging. With either method, a single insertion, deletion and so on takes strictly $O(\log n)$ time. However, unlike a [Treap](./treap.md) with fixed priorities, the structure of a WBLT is not unique, so the two methods produce trees with different shapes, though this does not affect how they are used. Of course, balance can also be kept with a strategy like the [scapegoat tree](./sgt.md), using rebuilding to get amortized $O(\log n)$ complexity, but then the WBLT loses its advantages such as persistence and range operations, so this is not recommended.
 
-下文分别介绍了通过旋转和合并维护平衡的方法，并实现了相应的平衡维护和合并操作的函数．封装好这些函数后，两种维护树平衡的方式在后续具体的平衡树的实现中再无区别．而且，无论使用哪种方式，单次维护平衡的操作的时间复杂度都是 $O(1)$ 的，单次合并树 $T_1$ 和树 $T_2$ 的复杂度都是 $O\left(\left|\log\dfrac{w(T_1)}{w(T_2)}\right|\right)$ 的．
+Below we introduce keeping balance by rotation and by merging, and implement the corresponding functions for maintaining balance and for merging. Once these functions are wrapped up, the two ways of keeping the tree balanced make no difference in the rest of the balanced tree implementation. Moreover, with either method, a single balancing step takes $O(1)$ time, and merging trees $T_1$ and $T_2$ once takes $O\left(\left|\log\dfrac{w(T_1)}{w(T_2)}\right|\right)$ time.
 
-???+ info "省略权重的记号"
-    为了维护树的平衡，只需要保留子树的权重信息．因此，为了表达方便，下面讨论平衡维护的两节将混用树和它的权重的记号．比如，子树 $x$ 的权重也由 $x$ 表示，而不是 $w(x)$．类似地，子树 $x$ 和 $y$ 合并得到的树也用它的权重表示，直接写作树 $x+y$．
+???+ info "Notation that omits the weight"
+    To keep the tree balanced, we only need the weight of each subtree. So for convenience, the next two sections on keeping balance use the same notation for a tree and its weight. For example, the weight of subtree $x$ is also written $x$, not $w(x)$. Similarly, the tree obtained by merging subtrees $x$ and $y$ is also denoted by its weight, written directly as the tree $x+y$.
 
-### 通过旋转维护
+### Keeping balance by rotation
 
-WBLT 的旋转操作和 [Treap 的旋转操作](./treap.md#旋转) 完全相同，可以采取与 Treap 完全一致的旋转策略．当然，旋转本身同样可以看作是重新分配子树权重的过程，因此也可以利用拆分和连接子树完成．两种实现的结果是完全一致的，但是第二种实现更方便 WBLT 的持久化．
+Rotation in a WBLT is exactly the same as [rotation in a Treap](./treap.md#旋转), and we can use exactly the same rotation strategy as in a Treap. Of course, a rotation can also be seen as redistributing subtree weights, so it can also be done by cutting and joining subtrees. The two implementations give exactly the same result, but the second one makes it easier to make a WBLT persistent.
 
-???+ example "参考代码"
-    === "不依赖连接"
+???+ example "Reference code"
+    === "Without joining"
         ```cpp
         --8<-- "docs/ds/code/wblt/wblt-1.cpp:rotate-not-by-joining"
         ```
     
-    === "依赖连接"
+    === "With joining"
         ```cpp
         --8<-- "docs/ds/code/wblt/wblt-1.cpp:rotate-by-joining"
         ```
 
-假设在某个树的修改操作后，正在自下而上地恢复树的平衡．现在，左右子树 $x$ 和 $y$ 不再平衡，但是它们自身都是平衡的．不妨设右子树 $y$ 过轻，即 $y<\alpha(x+y)$．此时，树的形态如图中左侧的树所示．
+Suppose that after some modification of the tree, we are restoring balance from the bottom up. Now the left and right subtrees $x$ and $y$ are no longer balanced with each other, but each of them is balanced. Without loss of generality, suppose the right subtree $y$ is too light, i.e., $y<\alpha(x+y)$. The tree then looks like the tree on the left of the figure.
 
 ![](images/wblt-balance.svg)
 
-一种朴素的平衡维护策略是将 $x$ 旋转到根节点处，这样它原先的右子节点 $w$ 就和 $y$ 一起成为了新树的右子节点，而它原先的左子节点 $z$ 成为了新树的左子节点．这相当于将原来的树左侧中 $w$ 的权重移动到它的右侧．如果 $w$ 的权重合适，这样的操作就可以恢复树的平衡．这样得到的树如图中右侧的树所示．
+A simple balancing strategy is to rotate $x$ up to the root. Then its old right child $w$ becomes, together with $y$, the right child of the new tree, and its old left child $z$ becomes the left child of the new tree. This amounts to moving the weight of $w$ from the left side of the old tree to its right side. If $w$ has a suitable weight, this restores balance. The resulting tree is shown on the right of the figure.
 
-但是，如果 $w$ 本身过重，这样的操作可能移动了太多的权重到右子树，从而使得新树中左子树过轻，即 $z<\alpha(x+y)$．对于这种情形，因为子树 $z$ 和子树 $y$ 的权重都太小，只能考虑将 $w$ 分拆为两个子树，分别与 $z$ 和 $y$ 连接，成为新树的两个子树．这相当于首先将节点 $w$ 旋转到节点 $x$ 处，再将它旋转到根节点处．同样，可以期待这样得到的树能够达到平衡，形态如图中间的树所示．
+However, if $w$ itself is too heavy, this may move too much weight to the right subtree, so the left subtree of the new tree becomes too light, i.e., $z<\alpha(x+y)$. In this case, since both subtree $z$ and subtree $y$ are too light, the only option is to split $w$ into two subtrees, join them with $z$ and $y$ respectively, and make those the two subtrees of the new tree. This amounts to first rotating node $w$ up to node $x$, and then rotating it up to the root. Again, we can expect the resulting tree to be balanced; it is shown in the middle of the figure.
 
-这两种旋转的策略分别称为单旋和双旋．单旋和双旋策略的选取，主要取决于子树 $w$ 相对于子树 $x$ 的比重，即存在阈值 $\beta$，使得
+These two strategies are called single rotation and double rotation. Which one to use depends mainly on the weight of subtree $w$ relative to subtree $x$: there is a threshold $\beta$ such that
 
--   当 $w\le\beta x$ 时，应选取单旋策略；
--   当 $w>\beta x$ 时，应选取双旋策略．
+-   when $w\le\beta x$, use a single rotation;
+-   when $w>\beta x$, use a double rotation.
 
-难点在于阈值 $\beta$ 的选择，这就需要做一些具体的计算．Blum 和 Mehlhorn 证明了，对于参数[^wrong-range]
+The hard part is choosing the threshold $\beta$, which needs some concrete calculation. Blum and Mehlhorn proved that for the parameters[^wrong-range]
 
 $$
 \alpha\in\left(\dfrac{2}{11},1-\dfrac{\sqrt{2}}{2}\right]\approx(0.182,0.292],~\beta=\frac{1}{2-\alpha},
 $$
 
-能够通过上述单旋和双旋结合的策略，维护因为单次插入或删除而失衡的 WBLT 的平衡．
+the combined single/double rotation strategy above can restore the balance of a WBLT that became unbalanced after a single insertion or deletion.
 
-??? note "证明"
-    需要证明的是，如果树在单次插入或删除后失衡，可以通过上述策略恢复它的平衡．结合上述图示，令
+??? note "Proof"
+    We need to prove that if the tree becomes unbalanced after a single insertion or deletion, the strategy above restores its balance. With the figure above, let
     
     $$
     \rho_1 = \dfrac{y}{x+y}, ~\rho_2 = \dfrac{w}{x}, ~\rho_3 = \dfrac{v}{w}.
     $$
     
-    那么，有 $\rho_1<\alpha\le\rho_2,\rho_3\le 1-\alpha$．此处还有一个隐含条件，是关于 $\rho_1$ 的取值范围的：
+    Then $\rho_1<\alpha\le\rho_2,\rho_3\le 1-\alpha$. There is also a hidden condition on the range of $\rho_1$:
     
-    -   如果失衡是由插入单个元素引起的，那么，应该有
+    -   If the imbalance was caused by inserting one element, then
     
         $$
         \dfrac{y}{x-1+y} \ge \alpha \implies \rho_1 \ge \dfrac{\alpha y}{y+\alpha} \ge \dfrac{\alpha}{1+\alpha}.
         $$
-    -   如果失衡是由删除单个元素引起的，那么，应该有
+    -   If the imbalance was caused by deleting one element, then
     
         $$
         \dfrac{y+1}{x+y+1} \ge \alpha \implies \rho_1 \ge \dfrac{\alpha y}{y+1-\alpha} \ge \dfrac{\alpha}{2-\alpha}.
         $$
     
-    因为对于 $0<\alpha<1/2$，总有 $\alpha/(2-\alpha)<\alpha/(1+\alpha)$，所以删除元素会导致比增添元素更严重的失衡，尤其是对于树的规模很小的情形．
+    Since $\alpha/(2-\alpha)<\alpha/(1+\alpha)$ always holds for $0<\alpha<1/2$, deleting an element can cause a worse imbalance than inserting one, especially when the tree is small.
     
-    接下来，恢复平衡的操作分为两种情形：
+    Next, restoring balance splits into two cases:
     
-    ??? note "情形一：$w$ 没有过重，即 $\rho_2\le\beta$ 时，单旋"
-        首先，$z$ 和 $w+y$ 平衡．这是因为
+    ??? note "Case 1: $w$ is not too heavy, i.e., $\rho_2\le\beta$: single rotation"
+        First, $z$ and $w+y$ are balanced, because
         
         $$
         \left(1-\dfrac{\alpha}{2-\alpha}\right)\alpha+\dfrac{\alpha}{2-\alpha} \le \dfrac{w+y}{x+y} = (1-\rho_1)\rho_2+\rho_1 < (1-\alpha)\dfrac{1}{2-\alpha}+\alpha.
         $$
         
-        左侧表达式在 $\alpha\in(0,1)$ 时总大于 $\alpha$，右侧表达式在 $\alpha\in(0,1-\sqrt{2}/2]$ 时总不大于 $(1-\alpha)$．
+        The left-hand expression is always greater than $\alpha$ for $\alpha\in(0,1)$, and the right-hand expression is always at most $(1-\alpha)$ for $\alpha\in(0,1-\sqrt{2}/2]$.
         
-        其次，$w$ 和 $y$ 平衡．同样地，考虑
+        Second, $w$ and $y$ are balanced. Similarly, consider
         
         $$
         \dfrac{y}{w+y} = \dfrac{\rho_1}{(1-\rho_1)\rho_2+\rho_1}.
         $$
         
-        一方面，对于所有 $\alpha\in(0,(3-\sqrt{5})/2)$，有
+        On one hand, for all $\alpha\in(0,(3-\sqrt{5})/2)$,
         
         $$
         \dfrac{y}{w+y} < \dfrac{\alpha}{(1-\alpha)\alpha+\alpha} < 1-\alpha.
         $$
         
-        另一方面，对于所有 $\alpha\in(0,1/3)$，除了删除元素且 $y=1$ 的情形外，都有
+        On the other hand, for all $\alpha\in(0,1/3)$, except when an element is deleted and $y=1$, we have
         
         $$
         \rho_1 \ge \min\left\{\dfrac{\alpha}{1+\alpha},\dfrac{2\alpha}{3-\alpha}\right\} = \dfrac{2\alpha}{3-\alpha},
         $$
         
-        所以，有
+        so
         
         $$
         \dfrac{y}{w+y} \ge \dfrac{\dfrac{2\alpha}{3-\alpha}}{\left(1-\dfrac{2\alpha}{3-\alpha}\right)\dfrac{1}{2-\alpha}+\dfrac{2\alpha}{3-\alpha}} > \alpha.
         $$
         
-        最后，考虑剩余的情形，即删除元素且 $y=1$ 时．最可能失衡的情形发生在 $x=\lfloor 2/\alpha\rfloor-2$ 且 $w=\lfloor\beta x\rfloor$ 时．树可以恢复平衡，当且仅当
+        Finally, consider the remaining case: an element is deleted and $y=1$. The case most likely to be unbalanced is when $x=\lfloor 2/\alpha\rfloor-2$ and $w=\lfloor\beta x\rfloor$. The tree can be rebalanced if and only if
         
         $$
         \dfrac{1}{1+\lfloor\beta x\rfloor}\ge\alpha \iff \lfloor\beta x\rfloor\le\dfrac{1}{\alpha}-1 \iff \beta x < \dfrac{1}{\alpha} \iff x < \dfrac{2}{\alpha}-1.
         $$
         
-        而这总是成立的．这就完成了该情形的证明．注意，最后一种情形的证明利用了权重总是整数这一性质，并不能合并到之前的讨论中．
+        and this always holds. This completes the proof of this case. Note that the proof of the last case uses the fact that weights are always integers, so it cannot be merged into the earlier argument.
     
-    ??? note "情形二：$w$ 过重，即 $\rho_2>\beta$ 时，双旋"
-        首先，$z+u$ 和 $v+y$ 平衡．这是因为
+    ??? note "Case 2: $w$ is too heavy, i.e., $\rho_2>\beta$: double rotation"
+        First, $z+u$ and $v+y$ are balanced, because
         
         $$
         \dfrac{\alpha}{2-\alpha}+\left(1-\dfrac{\alpha}{2-\alpha}\right)\dfrac{1}{2-\alpha}\alpha < \dfrac{v+y}{x+y} = \rho_1+(1-\rho_1)\rho_2\rho_3 <\alpha+(1-\alpha)^3
         $$
         
-        左侧表达式在 $\alpha\in(0,1)$ 时总大于 $\alpha$，右侧表达式在 $\alpha\in(0,(3-\sqrt{5})/2)$ 时总小于 $(1-\alpha)$．
+        The left-hand expression is always greater than $\alpha$ for $\alpha\in(0,1)$, and the right-hand expression is always less than $(1-\alpha)$ for $\alpha\in(0,(3-\sqrt{5})/2)$.
         
-        然后，$z$ 和 $u$ 平衡．这是因为对于 $\alpha\in(0,1)$，总是成立
+        Next, $z$ and $u$ are balanced, because for $\alpha\in(0,1)$ it always holds that
         
         $$
         \alpha=\dfrac{\dfrac{1}{2-\alpha}\alpha}{1-\dfrac{1}{2-\alpha}(1-\alpha)}<\dfrac{u}{z+u} = \dfrac{\rho_2(1-\rho_3)}{1-\rho_2\rho_3} <\dfrac{(1-\alpha)^2}{1-(1-\alpha)\alpha} < 1-\alpha.
         $$
         
-        最后，$v$ 和 $y$ 平衡．类似其他的情形，考虑
+        Finally, $v$ and $y$ are balanced. As in the other cases, consider
         
         $$
         \dfrac{y}{v+y} = \dfrac{\rho_1}{\rho_1+(1-\rho_1)\rho_2\rho_3}.
         $$
         
-        一方面，对于所有 $\alpha\in(0,1-\sqrt{2}/2]$，都有
+        On one hand, for all $\alpha\in(0,1-\sqrt{2}/2]$,
         
         $$
         \dfrac{y}{v+y} < \dfrac{\alpha}{\alpha+(1-\alpha)\dfrac{1}{2-\alpha}\alpha} \le 1-\alpha.
         $$
         
-        另一方面，
+        On the other hand,
         
         $$
         \dfrac{y}{v+y} \ge \dfrac{\rho_1}{\rho_1+(1-\rho_1)(1-\alpha)^2}.
         $$
         
-        右侧表达式不小于 $\alpha$，当且仅当
+        The right-hand expression is at least $\alpha$ if and only if
         
         $$
         \rho_1 \ge \dfrac{\alpha(1-\alpha)}{1+\alpha(1-\alpha)}.
         $$
         
-        如果失衡是由插入引起的，那么 $\rho_1\ge \alpha/(1+\alpha)$，显然成立．否则，情形有些复杂：
+        If the imbalance was caused by an insertion, then $\rho_1\ge \alpha/(1+\alpha)$, and this clearly holds. Otherwise, things are a bit more complicated:
         
-        -   当 $y\ge 3$ 时，$\rho_1\ge 3\alpha/(4-\alpha)$，且 $3\alpha/(4-\alpha)\ge\alpha(1-\alpha)/(1+\alpha(1-\alpha))$ 对于所有 $\alpha\in[1-\sqrt{3}/2,1)$ 都成立；
-        -   当 $y=2$ 时，最可能失衡的情形发生在 $x=\lfloor 3/\alpha\rfloor-3$，$w=\lfloor(1-\alpha)x\rfloor$ 且 $v=\lfloor(1-\alpha)w\rfloor$ 时，此时 $y/(v+y)\ge\alpha$ 对于所有 $\alpha\in(3/22,1)$ 都成立；
-        -   当 $y=1$ 时，最可能失衡的情形发生在 $x=\lfloor 2/\alpha\rfloor-2$，$w=\lfloor(1-\alpha)x\rfloor$ 且 $v=\lfloor(1-\alpha)w\rfloor$ 时，此时 $y/(v+y)\ge\alpha$ 对于所有 $\alpha\in(2/11,1)$ 都成立．
+        -   When $y\ge 3$, $\rho_1\ge 3\alpha/(4-\alpha)$, and $3\alpha/(4-\alpha)\ge\alpha(1-\alpha)/(1+\alpha(1-\alpha))$ holds for all $\alpha\in[1-\sqrt{3}/2,1)$;
+        -   When $y=2$, the case most likely to be unbalanced is when $x=\lfloor 3/\alpha\rfloor-3$, $w=\lfloor(1-\alpha)x\rfloor$ and $v=\lfloor(1-\alpha)w\rfloor$; then $y/(v+y)\ge\alpha$ holds for all $\alpha\in(3/22,1)$;
+        -   When $y=1$, the case most likely to be unbalanced is when $x=\lfloor 2/\alpha\rfloor-2$, $w=\lfloor(1-\alpha)x\rfloor$ and $v=\lfloor(1-\alpha)w\rfloor$; then $y/(v+y)\ge\alpha$ holds for all $\alpha\in(2/11,1)$.
         
-        最后两种情形的讨论，同样利用了所有节点的权重都是整数这一点．
+        The last two cases also use the fact that all node weights are integers.
     
-    综合两种情形，当 $\alpha\in(2/11,1-\sqrt{2}/2]$ 时，前述单旋和双旋结合的策略可以保证树的平衡．
+    Combining the two cases, when $\alpha\in(2/11,1-\sqrt{2}/2]$, the combined single/double rotation strategy above keeps the tree balanced.
     
-    从这个分析过程中可以看出，最难保持平衡的情形发生在从小规模的树中删除节点时．除了 $\beta=1/(2-\alpha)$ 之外，对于其他参数的选择的正确性证明，同样可以重复上述的过程，只是用到的一些不等式需要相应地调整．
+    This analysis shows that balance is hardest to keep when deleting nodes from a small tree. For choices of $\beta$ other than $\beta=1/(2-\alpha)$, correctness can be proved by repeating the process above, with some of the inequalities adjusted accordingly.
 
-随后，Hirai 和 Yamamoto 通过机器证明完整地确定了所有可行的 $(\alpha,\beta)$ 的范围，结果是一个相当复杂的二维图形：
+Later, Hirai and Yamamoto used a computer-assisted proof to fully determine the range of all feasible $(\alpha,\beta)$. The result is a fairly complicated two-dimensional region:
 
 ![](images/wblt-param-range.svg)
 
-他们在文章中推荐使用如下策略维持平衡：
+In their paper, they recommend the following balancing strategy:
 
--   当 $x>3y$ 时，判断失衡；
--   当 $w\le 2z$ 时，选取单旋策略，否则，选取双旋策略．
+-   When $x>3y$, the tree is considered unbalanced;
+-   When $w\le 2z$, use a single rotation; otherwise, use a double rotation.
 
-原因是，这是可行的参数范围内唯一可以用简单整数表示的策略，从而避免了浮点数运算造成的效率损失．他们推荐的策略相当于取 $(\alpha,\beta)=(1/4,2/3)$．实践中，可以根据具体情况，选择合适的参数．
+The reason is that this is the only strategy in the feasible parameter range that can be written with simple integers, which avoids the slowdown from floating-point arithmetic. Their recommended strategy is equivalent to $(\alpha,\beta)=(1/4,2/3)$. In practice, you can choose suitable parameters for your situation.
 
-参考实现如下：
+A reference implementation:
 
-???+ example "参考代码"
+???+ example "Reference code"
     ```cpp
     --8<-- "docs/ds/code/wblt/wblt-1.cpp:too-heavy"
     --8<-- "docs/ds/code/wblt/wblt-1.cpp:balance"
     ```
 
-实现了维护平衡的策略后，合并两树的算法就非常简单．仍然设 $x>y$，合并的策略如下：
+With the balancing strategy in place, merging two trees is very simple. Again assume $x>y$. The merge strategy is:
 
--   如果右子树 $y$ 是空的，直接返回左子树 $x$；
--   如果左右子树 $x$ 和 $y$ 已经平衡，即 $y\ge\alpha(x+y)$，直接连接两子树；
--   否则，将 $x$ 的右子树 $w$ 与 $y$ 合并，将左子树 $z$ 与它们合并的结果连接，并调整新树的平衡．
+-   If the right subtree $y$ is empty, return the left subtree $x$ directly;
+-   If the left and right subtrees $x$ and $y$ are already balanced, i.e., $y\ge\alpha(x+y)$, join the two subtrees directly;
+-   Otherwise, merge the right subtree $w$ of $x$ with $y$, join the left subtree $z$ with the result, and rebalance the new tree.
 
-参考实现如下：
+A reference implementation:
 
-???+ example "参考代码"
+???+ example "Reference code"
     ```cpp
     --8<-- "docs/ds/code/wblt/wblt-1.cpp:merge-by-balancing"
     ```
 
-可以证明，这样可以维持合并后树的平衡，且这样操作的复杂度是 $O(|\log(x/y)|)$ 的．
+It can be proved that this keeps the merged tree balanced, and that this takes $O(|\log(x/y)|)$ time.
 
-??? note "平衡和复杂度的证明"
-    只需要考虑 $y$ 过轻的情形，即 $y<\alpha(x+y)$．此时，先合并 $w$ 和 $y$，再连接 $z$ 和 $w+y$．需要证明的是，只要在树根处调整树的平衡，就能够保证树的平衡．假设树 $w+y$ 的左、右子树分别是 $c$ 和 $d$，且 $c$ 的左、右子树分别是 $a$ 和 $b$．在树根处调整平衡，可以分为三种情形：
+??? note "Proof of balance and complexity"
+    We only need to consider the case where $y$ is too light, i.e., $y<\alpha(x+y)$. Then we first merge $w$ and $y$, and then join $z$ and $w+y$. We need to prove that adjusting the balance at the root is enough to make the tree balanced. Suppose the left and right subtrees of tree $w+y$ are $c$ and $d$, and the left and right subtrees of $c$ are $a$ and $b$. Adjusting the balance at the root falls into three cases:
     
-    ??? note "情形一：$z$ 和 $w+y$ 已经平衡，无需进一步调整，即 $z\ge\alpha(x+y)$"
-        根据平衡的定义，子树 $z$ 和 $w+y$ 都是平衡的，且它们互相也是平衡的，那么整棵树也是平衡的．
+    ??? note "Case 1: $z$ and $w+y$ are already balanced and need no further adjustment, i.e., $z\ge\alpha(x+y)$"
+        By the definition of balance, subtrees $z$ and $w+y$ are each balanced and balanced with each other, so the whole tree is balanced.
     
-    ??? note "情形二：$z$ 过轻且 $c$ 没有过重，可以通过单旋恢复平衡，即 $z<\alpha(x+y)$ 且 $c\le\beta(w+y)$"
-        此时，因为 $z$ 和 $w$ 平衡，但 $y$ 相较于 $x = z+w$ 过轻，所以，子树 $z$ 的权重满足
+    ??? note "Case 2: $z$ is too light and $c$ is not too heavy, so a single rotation restores balance, i.e., $z<\alpha(x+y)$ and $c\le\beta(w+y)$"
+        Here, since $z$ and $w$ are balanced but $y$ is too light compared with $x = z+w$, the weight of subtree $z$ satisfies
         
         $$
         \alpha(1-\alpha)(x+y) <  \alpha(z+w) \le z \le \alpha(x+y) .
         $$
         
-        而 $c$ 的权重则满足
+        and the weight of $c$ satisfies
         
         $$
         \alpha(w+y) \le c \le \beta(w+y).
         $$
         
-        由此，$z$ 和 $c$ 互相平衡，只要
+        So $z$ and $c$ are balanced with each other as long as
         
         $$
         \dfrac{\alpha}{1-\alpha}<\dfrac{1-\alpha}{\alpha}\alpha<\dfrac{c}{z}=\dfrac{w+y}{z}\dfrac{c}{w+y} < \dfrac{1-\alpha(1-\alpha)}{\alpha(1-\alpha)}\beta\le\dfrac{1-\alpha}{\alpha},
         $$
         
-        这要求
+        which requires
         
         $$
         \beta\le \dfrac{(1-\alpha)^2}{1-\alpha(1-\alpha)}.
         $$
         
-        以及 $z+c$ 和 $d$ 互相平衡，只要
+        and $z+c$ and $d$ are balanced with each other as long as
         
         $$
         \alpha\le (1-\beta)(1-\alpha)\le \dfrac{d}{w+y}\dfrac{w+y}{x+y}  = \dfrac{d}{x+y} < \dfrac{d}{c+d} \le 1-\alpha,
         $$
         
-        这要求
+        which requires
         
         $$
         \beta \le \dfrac{1-2\alpha}{1-\alpha}.
         $$
     
-    ??? note "情形三：$z$ 过轻且 $c$ 过重，可以通过双旋恢复平衡，即 $z<\alpha(x+y)$ 且 $c>\beta(w+y)$"
-        类似情形二，有
+    ??? note "Case 3: $z$ is too light and $c$ is too heavy, so a double rotation restores balance, i.e., $z<\alpha(x+y)$ and $c>\beta(w+y)$"
+        As in Case 2, we have
         
         $$
         \begin{aligned}
@@ -320,117 +320,117 @@ $$
         \end{aligned}
         $$
         
-        由此，$z$ 和 $a$ 互相平衡，只要
+        So $z$ and $a$ are balanced with each other as long as
         
         $$
         \dfrac{\alpha}{1-\alpha}\le\dfrac{1-\alpha}{\alpha}\beta\alpha\le\dfrac{a}{z} = \dfrac{w+y}{z}\dfrac{a}{c+d} < \dfrac{1-\alpha(1-\alpha)}{\alpha(1-\alpha)}(1-\alpha)^2,
         $$
         
-        这要求
+        which requires
         
         $$
         \beta\ge\dfrac{\alpha}{(1-\alpha)^2}.
         $$
         
-        其次，$b$ 和 $d$ 互相平衡，只要
+        Next, $b$ and $d$ are balanced with each other as long as
         
         $$
         \dfrac{\alpha}{1-\alpha}\le\dfrac{\beta}{1-\beta}\alpha \le \dfrac{b}{d} = \dfrac{c}{d}\dfrac{b}{c} \le \dfrac{1-\alpha}{\alpha}(1-\alpha) < \dfrac{1-\alpha}{\alpha},
         $$
         
-        这要求
+        which requires
         
         $$
         \beta\ge\dfrac{1}{2-\alpha}.
         $$
         
-        最后，$z+a$ 和 $b+d$ 互相平衡，只要
+        Finally, $z+a$ and $b+d$ are balanced with each other as long as
         
         $$
         \alpha<(1-\alpha)(1-(1-\alpha)^2)\le\frac{b+d}{x+y} = \dfrac{w+y}{x+y}\dfrac{b+d}{w+y} < (1-\alpha(1-\alpha))(1-\beta\alpha) \le 1-\alpha,
         $$
         
-        这要求
+        which requires
         
         $$
         \beta\ge\dfrac{\alpha}{1-\alpha+\alpha^2}.
         $$
     
-    综合三种情形，只要
+    Combining the three cases, as long as
     
     $$
     0<\alpha\le 1-\dfrac{\sqrt{2}}{2},~\dfrac{1}{2-\alpha}\le\beta\le\dfrac{1-2\alpha}{1-\alpha},
     $$
     
-    就能保证合并后的树可以利用单旋和双旋结合的策略调整到平衡．这显然包含正文给出的参数范围．
+    the merged tree can be rebalanced with the combined single/double rotation strategy. This clearly includes the parameter range given in the main text.
     
-    最后，简单说明一下该算法的复杂度为什么是 $O(|\log(x/y)|)$ 的．合并的流程中，如果 $y$ 相较于 $x$ 过轻，就尝试与 $x$ 的右子树合并，这个过程一直持续到以 $x$ 某个子孙节点为根的子树与 $y$ 平衡为止．因为每向下加深一层，子树权重就减少到不超过原来的 $(1-\alpha)$ 倍，所以至多只要 $\log_{\frac{1}{1-\alpha}}(x/y)$ 次迭代，就能找到与 $y$ 平衡的子树．因此，该合并算法调用 $O(|\log(x/y)|)$ 次平衡算法[^merge-complexity-cmp]，复杂度也就是 $O(|\log(x/y)|)$．
+    Finally, a short explanation of why the algorithm takes $O(|\log(x/y)|)$ time. During the merge, if $y$ is too light compared with $x$, we try to merge it with the right subtree of $x$, and this continues until the subtree rooted at some descendant of $x$ is balanced with $y$. Each level we go down, the subtree weight shrinks to at most $(1-\alpha)$ times its previous value, so at most $\log_{\frac{1}{1-\alpha}}(x/y)$ iterations are needed to find a subtree balanced with $y$. So the merge algorithm calls the balancing algorithm $O(|\log(x/y)|)$ times[^merge-complexity-cmp], and its complexity is $O(|\log(x/y)|)$.
     
-    虽然并不明显，但是这个论证过程依赖于这样一个结论：不断取右子树的过程中，$y$ 不会在一次迭代前后，从相较于左侧的子树过轻，变为相较于它过重．这是因为能够与 $y$ 平衡的子树权重范围位于 $\alpha y/(1-\alpha)$ 与 $(1-\alpha)y/\alpha$ 之间．因此，如果在一次迭代时，就从 $y$ 过轻变成 $y$ 过重，则 $x$ 的子树的权重在该次迭代过程中至少缩小到了原来的 $\alpha^2/(1-\alpha)^2$ 倍．但是，单次迭代，子树权重至多只能缩小到原来的 $\alpha$ 倍，而在上述 $\alpha$ 的范围中，$\alpha>\alpha^2/(1-\alpha)^2$．这说明，前设情形是不可能的，某次迭代之后一定会有 $y$ 与 $x$ 的某个子树平衡的情形发生．
+    Although it is not obvious, this argument relies on the following fact: while we keep taking right subtrees, $y$ cannot go from being too light compared with the subtree on the left to being too heavy compared with it within a single iteration. This is because the weights of subtrees that can be balanced with $y$ lie between $\alpha y/(1-\alpha)$ and $(1-\alpha)y/\alpha$. So if $y$ went from too light to too heavy in one iteration, the weight of the subtree of $x$ would shrink to at most $\alpha^2/(1-\alpha)^2$ times its previous value in that iteration. But in a single iteration the subtree weight can shrink to at most $\alpha$ times its previous value, and in the range of $\alpha$ above, $\alpha>\alpha^2/(1-\alpha)^2$. So the assumed situation is impossible, and after some iteration $y$ must be balanced with some subtree of $x$.
 
-### 通过合并维护
+### Keeping balance by merging
 
-合并两子树是指，保证左子树的键值总是不大于右子树的键值的情况下，建立新树，使其所有叶子节点的信息恰为左右子树叶子节点信息的并，且保证树的平衡．
+Merging two subtrees means: given that every key in the left subtree is not greater than every key in the right subtree, build a new tree whose leaves hold exactly the union of the leaves of the two subtrees, while keeping the tree balanced.
 
-为此，有如下策略[^more-join]：（仍然设 $x\ge y$）
+For this, we use the following strategy[^more-join]: (again assume $x\ge y$)
 
--   如果右子树 $y$ 是空的，直接返回左子树 $x$；
--   如果左右子树 $x$ 和 $y$ 已经平衡，即 $y\ge\alpha(x+y)$，直接连接两子树；
--   否则，右子树 $y$ 过轻，但如果 $x$ 的左子树 $z$ 和 $w+y$ 可以平衡，即 $z\ge\alpha(x+y)$，就将 $w$ 和 $y$ 先合并，再合并 $z$ 和 $w+y$；
--   否则，$z$ 和 $y$ 都过轻，此时，需要首先合并 $z$ 和 $w$ 的左子树 $u$，再合并 $w$ 的右子树 $v$ 和 $y$，再将两次合并的结果 **合并** 为新树．
+-   If the right subtree $y$ is empty, return the left subtree $x$ directly;
+-   If the left and right subtrees $x$ and $y$ are already balanced, i.e., $y\ge\alpha(x+y)$, join the two subtrees directly;
+-   Otherwise, the right subtree $y$ is too light. If the left subtree $z$ of $x$ can be balanced with $w+y$, i.e., $z\ge\alpha(x+y)$, first merge $w$ and $y$, then merge $z$ and $w+y$;
+-   Otherwise, both $z$ and $y$ are too light. Then first merge $z$ with the left subtree $u$ of $w$, then merge the right subtree $v$ of $w$ with $y$, and finally **merge** the results of the two merges into a new tree.
 
-将这一策略与前文的平衡策略对比，可以看到后两种情形中节点的组合方式分别和前述平衡策略中单旋和双旋的结果相似，只是将子树的连接换作了合并．
+Comparing this strategy with the balancing strategy above, we see that in the last two cases the nodes are combined just like the results of single and double rotation in the balancing strategy, except that joining subtrees is replaced by merging.
 
-可以证明，当
+It can be proved that when
 
 $$
 0<\alpha \le 1-\dfrac{\sqrt{2}}{2}\approx 0.292
 $$
 
-时，这样得到的树总是平衡的，且这样操作的复杂度是 $O(|\log(x/y)|)$ 的．也就是说，合并两个树的成本，与两个树的绝对大小无关，而只与它们的相对大小有关．
+the resulting tree is always balanced, and this takes $O(|\log(x/y)|)$ time. In other words, the cost of merging two trees does not depend on their absolute sizes, only on their relative sizes.
 
-??? note "平衡和复杂度的证明"
-    设合并权重分别为 $x$ 和 $y$ 的两棵子树时，需要直接连接两棵子树的次数为 $\tau(x,y)$．严格来说，需要证明当 $0<\alpha\le 1-\sqrt{2}/2$ 时，存在常数 $C>0$，对于任意 $x\ge y>0$，都有
+??? note "Proof of balance and complexity"
+    Let $\tau(x,y)$ be the number of direct joins of two subtrees needed when merging two subtrees of weights $x$ and $y$. Strictly speaking, we need to prove that when $0<\alpha\le 1-\sqrt{2}/2$, there is a constant $C>0$ such that for all $x\ge y>0$,
     
     $$
     \tau(x,y) \le 1+C\log^+\dfrac{\alpha x}{(1-\alpha)^2y},
     $$
     
-    其中，$\log^+ x = \max\{0,\log x\}$；而且，对于所有 $x/y\le(1-\alpha)/\alpha$，都有 $\tau(x,y)=1$．实际上，式子中的常数可以取作
+    where $\log^+ x = \max\{0,\log x\}$; moreover, $\tau(x,y)=1$ for all $x/y\le(1-\alpha)/\alpha$. In fact, the constant in the formula can be taken as
     
     $$
     C = -\dfrac{2}{\log(1-\alpha)}.
     $$
     
-    这就说明了合并算法的复杂度是 $O(|\log(x/y)|)$ 的．
+    This shows that the merge algorithm takes $O(|\log(x/y)|)$ time.
     
-    为了证明合并算法得到的树总是平衡的，且上述复杂度的表达式成立，需要使用归纳法．对于所有第一象限的格点 $(x,y)\in\mathbf N^2_+$，可以赋以 $(x+y,|x-y|)$ 的字典序，这显然是该集合上的良序，可以沿着该顺序进行归纳．归纳起点是 $(x,y)=(1,1)$，此时，两子树都只有一个叶子节点，直接连接得到的子树必然是平衡的，且 $\tau(x,y)=1$，符合上式．下面假设归纳进行到 $(x,y)$，且结论对于所有 $(x,y)$ 之前的点都成立．这分为三种情形：
+    To prove that the merge algorithm always produces a balanced tree and that the complexity bound above holds, we use induction. Give every lattice point $(x,y)\in\mathbf N^2_+$ in the first quadrant the lexicographic order of $(x+y,|x-y|)$. This is clearly a well-order on the set, so we can do induction along it. The base case is $(x,y)=(1,1)$: both subtrees have only one leaf, joining them directly certainly gives a balanced tree, and $\tau(x,y)=1$, which satisfies the formula. Now suppose the induction has reached $(x,y)$ and the claim holds for all points before $(x,y)$. There are three cases:
     
-    ??? note "情形一：树 $x$ 和 $y$ 平衡，即 $y\ge\alpha(x+y)$"
-        此时，直接连接得到树也是平衡的，且只调用树的连接算法一次，所以有 $\tau(x,y)=1$．
+    ??? note "Case 1: trees $x$ and $y$ are balanced, i.e., $y\ge\alpha(x+y)$"
+        Then the tree obtained by joining them directly is also balanced, and the join algorithm is called only once, so $\tau(x,y)=1$.
     
-    ??? note "情形二：树 $y$ 过轻，但是 $z$ 并不过轻，即 $y<\alpha(x+y)\le z$"
-        此时，首先合并 $w$ 和 $y$，然后合并 $z$ 和 $w+y$，所以
+    ??? note "Case 2: tree $y$ is too light, but $z$ is not, i.e., $y<\alpha(x+y)\le z$"
+        Here we first merge $w$ and $y$, then merge $z$ and $w+y$, so
         
         $$
         \tau(x,y) = \tau(w,y) + \tau(z,w+y).
         $$
         
-        由归纳假设，子树 $w+y$ 已经是平衡的．对于第二步合并，其实可以直接证明 $z$ 和 $w+y$ 是平衡的：
+        By the induction hypothesis, subtree $w+y$ is already balanced. For the second merge, we can actually prove directly that $z$ and $w+y$ are balanced:
         
         $$
         \alpha \le \dfrac{z}{z+(w+y)} = \dfrac{z}{x+y} < \dfrac{z}{z+w} \le 1-\alpha.
         $$
         
-        因此，合并 $z$ 和 $w+y$ 其实是直接连接两个子树，有 $\tau(z,w+y) = 1$．因此，最后得到的树也是平衡的．
+        So merging $z$ and $w+y$ is really just joining the two subtrees directly, and $\tau(z,w+y) = 1$. So the final tree is also balanced.
         
-        现在估计 $\tau(w,y)$ 的大小．因为 $y<(\alpha/(1-\alpha))x$ 且 $\alpha x\le w\le(1-\alpha)x$，所以，经放缩可知
+        Now estimate $\tau(w,y)$. Since $y<(\alpha/(1-\alpha))x$ and $\alpha x\le w\le(1-\alpha)x$, bounding gives
         
         $$
         \dfrac{\alpha}{1-\alpha}<1-\alpha=\dfrac{\alpha x}{(\alpha/(1-\alpha))x}< \dfrac{w}{y} \le \dfrac{(1-\alpha)x}{y}.
         $$
         
-        这说明，$w$ 和 $y$ 不平衡，只出现在 $w>y$ 时，所以，有
+        This shows that $w$ and $y$ can be unbalanced only when $w>y$, so
         
         $$
         \begin{aligned}
@@ -439,24 +439,24 @@ $$
         \end{aligned}
         $$
         
-        最后一步的等式成立，是因为 $x/y>(1-\alpha)/\alpha$．
+        The last equality holds because $x/y>(1-\alpha)/\alpha$.
         
-        因此，有
+        Therefore,
         
         $$
         \tau(x,y) \le 2 + C\log(1-\alpha) + C\log^+\dfrac{\alpha x}{(1-\alpha)^2y}.
         $$
     
-    ??? note "情形三：树 $y$ 和 $z$ 都过轻，即 $y,z<\alpha(x+y)$"
-        此时，首先合并 $z$ 和 $u$，再合并 $v$ 和 $y$，最后合并 $z+u$ 和 $v+y$．因此，
+    ??? note "Case 3: trees $y$ and $z$ are both too light, i.e., $y,z<\alpha(x+y)$"
+        Here we first merge $z$ and $u$, then merge $v$ and $y$, and finally merge $z+u$ and $v+y$. So
         
         $$
         \tau(x,y) = \tau(z,u) + \tau(v,y) + \tau(z+u,v+y).
         $$
         
-        类似前文情形，可以估计每一步合并时两个子树的权重比值．
+        As in the previous case, we can estimate the weight ratio of the two subtrees at each merge step.
         
-        因为 $z,y<\alpha(x+y)$，所以 $w>(1-2\alpha)(x+y)$．同时，利用平衡条件，有 $\alpha\le z/x,w/x,u/w,v/w\le 1-\alpha$．这说明
+        Since $z,y<\alpha(x+y)$, we have $w>(1-2\alpha)(x+y)$. Also, by the balance condition, $\alpha\le z/x,w/x,u/w,v/w\le 1-\alpha$. This shows that
         
         $$
         \begin{aligned}
@@ -465,24 +465,24 @@ $$
         \end{aligned}
         $$
         
-        对于最后一项，有
+        For the last term,
         
         $$
         \dfrac{z+u}{v+y} = \dfrac{x+y}{v+y}-1 = \dfrac{x+y}{y}\dfrac{y}{v+y} - 1 < (1-\alpha)\left(\dfrac{x}{y}+1\right)-1 < (1-\alpha)\dfrac{x}{y}.
         $$
         
-        反过来，有
+        Conversely,
         
         $$
         \dfrac{z+u}{v+y} = \dfrac{x+y}{v+y}-1 \ge \dfrac{x+y}{(1-\alpha)^2x+y}-1 > \dfrac{1}{(1-\alpha)^3+\alpha}-1 > \dfrac{\alpha}{1-\alpha}.
         $$
         
-        利用这些不等式，可以说明最后得到的树必然是平衡的．利用归纳假设可知，$z$ 和 $u$ 合并，$v$ 和 $y$ 合并，都可以保证得到的树是平衡的．而且，其中第一步 $z$ 和 $u$ 合并实际上是直接连接两棵树．对于树 $z+u$ 和树 $v+y$ 的合并，又有两种子情形：
+        Using these inequalities, we can show that the final tree must be balanced. By the induction hypothesis, merging $z$ with $u$ and merging $v$ with $y$ both give balanced trees. Moreover, the first step, merging $z$ and $u$, is actually a direct join of the two trees. For the merge of tree $z+u$ and tree $v+y$, there are two subcases:
         
-        -   如果 $z+u\le v+y$，那么它们的权重比值严格大于 $\alpha/(1-\alpha)$，故而可以直接连接，结果是平衡的；
-        -   否则，它们的权重比值必然严格小于 $x/y$，但是 $(z+u)+(v+y)=x+y$，所以 $|(z+u)-(v+y)|<|x-y|$，由前文给出的字典序判断，这种情形也可以应用归纳假设，结果也是平衡的．
+        -   If $z+u\le v+y$, their weight ratio is strictly greater than $\alpha/(1-\alpha)$, so they can be joined directly and the result is balanced;
+        -   Otherwise, their weight ratio must be strictly less than $x/y$, but $(z+u)+(v+y)=x+y$, so $|(z+u)-(v+y)|<|x-y|$. By the lexicographic order given above, the induction hypothesis also applies in this case, and the result is balanced too.
         
-        进一步应用归纳假设可知：
+        Applying the induction hypothesis further gives:
         
         $$
         \begin{aligned}
@@ -492,9 +492,9 @@ $$
         \end{aligned}
         $$
         
-        三个不等式直接相加，会导致对数项前面的系数变成 $2C$，无法完成归纳．因此，此处需要更为细致的估计．
+        Simply adding the three inequalities would make the coefficient in front of the logarithm $2C$, and the induction would fail. So a more careful estimate is needed here.
         
-        当 $\min\{v/y,(z+u)/(v+y)\}\le(1-\alpha)/\alpha$ 时，$\tau(v,y)$ 和 $\tau(z+u,v+y)$ 中必然有一项为 $1$，所以，有
+        When $\min\{v/y,(z+u)/(v+y)\}\le(1-\alpha)/\alpha$, one of $\tau(v,y)$ and $\tau(z+u,v+y)$ must be $1$, so
         
         $$
         \begin{aligned}
@@ -503,7 +503,7 @@ $$
         \end{aligned}
         $$
         
-        否则，应该有
+        Otherwise, we have
         
         $$
         \begin{aligned}
@@ -513,13 +513,13 @@ $$
         \end{aligned}
         $$
         
-        对于 $0<\alpha\le 1-\sqrt{2}/2$，有
+        For $0<\alpha\le 1-\sqrt{2}/2$,
         
         $$
         \dfrac{\alpha}{(1-\alpha)^2} < 1-\alpha.
         $$
         
-        而且，有
+        Also,
         
         $$
         \begin{aligned}
@@ -528,188 +528,188 @@ $$
         \end{aligned}
         $$
         
-        这就说明，对于后面这种情形，也有
+        This shows that in the latter case we also have
         
         $$
         \tau(v,y) + \tau(z+u,v+y) < 2 + C\log(1-\alpha) + C\log^+\dfrac{\alpha x}{(1-\alpha)^2y}.
         $$
         
-        整体的合并复杂度为
+        The overall merge complexity is
         
         $$
         \tau(x,y) \le 3 + C\log(1-\alpha) + C\log^+\dfrac{\alpha x}{(1-\alpha)^2y}.
         $$
     
-    综合所有情形，有
+    Combining all cases,
     
     $$
     \tau(x,y) \le 3 + C\log(1-\alpha) + C\log^+\dfrac{\alpha x}{(1-\alpha)^2y}.
     $$
     
-    因此，只要取 $2+C\log(1-\alpha)\le 0$，就可以完成复杂度的归纳．一个显然的选择为
+    So as long as we choose $2+C\log(1-\alpha)\le 0$, the induction on the complexity goes through. An obvious choice is
     
     $$
     C = -\dfrac{2}{\log(1-\alpha)}.
     $$
     
-    这个常数说明，两个树合并时，直接连接子树的次数大致不会超过树高差值的二倍．
+    This constant shows that when merging two trees, the number of direct joins of subtrees is roughly at most twice the difference in tree heights.
 
-参考实现如下：
+A reference implementation:
 
-???+ example "参考代码"
+???+ example "Reference code"
     ```cpp
     --8<-- "docs/ds/code/wblt/wblt-1.cpp:merge"
     ```
 
-利用该合并策略，同样可以很容易实现树的平衡维护：失衡时，直接合并左右子树即可．
+With this merge strategy, keeping the tree balanced is also easy: when it is unbalanced, just merge the left and right subtrees.
 
-???+ example "参考代码"
+???+ example "Reference code"
     ```cpp
     --8<-- "docs/ds/code/wblt/wblt-1.cpp:balance-by-merging"
     ```
 
-因为需要再平衡的两个树的大小总是近乎平衡的，因此维护平衡的复杂度是 $O(1)$ 的．
+Since the two trees to rebalance always have nearly balanced sizes, maintaining balance takes $O(1)$ time.
 
-## 平衡树基础操作
+## Basic balanced tree operations
 
-利用前文实现的函数，WBLT 可以支持平衡树的所有基础操作．本节以可重集为例，讨论 WBLT 实现平衡树的方法．
+Using the functions implemented above, a WBLT supports all the basic operations of a balanced tree. This section uses a multiset as an example to show how to implement a balanced tree with a WBLT.
 
-### 建树
+### Building the tree
 
-建树操作与线段树十分相似，只需要向下递归二分区间，直至区间长度为 $1$ 时把要维护的信息放在叶子节点上，回溯的时候合并区间信息即可．
+Building the tree is very similar to a segment tree: recursively split the range in half until its length is $1$, put the stored information in the leaf, and combine the range information while backtracking.
 
-???+ example "参考代码"
+???+ example "Reference code"
     ```cpp
     --8<-- "docs/ds/code/wblt/wblt-2.cpp:build"
     ```
 
-时间复杂度为 $O(n)$．
+The time complexity is $O(n)$.
 
-### 插入与删除
+### Insertion and deletion
 
-对于插入操作，需要从根节点开始向下递归，直到找到权值大于等于待插入元素的叶子节点中权值最小的那个，再新建两个节点，其中一个用来存储新插入的值，另一个作为两个叶子的新父亲替代这个最小叶子节点的位置，再将这两个叶子连接到这个父亲上．回溯时，需要维护树的平衡．
+To insert, recurse down from the root until we find, among the leaves with value greater than or equal to the element to insert, the one with the smallest value. Then create two new nodes: one stores the newly inserted value, and the other becomes the new parent of the two leaves and takes the place of that smallest leaf. Then connect the two leaves to this parent. While backtracking, maintain the balance of the tree.
 
 ![](./images/wblt-insert-delete.svg)
 
-如图所示，要向左侧的树中插入值为 $4$ 的元素．首先找到值为 $5$ 的叶子节点，然后新建叶子节点 $4$ 和非叶子节点 $\text{d}$，并将 $4$ 和 $5$ 连接到 $\text{d}$ 上．这就得到右侧的树．
+As shown in the figure, we want to insert an element with value $4$ into the tree on the left. First find the leaf with value $5$, then create a new leaf $4$ and a non-leaf node $\text{d}$, and connect $4$ and $5$ to $\text{d}$. This gives the tree on the right.
 
-对于删除，考虑上面过程的逆过程．即找到与要删除的值权值相等的一个叶子节点，将它和它的父亲节点删除，并用其父亲的另一个儿子代替父亲的位置．回溯时，同样需要维护树的平衡．
+For deletion, reverse the process above: find a leaf whose value equals the value to delete, delete it and its parent, and put the parent's other child in the parent's place. While backtracking, also maintain the balance of the tree.
 
-参考实现如下：
+A reference implementation:
 
-???+ example "参考代码"
+???+ example "Reference code"
     ```cpp
     --8<-- "docs/ds/code/wblt/wblt-1.cpp:insert-remove"
     ```
 
-注意空树的处理．如果不想处理空树，可以提前向树内插入 $\infty$ 元素．
+Watch out for the empty tree. If you do not want to handle an empty tree, you can insert an $\infty$ element into the tree beforehand.
 
-两种操作的时间复杂度均为 $O(\log n)$．
+Both operations take $O(\log n)$ time.
 
-### 查询排名
+### Finding the rank
 
-因为 WBLT 的形态和线段树十分相似，因此查询排名可以使用类似线段树上二分的方式：如果左子树的最大值大于等于待查值就往左子节点跳；否则，就向右子节点跳，同时答案加上左子树的权重．
+Since a WBLT looks very much like a segment tree, we can find the rank in a way similar to binary search on a segment tree: if the maximum of the left subtree is greater than or equal to the value we are looking for, go to the left child; otherwise, go to the right child and add the weight of the left subtree to the answer.
 
-参考实现如下：
+A reference implementation:
 
-???+ example "参考代码"
+???+ example "Reference code"
     ```cpp
     --8<-- "docs/ds/code/wblt/wblt-1.cpp:rank"
     ```
 
-时间复杂度为 $O(\log n)$．
+The time complexity is $O(\log n)$.
 
-### 根据排名查询
+### Finding by rank
 
-依然是利用线段树上二分的思想，只不过这里比较的是节点的权重．
+This again uses the idea of binary search on a segment tree, except that here we compare node weights.
 
-参考实现如下：
+A reference implementation:
 
-???+ example "参考代码"
+???+ example "Reference code"
     ```cpp
     --8<-- "docs/ds/code/wblt/wblt-1.cpp:kth-element"
     ```
 
-时间复杂度为 $O(\log n)$．
+The time complexity is $O(\log n)$.
 
-### 查找前驱、后继
+### Finding the predecessor and successor
 
-以上两种功能结合即可．
+Just combine the two operations above.
 
-参考实现如下：
+A reference implementation:
 
-???+ example "参考代码"
+???+ example "Reference code"
     ```cpp
     --8<-- "docs/ds/code/wblt/wblt-1.cpp:prev-next"
     ```
 
-如果想直接实现，需要注意键值相同的节点可能存储于多个叶子节点．
+If you want to implement them directly, note that equal keys may be stored in several leaves.
 
-### 分裂操作
+### Split
 
-WBLT 的分裂与 [无旋 Treap](./treap.md#分裂split) 类似，根据子树大小或权值决定向下递归分裂左子树或右子树．不同的是，WBLT 需要对分裂出来的子树进行 **合并**，以维护最终分裂的树的平衡．
+Splitting a WBLT is similar to splitting a [non-rotating Treap](./treap.md#分裂split): based on subtree sizes or values, decide whether to recursively split the left or the right subtree. The difference is that a WBLT needs to **merge** the subtrees that are split off, to keep the final split trees balanced.
 
-根据子树大小分裂的参考实现如下：
+A reference implementation of splitting by subtree size:
 
-???+ example "参考代码"
+???+ example "Reference code"
     ```cpp
     --8<-- "docs/ds/code/wblt/wblt-2.cpp:split"
     ```
 
-时间复杂度为 $O(\log n)$．
+The time complexity is $O(\log n)$.
 
-??? note "复杂度证明"
-    向下递归的层数显然不超过树高，是 $O(\log n)$ 的．需要证明的是，将左右两侧分裂出来的子树分别合并起来的复杂度是 $O(\log n)$ 的．不妨仅考虑左侧的子树，因为右侧是对称的．设左侧分裂出来的子树自下而上分别是 $T_1,T_2,\cdots,T_\ell$，这些子树的数量 $\ell\in O(\log n)$．合并的过程可以描述为，自 $T'_1=T_1$ 开始，将 $T'_{i-1}$ 与 $T_i$ 合并得到 $T'_i$，递归地合并完所有子树为止．合并的总复杂度可以表示为
+??? note "Proof of the complexity"
+    The recursion depth is clearly at most the tree height, which is $O(\log n)$. We need to prove that merging the subtrees split off on the left side and on the right side takes $O(\log n)$ time. Consider only the left side, since the right side is symmetric. Let the subtrees split off on the left be $T_1,T_2,\cdots,T_\ell$ from bottom to top; the number of them is $\ell\in O(\log n)$. The merging process can be described as follows: starting from $T'_1=T_1$, merge $T'_{i-1}$ with $T_i$ to get $T'_i$, until all subtrees are merged. The total cost of merging can be written as
     
     $$
     \sum_{i=2}^\ell \tau(T_i,T'_{i-1}),
     $$
     
-    其中，$\tau(T_i,T'_{i-1})$ 是将 $T_i$ 和 $T'_{i-1}$ 合并起来的复杂度．
+    where $\tau(T_i,T'_{i-1})$ is the cost of merging $T_i$ and $T'_{i-1}$.
     
-    如果总是有 $w(T_i)\ge w(T'_{i-1})$，那么根据合并两子树的复杂度表达式，有
+    If $w(T_i)\ge w(T'_{i-1})$ always holds, then by the complexity of merging two subtrees,
     
     $$
     \tau(T_i,T'_{i-1}) \in O\left(\log\dfrac{w(T_i)}{w(T'_{i-1})}\right) \subseteq O\left(\log\dfrac{w(T'_i)}{w(T'_{i-1})}\right).
     $$
     
-    因为这些大 $O$ 记号中的常数都是一致的，所以可以直接相加，裂项相消．
+    Since the constants in these big-$O$ terms are all the same, we can add them up directly, and the sum telescopes.
     
-    但是，应该注意的是，$w(T_i)\ge w(T'_{i-1})$ 并不总是成立，因为 $T'_{i-1}$ 是从 $T_i$ 在原来的树中对应的右子树分裂出来的，而这个右子树可能比左子树 $T_i$ 更大．尽管如此，即使 $T'_{i-1}$ 比 $T_i$ 大，作为右子树的一部分，权重 $w(T'_{i-1})$ 也不会超过 $w(T_i)$ 的 $(1-\alpha)/\alpha$ 倍，这意味着，此时 $T'_{i-1}$ 和 $T_i$ 一定是平衡的，合并的复杂度是 $O(1)$ 的．
+    However, note that $w(T_i)\ge w(T'_{i-1})$ does not always hold, because $T'_{i-1}$ was split from the right subtree corresponding to $T_i$ in the original tree, and that right subtree may be larger than the left subtree $T_i$. Even so, if $T'_{i-1}$ is larger than $T_i$, since it is part of that right subtree, its weight $w(T'_{i-1})$ is at most $(1-\alpha)/\alpha$ times $w(T_i)$. This means $T'_{i-1}$ and $T_i$ must be balanced in this case, and merging them takes $O(1)$ time.
     
-    将这两种情形总结在一起，单次合并的复杂度可以写为
+    Putting the two cases together, the cost of a single merge can be written as
     
     $$
     \tau(T_i,T'_{i-1}) \in O\left(\log\dfrac{w(T'_i)}{w(T'_{i-1})}\right) + O(1).
     $$
     
-    由此，合并的总复杂度为
+    So the total cost of merging is
     
     $$
     O\left(\sum_{i=2}^\ell\left( 1+\log\dfrac{w(T'_i)}{w(T'_{i-1})}\right) \right) \subseteq O(\ell+\log w(T'_\ell)) \subseteq O(\log n).
     $$
     
-    这也说明，分裂算法的总复杂度是 $O(\log n)$ 的．
+    This shows that the split algorithm takes $O(\log n)$ time in total.
 
-## 参考实现
+## Reference implementation
 
-本文介绍了如何利用 WBLT 完成平衡树的基本操作．下面是用 WBLT 实现的 [普通平衡树模板](https://loj.ac/p/104)．
+This article has shown how to use a WBLT for the basic operations of a balanced tree. Below is the [standard balanced tree template](https://loj.ac/p/104) implemented with a WBLT.
 
-??? example "参考代码"
+??? example "Reference code"
     ```cpp
     --8<-- "docs/ds/code/wblt/wblt-1.cpp:full-text"
     ```
 
-利用合并和分裂，也可以实现文艺平衡树．下面是用 WBLT 实现的 [文艺平衡树模板](https://loj.ac/p/105)，需要在向下访问节点时下传懒标记．
+With merge and split, we can also implement the "Literary Balanced Tree" problem. Below is the [Literary Balanced Tree template](https://loj.ac/p/105) implemented with a WBLT; lazy tags must be pushed down when visiting nodes on the way down.
 
-??? example "参考代码"
+??? example "Reference code"
     ```cpp
     --8<-- "docs/ds/code/wblt/wblt-2.cpp:full-text"
     ```
 
-注意 WBLT 需要两倍的空间；涉及分裂与合并时，需要注意垃圾回收，及时回收无用的节点，否则空间不是线性的．
+Note that a WBLT needs twice the space. When split and merge are involved, take care of garbage collection and recycle unused nodes in time, or the space usage will not be linear.
 
-## 参考资料与注释
+## References and notes
 
 -   [Weight-balanced tree - Wikipedia](https://en.wikipedia.org/wiki/Weight-balanced_tree)
 -   Nievergelt, J.; Reingold, E. M. (1973). "Binary Search Trees of Bounded Balance". SIAM Journal on Computing. 2: 33–43.
@@ -718,8 +718,8 @@ WBLT 的分裂与 [无旋 Treap](./treap.md#分裂split) 类似，根据子树�
 -   Blelloch, Guy E.; Ferizovic, Daniel; Sun, Yihan (2016), "Just Join for Parallel Ordered Sets", Symposium on Parallel Algorithms and Architectures, Proc. of 28th ACM Symp. Parallel Algorithms and Architectures (SPAA 2016), ACM, pp. 253–264.
 -   Straka, Milan. (2011). "Adams’Trees Revisited: Correctness Proof and Efficient Implementation." International Symposium on Trends in Functional Programming. Berlin, Heidelberg: Springer Berlin Heidelberg.
 
-[^wrong-range]: Nievergelt 和 Reingold 的原始论文中给出的参数范围 $\alpha < 1-\dfrac{\sqrt{2}}{2},~\beta=\dfrac{1-2\alpha}{1-\alpha}$ 是错误的．Hirai 和 Yamamoto 的文章中提供了相应的反例，问题主要出现在某些很小的树上，从而导致整个归纳证明失效．当然，实际算法竞赛中，很难造出能卡掉这些错误参数的数据，所以实践中可能并不会有太大影响．
+[^wrong-range]: The parameter range $\alpha < 1-\dfrac{\sqrt{2}}{2},~\beta=\dfrac{1-2\alpha}{1-\alpha}$ given in the original paper by Nievergelt and Reingold is wrong. The paper by Hirai and Yamamoto gives counterexamples. The problem mainly appears on some very small trees, which breaks the whole inductive proof. Of course, in real contests it is very hard to construct data that breaks these wrong parameters, so in practice it may not matter much.
 
-[^merge-complexity-cmp]: 因为单次平衡操作至多相当于连接两次子树，而且最后两子树已经平衡时还需要调用一次连接子树的算法，所以如果以调用连接子树的算法的次数计算，基于平衡实现的合并操作和下文直接合并的平衡操作的算法的常数是一致的．
+[^merge-complexity-cmp]: A single balancing step is equivalent to at most two subtree joins, and when the two subtrees are finally balanced, one more call to the join algorithm is needed. So if we count the number of calls to the join algorithm, the merge operation based on balancing and the balancing operation based on direct merging below have the same constant factor.
 
-[^more-join]: 通过稍后的证明可以看出：第三种情形中，$z$ 和 $w+y$ 总是平衡的；第四种情形中，$z$ 和 $u$ 总是平衡的．它们都可以直接连接，而不需要合并．
+[^more-join]: The proof below shows that in the third case, $z$ and $w+y$ are always balanced, and in the fourth case, $z$ and $u$ are always balanced. They can be joined directly without merging.

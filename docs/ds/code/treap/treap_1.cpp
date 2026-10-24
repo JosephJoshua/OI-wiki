@@ -5,7 +5,7 @@ constexpr int INF = 1 << 30;
 
 int n;
 
-struct treap {  // 直接维护成数据结构，可以直接用
+struct treap {  // Wrapped as a data structure, ready to use directly
   int l[MAXN], r[MAXN], val[MAXN], rnd[MAXN], size_[MAXN], w[MAXN];
   int sz, ans, rt;
 
@@ -29,7 +29,7 @@ struct treap {  // 直接维护成数据结构，可以直接用
     k = t;
   }
 
-  void insert(int &k, int x) {  // 插入
+  void insert(int &k, int x) {  // Insert
     if (!k) {
       sz++;
       k = sz;
@@ -51,7 +51,7 @@ struct treap {  // 直接维护成数据结构，可以直接用
     }
   }
 
-  bool del(int &k, int x) {  // 删除节点
+  bool del(int &k, int x) {  // Delete a node
     if (!k) return false;
     if (val[k] == x) {
       if (w[k] > 1) {
