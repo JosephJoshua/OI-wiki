@@ -1,21 +1,21 @@
-## 定义
+## Definition
 
-记忆化搜索是一种通过记录已经遍历过的状态的信息，从而避免对同一状态重复遍历的搜索实现方式．
+Memoized search is a way to implement search that records information about states it has already visited, so it never explores the same state twice.
 
-因为记忆化搜索确保了每个状态只访问一次，它也是一种常见的动态规划实现方式．
+Because memoized search guarantees that each state is visited only once, it is also a common way to implement dynamic programming.
 
-## 引入
+## Introduction
 
-???+ note "[\[NOIP2005\] 采药](https://www.luogu.com.cn/problem/P1048)"
-    山洞里有 $M$ 株不同的草药，采每一株都需要一些时间 $t_i$，每一株也有它自身的价值 $v_i$．给你一段时间 $T$，在这段时间里，你可以采到一些草药．让采到的草药的总价值最大．
+???+ note "[\[NOIP2005\] Herb Gathering](https://www.luogu.com.cn/problem/P1048)"
+    There are $M$ different herbs in a cave. Picking herb $i$ takes time $t_i$, and each herb has its own value $v_i$. You are given a total time $T$, during which you can pick some of the herbs. Maximize the total value of the herbs you pick.
     
-    $1 \leq T \leq 10^3$，$1 \leq t_i,v_i,M \leq 100$
+    $1 \leq T \leq 10^3$, $1 \leq t_i,v_i,M \leq 100$
 
-### 朴素的 [DFS](../search/dfs.md) 做法
+### Naive [DFS](../search/dfs.md) approach
 
-很容易实现这样一个朴素的搜索做法：在搜索时记录下当前准备选第几个物品、剩余的时间是多少、已经获得的价值是多少这三个参数，然后枚举当前物品是否被选，转移到相应的状态．
+A naive search is easy to write. During the search, keep three parameters: which item we are about to decide on, how much time is left, and how much value we have collected so far. Then try both choices for the current item (take it or not) and move to the corresponding state.
 
-???+ note "实现"
+???+ note "Implementation"
     === "C++"
         ```cpp
         int n, t;
@@ -66,19 +66,19 @@
         print(ans)
         ```
 
-这种做法的时间复杂度是指数级别的，并不能通过本题．
+The time complexity of this approach is exponential, so it is too slow for this problem.
 
-### 优化
+### Optimization
 
-上面的做法为什么效率低下呢？因为同一个状态会被访问多次．
+Why is the approach above so slow? Because the same state gets visited many times.
 
-如果我们每查询完一个状态后将该状态的信息存储下来，再次需要访问这个状态就可以直接使用之前计算得到的信息，从而避免重复计算．这充分利用了动态规划中很多问题具有大量重叠子问题的特点，属于用空间换时间的「记忆化」思想．
+If we store the information of each state once we have computed it, then the next time we need that state we can just reuse the stored result and avoid computing it again. This takes full advantage of the fact that many dynamic programming problems have lots of overlapping subproblems. It is the idea of "memoization": trading space for time.
 
-具体到本题上，我们在朴素的 DFS 的基础上，增加一个数组 `mem` 来记录每个 `dfs(pos,tleft)` 的返回值．刚开始把 `mem` 中每个值都设成 `-1`（代表没求解过）．每次需要访问一个状态时，如果相应状态的值在 `mem` 中为 `-1`，则递归访问该状态．否则我们直接使用 `mem` 中已经存储过的值即可．
+For this problem, we start from the naive DFS and add an array `mem` that records the return value of each `dfs(pos,tleft)`. At the beginning, set every value in `mem` to `-1` (meaning "not computed yet"). Whenever we need a state, if its value in `mem` is `-1`, we visit it recursively. Otherwise, we simply use the value already stored in `mem`.
 
-通过这样的处理，我们确保了每个状态只会被访问一次，因此该算法的时间复杂度为 $O(TM)$．
+With this change, each state is visited only once, so the time complexity of the algorithm is $O(TM)$.
 
-???+ note "实现"
+???+ note "Implementation"
     === "C++"
         ```cpp
         int n, t;
@@ -87,13 +87,13 @@
         
         int dfs(int pos, int tleft) {
           if (mem[pos][tleft] != -1)
-            return mem[pos][tleft];  // 已经访问过的状态，直接返回之前记录的值
+            return mem[pos][tleft];  // state already visited: return the stored value
           if (pos == n + 1) return mem[pos][tleft] = 0;
           int dfs1, dfs2 = -INF;
           dfs1 = dfs(pos + 1, tleft);
           if (tleft >= tcost[pos])
-            dfs2 = dfs(pos + 1, tleft - tcost[pos]) + mget[pos];  // 状态转移
-          return mem[pos][tleft] = max(dfs1, dfs2);  // 最后将当前状态的值存下来
+            dfs2 = dfs(pos + 1, tleft - tcost[pos]) + mget[pos];  // state transition
+          return mem[pos][tleft] = max(dfs1, dfs2);  // finally, store the value of the current state
         }
         
         int main() {
@@ -132,11 +132,11 @@
         print(dfs(1, t))
         ```
 
-## 与递推的联系与区别
+## How it relates to and differs from iterative DP
 
-在求解动态规划的问题时，记忆化搜索与递推的代码，在形式上是高度类似的．这是由于它们使用了相同的状态表示方式和类似的状态转移．也正因为如此，一般来说两种实现的时间复杂度是一样的．
+When solving dynamic programming problems, code for memoized search and code for iterative (bottom-up) DP look very similar. This is because they use the same state representation and similar transitions. For the same reason, the two implementations usually have the same time complexity.
 
-下面给出的是递推实现的代码（为了方便对比，没有添加滚动数组优化），通过对比可以发现二者在形式上的类似性．
+Below is the iterative version (without the rolling array optimization, to make comparison easier). Comparing them shows how similar the two are in form.
 
 ```cpp
 int n, t, w[105], v[105], f[105][1005];
@@ -148,30 +148,30 @@ int main() {
     for (int j = 0; j <= t; j++) {
       f[i][j] = f[i - 1][j];
       if (j >= w[i])
-        f[i][j] = max(f[i][j], f[i - 1][j - w[i]] + v[i]);  // 状态转移方程
+        f[i][j] = max(f[i][j], f[i - 1][j - w[i]] + v[i]);  // state transition equation
     }
   cout << f[n][t];
   return 0;
 }
 ```
 
-在求解动态规划的问题时，记忆化搜索和递推，都确保了同一状态至多只被求解一次．而它们实现这一点的方式则略有不同：递推通过设置明确的访问顺序来避免重复访问，记忆化搜索虽然没有明确规定访问顺序，但通过给已经访问过的状态打标记的方式，也达到了同样的目的．
+When solving dynamic programming problems, both memoized search and iterative DP make sure each state is solved at most once. They achieve this in slightly different ways: iterative DP avoids repeated visits by fixing an explicit order of evaluation, while memoized search has no explicit order but reaches the same goal by marking states that have already been visited.
 
-与递推相比，记忆化搜索因为不用明确规定访问顺序，在实现难度上有时低于递推，且能比较方便地处理边界情况，这是记忆化搜索的一大优势．但与此同时，记忆化搜索难以使用滚动数组等优化，且由于存在递归，运行效率会低于递推．因此应该视题目选择更适合的实现方式．
+Compared with iterative DP, memoized search does not require an explicit evaluation order, so it is sometimes easier to write, and it handles boundary cases more conveniently. This is a major advantage of memoized search. On the other hand, it is hard to apply optimizations such as rolling arrays to memoized search, and because of recursion it runs slower than iterative DP. So you should choose whichever implementation fits the problem better.
 
-## 如何写记忆化搜索
+## How to write a memoized search
 
-### 方法一
+### Method 1
 
-1.  把这道题的 dp 状态和方程写出来
-2.  根据它们写出 dfs 函数
-3.  添加记忆化数组
+1.  Write down the DP states and transition equation for the problem
+2.  Write a dfs function based on them
+3.  Add a memoization array
 
-举例：
+Example:
 
-$dp_{i} = \max\{dp_{j}+1\}\quad (1 \leq j < i \land a_{j}<a_{i})$（最长上升子序列）
+$dp_{i} = \max\{dp_{j}+1\}\quad (1 \leq j < i \land a_{j}<a_{i})$ (longest increasing subsequence)
 
-转为
+becomes
 
 === "C++"
     ```cpp
@@ -185,7 +185,7 @@ $dp_{i} = \max\{dp_{j}+1\}\quad (1 \leq j < i \land a_{j}<a_{i})$（最长上升
     
     int main() {
       memset(mem, -1, sizeof(mem));
-      // 读入部分略去
+      // input reading omitted
       int ret = 0;
       for (int j = 1; j <= n; j++) {
         ret = max(ret, dfs(j));
@@ -207,10 +207,10 @@ $dp_{i} = \max\{dp_{j}+1\}\quad (1 \leq j < i \land a_{j}<a_{i})$（最长上升
         return mem[i]
     ```
 
-### 方法二
+### Method 2
 
-1.  写出这道题的暴搜程序（最好是 [dfs](../search/dfs.md)）
-2.  将这个 dfs 改成「无需外部变量」的 dfs
-3.  添加记忆化数组
+1.  Write a brute-force search program for the problem (preferably a [dfs](../search/dfs.md))
+2.  Turn this dfs into one that "does not need external variables"
+3.  Add a memoization array
 
-举例：本文中「采药」的例子
+Example: the "Herb Gathering" example in this article

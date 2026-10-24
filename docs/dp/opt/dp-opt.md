@@ -1,185 +1,185 @@
-## 引入
+## Introduction
 
-本页面列举了一些常见的动态规划（dynamic programming，DP）优化方法．所谓 DP 优化，是指许多动态规划问题虽然容易列出朴素的状态转移方程，但直接计算往往效率低下，因此需要借助一些技巧来降低时间复杂度．
+This page lists some common optimization methods for dynamic programming (DP). "DP optimization" refers to the fact that for many DP problems, the naive state transition equation is easy to write down but slow to compute directly, so we need some tricks to lower the time complexity.
 
-这些方法彼此联系紧密，常常包含相似的思想，且往往需要结合多种技巧共同使用．因此，本文仅作粗略分类，侧重介绍一些最基本的思路．
+These methods are closely related, often share similar ideas, and frequently need to be combined. So this article only gives a rough classification and focuses on the most basic ideas.
 
-## 利用常见技巧优化
+## Optimization with common techniques
 
-许多动态规划问题的转移，可以通过常见的算法和数据结构进行优化．
+The transitions of many DP problems can be sped up with common algorithms and data structures.
 
-这类技巧有两种常见的情形．第一种情形中，DP 问题有着如下状态转移方程：
+There are two common situations for these techniques. In the first, the DP problem has a state transition equation like this:
 
 $$
 f(i) = F(a_i,\{f(j) : j < i\}).
 $$
 
-其中，当前状态 $f(i)$ 的计算依赖于当前的输入 $a_i$ 和之前整个序列的状态 $\{f(j):j < i\}$．因此，可以维护一个数据结构，将每次 $f(i)$ 的计算都看作是一次查询操作；而得到当前状态 $f(i)$ 后，可以再执行一次修改操作，更新该数据结构，用于后续的转移．
+Here, computing the current state $f(i)$ depends on the current input $a_i$ and on the states of the whole sequence before it, $\{f(j):j < i\}$. So we can maintain a data structure and treat each computation of $f(i)$ as a query. After obtaining the current state $f(i)$, we perform an update on the data structure so it can be used by later transitions.
 
-第二种情形中，DP 问题有着如下状态转移方程：
+In the second situation, the DP problem has a state transition equation like this:
 
 $$
 f(i,\cdot) = F(a_i,f(i-1,\cdot)).
 $$
 
-其中，每个 $f(i,\cdot)$ 都是一个数组或其他较复杂的对象．因此，虽然 $f(i,\cdot)$ 只依赖于之前的单个状态，但是单次转移的复杂度很高，需要通过数据结构等技巧进行优化．
+Here, each $f(i,\cdot)$ is an array or some other fairly complex object. So although $f(i,\cdot)$ depends only on the single previous state, one transition is very expensive and needs to be optimized with data structures or other techniques.
 
-### 前缀和优化 DP
+### DP optimization with prefix sums
 
-相关页面：[前缀和](../../basic/prefix-sum.md#prefix-sums)
+Related page: [Prefix sums](../../basic/prefix-sum.md#prefix-sums)
 
-如果当前状态的计算依赖于之前状态的子段和，那么，可以通过维护前缀和来加速计算．其中，一类涉及高维前缀和的问题也称为 [SOS DP](../../basic/prefix-sum.md#special-case-sum-over-subsets-dp)．
+If computing the current state depends on the sum of a subarray of earlier states, we can speed it up by maintaining prefix sums. Problems that involve higher-dimensional prefix sums are also called [SOS DP](../../basic/prefix-sum.md#special-case-sum-over-subsets-dp).
 
-习题：
+Exercises:
 
--   [Luogu P2513 \[HAOI2009\] 逆序对数列](https://www.luogu.com.cn/problem/P2513)
+-   [Luogu P2513 \[HAOI2009\] Inversion Sequence](https://www.luogu.com.cn/problem/P2513)
 -   [AtCoder Educational DP Contest M - Candies](https://atcoder.jp/contests/dp/tasks/dp_m)
 
-### 单调队列/单调栈优化 DP
+### DP optimization with monotonic queues/stacks
 
-主页面：[单调队列/单调栈优化](./monotonic-queue-stack.md)
+Main page: [Monotonic queue/stack optimization](./monotonic-queue-stack.md)
 
-如果当前状态依赖于之前状态的区间最值等信息时，可以通过维护单调队列、单调栈来加速计算．
+If the current state depends on information such as the maximum or minimum of earlier states over a range, we can speed things up by maintaining a monotonic queue or monotonic stack.
 
-### 线段树/树状数组优化 DP
+### DP optimization with segment trees/Fenwick trees
 
-相关页面：[线段树](../../ds/seg.md)、[树状数组](../../ds/fenwick.md)
+Related pages: [Segment tree](../../ds/seg.md), [Fenwick tree](../../ds/fenwick.md)
 
-如果每次状态转移时，查询的都是某段区间上的和、最值等信息，或是单次修改操作涉及区间更新时，可以通过维护线段树、树状数组来加速计算．
+If each transition queries the sum, maximum/minimum or similar information over some range, or if a single update involves a range update, we can speed things up by maintaining a segment tree or Fenwick tree.
 
-习题：
+Exercises:
 
 -   [AtCoder Educational DP Contest Q - Flowers](https://atcoder.jp/contests/dp/tasks/dp_q)
 -   [AtCoder Educational DP Contest W - Intervals](https://atcoder.jp/contests/dp/tasks/dp_w)
 -   [Codeforces 115 E. Linear Kingdom Races](https://codeforces.com/problemset/problem/115/E)
 
-### CDQ 分治优化 DP
+### DP optimization with CDQ divide and conquer
 
-主页面：[CDQ 分治优化 DP](../../misc/cdq-divide.md#cdq-分治优化-1d1d-动态规划的转移)
+Main page: [DP optimization with CDQ divide and conquer](../../misc/cdq-divide.md#cdq-分治优化-1d1d-动态规划的转移)
 
-类似前文，将整个 DP 过程看作是一系列查询和修改操作．对于有些问题，顺次计算复杂度过高，可以将整个查询和修改过程离线，利用 CDQ 分治加速计算．
+As above, view the whole DP process as a sequence of queries and updates. For some problems, computing them in order is too slow; instead, we can process all queries and updates offline and use CDQ divide and conquer to speed things up.
 
-CDQ 分治优化 DP 也常见于下列各类问题中：
+CDQ divide and conquer for DP optimization also often appears in the following kinds of problems:
 
--   [基于 CDQ 分治的斜率优化 DP](./slope.md#二分cdq平衡树优化-dp)
--   [分治优化斜率单调性 DP](./quadrangle.md#分治)
+-   [Convex hull trick DP based on CDQ divide and conquer](./slope.md#二分cdq平衡树优化-dp)
+-   [Divide and conquer optimization for DP with monotonic slopes](./quadrangle.md#分治)
 
-### 倍增优化 DP
+### DP optimization with binary lifting
 
-相关页面：[倍增](../../basic/binary-lifting.md)
+Related page: [Binary lifting](../../basic/binary-lifting.md)
 
-有些问题中，需要将状态 $f(i)$ 设为从初始状态开始，进行了 $2^i$ 次转移时得到的结果．它利用了倍增的思想转化了原问题，因此常常称为倍增优化 DP．
+In some problems, the state $f(i)$ is defined as the result after applying $2^i$ transitions starting from the initial state. This uses the idea of binary lifting to transform the original problem, so it is often called binary lifting DP optimization.
 
-有些时候，也会将状态转移方程类似
+Sometimes DP problems whose state transition equation looks like
 
 $$
 f(i,j) = f(i-1,f(i-1,j))
 $$
 
-的 DP 问题称为倍增（优化）DP．
+are also called binary lifting (optimized) DP.
 
-习题：
+Exercises:
 
--   [Luogu P1081 \[NOIP 2012 提高组\] 开车旅行](https://www.luogu.com.cn/problem/P1081)
--   [Luogu P1613 跑路](https://www.luogu.com.cn/problem/P1613)
+-   [Luogu P1081 \[NOIP 2012 Senior Group\] Driving Trip](https://www.luogu.com.cn/problem/P1081)
+-   [Luogu P1613 Running Away](https://www.luogu.com.cn/problem/P1613)
 -   [Luogu P4739 \[CERC2017\] Donut Drone](https://www.luogu.com.cn/problem/P4739)
 
-## 利用问题结构优化
+## Optimization using problem structure
 
-许多动态规划问题具备如凸性、单调性等结构性质，合理利用这些性质可以快速求解．
+Many DP problems have structural properties such as convexity or monotonicity. Using these properties well can lead to fast solutions.
 
-### 斜率优化 DP
+### Convex hull trick DP
 
-主页面：[斜率优化](./slope.md)
+Main page: [Convex hull trick](./slope.md)
 
-类似于上一节介绍的优化方法，利用问题的凸性，可以通过维护凸包加速单次转移．
+Similar to the methods in the previous section, if the problem is convex, we can speed up each transition by maintaining a convex hull.
 
-### 四边形不等式优化 DP
+### Quadrangle inequality DP optimization
 
-主页面：[四边形不等式优化](./quadrangle.md)
+Main page: [Quadrangle inequality optimization](./quadrangle.md)
 
-涉及的函数满足四边形不等式的 DP 问题，往往满足某种决策单调性．利用这一特性，有很多专门的方法可以降低计算复杂度．常见的问题类型包括一维决策单调性问题、区间分拆问题、区间合并问题等．
+DP problems whose functions satisfy the quadrangle inequality often have some kind of decision monotonicity. Many dedicated methods use this property to lower the complexity. Common problem types include one-dimensional decision monotonicity problems, interval partition problems, and interval merging problems.
 
-### Slope Trick 优化 DP
+### Slope Trick DP optimization
 
-主页面：[Slope Trick](./slope-trick.md)
+Main page: [Slope Trick](./slope-trick.md)
 
-有些问题中，状态函数的差分（即斜率）在状态转移过程中更容易维护．这种优化也往往需要问题具有凸性．
+In some problems, the differences (that is, the slopes) of the state function are easier to maintain during transitions. This optimization usually also requires the problem to be convex.
 
-### WQS 二分/凸优化 DP
+### WQS binary search / convex optimization DP
 
-主页面：[WQS 二分](./wqs-binary-search.md)
+Main page: [WQS binary search](./wqs-binary-search.md)
 
-对于带个数限制的最优化 DP 问题，如果不考虑个数限制时，问题更容易解决，且最优价值是关于该限制的凸函数，那么，可以通过 WQS 二分的方法简化计算．
+For an optimization DP problem with a limit on the count, if the problem is easier to solve without the count limit, and the optimal value is a convex function of that limit, then WQS binary search can simplify the computation.
 
-## 利用数学方法优化
+## Optimization with mathematical methods
 
-许多动态规划问题的转移，可以通过数学工具加速．
+The transitions of many DP problems can be sped up with mathematical tools.
 
-### 矩阵快速幂优化 DP
+### DP optimization with fast matrix exponentiation
 
-相关页面：[快速幂](../../math/binary-exponentiation.md)
+Related page: [Fast exponentiation](../../math/binary-exponentiation.md)
 
-如果 DP 问题的状态转移方程可以写作一个自治的形式
+If the state transition equation of a DP problem can be written in an autonomous form
 
 $$
 f(i) = F(f(i-1)),
 $$
 
-也就是说，当前状态 $f(i)$ 只取决于前一个状态 $f(i-1)$，而不依赖于其他输入，那么，可以直接通过快速幂加速计算
+that is, the current state $f(i)$ depends only on the previous state $f(i-1)$ and not on any other input, then we can directly use fast exponentiation to compute
 
 $$
 f(n) = F^n(f(0))
 $$
 
-获得最终答案．由于单次操作 $F$ 经常可以写作矩阵的形式，所以这一优化方法常称为矩阵快速幂优化 DP．实际上，任何满足结合律的变换（即任何 [幺半群](../../math/algebra/basic.md#群) 内的元素）都可以应用该方法加速．
+and get the final answer. Since a single step $F$ can often be written as a matrix, this method is usually called fast matrix exponentiation DP optimization. In fact, any associative transformation (that is, any element of a [monoid](../../math/algebra/basic.md#群)) can be sped up this way.
 
-习题：
+Exercises:
 
--   [Luogu P1397 \[NOI2013\] 矩阵游戏](https://www.luogu.com.cn/problem/P1397)
--   [Luogu P3176 \[HAOI2015\] 数字串拆分](https://www.luogu.com.cn/problem/P3176)
+-   [Luogu P1397 \[NOI2013\] Matrix Game](https://www.luogu.com.cn/problem/P1397)
+-   [Luogu P3176 \[HAOI2015\] Splitting Digit Strings](https://www.luogu.com.cn/problem/P3176)
 -   [Codeforces 576 D. Flights for Regular Customers](https://codeforces.com/problemset/problem/576/D)
--   [Luogu P6772 \[NOI2020\] 美食家](https://www.luogu.com.cn/problem/P6772)
+-   [Luogu P6772 \[NOI2020\] Gourmet](https://www.luogu.com.cn/problem/P6772)
 
-### FFT 优化 DP
+### DP optimization with FFT
 
-相关页面：[FFT](../../math/poly/fft.md)
+Related page: [FFT](../../math/poly/fft.md)
 
-如果 DP 问题的状态转移方程是一个卷积的形式，那么，可以考虑用 FFT 加速转移．当然，根据具体的题目，也可能会用到其他多项式技术．
+If the state transition equation of a DP problem is a convolution, consider using FFT to speed up the transitions. Depending on the problem, other polynomial techniques may also be useful.
 
-习题：
+Exercises:
 
 -   [Codeforces 553 E. Kyoya and Train](https://codeforces.com/contest/553/problem/E)
 -   [Codeforces 1784 D. Wooden Spoon](https://codeforces.com/problemset/problem/1784/D)
 
-### Lagrange 插值优化 DP
+### DP optimization with Lagrange interpolation
 
-相关页面：[Lagrange 插值](../../math/numerical/interp.md#lagrange-插值法)
+Related page: [Lagrange interpolation](../../math/numerical/interp.md#lagrange-插值法)
 
-有些 DP 问题的状态函数 $f(i,j)$ 是关于 $j$ 的 $k$ 次多项式函数．此时，可以直接暴力计算它在 $k+1$ 个点处的取值，并通过 Lagrange 插值求出 $f(i,\cdot)$ 的表达式，进而优化转移甚至直接得到答案．
+In some DP problems, the state function $f(i,j)$ is a polynomial of degree $k$ in $j$. Then we can compute its values at $k+1$ points by brute force, and use Lagrange interpolation to find the expression of $f(i,\cdot)$. This speeds up transitions or even gives the answer directly.
 
-习题：
+Exercises:
 
 -   [Luogu P5223 Function](https://www.luogu.com.cn/problem/P5223)
--   [Luogu P4463 \[集训队互测 2012\] calc](https://www.luogu.com.cn/problem/P4463)
--   [Luogu P5469 \[NOI2019\] 机器人](https://www.luogu.com.cn/problem/P5469)
+-   [Luogu P4463 \[National Training Team Mutual Test 2012\] calc](https://www.luogu.com.cn/problem/P4463)
+-   [Luogu P5469 \[NOI2019\] Robot](https://www.luogu.com.cn/problem/P5469)
 
-## 通过简化状态优化
+## Optimization by simplifying states
 
-除了优化转移外，还可以通过简化状态降低计算复杂度．
+Besides optimizing transitions, we can also lower the complexity by simplifying the states.
 
-### DP 套 DP 与 DFA 最小化
+### DP of DP and DFA minimization
 
-主页面：[DP 套 DP](../dp-of-dp.md)、[DFA 最小化](../../misc/fsm.md#dfa-最小化)
+Main pages: [DP of DP](../dp-of-dp.md), [DFA minimization](../../misc/fsm.md#dfa-最小化)
 
-一些 DP 问题的状态函数可以写成 $f(i,x)$ 的形式，但是 $x$ 自身的转移较为复杂，甚至可能依赖于另一个 DP 问题．对于这类问题，可以首先为状态 $x$ 的转移建立自动机，并通过 DFA 最小化的方法减少状态数量，再进行外层 DP．
+In some DP problems, the state function can be written as $f(i,x)$, but the transitions of $x$ itself are complicated and may even depend on another DP problem. For such problems, we can first build an automaton for the transitions of state $x$, reduce the number of states with DFA minimization, and then run the outer DP.
 
-### 状态设计优化 DP
+### DP optimization through state design
 
-主页面：[状态设计优化](./state.md)
+Main page: [State design optimization](./state.md)
 
-有些特殊的问题可以通过巧妙的状态设计大幅减少状态数量．
+Some special problems allow a clever state design that greatly reduces the number of states.
 
-## 拓展阅读
+## Further reading
 
--   [DP 优化方法大杂烩 by Alex Wei](https://www.cnblogs.com/alex-wei/p/DP_Involution.html)
+-   [A grab bag of DP optimization methods by Alex Wei (Chinese)](https://www.cnblogs.com/alex-wei/p/DP_Involution.html)

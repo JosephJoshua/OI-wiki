@@ -1,33 +1,33 @@
 author: Marcythm, hsfzLZH1, abc1763613206, greyqz, Ir1d, billchenchina, Chrogeek, Enter-tainer, StudyingFather, MrFoodinChina, luoguyuntianming, sshwy, wood3
 
-## 例题引入
+## Introductory example problem
 
-???+ note "[「HNOI2008」玩具装箱](https://loj.ac/problem/10188)"
-    有 $n$ 个玩具排成一排，第 $i$ 个玩具价值为 $c_i$．要求将这 $n$ 个玩具分成若干段．对于一段 $[l,r]$，它的代价为 $(r-l+\sum_{i=l}^r c_i-L)^2$．其中 $L$ 是一个常量，求分段的最小代价．
+???+ note "[HNOI2008 Toy Packing](https://loj.ac/problem/10188)"
+    There are $n$ toys in a row, and toy $i$ has value $c_i$. Split these $n$ toys into several segments. The cost of a segment $[l,r]$ is $(r-l+\sum_{i=l}^r c_i-L)^2$, where $L$ is a constant. Find the minimum total cost of the split.
     
-    $1\le n\le 5\times 10^4, 1\le L, c_i\le 10^7$．
+    $1\le n\le 5\times 10^4, 1\le L, c_i\le 10^7$.
 
-### 朴素的 DP 做法
+### Naive DP approach
 
-令 $f_i$ 表示前 $i$ 个物品，分若干段的最小代价．
+Let $f_i$ be the minimum cost of splitting the first $i$ items into segments.
 
-状态转移方程：$f_i=\min_{j<i}\{f_j+(i-(j+1)+pre_i-pre_j-L)^2\}=\min_{j<i}\{f_j+(pre_i-pre_j+i-j-1-L)^2\}$．
+State transition equation: $f_i=\min_{j<i}\{f_j+(i-(j+1)+pre_i-pre_j-L)^2\}=\min_{j<i}\{f_j+(pre_i-pre_j+i-j-1-L)^2\}$.
 
-其中 $pre_i$ 表示前 $i$ 个数的和，即 $\sum_{j=1}^i c_j$．
+Here $pre_i$ is the sum of the first $i$ numbers, that is, $\sum_{j=1}^i c_j$.
 
-该做法的时间复杂度为 $O(n^2)$，无法解决本题．
+The time complexity of this approach is $O(n^2)$, which is too slow for this problem.
 
-### 优化
+### Optimization
 
-考虑简化上面的状态转移方程式：令 $s_i=pre_i+i,L'=L+1$，则 $f_i=\min_{j<i}\{f_j+(s_i-s_j-L')^2\}$．
+Let's simplify the transition equation above: let $s_i=pre_i+i,L'=L+1$. Then $f_i=\min_{j<i}\{f_j+(s_i-s_j-L')^2\}$.
 
-将与 $j$ 无关的移到外面，我们得到
+Moving the terms that do not depend on $j$ outside, we get
 
 $$
 f_i - (s_i-L')^2=\min_{j<i}\{f_j+s_j^2 + 2s_j(L'-s_i) \} 
 $$
 
-考虑一次函数的斜截式 $y=kx+b$，将其移项得到 $b=y-kx$．我们将与 $j$ 有关的信息表示为 $y$ 的形式，把同时与 $i,j$ 有关的信息表示为 $kx$，把要最小化的信息（与 $i$ 有关的信息）表示为 $b$，也就是截距．具体地，设
+Consider the slope-intercept form of a linear function, $y=kx+b$. Rearranging gives $b=y-kx$. We express the information that depends only on $j$ as $y$, the information that depends on both $i$ and $j$ as $kx$, and the quantity to minimize (which depends on $i$) as $b$, the intercept. Specifically, let
 
 $$
 \begin{aligned}
@@ -38,93 +38,93 @@ b_i&=f_i-(s_i-L')^2\\
 \end{aligned}
 $$
 
-则转移方程就写作 $b_i = \min_{j<i}\{ y_j-k_ix_j \}$．我们把 $(x_j,y_j)$ 看作二维平面上的点，则 $k_i$ 表示直线斜率，$b_i$ 表示一条过 $(x_j,y_j)$ 的斜率为 $k_i$ 的直线的截距．问题转化为了，选择合适的 $j$（$1\le j<i$），最小化直线的截距．
+Then the transition becomes $b_i = \min_{j<i}\{ y_j-k_ix_j \}$. If we view $(x_j,y_j)$ as points in the plane, then $k_i$ is the slope of a line, and $b_i$ is the intercept of the line with slope $k_i$ passing through $(x_j,y_j)$. The problem becomes: choose a suitable $j$ ($1\le j<i$) to minimize the intercept of the line.
 
 ![slope\_optimization](../images/optimization.svg)
 
-如图，我们将这个斜率为 $k_i$ 的直线从下往上平移，直到有一个点 $(x_p,y_p)$ 在这条直线上，则有 $b_i=y_p-k_ix_p$，这时 $b_i$ 取到最小值．算完 $f_i$，我们就把 $(x_i,y_i)$ 这个点加入点集中，以作为新的 DP 决策．那么，我们该如何维护点集？
+As shown in the figure, we move this line with slope $k_i$ upward from below until it hits some point $(x_p,y_p)$. Then $b_i=y_p-k_ix_p$, and this is the minimum value of $b_i$. After computing $f_i$, we add the point $(x_i,y_i)$ to the point set as a new DP decision. So how do we maintain the point set?
 
-容易发现，可能让 $b_i$ 取到最小值的点一定在下凸壳上．因此在寻找 $p$ 的时候我们不需要枚举所有 $i-1$ 个点，只需要考虑凸包上的点．而在本题中 $k_i$ 随 $i$ 的增加而递增，因此我们可以单调队列维护凸包．
+It is easy to see that any point that can give the minimum $b_i$ must lie on the lower convex hull. So when looking for $p$ we do not need to enumerate all $i-1$ points; we only need to consider points on the hull. In this problem, $k_i$ increases with $i$, so we can maintain the hull with a monotonic queue.
 
-具体地，设 $K(a,b)$ 表示过 $(x_a,y_a)$ 和 $(x_b,y_b)$ 的直线的斜率．考虑队列 $q_l,q_{l+1},\ldots,q_r$，维护的是下凸壳上的点．也就是说，对于 $l<i<r$，始终有 $K(q_{i-1},q_i) < K(q_i,q_{i+1})$ 成立．
+Specifically, let $K(a,b)$ be the slope of the line through $(x_a,y_a)$ and $(x_b,y_b)$. Consider the queue $q_l,q_{l+1},\ldots,q_r$, which stores the points on the lower convex hull. That is, for $l<i<r$, $K(q_{i-1},q_i) < K(q_i,q_{i+1})$ always holds.
 
-我们维护一个指针 $e$ 来计算 $b_i$ 最小值．我们需要找到一个 $K(q_{e-1},q_e)\le k_i< K(q_e,q_{e+1})$ 的 $e$（特别地，当 $e=l$ 或者 $e=r$ 时要特别判断），这时就有 $p=q_e$，即 $q_e$ 是 $i$ 的最优决策点．由于 $k_i$ 是单调递增的，因此 $e$ 的移动次数是均摊 $O(1)$ 的．
+We maintain a pointer $e$ to compute the minimum of $b_i$. We need to find an $e$ with $K(q_{e-1},q_e)\le k_i< K(q_e,q_{e+1})$ (the cases $e=l$ and $e=r$ need special handling). Then $p=q_e$, that is, $q_e$ is the optimal decision point for $i$. Since $k_i$ is monotonically increasing, $e$ moves an amortized $O(1)$ times.
 
-在插入一个点 $(x_i,y_i)$ 时，我们要判断是否 $K(q_{r-1},q_r)<K(q_r,i)$，如果不等式不成立就将 $q_r$ 弹出，直到等式满足．然后将 $i$ 插入到 $q$ 队尾．
+When inserting a point $(x_i,y_i)$, we check whether $K(q_{r-1},q_r)<K(q_r,i)$. If the inequality does not hold, pop $q_r$, and repeat until it holds. Then push $i$ onto the back of $q$.
 
-这样我们就将 DP 的复杂度优化到了 $O(n)$．
+This reduces the complexity of the DP to $O(n)$.
 
-概括一下上述斜率优化模板题的算法：
+To summarize the algorithm for this template convex hull trick problem:
 
-1.  将初始状态入队．
-2.  每次使用一条和 $i$ 相关的直线 $f(i)$ 去切维护的凸包，找到最优决策，更新 $dp_i$．
-3.  加入状态 $dp_i$．如果一个状态（即凸包上的一个点）在 $dp_i$ 加入后不再是凸包上的点，需要在 $dp_i$ 加入前将其剔除．
+1.  Push the initial state into the queue.
+2.  Each time, use a line $f(i)$ related to $i$ to touch the maintained convex hull, find the optimal decision, and update $dp_i$.
+3.  Add the state $dp_i$. If some state (that is, a point on the hull) is no longer on the hull after $dp_i$ is added, remove it before adding $dp_i$.
 
-接下来我们介绍斜率优化的进阶应用，将斜率优化与二分/分治/数据结构等结合，来维护性质不那么好（缺少一些单调性性质）的 DP 方程．
+Next we introduce advanced uses of the convex hull trick: combining it with binary search, divide and conquer, data structures and so on, to handle DP equations with weaker properties (missing some monotonicity).
 
-## 二分/CDQ/平衡树优化 DP
+## DP optimization with binary search/CDQ/balanced trees
 
-当我们在 $i$ 这个点寻找最优决策时，会使用一个和 $i$ 相关的直线 $f(i)$ 去切我们维护的凸包．切到的点即为最优决策．
+When we look for the optimal decision at point $i$, we use a line $f(i)$ related to $i$ to touch the convex hull we maintain. The point it touches is the optimal decision.
 
-在上述例题中，直线的斜率随 $i$ 单调变化，但是对于有些问题，斜率并不是单调的．这时我们需要维护凸包上的每一个节点，然后每次用当前的直线去切这个凸包．这个过程可以使用二分解决，因为凸包上相邻两个点的斜率是有单调性的．
+In the example above, the slope of the line changes monotonically with $i$, but in some problems the slope is not monotonic. Then we need to keep every point on the convex hull, and each time touch the hull with the current line. This can be done with binary search, because the slopes between adjacent points on the hull are monotonic.
 
-???+ note "玩具装箱 改"
-    有 $n$ 个玩具排成一排，第 $i$ 个玩具价值为 $c_i$．要求将这 $n$ 个玩具分成若干段．对于一段 $[l,r]$，它的代价为 $(r-l+\sum_{i=l}^r c_i-L)^2$．其中 $L$ 是一个常量，求分段的最小代价．
+???+ note "Toy Packing, modified"
+    There are $n$ toys in a row, and toy $i$ has value $c_i$. Split these $n$ toys into several segments. The cost of a segment $[l,r]$ is $(r-l+\sum_{i=l}^r c_i-L)^2$, where $L$ is a constant. Find the minimum total cost of the split.
     
-    $1\le n\le 5\times 10^4,1\le L\le 10^7,-10^7\le c_i\le 10^7$．
+    $1\le n\le 5\times 10^4,1\le L\le 10^7,-10^7\le c_i\le 10^7$.
 
-本题与「玩具装箱」问题唯一的区别是，玩具的价值可以为负．延续之前的思路，令 $f_i$ 表示前 $i$ 个物品，分若干段的最小代价．
+The only difference from "Toy Packing" is that toy values can be negative. Following the same idea, let $f_i$ be the minimum cost of splitting the first $i$ items into segments.
 
-状态转移方程：$f_i=\min_{j<i}\{f_j+(pre_i-pre_j+i-j-1-L)^2\}$．
+State transition equation: $f_i=\min_{j<i}\{f_j+(pre_i-pre_j+i-j-1-L)^2\}$.
 
-其中 $pre_i = \sum_{j=1}^i c_j$．
+Here $pre_i = \sum_{j=1}^i c_j$.
 
-将方程做相同的变换
+Apply the same transformation to the equation:
 
 $$
 f_i - (s_i-L')^2=\min_{j<i}\{f_j+s_j^2 + 2s_j(L'-s_i) \} 
 $$
 
-然而这时有两个条件不成立了：
+But now two conditions no longer hold:
 
-1.  直线的斜率不再单调；
-2.  每次加入的决策点的横坐标不再单调．
+1.  The slope of the line is no longer monotonic;
+2.  The x-coordinates of the decision points added each time are no longer monotonic.
 
-仍然考虑凸壳的维护．
+We still think about maintaining the convex hull.
 
-在寻找最优决策点，也就是用直线切凸壳的时候，我们将单调队列找队首改为：凸壳上二分．我们二分出斜率最接近直线斜率的那条凸壳边，就可以找到最优决策．
+When looking for the optimal decision point, that is, touching the hull with a line, we replace "take the front of the monotonic queue" with "binary search on the hull". We binary search for the hull edge whose slope is closest to the slope of the line, which gives the optimal decision.
 
-在加入决策点，也就是凸壳上加一个点的时候，我们有两种方法维护．
+When adding a decision point, that is, adding a point to the hull, there are two ways to maintain the hull.
 
-第一种方法是直接用平衡树维护凸壳．那么寻找决策点的二分操作就转化为在平衡树上二分，插入决策点就转化为在平衡树上插入一个结点，并删除若干个被踢出凸壳的点．此方法思路简洁但实现繁琐．
+The first way is to maintain the hull directly with a balanced binary search tree. Then the binary search for the decision point becomes a binary search on the tree, and inserting a decision point becomes inserting a node into the tree and deleting the points that get kicked off the hull. This idea is simple but tedious to implement.
 
-下面介绍一种基于 [CDQ 分治](../../misc/cdq-divide.md) 的做法．
+Below we introduce an approach based on [CDQ divide and conquer](../../misc/cdq-divide.md).
 
-设 $\text{CDQ}(l,r)$ 代表计算 $f_i,i\in [l,r]$．考虑 $\text{CDQ}(1,n)$：
+Let $\text{CDQ}(l,r)$ mean computing $f_i,i\in [l,r]$. Consider $\text{CDQ}(1,n)$:
 
--   我们先调用 $\text{CDQ}(1,mid)$ 算出 $f_i,i\in[1,mid]$．然后我们对 $[1,mid]$ 这个区间内的决策点建凸壳，然后使用这个凸壳去更新 $f_i,i\in [mid+1,n]$．这时我们决策点集是固定的，不像之前那样边计算 DP 值边加入决策点，那么我们就可以把 $i \in [mid+1,n]$ 的 $f_i$ 先按照直线的斜率 $k_i$ 排序，然后就可以使用单调队列来计算 DP 值了．当然，也可以在静态凸壳上二分计算 DP 值．
+-   First call $\text{CDQ}(1,mid)$ to compute $f_i,i\in[1,mid]$. Then build the convex hull of the decision points in $[1,mid]$, and use this hull to update $f_i,i\in [mid+1,n]$. At this point the set of decision points is fixed, unlike before where we added decision points while computing DP values. So we can first sort the $f_i$ with $i \in [mid+1,n]$ by the slope $k_i$ of their lines, and then use a monotonic queue to compute the DP values. Alternatively, we can binary search on the static hull to compute them.
 
--   对于 $[mid+1,n]$ 中的每个点，如果它的最优决策的位置是在 $[1,mid]$ 这个区间，在这一步操作中他就会被更新成最优答案．当执行完这一步操作时，我们发现 $[1,mid]$ 中的所有点已经发挥了全部的作用，凸壳中他们存不存在已经不影响之后的答案更新．因此我们可以直接舍弃这个区间的决策点，并使用 $\text{CDQ}(mid+1,n)$ 解决右区间剩下的问题．
+-   For each point in $[mid+1,n]$, if its optimal decision lies in $[1,mid]$, it will be updated to the optimal answer in this step. After this step, all points in $[1,mid]$ have done their job; whether they stay in the hull no longer affects later updates. So we can discard the decision points of this range and use $\text{CDQ}(mid+1,n)$ to solve the rest of the right half.
 
-时间复杂度 $O(n\log^2 n)$．
+The time complexity is $O(n\log^2 n)$.
 
-对比「玩具装箱」和「玩具装箱 改」，可以总结出以下两点：
+Comparing "Toy Packing" and "Toy Packing, modified", we can draw two conclusions:
 
--   二分/CDQ/平衡树等能够优化 DP 方程的计算，于一定程度上降低复杂度，但不能改变这个方程本身．
--   DP 方程的性质会取决于数据的特征，但 DP 方程本身取决于题目中的数学模型．
+-   Binary search/CDQ/balanced trees and so on can speed up computing a DP equation and lower the complexity to some degree, but they cannot change the equation itself.
+-   The properties of a DP equation depend on the characteristics of the data, but the DP equation itself depends on the mathematical model of the problem.
 
-## 小结
+## Summary
 
-斜率优化 DP 需要灵活运用，其宗旨是将最优化问题转化为二维平面上与凸包有关的截距最值问题．遇到性质不太好的方程，有时需要辅以数据结构来加以解决，届时还请就题而论．
+The convex hull trick needs to be applied flexibly. Its core idea is to turn an optimization problem into a problem of finding the extreme intercept related to a convex hull in the plane. For equations with weaker properties, data structures are sometimes needed; handle those case by case.
 
-## 习题
+## Exercises
 
--   [「SDOI2016」征途](https://loj.ac/problem/2035)
--   [「ZJOI2007」仓库建设](https://loj.ac/problem/10189)
--   [「APIO2010」特别行动队](https://loj.ac/problem/10190)
--   [「JSOI2011」柠檬](https://www.luogu.com.cn/problem/P5504)
--   [「Codeforces 311B」Cats Transport](http://codeforces.com/problemset/problem/311/B)
--   [「NOI2007」货币兑换](https://loj.ac/problem/2353)
--   [「NOI2019」回家路线](https://loj.ac/problem/3156)
--   [「NOI2016」国王饮水记](https://uoj.ac/problem/223)
--   [「NOI2014」购票](https://uoj.ac/problem/7)
+-   [SDOI2016 Journey](https://loj.ac/problem/2035)
+-   [ZJOI2007 Warehouse Construction](https://loj.ac/problem/10189)
+-   [APIO2010 Commando](https://loj.ac/problem/10190)
+-   [JSOI2011 Lemons](https://www.luogu.com.cn/problem/P5504)
+-   [Codeforces 311B Cats Transport](http://codeforces.com/problemset/problem/311/B)
+-   [NOI2007 Currency Exchange](https://loj.ac/problem/2353)
+-   [NOI2019 Route Home](https://loj.ac/problem/3156)
+-   [NOI2016 The King's Drinking Water](https://uoj.ac/problem/223)
+-   [NOI2014 Ticket Purchase](https://uoj.ac/problem/7)
