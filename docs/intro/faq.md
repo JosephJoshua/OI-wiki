@@ -1,91 +1,91 @@
-本页面主要解答一些常见的问题．
+This page answers some frequently asked questions.
 
-## 我想问点与这个 Wiki 相关的问题
+## I have some questions about this Wiki
 
-Q：你们是为什么想要做这个 Wiki 的呢？
+Q: Why did you want to make this Wiki?
 
-A：不知道你在学 **OI** 的时候，面对庞大的知识体系，有没有感到过迷茫无助的时候？**OI Wiki** 想要做的事情可能类似于「让更多竞赛资源不充裕的同学能方便地接触到训练资源」．当然这么表述也不完全，做 Wiki 的动机可能也很纯粹，只是简单地想要对 **OI** 的发展做出一点点微小的贡献吧．XD
-
-***
-
-Q：我很感兴趣，怎么参与？
-
-A：**OI Wiki** 现在托管在 GitHub 上，你可以直接访问这个 [repo](https://github.com/OI-wiki/OI-wiki) 来查看最新进展．参与的途径包括在 GitHub 上面开 [Issue](https://github.com/OI-wiki/OI-wiki/issues)、[Pull Request](https://github.com/OI-wiki/OI-wiki/pulls)，或者在交流群中分享你的想法、直接向管理员投稿．目前，我们使用的框架是用 Python 开发的 [MkDocs](https://mkdocs.readthedocs.io)，支持 Markdown 格式（也支持插入数学公式）．
+A: When you were learning **OI**, did you ever feel lost and helpless in front of such a huge body of knowledge? What **OI Wiki** wants to do is perhaps something like "making training resources easy to reach for students who don't have many contest resources". Of course, that is not the whole story. The motivation for making the Wiki may also be simple: we just want to make a tiny contribution to the development of **OI**. XD
 
 ***
 
-Q：可是我比较弱……不知道我能做点什么．
+Q: I'm interested. How can I take part?
 
-A：一切源于热爱．你可以协助其他人审核修改稿件，帮助我们宣传 **OI Wiki**，为社区营造良好学习交流氛围！
+A: **OI Wiki** is currently hosted on GitHub. You can visit this [repo](https://github.com/OI-wiki/OI-wiki) directly to see the latest progress. You can take part by opening an [Issue](https://github.com/OI-wiki/OI-wiki/issues) or a [Pull Request](https://github.com/OI-wiki/OI-wiki/pulls) on GitHub, sharing your ideas in the discussion groups, or sending contributions directly to the administrators. Right now we use [MkDocs](https://mkdocs.readthedocs.io), a framework written in Python. It supports Markdown (including math formulas).
 
 ***
 
-Q：现在主要是谁在做这件事啊？感觉这是个大坑，真的能做好吗？
+Q: But I'm not very strong... I don't know what I could do.
 
-A：最开始主要是一些退役老年选手在做这件事，后来遇到了很多志同道合的小伙伴：有现役选手，退役玩家，也有从未参加过 **OI** 的朋友．目前，这个项目主要是由 **OI Wiki** 项目组来维护（下面是一张合影）．
+A: Everything starts with passion. You can help review other people's changes, help us spread the word about **OI Wiki**, and help build a good atmosphere for learning and discussion in the community!
+
+***
+
+Q: Who is mainly working on this right now? It feels like a huge, never-ending project. Can it really be done well?
+
+A: At first it was mainly some retired veteran contestants. Later we met many like-minded people: active contestants, retired players, and also friends who have never taken part in **OI**. Today the project is mainly maintained by the **OI Wiki** team (below is a group photo).
 
 <a href="https://github.com/OI-wiki/OI-wiki/graphs/contributors"><img src="https://opencollective.com/oi-wiki/contributors.svg?width=890&button=false"/></a>
 
-当然，这个项目只靠我们的力量是很难做得十全十美的，我们诚挚地邀请你一起来完善 **OI Wiki**．
+Of course, it is very hard for us to make this project perfect on our own, so we sincerely invite you to help improve **OI Wiki** together.
 
 ***
 
-Q：你们怎么保证我们添加的内容不会突然消失？
+Q: How do you make sure the content we add won't suddenly disappear?
 
-A：我们把内容托管在 [GitHub](https://github.com/OI-wiki/OI-wiki) 上面，即使我们的服务器翻车了，内容也不会丢失．另外，我们也会定期备份大家的心血，即使有一天 GitHub 倒闭了（？），我们的内容也不会丢失．
-
-***
-
-Q：**OI Wiki** 好像有空的页面啊！
-
-A：是的．受限于项目组成员的水平和时间，我们暂时无法完成这些空页面．所以我们在这里进行征稿和招募，希望可以遇到有同样想法的朋友，我们一起把 **OI Wiki** 完善起来．
+A: Our content is hosted on [GitHub](https://github.com/OI-wiki/OI-wiki), so even if our servers crash, nothing is lost. We also back up everyone's hard work regularly, so even if GitHub shut down one day (?), our content would not be lost.
 
 ***
 
-Q：为什么不直接去写 [中文维基百科](https://zh.wikipedia.org/) 呢？
+Q: **OI Wiki** seems to have some empty pages!
 
-A：因为我们希望可以真正帮到更多的选手或者对这些内容感兴趣的人．而且由于众所周知的原因，中文维基上的内容并不是无门槛就可以获取到的．
-
-## 我想参与进来！
-
-Q：我要怎么与项目组交流？
-
-A：可以通过 [关于本项目里的交流方式](./about.md#交流方式) 联系我们．
+A: Yes. Limited by the skill and time of the team members, we can't finish these empty pages for now. So we are calling for contributions and recruiting here, hoping to meet people who share the same idea, so that we can complete **OI Wiki** together.
 
 ***
 
-Q：我要怎么贡献代码或者内容？
+Q: Why not just write for the [Chinese Wikipedia](https://zh.wikipedia.org/)?
 
-请参考 [如何参与](./htc.md) 页面．
+A: Because we want to truly help more contestants and anyone interested in these topics. Also, for well-known reasons, the content of the Chinese Wikipedia can't be accessed without barriers (in mainland China).
 
-***
+## I want to get involved!
 
-Q：目录在哪？
+Q: How do I communicate with the team?
 
-A：目录在项目根目录下的 [mkdocs.yml](https://github.com/OI-wiki/OI-wiki/blob/master/mkdocs.yml#L17) 文件中．
-
-***
-
-Q：如何修改一个 topic 的内容？
-
-A：在对应页面右上方有一个编辑按钮<i class="md-icon">edit</i>，点击并确认阅读了 [如何贡献](./htc.md) 之后会跳转到 GitHub 上对应文件的位置．
-
-或者也可以自行阅读目录 [(mkdocs.yml)](https://github.com/OI-wiki/OI-wiki/blob/master/mkdocs.yml) 查找文件位置．
+A: You can contact us using the [ways to get in touch on the About page](./about.md#交流方式).
 
 ***
 
-Q：如何添加一个 topic？
+Q: How do I contribute code or content?
 
-A：有两种选择：
-
--   可以开一个 Issue，注明希望能添加的内容．
--   可以开一个 Pull Request，在目录 [(mkdocs.yml)](https://github.com/OI-wiki/OI-wiki/blob/master/mkdocs.yml) 中加上新的 topic，并在 [docs](https://github.com/OI-wiki/OI-wiki/tree/master/docs) 文件夹下对应位置创建一个空的 `.md` 文件．文档的格式细节请参考 [格式手册](./format.md#贡献文档要求)．
+Please see the [How to contribute](./htc.md) page.
 
 ***
 
-Q：我尝试访问 GitHub 的时候遇到了困难．
+Q: Where is the table of contents?
 
-A：推荐在 hosts 文件中加入如下几行[^ref1]：
+A: The table of contents is in the [mkdocs.yml](https://github.com/OI-wiki/OI-wiki/blob/master/mkdocs.yml#L17) file in the project's root directory.
+
+***
+
+Q: How do I edit the content of a topic?
+
+A: There is an edit button <i class="md-icon">edit</i> at the top right of each page. Click it, confirm that you have read [How to contribute](./htc.md), and you will be taken to the corresponding file on GitHub.
+
+Alternatively, you can read the table of contents [(mkdocs.yml)](https://github.com/OI-wiki/OI-wiki/blob/master/mkdocs.yml) yourself to find where the file is.
+
+***
+
+Q: How do I add a topic?
+
+A: There are two options:
+
+-   Open an Issue describing the content you would like added.
+-   Open a Pull Request that adds the new topic to the table of contents [(mkdocs.yml)](https://github.com/OI-wiki/OI-wiki/blob/master/mkdocs.yml) and creates an empty `.md` file at the matching place in the [docs](https://github.com/OI-wiki/OI-wiki/tree/master/docs) folder. For formatting details, see the [Format guide](./format.md#贡献文档要求).
+
+***
+
+Q: I have trouble accessing GitHub.
+
+A: We recommend adding the following lines to your hosts file[^ref1]:
 
 ```text
 # GitHub Start
@@ -131,19 +131,19 @@ A：推荐在 hosts 文件中加入如下几行[^ref1]：
 # GitHub End
 ```
 
-可以在 [GitHub520](https://gitee.com/klmahuaw/GitHub520) 上了解到最新内容和更多信息．
+You can find the latest version and more information at [GitHub520](https://gitee.com/klmahuaw/GitHub520).
 
-Linux 和 macOS 用户可以尝试使用 [依云](https://github.com/lilydjwg/) 的 [gh-check 脚本](https://gist.github.com/lilydjwg/93d33ed04547e1b9f7a86b64ef2ed058) 获取访问最快的 IP，使用 `--hosts` 参数可以直接更新 hosts 文件．使用 `--help` 参数可以获取使用帮助．使用先需要安装 Python3 和 aiohttp（`pip install aiohttp -i https://pypi.tuna.tsinghua.edu.cn/simple/`）．依云博客的介绍：[寻找最快的 GitHub IP](https://blog.lilydjwg.me/2019/8/16/gh-check.214730.html)．
+Linux and macOS users can try the [gh-check script](https://gist.github.com/lilydjwg/93d33ed04547e1b9f7a86b64ef2ed058) by [lilydjwg (Yiyun)](https://github.com/lilydjwg/) to find the fastest IPs. The `--hosts` option updates the hosts file directly, and `--help` shows usage help. You need Python 3 and aiohttp installed first (`pip install aiohttp -i https://pypi.tuna.tsinghua.edu.cn/simple/`). Yiyun's blog post about it: [Finding the fastest GitHub IP](https://blog.lilydjwg.me/2019/8/16/gh-check.214730.html).
 
-同时，您可以使用 [Gitclone](https://www.gitclone.com/) 服务加速 Clone，可以阅读其首页上的说明．
+You can also use the [Gitclone](https://www.gitclone.com/) service to speed up cloning; see the instructions on its home page.
 
-如果您仅仅是想 Clone **OI Wiki** 的仓库，那么：
+If you only want to clone the **OI Wiki** repository:
 
 ```bash
 git clone https://gitclone.com/github.com/OI-wiki/OI-wiki
 ```
 
-如果您需要向 **OI Wiki** 贡献，那么首先 fork **OI Wiki** 的仓库，然后（将 `username` 替换为您的用户名），需要注意的是提供的示例将使您使用 SSH 连接到 GitHub[^only-ssh-connect]：
+If you want to contribute to **OI Wiki**, first fork the **OI Wiki** repository, then run the following (replace `username` with your user name). Note that this example makes you connect to GitHub over SSH[^only-ssh-connect]:
 
 ```bash
 git clone https://gitclone.com/github.com/username/OI-wiki
@@ -152,9 +152,9 @@ git remote set-url origin git@github.com:username/OI-wiki.git
 
 ***
 
-Q：我这里 pip 也太慢了！
+Q: pip is way too slow for me!
 
-A：可以选择更换国内源[^ref2]，或者：
+A: You can switch to a mirror in mainland China[^ref2], or:
 
 ```bash
 pip install -U -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/
@@ -162,9 +162,9 @@ pip install -U -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/
 
 ***
 
-Q：我在客户端 clone 了这个项目，速度太慢．
+Q: I cloned this project in a client, and it was too slow.
 
-A：如果有安装 `git bash`，可以加几个限制来减少下载量．[^ref3]
+A: If you have `git bash` installed, you can add a few limits to reduce the download size.[^ref3]
 
 ```bash
 git clone https://github.com/OI-wiki/OI-wiki.git --depth=1 -b master
@@ -172,15 +172,15 @@ git clone https://github.com/OI-wiki/OI-wiki.git --depth=1 -b master
 
 ***
 
-Q：我没装过 Python 3．
+Q: I have never installed Python 3.
 
-A：可以访问 [Python 官网](https://www.python.org/downloads/) 了解更多信息．
+A: Visit the [official Python website](https://www.python.org/downloads/) for more information.
 
 ***
 
-Q：好像提示我 pip 版本过低．
+Q: It seems to say my pip version is too old.
 
-A：进入 cmd/shell 之后，执行以下命令：
+A: Open cmd/shell and run the following command:
 
 ```bash
 python -m pip install --upgrade pip
@@ -188,27 +188,27 @@ python -m pip install --upgrade pip
 
 ***
 
-Q：我安装依赖失败了．
+Q: Installing the dependencies failed.
 
-A：检查一下：网络？权限？查看错误信息？
-
-***
-
-Q：我已经 clone 下来了，为什么部署不了？
-
-A：检查一下是否安装好了依赖？
+A: Check: your network? Permissions? What does the error message say?
 
 ***
 
-Q：我 clone 了很久之前的 repo，怎么更新到新版本呢？
+Q: I've already cloned it. Why can't I deploy it?
 
-A：请参考 GitHub 官方的帮助页面 [Syncing a fork - GitHub Docs](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork)．
+A: Check whether the dependencies are installed properly.
 
 ***
 
-Q：如果是装了之前的依赖怎么更新？
+Q: I cloned the repo a long time ago. How do I update it to the new version?
 
-A：请输入以下命令：
+A: See GitHub's official help page [Syncing a fork - GitHub Docs](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork).
+
+***
+
+Q: How do I update dependencies I installed earlier?
+
+A: Run the following command:
 
 ```bash
 pip install -U -r requirements.txt
@@ -216,88 +216,88 @@ pip install -U -r requirements.txt
 
 ***
 
-Q：为什么我的 markdown 格式乱了？
+Q: Why is my Markdown formatting broken?
 
-A：可以查阅 [cyent 的笔记](https://web.archive.org/web/20221103014610/https://cyent.github.io/markdown-with-mkdocs-material/)，或者 [MkDocs 使用说明](https://github.com/ctf-wiki/ctf-wiki/wiki/Mkdocs-%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)．
+A: You can read [cyent's notes](https://web.archive.org/web/20221103014610/https://cyent.github.io/markdown-with-mkdocs-material/) or the [MkDocs usage guide](https://github.com/ctf-wiki/ctf-wiki/wiki/Mkdocs-%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E) (in Chinese).
 
-我们目前使用 [remark-lint](https://github.com/remarkjs/remark-lint) 来自动化修正格式，可能还有一些 [配置](https://github.com/OI-wiki/OI-wiki/blob/master/.remarkrc) 不够好的地方，欢迎指出．
-
-***
-
-Q：GitHub 是不是不显示我的数学公式？
-
-A：是的，GitHub 的预览不显示数学公式．但是请放心，MkDocs 是支持数学公式的，可以正常使用，只要是 MathJax 支持的句式都可以使用．
+We currently use [remark-lint](https://github.com/remarkjs/remark-lint) to fix formatting automatically. Some parts of the [configuration](https://github.com/OI-wiki/OI-wiki/blob/master/.remarkrc) may not be good enough yet; feel free to point them out.
 
 ***
 
-Q：我的数学公式怎么乱码了？
+Q: Does GitHub not show my math formulas?
 
-A：如果是行间公式（用的 `$$`），目前已知的问题是需要在 `$$` 两侧留有空行，且 `$$` 要 **单独** 放在一行里（且不要在前加空格）．格式如下：
+A: Right, GitHub's preview does not render math formulas. But don't worry: MkDocs supports math formulas and they work normally. Any syntax supported by MathJax can be used.
+
+***
+
+Q: Why are my math formulas garbled?
+
+A: If it is a display formula (using `$$`), the known issue is that you need a blank line on both sides of the `$$` block, and each `$$` must be on a line **by itself** (with no spaces in front). The format is:
 
 ```text
-// 空行
+// blank line
 $$
 a_i
 $$
-// 空行
+// blank line
 ```
 
 ***
 
-Q：我的公式为什么在目录里没有正常显示？好像双倍了．
+Q: Why doesn't my formula show up properly in the table of contents? It seems to appear twice.
 
-A：是的，这个是 python-markdown 的一个 bug，可能近期会修复．
+A: Yes, this is a bug in python-markdown and may be fixed soon.
 
-如果想要避免目录中出现双倍公式，可以参考 [string 分类下 SAM 的目录写法](https://github.com/OI-wiki/OI-wiki/blame/master/docs/string/sam.md#L73)．
-
-```text
-结束位置 <script type="math/tex">endpos</script>
-```
-
-在目录中会变成
+To avoid doubled formulas in the table of contents, see [how the SAM page under the string section writes its headings](https://github.com/OI-wiki/OI-wiki/blame/master/docs/string/sam.md#L73).
 
 ```text
-结束位置 endpos
+End position <script type="math/tex">endpos</script>
 ```
 
-注：现在请尽量避免在目录中引入 MathJax 公式．
+In the table of contents it becomes
+
+```text
+End position endpos
+```
+
+Note: please avoid putting MathJax formulas in headings for now.
 
 ***
 
-Q：如何给一个页面单独声明版权信息？
+Q: How do I declare copyright information for a single page?
 
-A：在页面开头加一行即可．[^ref4]
+A: Just add one line at the start of the page.[^ref4]
 
-比如：
+For example:
 
 ```text
 copyright: SATA
 ```
 
-注：默认的是 CC BY-SA 4.0 和 SATA．
+Note: the default is CC BY-SA 4.0 and SATA.
 
 ***
 
-Q：为什么作者信息统计处没有我的名字？
+Q: Why is my name missing from the author list?
 
-A：如果你发现自己写过一个页面中的部分内容，但是你没有被记录进作者列表，可以把自己的 GitHub ID 加入到文件头的 [author 字段](./htc.md#author-字段)．
+A: If you wrote part of a page but were not recorded in the author list, you can add your GitHub ID to the [author field](./htc.md#author-字段) in the file header.
 
 ***
 
-感谢你看到了最后，我们现在亟需的，就是你的帮助．
+Thank you for reading to the end. What we need most right now is your help.
 
-**OI Wiki** 项目组
+The **OI Wiki** team
 
 2018.8
 
-## 参考资料与注释
+## References and notes
 
 [^ref1]: [GitHub520](https://gitee.com/klmahuaw/GitHub520)
 
-[^ref2]: [更改 pip 源至国内镜像 - L 瑜 - CSDN 博客](https://blog.csdn.net/lambert310/article/details/52412059)
+[^ref2]: [Switching the pip source to a mirror in mainland China - L Yu - CSDN Blog](https://blog.csdn.net/lambert310/article/details/52412059) (in Chinese)
 
-[^ref3]: [GIT--- 看我一步步入门（Windows Git Bash）](https://blog.csdn.net/FreeApe/article/details/46845555)
+[^ref3]: [GIT: learn it step by step (Windows Git Bash)](https://blog.csdn.net/FreeApe/article/details/46845555) (in Chinese)
 
 [^ref4]: [Metadata - Material for MkDocs](https://squidfunk.github.io/mkdocs-material/extensions/metadata/#usage)
 
-[^only-ssh-connect]: GitHub 弃用了基于密码身份验证的 HTTPS 协议，连接必须使用 SSH 或者 Personal Access Token，参见 [我应使用哪个远程 URL？](https://docs.github.com/cn/github/using-git/which-remote-url-should-i-use)，[创建个人访问令牌](https://docs.github.com/cn/github/authenticating-to-github/creating-a-personal-access-token) 和 [使用 SSH 连接到 GitHub](https://docs.github.com/cn/github/authenticating-to-github/connecting-to-github-with-ssh)．
+[^only-ssh-connect]: GitHub has removed password-based authentication over HTTPS; you must connect with SSH or a Personal Access Token. See [Which remote URL should I use?](https://docs.github.com/cn/github/using-git/which-remote-url-should-i-use), [Creating a personal access token](https://docs.github.com/cn/github/authenticating-to-github/creating-a-personal-access-token) and [Connecting to GitHub with SSH](https://docs.github.com/cn/github/authenticating-to-github/connecting-to-github-with-ssh).

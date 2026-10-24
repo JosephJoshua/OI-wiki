@@ -2,17 +2,17 @@ disqus:
 pagetime:
 title: OI Wiki
 
-## 欢迎来到 **OI Wiki**！[![GitHub watchers](https://img.shields.io/github/watchers/OI-wiki/OI-wiki.svg?style=social&label=Watch)](https://github.com/OI-wiki/OI-wiki)  [![GitHub stars](https://img.shields.io/github/stars/OI-wiki/OI-wiki.svg?style=social&label=Stars)](https://github.com/OI-wiki/OI-wiki)
+## Welcome to **OI Wiki**! [![GitHub watchers](https://img.shields.io/github/watchers/OI-wiki/OI-wiki.svg?style=social&label=Watch)](https://github.com/OI-wiki/OI-wiki)  [![GitHub stars](https://img.shields.io/github/stars/OI-wiki/OI-wiki.svg?style=social&label=Stars)](https://github.com/OI-wiki/OI-wiki)
 
 [![Word Art](images/wordArt.webp)](https://github.com/OI-wiki/OI-wiki)
 
-**OI**（Olympiad in Informatics，信息学奥林匹克竞赛）在中国起源于 1984 年，是五大高中学科竞赛之一．
+**OI** (Olympiad in Informatics) started in China in 1984. It is one of the five major academic olympiads for high school students in China.
 
-**ICPC**（International Collegiate Programming Contest，国际大学生程序设计竞赛）由 ICPC 基金会（ICPC Foundation）举办，是最具影响力的大学生计算机竞赛．由于以前 ACM 赞助这个竞赛，也有很多人习惯叫它 ACM 竞赛．
+**ICPC** (International Collegiate Programming Contest) is run by the ICPC Foundation and is the most influential programming contest for university students. ACM used to sponsor the contest, so many people still call it the ACM contest.
 
-**OI Wiki** 致力于成为一个免费开放且持续更新的 **编程竞赛（competitive programming）** 知识整合站点，大家可以在这里获取与竞赛相关的、有趣又实用的知识．我们为大家准备了竞赛中的基础知识、常见题型、解题思路以及常用工具等内容，帮助大家更快速深入地学习编程竞赛中涉及到的知识．
+**OI Wiki** aims to be a free, open and continuously updated knowledge base for **competitive programming**. Here you can find interesting and practical knowledge related to programming contests. We have prepared the basics, common problem types, problem-solving ideas, frequently used tools and more, to help you learn the knowledge used in competitive programming faster and more deeply.
 
-本项目受 [CTF Wiki](https://ctf-wiki.org/) 的启发，在编写过程中参考了诸多资料，在此一并致谢．
+This project was inspired by [CTF Wiki](https://ctf-wiki.org/). Many references were consulted while writing it, and we thank all of their authors.
 
 <div align="center">
 <a href="https://www.netlify.com/" target="_blank" style="margin-left: 60px;"><img style="height: 40px; " src="images/netlify.png"></a>

@@ -1,182 +1,182 @@
-在文章开始之前，**OI Wiki** 项目组全体成员十分欢迎您为本项目贡献页面．正因为有了上百位像您一样的人，才有了 **OI Wiki** 的今天！
+Before we begin: everyone on the **OI Wiki** team warmly welcomes you to contribute pages to this project. **OI Wiki** is what it is today thanks to hundreds of people like you!
 
-这篇文章将主要叙述参与 **OI Wiki** 编写的写作过程．请您在撰稿或者修正 Wiki 页面以前，仔细阅读以下内容，以帮助您完成更高质量的内容．
+This page mainly describes the process of writing for **OI Wiki**. Before you write or fix a Wiki page, please read the following carefully. It will help you produce higher-quality content.
 
-## 贡献指南
+## Contribution guidelines
 
-请您在编辑前查看 [OI Wiki 贡献指南](https://github.com/OI-wiki/OI-wiki/blob/master/.github/CONTRIBUTING.md) 和 [项目方针](./about.md#项目方针)，以更好地和社区贡献者进行合作、交流．
+Before editing, please read the [OI Wiki contribution guidelines](https://github.com/OI-wiki/OI-wiki/blob/master/.github/CONTRIBUTING.md) and the [project policies](./about.md#项目方针), so that you can work and communicate better with other community contributors.
 
-## 参与协作
+## Collaborating
 
 ???+ warning "Warning"
-    在开始编写一段内容之前，请查阅 [Issues](https://github.com/OI-wiki/OI-wiki/issues)，确认没有别人在做相同的工作之后，开个 [新 issue](https://github.com/OI-wiki/OI-wiki/issues/new) 记录待编写的内容．
+    Before you start writing a piece of content, check the [Issues](https://github.com/OI-wiki/OI-wiki/issues) to make sure nobody else is doing the same work, then open a [new issue](https://github.com/OI-wiki/OI-wiki/issues/new) to record what you plan to write.
 
 ???+ tip "Tip"
-    在 Issues 中也有很多待修复/解决的问题，尤其是我们的迭代计划（Iteration Plan）．从这里获取任务是一个很好的开始！
+    There are also many problems waiting to be fixed or solved in the Issues, especially in our Iteration Plan. Picking up a task there is a great way to start!
 
-为了保证条目内容的专业性和准确性，我们建议您在编辑前先考虑以下几点：
+To keep entries professional and accurate, we suggest you consider the following before editing:
 
-1.  **选择您熟悉的领域**：请优先编辑那些与您的专业知识、学习背景或兴趣爱好相关的条目．这有助于您创作出高质量的内容．
-2.  **谨慎对待新领域**：如果您对某个主题还处于初学阶段或不太了解，建议您先通过阅读、学习加深理解，待有一定把握后再动手编辑．
-3.  **查阅相关资料**：为条目添加内容或进行修订时，建议您先查阅权威文献和资料，确保信息准确无误．也欢迎您在页面评论区或我们的社区提出问题，与其他编者交流讨论．
+1.  **Choose areas you know well**: Please focus first on entries related to your expertise, background or interests. This helps you create high-quality content.
+2.  **Be careful with new areas**: If you are still a beginner in a topic or don't know it well, we suggest you deepen your understanding by reading and studying first, and start editing once you feel confident.
+3.  **Consult references**: When adding to or revising an entry, we suggest you first check authoritative literature and sources to make sure the information is accurate. You are also welcome to ask questions in the page's comment section or in our community and discuss with other editors.
 
-我们珍惜每位贡献者的热情和付出，也理解大家的专业水平不尽相同．让我们携手合作，共同呵护这个知识的乐园，用准确、专业的内容去帮助更多读者．期待您的贡献！在这里引用维基百科的一句话：
+We value every contributor's enthusiasm and effort, and we understand that everyone's level of expertise differs. Let's work together to take care of this garden of knowledge and help more readers with accurate, professional content. We look forward to your contributions! To quote Wikipedia:
 
-> 不要害怕编辑，勇于更新页面！[^ref1]
+> Don't be afraid to edit; be bold in updating pages![^ref1]
 
-### 在 GitHub 上编辑
+### Editing on GitHub
 
-参与 **OI Wiki** 的编写 **需要** 一个 GitHub 账号（可以前往 [GitHub 的账号注册页面](https://github.com/signup) 页面注册），但 **不需要** 高超的 GitHub 技巧，即使你是一名新手，只要按照下面所述的步骤操作，也能够 **非常出色** 地完成编辑．
+Writing for **OI Wiki** **requires** a GitHub account (you can sign up on [GitHub's sign-up page](https://github.com/signup)), but it does **not require** advanced GitHub skills. Even if you are a beginner, you can edit **very well** just by following the steps below.
 
 ???+ tip "Tip"
-    在你的更改被合并到 **OI Wiki** 的主仓库之前，你对 **OI Wiki** 的内容所作出的修改均不会出现在 **OI Wiki** 的主站上，所以无需担心你的修改会破坏 **OI Wiki** 上正在显示的内容．
+    Until your changes are merged into the main **OI Wiki** repository, none of your changes to **OI Wiki** will appear on the main **OI Wiki** site, so you don't need to worry about breaking the content currently shown on **OI Wiki**.
     
-    如果还是不放心，可以查看 [GitHub 的官方教程](https://skills.github.com/)．
+    If you are still worried, you can check out [GitHub's official tutorials](https://skills.github.com/).
 
-#### 编辑单个页面内的内容
+#### Editing content on a single page
 
-1.  在 **OI Wiki** 上找到对应页面；
-2.  点击正文右上方（目录左侧）的 **「编辑此页」**（<i class="md-icon">edit</i>）按钮，在确认您已经阅读了本页面和 [格式手册](./format.md) 后点击按钮根据提示跳转到 GitHub 进行编辑；
-3.  在编辑框内编写你想修改的内容．请注意，在修改和接下来的提交过程中，请 **关闭您的自动翻译软件**，因为它可能产生不必要的麻烦（例如您修改的文件有时会被其错误改名，从而影响目录结构）；
-4.  编写完成后滚动到页面下方，按照本文中 [commit 信息格式规范](#commit-信息格式规范) 填写 commit 信息，之后点击 **Propose changes** 按钮提交修改．点击按钮后，GitHub 会自动帮你创建一份 **OI Wiki** 仓库的分支，并将你的提交添加到这个分支仓库．
-5.  GitHub 会自动跳转到你的分支仓库的页面，此时页面上方会显示一个绿色的 **Create pull request** 按钮，点击后 GitHub 会跳转到一个创建 Pull Request 页面．向下滚动检查自己所作出的修改没有错误后，按照本文中 [Pull Request 信息格式规范](#pull-request-信息格式规范) 一节中的规范书写 Pull Request 信息，然后点击页面上的绿色的 **Create pull request** 按钮创建 Pull Request．
-6.  不出意外的话，你的 Pull Request 就顺利提交到仓库，等待管理员审核并合并到主仓库中即可．
+1.  Find the page on **OI Wiki**;
+2.  Click the **"Edit this page"** (<i class="md-icon">edit</i>) button at the top right of the main text (left of the table of contents). After confirming that you have read this page and the [Format guide](./format.md), click the button and follow the prompts to go to GitHub and edit;
+3.  Write your changes in the edit box. Note: while editing and during the following submission steps, please **turn off any automatic translation software**, because it can cause unnecessary trouble (for example, it sometimes wrongly renames the file you are editing, which breaks the directory structure);
+4.  When you are done, scroll to the bottom of the page, fill in the commit message following the [commit message format](#commit-message-format) in this page, then click the **Propose changes** button to submit your change. After you click it, GitHub automatically creates a fork of the **OI Wiki** repository for you and adds your commit to that fork.
+5.  GitHub automatically takes you to your fork's page. A green **Create pull request** button appears at the top; click it and GitHub takes you to a page for creating a Pull Request. Scroll down to check that your changes are correct, write the Pull Request message following the [Pull Request message format](#pull-request-message-format) section of this page, then click the green **Create pull request** button on the page to create the Pull Request.
+6.  If all goes well, your Pull Request has now been submitted to the repository. Just wait for an administrator to review it and merge it into the main repository.
 
-在等待合并的时间里，你可以给他人的 Pull Request 提意见、点赞或者点踩．如果有新消息，会在网页右上角出现提示，并附有邮件提醒（取决于个人设置中配置的通知方式）．
+While you wait for the merge, you can comment on, upvote or downvote other people's Pull Requests. When there is news, a notification appears at the top right of the web page, and you also get an email (depending on the notification settings in your personal settings).
 
-#### 编辑多个页面内的内容
+#### Editing content on multiple pages
 
-如果你需要同时编辑互相无关联的多个页面的内容，请按照上方的 [编辑单个页面内的内容](#编辑单个页面内的内容) 一节一次修改所有页面．
+If you need to edit several pages that are unrelated to each other, follow the [Editing content on a single page](#editing-content-on-a-single-page) section above to change all of them.
 
-1.  打开 [OI-Wiki/OI-Wiki](https://github.com/OI-Wiki/OI-Wiki) 仓库，点击键盘上的<kbd>.</kbd>按钮（或者将 URL 中的 `github.com` 更改为 `github.dev`）[^ref2]，进入 GitHub 的网页版 VS Code 编辑器；
-2.  在编辑器中作出对页面源文件的更改，可以使用页面右上方的预览按钮（或按下<kbd>Ctrl+K</kbd><kbd>V</kbd>快捷键）在右侧打开预览界面；
-3.  修改完成后使用左侧的 Source Control 选项卡，并按照本文中 [commit 信息格式规范](#commit-信息格式规范) 填写 commit 信息并提交，提交时会提示是否创建此仓库的分支，点击绿色的 **Fork Repository** 按钮即可．
-4.  提交后会在网页上方的中央弹出一个提示框，在第一次的提示框内填写标题，第二次的提示框内填写此提交要提交到的仓库内分支名称，之后右下角会弹出一个提示框，内容类似于 `Created Pull Request #1 for OI-Wiki/OI-Wiki.`，点击蓝字链接即可查看该 Pull Request．
+1.  Open the [OI-Wiki/OI-Wiki](https://github.com/OI-Wiki/OI-Wiki) repository and press the <kbd>.</kbd> key on your keyboard (or change `github.com` in the URL to `github.dev`)[^ref2] to open GitHub's web-based VS Code editor;
+2.  Make your changes to the page source files in the editor. You can use the preview button at the top right (or the <kbd>Ctrl+K</kbd><kbd>V</kbd> shortcut) to open a preview on the right;
+3.  When you are done, use the Source Control tab on the left, fill in the commit message following the [commit message format](#commit-message-format) in this page, and commit. When committing, you will be asked whether to create a fork of this repository; just click the green **Fork Repository** button.
+4.  After committing, a prompt box pops up at the top center of the page. Enter the title in the first prompt and the name of the branch to commit to in the second. Then a notification pops up at the bottom right, saying something like `Created Pull Request #1 for OI-Wiki/OI-Wiki.`; click the blue link to view that Pull Request.
 
-#### 向 Pull Request 追加更改
+#### Adding changes to a Pull Request
 
-1.  打开 [OI-Wiki 的 Pull Request 列表](https://github.com/OI-wiki/OI-wiki/pulls)，找到您提交的 Pull Request 并点击．
-2.  Pull Request 页面的标题下方将会有一段例如 `<您的ID> wants to merge x commits into OI-wiki:master from <您的ID>:patch-1` 的文字，点击 `<您的ID>:patch-1` 部分．
-3.  您应该会被重定向到您的分支仓库中，而且文件列表左上角的分支名称是你提交 Pull Request 的分支名称（在本示例中应为 `patch-1`）．
-4.  进行您需要的更改．
-    -   如果您需要编辑单个文件或多个互相无关联的页面的内容，请直接找到你要的文件并进行更改，更改完成后滚动到页面下方，按照本文中 [commit 信息格式规范](#commit-信息格式规范) 填写 commit 信息，之后点击 **Commit changes** 按钮提交修改．
-    -   如果您需要编辑多个文件，点击键盘上的<kbd>.</kbd>按钮（或者将 URL 中的 `github.com` 更改为 `github.dev`）[^ref2]，进入 GitHub 的网页版 VS Code 编辑器并作出更改．然后使用左侧的 Source Control 选项卡，并按照本文中 [commit 信息格式规范](#commit-信息格式规范) 填写 commit 信息并提交修改．
-5.  这时你的更改会被自动追加在您的 Pull Request 中．
+1.  Open [OI-Wiki's Pull Request list](https://github.com/OI-wiki/OI-wiki/pulls), find the Pull Request you submitted and click it.
+2.  Below the title of the Pull Request page there is a line of text like `<your ID> wants to merge x commits into OI-wiki:master from <your ID>:patch-1`. Click the `<your ID>:patch-1` part.
+3.  You should be redirected to your fork, and the branch name at the top left of the file list should be the branch of your Pull Request (in this example, `patch-1`).
+4.  Make the changes you need.
+    -   If you need to edit a single file or several unrelated pages, find the file you want and change it directly. When you are done, scroll to the bottom of the page, fill in the commit message following the [commit message format](#commit-message-format) in this page, then click the **Commit changes** button to commit.
+    -   If you need to edit several files, press the <kbd>.</kbd> key on your keyboard (or change `github.com` in the URL to `github.dev`)[^ref2] to open GitHub's web-based VS Code editor and make your changes. Then use the Source Control tab on the left, fill in the commit message following the [commit message format](#commit-message-format) in this page, and commit.
+5.  Your changes are now added to your Pull Request automatically.
 
-### 使用 Git 在本地进行编辑
+### Editing locally with Git
 
 ???+ warning "Warning"
-    对于一般用户，我们更推荐使用上方所述的 GitHub 的 Web 编辑器进行编辑．
+    For most users, we recommend the GitHub web editor described above.
 
-虽然大多数情况下您可以直接在 GitHub 上进行编辑，但对于一些较为特殊的情况（如需要使用 GPG 签名），我们更推荐使用 Git 在本地进行编辑．
+Although in most cases you can edit directly on GitHub, for some special cases (such as when you need GPG signing) we recommend editing locally with Git.
 
-大致流程如下：
+The general process is:
 
-1.  将主仓库 Fork 到自己的仓库中；
-2.  将 Fork 后的分支仓库克隆（clone）到本地；
-3.  在本地进行修改后提交（commit）这些更改；
-4.  将这些更改推送（push）到你克隆的分支仓库；
-5.  提交 Pull Request 至主仓库．
+1.  Fork the main repository to your own account;
+2.  Clone your fork to your local machine;
+3.  Make changes locally and commit them;
+4.  Push the changes to your fork;
+5.  Open a Pull Request to the main repository.
 
-详细的操作方式可以参考 [Git](../tools/git.md) 页面．
+For detailed steps, see the [Git](../tools/git.md) page.
 
-#### 向 Pull Request 追加更改
+#### Adding changes to a Pull Request
 
-在 clone 下来的本地分支仓库中继续进行修改，并提交（commit）以及推送（push）这些更改即可．你的更改会被自动追加在 Pull Request 中．
+Keep making changes in your local clone of the fork, then commit and push them. Your changes are added to the Pull Request automatically.
 
-### 在构建的网页中预览变更
+### Previewing changes on the built site
 
-在 Pull Request 页面下方可以找到测试页面，点击 netlify/oi-wiki/deploy-preview 一项的 Details 链接（如下图），可以进入自动构建的，由您变更后的页面供您预览．
+You can find the test checks at the bottom of the Pull Request page. Click the Details link for netlify/oi-wiki/deploy-preview (as shown below) to open an automatically built version of the pages with your changes, for you to preview.
 
 ![deploy\_preview](./images/deploy_preview.png)
 
-### 对于目录和引用的变更
+### Changes to the table of contents and links
 
-通常情况下，如果您需要添加一个新页面，或者修改已有页面在目录中的链接，您就需要对 [`mkdocs.yml`](https://github.com/OI-wiki/OI-wiki/blob/master/mkdocs.yml) 文件作出改动．
+Usually, if you need to add a new page or change an existing page's link in the table of contents, you need to edit the [`mkdocs.yml`](https://github.com/OI-wiki/OI-wiki/blob/master/mkdocs.yml) file.
 
-添加新页面可以参考既有的格式．但除非是进行重构或修正名词，否则 **我们不建议对既有页面的引用链接进行修改**，Pull Requests 中不必要的修改也将被驳回．
+To add a new page, you can follow the existing format. But unless you are restructuring or fixing a term, **we don't recommend changing the links of existing pages**. Unnecessary changes in Pull Requests will be rejected.
 
-如果您坚持要修改链接，请注意更新 author 字段和重定向文件．
+If you insist on changing a link, remember to update the author field and the redirect file.
 
-### author 字段
+### The author field
 
-GitHub API 在文件目录变更后不能跟踪统计，所以我们在文件头手动维护了一个作者列表来解决这个问题．author 字段位于整个 Markdown 文件的开头，形如 `author: Ir1d, cjsoft`，相邻两个 ID 之间用逗号加空格隔开．这里的 ID 是 GitHub 的用户名，即 GitHub profile 的地址（例如 <https://github.com/Ir1d> 中的 `Ir1d`）．
+The GitHub API can't keep track of statistics after a file moves, so we keep an author list by hand in the file header to solve this. The author field is at the very start of the Markdown file, in the form `author: Ir1d, cjsoft`, with adjacent IDs separated by a comma and a space. Each ID is a GitHub user name, i.e. the one in the GitHub profile address (for example, `Ir1d` in <https://github.com/Ir1d>).
 
-修改链接时，需要将当前页面中的 contributors 逐一填入 author 字段．
+When you change a link, add every contributor of the current page to the author field.
 
-### 重定向文件
+### The redirect file
 
-在修改链接时，为了避免在站外引用时出现死链，需要修改重定向文件．
+When you change a link, you need to update the redirect file, so that links from other sites don't break.
 
-[`_redirects`](https://github.com/OI-wiki/OI-wiki/blob/master/docs/_redirects) 文件用于生成 [netlify 的配置](https://docs.netlify.com/routing/redirects/#syntax-for-the-redirects-file) 和 [用于跳转的文件](https://github.com/OI-wiki/OI-wiki/blob/master/scripts/gen_redirect.py)．
+The [`_redirects`](https://github.com/OI-wiki/OI-wiki/blob/master/docs/_redirects) file is used to generate the [Netlify configuration](https://docs.netlify.com/routing/redirects/#syntax-for-the-redirects-file) and the [files used for redirects](https://github.com/OI-wiki/OI-wiki/blob/master/scripts/gen_redirect.py).
 
-每一行表示一个重定向规则，分别写跳转的起点和终点的 url（不包含域名）：
+Each line is one redirect rule, giving the source and destination URLs (without the domain):
 
 ```text
 /path/to/src /path/to/desc
 ```
 
-注：所有跳转均为 301 跳转，只有在修改目录中 url 造成死链的时候需要修改．
+Note: all redirects are 301 redirects. You only need to change this file when changing a URL in the table of contents creates a dead link.
 
-### Commit 信息格式规范
+### Commit message format
 
-对于提交时需要填写的 commit 信息，请遵守以下几点基本要求：
+For the commit message you write when committing, please follow these basic rules:
 
-1.  commit 摘要请简要描述这一次 commit 改动的内容．注意 commit 摘要的长度不要超过 50 字符，超出的部分会自动置于正文中．
-2.  如果需要进一步描述本次 commit 内容，请在正文中详细说明．
+1.  The commit summary should briefly describe what this commit changes. Keep the summary within 50 characters; anything longer is automatically moved into the body.
+2.  If you need to describe the commit further, explain it in detail in the body.
 
-对于 commit 摘要，推荐按照如下格式书写：
+For the commit summary, we recommend this format:
 
 ```text
-<修改类型>(<文件名>): <修改的内容>
+<type>(<file name>): <what changed>
 ```
 
-修改类型分为如下几类：
+The types are:
 
--   `feat`：用于添加内容的情况．
--   `fix`：用于修正现有内容错误的情况．
--   `refactor`：用于对一个页面进行重构（较大规模的更改）的情况．
--   `revert`：用于回退之前更改的情况．
+-   `feat`: for adding content.
+-   `fix`: for fixing errors in existing content.
+-   `refactor`: for restructuring a page (larger-scale changes).
+-   `revert`: for reverting earlier changes.
 
-### Pull Request 信息格式规范
+### Pull Request message format
 
-对于 Pull Request，请遵守以下几点要求：
+For Pull Requests, please follow these rules:
 
-1.  标题请写明本次 PR 的目的（做了 **什么** 工作，修复了 **什么** 问题）．
-2.  内容请简要叙述修改的内容．如果修复了一个 issue 的问题，请在内容中添加 `fix #xxxx` 字段，其中 `xxxx` 代表 issue 的编号．
-3.  请您仔细阅读 [贡献指南](https://github.com/OI-wiki/OI-wiki/blob/master/.github/CONTRIBUTING.md) 和 [社区公约](https://github.com/OI-wiki/OI-wiki/blob/master/CODE_OF_CONDUCT.md)，并在同意后勾选 PR 模板中的框，表示您同意了以上指南和公约．
+1.  The title should state the purpose of the PR (**what** work it does, **what** problem it fixes).
+2.  The description should briefly describe the changes. If it fixes an issue, add `fix #xxxx` to the description, where `xxxx` is the issue number.
+3.  Please read the [contribution guidelines](https://github.com/OI-wiki/OI-wiki/blob/master/.github/CONTRIBUTING.md) and the [code of conduct](https://github.com/OI-wiki/OI-wiki/blob/master/CODE_OF_CONDUCT.md) carefully. If you agree, tick the boxes in the PR template to show that you accept them.
 
-对于 Pull Request 的标题，推荐使用如下格式书写：
+For the Pull Request title, we recommend this format:
 
 ```plain
-<修改类型>(<文件名>): <修改的内容> (<对应 issue 的编号>)
+<type>(<file name>): <what changed> (<related issue number>)
 ```
 
-修改类型分为如下几类：
+The types are:
 
--   `feat`：用于添加内容的情况．
--   `fix`：用于修正现有内容错误的情况．
--   `refactor`：用于对一个页面进行重构（较大规模的更改）的情况．
--   `revert`：用于回退之前更改的情况．
+-   `feat`: for adding content.
+-   `fix`: for fixing errors in existing content.
+-   `refactor`: for restructuring a page (larger-scale changes).
+-   `revert`: for reverting earlier changes.
 
-示例：
+Examples:
 
--   `fix(ds/persistent-seg): 修改代码注释使描述更清晰`
--   `fix: tools/judger/index 不在目录中 (#3709)`
+-   `fix(ds/persistent-seg): make the code comments clearer`
+-   `fix: tools/judger/index is missing from the table of contents (#3709)`
 -   `feat(math/poly/fft): better proof`
--   `refactor(ds/stack): 整理页面内容`
+-   `refactor(ds/stack): reorganize the page content`
 
-### 协作流程
+### Collaboration workflow
 
-1.  在收到一个新的 Pull Request 之后，GitHub 会给 reviewer 发送邮件；
-2.  与此同时，在 [GitHub Actions](https://github.com/OI-wiki/OI-wiki/actions) 和 [Netlify](https://app.netlify.com/sites/oi-wiki) 上会运行两组测试，它们会把进度同步在 PR 页面的下方．GitHub Actions 主要用来确认 PR 中内容的修改不会影响到网站构建的进程；Netlify 用来把 PR 中的更新构建出来，方便 reviewer 审核（在测试完成后点击 Details 可以了解更多）；
-3.  reviewer 可能会发现问题，并提出 `review` 或 `suggested changes`（建议更改，显示为灰色图标）/`requested changes`（强制更改，显示为红色图标，只会在 reviewer 拥有 repo 写权限时出现）．一般来说，reviewer 也会附上建议和需要进行的更改，在这时，您将会需要继续向 Pull Request 追加其他更改．更改的方法可以参考 `在 GitHub 上编辑` 或者 `使用 Git 在本地进行编辑` 部分的 `向 Pull Request 追加更改` 部分．
-4.  在足够多 reviewer 投票通过一个 PR 之后，这个 PR 才可以合并到 master 分支中；
-5.  在合并到 master 分支之后，GitHub Actions 会重新构建一遍网站内容，并更新到 gh-pages 分支；
-6.  这时服务器才会拉取 gh-pages 分支的更新，并重新部署最新版本的内容．
+1.  When a new Pull Request comes in, GitHub emails the reviewers;
+2.  At the same time, two sets of checks run on [GitHub Actions](https://github.com/OI-wiki/OI-wiki/actions) and [Netlify](https://app.netlify.com/sites/oi-wiki), and their progress is shown at the bottom of the PR page. GitHub Actions mainly checks that the changes in the PR don't break the site build; Netlify builds the PR's changes so reviewers can check them easily (click Details after the checks finish to learn more);
+3.  A reviewer may find problems and leave a `review`, or `suggested changes` (shown with a gray icon) / `requested changes` (required changes, shown with a red icon; this only appears when the reviewer has write access to the repo). Usually the reviewer also includes suggestions and the changes that need to be made. You will then need to add more changes to the Pull Request. For how to do this, see the `Adding changes to a Pull Request` part under `Editing on GitHub` or `Editing locally with Git`.
+4.  A PR can be merged into the master branch only after enough reviewers approve it;
+5.  After it is merged into master, GitHub Actions rebuilds the site and pushes the result to the gh-pages branch;
+6.  Only then does the server pull the gh-pages update and redeploy the latest version of the content.
 
-## 参考资料与注释
+## References and notes
 
-[^ref1]: [维基百科：新手入门/编辑](https://zh.wikipedia.org/wiki/Wikipedia:%E6%96%B0%E6%89%8B%E5%85%A5%E9%96%80/%E7%B7%A8%E8%BC%AF)
+[^ref1]: [Wikipedia: Getting started/Editing (Chinese Wikipedia)](https://zh.wikipedia.org/wiki/Wikipedia:%E6%96%B0%E6%89%8B%E5%85%A5%E9%96%80/%E7%B7%A8%E8%BC%AF)
 
 [^ref2]: [Web-based editor - GitHub Codespaces - GitHub Docs](https://docs.github.com/en/codespaces/developing-in-codespaces/web-based-editor)

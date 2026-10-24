@@ -1,22 +1,22 @@
-???+ failure "新增信息收录限制"
-    由于 [OI Wiki 不是宣传工具](./what-oi-wiki-is-not.md#oi-wiki-不是宣传工具)，除确有特殊原因外，本页面 **一律不接受任何新增信息**．
+???+ failure "Restriction on adding new entries"
+    Because [OI Wiki is not a promotional tool](./what-oi-wiki-is-not.md#oi-wiki-不是宣传工具), this page **does not accept any new entries** unless there is a truly special reason.
 
-**OI Wiki** 部署在国外服务器上，有时可能会因为各种原因，出现访问不通畅的情况．
+**OI Wiki** is hosted on servers outside mainland China, so for various reasons it can sometimes be hard to reach.
 
-我们搭建了一个状态页：<https://status.oi-wiki.org>，用于监控 **OI Wiki** 站点的在线情况．如果你遇到了无法访问的问题，可以打开状态页，寻找可以连接的镜像站．
+We run a status page, <https://status.oi-wiki.org>, that monitors whether the **OI Wiki** site is online. If you can't reach the site, open the status page to find a mirror you can connect to.
 
-以下是一个 **OI Wiki** 的镜像站列表，可供选用：
+Below is a list of **OI Wiki** mirrors you can choose from:
 
--   **OI Wiki** 主站，线路：DMIT
+-   **OI Wiki** main site, network: DMIT
     -   <https://oi-wiki.org>
 
--   维护者：**OI Wiki**，线路：阿里云，同步频率：与主站相同
+-   Maintainer: **OI Wiki**, network: Alibaba Cloud, sync frequency: same as the main site
     -   <http://oi-wiki.com>
 
--   维护者：**OI Wiki**，线路：Netlify，同步频率：与主站相同
+-   Maintainer: **OI Wiki**, network: Netlify, sync frequency: same as the main site
     -   <https://demo.oi-wiki.org>
 
--   维护者：琴春（[vx.st](https://vx.st)），线路：AWS，同步频率：与主站相同
+-   Maintainer: Qinchun ([vx.st](https://vx.st)), network: AWS, sync frequency: same as the main site
     -   <https://oi-wiki.net>
     -   <https://oi-wiki.wiki>
     -   <https://oi-wiki.win>
@@ -29,5 +29,5 @@
     -   <https://oiwiki.win>
     -   <https://oiwiki.com>
 
--   维护者：Menci（[men.ci](https://men.ci)），线路：Azure + 阿里云 CDN，同步频率：与主站相同
+-   Maintainer: Menci ([men.ci](https://men.ci)), network: Azure + Alibaba Cloud CDN, sync frequency: same as the main site
     -   <https://oi.wiki>

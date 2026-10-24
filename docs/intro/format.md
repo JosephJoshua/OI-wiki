@@ -1,81 +1,81 @@
-在文章开始之前，**OI Wiki** 项目组全体成员十分欢迎您为本项目贡献页面．正因为有了上百位像您一样的人，才有了 **OI Wiki** 的今天！
+Before we begin: everyone on the **OI Wiki** team warmly welcomes you to contribute pages to this project. **OI Wiki** is what it is today thanks to hundreds of people like you!
 
-本页面将列出在 **OI Wiki** 编写过程时推荐使用的格式规范与编辑方针．请您在撰稿或者修正 Wiki 页面以前，仔细阅读以下内容，以帮助您完成更高质量的内容．
+This page lists the recommended format conventions and editing policies for writing **OI Wiki**. Before you write or fix a Wiki page, please read the following carefully. It will help you produce higher-quality content.
 
-如果您已迫不及待，想要快速上手，建议先阅读 [太长不看版](#太长不看版) 与 [图片举例](#图解) 的章节．
+If you can't wait to get started, we suggest reading the [TL;DR](#tldr) and [Illustrated examples](#illustrated-examples) sections first.
 
 ??? abstract "Changelog"
-    **注意**：只记录和写作、审阅等相关的改动，不记录格式修正等改动．
+    **Note**: only changes related to writing, reviewing and so on are recorded here; changes such as formatting fixes are not.
     
-    | 时间         | 主要内容                                                | 相关 Issue/Pull Request 链接                                                                                    |
+    | Date | Main changes | Related Issue/Pull Request links |
     | ---------- | --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-    | 2026-02-22 | 完善引号使用的相关规定                                         | [#6793](https://github.com/OI-wiki/OI-wiki/pull/6793)                                                       |
-    | 2026-01-07 | 要求使用全角句点替代中文句号                                      | [#6746](https://github.com/OI-wiki/OI-wiki/pull/6746)                                                       |
-    | 2025-08-10 | 添加格式手册的格式要求；<br>代码：补充片段代码相关要求                       | [#6412](https://github.com/OI-wiki/OI-wiki/pull/6412)                                                       |
-    | 2025-08-10 | 添加 Changelog 与 TL;DR                                | [#6409](https://github.com/OI-wiki/OI-wiki/pull/6409)                                                       |
-    | 2024-10-08 | 代码：为适应全平台测试完善了格式要求                                  | [#5912](https://github.com/OI-wiki/OI-wiki/pull/5912)，[#5924](https://github.com/OI-wiki/OI-wiki/pull/5924) |
-    | 2024-03-26 | 引用 OJ 题目链接时使用原链接，而不是镜像链接                            | [#5482](https://github.com/OI-wiki/OI-wiki/pull/5482)                                                       |
-    | 2023-10-09 | 主题插件：新增选项卡[^note6]的格式要求                             | [#5152](https://github.com/OI-wiki/OI-wiki/pull/5152)                                                       |
-    | 2023-07-23 | 对于工具类内容的下载安装等内容，要求引用官方文档                            | [#5023](https://github.com/OI-wiki/OI-wiki/pull/5023)                                                       |
-    | 2023-04-15 | 补充引号的使用规范                                           | [#4792](https://github.com/OI-wiki/OI-wiki/pull/4792)                                                       |
-    | 2023-03-28 | LaTeX：数学符号表                                         | [#4587](https://github.com/OI-wiki/OI-wiki/pull/4587)                                                       |
-    | 2023-03-02 | 补充全半角标点与连接号的使用规范                                    | [#4726](https://github.com/OI-wiki/OI-wiki/pull/4726)                                                       |
-    | 2022-12-13 | 主题插件：移除嵌套折叠框的阴影样式要求                                 | [#4500](https://github.com/OI-wiki/OI-wiki/pull/4500)                                                       |
-    | 2022-08-09 | 引用内链的某一节内容时，使用中文标题                                  | [#4057](https://github.com/OI-wiki/OI-wiki/pull/4057)                                                       |
-    | 2022-06-12 | 完善目录更改的相关要求[^note4]                                 | [#4043](https://github.com/OI-wiki/OI-wiki/pull/4043)                                                       |
-    | 2021-09-09 | 主题插件：补充折叠框相关要求                                      | [#3517](https://github.com/OI-wiki/OI-wiki/pull/3517)                                                       |
-    | 2021-09-03 | LaTeX：`\Leftrightarrow` $\to$ `\iff`                | [#3499](https://github.com/OI-wiki/OI-wiki/pull/3499)                                                       |
-    | 2021-08-18 | 代码：新增例题代码的格式要求                                      | [#3447](https://github.com/OI-wiki/OI-wiki/pull/3447)                                                       |
-    | 2021-08-12 | 图片：动图优先使用 APNG 格式                                   | [#3422](https://github.com/OI-wiki/OI-wiki/pull/3422)                                                       |
-    | 2021-06-29 | 图片：建议同时提交源文件                                        | [#3255](https://github.com/OI-wiki/OI-wiki/pull/3255)                                                       |
-    | 2021-05-29 | 代码：删除大括号不换行的要求，补充可读性要求                              | [#3197](https://github.com/OI-wiki/OI-wiki/pull/3197)                                                       |
-    | 2021-03-15 | 站点维护：规范 Pull Request 的合并方式[^note5]                  | [#3061](https://github.com/OI-wiki/OI-wiki/pull/3061)                                                       |
-    | 2021-02-01 | LaTeX：`\lt` $\to$ `<`，`\gt` $\to$ `>`               | [#2950](https://github.com/OI-wiki/OI-wiki/pull/2950)                                                       |
-    | 2021-01-27 | 建议在 [互联网档案馆](https://web.archive.org/) 保存外链备份       | [#2918](https://github.com/OI-wiki/OI-wiki/pull/2918)                                                       |
-    | 2020-09-19 | 站点维护：Commit Message 与 Pull Request 标题的书写要求[^note4]  | [#2744](https://github.com/OI-wiki/OI-wiki/pull/2744)                                                       |
-    | 2020-10-18 | 图片：优先使用 SVG 格式                                      | [#2215](https://github.com/OI-wiki/OI-wiki/pull/2215)                                                       |
-    | 2020-08-05 | LaTeX：新增多字母变量的格式要求                                  | [#2502](https://github.com/OI-wiki/OI-wiki/pull/2502)                                                       |
-    | 2020-07-28 | LaTeX：`cases` 环境禁止超过两列                              | [#2466](https://github.com/OI-wiki/OI-wiki/pull/2466)                                                       |
-    | 2020-07-24 | LaTeX：`{n \choose m}`$\to$ `\dbinom{n}{m}`          | [#2442](https://github.com/OI-wiki/OI-wiki/pull/2442)                                                       |
-    | 2020-07-20 | Markdown：禁用删除线语法                                    | [#2422](https://github.com/OI-wiki/OI-wiki/pull/2422)                                                       |
-    | 2020-07-19 | 主题插件：要求保留折叠框[^note3]中空行的缩进空格；<br>LaTeX：追加对数学公式的格式要求 | [#2412](https://github.com/OI-wiki/OI-wiki/pull/2412)                                                       |
-    | 2020-07-11 | 最初版本                                                | [#2350](https://github.com/OI-wiki/OI-wiki/pull/2350)                                                       |
+    | 2026-02-22 | Refined the rules on using quotation marks | [#6793](https://github.com/OI-wiki/OI-wiki/pull/6793) |
+    | 2026-01-07 | Require the full-width period instead of the Chinese full stop | [#6746](https://github.com/OI-wiki/OI-wiki/pull/6746) |
+    | 2025-08-10 | Added format requirements for the format guide itself;<br>Code: added requirements for snippet code | [#6412](https://github.com/OI-wiki/OI-wiki/pull/6412) |
+    | 2025-08-10 | Added Changelog and TL;DR | [#6409](https://github.com/OI-wiki/OI-wiki/pull/6409) |
+    | 2024-10-08 | Code: refined format requirements for testing on all platforms | [#5912](https://github.com/OI-wiki/OI-wiki/pull/5912), [#5924](https://github.com/OI-wiki/OI-wiki/pull/5924) |
+    | 2024-03-26 | When linking to an OJ problem, use the original link rather than a mirror | [#5482](https://github.com/OI-wiki/OI-wiki/pull/5482) |
+    | 2023-10-09 | Theme plugins: added format requirements for content tabs[^note6] | [#5152](https://github.com/OI-wiki/OI-wiki/pull/5152) |
+    | 2023-07-23 | For tool pages, require citing the official documentation for downloading, installation, etc. | [#5023](https://github.com/OI-wiki/OI-wiki/pull/5023) |
+    | 2023-04-15 | Added rules for using quotation marks | [#4792](https://github.com/OI-wiki/OI-wiki/pull/4792) |
+    | 2023-03-28 | LaTeX: table of mathematical symbols | [#4587](https://github.com/OI-wiki/OI-wiki/pull/4587) |
+    | 2023-03-02 | Added rules for full-width/half-width punctuation and dashes | [#4726](https://github.com/OI-wiki/OI-wiki/pull/4726) |
+    | 2022-12-13 | Theme plugins: removed the shadow-style requirement for nested collapsible blocks | [#4500](https://github.com/OI-wiki/OI-wiki/pull/4500) |
+    | 2022-08-09 | When linking to a section of an internal page, use the Chinese heading | [#4057](https://github.com/OI-wiki/OI-wiki/pull/4057) |
+    | 2022-06-12 | Refined the requirements for changes to the table of contents[^note4] | [#4043](https://github.com/OI-wiki/OI-wiki/pull/4043) |
+    | 2021-09-09 | Theme plugins: added requirements for collapsible blocks | [#3517](https://github.com/OI-wiki/OI-wiki/pull/3517) |
+    | 2021-09-03 | LaTeX: `\Leftrightarrow` $\to$ `\iff` | [#3499](https://github.com/OI-wiki/OI-wiki/pull/3499) |
+    | 2021-08-18 | Code: added format requirements for example problem code | [#3447](https://github.com/OI-wiki/OI-wiki/pull/3447) |
+    | 2021-08-12 | Images: prefer APNG for animations | [#3422](https://github.com/OI-wiki/OI-wiki/pull/3422) |
+    | 2021-06-29 | Images: recommend also submitting source files | [#3255](https://github.com/OI-wiki/OI-wiki/pull/3255) |
+    | 2021-05-29 | Code: removed the requirement to keep opening braces on the same line; added readability requirements | [#3197](https://github.com/OI-wiki/OI-wiki/pull/3197) |
+    | 2021-03-15 | Site maintenance: standardized how Pull Requests are merged[^note5] | [#3061](https://github.com/OI-wiki/OI-wiki/pull/3061) |
+    | 2021-02-01 | LaTeX: `\lt` $\to$ `<`, `\gt` $\to$ `>` | [#2950](https://github.com/OI-wiki/OI-wiki/pull/2950) |
+    | 2021-01-27 | Recommend saving backups of external links in the [Internet Archive](https://web.archive.org/) | [#2918](https://github.com/OI-wiki/OI-wiki/pull/2918) |
+    | 2020-09-19 | Site maintenance: requirements for writing commit messages and Pull Request titles[^note4] | [#2744](https://github.com/OI-wiki/OI-wiki/pull/2744) |
+    | 2020-10-18 | Images: prefer SVG | [#2215](https://github.com/OI-wiki/OI-wiki/pull/2215) |
+    | 2020-08-05 | LaTeX: added format requirements for multi-letter variables | [#2502](https://github.com/OI-wiki/OI-wiki/pull/2502) |
+    | 2020-07-28 | LaTeX: the `cases` environment may not have more than two columns | [#2466](https://github.com/OI-wiki/OI-wiki/pull/2466) |
+    | 2020-07-24 | LaTeX: `{n \choose m}`$\to$ `\dbinom{n}{m}` | [#2442](https://github.com/OI-wiki/OI-wiki/pull/2442) |
+    | 2020-07-20 | Markdown: strikethrough syntax disabled | [#2422](https://github.com/OI-wiki/OI-wiki/pull/2422) |
+    | 2020-07-19 | Theme plugins: require keeping the indentation spaces on blank lines inside collapsible blocks[^note3];<br>LaTeX: added format requirements for math formulas | [#2412](https://github.com/OI-wiki/OI-wiki/pull/2412) |
+    | 2020-07-11 | First version | [#2350](https://github.com/OI-wiki/OI-wiki/pull/2350) |
 
-## 太长不看版
+## TL;DR
 
-为方便初次阅读本文档的用户，本节列举该手册中的若干重点事项：
+For readers new to this document, this section lists the key points of the guide:
 
--   文件存储：
+-   File storage:
 
-    -   使用小写文件名，以 `-` 代替空格．详见 [SAVE-1](#SAVE-1)．
+    -   Use lowercase file names, with `-` instead of spaces. See [SAVE-1](#SAVE-1).
 
-    -   不要插入外链图片．详见 [SAVE-2](#SAVE-2)．
+    -   Don't embed images from external links. See [SAVE-2](#SAVE-2).
 
-    -   图片尽可能使用 SVG 格式，只应使用 SVG 1.1 标准．详见 [SAVE-3](#SAVE-3)．
+    -   Use SVG for images whenever possible, and only the SVG 1.1 standard. See [SAVE-3](#SAVE-3).
 
-    -   动图应使用 SVG 或 APNG 格式．详见 [SAVE-4](#SAVE-4)．
+    -   Animations should use SVG or APNG. See [SAVE-4](#SAVE-4).
 
-    -   有源文件的图片建议同时提交源文件．详见 [SAVE-5](#SAVE-5)．
+    -   For images that have source files, we recommend submitting the source files too. See [SAVE-5](#SAVE-5).
 
-    -   插入外链时建议同时插入快照链接．详见 [SAVE-6](#SAVE-6)．
+    -   When adding an external link, we recommend also adding a snapshot link. See [SAVE-6](#SAVE-6).
 
-    -   不要以插入外链的方式插入内链．详见 [SAVE-7](#SAVE-7)．
+    -   Don't write internal links as external links. See [SAVE-7](#SAVE-7).
 
--   标点符号：
+-   Punctuation:
 
-    -   规范使用标点符号．在每句话的末尾添加 **句号**．详见 [PUNC-1](#PUNC-1) 至 [PUNC-7](#PUNC-7)．
+    -   Use punctuation properly. End every sentence with a **full stop**. See [PUNC-1](#PUNC-1) to [PUNC-7](#PUNC-7).
 
-    -   注意区分连接号（hyphen、en dash、em dash）．详见 [PUNC-8](#PUNC-8)．
+    -   Distinguish between the different dashes (hyphen, en dash, em dash). See [PUNC-8](#PUNC-8).
 
--   Markdown 语法与主题扩展语法：
+-   Markdown syntax and theme extension syntax:
 
-    -   只应使用二级、三级、四级标题．不要使用标题替代加粗．不要在标题写 LaTeX 公式．详见 [LINT-1](#LINT-1)、[MDFM-1](#MDFM-1)、[CONT-4](#CONT-4)、[CONT-9](#CONT-9)．
+    -   Only use level-2, level-3 and level-4 headings. Don't use headings instead of bold. Don't put LaTeX formulas in headings. See [LINT-1](#LINT-1), [MDFM-1](#MDFM-1), [CONT-4](#CONT-4), [CONT-9](#CONT-9).
 
-    -   使用折叠框[^note3]语法和选项卡[^note6]语法时，须保持内部缩进一致，**对空行也是如此**．**不要漏掉** 空行的空格缩进．详见 [LINT-6](#LINT-6)、[MDFM-6](#MDFM-6)．
+    -   When using collapsible block[^note3] syntax and content tab[^note6] syntax, keep the inner indentation consistent, **including on blank lines**. **Don't leave out** the indentation spaces on blank lines. See [LINT-6](#LINT-6), [MDFM-6](#MDFM-6).
 
-    -   不要使用删除线 `~~foo~~` 语法．详见 [LINT-3](#LINT-3)．
+    -   Don't use the strikethrough syntax `~~foo~~`. See [LINT-3](#LINT-3).
 
-    -   行间公式应写作
+    -   A display formula should be written as
 
         ```text
         $$
@@ -83,253 +83,253 @@
         $$
         ```
 
-        而不是 `$$a^{2}=b^{2}+c^{2}$$`．详见 [LINT-5](#LINT-5)．
+        and not as `$$a^{2}=b^{2}+c^{2}$$`. See [LINT-5](#LINT-5).
 
-    -   使用折叠框而不是块引用（Blockquotes）．详见 [MDFM-5](#MDFM-5)．
+    -   Use collapsible blocks instead of blockquotes. See [MDFM-5](#MDFM-5).
 
-    -   代码块只应使用 ` ``` ` 语法，且须标注语言．详见 [LINT-7](#LINT-7)、[MDFM-3](#MDFM-3)．
+    -   Code blocks should only use the ` ``` ` syntax and must specify a language. See [LINT-7](#LINT-7), [MDFM-3](#MDFM-3).
 
--   LaTeX 公式：
-    -   不应与 [数学符号表](./symbol.md) 相冲突．详见 [MATH-1.1](#MATH-1.1)．
+-   LaTeX formulas:
+    -   Must not conflict with the [table of mathematical symbols](./symbol.md). See [MATH-1.1](#MATH-1.1).
 
-    -   注意字体的使用，详见 [MATH-1.2](#MATH-1.2)、[MATH-1.15](#MATH-1.15)、[MATH-2.6](#MATH-2.6)、[MATH-2.7](#MATH-2.7)．
+    -   Pay attention to the fonts used. See [MATH-1.2](#MATH-1.2), [MATH-1.15](#MATH-1.15), [MATH-2.6](#MATH-2.6), [MATH-2.7](#MATH-2.7).
 
-    -   不要滥用 LaTeX 公式．详见 [MATH-1.14](#MATH-1.14)．
+    -   Don't overuse LaTeX formulas. See [MATH-1.14](#MATH-1.14).
 
-    -   不要 LaTeX 公式里使用程序设计语言的表示方式．（如：不要使用 $a==b$、$a<<1$、$a\%b$．）不要使用中括号连缀（$a[i][j]$）．详见 [MATH-1.9](#MATH-1.9)、[MATH-1.10](#MATH-1.10)．
+    -   Don't use programming-language notation in LaTeX formulas. (For example, don't write $a==b$, $a<<1$ or $a\%b$.) Don't chain square brackets ($a[i][j]$). See [MATH-1.9](#MATH-1.9), [MATH-1.10](#MATH-1.10).
 
--   代码：
+-   Code:
 
-    -   尽可能简洁易懂，避免压行等不良习惯．尽可能保证可读性，突出算法思想．详见 [CONT-10](#CONT-10)．
+    -   Keep it as short and easy to understand as possible, and avoid bad habits such as cramming many statements onto one line. Keep it readable and make the idea of the algorithm stand out. See [CONT-10](#CONT-10).
 
-    -   不推荐直接把代码插入 Markdown 文档中．详见 [CODE-1.1](#CODE-1.1)、[CODE-1.2](#CODE-1.2)．
+    -   We don't recommend putting code directly into the Markdown document. See [CODE-1.1](#CODE-1.1), [CODE-1.2](#CODE-1.2).
 
-## 对本文档的格式要求
+## Format requirements for this document
 
--   <span id="FREQ-1">FREQ-1</span>：修订格式手册的条目时需同时补充 Changelog．若只是修正格式，则无需补充 Changelog．
--   <span id="FREQ-2">FREQ-2</span>：除 [太长不看版](#太长不看版) 一节外，格式手册的条目都需要有不重复的编号，编号需要匹配正则表达式 `(?<category>[A-Z]{4})-(?<id>[1-9][0-9]*(?:\.[1-9][0-9]*)*)`，其中 `category` 应具有直观的含义．说明文字不需要有编号．
--   <span id="FREQ-3">FREQ-3</span>：[太长不看版](#太长不看版) 的条目必须来自格式手册其他章节的内容，且需在末尾引用对应的条目编号．
--   <span id="FREQ-4">FREQ-4</span>：条目的编号一旦确定就不应更改．如果确需更改（如删除、合并条目），则应用类似「已废止」、「迁移至 XXXX-id」的文字注明．
+-   <span id="FREQ-1">FREQ-1</span>: When revising an entry of the format guide, also update the Changelog. If you are only fixing formatting, you don't need to update the Changelog.
+-   <span id="FREQ-2">FREQ-2</span>: Except for the [TL;DR](#tldr) section, every entry of the format guide needs a unique number. The number must match the regular expression `(?<category>[A-Z]{4})-(?<id>[1-9][0-9]*(?:\.[1-9][0-9]*)*)`, where `category` should have an intuitive meaning. Explanatory text does not need a number.
+-   <span id="FREQ-3">FREQ-3</span>: Entries in the [TL;DR](#tldr) must come from other sections of the format guide, and must cite the corresponding entry number at the end.
+-   <span id="FREQ-4">FREQ-4</span>: Once an entry's number is set, it should not change. If a change is really necessary (for example, when deleting or merging entries), mark it with text such as "Deprecated" or "Moved to XXXX-id".
 
-## 贡献文档要求
+## Requirements for contributed documents
 
-当你打算贡献某部分的内容时，你应该尽量熟悉以下三部分：
+When you plan to contribute to some part of the content, you should get as familiar as you can with the following three things:
 
--   文档存储的格式
--   文档的合理性
--   remark-lint 和 $\rm{\LaTeX}$ 公式的格式要求
+-   The format for storing documents
+-   How reasonable the document is
+-   The format requirements of remark-lint and of $\rm{\LaTeX}$ formulas
 
-### 文档引用与存储的格式
+### Format for references and storage
 
--   <span id="SAVE-1">SAVE-1</span>：**文件名请务必都小写，以 `-` 分割．** 例如：`file-name.md`．
+-   <span id="SAVE-1">SAVE-1</span>: **File names must be all lowercase, separated by `-`.** For example: `file-name.md`.
 
--   <span id="SAVE-2">SAVE-2</span>：请务必确保文档中引用的 **外链** 图片已经全部转存到了 **本库内** 对应的 `images` 文件夹中（防止触发某些网站的防盗链），建议处理成 `MD 文档名称 + 编号` 的形式（可参考已有文档中图片的处理方式）．例如：本篇文档的文件名称为 format，则文档中引用的第一张图片的名字为 `format1.png`．
+-   <span id="SAVE-2">SAVE-2</span>: Make sure that all images from **external links** used in the document have been copied into the matching `images` folder **in this repository** (to avoid triggering hotlink protection on some sites). We recommend naming them as `MD document name + number` (see how images are handled in existing documents). For example, this document's file name is format, so the first image used in it is named `format1.png`.
 
--   <span id="SAVE-3">SAVE-3</span>：推荐使用 SVG 格式的图片[^ref4]，以获取较好的清晰度和缩放效果．由于 **OI Wiki** 各组件对 SVG 标准的兼容性不同，所以您的图片应基于 [SVG 1.1](http://www.w3.org/TR/SVG11/) 标准．
+-   <span id="SAVE-3">SAVE-3</span>: We recommend SVG images[^ref4] for better sharpness and scaling. Because the various components of **OI Wiki** support the SVG standard to different degrees, your images should follow the [SVG 1.1](http://www.w3.org/TR/SVG11/) standard.
 
--   <span id="SAVE-4">SAVE-4</span>：动图如果无法或者不会制作 SVG 格式的，则推荐使用 APNG 格式[^apng]的文件．Windows 用户可使用 [ScreenToGif](https://www.screentogif.com) 录制，Linux 用户可使用 [Peek](https://github.com/phw/peek) 录制，注意需要在设置里调整为录制 APNG．其他情况则推荐先制作为 MP4 等视频文件再转换为 APNG，如果使用 ffmpeg 则可以使用 `ffmpeg -i filename.mp4 -f apng filename.apng -plays 0` 转换．[^intro-apng]
+-   <span id="SAVE-4">SAVE-4</span>: If an animation can't be made as SVG, or you don't know how, we recommend an APNG[^apng] file. Windows users can record with [ScreenToGif](https://www.screentogif.com), and Linux users can record with [Peek](https://github.com/phw/peek); remember to switch the setting to record APNG. Otherwise, we recommend making a video file such as MP4 first and then converting it to APNG. With ffmpeg, you can convert it with `ffmpeg -i filename.mp4 -f apng filename.apng -plays 0`.[^intro-apng]
 
--   <span id="SAVE-5">SAVE-5</span>：同时具有源文件和导出图像的图片（例如 JPG 文件与 PSD 文件或者 SVG 图像与 TikZ TeX 源代码），建议将源文件以与图片相同的文件名保存于同一目录下．
+-   <span id="SAVE-5">SAVE-5</span>: For images that have both a source file and an exported image (for example, a JPG file and a PSD file, or an SVG image and TikZ TeX source code), we recommend saving the source file in the same folder with the same file name as the image.
 
--   <span id="SAVE-6">SAVE-6</span>：请确保您的文档中的引用链接的稳定性．**不推荐** 引用 **自建** 服务中的资源（如自建 OJ 里的题目）．建议在添加时同时将该外链存于互联网档案馆[^webarchive]，以防无法替代的链接失效．
+-   <span id="SAVE-6">SAVE-6</span>: Make sure the links cited in your document are stable. We **don't recommend** citing resources from **self-hosted** services (such as problems on a self-hosted OJ). When adding an external link, we recommend also saving it to the Internet Archive[^webarchive], in case an irreplaceable link stops working.
 
--   <span id="SAVE-7">SAVE-7</span>：站内链接请去掉网站域名，并且使用相对路径链接对应 `.md` 文件．例如，在本页面（`intro/format`）中链接杂项简介（`misc`），应使用 `[杂项简介](../misc/index.md)`．可以在链接中添加 hash 来链接到某一节，例如 [`[Pull Request 信息格式规范](./htc.md#pull-request-信息格式规范)`](./htc.md#pull-request-信息格式规范)，hash 的值可以通过位于每个标题右侧的按钮或者位于网页右侧的目录中的链接得到．
+-   <span id="SAVE-7">SAVE-7</span>: For links within the site, drop the site's domain and link to the corresponding `.md` file with a relative path. For example, to link to the miscellaneous introduction (`misc`) from this page (`intro/format`), use `[Miscellaneous introduction](../misc/index.md)`. You can add a hash to the link to point to a section, for example [`[Pull Request message format](./htc.md#pull-request-信息格式规范)`](./htc.md#pull-request-信息格式规范). You can get the hash value from the button to the right of each heading or from the links in the table of contents on the right side of the page.
 
-### 文档的合理性
+### How reasonable the document is
 
-**合理性**，指所编写的 **内容** 必须具有如下的特性：
+**Reasonable** means the **content** you write must have the following properties:
 
--   <span id="STRC-1">STRC-1</span>：由浅入深，内容的难度应该具有渐进性．
--   <span id="STRC-2">STRC-2</span>：逻辑性．
+-   <span id="STRC-1">STRC-1</span>: Go from easy to hard; the difficulty of the content should increase gradually.
+-   <span id="STRC-2">STRC-2</span>: Logical.
 
-    -   <span id="STRC-2.1">STRC-2.1</span>：对于算法或数学概念类内容的撰写应该尽量包含以下的内容：
+    -   <span id="STRC-2.1">STRC-2.1</span>: Content about an algorithm or a mathematical concept should, where possible, include the following:
 
-        1.  原理：说明该内容对应的原理；
-        2.  例子：给出 1 \~ 2 个典型的例子；
-        3.  题目：在该标题下，**只需要给出题目名字和题目链接**．对于算法类题目，题目链接 OJ 的优先级为：原 OJ（国外 OJ 要求国内可流畅访问）> UOJ > LOJ > 洛谷．
+        1.  Principle: explain the principle behind the content;
+        2.  Examples: give 1 \~ 2 typical examples;
+        3.  Problems: under this heading, **only give the problem names and links**. For algorithm problems, the preferred OJ for problem links is: the original OJ (OJs outside China must be smoothly accessible from mainland China) > UOJ > LOJ > Luogu.
 
-        示例页面：[IDA\*](../search/idastar.md)
+        Example page: [IDA\*](../search/idastar.md)
 
-    -   <span id="STRC-2.2">STRC-2.2</span>：对于工具类内容的撰写应该尽量包含以下的内容：
+    -   <span id="STRC-2.2">STRC-2.2</span>: Content about a tool should, where possible, include the following:
 
-        1.  简介：阐明该工具的背景与用途．
-        2.  配置方式：详细给出配置环境与使用的过程，下载与安装方法建议尽量引用官方文档．
+        1.  Introduction: explain the background and purpose of the tool.
+        2.  Setup: describe in detail how to set up the environment and how to use it. For downloading and installation, we recommend citing the official documentation whenever possible.
 
-        示例页面：[WSL (Windows 10)](../tools/wsl.md)
+        Example page: [WSL (Windows 10)](../tools/wsl.md)
 
-除现有内容质量较低的情况外，建议尽量从 **补充** 的角度来做贡献，而非采取直接覆盖的方式．如果拿不准主意，可以参考 [关于本项目的交流方式](./about.md#交流方式) 一节，与 **OI Wiki** 项目组联系．
+Unless the existing content is of low quality, we suggest contributing by **adding to** it rather than overwriting it. If you are unsure, see the [ways to get in touch on the About page](./about.md#交流方式) section and contact the **OI Wiki** team.
 
-### 文档的基本格式要求
+### Basic format requirements for documents
 
-#### Remark-lint 的格式要求
+#### Remark-lint format requirements
 
-[remark-lint](https://github.com/remarkjs/remark-lint) 可以自动给项目内文件统一风格．**OI Wiki** 现在启用的配置文件托管在 [.remarkrc](https://github.com/OI-wiki/OI-wiki/blob/master/.remarkrc)．
+[remark-lint](https://github.com/remarkjs/remark-lint) can automatically give the files in the project a consistent style. The configuration **OI Wiki** currently uses is hosted at [.remarkrc](https://github.com/OI-wiki/OI-wiki/blob/master/.remarkrc).
 
-在配置过程中 **OI Wiki** 项目组也遇到了一些 remark-lint 不能很好处理的问题，所以请严格按照下列要求编辑文档：
+While setting it up, the **OI Wiki** team ran into some problems that remark-lint does not handle well, so please follow these requirements strictly when editing documents:
 
--   <span id="LINT-1">LINT-1</span>：不要使用如 `<h1>` 或者 `# 标题` 的一级标题．
+-   <span id="LINT-1">LINT-1</span>: Don't use level-1 headings such as `<h1>` or `# Heading`.
 
--   <span id="LINT-2">LINT-2</span>：标题要空一个英文半角空格，例如：`## 简介`．
+-   <span id="LINT-2">LINT-2</span>: Put one half-width space after the heading marker, for example: `## Introduction`.
 
--   <span id="LINT-3">LINT-3</span>：由于 remark-lint 不能很好地处理删除线，因此请不要使用删除线语法（不使用删除线语法的另外一个原因是，删除线划去的内容大多为「抖机灵」性质，对读者理解帮助不大，不符合下面的「文本内容的格式要求」中 [对内容表述的要求](#CONT-5)）．
+-   <span id="LINT-3">LINT-3</span>: Because remark-lint does not handle strikethrough well, please don't use strikethrough syntax. (Another reason not to use it: struck-through content is usually a "clever joke" that does little to help readers understand, which does not meet the [requirements on how content is expressed](#CONT-5) in "Format requirements for text content" below.)
 
--   <span id="LINT-4">LINT-4</span>：列表：
-    -   <span id="LINT-4.1">LINT-4.1</span>：列表前要有空行，新开一段．
-    -   <span id="LINT-4.2">LINT-4.2</span>：使用有序列表（如 `1. 例子`）时，点号后要有空格．
+-   <span id="LINT-4">LINT-4</span>: Lists:
+    -   <span id="LINT-4.1">LINT-4.1</span>: Put a blank line before a list, starting a new paragraph.
+    -   <span id="LINT-4.2">LINT-4.2</span>: In an ordered list (such as `1. Example`), put a space after the period.
 
--   <span id="LINT-5">LINT-5</span>：行间公式前后各要有一行空行，否则会被当做是行内公式．
+-   <span id="LINT-5">LINT-5</span>: Put one blank line before and after a display formula; otherwise it is treated as an inline formula.
 
--   <span id="LINT-6">LINT-6</span>：使用 `???` 或 `!!!` 开头的 Details 语法时，每一行要包括在 Details 语法的文本框的文本，开头必须至少有 4 个空格．
+-   <span id="LINT-6">LINT-6</span>: When using the Details syntax that starts with `???` or `!!!`, every line of text inside the Details box must start with at least 4 spaces.
 
-    **即使是空行，也必须保持与其他行一致的缩进．请不要使用编辑器的自动裁剪行末空格功能．**
+    **Even blank lines must keep the same indentation as the other lines. Please don't use your editor's feature that automatically trims trailing spaces.**
 
-    ???+ success "示例"
-        下面的代码中用 `␣` 表示空格 ` `．
+    ???+ success "Example"
+        In the code below, `␣` stands for a space ` `.
         
         ```text
         ???+ warning
-        ␣␣␣␣请记得在文本前面添加 4 个空格．其他的语法还是与 Markdown 语法一致．
+        ␣␣␣␣Remember to add 4 spaces before the text. The rest of the syntax is the same as Markdown.
         ␣␣␣␣
-        ␣␣␣␣不添加 4 个空格的话，文本就不会出现在 Details 文本框里了．
+        ␣␣␣␣Without the 4 spaces, the text won't appear inside the Details box.
         ␣␣␣␣
-        ␣␣␣␣这个`???`是什么的问题会在 [下文](#MDFM-5) 解答．
+        ␣␣␣␣What this `???` is will be explained [below](#MDFM-5).
         ```
         
         ???+ warning "Warning"
-            请记得在文本前面添加 4 个空格．其他的语法还是与 Markdown 语法一致．
+            Remember to add 4 spaces before the text. The rest of the syntax is the same as Markdown.
             
-            不添加 4 个空格的话，文本就不会出现在 Details 文本框里了．
+            Without the 4 spaces, the text won't appear inside the Details box.
             
-            这个 `???` 是什么的问题会在 [下文](#MDFM-5) 解答．
+            What this `???` is will be explained [below](#MDFM-5).
 
--   <span id="LINT-7">LINT-7</span>：代码样式的纯文本块请使用 ` ```text`．直接使用 ` ``` ` 而不指定纯文本块里的语言，可能会导致内容被错误地缩进．
+-   <span id="LINT-7">LINT-7</span>: For plain-text blocks styled as code, use ` ```text`. Using plain ` ``` ` without specifying the language of the plain-text block may cause the content to be indented incorrectly.
 
-#### 标点符号的使用
+#### Use of punctuation
 
--   <span id="PUNC-1">PUNC-1</span>：请在每句话的末尾添加 **句号**．
+-   <span id="PUNC-1">PUNC-1</span>: End every sentence with a **full stop**.
 
 <!-- scripts.linter.postprocess.fix_full_stop off -->
 
--   <span id="PUNC-2">PUNC-2</span>：请正确使用 **全角** 标点符号与 **半角** 标点符号．汉语请使用全角符号，英语请使用半角符号．中文中夹用英文时，请参考 [中文出版物夹用英文的编辑规范](https://www.nppa.gov.cn/xxgk/fdzdgknr/hybz/202210/t20221004_445147.html)．特别地，请用全角句点「．」替代中文句号「。」．
+-   <span id="PUNC-2">PUNC-2</span>: Use **full-width** and **half-width** punctuation correctly. Use full-width punctuation for Chinese and half-width punctuation for English. When English is mixed into Chinese text, follow the [Editorial Standard for Using English in Chinese Publications](https://www.nppa.gov.cn/xxgk/fdzdgknr/hybz/202210/t20221004_445147.html). In particular, in Chinese text use the full-width period (U+FF0E) instead of the Chinese full stop (U+3002).
 
 <!-- scripts.linter.postprocess.fix_full_stop on -->
 
 <!-- scripts.linter.postprocess.fix_quotation off -->
 
--   <span id="PUNC-3">PUNC-3</span>：由于 `“……”` 和 `‘……’` 未区分全半角，请使用 `「……」` 作为全角双引号，`"..."` 作为半角双引号，`『……』` 作为全角单引号，`'...'` 作为半角单引号．
+-   <span id="PUNC-3">PUNC-3</span>: Because `“……”` and `‘……’` don't distinguish full-width from half-width, use corner brackets (U+300C and U+300D) as full-width double quotes, `"..."` as half-width double quotes, white corner brackets (U+300E and U+300F) as full-width single quotes, and `'...'` as half-width single quotes.
 
 <!-- scripts.linter.postprocess.fix_quotation on -->
 
--   <span id="PUNC-4">PUNC-4</span>：注意区分 **顿号** 与 **逗号** 的使用．
--   <span id="PUNC-5">PUNC-5</span>：注意 **括号** 的位置．句内括号与句外括号的位置不同．
--   <span id="PUNC-6">PUNC-6</span>：通常使用 **分号** 来表示列表环境中各复句之间的关系．
--   <span id="PUNC-7">PUNC-7</span>：对于有序列表，推荐在每一项的后面添加 **分号**，在列表最后一项的后面添加 **句号**；对于无序列表，推荐在每一项的后面添加 **句号**．
--   <span id="PUNC-8">PUNC-8</span>：注意区分各种不同的连接号，如 hyphen（一般使用 U+002D hyphen-minus（-），即键盘上的「减号」代替），U+2013 en dash（–）和 U+2014 em dash（—）．（英文中连接多个人名时，须用 en dash，但是极常误用为 hyphen．其他误用较为罕见，基本上只需记住这一点即可．）详见 [连接号 - 维基百科](https://zh.wikipedia.org/wiki/%E8%BF%9E%E6%8E%A5%E5%8F%B7)．
+-   <span id="PUNC-4">PUNC-4</span>: Distinguish between the use of the **enumeration comma** (U+3001) and the **comma**.
+-   <span id="PUNC-5">PUNC-5</span>: Pay attention to where **parentheses** go. Parentheses inside a sentence and parentheses outside a sentence are placed differently.
+-   <span id="PUNC-6">PUNC-6</span>: Usually use a **semicolon** to show the relation between the clauses of the items in a list.
+-   <span id="PUNC-7">PUNC-7</span>: For ordered lists, we recommend ending each item with a **semicolon** and the last item with a **full stop**; for unordered lists, we recommend ending each item with a **full stop**.
+-   <span id="PUNC-8">PUNC-8</span>: Distinguish between the different dashes, such as the hyphen (usually typed as U+002D hyphen-minus (-), the "minus" key on the keyboard), U+2013 en dash (–) and U+2014 em dash (—). (In English, an en dash must be used to join several people's names, but it is very often wrongly written as a hyphen. Other misuses are fairly rare, so this is basically the only point to remember.) See [Dash - Wikipedia (Chinese)](https://zh.wikipedia.org/wiki/%E8%BF%9E%E6%8E%A5%E5%8F%B7).
 
-    ???+ success "示例"
-        -   中学生学科竞赛主要包括信息学奥林匹克竞赛、信息学奥林匹克竞赛、信息学奥林匹克竞赛、信息学奥林匹克竞赛和信息学奥林匹克竞赛（谁写的这个示例，建议抬走）．
-        -   「你吃了吗？」李四问张三．
-        -   我想对你说：「我真是太喜欢你了．」
-        -   「苟利国家生死以，岂因祸福避趋之！」
-        -   张华考上了大学；李萍进了技校；我当了工人：我们都有美好的前途．[^note1]
-        -   以下是这个算法的基本流程：
-            1.  初始化到各点的距离为无穷大，将所有点设置为未被访问过，初始化一个队列；
-            2.  将起点放入队列，将起点设置为已被访问过，更新到起点的距离为 $0$；
-            3.  取出队首元素，将该元素设置为未被访问过；
-            4.  遍历所有与此元素相连的边，若到这个点存在更短的距离，则进行松弛操作；
-            5.  若这个点未被访问过，则将这个点放入队列，且设置这个点为已经访问过；
-            6.  回到第三步，直到队列为空．
-        -   KMP 算法（Knuth–Morris–Pratt algorithm, KMP algorithm）由 Knuth、Pratt 和 Morris 在 1977 年共同发布．[^note2]
+    ???+ success "Example"
+        -   Academic olympiads for secondary school students mainly include the Olympiad in Informatics, the Olympiad in Informatics, the Olympiad in Informatics, the Olympiad in Informatics and the Olympiad in Informatics (whoever wrote this example should be carried off).
+        -   "Have you eaten yet?" Li Si asked Zhang San.
+        -   I want to tell you: "I really like you so much."
+        -   "If it serves my country, I will give my life for it; how could I seek fortune or flee misfortune for my own sake!"
+        -   Zhang Hua got into university; Li Ping went to a technical school; I became a worker: we all have a bright future.[^note1]
+        -   Here are the basic steps of this algorithm:
+            1.  Initialize the distance to every vertex as infinity, mark all vertices as not visited, and initialize a queue;
+            2.  Push the start vertex into the queue, mark it as visited, and set its distance to $0$;
+            3.  Pop the front element of the queue and mark it as not visited;
+            4.  Go through all edges connected to this element; if there is a shorter distance to the other end, relax it;
+            5.  If that vertex has not been visited, push it into the queue and mark it as visited;
+            6.  Go back to step 3 until the queue is empty.
+        -   The KMP algorithm (Knuth–Morris–Pratt algorithm, KMP algorithm) was published jointly by Knuth, Pratt and Morris in 1977.[^note2]
 
-#### Markdown 格式与主题扩展格式要求
+#### Format requirements for Markdown and theme extensions
 
--   <span id="MDFM-1">MDFM-1</span>：表示强调时请使用 `**SOMETHING**` 和 `「」`，而非某级标题，因为使用标题会导致文章结构层次混乱和（或）目录出现问题．
+-   <span id="MDFM-1">MDFM-1</span>: For emphasis, use `**SOMETHING**` and corner-bracket quotes (U+300C and U+300D) rather than a heading, because using headings breaks the article's structure and/or causes problems in the table of contents.
 
--   <span id="MDFM-2">MDFM-2</span>：当需要引用题目链接时，应尽可能使用原 OJ 题库中的链接而不是镜像链接．
+-   <span id="MDFM-2">MDFM-2</span>: When citing a problem link, use the link to the original OJ's problem set whenever possible, rather than a mirror link.
 
--   <span id="MDFM-3">MDFM-3</span>：请正确使用 Markdown 的区块功能．插入行内代码请使用一对反引号包围代码区块；行间代码请使用一对 ` ``` ` 包围代码区块，其中反引号就是键盘左上角波浪线下面那个符号，行间代码请在第一个 ` ``` ` 的后面加上语言名称（如：` ```cpp`）．
+-   <span id="MDFM-3">MDFM-3</span>: Use Markdown's block features correctly. Wrap inline code in a pair of backticks; wrap block code in a pair of ` ``` `. The backtick is the key under the tilde in the top-left corner of the keyboard. For block code, add the language name after the first ` ``` ` (for example, ` ```cpp`).
 
-    ???+ success "示例"
+    ???+ success "Example"
         ````text
         ```cpp
-        // #include<stdio.h>    //不好的写法
-        #include <cstdio>  //好的写法
+        // #include<stdio.h>    //bad style
+        #include <cstdio>  //good style
         ```
         ````
         
         ```cpp
-        // #include<stdio.h>    //不好的写法
-        #include <cstdio>  //好的写法
+        // #include<stdio.h>    //bad style
+        #include <cstdio>  //good style
         ```
 
--   <span id="MDFM-4">MDFM-4</span>：「参考资料与注释」使用 Markdown 的脚注功能进行编写．格式为：
+-   <span id="MDFM-4">MDFM-4</span>: Write "References and notes" using Markdown's footnote feature. The format is:
 
     ```markdown
-    文本内容．[^脚注名]
-    [^脚注名]: 参考资料内容．注意：冒号是英文冒号，冒号后面跟着一个空格．
+    Text content.[^footnote-name]
+    [^footnote-name]: Reference content. Note: the colon is an English (half-width) colon, followed by a space.
     ```
 
-    脚注名既可以使用数字也可以使用文本．脚注名摆放的位置与括号的用法一致．为美观起见，建议同一个页面内的脚注名遵循统一的命名规律，如：ref1、ref2、note1……
+    A footnote name can be a number or text. Footnote markers are placed in the same way as parentheses. For a neat look, we recommend that footnote names within one page follow a consistent naming pattern, such as ref1, ref2, note1...
 
-    脚注的内容统一放在 `## 参考资料与注释` 二级标题下．
+    Put all footnote content under the level-2 heading `## References and notes`.
 
-    ???+ success "示例"
+    ???+ success "Example"
         ```markdown
-        当 `#include <cxxxx>` 可以替代 `#include <xxxx.h>` 时，应使用前者．[^ref1]
+        When `#include <cxxxx>` can replace `#include <xxxx.h>`, use the former.[^ref1]
         
-        2020年1月21日，CCF宣布恢复NOIP．[^ref2]
+        On January 21, 2020, CCF announced that NOIP would resume.[^ref2]
         
-        ## 参考资料与注释
+        ## References and notes
         
         [^ref1]: [cstdio stdio.h namespace](https://stackoverflow.com/questions/10460250/cstdio-stdio-h-namespace)
         
-        [^ref2]: [CCF关于恢复NOIP竞赛的公告-中国计算机学会](https://www.ccf.org.cn/c/2020-01-21/694716.shtml)
+        [^ref2]: [Announcement by CCF on Resuming the NOIP Competition - China Computer Federation](https://www.ccf.org.cn/c/2020-01-21/694716.shtml)
         ```
         
-        当 `#include <cxxxx>` 可以替代 `#include <xxxx.h>` 时，应使用前者．[^ref1]
+        When `#include <cxxxx>` can replace `#include <xxxx.h>`, use the former.[^ref1]
         
-        2020 年 1 月 21 日，CCF 宣布恢复 NOIP．[^ref2]
+        On January 21, 2020, CCF announced that NOIP would resume.[^ref2]
 
--   <span id="MDFM-5">MDFM-5</span>：建议使用主题扩展的 `???+note` 格式（即 [Collapsible Blocks](https://squidfunk.github.io/mkdocs-material/reference/admonitions/#collapsible-blocks)）来描述题面和参考代码．也可以用这种格式来展示其他需要补充介绍的内容．
+-   <span id="MDFM-5">MDFM-5</span>: We recommend using the theme extension's `???+note` format (i.e. [Collapsible Blocks](https://squidfunk.github.io/mkdocs-material/reference/admonitions/#collapsible-blocks)) for problem statements and reference code. You can also use it to show other content that needs extra explanation.
 
-    示例代码（下面的代码中用 `␣` 表示空格 ` `）：
+    Example code (in the code below, `␣` stands for a space ` `):
 
     ```text
-    ??? note "标题"
-    ␣␣␣␣这个文本框会被默认折叠．
+    ??? note "Title"
+    ␣␣␣␣This box is collapsed by default.
     ␣␣␣␣
-    ␣␣␣␣推荐将 **解题代码** 放在折叠文本框内．
+    ␣␣␣␣We recommend putting **solution code** in a collapsible box.
 
-    ???+note "[HDOJ 的「A + B Problem」](https://acm.hdu.edu.cn/showproblem.php?pid=1000)"
-    ␣␣␣␣标题也可以使用 Markdown 的超链接．这里的超链接是 HDOJ 的「A + B Problem」．
+    ???+note "[HDOJ: A + B Problem](https://acm.hdu.edu.cn/showproblem.php?pid=1000)"
+    ␣␣␣␣The title can also use a Markdown hyperlink. The hyperlink here is HDOJ's "A + B Problem".
     ␣␣␣␣
-    ␣␣␣␣而且推荐以这种方式**标注原题链接**．
+    ␣␣␣␣We also recommend **marking the original problem link** this way.
     ␣␣␣␣
-    ␣␣␣␣注意双引号的位置．
+    ␣␣␣␣Note where the double quotes go.
     ```
 
-    效果：
+    Result:
 
-    ??? note "标题"
-        这个文本框会被默认折叠．
+    ??? note "Title"
+        This box is collapsed by default.
         
-        推荐将 **解题代码** 放在折叠文本框内．
+        We recommend putting **solution code** in a collapsible box.
 
-    ???+ note "[HDOJ 的「A + B Problem」](https://acm.hdu.edu.cn/showproblem.php?pid=1000)"
-        标题也可以使用 Markdown 的超链接．这里的超链接是 HDOJ 的「A + B Problem」．
+    ???+ note "[HDOJ: A + B Problem](https://acm.hdu.edu.cn/showproblem.php?pid=1000)"
+        The title can also use a Markdown hyperlink. The hyperlink here is HDOJ's "A + B Problem".
         
-        而且推荐以这种方式 **标注原题链接**．
+        We also recommend **marking the original problem link** this way.
         
-        注意双引号的位置．
+        Note where the double quotes go.
 
-    两种格式的区别是，带 `+` 的会默认保持展开，而不带 `+` 的会默认保持折叠．
+    The difference between the two formats is that the one with `+` is expanded by default, and the one without `+` is collapsed by default.
 
-    折叠框的标题，即 `???+note` 中 `note` 后的内容应以 `"` 包裹起来．其中的内容支持 Markdown 语法．详见 [Admonition - Changing the title](https://squidfunk.github.io/mkdocs-material/reference/admonitions/#changing-the-title)．（不具备折叠功能的为一般的 Admonitions，参考 [Admonitions - Material for MkDocs](https://squidfunk.github.io/mkdocs-material/reference/admonitions)）
+    The title of a collapsible block, i.e. the content after `note` in `???+note`, should be wrapped in `"`. Markdown syntax is supported inside it. See [Admonition - Changing the title](https://squidfunk.github.io/mkdocs-material/reference/admonitions/#changing-the-title). (Blocks that can't be collapsed are ordinary admonitions; see [Admonitions - Material for MkDocs](https://squidfunk.github.io/mkdocs-material/reference/admonitions).)
 
--   <span id="MDFM-6">MDFM-6</span>：当需要添加不同语言的代码时，推荐使用 Content tabs，可以实现不同语言代码的切换．Content tabs 还有其他的用法，详见 [Content tabs](https://squidfunk.github.io/mkdocs-material/reference/content-tabs/#usage)．其使用方法和效果如下．
+-   <span id="MDFM-6">MDFM-6</span>: When you need to add code in different languages, we recommend Content tabs, which let readers switch between the code in each language. Content tabs have other uses too; see [Content tabs](https://squidfunk.github.io/mkdocs-material/reference/content-tabs/#usage). Usage and result are shown below.
 
-    ???+ success "示例"
-        注意需要在文本前面添加 4 个空格（下面用 `␣` 表示）．其他的语法还是与 Markdown 语法一致．
+    ???+ success "Example"
+        Note that you need to add 4 spaces before the text (shown as `␣` below). The rest of the syntax is the same as Markdown.
         
         ````text
         === "C"
@@ -373,121 +373,121 @@
             }
             ```
 
-如果对 mkdocs-material（我们使用的这个主题）还有什么问题，还可以查阅 [MkDocs 使用说明](https://github.com/ctf-wiki/ctf-wiki/wiki/Mkdocs-%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)，其介绍了 mkdocs-material 主题的插件使用方式．
+If you have other questions about mkdocs-material (the theme we use), you can also read the [MkDocs usage guide](https://github.com/ctf-wiki/ctf-wiki/wiki/Mkdocs-%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E) (in Chinese), which explains how to use the plugins of the mkdocs-material theme.
 
-#### 文本内容的格式要求
+#### Format requirements for text content
 
--   <span id="CONT-1">CONT-1</span>：所有的 **OI Wiki** 文本都应使用粗体标记．
+-   <span id="CONT-1">CONT-1</span>: Every occurrence of the text **OI Wiki** should be marked in bold.
 
--   <span id="CONT-2">CONT-2</span>：在页面的开头应有一段简短的文字（如「本页面将介绍……」），用于概述页面内容．
+-   <span id="CONT-2">CONT-2</span>: A page should start with a short paragraph (such as "This page introduces...") that summarizes the page.
 
-    ???+ success "示例"
-        本页面将列出在 **OI Wiki** 编写过程时推荐使用的格式规范与编辑方针．
+    ???+ success "Example"
+        This page lists the recommended format conventions and editing policies for writing **OI Wiki**.
 
--   <span id="CONT-3">CONT-3</span>：涉及到「前置知识」的页面，请在开头添加一行 **前置知识：……**，放在页面概述前．格式如下：
+-   <span id="CONT-3">CONT-3</span>: For pages that require "prerequisites", add a line **Prerequisites: ...** at the beginning, before the page summary. The format is:
 
-    `前置知识：[站内页面1](url1)、[站内页面2](url2)和[站内页面3](url3)`
+    `Prerequisites: [Internal page 1](url1), [Internal page 2](url2) and [Internal page 3](url3)`
 
-    ???+ success "示例"
-        前置知识：[时间复杂度](../basic/complexity.md)
+    ???+ success "Example"
+        Prerequisites: [Time complexity](../basic/complexity.md)
         
-        本页面将介绍基础的计算理论的知识．
+        This page introduces the basics of the theory of computation.
 
--   <span id="CONT-4">CONT-4</span>：请注意文档结构．文档结构应当十分条理，层次清晰．请不要让诸如「五级标题」这种事情再次发生了，一篇正常的文章是用不到如此复杂的结构层次的．
+-   <span id="CONT-4">CONT-4</span>: Pay attention to document structure. It should be well organized, with clear levels. Please never let something like a "level-5 heading" happen again; a normal article does not need such a complex structure.
 
--   <span id="CONT-5">CONT-5</span>：请注意内容的表述．作为一个百科网站，**OI Wiki** 使用的语言应该是书面的，客观的．诸如「抖机灵」性质的，对读者理解帮助不大的内容，不应该出现在 **OI Wiki** 当中．
+-   <span id="CONT-5">CONT-5</span>: Pay attention to how content is expressed. As an encyclopedia site, **OI Wiki** should use written, objective language. Content such as "clever jokes" that does little to help readers understand should not appear in **OI Wiki**.
 
--   <span id="CONT-6">CONT-6</span>：请尽量为链接提供完整的标题、或者可被识别的提示，避免使用裸地址和「这」、「此」之类的模糊不清的描述．每一个超链接都应尽量对其加以清楚明确的描述，方便读者明白该超链接将指向何处．
+-   <span id="CONT-6">CONT-6</span>: Try to give each link a full title or a recognizable hint, and avoid bare URLs and vague descriptions such as "this" or "here". Every hyperlink should have a clear and specific description, so readers know where it leads.
 
-    建议使用源文章或者标签页的标题．
+    We recommend using the title of the source article or the tab.
 
-    ???+ failure "不推荐的写法"
+    ???+ failure "Not recommended"
         ```markdown
-        请参考[这个页面](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork)
+        Please see [this page](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork)
         
-        请参考 <https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork>
+        Please see <https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork>
         ```
         
-        请参考 [这个页面](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork)
+        Please see [this page](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork)
         
-        请参考 <https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork>
+        Please see <https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork>
 
-    ???+ success "推荐的写法"
+    ???+ success "Recommended"
         ```markdown
-        请参考 GitHub 官方的帮助页面 [Syncing a fork - GitHub Docs](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork)
+        Please see GitHub's official help page [Syncing a fork - GitHub Docs](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork)
         ```
         
-        请参考 GitHub 官方的帮助页面 [Syncing a fork - GitHub Docs](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork)
+        Please see GitHub's official help page [Syncing a fork - GitHub Docs](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork)
 
--   <span id="CONT-7">CONT-7</span>：受 Markdown 格式限制，`## 参考资料与注释` 二级标题必须放在文末．
+-   <span id="CONT-7">CONT-7</span>: Because of Markdown's limitations, the level-2 heading `## References and notes` must be at the end of the page.
 
--   <span id="CONT-8">CONT-8</span>：所有用作序号的数字建议使用中文．示例：
-    -   数列的第一项．
-    -   输入文件的第一行．
+-   <span id="CONT-8">CONT-8</span>: We recommend writing all numbers used as ordinals in words. Examples:
+    -   The first term of the sequence.
+    -   The first line of the input file.
 
--   <span id="CONT-9">CONT-9</span>：请尽量避免在标题中使用 MathJax 公式，无论是几级标题．在标题中使用公式有可能会导致目录显示错误．[^ref3]
+-   <span id="CONT-9">CONT-9</span>: Try to avoid MathJax formulas in headings of any level. Formulas in headings can cause the table of contents to display incorrectly.[^ref3]
 
--   <span id="CONT-10">CONT-10</span>：请注意代码的可读性．
+-   <span id="CONT-10">CONT-10</span>: Pay attention to code readability.
 
-    -   <span id="CONT-10.1.1">CONT-10.1.1</span>：代码应拥有清晰的逻辑，尽可能简洁易懂．不要过度压行，不要引入过多无关代码．尽量避免与算法思想无关的内容．
-    -   <span id="CONT-10.1.2">CONT-10.1.2</span>：建议在参考代码中添加适当注释以方便读者理解．
+    -   <span id="CONT-10.1.1">CONT-10.1.1</span>: Code should have clear logic and be as short and easy to understand as possible. Don't cram too much onto one line, and don't add too much unrelated code. Try to avoid anything unrelated to the idea of the algorithm.
+    -   <span id="CONT-10.1.2">CONT-10.1.2</span>: We recommend adding suitable comments to reference code to help readers understand it.
 
-    对 C/C++ 类语言：
+    For C/C++-like languages:
 
-    -   <span id="CONT-10.2.1">CONT-10.2.1</span>：尽量避免出现影响阅读的预编译指令和宏定义．
+    -   <span id="CONT-10.2.1">CONT-10.2.1</span>: Try to avoid preprocessor directives and macros that make the code harder to read.
 
-    -   <span id="CONT-10.2.2">CONT-10.2.2</span>：不要用 `0` 代替 `false`/`NULL`/`nullptr` 等，不要用 `1` 代替 `true` 等．
+    -   <span id="CONT-10.2.2">CONT-10.2.2</span>: Don't use `0` instead of `false`/`NULL`/`nullptr` and the like, and don't use `1` instead of `true` and the like.
 
-    -   <span id="CONT-10.2.3">CONT-10.2.3</span>：在声明 [类型别名](https://en.cppreference.com/w/cpp/language/type_alias) 时，不推荐使用 `typedef`，推荐使用 `using`．
+    -   <span id="CONT-10.2.3">CONT-10.2.3</span>: When declaring a [type alias](https://en.cppreference.com/w/cpp/language/type_alias), we recommend `using` rather than `typedef`.
 
-    -   <span id="CONT-10.2.4">CONT-10.2.4</span>：不推荐用宏定义定义常量，推荐直接使用 `constexpr`/`const` 等关键字定义常量．
+    -   <span id="CONT-10.2.4">CONT-10.2.4</span>: We don't recommend defining constants with macros; define them directly with keywords such as `constexpr`/`const`.
 
-    -   <span id="CONT-10.2.5">CONT-10.2.5</span>：不推荐对函数使用 `inline` 关键字，详见 [编译优化](../lang/optimizations.md#inline---内联)．
+    -   <span id="CONT-10.2.5">CONT-10.2.5</span>: We don't recommend using the `inline` keyword on functions; see [Compiler optimizations](../lang/optimizations.md#inline---内联).
 
-    -   <span id="CONT-10.2.6">CONT-10.2.6</span>：尽量避免类型萃取、偏特化等复杂的模板元编程技巧．如确需使用，则需添加注释解释含义．
+    -   <span id="CONT-10.2.6">CONT-10.2.6</span>: Try to avoid complex template metaprogramming techniques such as type traits and partial specialization. If you really need them, add comments explaining what they mean.
 
-        ???+ failure "不推荐的写法"
+        ???+ failure "Not recommended"
             ```cpp
             --8<-- "docs/intro/code/format/format_1.cpp:not-recommended"
             ```
             
-            该代码给出了一个求 [最大公约数](../math/number-theory/gcd.md) 的复杂实现，其中：
+            This code gives a complicated implementation of the [greatest common divisor](../math/number-theory/gcd.md), where:
             
-            -   第一个 `gcd` 接受两个无符号整数 `x`，`y`，返回 `x`，`y` 的最大公约数，返回值类型的范围保证能同时包含 `x` 和 `y`．
-            -   第二个 `gcd` 接受两个整数 `x`，`y`，其中 `x`，`y` 至少有一个是有符号整数，返回 `x`，`y` 的最大公约数．
-            -   第三个 `gcd` 接受超过两个整数，返回这些整数的最大公约数．
-            -   第四个 `gcd` 接受一个容器，返回容器中所有数的最大公约数．
+            -   The first `gcd` takes two unsigned integers `x`, `y` and returns their greatest common divisor; the return type is guaranteed to be wide enough to hold both `x` and `y`.
+            -   The second `gcd` takes two integers `x`, `y`, at least one of which is signed, and returns their greatest common divisor.
+            -   The third `gcd` takes more than two integers and returns their greatest common divisor.
+            -   The fourth `gcd` takes a container and returns the greatest common divisor of all numbers in it.
             
-            对 **OI Wiki** 来说，我们只关注最大公约数这个算法的思想，这份代码涵盖了过多无关且复杂的技术细节，是需要避免的．
+            For **OI Wiki**, we only care about the idea of the greatest common divisor algorithm. This code includes too many unrelated and complex technical details, and should be avoided.
 
-        ???+ success "推荐的写法"
+        ???+ success "Recommended"
             ```cpp
             --8<-- "docs/intro/code/format/format_1.cpp:recommended"
             ```
             
-            诸如「添加类型检查」、「处理负数输入」、「让函数支持多参数」等更多是工程上关注的话题，我们的重点始终应该是算法的思想．
+            Topics such as "adding type checks", "handling negative input" and "letting the function take many arguments" are mostly engineering concerns; our focus should always be the idea of the algorithm.
 
-#### LaTeX 公式的格式要求
+#### Format requirements for LaTeX formulas
 
-LaTeX 作为公式排版的首选，我们应当正确地使用它．因此对于 LaTeX 的使用我们有严格的要求．如果您想要快速上手，可以阅读本章节末给出的表格．
+LaTeX is the first choice for typesetting formulas, and we should use it correctly. So we have strict requirements on how LaTeX is used. If you want to get started quickly, read the table at the end of this section.
 
--   <span id="MATH-1.1">MATH-1.1</span>：您使用的符号不应与 [数学符号表](./symbol.md) 规定的符号冲突．
+-   <span id="MATH-1.1">MATH-1.1</span>: The symbols you use must not conflict with those defined in the [table of mathematical symbols](./symbol.md).
 
--   <span id="MATH-1.2">MATH-1.2</span>：使用 Roman 体表示数字、常量、算子和函数．使用 Italic 体表示变量、下标．LaTeX 已经预先定义好了一些常见的常量、函数、运算符等，我们可以直接调用，包括但不限于：
+-   <span id="MATH-1.2">MATH-1.2</span>: Use Roman (upright) type for numbers, constants, operators and functions. Use Italic type for variables and subscripts. LaTeX already predefines some common constants, functions, operators and so on, which we can use directly, including but not limited to:
 
     ```latex
     \log, \ln, \lg, \sin, \cos, \tan, \sec, \csc, \cot, \gcd, \min, \max, \exp, \inf, \mod, \bmod, \pmod
     ```
 
-    所以在输入常量、函数名、运算符等时，请先检查一下是否应该使用 Roman 体或其它字体．LaTeX 符号的书写可参考 [KaTeX 的 Supported Functions 页面](https://katex.org/docs/supported.html)（不是全部），也可以搜索求解．
+    So when typing constants, function names, operators and so on, first check whether you should use Roman type or another font. For how to write LaTeX symbols, see the [Supported Functions page of KaTeX](https://katex.org/docs/supported.html) (not complete), or search for it.
 
-    由于 LaTeX 书写 Roman 体小写希腊字母较为困难，故小写希腊字母常量、算子和函数可以使用 Italic 体，如 $\pi$ 以及 $\delta x$ 中的 $\delta$.
+    Because writing lowercase Greek letters in Roman type is awkward in LaTeX, lowercase Greek constants, operators and functions may use Italic type, such as $\pi$, and the $\delta$ in $\delta x$.
 
-    如果遇到没有预先定义好的需要使用 Roman 体的 **函数名**，我们可以使用 `$\operatorname{something}$` 来产生，如我们可以使用 `$\operatorname{lcm}$` 产生正体的最小公倍数（函数）符号．同理，产生 Roman 体的 **常量** 应用 `$\mathrm{}$`；产生 Roman 体粗体符号应用 `$\mathbf{}$`；产生 Italic 体粗体符号应用 `$\boldsymbol{}$`（如向量 $\boldsymbol{a}$）．对于多字母的变量，应当使用 `$\textit{}$`．其他非数学内容，包括英文、特殊符号等，一律使用 `$\text{}$`．中文我们则建议不放在 LaTeX 公式中．
+    If you need a **function name** in Roman type that isn't predefined, you can produce it with `$\operatorname{something}$`; for example, `$\operatorname{lcm}$` produces an upright least common multiple (function) symbol. Similarly, use `$\mathrm{}$` for Roman **constants**; use `$\mathbf{}$` for Roman bold symbols; use `$\boldsymbol{}$` for Italic bold symbols (such as the vector $\boldsymbol{a}$). For multi-letter variables, use `$\textit{}$`. All other non-math content, including English words, special symbols and so on, goes in `$\text{}$`. As for Chinese text, we recommend not putting it in LaTeX formulas at all.
 
--   <span id="MATH-1.3">MATH-1.3</span>：如果表达式须折行（常见于较长的行间公式中），则应遵循如下换行规则：
+-   <span id="MATH-1.3">MATH-1.3</span>: If an expression must be broken across lines (common in long display formulas), follow these line-breaking rules:
 
-    -   <span id="MATH-1.3.1">MATH-1.3.1</span>：将换行符放在 $=$，$+$，$-$，$\pm$，$\mp$ 之前，如果有必要，也可放在 $\times$，$\cdot$，$/$ 之前，如：
+    -   <span id="MATH-1.3.1">MATH-1.3.1</span>: Put the line break before $=$, $+$, $-$, $\pm$, $\mp$; if necessary, it can also go before $\times$, $\cdot$, $/$. For example:
 
         $$
         \begin{aligned}
@@ -497,84 +497,84 @@ LaTeX 作为公式排版的首选，我们应当正确地使用它．因此对�
         \end{aligned}
         $$
 
-    -   <span id="MATH-1.3.2">MATH-1.3.2</span>：同一运算符不应在换行符前后同时出现，
+    -   <span id="MATH-1.3.2">MATH-1.3.2</span>: The same operator should not appear both before and after a line break;
 
-    -   <span id="MATH-1.3.3">MATH-1.3.3</span>：换行符尽量不要出现在括号内的表达式中．
+    -   <span id="MATH-1.3.3">MATH-1.3.3</span>: Try not to break lines inside an expression in parentheses.
 
--   <span id="MATH-1.4">MATH-1.4</span>：在行内使用分数的时候，请使用 `$\dfrac{}{}$`．比如 `$\dfrac{1}{2}$`，效果 $\dfrac{1}{2}$，而不是 `$\frac{1}{2}$`，效果 $\frac{1}{2}$．
+-   <span id="MATH-1.4">MATH-1.4</span>: For inline fractions, use `$\dfrac{}{}$`. For example, `$\dfrac{1}{2}$` gives $\dfrac{1}{2}$, rather than `$\frac{1}{2}$`, which gives $\frac{1}{2}$.
 
--   <span id="MATH-1.5">MATH-1.5</span>：组合数请使用 `\dbinom{n}{m}`，效果 $\dbinom{n}{m}$，而不是 `{n \choose m}`（在 LaTeX 中这种写法已不推荐）；与上一条关于分数的约定相似，请不要使用 `\binom{n}{m}`，效果 $\binom{n}{m}$．
+-   <span id="MATH-1.5">MATH-1.5</span>: For binomial coefficients, use `\dbinom{n}{m}`, which gives $\dbinom{n}{m}$, rather than `{n \choose m}` (this form is no longer recommended in LaTeX). As with the previous rule about fractions, don't use `\binom{n}{m}`, which gives $\binom{n}{m}$.
 
--   <span id="MATH-1.6">MATH-1.6</span>：尽可能避免在行内使用巨运算符（如 $\sum$，$\prod$，$\int$ 等）．
+-   <span id="MATH-1.6">MATH-1.6</span>: Avoid large operators (such as $\sum$, $\prod$, $\int$) inline whenever possible.
 
--   <span id="MATH-1.7">MATH-1.7</span>：在不会引起歧义的情况下，请用 `$\times$` 代替星号，叉乘请使用 `$\times$`，点乘请使用 `$\cdot$`．如 $a\times b$，$a\cdot b$，而不是 $a\ast b$．
+-   <span id="MATH-1.7">MATH-1.7</span>: When it causes no ambiguity, use `$\times$` instead of an asterisk. Use `$\times$` for the cross product and `$\cdot$` for the dot product. For example, write $a\times b$ or $a\cdot b$, not $a\ast b$.
 
--   <span id="MATH-1.8">MATH-1.8</span>：请用 `$\cdots$`（居于排版基线与顶线中间），`$\ldots$`（居于排版基线的位置），`$\vdots$`（竖着的省略号）代替 `$...$`．如 $a_1,a_2,\cdots a_n$，而不是 $a_1,a_2,... a_n$．
+-   <span id="MATH-1.8">MATH-1.8</span>: Use `$\cdots$` (centered between the baseline and the top line), `$\ldots$` (on the baseline) and `$\vdots$` (vertical ellipsis) instead of `$...$`. For example, write $a_1,a_2,\cdots a_n$, not $a_1,a_2,... a_n$.
 
--   <span id="MATH-1.9">MATH-1.9</span>：请注意，不要在非代码区域使用任何程序设计语言的表示方式，而是使用 LaTeX 公式．例如，使用 `$=$` 而不是 `$==$`（如 $a=b$，而不是 $a==b$）、使用 `` `a<<1` `` 或者 `$a\times 2$` 而不是 `$a<<1$`、使用 `$a\bmod b$` 代替 `$a\%b$`（如 $a\bmod b$，而不是 $a\%b$）等．
+-   <span id="MATH-1.9">MATH-1.9</span>: Don't use any programming-language notation outside code areas; use LaTeX formulas instead. For example, use `$=$` instead of `$==$` (write $a=b$, not $a==b$), use `` `a<<1` `` or `$a\times 2$` instead of `$a<<1$`, use `$a\bmod b$` instead of `$a\%b$` (write $a\bmod b$, not $a\%b$), and so on.
 
--   <span id="MATH-1.10">MATH-1.10</span>：公式中不要使用中括号连缀（即 C++ 高维数组的表示方式）而多使用下标．即 $a_{i,j,k}$ 而不是 $a[i][j][k]$．在公式中下标较复杂的情况下建议改用多元函数（$f(i,j,k)$）或内联代码格式．对于一元简单函数使用 `$f_i$`、`$f(i)$` 或 `$f[i]$` 均可．
+-   <span id="MATH-1.10">MATH-1.10</span>: In formulas, don't chain square brackets (the C++ notation for multidimensional arrays); use subscripts instead. That is, write $a_{i,j,k}$ rather than $a[i][j][k]$. When the subscripts in a formula get complicated, we suggest using a multivariable function ($f(i,j,k)$) or inline code format instead. For a simple function of one variable, `$f_i$`, `$f(i)$` and `$f[i]$` are all fine.
 
--   <span id="MATH-1.11">MATH-1.11</span>：为了统一且书写方便，复杂度分析时大 $O$ 记号请直接使用 `$O()$` 而不是 `$\mathcal O()$`．
+-   <span id="MATH-1.11">MATH-1.11</span>: For consistency and ease of writing, write big $O$ notation in complexity analysis directly as `$O()$`, not `$\mathcal O()$`.
 
--   <span id="MATH-1.12">MATH-1.12</span>：在表示等价关系时，请使用 `$\iff$`，效果 $\iff$，而不是 `$\Leftrightarrow$`，效果 $\Leftrightarrow$．
+-   <span id="MATH-1.12">MATH-1.12</span>: For equivalence, use `$\iff$`, which gives $\iff$, rather than `$\Leftrightarrow$`, which gives $\Leftrightarrow$.
 
--   <span id="MATH-1.13">MATH-1.13</span>：分段函数环境 `cases`  **只能有两列**（即一个 `&` 分隔符）．
+-   <span id="MATH-1.13">MATH-1.13</span>: The piecewise function environment `cases` **may only have two columns** (that is, one `&` separator).
 
--   <span id="MATH-1.14">MATH-1.14</span>：请不要滥用 LaTeX 公式．这不仅会造成页面加载缓慢（因为 MathJax 的效率低是出了名的），同时也会导致页面的排版混乱．我们通常使用 LaTeX 公式字体表示变量名称．我们的建议是，如非必要，尽量减少公式与普通正文字体的 **大量** 混合使用，如非必要，尽量不要使用公式，如：
+-   <span id="MATH-1.14">MATH-1.14</span>: Please don't overuse LaTeX formulas. Overuse not only makes pages load slowly (MathJax is notoriously slow), but also makes the page layout messy. We usually use the LaTeX formula font for variable names. Our advice is: unless necessary, avoid **heavily** mixing formulas with normal body text, and unless necessary, don't use formulas at all. For example:
 
     ```LaTeX
-    我们将要学习 $Network-flow$ 中的 $SPFA$ 最小费用流，需要使用 $Edmonds–Karp$ 算法进行增广．
+    We are going to learn the $SPFA$ min-cost flow in $Network-flow$, which uses the $Edmonds–Karp$ algorithm for augmentation.
     ```
 
-    就是一个典型的 **滥用公式字体** 的例子．（在页面中使用斜体请用 `*文本*` 表示．）
+    is a typical example of **abusing the formula font**. (To use italics on a page, write `*text*`.)
 
--   <span id="MATH-1.15">MATH-1.15</span>：请正确使用对应的 LaTeX 符号，尤其是公式中的希腊字母等特殊符号．如欧拉函数请使用 `$\varphi$`，圆的直径请使用 `$\Phi$`，黄金分割请使用 `$\phi$`．这些符号虽然同样表示希腊字母 Phi，但是在不同的环境下有不同的含义．切记 **不要使用输入法的插入特殊符号** 来插入这种符号．
+-   <span id="MATH-1.15">MATH-1.15</span>: Use the correct LaTeX symbols, especially for special symbols such as Greek letters in formulas. For example, use `$\varphi$` for Euler's totient function, `$\Phi$` for the diameter of a circle, and `$\phi$` for the golden ratio. These symbols all represent the Greek letter Phi, but they mean different things in different contexts. Remember: **never insert such symbols with your input method's special-symbol feature**.
 
-    另外，由于 LaTeX 历史原因，空集的符号应为 `$\varnothing$` 而不是 `$\emptyset$`；其他的符号应参照 [数学符号表](./symbol.md) 书写．
+    Also, for historical reasons in LaTeX, the empty set symbol should be `$\varnothing$`, not `$\emptyset$`; other symbols should follow the [table of mathematical symbols](./symbol.md).
 
-我们可以使用一个表格来总结一下上述内容．注意本表格没有举出所有符号的用法，只给出常见的错误．类似的情况类比即可．
+We can summarize the above in a table. Note that the table does not show how to use every symbol; it only lists common mistakes. Handle similar cases by analogy.
 
-| 不符合规定的用法                     | 渲染效果              | 符合规定的用法                                  | 渲染效果                                |
+| Non-compliant usage | Rendered | Compliant usage | Rendered |
 | ---------------------------- | ----------------- | ---------------------------------------- | ----------------------------------- |
-| `$log, ln, lg$`              | $log, ln, lg$     | `$\log$, $\ln$, $\lg$`                   | $\log$，$\ln$，$\lg$                  |
-| `$sin, cos, tan$`            | $sin, cos, tan$   | `$\sin$, $\cos$, $\tan$`                 | $\sin$，$\cos$，$\tan$                |
-| `$gcd, lcm$`                 | $gcd, lcm$        | `$\gcd$, $\operatorname{lcm}$`           | $\gcd$，$\operatorname{lcm}$         |
-| `$e$, $\text{e}$, e`（自然对数的底） | $e$，$\text{e}$, e | `$\mathrm{e}$`                           | $\mathrm{e}$                        |
-| `$i$, $\text{i}$, i`（虚数单位）   | $i$，$\text{i}$, i | `$\mathrm{i}$`                           | $\mathrm{i}$                        |
-| `$ 小于 a 的质数 $`               | $小于 a 的质数$        | `小于 $a$ 的质数`                             | 小于 $a$ 的质数                          |
-| `$...$`                      | $...$             | `$\cdots$, $\ldots$, $\vdots$, $\ddots$` | $\cdots$，$\ldots$，$\vdots$，$\ddots$ |
-| `$a*b$`（两个数相乘）               | $a*b$             | `$a\times b$, $a\cdot b$`                | $a\times b$，$a\cdot b$              |
-| `$SPFA$`（英文名称）               | $SPFA$            | `SPFA`                                   | SPFA                                |
+| `$log, ln, lg$` | $log, ln, lg$ | `$\log$, $\ln$, $\lg$` | $\log$, $\ln$, $\lg$ |
+| `$sin, cos, tan$` | $sin, cos, tan$ | `$\sin$, $\cos$, $\tan$` | $\sin$, $\cos$, $\tan$ |
+| `$gcd, lcm$` | $gcd, lcm$ | `$\gcd$, $\operatorname{lcm}$` | $\gcd$, $\operatorname{lcm}$ |
+| `$e$, $\text{e}$, e` (base of the natural logarithm) | $e$, $\text{e}$, e | `$\mathrm{e}$` | $\mathrm{e}$ |
+| `$i$, $\text{i}$, i` (imaginary unit) | $i$, $\text{i}$, i | `$\mathrm{i}$` | $\mathrm{i}$ |
+| `$ primes less than a $` | $primes less than a$ | `primes less than $a$` | primes less than $a$ |
+| `$...$` | $...$ | `$\cdots$, $\ldots$, $\vdots$, $\ddots$` | $\cdots$, $\ldots$, $\vdots$, $\ddots$ |
+| `$a*b$` (product of two numbers) | $a*b$ | `$a\times b$, $a\cdot b$` | $a\times b$, $a\cdot b$ |
+| `$SPFA$` (English name) | $SPFA$ | `SPFA` | SPFA |
 | `$a==b$`                     | $a==b$            | `$a=b$`                                  | $a=b$                               |
-| `$f[i][j][k]$`               | $f[i][j][k]$      | `$f_{i,j,k}$, $f(i,j,k)$`                | $f_{i,j,k}$，$f(i,j,k)$              |
-| `$R,N^*$`（集合）                | $R,N^*$           | `$\mathbf{R}$, $\mathbf{N}^*$`           | $\mathbf{R}$，$\mathbf{N}^*$         |
+| `$f[i][j][k]$` | $f[i][j][k]$ | `$f_{i,j,k}$, $f(i,j,k)$` | $f_{i,j,k}$, $f(i,j,k)$ |
+| `$R,N^*$` (sets) | $R,N^*$ | `$\mathbf{R}$, $\mathbf{N}^*$` | $\mathbf{R}$, $\mathbf{N}^*$ |
 | `$\emptyset$`                | $\emptyset$       | `$\varnothing$`                          | $\varnothing$                       |
 | `$size$`                     | $size$            | `$\textit{size}$`                        | $\textit{size}$                     |
 
-#### 对数学公式的附加格式要求
+#### Additional format requirements for math formulas
 
-请注意，尽管上述输入公式的语法和真正的 LaTeX 排版系统非常相似，但 **MathJax 和 LaTeX 是两个完全没有关系的东西**，MathJax 仅仅使用了一部分与 LaTeX 非常相似的语法而已．实际上，二者之间有不少细节差别，而这些差别经常导致写出来的公式在二者之间不通用．
+Note that although the syntax for typing formulas above is very similar to the real LaTeX typesetting system, **MathJax and LaTeX are two completely unrelated things**. MathJax only uses a subset of syntax that looks very much like LaTeX. In fact, there are quite a few small differences between them, and these often make a formula work in one but not in the other.
 
-由于 **OI Wiki** 使用 LaTeX 排版引擎开发了 PDF 导出工具，因此有必要强调公式在 MathJax 和 LaTeX 之间的兼容性．**请各位在 Wiki 中书写数学公式时注意以下几点．**
+Because **OI Wiki** has built a PDF export tool on the LaTeX typesetting engine, compatibility of formulas between MathJax and LaTeX matters. **Please keep the following points in mind when writing math formulas in the Wiki.**
 
-这些规则已经向 MathJax 做了尽可能多的妥协．导出工具兼容了一部分原本仅能在 MathJax 中正常输出的写法．
+These rules already make as many compromises toward MathJax as possible. The export tool supports some forms that originally only worked in MathJax.
 
--   <span id="MATH-2.1">MATH-2.1</span>：请使用 `\begin{aligned} ... \end{aligned}` 表示多行对齐的公式；
+-   <span id="MATH-2.1">MATH-2.1</span>: Use `\begin{aligned} ... \end{aligned}` for multi-line aligned formulas;
 
--   <span id="MATH-2.2">MATH-2.2</span>：如果这些多行对齐的公式需要 **编号**，请用 `align` 或 `equation` 环境；
+-   <span id="MATH-2.2">MATH-2.2</span>: If these multi-line aligned formulas need **numbering**, use the `align` or `equation` environment;
 
--   <span id="MATH-2.3">MATH-2.3</span>：不要使用 `split`、`eqnarray` 环境；
+-   <span id="MATH-2.3">MATH-2.3</span>: Don't use the `split` or `eqnarray` environments;
 
--   <span id="MATH-2.4">MATH-2.4</span>：不要使用 `\lt`,`\gt` 来表示大于号和小于号，请直接使用 `<`，`>`；
+-   <span id="MATH-2.4">MATH-2.4</span>: Don't use `\lt`, `\gt` for the less-than and greater-than signs; use `<`, `>` directly;
 
--   <span id="MATH-2.5">MATH-2.5</span>：不要直接用 `\\` 换行（需要换行的公式，请套在 `aligned` 或其他多行环境下）；
+-   <span id="MATH-2.5">MATH-2.5</span>: Don't break lines with a bare `\\` (wrap formulas that need line breaks in `aligned` or another multi-line environment);
 
--   <span id="MATH-2.6">MATH-2.6</span>：若要输出 LaTeX 符号 $\rm{\LaTeX}$，请用 `$\rm{\LaTeX}$`，而不是 `mathrm`；（`\LaTeX` 在 TeX 排版系统中是一个不能用于数学模式下的命令，而 `\mathrm` 又不能在普通模式下使用；另外，`\text` 命令虽然在 TeX 上正常输出，但是在 MathJax 中 `\text` 命令的参数会被原样输出，而不是按命令转义）；
+-   <span id="MATH-2.6">MATH-2.6</span>: To output the LaTeX logo $\rm{\LaTeX}$, use `$\rm{\LaTeX}$`, not `mathrm`; (in the TeX typesetting system, `\LaTeX` is a command that can't be used in math mode, while `\mathrm` can't be used outside math mode; also, although the `\text` command works normally in TeX, in MathJax the argument of `\text` is printed literally instead of being interpreted as commands);
 
--   <span id="MATH-2.7">MATH-2.7</span>：数学公式中的中文文字 **必须置于 `\text{}` 命令之中**，而变量、数字、运算符、函数名称则必须置于 `\text{}` 命令之外．**请不要在 `\text{}` 命令中嵌套数学公式**；
+-   <span id="MATH-2.7">MATH-2.7</span>: Chinese text in a math formula **must be placed inside the `\text{}` command**, while variables, numbers, operators and function names must be outside `\text{}`. **Don't nest math formulas inside the `\text{}` command**;
 
--   <span id="MATH-2.8">MATH-2.8</span>：使用 `array` 环境时请注意 **实际列数与对齐符号的数量保持一致**．例如下面的公式中，数据实际有 3 列（`&` 是列分隔符），因此需要 3 个对齐符号（`l`/`r`/`c` 分别表示左、右、居中对齐）．
+-   <span id="MATH-2.8">MATH-2.8</span>: When using the `array` environment, make sure **the number of alignment specifiers matches the actual number of columns**. For example, in the formula below the data actually has 3 columns (`&` is the column separator), so 3 alignment specifiers are needed (`l`/`r`/`c` mean left, right and center alignment).
 
     ```latex
     $$
@@ -585,13 +585,13 @@ LaTeX 作为公式排版的首选，我们应当正确地使用它．因此对�
     $$
     ```
 
-#### 伪代码格式
+#### Pseudocode format
 
-伪代码具体格式没有严格要求，请参考算法导论或学术论文．注意不要写成 Python．
+There are no strict rules for the exact format of pseudocode; refer to Introduction to Algorithms or academic papers. Be careful not to write it as Python.
 
-<span id="PCOD-1">PCOD-1</span>：Wiki 内使用 LaTeX 书写伪代码，整体处于 array 环境中，缩进使用 `$\qquad$`，文字描述使用 `$\text$`，关键字使用 `$\textbf$`，多字母变量使用 `$\textit$`，赋值使用 `$\gets$`．
+<span id="PCOD-1">PCOD-1</span>: In the Wiki, pseudocode is written in LaTeX, inside an array environment as a whole. Use `$\qquad$` for indentation, `$\text$` for text descriptions, `$\textbf$` for keywords, `$\textit$` for multi-letter variables, and `$\gets$` for assignment.
 
-参考示例：
+Reference example:
 
 $$
 \begin{array}{l}
@@ -631,137 +631,137 @@ $$
 $$
 ```
 
-#### 代码块的格式要求
+#### Format requirements for code blocks
 
-代码块目前分为两种：片段和例题．
+There are currently two kinds of code blocks: snippets and example problem code.
 
-关于片段代码：
+About snippet code:
 
--   <span id="CODE-1.1">CODE-1.1</span>：若代码片段足够短且没有必要测试，可以直接在 Markdown 文档中修改．
--   <span id="CODE-1.2">CODE-1.2</span>：由于 Markdown 文档中内嵌的代码难以实现自动化测试，所以推荐使用例题代码的格式插入片段代码．可以选择 [多文件编译方案](https://github.com/OI-wiki/OI-wiki/pull/5729) 或 [Snippet Sections](https://facelessuser.github.io/pymdown-extensions/extensions/snippets/#snippet-sections) 语法：
+-   <span id="CODE-1.1">CODE-1.1</span>: If a code snippet is short enough and doesn't need testing, you can edit it directly in the Markdown document.
+-   <span id="CODE-1.2">CODE-1.2</span>: Because code embedded in Markdown documents is hard to test automatically, we recommend inserting snippet code in the same format as example problem code. You can choose the [multi-file compilation approach](https://github.com/OI-wiki/OI-wiki/pull/5729) or the [Snippet Sections](https://facelessuser.github.io/pymdown-extensions/extensions/snippets/#snippet-sections) syntax:
 
-    多文件编译方案示例：[冒泡排序](https://github.com/OI-wiki/OI-wiki/blob/c35defebff6cea072d6cfeb359642f6fd84e66c7/docs/basic/bubble-sort.md?plain=1#L48)．正文引用 [bubble-sort\_1.cpp](https://github.com/OI-wiki/OI-wiki/blob/c35defebff6cea072d6cfeb359642f6fd84e66c7/docs/basic/code/bubble-sort/bubble-sort_1.cpp)，测试代码放在 [bubble-sort\_1.aux1.cpp](https://github.com/OI-wiki/OI-wiki/blob/c35defebff6cea072d6cfeb359642f6fd84e66c7/docs/basic/code/bubble-sort/bubble-sort_1.aux1.cpp) 中．
+    Example of the multi-file compilation approach: [Bubble sort](https://github.com/OI-wiki/OI-wiki/blob/c35defebff6cea072d6cfeb359642f6fd84e66c7/docs/basic/bubble-sort.md?plain=1#L48). The text includes [bubble-sort\_1.cpp](https://github.com/OI-wiki/OI-wiki/blob/c35defebff6cea072d6cfeb359642f6fd84e66c7/docs/basic/code/bubble-sort/bubble-sort_1.cpp), and the test code is in [bubble-sort\_1.aux1.cpp](https://github.com/OI-wiki/OI-wiki/blob/c35defebff6cea072d6cfeb359642f6fd84e66c7/docs/basic/code/bubble-sort/bubble-sort_1.aux1.cpp).
 
-    Snippet Sections 示例：[前缀和](https://github.com/OI-wiki/OI-wiki/blob/c7cf6d6de13b44757f1d0528e952349beb921f8a/docs/basic/prefix-sum.md?plain=1#L37)．正文中不需要引用 [prefix-sum\_1.cpp](https://github.com/OI-wiki/OI-wiki/blob/c7cf6d6de13b44757f1d0528e952349beb921f8a/docs/basic/code/prefix-sum/prefix-sum_1.cpp) 中的测试部分，所以选择插入主要的代码片段．
+    Example of Snippet Sections: [Prefix sums](https://github.com/OI-wiki/OI-wiki/blob/c7cf6d6de13b44757f1d0528e952349beb921f8a/docs/basic/prefix-sum.md?plain=1#L37). The text doesn't need to include the testing part of [prefix-sum\_1.cpp](https://github.com/OI-wiki/OI-wiki/blob/c7cf6d6de13b44757f1d0528e952349beb921f8a/docs/basic/code/prefix-sum/prefix-sum_1.cpp), so only the main code snippet is inserted.
 
-    **注意**：不要使用 [Snippet Lines](https://facelessuser.github.io/pymdown-extensions/extensions/snippets/#snippet-lines) 语法．
+    **Note**: Don't use the [Snippet Lines](https://facelessuser.github.io/pymdown-extensions/extensions/snippets/#snippet-lines) syntax.
 
-    为了提高代码复用率，您也可以将代码拆分成头文件，测试时在不同的测试代码里引用．如果正文中需要出现完整的测试代码作为例题的参考实现，那么正文中应该另外用 Snippet Sections 语法拼接成单文件代码，以便读者阅读．示例：[红黑树](https://github.com/OI-wiki/OI-wiki/blob/3b721e22ea60d59a2687a9b10555263de7bdc2f0/docs/ds/rbtree.md?plain=1#L218-L231)．
+    To reuse code more, you can also split code into header files and include them from different test files. If the text needs to show the complete test code as the reference implementation of an example problem, the text should use Snippet Sections syntax to stitch it together into single-file code, so it is easy for readers to read. Example: [Red-black tree](https://github.com/OI-wiki/OI-wiki/blob/3b721e22ea60d59a2687a9b10555263de7bdc2f0/docs/ds/rbtree.md?plain=1#L218-L231).
 
-关于例题代码：
+About example problem code:
 
--   <span id="CODE-2.1">CODE-2.1</span>：例题代码的表示形式为 `--8<-- "path"`，代码均存储在 `path` 中．路径通常为 `docs/主题/code/内容/内容_编号.cpp`．
+-   <span id="CODE-2.1">CODE-2.1</span>: Example problem code is written as `--8<-- "path"`, and the code is stored at `path`. The path is usually `docs/topic/code/content/content_number.cpp`.
 
--   <span id="CODE-2.2">CODE-2.2</span>：修改例题代码时，请保证你的代码是正确的．例题代码均拥有一组测试数据，存储在 `/docs/主题/examples/内容/内容_编号.in/ans` 中．
+-   <span id="CODE-2.2">CODE-2.2</span>: When you change example problem code, make sure your code is correct. Each example problem code has a set of test data, stored in `/docs/topic/examples/content/content_number.in/ans`.
 
-如果你需要添加例题：
+If you need to add an example problem:
 
--   请在 `docs/主题/code/内容` 中添加你的例题代码，并编号．通常，该 `内容` 文件夹中已经有了一个或者多个代码．例子：如果需要修改 `dag.md` 的代码，那么路径为 `docs/dp/code/dag`，其中 `dp` 为主题，而 `dag` 为内容．
+-   Add your example code to `docs/topic/code/content` and give it a number. Usually, this `content` folder already has one or more code files. Example: if you need to change the code of `dag.md`, the path is `docs/dp/code/dag`, where `dp` is the topic and `dag` is the content.
 
--   如果需要在所有例题的最后添加一个例题代码，请顺延目前的编号．比如已经存在了 `code/prefix-sum/prefix-sum_3.cpp`，如果需要在最后一个例题后继续添加一个例题，请将你的代码命名为 `prefix-sum_4.cpp` 并添加到 `docs/basic/code/prefix-sum` 中．
+-   If you need to add an example code after all existing example problems, continue the current numbering. For example, if `code/prefix-sum/prefix-sum_3.cpp` already exists and you need to add another example after the last one, name your code `prefix-sum_4.cpp` and add it to `docs/basic/code/prefix-sum`.
 
--   如果需要在文章中间添加一个例题代码，请插入并改变原先的编号．比如已经存在了 `prefix-sum_2.cpp` 和 `prefix-sum_3.cpp`，如果你需要在第二个例题和第三个例题中间再添加一个例题，请将你的代码命名为 `prefix-sum_3.cpp` 并将原先的 `prefix-sum_3.cpp` 改名为 `prefix-sum_4.cpp` 同时 **在 Markdown 文档和测试数据存放的文件夹中同步修改编号**．
+-   If you need to add an example code in the middle of the article, insert it and renumber the existing ones. For example, if `prefix-sum_2.cpp` and `prefix-sum_3.cpp` already exist and you need to add an example between the second and third examples, name your code `prefix-sum_3.cpp` and rename the old `prefix-sum_3.cpp` to `prefix-sum_4.cpp`, and **update the numbers in the Markdown document and in the test data folder at the same time**.
 
--   **别忘记，你还要对你的代码添加一组测试数据，以保证这个代码是可以成功运行的．** 你需要在 `docs/主题/examples/内容` 文件夹中添加一组测试数据，将输入数据存储为 `内容_编号.in`，将标准答案存储为 `内容_编号.ans`．
+-   **Don't forget: you also need to add a set of test data for your code, to make sure it runs correctly.** Add the test data to the `docs/topic/examples/content` folder, storing the input as `content_number.in` and the expected answer as `content_number.ans`.
 
--   最后，可以将代码添加到文档中了．请直接在文档中用添加代码块的格式，并将代码块内部直接写成 `--8<-- "你的代码路径"` 的格式就可以了．
+-   Finally, you can add the code to the document. Just add a code block in the document and write `--8<-- "your code path"` inside it.
 
-**OI Wiki** 会对例题代码进行全平台测试，为保证您的代码能够顺利通过测试，请遵守如下规则：
+**OI Wiki** tests example problem code on all platforms. To make sure your code passes the tests, follow these rules:
 
--   <span id="CODE-3.1">CODE-3.1</span>：您的代码需要同时支持在 C++14、C++17、C++20 标准下编译和运行．
--   <span id="CODE-3.2">CODE-3.2</span>：不要使用 `<bits/stdc++.h>`、`<bits/extc++.h>` 等非标准头文件．
--   <span id="CODE-3.3">CODE-3.3</span>：标准答案文件不要有多余空格．
--   <span id="CODE-3.4">CODE-3.4</span>：不要使用 [代用记号](https://en.cppreference.com/w/cpp/language/operator_alternative#Alternative_tokens)．
--   <span id="CODE-3.5">CODE-3.5</span>：使用 [聚合初始化](https://en.cppreference.com/w/cpp/language/aggregate_initialization) 时，`object{args}` 不可写成 `(object){args}`．
--   <span id="CODE-3.6">CODE-3.6</span>：使用 [运算符重载](https://en.cppreference.com/w/cpp/language/operators) 时注意格式，如重载比较运算符时，若使用成员函数写法，则不可省略 `const` 限定符．
--   <span id="CODE-3.7">CODE-3.7</span>：不要使用类似 `#define int long long` 的宏定义．
--   <span id="CODE-3.8">CODE-3.8</span>：若您需要使用 C 风格的 [有格式输入/输出](https://en.cppreference.com/w/cpp/io/c#Formatted_input.2Foutput)，请特别留意格式指示符的写法：如 `size_t` 对应 `%zu`，`ptrdiff_t` 对应 `%td`．例如输出某 STL 容器的大小时，代码应类似 `printf("%zu", container.size());`．
--   <span id="CODE-3.9">CODE-3.9</span>：由于当前测试环境 libstdc++ 的 `<chrono>` 库有 [BUG](https://github.com/actions/runner-images/issues/8659)，所以请避免使用 `<chrono>` 库．
--   <span id="CODE-3.10">CODE-3.10</span>：由于 `long` 与 `unsigned long` 在某些测试环境下为 32 位，而在另一些测试环境下为 64 位，为确保各平台代码行为一致，故不推荐使用这两种类型．推荐使用 [定宽整数类型](../lang/var.md#定宽整数类型)．
--   <span id="CODE-3.11">CODE-3.11</span>：不建议使用 `__gcd`、`__int128`、`__builtin_` 系列函数等非标准内容．如果您需要使用，则需确保您的代码能通过全平台测试，如 [此代码](https://github.com/OI-wiki/OI-wiki/blob/4af83d6db6017f4c36db6d4a7583bbc3f6257484/docs/ds/code/tree-decompose/tree-decompose_1.cpp#L24-L47) 提供了 libstdc++ 中 [std::bitset](../lang/csl/bitset.md) 特有成员函数 `_Find_first()` 的全平台实现．
+-   <span id="CODE-3.1">CODE-3.1</span>: Your code must compile and run under the C++14, C++17 and C++20 standards.
+-   <span id="CODE-3.2">CODE-3.2</span>: Don't use non-standard headers such as `<bits/stdc++.h>` and `<bits/extc++.h>`.
+-   <span id="CODE-3.3">CODE-3.3</span>: The expected answer file must not contain extra spaces.
+-   <span id="CODE-3.4">CODE-3.4</span>: Don't use [alternative tokens](https://en.cppreference.com/w/cpp/language/operator_alternative#Alternative_tokens).
+-   <span id="CODE-3.5">CODE-3.5</span>: When using [aggregate initialization](https://en.cppreference.com/w/cpp/language/aggregate_initialization), don't write `object{args}` as `(object){args}`.
+-   <span id="CODE-3.6">CODE-3.6</span>: Pay attention to the form when using [operator overloading](https://en.cppreference.com/w/cpp/language/operators). For example, when overloading a comparison operator as a member function, you can't omit the `const` qualifier.
+-   <span id="CODE-3.7">CODE-3.7</span>: Don't use macros like `#define int long long`.
+-   <span id="CODE-3.8">CODE-3.8</span>: If you need C-style [formatted input/output](https://en.cppreference.com/w/cpp/io/c#Formatted_input.2Foutput), pay special attention to the format specifiers: for example, `size_t` uses `%zu` and `ptrdiff_t` uses `%td`. For instance, to print the size of an STL container, the code should look like `printf("%zu", container.size());`.
+-   <span id="CODE-3.9">CODE-3.9</span>: Because the `<chrono>` library of libstdc++ in the current test environment has a [BUG](https://github.com/actions/runner-images/issues/8659), please avoid the `<chrono>` library.
+-   <span id="CODE-3.10">CODE-3.10</span>: Because `long` and `unsigned long` are 32 bits in some test environments and 64 bits in others, we don't recommend these two types, to keep the code's behavior the same on all platforms. We recommend [fixed-width integer types](../lang/var.md#定宽整数类型).
+-   <span id="CODE-3.11">CODE-3.11</span>: We don't recommend non-standard features such as `__gcd`, `__int128` and the `__builtin_` family of functions. If you need them, make sure your code passes the tests on all platforms. For example, [this code](https://github.com/OI-wiki/OI-wiki/blob/4af83d6db6017f4c36db6d4a7583bbc3f6257484/docs/ds/code/tree-decompose/tree-decompose_1.cpp#L24-L47) provides an all-platform implementation of `_Find_first()`, a member function specific to libstdc++'s [std::bitset](../lang/csl/bitset.md).
 
-此外，为了提高代码的可读性，建议遵守 [CONT-10](#CONT-10)．
+Also, to make code more readable, we recommend following [CONT-10](#CONT-10).
 
-## 图解
+## Illustrated examples
 
-可能上述要求把握起来有些困难，接下来我们给出一些图片来具体分析哪种格式应该使用，哪种不该使用：
+The requirements above may be a bit hard to grasp, so next we give some images to show concretely which formats should be used and which should not:
 
-### 例 1
+### Example 1
 
 ![](./images/format-1.png)
 
-将复杂的 LaTeX 公式使用行间格式，可以使得页面错落有致．但 **OI Wiki** 作为一个以中文为主体的站点，我们希望大部分纲领性的信息（如标题）尽量使用中文（除英文专有名词）．
+Putting complex LaTeX formulas in display format makes the page well laid out. But since **OI Wiki** is a site mainly in Chinese, we want most of the key structural information (such as headings) to be in Chinese where possible (except for English proper nouns).
 
-### 例 2
+### Example 2
 
 ![](./images/format-2.png)
 
-较复杂度的 LaTeX 公式请注意等号的对齐，同时可以适当引用 Wiki 的页面 **链接** 来完善内容．
+For more complex LaTeX formulas, align the equals signs. You can also add suitable **links** to Wiki pages to enrich the content.
 
-### 例 3
+### Example 3
 
 ![](./images/format-3.png)
 
-一般情况下，我们建议将引用的资料列在文末的 `##参考资料与注释` 一节，并在原句后面加上脚注，而不是直接给出链接．同时一定要避免使用 LaTeX 公式表达代码，上图中两个中括号就是不规范的写法．我们建议使用 `dp(i,j)` 或者 `dp_{i,j}`．
+In general, we recommend listing cited sources in the `## References and notes` section at the end of the page and adding a footnote after the original sentence, rather than giving the link directly. Also, be sure to avoid using LaTeX formulas to express code; the two square brackets in the image above are non-standard. We recommend `dp(i,j)` or `dp_{i,j}`.
 
-### 例 4
+### Example 4
 
 ![](./images/format-4.png)
 
-注意我们描述 **乘法** 的时候一般使用 `\times` 或者 `\cdot`，特殊情况（如卷积）下会使用 `*`（也可以写成 `\ast`）．标题是简洁的词组，但我们不希望正文部分由词组拼凑而成．上图中「两个要素」，建议更改为「动态规划的原理具有以下两个要素」，上下文保持连贯．可取的地方是，适当使用 **有序** 列表可以更有条理地表述内容．再次提醒，在使用列表的时候，每一项如果是一句话，需要在末位添加 **标点符号**．有序列表通常添加分号，在最后一项末位添加句号；无序列表统一添加句号．
+Note that for **multiplication** we usually use `\times` or `\cdot`; in special cases (such as convolution) we use `*` (which can also be written `\ast`). A heading is a short phrase, but we don't want the body text to be pieced together from phrases. In the image above, "two elements" should be changed to "The principle of dynamic programming has the following two elements", so that the text flows. A good point is that using an **ordered** list where appropriate makes the content better organized. A reminder again: when using a list, if each item is a sentence, end it with **punctuation**. Ordered list items usually end with a semicolon, with a full stop after the last item; unordered list items all end with a full stop.
 
-### 例 5
+### Example 5
 
 ![](./images/format-5.png)
 
-适当引用 **图片** 可以增强文章易读性．使用 **伪代码** 的方式表达算法过程可以方便又简洁地描述算法过程，相比于直接贴模板代码更加好懂．
+Using **images** where appropriate makes an article easier to read. Expressing an algorithm in **pseudocode** describes the process conveniently and concisely, and is easier to understand than just pasting template code.
 
-### 例 6
+### Example 6
 
 ![](./images/format-6.png)
 
-同样的问题，标题使用英文．并且在使用完括号后没有句号．另外，上图中的行间公式虽然没有使用括号，但是由于下标嵌套过多，使得最底层的下标字体很小，整个公式也并不美观．建议将 `son_{now,i}` 更换为 `son(now,i)`，或者把 `f_{now}` 替换为 `f(now)`．我们希望尽量控制上下标嵌套在两层以内（需要多次嵌套上标时建议使用 Knuth 箭头，如用 $2 \uparrow (2 \uparrow (2 \uparrow (2 \uparrow \cdots)))$ 代替 $2^{2^{2^{2^{\cdots}}}}$，《上帝造题的七分钟》）．
+Same problem as before: the heading is in English. Also, there is no full stop after the parentheses. In addition, although the display formula in the image above uses no parentheses, it has too many nested subscripts, so the innermost subscript is very small and the whole formula doesn't look good. We suggest changing `son_{now,i}` to `son(now,i)`, or replacing `f_{now}` with `f(now)`. We want to keep nesting of superscripts and subscripts within two levels where possible (when you need to nest superscripts many times, we suggest Knuth's up-arrow notation, e.g. use $2 \uparrow (2 \uparrow (2 \uparrow (2 \uparrow \cdots)))$ instead of $2^{2^{2^{2^{\cdots}}}}$, as in the problem "Seven Minutes of God Creating Problems").
 
-### 例 7
+### Example 7
 
 ![](./images/format-7.png)
 
-使用 MkDocs 扩展语法，让例题题面与算法描述区分开．将代码折叠，可以让文章更紧凑．（毕竟看 Wiki 的大多数是了解思路，除了模板代码需要阅读外，习题的代码大多可以折叠．）在描述函数操作时，使用行内代码和 LaTeX 公式都是不错的选择．
+Use the MkDocs extension syntax to separate the problem statement from the description of the algorithm. Collapsing the code makes the article more compact. (After all, most people reading the Wiki want to understand the idea; apart from template code, which needs to be read, the code for exercises can mostly be collapsed.) When describing what a function does, both inline code and LaTeX formulas are good choices.
 
-### 例 8
+### Example 8
 
 ![](./images/format-8.png)
 
-在文末罗列出参考文献，可以使页面的内容更严谨，真实可信．
+Listing references at the end of the page makes its content more rigorous and trustworthy.
 
-## 外部链接
+## External links
 
--   [标点符号用法（GB/T 15834—2011）](http://www.moe.gov.cn/jyb_sjzl/ziliao/A19/201001/W020190128580990138234.pdf)
--   [维基百科：格式手册/标点符号](https://zh.wikipedia.org/wiki/Wikipedia:%E6%A0%BC%E5%BC%8F%E6%89%8B%E5%86%8C/%E6%A0%87%E7%82%B9%E7%AC%A6%E5%8F%B7)
--   [中文文案排版指北（简体中文版）](https://mazhuang.org/wiki/chinese-copywriting-guidelines/)
--   [中文文案风格指南 - PDFE GUIDELINE](https://pdfe.github.io/GUIDELINE/#/others/copywriter)
--   [一份（不太）简短的 LATEX2ε 介绍或 106 分钟了解 LATEX2ε](https://github.com/CTeX-org/lshort-zh-cn/releases)
--   [中文出版物夹用英文的编辑规范](https://www.nppa.gov.cn/xxgk/fdzdgknr/hybz/202210/t20221004_445147.html)
+-   [Use of Punctuation Marks (GB/T 15834-2011)](http://www.moe.gov.cn/jyb_sjzl/ziliao/A19/201001/W020190128580990138234.pdf) (in Chinese)
+-   [Wikipedia: Manual of Style/Punctuation (Chinese Wikipedia)](https://zh.wikipedia.org/wiki/Wikipedia:%E6%A0%BC%E5%BC%8F%E6%89%8B%E5%86%8C/%E6%A0%87%E7%82%B9%E7%AC%A6%E5%8F%B7)
+-   [Chinese Copywriting Guidelines (Simplified Chinese edition)](https://mazhuang.org/wiki/chinese-copywriting-guidelines/)
+-   [Chinese Copywriting Style Guide - PDFE GUIDELINE](https://pdfe.github.io/GUIDELINE/#/others/copywriter) (in Chinese)
+-   [A (Not So) Short Introduction to LATEX2ε, or LATEX2ε in 106 Minutes](https://github.com/CTeX-org/lshort-zh-cn/releases) (Chinese edition)
+-   [Editorial Standard for Using English in Chinese Publications](https://www.nppa.gov.cn/xxgk/fdzdgknr/hybz/202210/t20221004_445147.html) (in Chinese)
 
-## 参考资料与注释
+## References and notes
 
-[^note1]: （冒号）表示总结上文．
+[^note1]: (The colon) introduces a summary of what comes before it.
 
-[^note2]: 科学技术名称的英文全称与其缩略形式间，应使用英文逗号．中文句子内夹用了用以注释、补充或说明的英文句子或语段，该英文句子或语段用中文圆括号标示．
+[^note2]: Between the full English name of a scientific or technical term and its abbreviation, use an English comma. When an English sentence or passage that annotates, adds to or explains something is embedded in a Chinese sentence, enclose it in Chinese (full-width) parentheses.
 
-[^note3]: 折叠框：参见 [Collapsible Blocks](https://squidfunk.github.io/mkdocs-material/reference/admonitions/#collapsible-blocks)，有时我们也用「Details 语法」指代该语法，因其从功能上与 HTML 中的 [`<details>` 元素](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/details) 功能一致．
+[^note3]: Collapsible block: see [Collapsible Blocks](https://squidfunk.github.io/mkdocs-material/reference/admonitions/#collapsible-blocks). We sometimes also call this the "Details syntax", because it works the same way as the [`<details>` element](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/details) in HTML.
 
-[^note4]: 移至 [如何贡献](./htc.md)．
+[^note4]: Moved to [How to contribute](./htc.md).
 
-[^note5]: 该规范写入了 [编辑前须知](../edit-landing.md) 并发布了公告，并未写入本文档．
+[^note5]: This rule was added to [Before you edit](../edit-landing.md) and announced, but was not added to this document.
 
-[^note6]: 选项卡：参见 [Content tabs](https://squidfunk.github.io/mkdocs-material/reference/content-tabs)．
+[^note6]: Content tabs: see [Content tabs](https://squidfunk.github.io/mkdocs-material/reference/content-tabs).
 
 [^ref1]: [cstdio stdio.h namespace](https://stackoverflow.com/questions/10460250/cstdio-stdio-h-namespace)
 
-[^ref2]: [CCF 关于恢复 NOIP 竞赛的公告 - 中国计算机学会](https://www.ccf.org.cn/c/2020-01-21/694716.shtml)
+[^ref2]: [Announcement by CCF on Resuming the NOIP Competition - China Computer Federation](https://www.ccf.org.cn/c/2020-01-21/694716.shtml)
 
-[^ref3]: [我的公式为什么在目录里没有正常显示？好像双倍了](faq.md)
+[^ref3]: [Why doesn't my formula show up properly in the table of contents? It seems to appear twice](faq.md)
 
 [^ref4]: [SVG|MDN](https://developer.mozilla.org/zh-CN/docs/Web/SVG)
 
