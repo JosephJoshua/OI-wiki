@@ -1,81 +1,81 @@
-本文将介绍随机变量的期望、方差等数字特征．
+This article introduces numerical characteristics of random variables such as the expected value and the variance.
 
-## 期望
+## Expected value
 
-### 定义
+### Definition
 
-#### 离散型随机变量
+#### Discrete random variables
 
-设离散型随机变量 $X$ 的概率分布为 $p_i = P\{ X = x_i \}$，若和式
+Let the discrete random variable $X$ have probability distribution $p_i = P\{ X = x_i \}$. If the sum
 
 $$
 \sum x_i p_i
 $$
 
-绝对收敛，则称其值为 $X$ 的 **期望**，记作 $EX$．
+converges absolutely, its value is called the **expected value** of $X$, written $EX$.
 
-#### 连续型随机变量
+#### Continuous random variables
 
-设连续型随机变量 $X$ 的密度函数为 $f(x)$．若积分
+Let the continuous random variable $X$ have density function $f(x)$. If the integral
 
 $$
 \int_{\mathbb{R}} xf(x) \text{d} x
 $$
 
-绝对收敛，则称其值为 $X$ 的 **期望**，记作 $EX$．
+converges absolutely, its value is called the **expected value** of $X$, written $EX$.
 
-#### 统一定义
+#### Unified definition
 
-设随机变量 $X$ 的分布函数为 $F(x)$，若 [Stieltjes 积分](https://en.wikipedia.org/wiki/Riemann%E2%80%93Stieltjes_integral)
+Let the random variable $X$ have distribution function $F(x)$. If the [Stieltjes integral](https://en.wikipedia.org/wiki/Riemann%E2%80%93Stieltjes_integral)
 
 $$
 \int_{\mathbb{R}} x \text{d} F(x)
 $$
 
-绝对收敛，则称其值为 $X$ 的 **期望**，记作 $EX$．
+converges absolutely, its value is called the **expected value** of $X$, written $EX$.
 
-??? example "期望不存在的例子"
-    考虑有如下分布的离散型随机变量 $X$
+??? example "Examples where the expected value does not exist"
+    Consider a discrete random variable $X$ with the following distribution
     
     $$
     P\left\{ X = (-1)^k \frac{2^k}{k} \right\} = \frac{1}{2^k}, \quad k = 1, 2, \cdots
     $$
     
-    尽管和式 $\sum x_i p_i$ 收敛于 $- \ln 2$，但由于其不是绝对收敛的，故 $X$ 的期望不存在．
+    Although the sum $\sum x_i p_i$ converges to $- \ln 2$, it does not converge absolutely, so the expected value of $X$ does not exist.
     
-    再考虑有如下密度函数的连续型随机变量 $Y$
+    Now consider a continuous random variable $Y$ with the following density function
     
     $$
     f(y) = \frac{1}{\pi} \cdot \frac{1}{1 + y^2}, \quad y \in (-\infty, +\infty)
     $$
     
-    容易验证 $Y$ 的期望也不存在．
+    It is easy to check that the expected value of $Y$ does not exist either.
 
-### 期望的性质
+### Properties of the expected value
 
-#### 线性性
+#### Linearity
 
-若随机变量 $X, Y$ 的期望存在，则
+If the expected values of random variables $X, Y$ exist, then
 
--   对任意实数 $a, b$，有 $E(aX + b) = a \cdot EX + b$．
--   $E(X + Y) = EX + EY$．
+-   for any real numbers $a, b$, $E(aX + b) = a \cdot EX + b$.
+-   $E(X + Y) = EX + EY$.
 
-#### 随机变量乘积的期望
+#### Expected value of a product of random variables
 
-若随机变量 $X$,$Y$ 的期望存在且 $X$,$Y$ 相互独立，则有
+If the expected values of random variables $X$, $Y$ exist and $X$, $Y$ are independent, then
 
 $$
 E(XY) = EX \cdot EY
 $$
 
-注意：上述性质中的独立性 **并非** 必要条件．
+Note: independence in the property above is **not** a necessary condition.
 
-??? example "反例"
-    考察随机变量 $X$ 和 $Y$，其中 $X$ 服从 $[-1, 1]$ 上的均匀分布，$Y = X^2$．
+??? example "Counterexample"
+    Consider random variables $X$ and $Y$, where $X$ is uniformly distributed on $[-1, 1]$ and $Y = X^2$.
 
-### 期望与概率的转化
+### Converting between expected value and probability
 
-对于随机事件 $A$，考虑其示性函数 $I_A$：
+For a random event $A$, consider its indicator function $I_A$:
 
 $$
 I_A(\omega) = \begin{cases}
@@ -84,60 +84,60 @@ I_A(\omega) = \begin{cases}
 \end{cases}
 $$
 
-根据定义可以求得其期望 $EI_A = P(A)$．这一转化在实际应用中非常常见．
+From the definition, its expected value is $EI_A = P(A)$. This conversion is very common in practice.
 
-??? example "例子"
-    假设对于一个长为 $n$ 的序列 $\{ a_i \}$，其中 $a_k$ 以 $p_k$ 的概率取 $k$，以 $1 - p_k$ 的概率取 $0$．考虑如何求 $S = \sum_{i=1}^{n} a_i$ 的期望．
+??? example "Example"
+    Suppose we have a sequence $\{ a_i \}$ of length $n$, where $a_k$ equals $k$ with probability $p_k$ and $0$ with probability $1 - p_k$. How do we find the expected value of $S = \sum_{i=1}^{n} a_i$?
     
-    如果使用定义直接求，需要求出 $S$ 在每个可能取值处的概率，这个计算过程比较繁琐，这里不展开叙述．
+    If we compute it directly from the definition, we need the probability of every possible value of $S$. This is fairly tedious, so we will not go into it here.
     
-    另一方面，用 $I_k$ 表示随机事件 $a_k = k$ 的示性函数，则有
+    On the other hand, let $I_k$ be the indicator function of the random event $a_k = k$. Then
     
     $$
     S = \sum_{k=1}^{n} k \cdot I_k
     $$
     
-    进而不难求出
+    and it is easy to get
     
     $$
     ES = E \left( \sum_{k=1}^{n} k \cdot I_k \right) = \sum_{k=1}^{n} k \cdot E[I_k] = \sum_{k=1}^{n} k \cdot p_k
     $$
 
-## 条件分布与条件期望
+## Conditional distribution and conditional expectation
 
-我们之前研究过条件概率，类似的也可以提出所谓条件期望的概念．
+We studied conditional probability earlier. In a similar way, we can introduce the concept of conditional expectation.
 
-### 定义
+### Definition
 
-对于两个随机变量 $X$,$Y$，在已知 $Y = y$ 的条件下 $X$ 的概率分布（密度函数）称之为 **条件概率分布（条件概率密度）**，分别记作
+For two random variables $X$, $Y$, the probability distribution (density function) of $X$ given $Y = y$ is called the **conditional probability distribution (conditional probability density)**, written respectively as
 
 $$
 P( X = x_i | Y = y ) \qquad f_{X|Y}(x|y)
 $$
 
-在此条件下，$X$ 的期望称为 **条件期望**，记作 $E[X|Y=y]$．
+Under this condition, the expected value of $X$ is called the **conditional expectation**, written $E[X|Y=y]$.
 
-### 条件期望的性质
+### Properties of conditional expectation
 
-条件期望的诸多性质可由条件概率推知，在此不做赘述．
+Many properties of conditional expectation can be derived from conditional probability, so we will not repeat them here.
 
-值得一提的是 $E[X | Y]$ 一般是随机变量 $Y$ 的函数，且这个函数通常不是线性的．但实际上有
+It is worth mentioning that $E[X | Y]$ is in general a function of the random variable $Y$, and this function is usually not linear. But in fact
 
 $$
 E[E[X|Y]] = EX
 $$
 
-上式称作 **全期望公式**．
+This is called the **law of total expectation**.
 
-### 应用
+### Application
 
 ???+ example "[HDU 5984 Pocky](https://acm.hdu.edu.cn/showproblem.php?pid=5984)"
-    有一根长为 $L$ 的 Pocky，每次随机折成两段．若右边一段的长度不大于 $d$ 则停止，否则对右边一段重复上述过程．求重复次数的期望．
+    There is a Pocky stick of length $L$. Each time, it is broken into two pieces at a random point. If the right piece has length at most $d$, stop; otherwise repeat the process on the right piece. Find the expected number of repetitions.
 
-??? note "题解"
-    记 $f(x)$ 表示长度为 $x$ 的期望次数．$x \leq d$ 的情形平凡．
+??? note "Solution"
+    Let $f(x)$ be the expected number of repetitions for length $x$. The case $x \leq d$ is trivial.
     
-    当 $x > d$ 时，不妨设折断的位置距右端的长度为 $k$，则显然 $k \sim U[0, x]$，此时期望的重复次数为
+    When $x > d$, let the break point be at distance $k$ from the right end. Clearly $k \sim U[0, x]$, and the expected number of repetitions is then
     
     $$
     g(k) = \begin{cases}
@@ -146,101 +146,101 @@ $$
     \end{cases}
     $$
     
-    由全期望公式可知
+    By the law of total expectation,
     
     $$
     f(x) = Eg(k) = 1 + \frac{1}{x} \cdot \int_{d}^{x} f(t) \text{d} t
     $$
     
-    解上述积分方程并代入初值条件得
+    Solving this integral equation and plugging in the initial condition gives
     
     $$
     f(x) = 1 + \ln \frac{x}{d}
     $$
 
-## 方差
+## Variance
 
-### 定义
+### Definition
 
-设随机变量 $X$ 的期望 $EX$ 存在且期望
+Suppose the expected value $EX$ of a random variable $X$ exists and the expected value
 
 $$
 E(X - EX)^2
 $$
 
-也存在，则称上式的值为随机变量 $X$ 的 **方差**，记作 $DX$ 或 $Var(x)$．方差的算术平方根称为 **标准差**，记作 $\sigma(X) = \sqrt{DX}$．
+also exists. Then its value is called the **variance** of the random variable $X$, written $DX$ or $Var(x)$. The arithmetic square root of the variance is called the **standard deviation**, written $\sigma(X) = \sqrt{DX}$.
 
-### 方差的性质
+### Properties of variance
 
-若随机变量 $X$ 的方差存在，则
+If the variance of the random variable $X$ exists, then
 
--   对任意常数 $a, b$ 都有 $D(aX + b) = a^2 \cdot DX$
+-   for any constants $a, b$, $D(aX + b) = a^2 \cdot DX$
 -   $DX = E(X^2) - (EX)^2$
 
-## 协方差与相关系数
+## Covariance and correlation coefficient
 
-一般来说，等式 $D(X + Y) = DX + DY$ 并不成立，我们自然会提出两个问题：
+In general, the equation $D(X + Y) = DX + DY$ does not hold. Two questions naturally come up:
 
--   $D(X + Y)$ 与 $DX + DY$ 之间相差的部分到底是什么．
--   $D(X + Y)$ 与 $DX + DY$ 在什么情况下相等．
+-   What exactly is the difference between $D(X + Y)$ and $DX + DY$?
+-   When are $D(X + Y)$ and $DX + DY$ equal?
 
-对于第一个问题，我们引入协方差作为解答．
+To answer the first question, we introduce covariance.
 
-### 协方差的定义
+### Definition of covariance
 
-对于随机变量 $X, Y$，称
+For random variables $X, Y$,
 
 $$
 E((X - EX)(Y - EY))
 $$
 
-为 $X$ 与 $Y$ 的 **协方差**，记作 $\operatorname{Cov}(X, Y)$．
+is called the **covariance** of $X$ and $Y$, written $\operatorname{Cov}(X, Y)$.
 
-### 协方差的性质
+### Properties of covariance
 
-对于随机变量 $X, Y, Z$，有
+For random variables $X, Y, Z$,
 
 -   $\operatorname{Cov}(X, Y) = \operatorname{Cov}(Y, X)$
--   对任意常数 $a, b$，有 $\operatorname{Cov}(aX + bY, Z) = a \cdot \operatorname{Cov}(X, Z) + b \cdot \operatorname{Cov}(Y, Z)$
+-   for any constants $a, b$, $\operatorname{Cov}(aX + bY, Z) = a \cdot \operatorname{Cov}(X, Z) + b \cdot \operatorname{Cov}(Y, Z)$
 
-同时协方差与方差也有如下联系：
+Covariance is also related to variance as follows:
 
 -   $DX = \operatorname{Cov}(X, X)$
 -   $D(X + Y) = DX + 2 \operatorname{Cov}(X, Y) + DY$
 
-??? note "关于协方差"
-    你可能会发现协方差的性质与向量内积的运算性质在形式上高度一致．
+??? note "About covariance"
+    You may notice that the properties of covariance look very much like the properties of the inner product of vectors.
     
-    在泛函分析的视角下，对于给定的概率空间，其上的全体随机变量构成一个线性空间，而协方差是这个空间上的一个内积，标准差则是由该内积导出的范数．
+    From the point of view of functional analysis, for a given probability space, all random variables on it form a linear space. Covariance is an inner product on this space, and the standard deviation is the norm induced by this inner product.
 
-对于刚才提出的第二个问题，不难看出 $D(X + Y) = DX + DY$ 当且仅当 $\operatorname{Cov}(X, Y) = 0$．一个直观的必要条件是 $X$ 与 $Y$ 独立，因为此时有
+For the second question above, it is easy to see that $D(X + Y) = DX + DY$ if and only if $\operatorname{Cov}(X, Y) = 0$. An intuitive sufficient condition is that $X$ and $Y$ are independent, because then
 
 $$
 \operatorname{Cov}(X, Y) = E((X - EX)(Y - EY)) = E(X - EX) E(Y - EY) = 0
 $$
 
-但这个条件并不是充分的．为了描述满足 $\operatorname{Cov}(X, Y) = 0$ 的随机变量 $X$,$Y$ 之间的关系，我们引入相关系数
+But this condition is not necessary. To describe the relationship between random variables $X$, $Y$ that satisfy $\operatorname{Cov}(X, Y) = 0$, we introduce the correlation coefficient.
 
-### 相关系数
+### Correlation coefficient
 
-对于随机变量 $X, Y$，称
+For random variables $X, Y$,
 
 $$
 \frac{ \operatorname{Cov}(X, Y)}{ \sigma(X)\sigma(Y) }
 $$
 
-为 $X$ 与 $Y$ 的 **Pearson 相关系数**，记作 $\rho_{X,Y}$．
+is called the **Pearson correlation coefficient** of $X$ and $Y$, written $\rho_{X,Y}$.
 
-Pearson 相关系数描述了两个随机变量之间线性关联的紧密程度．$|\rho_{X,Y}|$ 越大，则 $X$ 与 $Y$ 之间的线性关联程度越强．不难证明 $|\rho_{X,Y}| \leq 1$，且 $|\rho_{X,Y}| = 1$ 仅可能出现在以下两种情况
+The Pearson correlation coefficient describes how strongly two random variables are linearly related. The larger $|\rho_{X,Y}|$ is, the stronger the linear relationship between $X$ and $Y$. It is not hard to prove that $|\rho_{X,Y}| \leq 1$, and $|\rho_{X,Y}| = 1$ can only happen in the following two cases
 
--   当存在实数 $a$ 和正实数 $b$ 使得 $P(X = a + bY) = 1$ 时，有 $\rho_{X,Y} = 1$；
--   当存在实数 $a$ 和负实数 $b$ 使得 $P(X = a + bY) = 1$ 时，有 $\rho_{X,Y} = -1$．
+-   when there are a real number $a$ and a positive real number $b$ such that $P(X = a + bY) = 1$, we have $\rho_{X,Y} = 1$;
+-   when there are a real number $a$ and a negative real number $b$ such that $P(X = a + bY) = 1$, we have $\rho_{X,Y} = -1$.
 
-当 $\rho_{X,Y} = 0$ 时我们称随机变量 $X$ 与 $Y$  **不相关**，此时 $X$ 和 $Y$ 之间不存在线性关系．
+When $\rho_{X,Y} = 0$, we say the random variables $X$ and $Y$ are **uncorrelated**; in this case there is no linear relationship between $X$ and $Y$.
 
-??? note "「不相关」与「独立」"
-    两随机变量不相关只是表明他们之间没有线性关联，并不代表没有其他形式的联系．
+??? note "Uncorrelated vs. independent"
+    Two random variables being uncorrelated only means there is no linear relationship between them. It does not mean there is no other kind of relationship.
     
-    因此两随机变量 $X, Y$ 不相关是他们相互独立的 **必要而不充分** 条件．
+    So two random variables $X, Y$ being uncorrelated is a **necessary but not sufficient** condition for them to be independent.
 
-对于这一小节开头提到的第二个问题，我们给出结论：$\operatorname{Cov}(X, Y) = 0$ 的充要条件就是 $X$,$Y$ 中的某一个以概率 $1$ 取常值，或 $X, Y$ 不相关．
+For the second question raised at the start of this subsection, here is the conclusion: $\operatorname{Cov}(X, Y) = 0$ if and only if one of $X$, $Y$ is constant with probability $1$, or $X, Y$ are uncorrelated.

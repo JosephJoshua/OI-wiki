@@ -1,50 +1,50 @@
-## 多项式与生成函数
+## Polynomials and generating functions
 
-操纵 有限项/无限项 的多项式是 OI 数学中，尤其是生成函数中的重要内容．
+Working with polynomials, with finitely or infinitely many terms, is an important part of OI mathematics, especially of generating functions.
 
-以 [快速傅里叶变换](./fft.md) 为基石的多项式算法赋予了算法竞赛选手直接操纵生成函数的能力．
+Polynomial algorithms built on the [fast Fourier transform](./fft.md) give competitive programmers the power to work with generating functions directly.
 
-## 基本概念
+## Basic concepts
 
-对于求和式 $\sum a_nx^n$，如果是有限项相加，称为多项式，记作 $f(x)=\sum_{n=0}^m a_nx^n$．
+For a sum $\sum a_nx^n$ with finitely many terms, we call it a polynomial and write $f(x)=\sum_{n=0}^m a_nx^n$.
 
-可列项相加的求和式称为级数．在和式 $\sum_{n=0}^\infty a_nx^n$ 中，每项均为非负整数次幂函数乘常数系数，这种形式的级数称为幂级数．
+A sum of countably many terms is called a series. In the sum $\sum_{n=0}^\infty a_nx^n$, every term is a constant coefficient times a power of $x$ with a non-negative integer exponent. A series of this form is called a power series.
 
-研究多项式算术时先考虑较简单的多项式，幂级数概念仅用于方便理解．到了数学分析中会进一步研究幂级数的敛散性．
+When studying polynomial arithmetic, we first look at the simpler case of polynomials; the idea of a power series is only used to make things easier to understand. Convergence and divergence of power series are studied further in mathematical analysis.
 
-环、域及其衍生结构的一般定义详见 [抽象代数基本概念](../algebra/basic.md)．
+For the general definitions of rings, fields and related structures, see [Basic concepts of abstract algebra](../algebra/basic.md).
 
-对于一般环 $R$，定义 $R$ 上的 **多项式环**（polynomial ring）$R[x]$．
+For a general ring $R$, we define the **polynomial ring** $R[x]$ over $R$.
 
-每个元素 $f$ 称为 $R$ 上的 **多项式**（polynomial），可表示为
+Each element $f$ is called a **polynomial** over $R$, and can be written as
 
 $$
 f=\left<f_0,f_1,f_2,\cdots,f_n\right>\quad(f_0,f_1,f_2,\cdots,f_n\in R)
 $$
 
-换言之，我们将多项式直接定义为系数序列．也可以表示为
+In other words, we define a polynomial directly as its sequence of coefficients. It can also be written as
 
 $$
 f(x)=f_0+f_1x+f_2x^2+\cdots+f_nx^n
 $$
 
-此处我们认为 $x$ 只是一个 **形式符号**，一个对系数位置的标识符．
+Here we treat $x$ only as a **formal symbol**, a marker for the position of each coefficient.
 
-如果我们还允许无穷项的存在，即
+If we also allow infinitely many terms, that is,
 
 $$
 f(x)=f_0+f_1x+f_2x^2+\cdots
 $$
 
-则可得到 **形式幂级数环**（formal power series ring）$R[[x]]$，其中的每个元素 $f$ 称为 **形式幂级数**（formal power series），以下简称幂级数．
+then we get the **formal power series ring** $R[[x]]$. Each element $f$ in it is called a **formal power series**, or just a power series below.
 
-### 多项式的次数
+### Degree of a polynomial
 
-对于一个多项式 $f(x)$，称其最高次项的次数为该多项式的 **次数（degree）**，记作 $\operatorname{deg}{f}$．
+For a polynomial $f(x)$, the exponent of its highest-order term is called the **degree** of the polynomial, written $\operatorname{deg}{f}$.
 
-### 多项式的乘法
+### Polynomial multiplication
 
-最核心的操作是两个多项式的乘法，即给定多项式 $f(x)$ 和 $g(x)$：
+The most central operation is multiplying two polynomials. Given polynomials $f(x)$ and $g(x)$:
 
 $$
 \begin{alignedat}{3}
@@ -53,93 +53,93 @@ g(x)&=b_0+b_1x+\dots+b_mx^m\quad \quad &(2)
 \end{alignedat}
 $$
 
-要计算多项式 $Q(x)=f(x)\cdot g(x)$：
+we want to compute the polynomial $Q(x)=f(x)\cdot g(x)$:
 
 $$
 \boxed {Q(x) = \sum \limits_ {i = 0} ^ n \sum \limits_ {j = 0 } ^ m a_i b_j x ^ {i + j}} = c_0 + c_1 x + \dots + c_ {n + m} x ^ {n + m}
 $$
 
-多项式或幂级数的乘法，满足结合律，关于加法满足分配律．若 $R$ 为交换环或幺环，乘法相应的有交换律和单位元．
+Multiplication of polynomials or power series is associative and distributes over addition. If $R$ is a commutative ring or a ring with identity, multiplication is correspondingly commutative or has an identity element.
 
-若 $R$ 上存在 $2^n$ 次单位根，[快速傅里叶变换](./fft.md) 允许我们在 $O(n2^n)$ 而不是 $O(2^{2n})$ 的时间内计算两个 $2^n$ 次多项式的乘积．
+If $R$ has a $2^n$-th root of unity, the [fast Fourier transform](./fft.md) lets us compute the product of two polynomials of degree $2^n$ in $O(n2^n)$ time instead of $O(2^{2n})$.
 
-### 复合
+### Composition
 
-定义 $R[[x]]$ 中元素 $f$ 的乘方为
+Define powers of an element $f$ of $R[[x]]$ as
 
 $$
 f^1=f,f^k=f^{k-1}\times f
 $$
 
-在此基础上，定义 $R[[x]]$ 中元素 $f,g$ 的复合为
+Based on this, define the composition of elements $f,g$ of $R[[x]]$ as
 
 $$
 (f\circ g)(x)=f(g(x))=f_0+\sum_{k=1}^{+\infty}f_kg^k(x)
 $$
 
-我们规定 $f\circ g$ 存在当且仅当 $f$ 为有限项或 $g_0=0$，这样就不涉及 $R$ 上的极限了．
+We say $f\circ g$ exists if and only if $f$ has finitely many terms or $g_0=0$. This way, no limits over $R$ are involved.
 
-$\circ$ 满足结合律（$(f\circ g)\circ h$ 和 $f\circ (g\circ h)$ 均存在时），不满足交换律．$R$ 为幺环时 $\circ$ 存在单位元 $1\times x$．
+$\circ$ is associative (when both $(f\circ g)\circ h$ and $f\circ (g\circ h)$ exist), but not commutative. When $R$ is a ring with identity, $\circ$ has the identity element $1\times x$.
 
-多项式复合（与复合逆）有 $\Theta(n\log^2 n)$ 的做法，其由 Yasunori Kinoshita 与李白天于 2024 年提出，详见 [形式幂级数复合 | 复合逆](./comp-rev.md)．
+Polynomial composition (and compositional inverse) can be done in $\Theta(n\log^2 n)$. This method was proposed by Yasunori Kinoshita and Baitian Li in 2024; see [Formal power series composition | compositional inverse](./comp-rev.md).
 
-### 导数
+### Derivative
 
-尽管一般环甚至未必存在极限，  
-我们依然可以定义形式幂级数的 **形式导数**（formal derivative）为
+Even though limits may not even exist in a general ring,  
+we can still define the **formal derivative** of a formal power series as
 
 $$
 \left(\sum_{k=0}^{+\infty}f_kx^k\right)'=\sum_{k=1}^{+\infty}kf_kx^{k-1}
 $$
 
-其中
+where
 
 $$
-kf_k=\underbrace{f_k+f_k+\cdots+f_k}_{k \text{个} f_k}
+kf_k=\underbrace{f_k+f_k+\cdots+f_k}_{k \text{ copies of } f_k}
 $$
 
-基本求导法则——加法法则、乘法法则、链式法则（复合允许的情况下）依然是正确的．
+The basic rules of differentiation, namely the sum rule, the product rule and the chain rule (when composition is allowed), still hold.
 
-如果 $R$ 上允许作除法，同样可以类似定义形式幂级数的 **形式不定积分**（formal indefinite integral）．
+If division is allowed in $R$, we can define the **formal indefinite integral** of a formal power series in a similar way.
 
-### 乘法逆元
+### Multiplicative inverse
 
-根据例子
+From the example
 
 $$
 \dfrac{1}{1-x}=1+x+x^2+\cdots
 $$
 
-可以知道，多项式的倒数是能展开为无穷级数的．存在倒数，当且仅当常数项不为 $0$，并且倒数也满足常数项不为 $0$．
+we see that the reciprocal of a polynomial can expand into an infinite series. A reciprocal exists if and only if the constant term is not $0$, and the reciprocal also has a non-zero constant term.
 
-因此定义：对于形式幂级数 $f$，若 $f_0\not=0$，其 **乘法逆元**（multiplicative inversion）$f^{-1}$ 为另一形式幂级数，满足
+So we define: for a formal power series $f$ with $f_0\not=0$, its **multiplicative inverse** $f^{-1}$ is another formal power series such that
 
 $$
 f\times f^{-1}=f^{-1}\times f=1
 $$
 
-用形式幂级数乘法定义展开该式，可得 $f^{-1}$ 系数的递推式
+Expanding this with the definition of formal power series multiplication gives a recurrence for the coefficients of $f^{-1}$:
 
 $$
 f^{-1}_0=\dfrac{1}{f_0},f^{-1}_n=\dfrac{-1}{f_0}\sum_{k=0}^{n-1}f^{-1}_kf_{n-k}
 $$
 
-直接用递推式计算前 $n$ 项是 $O(n^2)$ 的，[运用 FFT](./elementary-func.md#多项式求逆) 可得到 $O(n\log n)$ 的算法．
+Computing the first $n$ terms directly with this recurrence takes $O(n^2)$. [Using FFT](./elementary-func.md#多项式求逆) gives an $O(n\log n)$ algorithm.
 
-???+ note "注"
-    容易发现，$f(x)$ 的倒数就是 $\frac{1}{f(x)}$ 的无穷项麦克劳林展开（在 $x=0$ 处的无穷项泰勒展开）．
+???+ note "Note"
+    It is easy to see that the reciprocal of $f(x)$ is just the infinite Maclaurin expansion of $\frac{1}{f(x)}$ (the infinite Taylor expansion at $x=0$).
 
-### 常见的幂级数展开式
+### Common power series expansions
 
-在数学分析中，在某点处或某区间上若干阶可导的一元函数可以在相应范围进行多项式展开，一般统称为泰勒展开，如果在 $0$ 处展开，也称为麦克劳林展开．
+In mathematical analysis, a function of one variable that is differentiable a certain number of times at a point or on an interval can be expanded as a polynomial in that range. This is usually called a Taylor expansion. If the expansion is at $0$, it is also called a Maclaurin expansion.
 
-如果无穷阶可导，则可以进行幂级数展开．最常见的还是在 $0$ 处展开．
+If the function is infinitely differentiable, it can be expanded as a power series. The most common case is still the expansion at $0$.
 
-在复变函数中，一些函数在奇点上虽然不能进行泰勒展开，但是可以进行洛朗展开．
+In complex analysis, some functions cannot be Taylor-expanded at singular points, but they can still be Laurent-expanded.
 
-下列等式只在幂级数收敛时成立，在不收敛时不成立．这里只写出展开式，不讨论收敛域．
+The equations below only hold where the power series converge, and do not hold where they diverge. We only write the expansions here and do not discuss the regions of convergence.
 
-基本的展开式有以下两个，指数函数和幂函数：
+There are two basic expansions, the exponential function and the power function:
 
 $$
 \mathrm{e}^x=1+x+\frac{1}{2!}x^2+\ldots+\frac{1}{n!}x^n+\ldots
@@ -149,7 +149,7 @@ $$
 (1+x)^a=1+ax+\frac{a(a-1)}{2!}x^2+\ldots+\frac{a(a-1)\ldots(a-n+1)}{n!}x^n+\ldots
 $$
 
-更多的展开式经常由上述两个变形得到．比如正余弦函数由指数函数代入复数得到：
+More expansions are often derived from these two. For example, sine and cosine come from substituting complex numbers into the exponential function:
 
 $$
 \cos x=1-\frac{1}{2!}x^2+\frac{1}{4!}x^4+\ldots+\frac{(-1)^n}{(2n)!}x^{2n}+\ldots
@@ -159,7 +159,7 @@ $$
 \sin x=x-\frac{1}{3!}x^3+\frac{1}{5!}x^5+\ldots+\frac{(-1)^n}{(2n+1)!}x^{2n+1}+\ldots
 $$
 
-对数和反正切、反正弦函数由积分得到：
+The logarithm, arctangent and arcsine come from integration:
 
 $$
 \frac{1}{1+x}=1-x+x^2+\ldots+{(-1)}^n x^n+\ldots
@@ -189,33 +189,33 @@ $$
 \arcsin x=x+\frac{1}{6}x^3+\frac{3}{40}x^5+\ldots+\frac{(2n)!}{{(n!)}^2(2n+1)4^n} x^{2n+1}+\ldots
 $$
 
-### 复合逆
+### Compositional inverse
 
-**复合逆**（compound inversion）即反函数概念在形式幂级数环上的推广．
+The **compositional inverse** generalizes the idea of an inverse function to the ring of formal power series.
 
-对于满足 $f_0=0$ 且 $f_1\not=0$ 的形式幂级数 $f$，其复合逆为满足 $g(f(x))=f(g(x))=x$ 的形式幂级数 $g$．由拉格朗日反演可得对于任意整数 $n,k$ 有
+For a formal power series $f$ with $f_0=0$ and $f_1\not=0$, its compositional inverse is the formal power series $g$ such that $g(f(x))=f(g(x))=x$. Lagrange inversion gives, for any integers $n,k$,
 
 $$
 n[x^n]f^k=k[x^{n-k}]\left(\dfrac{x}{g}\right)^n
 $$
 
-其中 $[x^k]f(x)$ 表示 $f(x)$ 在 $x^k$ 处的系数．
+where $[x^k]f(x)$ denotes the coefficient of $x^k$ in $f(x)$.
 
-### 多项式整除
+### Polynomial divisibility
 
-对于多项式 $f(x)$ 和多项式 $g(x)$，如果存在一个多项式 $h(x)$，使得：
+For polynomials $f(x)$ and $g(x)$, if there is a polynomial $h(x)$ such that:
 
 $$
 f(x)=g(x)h(x)
 $$
 
-则多项式 $g(x)$ 整除多项式 $f(x)$．
+then the polynomial $g(x)$ divides the polynomial $f(x)$.
 
-显而易见，多项式 $g(x)$ 整除多项式 $f(x)$，当且仅当 $g(x)$ 的根全部为 $f(x)$ 的根，并且在 $g(x)$ 中的重数不超过在 $f(x)$ 中的相应重数．
+Clearly, $g(x)$ divides $f(x)$ if and only if every root of $g(x)$ is a root of $f(x)$, and its multiplicity in $g(x)$ is at most its multiplicity in $f(x)$.
 
-### 多项式的余数和商
+### Polynomial quotient and remainder
 
-对于多项式 $f(x), g(x)$，存在 **唯一** 的 $Q(x), R(x)$ 满足：
+For polynomials $f(x), g(x)$, there are **unique** $Q(x), R(x)$ such that:
 
 $$
 \begin{aligned}
@@ -224,143 +224,143 @@ $$
 \end{aligned}
 $$
 
-当 $\operatorname{deg}{f} \ge \operatorname{deg}{g}$ 时有 $\operatorname{deg}{Q} = \operatorname{deg}{f} - \operatorname{deg}{g}$，否则有 $Q(x) = 0$．我们称 $Q(x)$ 为 $g(x)$ 除 $f(x)$ 的 **商（quotient）**，$R(x)$ 为 $g(x)$ 除 $f(x)$ 的 **余数（remainder）**．
+When $\operatorname{deg}{f} \ge \operatorname{deg}{g}$, we have $\operatorname{deg}{Q} = \operatorname{deg}{f} - \operatorname{deg}{g}$; otherwise $Q(x) = 0$. We call $Q(x)$ the **quotient** of $f(x)$ divided by $g(x)$, and $R(x)$ the **remainder** of $f(x)$ divided by $g(x)$.
 
-## 模多项式
+## Polynomials modulo a polynomial
 
-模多项式是多项式环的子环，由多项式环除以同余的等价关系得到．
+Polynomials modulo a polynomial form a quotient of the polynomial ring, obtained by dividing the polynomial ring by the congruence equivalence relation.
 
-在上文提到的带余除法中，多项式 $f(x)$ 与它的余式 $R(x)$ 在模多项式 $g(x)$ 的意义下同余．
+In the division with remainder above, the polynomial $f(x)$ and its remainder $R(x)$ are congruent modulo the polynomial $g(x)$.
 
 $$
 f(x) \equiv R(x) \pmod{g(x)}
 $$
 
-这个同余式也意味着，对于多项式 $g(x)$ 的任意一个根 $x_0$，代入 $f(x)$ 和 $R(x)$ 中，得到的点值相同．即：
+This congruence also means that for any root $x_0$ of $g(x)$, substituting it into $f(x)$ and $R(x)$ gives the same value. That is:
 
 $$
 f(x_0)=R(x_0)
 $$
 
-并且，如果根 $x_0$ 在多项式 $g(x)$ 中的重数是 $k$，即 $(x-x_0)^k$ 整除 $g(x)$，则对任意大于等于 $0$ 小于 $k$ 的整数 $t$，有：
+Moreover, if the root $x_0$ has multiplicity $k$ in $g(x)$, that is, $(x-x_0)^k$ divides $g(x)$, then for every integer $t$ with $0 \le t < k$:
 
 $$
 f^{t}(x_0)=R^{t}(x_0)
 $$
 
-这里的记号表示 $t$ 阶导数．
+Here the notation means the $t$-th derivative.
 
-模多项式同余可以应用于幂级数．一个无限项的幂级数，可以在模具体的多项式情形下，和一个有限项的多项式同余．例如：
+Congruence modulo a polynomial also applies to power series. A power series with infinitely many terms can be congruent, modulo a specific polynomial, to a polynomial with finitely many terms. For example:
 
 $$
 1+x+x^2+x^3+\ldots \equiv 1+x+\ldots+x^{n-1} \pmod{x^n}
 $$
 
-显然剩余的所有项都被 $x^n$ 整除，因此模 $x^n$ 的操作等价于「截断」，将无穷项的幂级数截断到前 $n$ 项，直接将更高位的信息丢失．
+Clearly all the remaining terms are divisible by $x^n$, so taking a power series modulo $x^n$ is the same as "truncating" it: we cut the infinite series down to its first $n$ terms and simply throw away the higher-order information.
 
-在一些特定的情况下，也可以模其他的多项式，下文将解释相应情况．
+In some specific cases, we can also take the modulus by other polynomials; the cases are explained below.
 
-### 多项式的多点求值和插值
+### Multipoint evaluation and interpolation of polynomials
 
-**多项式的多点求值（multi-point evaluation）** 即给出一个多项式 $f(x)$ 和 $n$ 个点 $x_{1}, x_{2}, \dots, x_{n}$，求
+**Multi-point evaluation** of a polynomial means: given a polynomial $f(x)$ and $n$ points $x_{1}, x_{2}, \dots, x_{n}$, compute
 
 $$
 f(x_{1}), f(x_{2}), \dots, f(x_{n})
 $$
 
-**多项式的插值（interpolation）** 即给出 $n+1$ 个点
+**Interpolation** of a polynomial means: given $n+1$ points
 
 $$
 (x_{0}, y_{0}), (x_{1}, y_{1}), \dots, (x_{n}, y_{n})
 $$
 
-求一个 $n$ 次多项式 $f(x)$ 使得这 $n+1$ 个点都在 $f(x)$ 上．
+find a polynomial $f(x)$ of degree $n$ that passes through all these $n+1$ points.
 
-这两种操作的实质就是将多项式在 **系数表示** 和 **点值表示** 间转化．多点求值将多项式的系数表示转为点值表示，插值将多项式的点值表示转为系数表示．
+In essence, these two operations convert a polynomial between its **coefficient representation** and its **point-value representation**. Multipoint evaluation converts the coefficient representation into the point-value representation, and interpolation converts the point-value representation into the coefficient representation.
 
-???+ note "注"
-    按照幂级数的观点看，多点求值相当于将无穷项的信息「压缩」到有限个点值表示，因此丢失了一些信息，而插值相当于还原到相应次数的系数表示．
+???+ note "Note"
+    From the power series point of view, multipoint evaluation "compresses" the information of infinitely many terms into finitely many point values, so some information is lost. Interpolation then restores a coefficient representation of the matching degree.
     
-    编程常见的求值与插值，例如离散傅里叶变换（及其逆变换）等等，选择的 $n+1$ 个点重数均为 $1$，即两两不同，免去求导的麻烦．
+    In the evaluation and interpolation commonly used in programming, such as the discrete Fourier transform (and its inverse), the $n+1$ chosen points all have multiplicity $1$, i.e. they are pairwise distinct. This avoids the trouble of taking derivatives.
     
-    这种「压缩」只保证了在 $n+1$ 个点上的一致．根据上文对模多项式同余的解释，如果幂级数 $f(x)$ 经过在 $x_0$ 到 $x_n$ 点处求值再插值，得到多项式 $R(x)$，则作多项式：
+    This "compression" only guarantees agreement at the $n+1$ points. By the explanation of congruence modulo a polynomial above, if a power series $f(x)$ is evaluated at the points $x_0$ to $x_n$ and then interpolated to give a polynomial $R(x)$, then take the polynomial:
     
     $$
     g(x)=(x-x_0)\ldots(x-x_n)
     $$
     
-    就有：
+    and we have:
     
     $$
     f(x) \equiv R(x) \pmod{g(x)}
     $$
     
-    由于 $R(x)$ 的次数严格小于 $g(x)$，所以利用求值与插值求出的 $R(x)$ 就是余式．因此在这种情况下，如果幂级数在根处可以求值，就可以模多项式．一个反例例如：
+    Since the degree of $R(x)$ is strictly less than that of $g(x)$, the $R(x)$ obtained by evaluation and interpolation is exactly the remainder. So in this situation, if the power series can be evaluated at the roots, it can be taken modulo the polynomial. A counterexample is:
     
     $$
     \frac{1}{1-x}=1+x+x^2+x^3+\ldots
     $$
     
-    在 $x=1$ 处不可求值，因此级数 $1+x+x^2+x^3+\ldots$ 不能模多项式 $x-1$．
+    It cannot be evaluated at $x=1$, so the series $1+x+x^2+x^3+\ldots$ cannot be taken modulo the polynomial $x-1$.
     
-    由于幂级数的任意阶导数，在 $0$ 处的值总是存在，因此模 $x^n$ 始终可以计算，与上文「截断」的意义一致．离散傅里叶变换（及其逆变换）相当于模多项式 $x^n-1$．
+    Since every derivative of a power series always has a value at $0$, taking the modulus by $x^n$ can always be computed, which matches the meaning of "truncation" above. The discrete Fourier transform (and its inverse) is equivalent to taking the modulus by the polynomial $x^n-1$.
 
-### 因式分解和欧几里得
+### Factorization and the Euclidean algorithm
 
-初等数论中的许多结论可以推广到多项式上．
+Many results from elementary number theory can be generalized to polynomials.
 
-复数域上，由代数基本定理可得，对于 $n$ 次多项式 $f$，方程
+Over the complex numbers, the fundamental theorem of algebra says that for a polynomial $f$ of degree $n$, the equation
 
 $$
 f(x)=0
 $$
 
-有且仅有 $n$ 个解（重根按重数计）．
+has exactly $n$ solutions (counting repeated roots with multiplicity).
 
-于是 $f(x)$ 在复数域内可唯一因式分解为如下形式
+So $f(x)$ has a unique factorization over the complex numbers of the form
 
 $$
 a(x-x_1)^{c_1}(x-x_2)^{c_2}\cdots(x-x_m)^{c_m}
 $$
 
 $$
-c_1+c_2+\cdots+c_m=n,x_1,x_2,\cdots,x_m \text{ 互不相同}
+c_1+c_2+\cdots+c_m=n,x_1,x_2,\cdots,x_m \text{ pairwise distinct}
 $$
 
-此时类比正整数的最大公因数，可得多项式的 [**最大公因式**](../number-theory/gcd.md)  
-（greatest common divisor, gcd）．其可用欧几里得算法求解
+By analogy with the greatest common divisor of positive integers, we get the [**greatest common divisor**](../number-theory/gcd.md) of polynomials  
+(gcd). It can be computed with the Euclidean algorithm:
 
 $$
 \gcd(f,0)=f,\gcd(f,g)=\gcd(g,f\bmod g)
 $$
 
-该性质可以推广到较为一般的情况：
+This property generalizes to a more general setting:
 
-> 对于任意域 $P$ 上的多项式环 $P[x]$，  
-> 多项式均可唯一因式分解，且可用欧几里得算法计算最大公因式．
-> 需要注意的是，对于一般环上的多项式，该结论未必成立．
+> For the polynomial ring $P[x]$ over any field $P$,  
+> every polynomial has a unique factorization, and the greatest common divisor can be computed with the Euclidean algorithm.
+> Note that for polynomials over a general ring, this result may not hold.
 
-欧几里得算法成立时，可用扩展欧几里得给出不定方程
+When the Euclidean algorithm works, the extended Euclidean algorithm gives a particular solution $(P(x),Q(x))$ of the indeterminate equation
 
 $$
 f(x)P(x)+g(x)Q(x)=\gcd(f(x),g(x))
 $$
 
-的一组特解 $(P(x),Q(x))$，并用 [裴蜀定理](../number-theory/bezouts.md) 判断不定方程
+and [Bézout's theorem](../number-theory/bezouts.md) decides whether the indeterminate equation
 
 $$
 f(x)P(x)+g(x)Q(x)=h(x)
 $$
 
-的可解性．
+has a solution.
 
-[HALF-GCD](https://loj.ac/p/172) 允许我们在 $O(n\log^2 n)$ 时间内计算多项式欧几里得．
+[HALF-GCD](https://loj.ac/p/172) lets us run the polynomial Euclidean algorithm in $O(n\log^2 n)$ time.
 
-### 模多项式的乘法逆元
+### Multiplicative inverse modulo a polynomial
 
-在模多项式 $h(x)$ 意义下，幂级数 $f(x)$ 有时存在逆元．逆元就是幂级数 $f(x)$ 的倒数模多项式 $h(x)$ 得到的余式．
+Modulo a polynomial $h(x)$, a power series $f(x)$ sometimes has an inverse. The inverse is the remainder of the reciprocal of $f(x)$ modulo $h(x)$.
 
-这个定义也等价于，对于多项式 $f(x)$，若存在 $g(x)$ 满足：
+Equivalently, for a polynomial $f(x)$, if there is a $g(x)$ such that:
 
 $$
 \begin{aligned}
@@ -368,41 +368,41 @@ $$
 \end{aligned}
 $$
 
-则称 $g(x)$ 为 $f(x)$ 在模 $h(x)$ 意义下的 **逆元（inverse element）**．当多项式欧几里得允许时，逆元存在当且仅当 $\gcd(f,h)=1$．
+then $g(x)$ is called the **inverse element** of $f(x)$ modulo $h(x)$. When the polynomial Euclidean algorithm works, the inverse exists if and only if $\gcd(f,h)=1$.
 
-模多项式 $h(x)$ 意义下逆元总是唯一的．如果多项式 $f(x)$ 的次数也小于 $h(x)$，则得到的 $g(x)$ 与 $f(x)$ 互为逆元．
+The inverse modulo a polynomial $h(x)$ is always unique. If the degree of $f(x)$ is also less than that of $h(x)$, then $g(x)$ and $f(x)$ are inverses of each other.
 
-考虑「截断」的概念，一般把模 $x^n$ 意义下的逆元记作 $f^{-1}(x)$，也是后文默认使用的逆元概念．如果不加说明，逆元的模就是指 $x^n$．
+Following the idea of "truncation", the inverse modulo $x^n$ is usually written $f^{-1}(x)$, and this is the notion of inverse used by default in later sections. Unless stated otherwise, the modulus for an inverse means $x^n$.
 
-???+ note "注"
-    一个问题是，可不可以用各种插值变换，直接求解「逆元」，比如计算：
+???+ note "Note"
+    One question is whether we can compute the "inverse" directly with some interpolation transform, for example by computing:
     
     $$
     IDFT\left(\frac{DFT(1)}{DFT(f(x))}\right)
     $$
     
-    答案是否定的，不可以这样做．根据上文的解释，这里利用离散傅里叶变换（及其逆变换）直接求出的逆元是模多项式 $x^n-1$ 的逆元，不是通常的模多项式 $x^n$ 的逆元．并且，由于原多项式在各点值处可能为 $0$，这个求解未必可以进行．
+    The answer is no. By the explanation above, the inverse computed directly with the discrete Fourier transform (and its inverse) is the inverse modulo the polynomial $x^n-1$, not the usual inverse modulo $x^n$. Also, the original polynomial may be $0$ at some of the points, so this computation may not even be possible.
 
-## 生成函数
+## Generating functions
 
-生成函数（generating function），又称母函数，是一种形式幂级数，其每一项的系数可以提供关于这个序列的信息．
+A generating function is a formal power series whose coefficients carry information about a sequence.
 
-生成函数有许多不同的种类，但大多可以表示为单一的形式：
+There are many kinds of generating functions, but most of them can be written in a single form:
 
 $$
 F(x)=\sum_n a_nk_n(x)
 $$
 
-其中 $k_n(x)$ 被称为核函数．不同的核函数会导出不同的生成函数，拥有不同的性质．举个例子：
+where $k_n(x)$ is called the kernel function. Different kernel functions lead to different generating functions with different properties. For example:
 
-1.  普通生成函数：$k_n(x)=x^n$．
-2.  指数生成函数：$k_n(x)=\dfrac{x^n}{n!}$．
-3.  [狄利克雷生成函数](../number-theory/dirichlet.md#dirichlet-生成函数)：$k_n(x)=\dfrac{1}{n^x}$．
+1.  Ordinary generating function: $k_n(x)=x^n$.
+2.  Exponential generating function: $k_n(x)=\dfrac{x^n}{n!}$.
+3.  [Dirichlet generating function](../number-theory/dirichlet.md#dirichlet-生成函数): $k_n(x)=\dfrac{1}{n^x}$.
 
-## 参考资料与拓展阅读
+## References and further reading
 
 -   [**Picks's Blog**](https://picks.logdown.com)
 -   [**Miskcoo's Space**](https://blog.miskcoo.com)
 -   [**Polynomial ring - Wikipedia**](https://en.wikipedia.org/wiki/Polynomial_ring)
 -   [**Formal power series - Wikipedia**](https://en.wikipedia.org/wiki/Formal_power_series#The_ring_of_formal_power_series)
--   《信息学竞赛中的生成函数计算理论框架》
+-   "A Theoretical Framework for Computing Generating Functions in Informatics Competitions"

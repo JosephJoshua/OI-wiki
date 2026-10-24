@@ -1,28 +1,28 @@
 author: ChungZH, Yukimaikoriya, tigerruanyifan, isdanni, Saisyc, 383494, Tiphereth-A, XuYueming520
 
-## 简介
+## Introduction
 
-**数论变换**（number-theoretic transform, NTT）是离散傅里叶变换（DFT）在数论基础上的实现；**快速数论变换**（fast number-theoretic transform, FNTT）是 [快速傅里叶变换](./fft.md)（FFT）在数论基础上的实现．
+The **number-theoretic transform** (NTT) is the discrete Fourier transform (DFT) carried out over number-theoretic structures; the **fast number-theoretic transform** (FNTT) is the [fast Fourier transform](./fft.md) (FFT) carried out over number-theoretic structures.
 
-**数论变换** 是一种计算卷积（convolution）的快速算法．最常用算法就包括了前文提到的快速傅里叶变换．然而快速傅立叶变换具有一些实现上的缺点，举例来说，资料向量必须乘上复数系数的矩阵加以处理，而且每个复数系数的实部和虚部是一个正弦及余弦函数，因此大部分的系数都是浮点数，也就是说，必须做复数而且是浮点数的运算，因此计算量会比较大，而且浮点数运算产生的误差会比较大．
+The **number-theoretic transform** is a fast algorithm for computing convolutions. The most common such algorithm is the fast Fourier transform mentioned earlier. However, the fast Fourier transform has some practical drawbacks. For example, the data vector has to be multiplied by a matrix of complex coefficients, and the real and imaginary parts of each complex coefficient are a sine and a cosine, so most coefficients are floating-point numbers. This means we have to do complex floating-point arithmetic, which is more expensive and produces larger errors.
 
-NTT 解决的是多项式乘法带模数的情况，可以说有些受模数的限制，数也比较大．目前最常见的模数是 998244353．
+NTT handles polynomial multiplication with a modulus. You could say it is somewhat limited by the modulus, and the numbers are fairly large. The most common modulus today is 998244353.
 
-## 前置知识
+## Prerequisites
 
-学习数论变换需要前置知识：离散傅里叶变换、生成子群、[原根](../number-theory/primitive-root.md)、离散对数．相关知识可以在对应页面中学习，此处不再赘述．
+To learn the number-theoretic transform, you need: the discrete Fourier transform, generated subgroups, [primitive roots](../number-theory/primitive-root.md), and discrete logarithms. You can learn these on their own pages; we will not repeat them here.
 
-## 定义
+## Definition
 
-### 数论变换
+### Number-theoretic transform
 
-在数学中，NTT 是关于任意 [环](../algebra/basic.md#环) 上的离散傅立叶变换（DFT）．在有限域的情况下，通常称为数论变换（NTT）．
+In mathematics, the NTT is the discrete Fourier transform (DFT) over an arbitrary [ring](../algebra/basic.md#环). In the case of a finite field, it is usually called the number-theoretic transform (NTT).
 
-**数论变换**（NTT）是通过将离散傅立叶变换化为 $F={\mathbb {Z}/p}$，整数模质数 $p$．这是一个 **有限域**，只要 $n$ 可除 $p-1$，就存在本原 $n$ 次方根，所以我们有 $p=\xi n+1$ 对于 正整数 $ξ$．具体来说，对于质数 $p=qn+1, (n=2^m)$，原根 $g$ 满足 $g^{qn} \equiv 1 \pmod p$, 将 $g_n=g^q\pmod p$ 看做 $\omega_n$ 的等价，则其满足相似的性质，比如 $g_n^n \equiv 1 \pmod p, g_n^{n/2} \equiv -1 \pmod p$．
+The **number-theoretic transform** (NTT) is obtained by moving the discrete Fourier transform to $F={\mathbb {Z}/p}$, the integers modulo a prime $p$. This is a **finite field**, and as long as $n$ divides $p-1$, a primitive $n$-th root of unity exists, so we have $p=\xi n+1$ for a positive integer $\xi$. Concretely, for a prime $p=qn+1, (n=2^m)$, the primitive root $g$ satisfies $g^{qn} \equiv 1 \pmod p$. Treat $g_n=g^q\pmod p$ as the equivalent of $\omega_n$; it has similar properties, such as $g_n^n \equiv 1 \pmod p, g_n^{n/2} \equiv -1 \pmod p$.
 
-因为这里涉及到数论变化，所以 $N$（为了区分 FFT 中的 $n$，我们把这里的 $n$ 称为 $N$）可以比 FFT 中的 $n$ 大，但是只要把 $\frac{qN}{n}$ 看做这里的 $q$ 就行了，能够避免大小问题．
+Because number theory is involved here, $N$ (we call this $n$ "$N$" to tell it apart from the $n$ in FFT) can be larger than the $n$ in FFT. Just treat $\frac{qN}{n}$ as the $q$ here, and the size issue goes away.
 
-常见的有：
+Common choices are:
 
 $$
 p = 167772161 = 5 \times 2^{25}+1, g=3
@@ -44,47 +44,47 @@ $$
 p = 1004535809 = 479 \times 2^{21}+1, g=3
 $$
 
-就是 $g^{qn}$ 的等价 $\mathrm{e}^{2\pi \mathrm{i} n}$．
+Here $g^{qn}$ plays the role of $\mathrm{e}^{2\pi \mathrm{i} n}$.
 
-迭代到长度 $l$ 时 $g_l = g^{\frac{p-1}{l}}$，或者 $\omega_n = g_l = g_N^{\frac{N}{l}} = g_N^{\frac{p-1}{l}}$．
+When the iteration reaches length $l$, $g_l = g^{\frac{p-1}{l}}$, or $\omega_n = g_l = g_N^{\frac{N}{l}} = g_N^{\frac{p-1}{l}}$.
 
-## 快速数论变换
+## Fast number-theoretic transform
 
-**快速数论变换**（FNTT）是数论变换（NTT）增加分治操作之后的快速算法．
+The **fast number-theoretic transform** (FNTT) is the fast algorithm obtained by adding divide and conquer to the number-theoretic transform (NTT).
 
-快速数论变换使用的分治办法，与快速傅里叶变换使用的分治办法完全一致．这意味着，只需在快速傅里叶变换的代码基础上进行简单修改，即可得到快速数论变换的代码．
+The divide-and-conquer approach used by the fast number-theoretic transform is exactly the same as the one used by the fast Fourier transform. This means you can get code for the fast number-theoretic transform by making simple changes to fast Fourier transform code.
 
-在算法竞赛中常提到的 NTT 一词，往往实际指的是快速数论变换，一般默认「数论变换」是指「快速数论变换」．
+In competitive programming, the term NTT usually actually means the fast number-theoretic transform; "number-theoretic transform" is generally taken to mean "fast number-theoretic transform" by default.
 
-这样简写的逻辑与快速傅里叶变换相似．事实上，「快速傅里叶变换」（FFT）一词指的是「快速离散傅里叶变换」（FDFT），但由于「快速」只能作用于离散，甚至是本原单位根阶数为 $2$ 的幂的特殊情形，不能作用于连续，因此「离散」一词被省略掉，FDFT 变为 FFT，即 FFT 永远指的是特殊的离散情形．
+The logic of this shorthand is similar to that of the fast Fourier transform. In fact, the term "fast Fourier transform" (FFT) refers to the "fast discrete Fourier transform" (FDFT). But since the "fast" part only applies to the discrete case, and even only to the special case where the order of the primitive root of unity is a power of $2$, and it cannot apply to the continuous case, the word "discrete" is dropped and FDFT becomes FFT. That is, FFT always refers to the special discrete case.
 
-数论变换或快速数论变换是在取模意义下进行的操作，不存在连续的情形，永远是离散的，自然也无需提到离散一词．
+The number-theoretic transform and the fast number-theoretic transform work modulo a number. There is no continuous case; they are always discrete, so there is no need to mention the word discrete.
 
-在算法领域，不进行提速的操作是无意义的．在快速傅里叶变换中介绍 DFT 一词，是因为 DFT 在信号处理、图像处理领域也有其他的具体应用，同时 DFT 也是 FFT 的原理或前置知识．
+In algorithms, an operation that is not sped up is pointless. The fast Fourier transform article introduces the term DFT because the DFT also has other concrete uses in signal processing and image processing, and because the DFT is the principle behind, and a prerequisite for, the FFT.
 
-在不引起混淆的情形下，常用 NTT 来代指 FNTT．为了不引起下文进一步介绍的混淆，下文的 NTT 与 FNTT 两个词进行了分离．
+When there is no risk of confusion, NTT is often used to mean FNTT. To avoid confusion in what follows, the terms NTT and FNTT are kept separate below.
 
-DFT、FFT、NTT、FNTT 的具体关系是：
+The exact relationship between DFT, FFT, NTT and FNTT is:
 
--   在 DFT 与 NTT 的基础上，增加分治操作，得到 FFT 与 FNTT．分治操作的办法与原理，可以参见快速傅里叶变换一文．
+-   Adding divide and conquer to DFT and NTT gives FFT and FNTT. For how and why the divide-and-conquer step works, see the fast Fourier transform article.
 
--   在 DFT 与 FFT 的基础上，将复数加法与复数乘法替换为模 $p$ 意义下的加法和乘法，一般大小限制在 $0$ 到 $p-1$ 之间；将本原单位根改为模 $p$ 意义下的相同阶数的本原单位根，阶数为 $2$ 的幂，即可得到 NTT 与 FNTT．
+-   Starting from DFT and FFT, replace complex addition and multiplication with addition and multiplication modulo $p$ (values are usually kept between $0$ and $p-1$), and replace the primitive root of unity with a primitive root of unity of the same order modulo $p$, where the order is a power of $2$. This gives NTT and FNTT.
 
-由于替换的运算只涉及加法和乘法，因此 DFT、FFT、NTT、FNTT 拥有相同的原理，均在满足加法与乘法的环上进行，无需域上满足除法运算的更加严格的条件．
+Since the replaced operations only involve addition and multiplication, DFT, FFT, NTT and FNTT all work on the same principle. They all work over a ring with addition and multiplication, and do not need the stricter condition of a field that also supports division.
 
-事实上，只要拥有原根，即群论中的生成元，该模数下的 NTT 或 FNTT 即可进行．考虑到模数为 $1$、$2$ 和 $4$ 的情形太小，不具有实际意义，对于奇素数 $p$ 和正整数 $\alpha$，只要给出模数为 $p^\alpha$ 和 $2p^\alpha$ 的原根 $g$，采用同样的办法，则 NTT 或 FNTT 仍然可以进行．
+In fact, as long as there is a primitive root, i.e. a generator in group-theory terms, NTT or FNTT can be done under that modulus. The moduli $1$, $2$ and $4$ are too small to be of practical use. For an odd prime $p$ and a positive integer $\alpha$, as long as we are given a primitive root $g$ modulo $p^\alpha$ or $2p^\alpha$, NTT or FNTT can still be done in the same way.
 
-## 模板
+## Template
 
 ??? example "[Library Checker - Convolution](https://judge.yosupo.jp/problem/convolution_mod)"
     ```cpp
     --8<-- "docs/math/code/poly/ntt/ntt_1.cpp"
     ```
 
-## 参考资料与拓展阅读
+## References and further reading
 
-1.  [FWT（快速沃尔什变换）零基础详解 qaq（ACM/OI）](https://zhuanlan.zhihu.com/p/41867199)
-2.  [FFT（快速傅里叶变换）0 基础详解！附 NTT（ACM/OI）](https://zhuanlan.zhihu.com/p/40505277)
+1.  [FWT (Fast Walsh Transform) explained from scratch qaq (ACM/OI)](https://zhuanlan.zhihu.com/p/41867199)
+2.  [FFT (Fast Fourier Transform) explained from scratch! With NTT (ACM/OI)](https://zhuanlan.zhihu.com/p/40505277)
 3.  [Number-theoretic transform(NTT) - Wikipedia](https://en.wikipedia.org/wiki/Discrete_Fourier_transform_%28general%29#Number-theoretic_transform)
 4.  [Tutorial on FFT/NTT—The tough made simple. (Part 1)](https://codeforces.com/blog/entry/43499)
-5.  [NTT 模板 - BlackJack\_ CSDN 博客](https://blog.csdn.net/blackjack_/article/details/79346433)
+5.  [NTT template - BlackJack\_ CSDN blog](https://blog.csdn.net/blackjack_/article/details/79346433)

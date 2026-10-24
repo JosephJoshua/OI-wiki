@@ -1,81 +1,81 @@
 author: sshwy
 
-序列 $a$ 的普通生成函数（ordinary generating function，OGF）定义为形式幂级数：
+The ordinary generating function (OGF) of a sequence $a$ is defined as the formal power series:
 
 $$
 F(x)=\sum_{n}a_n x^n
 $$
 
-$a$ 既可以是有穷序列，也可以是无穷序列．常见的例子（假设 $a$ 以 $0$ 为起点）：
+$a$ can be either a finite or an infinite sequence. Some common examples (assuming $a$ starts at index $0$):
 
-1.  序列 $a=\langle 1,2,3\rangle$ 的普通生成函数是 $1+2x+3x^2$．
-2.  序列 $a=\langle 1,1,1,\cdots\rangle$ 的普通生成函数是 $\sum_{n\ge 0}x^n$．
-3.  序列 $a=\langle 1,2,4,8,16,\cdots\rangle$ 的生成函数是 $\sum_{n\ge 0}2^nx^n$．
-4.  序列 $a=\langle 1,3,5,7,9,\cdots\rangle$ 的生成函数是 $\sum_{n\ge 0}(2n+1)x^n$．
+1.  The ordinary generating function of the sequence $a=\langle 1,2,3\rangle$ is $1+2x+3x^2$.
+2.  The ordinary generating function of the sequence $a=\langle 1,1,1,\cdots\rangle$ is $\sum_{n\ge 0}x^n$.
+3.  The generating function of the sequence $a=\langle 1,2,4,8,16,\cdots\rangle$ is $\sum_{n\ge 0}2^nx^n$.
+4.  The generating function of the sequence $a=\langle 1,3,5,7,9,\cdots\rangle$ is $\sum_{n\ge 0}(2n+1)x^n$.
 
-换句话说，如果序列 $a$ 有通项公式，那么它的普通生成函数的系数就是通项公式．
+In other words, if the sequence $a$ has a closed formula for its general term, then the coefficients of its ordinary generating function are given by that formula.
 
-## 基本运算
+## Basic operations
 
-考虑两个序列 $a,b$ 的普通生成函数，分别为 $F(x),G(x)$．那么有
+Consider the ordinary generating functions $F(x),G(x)$ of two sequences $a,b$. Then
 
 $$
 F(x)\pm G(x)=\sum_n (a_n\pm b_n)x^n
 $$
 
-因此 $F(x)\pm G(x)$ 是序列 $\langle a_n\pm b_n\rangle$ 的普通生成函数．
+So $F(x)\pm G(x)$ is the ordinary generating function of the sequence $\langle a_n\pm b_n\rangle$.
 
-考虑乘法运算，也就是卷积：
+Now consider multiplication, i.e. convolution:
 
 $$
 F(x)G(x)=\sum_n x^n \sum_{i=0}^na_ib_{n-i}
 $$
 
-因此 $F(x)G(x)$ 是序列 $\langle \sum_{i=0}^n a_ib_{n-i} \rangle$ 的普通生成函数．
+So $F(x)G(x)$ is the ordinary generating function of the sequence $\langle \sum_{i=0}^n a_ib_{n-i} \rangle$.
 
-## 封闭形式
+## Closed form
 
-在运用生成函数的过程中，我们不会一直使用形式幂级数的形式，而会适时地转化为封闭形式以更好地化简．
+When working with generating functions, we do not always keep them as formal power series. At the right moments we convert them to closed form, which makes simplification easier.
 
-例如 $\langle 1,1,1,\cdots\rangle$ 的普通生成函数 $F(x)=\sum_{n\ge 0}x^n$，我们可以发现
+For example, for the ordinary generating function $F(x)=\sum_{n\ge 0}x^n$ of $\langle 1,1,1,\cdots\rangle$, we notice that
 
 $$
 F(x)x+1=F(x)
 $$
 
-那么解这个方程得到
+Solving this equation gives
 
 $$
 F(x)=\frac{1}{1-x}
 $$
 
-这就是 $\sum_{n\ge 0}x^n$ 的封闭形式．
+This is the closed form of $\sum_{n\ge 0}x^n$.
 
-考虑等比数列 $\langle 1,p,p^2,p^3,p^4,\cdots\rangle$ 的生成函数 $F(x)=\sum_{n\ge 0}p^nx^n$，有
+For the generating function $F(x)=\sum_{n\ge 0}p^nx^n$ of the geometric sequence $\langle 1,p,p^2,p^3,p^4,\cdots\rangle$, we have
 
 $$
 \begin{aligned}F(x)px+1 &=F(x)\\F(x) &=\frac{1}{1-px}\end{aligned}
 $$
 
-等比数列的封闭形式与展开形式是常用的变换手段．
+Switching between the closed form and the expanded form of a geometric sequence is a commonly used transformation.
 
-???+ note "小练习"
-    请求出下列数列的普通生成函数（形式幂级数形式和封闭形式）．难度是循序渐进的．
+???+ note "Quick exercises"
+    Find the ordinary generating functions of the following sequences (both as a formal power series and in closed form). They get gradually harder.
     
-    1.  $a=\langle 0,1,1,1,1,\cdots\rangle$．
-    2.  $a=\langle 1,0,1,0,1,\cdots \rangle$．
-    3.  $a=\langle 1,2,3,4,\cdots \rangle$．
-    4.  $a_n=\binom{m}{n}$（$m$ 是常数，$n\ge 0$）．
-    5.  $a_n=\binom{m+n}{n}$（$m$ 是常数，$n\ge 0$）．
+    1.  $a=\langle 0,1,1,1,1,\cdots\rangle$.
+    2.  $a=\langle 1,0,1,0,1,\cdots \rangle$.
+    3.  $a=\langle 1,2,3,4,\cdots \rangle$.
+    4.  $a_n=\binom{m}{n}$ ($m$ is a constant, $n\ge 0$).
+    5.  $a_n=\binom{m+n}{n}$ ($m$ is a constant, $n\ge 0$).
 
-??? note "答案"
-    第一个：
+??? note "Answers"
+    First:
     
     $$
     F(x)=\sum_{n\ge 1}x^n=\dfrac{x}{1-x}
     $$
     
-    第二个：
+    Second:
     
     $$
     \begin{aligned}
@@ -85,29 +85,29 @@ $$
     \end{aligned}
     $$
     
-    第三个（求导）：
+    Third (by differentiation):
     
     $$
     \begin{aligned}F(x)&=\sum_{n\ge 0}(n+1)x^n\\&=\sum_{n\ge 1}nx^{n-1}\\&=\sum_{n\ge 0}(x^n)'\\&=\left(\frac{1}{1-x}\right)'\\&=\frac{1}{(1-x)^2}\end{aligned}
     $$
     
-    第四个（二项式定理）：
+    Fourth (binomial theorem):
     
     $$
     F(x)=\sum_{n\ge 0}\binom{m}{n}x^n=(1+x)^m
     $$
     
-    第五个：
+    Fifth:
     
     $$
     F(x)=\sum_{n\ge 0}\binom{m+n}{n}x^n=\frac{1}{(1-x)^{m+1}}
     $$
     
-    可以使用归纳法证明．
+    This can be proved by induction.
     
-    首先当 $m=0$ 时，有 $F(x)=\dfrac{1}{1-x}$．
+    First, when $m=0$, $F(x)=\dfrac{1}{1-x}$.
     
-    而当 $m>0$ 时，有
+    When $m>0$,
     
     $$
     \begin{aligned}
@@ -119,27 +119,27 @@ $$
     \end{aligned}
     $$
 
-## 斐波那契数列的生成函数
+## Generating function of the Fibonacci sequence
 
-接下来我们来推导斐波那契数列的生成函数．
+Next we derive the generating function of the Fibonacci sequence.
 
-斐波那契数列定义为 $a_0=0,a_1=1,a_n=a_{n-1}+a_{n-2}\;(n>1)$．设它的普通生成函数是 $F(x)$，那么根据它的递推式，我们可以类似地列出关于 $F(x)$ 的方程：
+The Fibonacci sequence is defined by $a_0=0,a_1=1,a_n=a_{n-1}+a_{n-2}\;(n>1)$. Let its ordinary generating function be $F(x)$. From the recurrence, we can similarly write an equation in $F(x)$:
 
 $$
 F(x)=xF(x)+x^2F(x)-a_0x+a_1x+a_0
 $$
 
-那么解得
+Solving it gives
 
 $$
 F(x)=\frac{x}{1-x-x^2}
 $$
 
-那么接下来的问题是，如何求出它的展开形式？
+The next question is: how do we find its expanded form?
 
-### 展开方式一
+### Expansion method 1
 
-不妨将 $x+x^2$ 当作一个整体，那么可以得到
+Treat $x+x^2$ as a single unit. Then we get
 
 $$
 \begin{aligned}
@@ -151,29 +151,29 @@ F(x) &= \dfrac{x}{1-(x+x^2)} \\
 \end{aligned}
 $$
 
-最后一步中，令 $n=k+i+1$ 并更换求和顺序．由此，可以得到通项公式：
+In the last step, we let $n=k+i+1$ and swap the order of summation. This gives the formula for the general term:
 
 $$
 a_n = \sum_{i=0}^{\lfloor(n-1)/2\rfloor}\binom{n-i-1}{i}.
 $$
 
-这并不是我们熟知的有关黄金分割比的形式．
+This is not the familiar form involving the golden ratio.
 
-### 展开方式二
+### Expansion method 2
 
-考虑求解一个待定系数的方程：
+Solve an equation with undetermined coefficients:
 
 $$
 \frac{A}{1-ax}+\frac{B}{1-bx}= \frac{x}{1-x-x^2}
 $$
 
-通分得到
+Putting the left side over a common denominator gives
 
 $$
 \frac{A-Abx+B-aBx}{(1-ax)(1-bx)} = \frac{x}{1-x-x^2}
 $$
 
-待定项系数相等，我们得到
+Matching coefficients, we get
 
 $$
 \begin{cases}
@@ -184,7 +184,7 @@ ab=-1
 \end{cases}
 $$
 
-解得
+Solving gives
 
 $$
 \begin{cases}
@@ -195,30 +195,30 @@ b=\frac{1-\sqrt{5}}{2}
 \end{cases}
 $$
 
-那么我们根据等比数列的展开式，就可以得到斐波那契数列的通项公式：
+Then, using the expansion of a geometric series, we get the formula for the general term of the Fibonacci sequence:
 
 $$
 \frac{x}{1-x-x^2}=\sum_{n\ge 0}x^n
 \frac{1}{\sqrt{5}}\left( \left(\frac{1+\sqrt{5}}{2}\right)^n-\left(\frac{1-\sqrt{5}}{2}\right)^n \right)
 $$
 
-这也被称为斐波那契数列的另一个封闭形式（$\frac{x}{1-x-x^2}$ 是一个封闭形式）．
+This is also called another closed form of the Fibonacci sequence ($\frac{x}{1-x-x^2}$ is a closed form).
 
-对于任意多项式 $P(x),Q(x)$，生成函数 $\dfrac{P(x)}{Q(x)}$ 的展开式都可以使用上述方法求出．在实际运用的过程中，我们往往先求出 $Q(x)$ 的根，把分母表示为 $\prod (1-p_ix)^{d_i}$ 的形式，然后再求分子．
+For any polynomials $P(x),Q(x)$, the expansion of the generating function $\dfrac{P(x)}{Q(x)}$ can be found with the method above. In practice, we usually first find the roots of $Q(x)$, write the denominator in the form $\prod (1-p_ix)^{d_i}$, and then work out the numerators.
 
-当对分母进行因式分解但有重根时，每有一个重根就要多一个分式，如考虑生成函数
+When the factored denominator has repeated roots, each extra repetition of a root needs one more fraction. For example, to find the formula for the coefficients of the generating function
 
 $$
 G(x)=\frac{1}{(1-x)(1-2x)^2}
 $$
 
-的系数的通项公式，那么有
+we write
 
 $$
 G(x)=\frac{c_0}{1-x}+\frac{c_1}{1-2x}+\frac{c_2}{(1-2x)^2}
 $$
 
-解得
+Solving gives
 
 $$
 \begin{cases}
@@ -228,106 +228,106 @@ c_2&=2
 \end{cases}
 $$
 
-那么
+So
 
 $$
 [x^n]G(x)=1-2^{n+1}+(n+1)\cdot 2^{n+1}
 $$
 
-## 牛顿二项式定理
+## Newton's binomial theorem
 
-我们重新定义组合数的运算：
+We redefine the binomial coefficient:
 
 $$
 \binom{r}{k}=\frac{r^{\underline{k}}}{k!}\quad(r\in\mathbf{C},k\in\mathbf{N})
 $$
 
-注意 $r$ 的范围是复数域．在这种情况下．对于 $\alpha\in\mathbf{C}$，有
+Note that $r$ ranges over the complex numbers. In this setting, for $\alpha\in\mathbf{C}$,
 
 $$
 (1+x)^{\alpha}=\sum_{n\ge 0}\binom{\alpha}{n}x^n
 $$
 
-二项式定理其实是牛顿二项式定理的一个特殊情况．
+The binomial theorem is in fact a special case of Newton's binomial theorem.
 
-## 卡特兰数的生成函数
+## Generating function of the Catalan numbers
 
-参考 [Catalan 数形式的代数推演](../combinatorics/catalan.md#代数推演)．
+See [the algebraic derivation of the Catalan numbers](../combinatorics/catalan.md#代数推演).
 
-## 应用
+## Applications
 
-接下来给出一些例题，来介绍生成函数在 OI 中的具体应用．
+Next are some example problems that show how generating functions are used in OI.
 
-### 食物
+### Food
 
-???+ note "[食物](https://hydro.ac/p/bzoj-P3028)"
-    在许多不同种类的食物中选出 $n$ 个，每种食物的限制如下：
+???+ note "[Food](https://hydro.ac/p/bzoj-P3028)"
+    Choose $n$ items from many different kinds of food. The limits for each kind are:
     
-    1.  承德汉堡：偶数个
-    2.  可乐：0 个或 1 个
-    3.  鸡腿：0 个，1 个或 2 个
-    4.  蜜桃多：奇数个
-    5.  鸡块：4 的倍数个
-    6.  包子：0 个，1 个，2 个或 3 个
-    7.  土豆片炒肉：不超过一个．
-    8.  面包：3 的倍数个
+    1.  Chengde hamburgers: an even number
+    2.  Cola: 0 or 1
+    3.  Chicken drumsticks: 0, 1 or 2
+    4.  Mitaoduo (a peach drink): an odd number
+    5.  Chicken nuggets: a multiple of 4
+    6.  Steamed buns: 0, 1, 2 or 3
+    7.  Stir-fried potato slices with pork: at most one
+    8.  Bread: a multiple of 3
     
-    每种食物都是以「个」为单位，只要总数加起来是 $n$ 就算一种方案．对于给出的 $n$ 你需要计算出方案数，对 $10007$ 取模．
+    Every kind of food is counted in whole items, and any choice whose total is $n$ counts as one way. For the given $n$, compute the number of ways modulo $10007$.
 
-这是一道经典的生成函数题．对于一种食物，我们可以设 $a_n$ 表示这种食物选 $n$ 个的方案数，并求出它的生成函数．而两种食物一共选 $n$ 个的方案数的生成函数，就是它们生成函数的卷积．多种食物选 $n$ 个的方案数的生成函数也是它们生成函数的卷积．
+This is a classic generating function problem. For one kind of food, let $a_n$ be the number of ways to choose $n$ items of that food, and find its generating function. The generating function for the number of ways to choose $n$ items in total from two kinds of food is the convolution of their generating functions. The same holds for many kinds of food: the generating function is the convolution of all their generating functions.
 
-在理解了方案数可以用卷积表示以后，我们就可以构造生成函数（标号对应题目中食物的标号）：
+Once we see that the number of ways can be expressed as a convolution, we can build the generating functions (numbered as the foods in the problem):
 
-1.  $\displaystyle\sum_{n\ge 0}x^{2n}=\dfrac{1}{1-x^2}$．
-2.  $1+x$．
-3.  $1+x+x^2=\dfrac{1-x^3}{1-x}$．
-4.  $\dfrac{x}{1-x^2}$．
-5.  $\displaystyle \sum_{n\ge 0}x^{4n}=\dfrac{1}{1-x^4}$．
-6.  $1+x+x^2+x^3=\dfrac{1-x^4}{1-x}$．
-7.  $1+x$．
-8.  $\dfrac{1}{1-x^3}$．
+1.  $\displaystyle\sum_{n\ge 0}x^{2n}=\dfrac{1}{1-x^2}$.
+2.  $1+x$.
+3.  $1+x+x^2=\dfrac{1-x^3}{1-x}$.
+4.  $\dfrac{x}{1-x^2}$.
+5.  $\displaystyle \sum_{n\ge 0}x^{4n}=\dfrac{1}{1-x^4}$.
+6.  $1+x+x^2+x^3=\dfrac{1-x^4}{1-x}$.
+7.  $1+x$.
+8.  $\dfrac{1}{1-x^3}$.
 
-那么全部乘起来，得到答案的生成函数：
+Multiplying them all together gives the generating function of the answer:
 
 $$
 F(x)=\frac{(1+x)(1-x^3)x(1-x^4)(1+x)}{(1-x^2)(1-x)(1-x^2)(1-x^4)(1-x)(1-x^3)}
 =\frac{x}{(1-x)^4}
 $$
 
-然后将它转化为展开形式（使用封闭形式练习中第五个练习）：
+Then convert it to expanded form (using the fifth closed-form exercise):
 
 $$
 F(x)=\sum_{n\ge 1}\binom{n+2}{n-1}x^n
 $$
 
-因此答案就是 $\dbinom{n+2}{n-1}=\dbinom{n+2}{3}$．
+So the answer is $\dbinom{n+2}{n-1}=\dbinom{n+2}{3}$.
 
 ### Sweet
 
-???+ note "[「CEOI2004」Sweet](https://hydro.ac/p/bzoj-P3027)"
-    有 $n$ 堆糖果．不同的堆里糖果的种类不同（即同一个堆里的糖果种类是相同的，不同的堆里的糖果的种类是不同的）．第 $i$ 个堆里有 $m_i$ 个糖果．现在要吃掉至少 $a$ 个糖果，但不超过 $b$ 个．求有多少种方案．
+???+ note "[CEOI 2004 Sweet](https://hydro.ac/p/bzoj-P3027)"
+    There are $n$ piles of candy. Different piles hold different kinds of candy (all candies in one pile are the same kind, and candies in different piles are different kinds). Pile $i$ has $m_i$ candies. You want to eat at least $a$ candies but no more than $b$. Count the number of ways.
     
-    两种方案不同当且仅当吃的个数不同，或者吃的糖果中，某一种糖果的个数在两个方案中不同．
+    Two ways are different if and only if the number of candies eaten is different, or for some kind of candy, the number eaten of that kind is different in the two ways.
     
-    $n\le 10,0\le a\le b\le 10^7,m_i\le 10^6$．
+    $n\le 10,0\le a\le b\le 10^7,m_i\le 10^6$.
 
-在第 $i$ 堆吃 $j$ 个糖果的方案数（显然为 1）的生成函数为
+The generating function for the number of ways to eat $j$ candies from pile $i$ (clearly 1 way) is
 
 $$
 F_i(x)=\sum_{j=0}^{m_i}x^j=\frac{1-x^{m_i+1}}{1-x}
 $$
 
-因此总共吃 $i$ 个糖果的方案数的生成函数就是
+So the generating function for the number of ways to eat $i$ candies in total is
 
 $$
 G(x)=\prod_{i=1}^n F_i(x)=(1-x)^{-n}\prod_{i=1}^n(1-x^{m_i+1})
 $$
 
-现在我们要求的是 $\sum_{i=a}^b[x^i]G(x)$．
+Now we want $\sum_{i=a}^b[x^i]G(x)$.
 
-由于 $n\le 10$，因此我们可以暴力展开 $\prod_{i=1}^n(1-x^{m_i+1})$（最多只有 $2^n$ 项）．
+Since $n\le 10$, we can expand $\prod_{i=1}^n(1-x^{m_i+1})$ by brute force (it has at most $2^n$ terms).
 
-然后对 $(1-x)^{-n}$ 使用牛顿二项式定理：
+Then apply Newton's binomial theorem to $(1-x)^{-n}$:
 
 $$
 \begin{aligned}
@@ -337,7 +337,7 @@ $$
 \end{aligned}
 $$
 
-我们枚举 $\prod_{i=1}^n(1-x^{m_i+1})$ 中 $x^k$ 项的系数，假设为 $c_k$．那么它和 $(1-x)^{-n}$ 相乘后，对答案的贡献就是
+We enumerate the coefficient of each $x^k$ term in $\prod_{i=1}^n(1-x^{m_i+1})$; call it $c_k$. After multiplying it by $(1-x)^{-n}$, its contribution to the answer is
 
 $$
 c_k\sum_{i=a-k}^{b-k}\binom{n-1+i}{i}=c_k\left(
@@ -346,6 +346,6 @@ c_k\sum_{i=a-k}^{b-k}\binom{n-1+i}{i}=c_k\left(
 \right)
 $$
 
-这样就可以 $O(b)$ 地求出答案了．
+This way the answer can be computed in $O(b)$.
 
-时间复杂度 $O(2^n+b)$．
+The time complexity is $O(2^n+b)$.
