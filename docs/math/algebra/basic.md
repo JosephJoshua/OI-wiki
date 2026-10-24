@@ -1,172 +1,172 @@
 author: jifbt, billchenchina, Enter-tainer, Great-designer, iamtwz, ImpleLee, isdanni, Menci, ouuan, Tiphereth-A, warzone-oier, Xeonacid, c-forrest
 
-本章节将简要介绍抽象代数的相关知识．现阶段算法竞赛的主要内容并不直接考察抽象代数的知识，但是在算法的描述或是问题的题解中常常会牵涉一些抽象代数的基本概念，这使得掌握了基础抽象代数概念的读者能够更快速理解一些算法．因此，这部分内容并不是任何选手的必修知识，而仅供那些感兴趣或者可能从中受益的读者参考使用．同时，本章节将避免过全过深的介绍抽象代数的知识[^oi-wiki-not-wikipedia]，而会集中在基础概念以及与 OI 其他部分知识联系最为紧密的部分．想系统学习抽象代数知识的读者，应当参考专业的抽象代数教科书学习．
+This chapter gives a short introduction to abstract algebra. Competitive programming today does not directly test abstract algebra. However, basic concepts from abstract algebra often come up when describing algorithms or in problem editorials, so readers who know these basic concepts can understand some algorithms faster. So this material is not required for any contestant; it is just a reference for readers who are interested or who may benefit from it. This chapter also avoids covering abstract algebra too broadly or too deeply[^oi-wiki-not-wikipedia]. Instead, it focuses on the basic concepts and on the parts most closely connected to the rest of OI. Readers who want to learn abstract algebra systematically should study a proper abstract algebra textbook.
 
-为了更好帮助读者理解阅读本部分内容可能的收获，列举一些算法竞赛中可能牵涉到抽象代数知识的例子：
+To help readers see what they might gain from this part, here are some examples where abstract algebra shows up in competitive programming:
 
--   数论和多项式的很多定理是抽象代数中结论的特例；
--   数据结构中，[线段树](../../ds/seg.md) 等结构可以维护幺半群的信息，而很多 DP 问题的递推关系可以抽象成这样的幺半群结构；
--   组合数学中，[Pólya 计数原理](../combinatorics/polya.md) 的严格表述和证明需要用到群论的相关概念．
+-   Many theorems in number theory and polynomials are special cases of results in abstract algebra;
+-   In data structures, structures such as the [segment tree](../../ds/seg.md) can maintain information from a monoid, and the recurrences of many DP problems can be abstracted into such a monoid structure;
+-   In combinatorics, the rigorous statement and proof of the [Pólya enumeration theorem](../combinatorics/polya.md) need concepts from group theory.
 
-基于此，本章节将着重介绍无法跳过的基础知识和与这些应用直接相关的部分．作为开始，本文介绍群、环、域的基本概念．
+With this in mind, this chapter focuses on the basics that cannot be skipped and on the parts directly related to these applications. To start, this article introduces the basic concepts of groups, rings and fields.
 
-## 群
+## Groups
 
-群的定义如下．
+A group is defined as follows.
 
-???+ abstract "群"
-    设 $G$ 是非空集合，其上有二元运算 $\cdot:G\times G\rightarrow G$，如果它们满足以下性质，则称 $(G,\cdot)$ 是一个 **群**（group）：
+???+ abstract "Group"
+    Let $G$ be a non-empty set with a binary operation $\cdot:G\times G\rightarrow G$. If they satisfy the following properties, then $(G,\cdot)$ is called a **group**:
     
-    1.  结合律（associative property）：对于所有 $a,b,c\in G$，成立 $a\cdot(b\cdot c)=(a\cdot b)\cdot c$；
-    2.  有单位元：存在 $e\in G$，使得对于任意 $a\in G$，都成立 $a\cdot e = e\cdot a = a$．这里，$e$ 称为 $G$ 的 **单位元**（identity element），也称幺元；
-    3.  存在逆元：对于所有 $a\in G$，都存在相应的 $b\in G$ 使得 $a\cdot b=b\cdot a=e$．这里，$b$ 称为 $a$ 的 **逆元**（inverse element）．
+    1.  Associativity (associative property): for all $a,b,c\in G$, $a\cdot(b\cdot c)=(a\cdot b)\cdot c$ holds;
+    2.  Existence of an identity: there is an $e\in G$ such that $a\cdot e = e\cdot a = a$ for every $a\in G$. Here $e$ is called the **identity element** of $G$ (also called the unit element);
+    3.  Existence of inverses: for every $a\in G$, there is a corresponding $b\in G$ such that $a\cdot b=b\cdot a=e$. Here $b$ is called the **inverse element** of $a$.
 
-??? info "关于定义中的封闭性条件"
-    这里的二元运算就隐含了所谓的封闭性条件，即对于任何 $a,b\in G$，都有 $a\cdot b\in G$．有些文章会将其单独列出．
+??? info "About the closure condition in the definition"
+    The binary operation here already implies the so-called closure condition: for any $a,b\in G$, we have $a\cdot b\in G$. Some texts list it as a separate condition.
 
-???+ note "群的基本性质"
-    对于群 $(G,\cdot)$，以下性质总是成立：
+???+ note "Basic properties of groups"
+    For a group $(G,\cdot)$, the following properties always hold:
     
-    1.  对于任何有限长的列 $\{g_i\}_{i=1}^k\subseteq G$，乘积 $g_1\cdot g_2\cdot\cdots\cdot g_k$ 的运算结果与加括号的方式无关；
-    2.  单位元 $e$ 总是唯一的；
-    3.  对于任何元素 $a\in G$，它的逆 $a^{-1}$ 也是唯一的；
-    4.  消去律（cancellation law）：对于 $a,b,c\in G$，如果 $a\cdot c=b\cdot c$ 或 $c\cdot a=c\cdot b$，那么有 $a=b$．
+    1.  For any finite sequence $\{g_i\}_{i=1}^k\subseteq G$, the result of the product $g_1\cdot g_2\cdot\cdots\cdot g_k$ does not depend on how the parentheses are placed;
+    2.  The identity element $e$ is always unique;
+    3.  For any element $a\in G$, its inverse $a^{-1}$ is also unique;
+    4.  Cancellation law: for $a,b,c\in G$, if $a\cdot c=b\cdot c$ or $c\cdot a=c\cdot b$, then $a=b$.
 
-群相当常见．通俗地说，所有不损失结构的变换都自动构成群．以常见的几种类型的群为例．
+Groups are very common. Informally, all transformations that preserve some structure automatically form a group. Here are some common kinds of groups as examples.
 
-???+ example "群的例子"
-    -   **对称群**（symmetric group）：集合 $M$ 上的所有 [置换](../permutation.md)，即自 $M$ 到 $M$ 自身的双射，就在映射的复合下构成群 $S_M$．单位元是恒等变换，逆元是逆映射（双射必然存在逆映射）．如果集合 $M$ 有限，大小为 $n$，也常记作 $S_n$，称作 $n$ 次对称群．
-    -   空间对称群（symmetry group）：对于一个几何图形，能够使其与自身重合的变换全体也在映射的复合下构成群．这描述了该几何图形的空间对称性．具体例子可以参考 [常见空间对称群](../combinatorics/polya.md#常见空间对称群)．
-    -   整数的加法群：整数集 $\mathbf Z$ 在加法 $+$ 运算下构成群 $(\mathbf Z,+)$．单位元是 $0$，逆元是相反数．
-    -   整数模 $n$ 乘法群（multiplicative group of integers modulo $n$）：对于一个模数 $n$，所有与 $n$ 互质的整数对应的 [同余类](../number-theory/basic.md#同余类与剩余系)，在乘法运算下构成群 $((\mathbf Z/n\mathbf Z)^\times,\times)$．单位元是 $\bar 1$，逆元就是模 $n$ 的 [乘法逆元](../number-theory/inverse.md)（对应的同余类），其存在性由 [裴蜀定理](../number-theory/bezouts.md) 保证．具体结构分析参考 [整数模 $n$ 乘法群](./ring-theory.md#应用整数同余类的乘法群)．
-    -   一般线性群（general linear group）：数域 $F$ 上的 $n$ 维的全体可逆方阵在乘法运算下构成群 $GL_n(F)$．单位元是单位矩阵，逆元是逆矩阵．
+???+ example "Examples of groups"
+    -   **Symmetric group**: all [permutations](../permutation.md) of a set $M$, that is, all bijections from $M$ to itself, form a group $S_M$ under composition of maps. The identity element is the identity map, and the inverse is the inverse map (a bijection always has an inverse map). If $M$ is finite with size $n$, the group is often written $S_n$ and called the symmetric group of degree $n$.
+    -   Symmetry group: for a geometric figure, all transformations that map the figure onto itself also form a group under composition of maps. This describes the spatial symmetry of the figure. For concrete examples, see [common symmetry groups](../combinatorics/polya.md#常见空间对称群).
+    -   The additive group of integers: the set of integers $\mathbf Z$ forms a group $(\mathbf Z,+)$ under addition $+$. The identity element is $0$, and the inverse of a number is its negative.
+    -   Multiplicative group of integers modulo $n$: for a modulus $n$, the [residue classes](../number-theory/basic.md#同余类与剩余系) of all integers coprime to $n$ form a group $((\mathbf Z/n\mathbf Z)^\times,\times)$ under multiplication. The identity element is $\bar 1$, and the inverse is (the residue class of) the [modular multiplicative inverse](../number-theory/inverse.md) modulo $n$, whose existence is guaranteed by [Bézout's identity](../number-theory/bezouts.md). For an analysis of its structure, see [multiplicative group of integers modulo $n$](./ring-theory.md#应用整数同余类的乘法群).
+    -   General linear group: all invertible $n\times n$ square matrices over a field $F$ form a group $GL_n(F)$ under multiplication. The identity element is the identity matrix, and the inverse is the inverse matrix.
 
-要更好地理解群的定义，不妨对比着看几个不属于群的例子．
+To understand the definition of a group better, it helps to compare with some examples that are not groups.
 
-???+ example "不是群的例子"
-    -   所有 $M$ 到自身的映射（不一定是双射），并不构成群．因为那些不是双射的映射不存在逆元．
-    -   整数在乘法下并不构成群，因为 $2$ 在整数范围内没有乘法逆元．
-    -   正整数在加法下也不构成群，因为正整数没有加法单位元．
-    -   模 $n$ 的所有非零同余类在乘法意义下往往不构成群．比如说 $(\mathbf Z/6\mathbf Z)\setminus\{\overline 0\}$ 中，$\overline 2\times\overline 3=\overline 0$ 不属于这个集合，这意味着乘法不是这个集合上良定义的二元运算（或者说，它不满足封闭性）．
+???+ example "Examples that are not groups"
+    -   The set of all maps from $M$ to itself (not necessarily bijections) is not a group, because maps that are not bijections have no inverse.
+    -   The integers do not form a group under multiplication, because $2$ has no multiplicative inverse among the integers.
+    -   The positive integers do not form a group under addition either, because the positive integers have no additive identity.
+    -   The non-zero residue classes modulo $n$ often do not form a group under multiplication. For example, in $(\mathbf Z/6\mathbf Z)\setminus\{\overline 0\}$, $\overline 2\times\overline 3=\overline 0$ is not in the set. This means multiplication is not a well-defined binary operation on this set (in other words, it does not satisfy closure).
 
-有时，也需要讨论这些更不完善的结构的性质．因此，可以定义如下概念，它们比群更宽泛．
+Sometimes we also need to study these less complete structures. So we can define the following concepts, which are broader than groups.
 
-???+ abstract "半群"
-    对于非空集合 $G$ 和其上的二元运算 $\cdot$，如果该运算满足结合律，则称 $(G,\cdot)$ 是一个 **半群**（semigroup）．
+???+ abstract "Semigroup"
+    For a non-empty set $G$ with a binary operation $\cdot$, if the operation is associative, then $(G,\cdot)$ is called a **semigroup**.
 
-???+ abstract "幺半群"
-    对于半群 $(G,\cdot)$，如果它还存在单位元，则称 $(G,\cdot)$ 是一个 **幺半群**（monoid）．
+???+ abstract "Monoid"
+    For a semigroup $(G,\cdot)$, if it also has an identity element, then $(G,\cdot)$ is called a **monoid**.
 
-???+ example "幺半群和半群的例子"
-    上面的例子中，$(\mathbf N_+,+)$ 是半群，而 $(\mathbf Z,\times)$ 是幺半群．
+???+ example "Examples of monoids and semigroups"
+    Among the examples above, $(\mathbf N_+,+)$ is a semigroup, and $(\mathbf Z,\times)$ is a monoid.
 
-最后，很多熟悉的群上的运算除了满足结合律外，还满足交换律．这类群的结构相对简单，它们称作 Abel 群，也称作交换群．
+Finally, in many familiar groups the operation is not only associative but also commutative. These groups have a relatively simple structure. They are called Abelian groups, or commutative groups.
 
-???+ abstract "Abel 群"
-    对于群 $(G,\cdot)$，如果运算 $\cdot$ 还满足交换律（commutative property），即对于所有 $a,b\in G$，都成立 $a\cdot b=b\cdot a$，则称 $(G,\cdot)$ 是一个 **Abel 群**（Abelian group）或 **交换群**（commutative group）．
+???+ abstract "Abelian group"
+    For a group $(G,\cdot)$, if the operation $\cdot$ is also commutative (commutative property), that is, $a\cdot b=b\cdot a$ holds for all $a,b\in G$, then $(G,\cdot)$ is called an **Abelian group** or a **commutative group**.
 
-???+ example "Abel 群和非 Abel 群的例子"
-    -   整数加法群 $(\mathbf Z,+)$ 就是一个 Abel 群．
-    -   当 $n\ge3$ 时，对称群 $S_n$ 并不是 Abel 群．
+???+ example "Examples of Abelian and non-Abelian groups"
+    -   The additive group of integers $(\mathbf Z,+)$ is an Abelian group.
+    -   For $n\ge3$, the symmetric group $S_n$ is not an Abelian group.
 
-这些就是群论相关的基本定义．群论的更多内容，可以参考 [群论](./group-theory.md) 或相关书籍．
+These are the basic definitions of group theory. For more on group theory, see [Group theory](./group-theory.md) or related books.
 
-## 环
+## Rings
 
-环的定义如下．
+A ring is defined as follows.
 
-???+ abstract "环"
-    对于非空集合 $R$ 和其上的两个二元运算 $+:R\times R\rightarrow R$ 和 $\cdot:R\times R\rightarrow R$，如果它们满足以下性质，则称 $(R,+,\cdot)$ 是一个 **环**（ring）：
+???+ abstract "Ring"
+    For a non-empty set $R$ with two binary operations $+:R\times R\rightarrow R$ and $\cdot:R\times R\rightarrow R$, if they satisfy the following properties, then $(R,+,\cdot)$ is called a **ring**:
     
-    1.  $(R,+)$ 构成 Abel 群，其单位元记作 $0$，元素 $a\in R$ 在 $+$ 下的逆元记作 $-a$．
-    2.  $(R,\cdot)$ 构成半群，即 $\cdot$ 满足结合律．
-    3.  分配律（distributive property）：对于所有 $a,b,c\in R$，成立 $a\cdot(b+c)=a\cdot b+a\cdot c$ 和 $(a+b)\cdot c=a\cdot c+b\cdot c$．
+    1.  $(R,+)$ is an Abelian group. Its identity element is written $0$, and the inverse of an element $a\in R$ under $+$ is written $-a$.
+    2.  $(R,\cdot)$ is a semigroup, that is, $\cdot$ is associative.
+    3.  Distributivity (distributive property): for all $a,b,c\in R$, $a\cdot(b+c)=a\cdot b+a\cdot c$ and $(a+b)\cdot c=a\cdot c+b\cdot c$ hold.
 
-为表述方便，这两个二元运算 $+$ 和 $\cdot$ 常称作该环的加法和乘法，相应地，加法单位元称作 **零元**（zero），乘法单位元（如果存在）称作 **幺元**（identity）．应避免和具体的数集中的加法、乘法，以及自然数零和一产生混淆．
+For convenience, the two binary operations $+$ and $\cdot$ are often called the addition and multiplication of the ring. Accordingly, the additive identity is called the **zero**, and the multiplicative identity (if it exists) is called the **identity**. Don't confuse these with addition and multiplication in concrete number sets, or with the natural numbers zero and one.
 
-??? info "关于定义中是否要求乘法单位元"
-    在有的定义中，环必须存在乘法单位元；相对地，不存在乘法单位元的则被称为 **伪环**（rng 或 pseudo-ring）．遇到的时候需根据上下文加以判断．维基百科采用的就是这种定义[^ring-wiki]．
+??? info "Whether the definition requires a multiplicative identity"
+    In some definitions, a ring must have a multiplicative identity; a structure without one is then called a **rng** (or pseudo-ring). When you meet the term, judge from the context. Wikipedia uses this definition[^ring-wiki].
 
-环的加法结构相当简单，但是乘法结构十分原始．因而如果类比群，在乘法上做更多要求，可以得到如下相关定义．
+The additive structure of a ring is quite simple, but its multiplicative structure is very primitive. So, by analogy with groups, we can put more requirements on the multiplication and get the following related definitions.
 
-???+ abstract "幺环"
-    对于环 $(R,+,\cdot)$，如果它含幺，即存在乘法单位元，记作 $1$，则称 $(R,+,\cdot)$ 是一个 **幺环**（ring with identity）．
+???+ abstract "Ring with identity"
+    For a ring $(R,+,\cdot)$, if it has a multiplicative identity, written $1$, then $(R,+,\cdot)$ is called a **ring with identity**.
 
-???+ abstract "除环"
-    对于非零幺环 $(R,+,\cdot)$，如果对于所有非 $0$ 元素 $a\in R$，都存在乘法逆元（记作 $a^{-1}$），则称 $(R,+,\cdot)$ 是一个 **除环**（division ring）．
+???+ abstract "Division ring"
+    For a non-zero ring with identity $(R,+,\cdot)$, if every non-$0$ element $a\in R$ has a multiplicative inverse (written $a^{-1}$), then $(R,+,\cdot)$ is called a **division ring**.
 
-???+ abstract "交换环"
-    对于环 $(R,+,\cdot)$，如果它的乘法满足交换律，则称 $(R,+,\cdot)$ 是一个 **交换环**（commutative ring）．
+???+ abstract "Commutative ring"
+    For a ring $(R,+,\cdot)$, if its multiplication is commutative, then $(R,+,\cdot)$ is called a **commutative ring**.
 
-这里除环的定义中有趣的一点是，它将 $0$ 视为乘法结构中的特殊元素．这是因为 $0 = 0\cdot a = a\cdot 0$[^zero-multiplication]．也就是说，环中加法单位元乘以任何元素都得到其自身．这样，它自然不会存在乘法逆元，除非它本身就是乘法单位元．这样的环只有零环（见下面的例子）．
+An interesting point in the definition of a division ring is that it treats $0$ as a special element in the multiplicative structure. This is because $0 = 0\cdot a = a\cdot 0$[^zero-multiplication]. In other words, the additive identity of a ring times any element gives the additive identity itself. So it naturally has no multiplicative inverse, unless it is itself the multiplicative identity. The only such ring is the zero ring (see the examples below).
 
-这里的启示是，理解一般的环的乘法结构时，要去除加法单位元的影响，考察 $R\setminus\{0\}$．基于这一想法，有如下定义．
+The lesson here is that to understand the multiplicative structure of a general ring, you should remove the effect of the additive identity and look at $R\setminus\{0\}$. Based on this idea, we have the following definitions.
 
-???+ abstract "零因子"
-    对于环 $(R,+,\cdot)$，如果存在 $b\in R$ 且 $b\ne 0$，成立 $a\cdot b=0$ 或 $b\cdot a=0$，则称非零元素 $a$ 为一个 **零因子**（zero divisor）．
+???+ abstract "Zero divisor"
+    For a ring $(R,+,\cdot)$, a non-zero element $a$ is called a **zero divisor** if there is some $b\in R$ with $b\ne 0$ such that $a\cdot b=0$ or $b\cdot a=0$.
 
-???+ abstract "可逆元（单位）"
-    对于环 $(R,+,\cdot)$，如果元素 $a$ 有乘法逆元，即存在 $b\in R$，成立 $a\cdot b=b\cdot a=1$，则称元素 $a\in R$ 是一个 **可逆元**，或称 **单位**（unit）．
+???+ abstract "Invertible element (unit)"
+    For a ring $(R,+,\cdot)$, an element $a\in R$ is called an **invertible element**, or a **unit**, if $a$ has a multiplicative inverse, that is, there is $b\in R$ such that $a\cdot b=b\cdot a=1$.
 
-???+ warning "「单位」与「单位元」"
-    请不要混淆这两个概念．为避免混淆，抽象代数部分将使用「可逆元」的名称代替「单位」．
+???+ warning "Unit vs. identity element"
+    Please do not confuse these two concepts. To avoid confusion, the abstract algebra section uses the name "invertible element" instead of "unit".
 
-零因子不可能是可逆元，可逆元不可能是零因子．但是，一个非零元素可以既不是零因子，也不是可逆元．
+A zero divisor can never be invertible, and an invertible element can never be a zero divisor. However, a non-zero element may be neither a zero divisor nor invertible.
 
-如果一个环没有零因子，就说明所有非零元素的集合在乘法运算下封闭，即 $(R\setminus\{0\},\cdot)$ 构成半群．进一步地，如果还要求它成为交换幺半群，就可以得到整环的定义．
+If a ring has no zero divisors, then the set of all non-zero elements is closed under multiplication, that is, $(R\setminus\{0\},\cdot)$ is a semigroup. If we further require it to be a commutative monoid, we get the definition of an integral domain.
 
-???+ abstract "整环"
-    对于非零环 $(R,+,\cdot)$，如果它是交换环，有乘法单位元，且无零因子，则称它为整环（integral domain）．
+???+ abstract "Integral domain"
+    A non-zero ring $(R,+,\cdot)$ is called an integral domain if it is commutative, has a multiplicative identity, and has no zero divisors.
 
-虽然整环中的元素不一定存在逆元，但是没有零因子这一特性已经足够在整环上建立消去律．
+Although elements of an integral domain need not have inverses, having no zero divisors is already enough to establish a cancellation law in an integral domain.
 
-???+ note "整环的消去律"
-    设整环 $R$ 有元素 $a,b,c\in R$ 且 $a\neq 0$，如果 $ab=ac$，则必然有 $b=c$．
+???+ note "Cancellation law in an integral domain"
+    Let $R$ be an integral domain with elements $a,b,c\in R$ and $a\neq 0$. If $ab=ac$, then $b=c$.
 
-对于一般的幺环，如果只考虑它的全体可逆元，那么同样可以得到群结构．这称为环的乘法群或是单位群．
+For a general ring with identity, if we look only at all of its invertible elements, we again get a group structure. This is called the multiplicative group, or the unit group, of the ring.
 
-???+ abstract "乘法群（单位群）"
-    对于幺环 $(R,+,\cdot)$，设 $R^\times$ 为 $R$ 中全体可逆元的集合，则 $(R^\times,\cdot)$ 构成群，称为幺环 $R$ 的 **乘法群**（multiplicative group），或是 **单位群**（unit group）．
+???+ abstract "Multiplicative group (unit group)"
+    For a ring with identity $(R,+,\cdot)$, let $R^\times$ be the set of all invertible elements of $R$. Then $(R^\times,\cdot)$ is a group, called the **multiplicative group**, or the **unit group**, of the ring $R$.
 
-最简单的一些环的例子如下．
+Here are some of the simplest examples of rings.
 
-???+ example "环的例子"
-    -   零环（zero ring）：集合 $\{0\}$ 在通常意义的加法 $+$ 和乘法 $\times$ 下构成环，称为零环．它是唯一的只有一个元素的环，也是唯一的加法单位元和乘法单位元相等的环．
-    -   整数环：整数集 $\mathbf Z$ 和其上通常定义的加法 $+$ 和乘法 $\times$ 构成了环 $(\mathbf Z,+,\times)$．实际上，这是一个整环，但是它不是除环．
-    -   多项式环：对于一个环 $R$，可以在上面定义 [多项式环](./ring-theory.md#多项式环)  $R[x]$．如果 $R$ 是整环，则该多项式环必然是整环．
-    -   四元数（quaternion）：类比复数，可以考虑集合 $\mathbf H=\{a+b\mathrm{i}+c\mathrm{j}+d\mathrm{k}:a,b,c,d\in\mathbf R\}$，并且定义其上的加法和乘法，这里，$\mathrm{i},\mathrm{j},\mathrm{k}$ 的乘法运算满足
+???+ example "Examples of rings"
+    -   Zero ring: the set $\{0\}$ forms a ring under the usual addition $+$ and multiplication $\times$, called the zero ring. It is the only ring with exactly one element, and also the only ring whose additive identity equals its multiplicative identity.
+    -   Ring of integers: the set of integers $\mathbf Z$ with the usual addition $+$ and multiplication $\times$ forms a ring $(\mathbf Z,+,\times)$. In fact, it is an integral domain, but it is not a division ring.
+    -   Polynomial ring: for a ring $R$, we can define the [polynomial ring](./ring-theory.md#多项式环)  $R[x]$ over it. If $R$ is an integral domain, then this polynomial ring is also an integral domain.
+    -   Quaternions: by analogy with complex numbers, consider the set $\mathbf H=\{a+b\mathrm{i}+c\mathrm{j}+d\mathrm{k}:a,b,c,d\in\mathbf R\}$ and define addition and multiplication on it, where multiplication of $\mathrm{i},\mathrm{j},\mathrm{k}$ satisfies
     
         $$
         \mathrm{i}^2=\mathrm{j}^2=\mathrm{k}^2=-1,\ \mathrm{i}\mathrm{j}=-\mathrm{j}\mathrm{i}=\mathrm{k},\ \mathrm{j}\mathrm{k}=-\mathrm{k}\mathrm{j}=\mathrm{i},\ \mathrm{k}\mathrm{i}=-\mathrm{i}\mathrm{k}=\mathrm{j}.
         $$
     
-        那么可以验证，$\mathbf H$ 构成环，而且，它是一个非交换的除环．
-    -   整数集的子集 $2\mathbf Z$，在通常意义的加法和乘法下构成环，它是交换环，没有零因子，但是并不含幺．
-    -   整数模 $n$ 同余类 $\mathbf Z/n\mathbf Z$ 在同余类的加法和乘法运算下构成环，它是交换环，含幺（即 $\bar 1$）．这样的环含有零因子，当且仅当 $n$ 是合数．所以，当 $n$ 是素数时，环 $(\mathbf Z/n\mathbf Z, +,\times)$ 是整环；而且，此时它也是除环，所以它实际构成了一个域．它的乘法群 $((\mathbf Z/n\mathbf Z)^\times,\times)$ 就是整数模 $n$ 乘法群．
-    -   矩阵环：环 $R$ 上的全体 $n$ 维方阵在矩阵的加法和乘法下构成一个环 $M_n(R)$．一般地，这个环有零因子，且不是交换环．
-    -   对于一个集合 $A$ 的全体子集 $\mathcal P(A)$，如果定义集合的对称差 $\triangle$ 和交 $\cap$ 分别为其加法和乘法运算，则 $(\mathcal P(A),\triangle,\cap)$ 构成环．一般地，这个环含幺，有零因子，且是交换环．
+        Then one can check that $\mathbf H$ is a ring, and moreover, it is a non-commutative division ring.
+    -   The subset $2\mathbf Z$ of the integers forms a ring under the usual addition and multiplication. It is commutative and has no zero divisors, but it has no identity.
+    -   The residue classes of integers modulo $n$, $\mathbf Z/n\mathbf Z$, form a ring under addition and multiplication of residue classes. It is commutative and has an identity ($\bar 1$). This ring has zero divisors if and only if $n$ is composite. So when $n$ is prime, the ring $(\mathbf Z/n\mathbf Z, +,\times)$ is an integral domain; moreover, it is then also a division ring, so it is actually a field. Its multiplicative group $((\mathbf Z/n\mathbf Z)^\times,\times)$ is exactly the multiplicative group of integers modulo $n$.
+    -   Matrix ring: all $n\times n$ square matrices over a ring $R$ form a ring $M_n(R)$ under matrix addition and multiplication. In general, this ring has zero divisors and is not commutative.
+    -   For the set $\mathcal P(A)$ of all subsets of a set $A$, if we use the symmetric difference $\triangle$ as addition and the intersection $\cap$ as multiplication, then $(\mathcal P(A),\triangle,\cap)$ is a ring. In general, this ring has an identity, has zero divisors, and is commutative.
 
-当然，对于环的结构的讨论远不止这些，要了解更多内容，可以参考 [环论](./ring-theory.md) 或相关书籍．
+Of course, there is much more to say about the structure of rings. To learn more, see [Ring theory](./ring-theory.md) or related books.
 
-## 域
+## Fields
 
-域是一个比环性质更强的代数结构．具体地，域是交换除环．当然也可以写出它完整的定义．
+A field is an algebraic structure with stronger properties than a ring. Specifically, a field is a commutative division ring. We can also write out its full definition.
 
-???+ abstract "域"
-    对于非空集合 $F$ 和其上的两个二元运算 $+:F\times F\rightarrow F$ 和 $\cdot:F\times F\rightarrow F$，如果它们满足以下性质，则称 $(F,+,\cdot)$ 是一个 **域**（field）：
+???+ abstract "Field"
+    For a non-empty set $F$ with two binary operations $+:F\times F\rightarrow F$ and $\cdot:F\times F\rightarrow F$, if they satisfy the following properties, then $(F,+,\cdot)$ is called a **field**:
     
-    1.  $(F,+)$ 构成 Abel 群，其单位元记作 $0$，元素 $a\in F$ 在 $+$ 下的逆元记作 $-a$．
-    2.  $(F\setminus\{0\},\cdot)$ 构成 Abel 群，其单位元记作 $1$，元素 $a\in F\setminus\{0\}$ 在 $\cdot$ 下的逆元记作 $a^{-1}$．
-    3.  分配律：对于所有 $a,b,c\in F$，成立 $a\cdot(b+c)=a\cdot b+a\cdot c$．
+    1.  $(F,+)$ is an Abelian group. Its identity element is written $0$, and the inverse of an element $a\in F$ under $+$ is written $-a$.
+    2.  $(F\setminus\{0\},\cdot)$ is an Abelian group. Its identity element is written $1$, and the inverse of an element $a\in F\setminus\{0\}$ under $\cdot$ is written $a^{-1}$.
+    3.  Distributivity: for all $a,b,c\in F$, $a\cdot(b+c)=a\cdot b+a\cdot c$ holds.
 
-换句话说，域是对加、减、乘、除四则运算都封闭的代数结构．
+In other words, a field is an algebraic structure closed under all four arithmetic operations: addition, subtraction, multiplication and division.
 
-常见的域的例子如下．
+Here are some common examples of fields.
 
-???+ example "域的例子"
-    -   数域：有理数集 $\mathbf Q$，实数集 $\mathbf R$ 和复数集 $\mathbf C$ 在通常意义的加法和乘法下都构成域．
-    -   有限域（finite field）：以质数 $p$ 为模的整数同余类的集合 $\mathbf Z/p\mathbf Z$ 在同余类的加法和乘法下构成域．当然，除此之外还有其他的有限域，它们的结构由其大小唯一确定，且大小必然是质数幂的形式．
-    -   **分式域**（fraction field）：设 $(R,+,\cdot)$ 为整环，可以考虑形如 $ab^{-1}$ 的元素构成的集合 $Q$．严格地说，在集合 $R\times(R\setminus\{0\})$ 上定义等价关系：$(a_1,b_1)\sim(a_2,b_2)$ 当且仅当 $a_1b_2=a_2b_1$．那么，集合 $Q$ 就是这一关系下的等价类构成的集合 $R\times(R\setminus\{0\})/\sim$，其中，$(a,b)$ 所在等价类就记作 $ab^{-1}$．如果定义它上面的运算为
+???+ example "Examples of fields"
+    -   Number fields: the rational numbers $\mathbf Q$, the real numbers $\mathbf R$ and the complex numbers $\mathbf C$ all form fields under the usual addition and multiplication.
+    -   Finite field: the set $\mathbf Z/p\mathbf Z$ of residue classes of integers modulo a prime $p$ forms a field under addition and multiplication of residue classes. Of course, there are other finite fields too. Their structure is uniquely determined by their size, and the size must be a prime power.
+    -   **Fraction field**: let $(R,+,\cdot)$ be an integral domain. Consider the set $Q$ of elements of the form $ab^{-1}$. Strictly speaking, define an equivalence relation on the set $R\times(R\setminus\{0\})$: $(a_1,b_1)\sim(a_2,b_2)$ if and only if $a_1b_2=a_2b_1$. Then the set $Q$ is the set of equivalence classes under this relation, $R\times(R\setminus\{0\})/\sim$, and the equivalence class containing $(a,b)$ is written $ab^{-1}$. If we define the operations on it as
     
         $$
         \begin{aligned}
@@ -175,22 +175,22 @@ author: jifbt, billchenchina, Enter-tainer, Great-designer, iamtwz, ImpleLee, is
         \end{aligned}
         $$
     
-        则 $(Q,+,\cdot)$ 构成域，称为 $R$ 的分式域．例如，有理数域 $(\mathbf Q,+,\times)$ 就是整数环 $(\mathbf Z,+,\times)$ 的分式域．
-    -   二次域（quadratic field）：它是在有理数域 $\mathbf Q$ 中添加了 $\sqrt d$ 而扩张成的，这里 $d\neq 0,1$ 且没有平方因子．相关内容可以参考 [二次域](../number-theory/quadratic.md)．
+        then $(Q,+,\cdot)$ is a field, called the fraction field of $R$. For example, the field of rational numbers $(\mathbf Q,+,\times)$ is the fraction field of the ring of integers $(\mathbf Z,+,\times)$.
+    -   Quadratic field: it is the extension of the field of rational numbers $\mathbf Q$ obtained by adding $\sqrt d$, where $d\neq 0,1$ and $d$ has no square factors. For more, see [Quadratic fields](../number-theory/quadratic.md).
 
-域相较于环，拥有着非常简单的加法和乘法结构．所以，域本身的结构往往很简单．这使得域的研究和环的研究大不相同，通常会转而研究域的扩张，以及相应的 Galois 理论．在算法竞赛中，有时会需要在有理数域或者有限域的扩域上进行计算．域论的相关内容，可以参考 [域论](./field-theory.md) 或相关书籍．
+Compared with rings, fields have very simple additive and multiplicative structures. So the structure of a field itself is often simple. This makes the study of fields quite different from the study of rings: it usually turns to field extensions and the related Galois theory. In competitive programming, you sometimes need to compute in extensions of the rational numbers or of finite fields. For field theory, see [Field theory](./field-theory.md) or related books.
 
-## 应用
+## Applications
 
-最后，以下面的题目为例，说明抽象的代数对象是怎样辅助分析具体的问题的．
+Finally, let's use the following problem to show how abstract algebraic objects can help analyze a concrete problem.
 
-???+ note "[【模板】"动态 DP"& 动态树分治（加强版）](https://www.luogu.com.cn/problem/P4751)"
-    给定大小为 $n$ 的带点权的树，进行 $m$ 次点权修改．每次修改后要输出树上最大带权独立集的权值之和．问题强制在线．
+???+ note "[Template: Dynamic DP & Dynamic Tree Divide and Conquer (Enhanced Version)](https://www.luogu.com.cn/problem/P4751)"
+    Given a tree of size $n$ with vertex weights, perform $m$ vertex weight updates. After each update, output the total weight of the maximum-weight independent set of the tree. The problem must be solved online.
 
-???+ note "思路分析"
-    这道题是动态 DP 模板，一种复杂度正确的代码实现需要用到 [全局平衡二叉树](../../ds/global-bst.md)，具体样例代码也在对应页面．这里仅仅结合该题情景，分析建模的过程．
+???+ note "Analysis"
+    This problem is the dynamic DP template problem. An implementation with the correct complexity needs the [global balanced binary tree](../../ds/global-bst.md); sample code is on that page. Here we only analyze how to model the problem in this setting.
     
-    为了突出重点，这里暂不考虑全局平衡二叉树对于树形结构的处理，转而考虑链上的最大带权独立集的 DP 问题．顺次考虑链 $[1,n]$ 上的每个点，对于点 $i$ 可以选（$1$）或不选（$0$）．分别设这两种情形下，$[1,i]$ 上子问题的最优解为 $f_{i,1}$ 和 $f_{i,0}$．所以，可以写出 DP 方程为
+    To focus on the key idea, let's ignore for now how the global balanced binary tree handles the tree structure, and instead consider the DP for the maximum-weight independent set on a chain. Go through the vertices of the chain $[1,n]$ in order. Each vertex $i$ can be chosen ($1$) or not chosen ($0$). Let the optimal values of the subproblem on $[1,i]$ in these two cases be $f_{i,1}$ and $f_{i,0}$. Then the DP equations are
     
     $$
     \begin{aligned}
@@ -199,32 +199,32 @@ author: jifbt, billchenchina, Enter-tainer, Great-designer, iamtwz, ImpleLee, is
     \end{aligned}
     $$
     
-    它的初值为 $(f_{0,1},f_{0,0})=(0,0)$，而最终答案就是 $\max\{f_{n,1},f_{n,0}\}$．要表示点 $i$ 对于最终结果的影响，只需要注意到这一递归关系可以写作
+    The initial value is $(f_{0,1},f_{0,0})=(0,0)$, and the final answer is $\max\{f_{n,1},f_{n,0}\}$. To express the effect of vertex $i$ on the final result, just note that the recurrence can be written as
     
     $$
     (f_{i,1},f_{i,0})=g(f_{i-1,1},f_{i-1,0};w_i).
     $$
     
-    这是一连串 $\mathbf R^2$ 到 $\mathbf R^2$ 的映射，它将 $(f_{i-1,1},f_{i-1,0})$ 映射到 $(f_{i,1},f_{i,0})$，用群的语言描述，这些变换在映射的复合之下构成幺半群．这正是线段树可以维护的．
+    This is a series of maps from $\mathbf R^2$ to $\mathbf R^2$, each mapping $(f_{i-1,1},f_{i-1,0})$ to $(f_{i,1},f_{i,0})$. In the language of groups, these transformations form a monoid under composition of maps. This is exactly what a segment tree can maintain.
     
-    但是，这样的含参变换 $g(\cdot;w_i)$ 如果没有特殊的结构，一般的 $\mathbf R^2$ 到 $\mathbf R^2$ 的映射是不可能用有限维的数据描述的．这里就需要另一项观察，即如果在 $\mathbf R\cup\{-\infty\}$ 上，定义 $\max$ 作为加法、$+$ 作为乘法，那么 $\mathbf R\cup\{-\infty\}$ 构成一种类似环的结构，这里，$-\infty$ 是加法单位元，$0$ 是乘法单位元．但是它不是环，因为其中的元素并非都有加法逆元．这样的结构叫做半环[^semiring]，这里 $(\mathbf R\cup\{-\infty\},\max,+)$ 形成的半环叫做 **热带半环**（tropical semiring）．
+    However, unless the parameterized transformation $g(\cdot;w_i)$ has special structure, a general map from $\mathbf R^2$ to $\mathbf R^2$ cannot be described with finite-dimensional data. Here we need one more observation: if on $\mathbf R\cup\{-\infty\}$ we define $\max$ as addition and $+$ as multiplication, then $\mathbf R\cup\{-\infty\}$ forms a ring-like structure, where $-\infty$ is the additive identity and $0$ is the multiplicative identity. But it is not a ring, because not every element has an additive inverse. Such a structure is called a semiring[^semiring], and the semiring $(\mathbf R\cup\{-\infty\},\max,+)$ here is called the **tropical semiring**.
     
-    基于热带半环 $(R,\oplus,\otimes)$，可以定义它上面的矩阵乘法．即对于 $m\times n$ 维矩阵 $A=(a_{ij})$ 和 $n\times p$ 维矩阵 $B=(b_{jk})$，可以定义其乘积 $AB$ 为 $(c_{ik})$，它的每项元素等于
+    Over the tropical semiring $(R,\oplus,\otimes)$, we can define matrix multiplication. For an $m\times n$ matrix $A=(a_{ij})$ and an $n\times p$ matrix $B=(b_{jk})$, define their product $AB$ as $(c_{ik})$, where each entry is
     
     $$
     c_{ik} = \bigoplus_{j=1}^n(a_{ij}\otimes b_{jk}) = \max_{1\le j\le n}\;(a_{ij}+b_{jk}).
     $$
     
-    有了这些记号，可以将上述递推关系看作是热带半环上的线性变换，并用矩阵语言写作
+    With this notation, the recurrence above can be viewed as a linear transformation over the tropical semiring, and written in matrix form as
     
     $$
     \left(\begin{matrix}f_{i,1}\\f_{i,0}\end{matrix}\right)
     =\left(\begin{matrix}-\infty&w_i\\0&0\end{matrix}\right)\left(\begin{matrix}f_{i-1,1}\\f_{i-1,0}\end{matrix}\right).
     $$
     
-    由此，只要用线段树维护这一热带半环上的矩阵的乘积就可以回答多次修改的链上的动态 DP 问题．
+    So by maintaining the product of these matrices over the tropical semiring with a segment tree, we can answer the dynamic DP problem on a chain with many updates.
     
-    现在回到该问题的树上版本．对于树上的节点 $i$，其子节点集合记作 $S(i)$，则该处的 DP 方程为
+    Now return to the tree version of the problem. For a vertex $i$ of the tree, let $S(i)$ be its set of children. Then the DP equations there are
     
     $$
     \begin{aligned}
@@ -233,7 +233,7 @@ author: jifbt, billchenchina, Enter-tainer, Great-designer, iamtwz, ImpleLee, is
     \end{aligned}
     $$
     
-    首先，通过树链剖分将问题转化为链上版本．设 $h$ 是 $i$ 的重子节点，那么上述递推方程可以写作
+    First, use heavy-light decomposition to turn the problem into the chain version. Let $h$ be the heavy child of $i$. Then the recurrence above can be written as
     
     $$
     \begin{aligned}
@@ -242,7 +242,7 @@ author: jifbt, billchenchina, Enter-tainer, Great-designer, iamtwz, ImpleLee, is
     \end{aligned}
     $$
     
-    这里，
+    where
     
     $$
     \begin{aligned}
@@ -251,19 +251,19 @@ author: jifbt, billchenchina, Enter-tainer, Great-designer, iamtwz, ImpleLee, is
     \end{aligned}
     $$
     
-    总结了轻子节点的贡献．根据上文描述，这些变换都可以写作热带半环上的矩阵形式，所以，整个问题也就可以在树剖后的线段树上维护．但是，直接用树剖加线段树的单次修改是 $O(\log^2n)$ 的，所以需要用到上文提到的全局平衡二叉树优化到 $O(\log n)$，当然也可以用 LCT 维护．
+    sum up the contributions of the light children. As described above, all these transformations can be written as matrices over the tropical semiring, so the whole problem can be maintained with a segment tree on top of the heavy-light decomposition. However, a single update with plain HLD plus a segment tree takes $O(\log^2n)$, so the global balanced binary tree mentioned above is needed to bring it down to $O(\log n)$. Of course, an LCT also works.
     
-    这里提到的热带半环以及上面的矩阵运算其实并不罕见．如果将上文中的 $\max$ 换作 $\min$，则相应的热带半环常用于最短路问题中．如果 $n$ 维方阵 $A$ 给出了顶点数目为 $n$ 的某个图的两点间的（最短）边权，那么，$A^k$ 的 $(i,j)$ 处的元素就是自点 $i$ 经至多 $k$ 条边到点 $j$ 的最短距离；特别地，$A^n$ 就是该图的距离矩阵．当然实际实现的时候并不会真的暴力计算这一矩阵的幂，而是使用复杂度为 $O(n^3)$ 的 Floyd 算法．
+    The tropical semiring and the matrix operations over it are actually not rare. If we replace $\max$ above with $\min$, the corresponding tropical semiring is often used in shortest path problems. If an $n\times n$ matrix $A$ gives the (shortest) edge weights between pairs of vertices of a graph with $n$ vertices, then the $(i,j)$ entry of $A^k$ is the shortest distance from vertex $i$ to vertex $j$ using at most $k$ edges; in particular, $A^n$ is the distance matrix of the graph. Of course, in practice we do not actually compute this matrix power by brute force; instead we use the Floyd algorithm, which runs in $O(n^3)$.
 
-## 参考资料与注释
+## References and notes
 
 -   Dummit, D.S. and Foote, R.M. (2004) Abstract Algebra. 3rd Edition, John Wiley & Sons, Inc.
 -   [Tropical semiring - Wikipedia](https://en.wikipedia.org/wiki/Tropical_semiring)
 
-[^oi-wiki-not-wikipedia]: 因为 [OI Wiki 不是百科全书](../../intro/what-oi-wiki-is-not.md#oi-wiki-不是百科全书)．
+[^oi-wiki-not-wikipedia]: Because [OI Wiki is not an encyclopedia](../../intro/what-oi-wiki-is-not.md#oi-wiki-不是百科全书).
 
-[^ring-wiki]: [Ring（mathematics）- Wikipedia](https://en.wikipedia.org/wiki/Ring_%28mathematics%29)
+[^ring-wiki]: [Ring (mathematics) - Wikipedia](https://en.wikipedia.org/wiki/Ring_%28mathematics%29)
 
-[^zero-multiplication]: 该式的推导即 $0\cdot a+0 = 0\cdot a = (0+0)\cdot a = 0\cdot a + 0\cdot a$，这里，第一个等号和第二个等号是加法单位元的定义，第三个等号是分配律，最后的蕴涵关系是加法的消去律．另一侧的乘法类似．
+[^zero-multiplication]: The derivation is $0\cdot a+0 = 0\cdot a = (0+0)\cdot a = 0\cdot a + 0\cdot a$. Here the first and second equalities follow from the definition of the additive identity, the third equality is distributivity, and the final implication is the cancellation law for addition. The multiplication on the other side is similar.
 
-[^semiring]: 半环（semiring）是在幺环的定义中放松了加法运算一定存在逆元的要求，即加法结构是交换幺半群、乘法结构是幺半群的代数结构．更多信息参见 [Wikipedia](https://en.wikipedia.org/wiki/Semiring)．
+[^semiring]: A semiring is the algebraic structure obtained from the definition of a ring with identity by dropping the requirement that every element has an additive inverse. That is, its additive structure is a commutative monoid and its multiplicative structure is a monoid. For more, see [Wikipedia](https://en.wikipedia.org/wiki/Semiring).
