@@ -1,69 +1,69 @@
-## 简介
+## Introduction
 
-爬山算法是一种局部择优的方法，采用启发式方法，是对深度优先搜索的一种改进，它利用反馈信息帮助生成解的决策．
+Hill climbing is a local-improvement method. It is a heuristic method and an improvement on depth-first search: it uses feedback to help decide which solution to generate next.
 
-直白地讲，就是当目前无法直接到达最优解，但是可以判断两个解哪个更优的时候，根据一些反馈信息生成一个新的可能解．
+Put simply: when you cannot jump straight to the optimal solution, but you can tell which of two solutions is better, you use some feedback to generate a new candidate solution.
 
-因此，爬山算法每次在当前找到的最优方案 $x$ 附近寻找一个新方案．如果这个新的解 $x'$ 更优，那么转移到 $x'$，否则不变．
+So each time, hill climbing looks for a new solution near the best solution $x$ found so far. If the new solution $x'$ is better, move to $x'$; otherwise stay put.
 
-这种算法对于单峰函数显然可行．
+This clearly works for unimodal functions.
 
-Q：都知道是单峰函数了为什么不三分呢？
+Q: If we already know the function is unimodal, why not just use ternary search?
 
-A：爬山算法的优势在于当正解的写法你并不了解（常见于毒瘤计算几何和毒瘤数学题），或者本身状态维度很多，无法容易地写分治（例 2 就可以用二分完成合法正解）时，可以通过非常暴力的计算得到最优解．
+A: The advantage of hill climbing is that when you don't know how to write the intended solution (common in nasty computational geometry and nasty math problems), or when the state has many dimensions and divide and conquer is hard to write (Example 2 can be solved correctly with binary search), you can still get the optimal solution through very brute-force computation.
 
-但是对于多数需要求解的函数，爬山算法很容易进入一个局部最优解，如下图（最优解为 $\color{green}{\Uparrow}$，而爬山算法可能找到的最优解为 $\color{red}{\Downarrow}$）．
+But for most functions you need to optimize, hill climbing easily gets stuck in a local optimum, as in the figure below (the optimal solution is $\color{green}{\Uparrow}$, while hill climbing may end up at $\color{red}{\Downarrow}$).
 
 ![](./images/hill-climbing.png)
 
-## 具体实现
+## Implementation
 
-爬山算法一般会引入温度参数（类似模拟退火）．类比地说，爬山算法就像是一只兔子喝醉了在山上跳，它每次都会朝着它所认为的更高的地方（这往往只是个不准确的趋势）跳，显然它有可能一次跳到山顶，也可能跳过头翻到对面去．不过没关系，兔子翻过去之后还会跳回来．显然这个过程很没有用，兔子永远都找不到出路，所以在这个过程中兔子冷静下来并在每次跳的时候更加谨慎，少跳一点，以到达合适的最优点．
+Hill climbing usually introduces a temperature parameter (similar to simulated annealing). As an analogy, hill climbing is like a drunk rabbit hopping around on a mountain. Each time it hops toward what it believes is higher ground (often only a rough trend). It might reach the top in one hop, or it might overshoot and land on the other side. That's fine: after going over, the rabbit will hop back. But clearly this alone is useless, and the rabbit would never find its way. So during the process the rabbit calms down and becomes more careful with each hop, hopping a bit less, so that it settles at a good optimum.
 
-兔子逐渐变得清醒的过程就是降温过程，即温度参数在爬山的时候会不断减小．
+The rabbit gradually sobering up is the cooling process: the temperature parameter keeps decreasing as we climb.
 
-关于降温：降温参数是略小于 $1$ 的常数，一般在 $[0.985, 0.999]$ 中选取．
+About cooling: the cooling factor is a constant slightly less than $1$, usually chosen from $[0.985, 0.999]$.
 
-## 例题
+## Example problems
 
-???+ example "[「JSOI2008」球形空间产生器](https://www.luogu.com.cn/problem/P4035)"
-    给出 $n$ 维空间中的 $n + 1$ 个点，已知它们在同一个 $n$ 维球面上，求出球心．$n \leq 10$，坐标绝对值不超过 $20000$．
+???+ example "[JSOI2008 Spherical Space Generator](https://www.luogu.com.cn/problem/P4035)"
+    You are given $n + 1$ points in $n$-dimensional space. They are known to lie on the same $n$-dimensional sphere. Find the center of the sphere. $n \leq 10$, and the absolute value of each coordinate is at most $20000$.
 
-??? note "解答"
-    很明显的单峰函数，可以使用爬山解决．本题算法流程：
+??? note "Solution"
+    This is clearly a unimodal function, so hill climbing works. The algorithm for this problem:
     
-    1.  初始化球心为各个给定点的重心（即其各维坐标均为所有给定点对应维度坐标的平均值），以减少枚举量．
-    2.  对于当前的球心，求出每个已知点到这个球心欧氏距离的平均值．
-    3.  遍历所有已知点．记录一个改变值 $\textit{cans}$（分开每一维度记录）对于每一个点的欧氏距离，如果大于平均值，就把改变值加上差值，否则减去．实际上并不用判断这个大小问题，只要不考虑绝对值，直接用坐标计算即可．这个过程可以形象地转化成一个新的球心，在空间里推来推去，碰到太远的点就往点的方向拉一点，碰到太近的点就往点的反方向推一点．
-    4.  将我们记录的 $\textit{cans}$ 乘上温度，更新球心，回到步骤 2
-    5.  在温度小于某个给定阈值的时候结束．
+    1.  Initialize the center as the centroid of the given points (each coordinate is the average of that coordinate over all given points), to reduce the amount of searching.
+    2.  For the current center, compute the average Euclidean distance from the known points to it.
+    3.  Go through all known points. Keep a change vector $\textit{cans}$ (recorded separately for each dimension). For each point's Euclidean distance, if it is larger than the average, add the difference to the change; otherwise subtract it. In fact you don't need to compare at all: just ignore absolute values and compute directly with the coordinates. You can picture this as a new center being pushed around in space: it gets pulled a bit toward points that are too far, and pushed a bit away from points that are too close.
+    4.  Multiply the recorded $\textit{cans}$ by the temperature, update the center, and go back to step 2.
+    5.  Stop when the temperature drops below some given threshold.
     
-    因此，我们在更新球心的时候，不能直接加上改变值，而是要加上改变值与温度的乘积．
+    So when updating the center, we don't add the change directly, but the change times the temperature.
     
-    并不是每一道爬山题都可以具体地用温度解决，这只是一个例子．
+    Not every hill climbing problem can be solved with temperature in exactly this way; this is just one example.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/misc/code/hill-climbing/hill-climbing_1.cpp"
     ```
 
-???+ example "[「BZOJ 3680」吊打 XXX](https://hydro.ac/p/bzoj-P3680)"
-    求 $n$ 个点的带权类费马点．
+???+ example "[BZOJ 3680 Beat Up XXX](https://hydro.ac/p/bzoj-P3680)"
+    Find the weighted Fermat-like point of $n$ points.
 
-??? note "解答"
-    框架类似，用了点物理知识．
+??? note "Solution"
+    The framework is similar, using a bit of physics.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/misc/code/hill-climbing/hill-climbing_2.cpp"
     ```
 
-## 优化
+## Optimization
 
-很容易想到的是，为了尽可能获取优秀的答案，我们可以多次爬山．方法有修改初始状态/修改降温参数/修改初始温度等，然后开一个全局最优解记录答案．每次爬山结束之后，更新全局最优解．
+An obvious idea is to climb several times to get as good an answer as possible. You can vary the initial state, the cooling factor, the initial temperature, and so on, and keep a global best solution. After each climb, update the global best.
 
-这样处理可能会存在的问题是超时，在正式考试时请手造大数据测试调参．
+The possible problem with this is exceeding the time limit. In a real contest, build large test data by hand to tune the parameters.
 
-## 劣势
+## Drawbacks
 
-其实爬山算法的劣势上文已经提及：它容易陷入一个局部最优解．当目标函数不是单峰函数时，这个劣势是致命的．因此我们要引进 [**模拟退火**](./simulated-annealing.md)．
+The drawback of hill climbing was already mentioned above: it easily gets stuck in a local optimum. When the objective function is not unimodal, this drawback is fatal. That is why we introduce [**simulated annealing**](./simulated-annealing.md).
