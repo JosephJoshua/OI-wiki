@@ -1,42 +1,42 @@
 author: 97littleleaf11, abc1763613206, CCXXXI, EndlessCheng, Enter-tainer, fps5283, Great-designer, H-J-Granger, hly1204, hsfzLZH1, huayucaiji, Ir1d, kenlig, Marcythm, ouuan, SamZhangQingChuan, shuzhouliu, sshwy, StudyingFather, test12345-pupil, Tiphereth-A, TrisolarisHD, untitledunrevised
 
-本页面包含多项式常见的初等函数操作．具体而言，本页面包含如下内容：
+This page covers the common elementary function operations on polynomials. Specifically, it contains:
 
-1.  多项式求逆
-2.  多项式开方
-3.  多项式除法
-4.  多项式取模
-5.  多项式指数函数
-6.  多项式对数函数
-7.  多项式三角函数
-8.  多项式反三角函数
+1.  Polynomial inverse
+2.  Polynomial square root
+3.  Polynomial division
+4.  Polynomial modulo
+5.  Polynomial exponential
+6.  Polynomial logarithm
+7.  Polynomial trigonometric functions
+8.  Polynomial inverse trigonometric functions
 
-??? note "初等函数与非初等函数"
-    初等函数的定义如下[^ref1]：
+??? note "Elementary and non-elementary functions"
+    Elementary functions are defined as follows[^ref1]:
     
-    若域 $F$ 中存在映射 $u\to \partial u$ 满足：
+    If a field $F$ has a map $u\to \partial u$ such that:
     
     1.  $\partial(u+v)=\partial u+\partial v$
     2.  $\partial(uv)=u\partial v+v\partial u$
     
-    则称这个域为 **微分域**．
+    then the field is called a **differential field**.
     
-    若微分域 $F$ 上的函数 $u$ 满足以下的任意一条条件，则称该函数 $u$ 为初等函数：
+    A function $u$ over a differential field $F$ is called elementary if it satisfies any one of the following:
     
-    1.  $u$ 是 $F$ 上的代数函数．
-    2.  $u$ 是 $F$ 上的指数性函数，即存在 $a\in F$ 使得 $\partial u=u\partial a$.
-    3.  $u$ 是 $F$ 上的对数性函数，即存在 $a\in F$ 使得 $\partial u=\frac{\partial a}{a}$.
+    1.  $u$ is an algebraic function over $F$.
+    2.  $u$ is an exponential function over $F$, that is, there is $a\in F$ such that $\partial u=u\partial a$.
+    3.  $u$ is a logarithmic function over $F$, that is, there is $a\in F$ such that $\partial u=\frac{\partial a}{a}$.
     
-    以下是常见的初等函数：
+    Common elementary functions include:
     
-    1.  代数函数：存在有限次多项式 $P$ 使得 $P(f(x))=0$ 的函数 $f(x)$，如 $2x+1$,$\sqrt{x}$,$(1+x^2)^{-1}$,$|x|$.
-    2.  指数函数
-    3.  对数函数
-    4.  三角函数
-    5.  反三角函数
-    6.  双曲函数
-    7.  反双曲函数
-    8.  以上函数的复合，如：
+    1.  Algebraic functions: functions $f(x)$ for which there is a polynomial $P$ of finite degree with $P(f(x))=0$, such as $2x+1$,$\sqrt{x}$,$(1+x^2)^{-1}$,$|x|$.
+    2.  Exponential functions
+    3.  Logarithmic functions
+    4.  Trigonometric functions
+    5.  Inverse trigonometric functions
+    6.  Hyperbolic functions
+    7.  Inverse hyperbolic functions
+    8.  Compositions of the above, such as:
     
         $$
         \frac{\mathrm{e}^{\tan x}}{1+x^2}\sin\left(\sqrt{1+\ln^2 x}\right)
@@ -46,30 +46,30 @@ author: 97littleleaf11, abc1763613206, CCXXXI, EndlessCheng, Enter-tainer, fps52
         -\mathrm{i} \ln\left(x+\mathrm{i}\sqrt{1-x^2}\right)
         $$
     
-    以下是常见的非初等函数：
+    A common non-elementary function is:
     
-    1.  误差函数：
+    1.  The error function:
     
         $$
         \operatorname{erf}(x):=\frac{2}{\sqrt{\pi}}\int_{0}^{x}\exp\left(-t^2\right)\mathrm{d}t
         $$
 
-## 多项式求逆
+## Polynomial inverse
 
-给定多项式 $f\left(x\right)$，求 $f^{-1}\left(x\right)$．
+Given a polynomial $f\left(x\right)$, find $f^{-1}\left(x\right)$.
 
-### 解法
+### Solution
 
-#### 倍增法
+#### Doubling method
 
-首先，易知
+First, it is easy to see that
 
 $$
 \left[x^{0}\right]f^{-1}\left(x\right)=\left(\left[x^{0}\right]f\left(x\right)\right)^{-1}
 $$
 
-假设现在已经求出了 $f\left(x\right)$ 在模 $x^{\left\lceil\frac{n}{2}\right\rceil}$ 意义下的逆元 $f^{-1}_{0}\left(x\right)$．
-有：
+Suppose we have already found the inverse $f^{-1}_{0}\left(x\right)$ of $f\left(x\right)$ modulo $x^{\left\lceil\frac{n}{2}\right\rceil}$.
+Then:
 
 $$
 \begin{aligned}
@@ -79,21 +79,21 @@ $$
 \end{aligned}
 $$
 
-两边平方可得：
+Squaring both sides gives:
 
 $$
 f^{-2}\left(x\right)-2f^{-1}\left(x\right)f^{-1}_{0}\left(x\right)+f^{-2}_{0}\left(x\right)\equiv 0 \pmod{x^{n}}
 $$
 
-两边同乘 $f\left(x\right)$ 并移项可得：
+Multiplying both sides by $f\left(x\right)$ and rearranging gives:
 
 $$
 f^{-1}\left(x\right)\equiv f^{-1}_{0}\left(x\right)\left(2-f\left(x\right)f^{-1}_{0}\left(x\right)\right) \pmod{x^{n}}
 $$
 
-递归计算即可．
+Then compute recursively.
 
-**时间复杂度**
+**Time complexity**
 
 $$
 T\left(n\right)=T\left(\frac{n}{2}\right)+O\left(n\log{n}\right)=O\left(n\log{n}\right)
@@ -101,11 +101,11 @@ $$
 
 #### Newton's Method
 
-参见 [Newton's Method](./newton.md#newtons-method).
+See [Newton's Method](./newton.md#newtons-method).
 
-#### Graeffe 法
+#### Graeffe's method
 
-欲求 $f^{-1}(x)\bmod x^{2n}$ 考虑
+To find $f^{-1}(x)\bmod x^{2n}$, consider
 
 $$
 \begin{aligned}
@@ -114,11 +114,11 @@ f^{-1}(x)\bmod x^{2n}&= f(-x)(f(x)f(-x))^{-1}\bmod x^{2n}\\
 \end{aligned}
 $$
 
-只需求出 $g^{-1}(x)\bmod x^n$ 即可还原出 $g^{-1}(x^2)\bmod x^{2n}$ 因为 $f(x)f(-x)$ 是偶函数，时间复杂度同上．
+Since $f(x)f(-x)$ is an even function, we only need $g^{-1}(x)\bmod x^n$ to recover $g^{-1}(x^2)\bmod x^{2n}$. The time complexity is the same as above.
 
-### 代码
+### Code
 
-??? note "多项式求逆"
+??? note "Polynomial inverse"
     ```cpp
     constexpr int MAXN = 262144;
     constexpr int mod = 998244353;
@@ -148,35 +148,35 @@ $$
     }
     ```
 
-### 例题
+### Example problems
 
-1.  有标号简单无向连通图计数：[「POJ 1737」Connected Graph](http://poj.org/problem?id=1737)
+1.  Counting labeled simple connected undirected graphs: [POJ 1737 Connected Graph](http://poj.org/problem?id=1737)
 
-## 多项式开方
+## Polynomial square root
 
-给定多项式 $g\left(x\right)$，求 $f\left(x\right)$，满足：
+Given a polynomial $g\left(x\right)$, find $f\left(x\right)$ such that:
 
 $$
 f^{2}\left(x\right)\equiv g\left(x\right) \pmod{x^{n}}
 $$
 
-### 解法
+### Solution
 
-#### 倍增法
+#### Doubling method
 
-首先讨论 $\left[x^0\right]g(x)$ 不为 $0$ 的情况．
+First consider the case where $\left[x^0\right]g(x)$ is not $0$.
 
-易知：
+It is easy to see that:
 
 $$
 \left[x^0\right]f(x) = \sqrt{\left[x^0\right]g(x)}
 $$
 
-若 $\left[x^0\right]g(x)$ 没有平方根，则多项式 $g(x)$ 没有平方根．
+If $\left[x^0\right]g(x)$ has no square root, then the polynomial $g(x)$ has no square root.
 
-> $\left[x^0\right]g(x)$ 可能有多个平方根，选取不同的根会求出不同的 $f(x)$．
+> $\left[x^0\right]g(x)$ may have several square roots; choosing different ones gives different $f(x)$.
 
-假设现在已经求出了 $g\left(x\right)$ 在模 $x^{\left\lceil\frac{n}{2}\right\rceil}$ 意义下的平方根 $f_{0}\left(x\right)$，则有：
+Suppose we have already found the square root $f_{0}\left(x\right)$ of $g\left(x\right)$ modulo $x^{\left\lceil\frac{n}{2}\right\rceil}$. Then:
 
 $$
 \begin{aligned}
@@ -190,58 +190,58 @@ $$
 \end{aligned}
 $$
 
-倍增计算即可．
+Then compute by doubling.
 
-**时间复杂度**
+**Time complexity**
 
 $$
 T\left(n\right)=T\left(\frac{n}{2}\right)+O\left(n\log{n}\right)=O\left(n\log{n}\right)
 $$
 
-还有一种常数较小的写法就是在倍增维护 $f\left(x\right)$ 的时候同时维护 $f^{-1}\left(x\right)$ 而不是每次都求逆．
+A version with a smaller constant factor maintains $f^{-1}\left(x\right)$ alongside $f\left(x\right)$ during the doubling, instead of computing the inverse from scratch each time.
 
-> 当 $\left[x^{0}\right]g\left(x\right)\neq 1$ 时，可能需要使用二次剩余来计算 $\left[x^{0}\right]f\left(x\right)$．
+> When $\left[x^{0}\right]g\left(x\right)\neq 1$, you may need quadratic residues to compute $\left[x^{0}\right]f\left(x\right)$.
 
-上述方法需要知道 $f_{0}(x)$ 的逆，所以常数项不能为 $0$．
+The method above needs the inverse of $f_{0}(x)$, so the constant term cannot be $0$.
 
-若 $\left[x^0\right]g(x) = 0$，则将 $g(x)$ 分解成 $x^{k}h(x)$，其中 $\left[x^0\right]h(x) \not = 0$．
+If $\left[x^0\right]g(x) = 0$, factor $g(x)$ as $x^{k}h(x)$ with $\left[x^0\right]h(x) \not = 0$.
 
--   若 $k$ 是奇数，则 $g(x)$ 没有平方根．
+-   If $k$ is odd, $g(x)$ has no square root.
 
--   若 $k$ 是偶数，则求出 $h(x)$ 的平方根 $\sqrt{h(x)}$，然后得到 $f(x) \equiv x^{k/2} \sqrt{h(x)} \pmod{x^{n}}$．
+-   If $k$ is even, find the square root $\sqrt{h(x)}$ of $h(x)$, and then $f(x) \equiv x^{k/2} \sqrt{h(x)} \pmod{x^{n}}$.
 
-??? note "洛谷模板题 [P5205【模板】多项式开根](https://www.luogu.com.cn/problem/P5205) 参考代码"
+??? note "Reference code for the Luogu template problem [P5205 [Template] Polynomial Square Root](https://www.luogu.com.cn/problem/P5205)"
     ```cpp
     --8<-- "docs/math/code/poly/sqrt/sqrt_1.cpp"
     ```
 
 #### Newton's Method
 
-参见 [Newton's Method](./newton.md#newtons-method).
+See [Newton's Method](./newton.md#newtons-method).
 
-### 例题
+### Example problems
 
-1.  [「Codeforces Round #250」E. The Child and Binary Tree](https://codeforces.com/contest/438/problem/E)
+1.  [Codeforces Round #250 E. The Child and Binary Tree](https://codeforces.com/contest/438/problem/E)
 
-## 多项式除法 & 取模
+## Polynomial division & modulo
 
-给定多项式 $f\left(x\right),g\left(x\right)$，求 $g\left(x\right)$ 除 $f\left(x\right)$ 的商 $Q\left(x\right)$ 和余数 $R\left(x\right)$．
+Given polynomials $f\left(x\right),g\left(x\right)$, find the quotient $Q\left(x\right)$ and remainder $R\left(x\right)$ of $f\left(x\right)$ divided by $g\left(x\right)$.
 
-### 解法
+### Solution
 
-发现若能消除 $R\left(x\right)$ 的影响则可直接 [多项式求逆](#多项式求逆) 解决．
+Notice that if we can remove the effect of $R\left(x\right)$, the problem can be solved directly with the [polynomial inverse](#polynomial-inverse).
 
-考虑构造变换
+Consider the transformation
 
 $$
 f^{R}\left(x\right)=x^{\operatorname{deg}{f}}f\left(\frac{1}{x}\right)
 $$
 
-观察可知其实质为反转 $f\left(x\right)$ 的系数．
+Looking at it, we see that it simply reverses the coefficients of $f\left(x\right)$.
 
-设 $n=\operatorname{deg}{f},m=\operatorname{deg}{g}$．
+Let $n=\operatorname{deg}{f},m=\operatorname{deg}{g}$.
 
-将 $f\left(x\right)=Q\left(x\right)g\left(x\right)+R\left(x\right)$ 中的 $x$ 替换成 $\frac{1}{x}$ 并将其两边都乘上 $x^{n}$，得到：
+In $f\left(x\right)=Q\left(x\right)g\left(x\right)+R\left(x\right)$, replace $x$ by $\frac{1}{x}$ and multiply both sides by $x^{n}$ to get:
 
 $$
 \begin{aligned}
@@ -250,36 +250,36 @@ $$
 \end{aligned}
 $$
 
-注意到上式中 $R^{R}\left(x\right)$ 的系数为 $x^{n-m+1}$，则将其放到模 $x^{n-m+1}$ 意义下即可消除 $R^{R}\left(x\right)$ 带来的影响．
+Note that in the equation above $R^{R}\left(x\right)$ is multiplied by $x^{n-m+1}$, so working modulo $x^{n-m+1}$ removes the effect of $R^{R}\left(x\right)$.
 
-又因 $Q^{R}\left(x\right)$ 的次数为 $\left(n-m\right)<\left(n-m+1\right)$，故 $Q^{R}\left(x\right)$ 不会受到影响．
+Also, since $Q^{R}\left(x\right)$ has degree $\left(n-m\right)<\left(n-m+1\right)$, $Q^{R}\left(x\right)$ is not affected.
 
-则：
+Then:
 
 $$
 f^{R}\left(x\right)\equiv Q^{R}\left(x\right)g^{R}\left(x\right)\pmod{x^{n-m+1}}
 $$
 
-使用多项式求逆即可求出 $Q\left(x\right)$，将其反代即可得到 $R\left(x\right)$．
+Use the polynomial inverse to find $Q\left(x\right)$, then substitute back to get $R\left(x\right)$.
 
-**时间复杂度**  $O\left(n\log{n}\right)$．
+**Time complexity**  $O\left(n\log{n}\right)$.
 
-## 多项式对数函数 & 指数函数
+## Polynomial logarithm & exponential
 
-给定多项式 $f(x)$，求模 $x^{n}$ 意义下的 $\ln{f(x)}$ 与 $\exp{f(x)}$．
+Given a polynomial $f(x)$, find $\ln{f(x)}$ and $\exp{f(x)}$ modulo $x^{n}$.
 
-### 解法
+### Solution
 
-#### 普通方法
+#### Basic method
 
-=== "多项式对数函数"
-    首先，对于多项式 $f(x)$，若 $\ln{f(x)}$ 存在，则由其 [定义](./intro.md#复合)，其必须满足：
+=== "Polynomial logarithm"
+    First, for a polynomial $f(x)$, if $\ln{f(x)}$ exists, then by its [definition](./intro.md#复合) it must satisfy:
     
     $$
     [x^{0}]f(x)=1
     $$
     
-    对 $\ln{f(x)}$ 求导再积分，可得：
+    Differentiating $\ln{f(x)}$ and then integrating gives:
     
     $$
     \begin{aligned}
@@ -288,24 +288,24 @@ $$
     \end{aligned}
     $$
     
-    多项式的求导，积分时间复杂度为 $O(n)$，求逆时间复杂度为 $O(n\log{n})$，故多项式求 $\ln$ 时间复杂度 $O(n\log{n})$．
+    Differentiating and integrating a polynomial take $O(n)$ time, and the inverse takes $O(n\log{n})$ time, so the polynomial $\ln$ takes $O(n\log{n})$ time.
 
-=== "多项式指数函数"
-    首先，对于多项式 $f(x)$，若 $\exp{f(x)}$ 存在，则其必须满足：
+=== "Polynomial exponential"
+    First, for a polynomial $f(x)$, if $\exp{f(x)}$ exists, it must satisfy:
     
     $$
     [x^{0}]f(x)=0
     $$
     
-    否则 $\exp{f(x)}$ 的常数项不收敛．
+    Otherwise the constant term of $\exp{f(x)}$ does not converge.
     
-    对 $\exp{f(x)}$ 求导，可得：
+    Differentiating $\exp{f(x)}$ gives:
     
     $$
     \frac{\mathrm{d} \exp{f(x)}}{\mathrm{d} x} \equiv \exp{f(x)}f'(x)\pmod{x^{n}}
     $$
     
-    比较两边系数可得：
+    Comparing coefficients on both sides gives:
     
     $$
     [x^{n-1}]\frac{\mathrm{d} \exp{f(x)}}{\mathrm{d} x} = \sum_{i = 0}^{n - 1} \left([x^{i}]\exp{f(x)}\right) \left([x^{n-i-1}]f'(x)\right)
@@ -315,17 +315,17 @@ $$
     n[x^{n}]\exp{f(x)} = \sum_{i = 0}^{n - 1} \left([x^{i}]\exp{f(x)}\right) \left((n - i)[x^{n - i}]f(x)\right)
     $$
     
-    使用分治 FFT 即可解决．
+    This can be solved with divide-and-conquer FFT.
     
-    **时间复杂度**  $O(n\log^{2}{n})$．
+    **Time complexity**  $O(n\log^{2}{n})$.
 
 #### Newton's Method
 
-使用 [Newton's Method](./newton.md#newtons-method) 即可在 $O(n\log{n})$ 的时间复杂度内解决多项式 $\exp$．
+With [Newton's Method](./newton.md#newtons-method), the polynomial $\exp$ can be computed in $O(n\log{n})$ time.
 
-### 代码
+### Code
 
-??? note "多项式 ln/exp"
+??? note "Polynomial ln/exp"
     ```cpp
     constexpr int MAXN = 262144;
     constexpr int mod = 998244353;
@@ -386,33 +386,33 @@ $$
     }
     ```
 
-### 例题
+### Example problems
 
-1.  计算 $f^{k}(x)$
+1.  Compute $f^{k}(x)$
 
-    普通做法为多项式快速幂，时间复杂度 $O(n\log{n}\log{k})$．
+    The usual approach is polynomial fast exponentiation, with time complexity $O(n\log{n}\log{k})$.
 
-    当 $[x^{0}]f(x)=1$ 时，有：
+    When $[x^{0}]f(x)=1$, we have:
 
     $$
     f^{k}(x)=\exp{\left(k\ln{f(x)}\right)}
     $$
 
-    当 $[x^{0}]f(x)\neq 1$ 时，设 $f(x)$ 的最低次项为 $f_{i}x^{i}$，则：
+    When $[x^{0}]f(x)\neq 1$, let the lowest-degree term of $f(x)$ be $f_{i}x^{i}$. Then:
 
     $$
     f^{k}(x)=f_{i}^{k}x^{ik}\exp{\left(k\ln{\frac{f(x)}{f_{i}x^{i}}}\right)}
     $$
 
-    **时间复杂度**  $O(n\log{n})$．
+    **Time complexity**  $O(n\log{n})$.
 
-## 多项式三角函数
+## Polynomial trigonometric functions
 
-给定多项式 $f\left(x\right)$，求模 $x^{n}$ 意义下的 $\sin{f\left(x\right)}, \cos{f\left(x\right)}$ 与 $\tan{f\left(x\right)}$．
+Given a polynomial $f\left(x\right)$, find $\sin{f\left(x\right)}, \cos{f\left(x\right)}$ and $\tan{f\left(x\right)}$ modulo $x^{n}$.
 
-### 解法
+### Solution
 
-首先由 [Euler's formula](../complex.md#欧拉公式) $\left(\mathrm{e}^{\mathrm{i}x} = \cos{x} + \mathrm{i}\sin{x}\right)$ 可以得到 [三角函数的另一个表达式](https://en.wikipedia.org/wiki/Trigonometric_functions#Relationship_to_exponential_function_and_complex_numbers)：
+First, from [Euler's formula](../complex.md#欧拉公式) $\left(\mathrm{e}^{\mathrm{i}x} = \cos{x} + \mathrm{i}\sin{x}\right)$ we get [another expression for the trigonometric functions](https://en.wikipedia.org/wiki/Trigonometric_functions#Relationship_to_exponential_function_and_complex_numbers):
 
 $$
 \begin{aligned}
@@ -421,7 +421,7 @@ $$
 \end{aligned}
 $$
 
-那么代入 $f\left(x\right)$ 就有：
+Substituting $f\left(x\right)$ gives:
 
 $$
 \begin{aligned}
@@ -430,12 +430,12 @@ $$
 \end{aligned}
 $$
 
-直接按上述表达式编写程序即可得到模 $x^{n}$ 意义下的 $\sin{f\left(x\right)}$ 与 $\cos{f\left(x\right)}$．再由 $\tan{f\left(x\right)} = \frac{\sin{f\left(x\right)}}{\cos{f\left(x\right)}}$ 可求得 $\tan{f\left(x\right)}$．
+Writing a program directly from these expressions gives $\sin{f\left(x\right)}$ and $\cos{f\left(x\right)}$ modulo $x^{n}$. Then $\tan{f\left(x\right)}$ follows from $\tan{f\left(x\right)} = \frac{\sin{f\left(x\right)}}{\cos{f\left(x\right)}}$.
 
-### 代码
+### Code
 
-??? note "多项式三角函数"
-    注意到我们是在 $\mathbb{Z}_{998244353}$ 上做 NTT，那么相应地，虚数单位 $\mathrm{i}$ 应该被换成 $86583718$ 或 $911660635$：
+??? note "Polynomial trigonometric functions"
+    Note that we are doing NTT over $\mathbb{Z}_{998244353}$, so the imaginary unit $\mathrm{i}$ should be replaced by $86583718$ or $911660635$:
     
     $$
     \begin{aligned}
@@ -476,13 +476,13 @@ $$
     }
     ```
 
-## 多项式反三角函数
+## Polynomial inverse trigonometric functions
 
-给定多项式 $f\left(x\right)$，求模 $x^{n}$ 意义下的 $\arcsin{f\left(x\right)}, \arccos{f\left(x\right)}$ 与 $\arctan{f\left(x\right)}$．
+Given a polynomial $f\left(x\right)$, find $\arcsin{f\left(x\right)}, \arccos{f\left(x\right)}$ and $\arctan{f\left(x\right)}$ modulo $x^{n}$.
 
-### 解法
+### Solution
 
-仿照求多项式 $\ln$ 的方法，对反三角函数求导再积分可得：
+As with the polynomial $\ln$, differentiating the inverse trigonometric functions and then integrating gives:
 
 $$
 \begin{aligned}
@@ -495,7 +495,7 @@ $$
 \end{aligned}
 $$
 
-那么代入 $f\left(x\right)$ 就有：
+Substituting $f\left(x\right)$ gives:
 
 $$
 \begin{aligned}
@@ -508,11 +508,11 @@ $$
 \end{aligned}
 $$
 
-直接按式子求就可以了．
+Just compute directly from these formulas.
 
-### 代码
+### Code
 
-??? note "多项式反三角函数"
+??? note "Polynomial inverse trigonometric functions"
     ```cpp
     constexpr int MAXN = 262144;
     constexpr int mod = 998244353;
@@ -590,6 +590,6 @@ $$
     }
     ```
 
-## 参考资料与链接
+## References and links
 
-[^ref1]: [Elementary function——Wikipedia](https://en.wikipedia.org/wiki/Elementary_function)
+[^ref1]: [Elementary function - Wikipedia](https://en.wikipedia.org/wiki/Elementary_function)

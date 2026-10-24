@@ -1,16 +1,16 @@
 author: sshwy, ComeIntoCalm
 
-序列 $a$ 的指数生成函数（exponential generating function，EGF）定义为形式幂级数：
+The exponential generating function (EGF) of a sequence $a$ is defined as the formal power series:
 
 $$
 \hat{F}(x)=\sum_{n}a_n \frac{x^n}{n!}
 $$
 
-## 基本运算
+## Basic operations
 
-指数生成函数的加减法与普通生成函数是相同的，也就是对应项系数相加．
+Addition and subtraction of EGFs work the same as for ordinary generating functions: you add the coefficients term by term.
 
-考虑指数生成函数的乘法运算．对于两个序列 $a,b$，设它们的指数生成函数分别为 $\hat{F}(x),\hat{G}(x)$，那么
+Now consider multiplication of EGFs. For two sequences $a,b$ with EGFs $\hat{F}(x),\hat{G}(x)$, we have
 
 $$
 \begin{aligned}
@@ -21,74 +21,74 @@ $$
 \end{aligned}
 $$
 
-因此 $\hat{F}(x)\hat{G}(x)$ 是序列
+So $\hat{F}(x)\hat{G}(x)$ is the EGF of the sequence
 
 $$
 \left\langle \sum_{i=0}^n \binom{n}{i}a_ib_{n-i} \right\rangle
 $$
 
-的指数生成函数．
+.
 
-## 封闭形式
+## Closed forms
 
-我们同样考虑指数生成函数的封闭形式．
+As with ordinary generating functions, let us look at closed forms of EGFs.
 
-序列 $\langle 1,1,1,\cdots\rangle$ 的指数生成函数是：
+The EGF of the sequence $\langle 1,1,1,\cdots\rangle$ is:
 
 $$
 \hat{F}(x) = \sum_{n \ge 0}\frac{x^n}{n!} = \mathrm{e}^x
 $$
 
-因为你将 $\mathrm{e}^x$ 在 $x = 0$ 处泰勒展开就得到了它的无穷级数形式．
+This is because expanding $\mathrm{e}^x$ as a Taylor series at $x = 0$ gives exactly this infinite series.
 
-类似地，等比数列 $\langle 1,p,p^2,\cdots\rangle$ 的指数生成函数是：
+Similarly, the EGF of the geometric sequence $\langle 1,p,p^2,\cdots\rangle$ is:
 
 $$
 \hat{F}(x) = \sum_{n\ge 0}\frac{p^nx^n}{n!}=\mathrm{e}^{px}
 $$
 
-## 指数生成函数与普通生成函数
+## EGFs and ordinary generating functions
 
-如何理解指数生成函数？我们定义序列 $a$ 的指数生成函数是：
+How should we think about EGFs? We defined the EGF of a sequence $a$ as:
 
 $$
 F(x)=\sum_{n\ge 0}a_n\frac{x^n}{n!}
 $$
 
-但 $F(x)$ 实际上也是序列 $\left\langle \dfrac{a_n}{n!} \right\rangle$ 的普通生成函数．
+But $F(x)$ is also the ordinary generating function of the sequence $\left\langle \dfrac{a_n}{n!} \right\rangle$.
 
-这两种理解没有任何问题．也就是说，不同的生成函数只是对问题理解方式的转变．
+Both views are perfectly fine. In other words, different kinds of generating functions are just different ways of looking at the problem.
 
-## EGF 中多项式 exp 的组合意义
+## Combinatorial meaning of polynomial exp for EGFs
 
-如果您还没有学习多项式 exp 请先跳过这里，这是由 exp 理解引出的意义，从某种意义上来说可以加深对 EGF 的理解．
+If you have not learned polynomial exp yet, skip this section for now. It is a meaning that comes from understanding exp, and in some sense it deepens your understanding of EGFs.
 
-EGF 中 $f^n(x)$ 的 $f$ 默认是一个 EGF，那么我们首先考虑任意两个 EGF 的乘积
+In $f^n(x)$, the $f$ is assumed to be an EGF. First consider the product of any two EGFs
 
 $$
 \hat{H}(x) = \hat{F}(x)\hat{G}(x) = \sum_{n\geq 0} \left[ \sum_{i = 0}^n\binom {n}{i}f_ig_{n-i} \right] \frac{x^n}{n!}
 $$
 
-对于两个 EGF 相乘得到的 $[x^k]\hat{H}(x)$，实际上是一个卷积．而如果考虑多个 EGF 相乘得到的 $[x^k]\hat{H}(x)$，实际上就是对每个 EGF 选择一项 $x^{a_i}$ 使得 $\sum_ia_i=k$ 时每种情况系数的和．
-从集合的角度来理解就是把 $n$ 个有标号元素划分为 $k>0$ 个有标号集合的方案数．
+For the product of two EGFs, $[x^k]\hat{H}(x)$ is really a convolution. For the product of several EGFs, $[x^k]\hat{H}(x)$ is the sum of coefficients over all ways to pick one term $x^{a_i}$ from each EGF such that $\sum_ia_i=k$.
+In terms of sets, it is the number of ways to split $n$ labeled elements into $k>0$ labeled sets.
 
-> 如果 $k=0$ 则系数显然为原 EGF 各项常数的积，但是多项式 $\exp$ 中某些要求导致 $\exp$ 的 $f(x)$ 常数项必须为 $0$，具体的原因在下文中会做出一些说明．
+> If $k=0$, the coefficient is clearly the product of the constant terms of the EGFs. But certain requirements of polynomial $\exp$ force the constant term of $f(x)$ in $\exp$ to be $0$; the reasons are explained below.
 
-多项式系数定义（具体请参考排列组合一栏中的多项式系数组合意义）里是默认集合有序的，但是 $\exp(f(x))$ 中 $f^k(x)$，$k$ 个 $f(x)$ 相乘得到的 EGF 相同，而集合划分显然是无序的，因此其系数应该乘上 $\dfrac{1}{k!}$．
+The definition of multinomial coefficients (see the combinatorial meaning of multinomial coefficients in the combinatorics section) assumes the sets are ordered. But in $f^k(x)$ inside $\exp(f(x))$, the $k$ factors $f(x)$ are identical EGFs, while a set partition is clearly unordered, so the coefficient should be multiplied by $\dfrac{1}{k!}$.
 
-设 $F_k(n)$ 为 $n$ 个有标号元素划分成 $k$ 个非空无序集合（因为是 $\exp$ 所以有非空要求）的情况，$f_i$ 为 $i$ 个元素组成一个集合时，$i$ 个元素的有限集上特定组合结构的数量（是原有的 EGF，对这一个集合元素计数的方案，仅仅与该集合大小有关），那么 $F_k(n)$
+Let $F_k(n)$ be the number of ways to split $n$ labeled elements into $k$ nonempty unordered sets (nonempty because of $\exp$). Let $f_i$ be the number of ways a set of $i$ elements can carry a certain combinatorial structure (this is the original EGF; the count for one set depends only on the size of the set). Then $F_k(n)$ is
 
 $$
 F_k(n)=\frac{n!}{k!}\sum_{\sum_{i}^ka_i=n}\prod_{j=1}^{k}\frac{f_{a_j}}{a_j!}
 $$
 
-设 $f_n$ 的 EGF 为 $\hat{F}(x)$，即：
+Let the EGF of $f_n$ be $\hat{F}(x)$, that is:
 
 $$
 \hat{F}(x) = \sum_{n \geq 0} f_n\frac{x^n}{n!}
 $$
 
-设 $F_k(n)$ 的 EGF 为 $G_k(x)$，则：
+Let the EGF of $F_k(n)$ be $G_k(x)$. Then:
 
 $$
 \begin{aligned}
@@ -99,17 +99,17 @@ G_k(x)&=\sum_{n \geq 0} F_k(n)\frac{x^n}{n!}\\
 \end{aligned}
 $$
 
-对于所有的 $k \geq 0$：
+Summing over all $k \geq 0$:
 
 $$
 \sum_{k \geq 0}G_k(x) = \sum_{k \geq 0}\frac{\hat{F}^k(x)}{k!} = \exp{\hat{F}(x)}
 $$
 
-上面是从组合角度直接列式理解，我们也可以从递推方面来证明 $\exp(f(x))$ 和 $f(x)$ 两者间的关系．
+The above writes the formula directly from a combinatorial viewpoint. We can also prove the relation between $\exp(f(x))$ and $f(x)$ using a recurrence.
 
-同样设 $F_k(n)$ 为 $n$ 个有标号元素划分成 $k$ 个非空集合（无标号）的情况，$g_i$ 为 $i$ 个元素组成一个集合内部的方案数（意义同上文中的 $f_i$），并令 $G(x)$ 为 $\{g_i\}$ 的 EGF，$H_k(x)$ 为 $\{F_k(n)\}$ 的 EGF．
+Again let $F_k(n)$ be the number of ways to split $n$ labeled elements into $k$ nonempty (unlabeled) sets, let $g_i$ be the number of ways to structure a set of $i$ elements (same meaning as $f_i$ above), let $G(x)$ be the EGF of $\{g_i\}$, and let $H_k(x)$ be the EGF of $\{F_k(n)\}$.
 
-$n$ 个元素中取出 $i$ 个元素作为一个单独划分出去的集合共有 $g_i$ 种方案，剩下的 $n-i$ 个元素构成 $k-1$ 个集合共 $F_{k-1}(n-i)$ 种方案，但最后的划分方案中，一个方案里的每个集合都会被枚举为单独划分出去的集合，所以重复计算了 $k$ 次，故还需要除以 $k$．
+There are $g_i$ ways to take $i$ of the $n$ elements as one separate set, and $F_{k-1}(n-i)$ ways for the remaining $n-i$ elements to form $k-1$ sets. But in the final partition, each set of a given partition gets enumerated as the "separate set", so every partition is counted $k$ times, and we must divide by $k$.
 
 $$
 \begin{aligned}
@@ -120,9 +120,9 @@ H_k(x) &= \sum_{n\ge 0}\cfrac{x^n}{n!}F_k(n)\\
 \end{aligned}
 $$
 
-上界是由非空集合划分推出的 $n-(k-1)\geq i$（前 $k-1$ 个集合每个集合最少有一个元素），但是如果超过枚举上界涉及的 $F_{k-1}(n-i)$ 设为 $0$，那么就没有影响．
+The upper bound $n-(k-1)\geq i$ comes from the sets being nonempty (each of the other $k-1$ sets has at least one element). But if we define the terms $F_{k-1}(n-i)$ beyond this bound to be $0$, extending the range changes nothing.
 
-得到递推式之后可递归展开，边界为 $k=1$ 时 $H_1(x)=G(x)$．
+With the recurrence, we can unfold it recursively, with base case $H_1(x)=G(x)$ when $k=1$.
 
 $$
 \begin{aligned}
@@ -134,7 +134,7 @@ H_k(x) &= \cfrac{1}{k}\cdot   H_{k-1}(x)G(x)\\
 \end{aligned}
 $$
 
-同样的有：
+Likewise:
 
 $$
 \begin{aligned}
@@ -142,152 +142,152 @@ $$
 \end{aligned}
 $$
 
-显然 **定义成划分为非空集合**（$g_0=0$）是符合本身的意义的，如果 **包含空集**（$g_0=1$），那么对应 $[x^n]G^k$ 中就会有 $[x^n]G^y,y>k$ 的贡献（在至少一个 $G$ 中选择常数项），有计重，得不到所求量．
+Clearly, **defining it as a partition into nonempty sets** ($g_0=0$) matches the intended meaning. If **empty sets are allowed** ($g_0=1$), then $[x^n]G^k$ gets contributions from $[x^n]G^y,y>k$ (by choosing the constant term in at least one $G$), which causes double counting, and we do not get the quantity we want.
 
-从递推式的角度讲，多个 EGF 的乘积也可以看作一个类似于背包的组合（合并两组计数对象的过程）．
+From the recurrence viewpoint, the product of several EGFs can also be seen as a knapsack-like combination (the process of merging two groups of counted objects).
 
-总结多项式 $\exp$ 的意义就是：**有标号元素构成的集合的生成集族有多少种情况**，或划分为任意个非空子集的总方案数．
+To sum up, polynomial $\exp$ means: **the number of ways to form a family of sets from labeled elements**, or the total number of ways to split into any number of nonempty subsets.
 
-## 排列与圆排列
+## Permutations and circular permutations
 
-长度为 $n$ 的排列数的指数生成函数是
+The EGF of the number of permutations of length $n$ is
 
 $$
 \hat{P}(x)=\sum_{n\ge 0}\frac{n!x^n}{n!}=\sum_{n\ge 0}x^n=\frac{1}{1-x}
 $$
 
-圆排列的定义是把 $1,2,\cdots,n$ 排成一个环的方案数．也就是说旋转后的方案的等价的（但翻转是不等价的）．
+A circular permutation is a way to arrange $1,2,\cdots,n$ in a ring. In other words, arrangements that differ by a rotation are equivalent (but reflections are not).
 
-$n$ 个数的圆排列数显然是 $(n-1)!$．因此 $n$ 个数的圆排列数的指数生成函数是
+The number of circular permutations of $n$ numbers is clearly $(n-1)!$. So the EGF of the number of circular permutations of $n$ numbers is
 
 $$
 \hat{Q}(x)=\sum_{n\ge 1}\frac{(n-1)!x^n}{n!}=\sum_{n\ge 1}\frac{x^n}{n}=-\ln(1-x)=\ln\left( \frac{1}{1-x} \right)
 $$
 
-也就是说 $\exp \hat{Q}(x)=\hat{P}(x)$．但这只是数学层面的推导．我们该怎样直观理解：圆排列数的 EGF 的 $\exp$ 是排列数的 EGF？
+That is, $\exp \hat{Q}(x)=\hat{P}(x)$. But this is just a mathematical derivation. How can we see intuitively that the $\exp$ of the EGF of circular permutations is the EGF of permutations?
 
-一个排列，是由若干个置换环构成的．例如 $p=[4,3,2,5,1]$ 有两个置换环：
+A permutation is made up of several permutation cycles. For example, $p=[4,3,2,5,1]$ has two cycles:
 
 ![](./images/p1.svg)
 
-（也就是说我们从 $p_i$ 向 $i$ 连有向边）
+(that is, we draw a directed edge from $p_i$ to $i$)
 
-而不同的置换环，会导出不同的排列．例如将第二个置换环改成
+Different cycles give different permutations. For example, if we change the second cycle to
 
 ![](./images/p2.svg)
 
-那么它对应的排列就是 $[5,3,2,1,4]$．
+then the corresponding permutation is $[5,3,2,1,4]$.
 
-也就是说，长度为 $n$ 的排列的方案数是
+In other words, the number of permutations of length $n$ is the number of ways to
 
-1.  把 $1,2,\cdots,n$ 分成若干个集合
-2.  每个集合形成一个置换环
+1.  split $1,2,\cdots,n$ into several sets, and
+2.  turn each set into a permutation cycle
 
-的方案数．而一个集合的数形成置换环的方案数显然就是这个集合大小的圆排列方案数．因此长度为 $n$ 的排列的方案数就是：把 $1,2,\cdots,n$ 分成若干个集合，每个集合的圆排列方案数之积．
+. The number of ways to turn a set of numbers into a cycle is clearly the number of circular permutations of that set's size. So the number of permutations of length $n$ is: over all ways to split $1,2,\cdots,n$ into sets, the product of the numbers of circular permutations of each set.
 
-这就是多项式 $\exp$ 的直观理解．
+This is the intuitive meaning of polynomial $\exp$.
 
-推广之
+Generalizing:
 
--   如果 $n$ 个点 **带标号** 生成树的 EGF 是 $\hat{F}(x)$，那么 $n$ 个点 **带标号** 生成森林的 EGF 就是 $\exp \hat{F}(x)$——直观理解为，将 $n$ 个点分成若干个集合，每个集合构成一个生成树的方案数之积．
--   如果 $n$ 个点带标号无向连通图的 EGF 是 $\hat{F}(x)$，那么 $n$ 个点带标号无向图的 EGF 就是 $\exp \hat{F}(x)$，后者可以很容易计算得到
+-   If the EGF of **labeled** spanning trees on $n$ vertices is $\hat{F}(x)$, then the EGF of **labeled** spanning forests on $n$ vertices is $\exp \hat{F}(x)$. Intuitively: split the $n$ vertices into several sets, and take the product of the numbers of spanning trees on each set.
+-   If the EGF of labeled connected undirected graphs on $n$ vertices is $\hat{F}(x)$, then the EGF of labeled undirected graphs on $n$ vertices is $\exp \hat{F}(x)$. The latter is easy to compute:
 
     $$
     \exp \hat{F}(x)=\sum_{n\ge 0}2^{\binom{n}{2}}\frac{x^n}{n!}
     $$
 
-    因此要计算前者，只需要一次多项式 $\ln$ 即可．
+    So to compute the former, a single polynomial $\ln$ is enough.
 
-接下来我们来看一些指数生成函数的应用．
+Next, let us look at some applications of EGFs.
 
-## 应用
+## Applications
 
-### 错排数
+### Derangements
 
-???+ note "错排数"
-    定义长度为 $n$ 的一个错排是满足 $p_i\ne i$ 的排列．
+???+ note "Derangements"
+    A derangement of length $n$ is a permutation with $p_i\ne i$ for all $i$.
     
-    求错排数的指数生成函数．
+    Find the EGF of the number of derangements.
 
-从置换环的角度考虑，错排就是指置换环中不存在自环的排列．也就是说不存在长度为 $1$ 的置换环．后者的指数生成函数是
+From the viewpoint of permutation cycles, a derangement is a permutation with no self-loops, that is, with no cycle of length $1$. The EGF for cycles of length at least $2$ is
 
 $$
 \sum_{n\ge 2}\frac{x^n}{n}=-\ln\left(1-x\right)-x
 $$
 
-因此错排数的指数生成函数就是 $\exp(-\ln(1-x)-x)$．
+So the EGF of the number of derangements is $\exp(-\ln(1-x)-x)$.
 
-### 不动点
+### Fixed points
 
-???+ note "[不动点](https://www.51nod.com/Html/Challenge/Problem.html#problemId=1728)"
-    题意：求有多少个映射 $f:\{1,2,\cdots,n\}\to \{1,2,\cdots,n\}$，使得
+???+ note "[Fixed Points](https://www.51nod.com/Html/Challenge/Problem.html#problemId=1728)"
+    Problem: count the maps $f:\{1,2,\cdots,n\}\to \{1,2,\cdots,n\}$ such that
     
     $$
     \underbrace{f\circ f\circ\cdots\circ f}_{k}=\underbrace{f\circ f\circ\cdots\circ f}_{k-1}
     $$
     
-    $nk\le 2\times 10^6,1\le k\le 3$．
+    $nk\le 2\times 10^6,1\le k\le 3$.
 
-考虑 $i$ 向 $f(i)$ 连边．相当于我们从任意一个 $i$ 走 $k$ 步和走 $k-1$ 步到达的是同一个点．也就是说基环树的环是自环且深度不超过 $k$（根结点深度为 $1$）．把这个基环树当成有根树是一样的．因此我们的问题转化为：$n$ 个点带标号，深度不超过 $k$ 的有根树森林的计数．
+Draw an edge from $i$ to $f(i)$. The condition says that from any $i$, walking $k$ steps and walking $k-1$ steps lead to the same vertex. That is, the cycle of each pseudotree is a self-loop and the depth is at most $k$ (the root has depth $1$). Treating such a pseudotree as a rooted tree is the same thing. So the problem becomes: count forests of labeled rooted trees on $n$ vertices with depth at most $k$.
 
-考虑 $n$ 个点带标号深度不超过 $k$ 的有根树，假设它的生成函数是：
+Consider labeled rooted trees on $n$ vertices with depth at most $k$, and let their generating function be:
 
 $$
 \hat{F_k}(x)=\sum_{n\ge 0}f_{n,k}\frac{x^n}{n!}
 $$
 
-考虑递推求 $\hat{F_k}(x)$．深度不超过 $k$ 的有根树，实际上就是深度不超过 $k-1$ 的若干棵有根树，把它们的根结点全部连到一个结点上去．因此
+We compute $\hat{F_k}(x)$ recursively. A rooted tree of depth at most $k$ is just several rooted trees of depth at most $k-1$ whose roots are all connected to one new vertex. So
 
 $$
 \hat{F_k}(x)=x\exp \hat{F}_{k-1}(x)
 $$
 
-那么答案的指数生成函数就是 $\exp \hat{F}_k(x)$．求它的第 $n$ 项即可．
+Then the EGF of the answer is $\exp \hat{F}_k(x)$. Just take its $n$-th term.
 
 ### Lust
 
 ???+ note "[Lust](https://codeforces.com/contest/891/problem/E)"
-    给你一个 $n$ 个数的序列 $a_1,a_2,\cdots,a_n$，和一个初值为 $0$ 的变量 $s$，要求你重复以下操作 $k$ 次：
+    You are given a sequence of $n$ numbers $a_1,a_2,\cdots,a_n$ and a variable $s$ with initial value $0$. Repeat the following operation $k$ times:
     
-    -   在 $1,2,\cdots,n$ 中等概率随机选择一个 $x$．
-    -   令 $s$ 加上 $\prod_{i\ne x}a_i$．
-    -   令 $a_x$ 减一．
+    -   Choose $x$ uniformly at random from $1,2,\cdots,n$.
+    -   Add $\prod_{i\ne x}a_i$ to $s$.
+    -   Decrease $a_x$ by one.
     
-    求 $k$ 次操作后 $s$ 的期望．
+    Find the expected value of $s$ after $k$ operations.
     
-    $1\le n\le 5000,1\le k\le 10^9,0\le a_i\le 10^9$．
+    $1\le n\le 5000,1\le k\le 10^9,0\le a_i\le 10^9$.
 
-假设 $k$ 次操作后 $a_i$ 减少了 $b_i$，那么实际上
+Suppose that after $k$ operations $a_i$ has decreased by $b_i$. Then in fact
 
 $$
 s=\prod_{i=1}^n a_i-\prod_{i=1}^n(a_i- b_i)
 $$
 
-因此实际上我们的问题转化为，求 $k$ 次操作后 $\prod_{i=1}^n (a_i- b_i)$ 的期望．
+So the problem becomes finding the expected value of $\prod_{i=1}^n (a_i- b_i)$ after $k$ operations.
 
-不妨考虑计算每种方案的 $\prod_{i=1}^n (a_i- b_i)$ 的和，最后除以 $n^k$．
+Let us compute the sum of $\prod_{i=1}^n (a_i- b_i)$ over all possible operation sequences, and divide by $n^k$ at the end.
 
-而 $k$ 次操作序列中，要使得 $i$ 出现了 $b_i$ 次的方案数是
+The number of operation sequences of length $k$ in which each $i$ appears $b_i$ times is
 
 $$
 \frac{k!}{b_1!b_2!\cdots b_n!}
 $$
 
-这与指数生成函数乘法的系数类似．
+This looks like the coefficients in EGF multiplication.
 
-设 $a_j$ 的指数生成函数是
+Let the EGF for $a_j$ be
 
 $$
 F_j(x)=\sum_{i\ge 0}(a_j-i)\frac{x^i}{i!}
 $$
 
-那么答案就是
+Then the answer is
 
 $$
 [x^k]\prod_{j=1}^nF_j(x)
 $$
 
-为了快速计算答案，我们需要将 $F_j(x)$ 转化为封闭形式：
+To compute the answer quickly, we turn $F_j(x)$ into closed form:
 
 $$
 \begin{aligned}
@@ -297,13 +297,13 @@ F_j(x)&=\sum_{i\ge 0}a_j\frac{x^i}{i!}-\sum_{i\ge 1}\frac{x^i}{(i-1)!}\\
 \end{aligned}
 $$
 
-因此我们得到
+So we get
 
 $$
 \prod_{j=1}^nF_j(x)=\mathrm{e}^{nx}\prod_{j=1}^n(a_j-x)
 $$
 
-其中 $\prod_{j=1}^n(a_j-x)$ 是一个 $n$ 次多项式，可以暴力计算出来．假设它的展开式是 $\sum_{i=0}^nc_ix^i$，那么
+Here $\prod_{j=1}^n(a_j-x)$ is a polynomial of degree $n$, which can be computed by brute force. If its expansion is $\sum_{i=0}^nc_ix^i$, then
 
 $$
 \begin{aligned}
@@ -314,4 +314,4 @@ $$
 \end{aligned}
 $$
 
-计算这个多项式的 $x^k$ 项系数即可．
+Then just compute the coefficient of $x^k$ in this polynomial.
