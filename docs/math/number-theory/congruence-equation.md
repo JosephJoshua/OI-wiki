@@ -1,255 +1,255 @@
 author: iamtwz, aofall, CCXXXI, CoelacanthusHex, Great-designer, Marcythm, Persdre, shuzhouliu, Tiphereth-A, Xeonacid
 
-## 定义
+## Definition
 
-???+ abstract "同余方程"
-    对正整数 $m$ 和一元整系数多项式 $f(x)=\sum_{i=0}^n a_ix^i$，其中未知数 $x\in\mathbf{Z}_m$，称形如
+???+ abstract "Congruence equation"
+    For a positive integer $m$ and a polynomial in one variable with integer coefficients $f(x)=\sum_{i=0}^n a_ix^i$, where the unknown $x\in\mathbf{Z}_m$, an equation of the form
     
     $$
     f(x)\equiv 0\pmod m\tag{1}
     $$
     
-    的方程为关于未知数 $x$ 的模 $m$ 的一元 **同余方程**（Congruence Equation）．
+    is called a **congruence equation** in one unknown $x$ modulo $m$.
     
-    若 $a_n\not\equiv 0\pmod m$，则称上式为 $n$ 次同余方程．
+    If $a_n\not\equiv 0\pmod m$, the equation above is called a congruence equation of degree $n$.
     
-    类似可定义同余方程组．
+    Systems of congruence equations are defined in the same way.
 
-关于一次同余方程与方程组的相关内容请参见 [线性同余方程](./linear-equation.md) 与 [中国剩余定理](./crt.md)．
+For linear congruence equations and systems of them, see [Linear Congruence Equations](./linear-equation.md) and [Chinese Remainder Theorem](./crt.md).
 
-本文首先研究同余方程的可解性和解集结构，之后会简要介绍高次同余方程的解法．
+This page first studies when congruence equations are solvable and the structure of their solution sets, and then briefly introduces how to solve higher-degree congruence equations.
 
-由 [中国剩余定理](./crt.md) 可知，求解关于模合数 $m$ 的同余方程可转化为求解模素数幂次的情况．故以下只介绍素数幂模同余方程和素数模同余方程的相关理论．
+By the [Chinese remainder theorem](./crt.md), solving a congruence equation modulo a composite $m$ reduces to solving it modulo prime powers. So below we only cover the theory of congruence equations modulo prime powers and modulo primes.
 
-## 素数幂模同余方程
+## Congruence equations modulo prime powers
 
-以下假设模数 $m=p^e~(p\in\mathbf{P},~e\in\mathbf{Z}_{>1})$．
+Below, assume the modulus is $m=p^e~(p\in\mathbf{P},~e\in\mathbf{Z}_{>1})$.
 
-注意到，若 $x_0$ 是方程
+Note that if $x_0$ is a solution of
 
 $$
 f(x)\equiv 0\pmod{p^e}
 $$
 
-的解，则 $x_0$ 是方程
+then $x_0$ is also a solution of
 
 $$
 f(x)\equiv 0\pmod{p^{e-1}}
 $$
 
-的解．这启发我们尝试通过较低的模幂次的解去构造较高的模幂次的解．我们有如下定理：
+This suggests building solutions modulo higher prime powers from solutions modulo lower ones. We have the following theorem:
 
-???+ note "定理 1（Hensel 引理）"
-    对素数 $p$ 和整数 $e>1$，取整系数多项式 $f(x)=\sum_{i=0}^na_ix^i~(p^e\nmid a_n)$，令 $f'(x)=\sum_{i=1}^nia_ix^{i-1}$ 为其导数．令 $x_0$ 为方程
+???+ note "Theorem 1 (Hensel's lemma)"
+    For a prime $p$ and an integer $e>1$, take a polynomial with integer coefficients $f(x)=\sum_{i=0}^na_ix^i~(p^e\nmid a_n)$, and let $f'(x)=\sum_{i=1}^nia_ix^{i-1}$ be its derivative. Let $x_0$ be a solution of
     
     $$
     f(x)\equiv 0\pmod{p^{e-1}}\tag{2}
     $$
     
-    的解，则：
+    Then:
     
-    1.  若 $f'(x_0)\not\equiv 0\pmod p$，则存在整数 $t$ 使得
+    1.  If $f'(x_0)\not\equiv 0\pmod p$, there exists an integer $t$ such that
     
         $$
         x=x_0+p^{e-1}t \tag{3}
         $$
     
-        是方程
+        satisfies
     
         $$
         f(x)\equiv 0\pmod{p^e} \tag{4}
         $$
     
-        的解．
-    2.  若 $f'(x_0)\equiv 0\pmod p$ 且 $f(x_0)\equiv 0\pmod{p^e}$，则对 $t=0,1,\dots,p-1$，由式 $(3)$ 确定的 $x$ 均为方程 $(4)$ 的解．
-    3.  若 $f'(x_0)\equiv 0\pmod p$ 且 $f(x_0)\not\equiv 0\pmod{p^e}$，则不能由式 $(3)$ 构造方程 $(4)$ 的解．
+        That is, $(3)$ gives a solution of $(4)$.
+    2.  If $f'(x_0)\equiv 0\pmod p$ and $f(x_0)\equiv 0\pmod{p^e}$, then for $t=0,1,\dots,p-1$, every $x$ given by $(3)$ is a solution of $(4)$.
+    3.  If $f'(x_0)\equiv 0\pmod p$ and $f(x_0)\not\equiv 0\pmod{p^e}$, then no solution of $(4)$ can be built from $(3)$.
 
-???+ note "证明"
-    我们假设式 $(3)$ 是方程 $(4)$ 的解，即
+???+ note "Proof"
+    Suppose $(3)$ is a solution of $(4)$, that is,
     
     $$
     f(x_0+p^{e-1}t)\equiv 0\pmod{p^e}
     $$
     
-    整理后可得
+    Rearranging gives
     
     $$
     f(x_0)+p^{e-1}tf'(x_0)\equiv 0\pmod{p^e}
     $$
     
-    于是
+    so
     
     $$
     tf'(x_0)\equiv -\frac{f(x_0)}{p^{e-1}}\pmod p\tag{5}
     $$
     
-    1.  若 $f'(x_0)\not\equiv 0\pmod p$，则关于 $t$ 的方程 $(5)$ 有唯一解 $t_0$，代入式 $(3)$ 可验证其为方程 $(4)$ 的解．
-    2.  若 $f'(x_0)\equiv 0\pmod p$ 且 $f(x_0)\equiv 0\pmod{p^e}$，则任意 $t$ 均能使方程 $(5)$ 成立，代入式 $(3)$ 可验证其均为方程 $(4)$ 的解．
-    3.  若 $f'(x_0)\equiv 0\pmod p$ 且 $f(x_0)\not\equiv 0\pmod{p^e}$，则方程 $(5)$ 无解，从而不能由式 $(3)$ 构造方程 $(4)$ 的解．
+    1.  If $f'(x_0)\not\equiv 0\pmod p$, then equation $(5)$ in $t$ has a unique solution $t_0$. Substituting it into $(3)$, we can check that it is a solution of $(4)$.
+    2.  If $f'(x_0)\equiv 0\pmod p$ and $f(x_0)\equiv 0\pmod{p^e}$, then every $t$ satisfies $(5)$. Substituting into $(3)$, we can check that all of them are solutions of $(4)$.
+    3.  If $f'(x_0)\equiv 0\pmod p$ and $f(x_0)\not\equiv 0\pmod{p^e}$, then $(5)$ has no solution, so no solution of $(4)$ can be built from $(3)$.
 
-进而我们有推论：
+This gives the following corollary:
 
-???+ note "推论 1"
-    对定理 1 的 $p$，$e$，$f(x)$，$x_0$，
+???+ note "Corollary 1"
+    For $p$, $e$, $f(x)$, $x_0$ as in Theorem 1,
     
-    1.  若 $s$ 是方程 $f(x)\equiv 0\pmod p$ 的解，且 $f'(s)\not\equiv 0\pmod p$，则存在 $x_s\in\mathbf{Z}_{p^e}$，$x_s\equiv s\pmod p$ 使得 $x_s$ 是方程 $(4)$ 的解．
-    2.  若方程 $f(x)\equiv 0\pmod p$ 与 $f'(x)\equiv 0\pmod p$ 无公共解，则方程 $(4)$ 和方程 $f(x)\equiv 0\pmod p$ 的解数相同．
+    1.  If $s$ is a solution of $f(x)\equiv 0\pmod p$ and $f'(s)\not\equiv 0\pmod p$, then there exists $x_s\in\mathbf{Z}_{p^e}$ with $x_s\equiv s\pmod p$ such that $x_s$ is a solution of $(4)$.
+    2.  If $f(x)\equiv 0\pmod p$ and $f'(x)\equiv 0\pmod p$ have no common solution, then $(4)$ and $f(x)\equiv 0\pmod p$ have the same number of solutions.
 
-从而我们可以将素数幂模同余方程化归到素数模同余方程的情况．
+So we can reduce congruence equations modulo prime powers to congruence equations modulo primes.
 
-## 素数模同余方程
+## Congruence equations modulo primes
 
-以下令 $p\in\mathbf{P}$，整系数多项式 $f(x)=\sum_{i=0}^na_ix^i$，其中 $p\nmid a_n$，$x\in\mathbf{Z}_p$．
+Below, let $p\in\mathbf{P}$ and let $f(x)=\sum_{i=0}^na_ix^i$ be a polynomial with integer coefficients, where $p\nmid a_n$ and $x\in\mathbf{Z}_p$.
 
-???+ note "定理 2"
-    若方程
+???+ note "Theorem 2"
+    If the equation
     
     $$
     f(x)\equiv 0\pmod p\tag{6}
     $$
     
-    有 $k$ 个不同的解 $x_1,x_2,\dots,x_k~(k\leq n)$，则
+    has $k$ distinct solutions $x_1,x_2,\dots,x_k~(k\leq n)$, then
     
     $$
     f(x)\equiv g(x)\prod_{i=1}^k(x-x_i)\pmod p,
     $$
     
-    其中 $\deg g=n-k$ 且 $[x^{n-k}]g(x)=a_n$．
+    where $\deg g=n-k$ and $[x^{n-k}]g(x)=a_n$.
 
-???+ note "证明"
-    对 $k$ 应用数学归纳法．
+???+ note "Proof"
+    Use induction on $k$.
     
-    -   当 $k=1$ 时，做多项式带余除法，有 $f(x)=(x-x_1)g(x)+r$，其中 $r\in\mathbf{Z}$．
+    -   When $k=1$, polynomial division with remainder gives $f(x)=(x-x_1)g(x)+r$, where $r\in\mathbf{Z}$.
     
-        由 $f(x_1)\equiv 0\pmod p$ 可知 $r\equiv 0\pmod p$，从而 $f(x)\equiv(x-x_1)g(x)\pmod p$．
-    -   假设命题对 $k-1$($k>1$) 时的情况成立，现在设 $f(x)$ 有 $k$ 个不同的解 $x_1,x_2,\dots,x_k$，则 $f(x)\equiv(x-x_1)h(x)\pmod p$，进而有
+        Since $f(x_1)\equiv 0\pmod p$, we get $r\equiv 0\pmod p$, so $f(x)\equiv(x-x_1)g(x)\pmod p$.
+    -   Assume the statement holds for $k-1$ ($k>1$). Now suppose $f(x)$ has $k$ distinct solutions $x_1,x_2,\dots,x_k$. Then $f(x)\equiv(x-x_1)h(x)\pmod p$, and so
     
         $$
         (\forall i=2,3,\dots,k),~~0\equiv f(x_i)\equiv (x_i-x_1)h(x_i)\pmod p
         $$
     
-        从而 $h(x)$ 有 $k-1$ 个不同的解 $x_2,x_3,\dots,x_k$，由归纳假设有
+        Hence $h(x)$ has $k-1$ distinct solutions $x_2,x_3,\dots,x_k$. By the induction hypothesis,
     
         $$
         h(x)\equiv g(x)\prod_{i=2}^k(x-x_i)\pmod p
         $$
     
-        其中 $\deg g=n-k$ 且 $[x^{n-k}]g(x)=a_n$．
+        where $\deg g=n-k$ and $[x^{n-k}]g(x)=a_n$.
     
-        因此命题得证．
+        This proves the statement.
 
-???+ note "推论 2"
-    对素数 $p$，
+???+ note "Corollary 2"
+    For a prime $p$,
     
-    -   $(\forall x\in\mathbf{Z}),~~x^{p-1}-1 \equiv \prod_{i=1}^{p-1}(x-i)\pmod p$．
-    -   （[Wilson 定理](./factorial.md#wilson-定理)）$(p-1)! \equiv -1 \pmod p$．
+    -   $(\forall x\in\mathbf{Z}),~~x^{p-1}-1 \equiv \prod_{i=1}^{p-1}(x-i)\pmod p$.
+    -   ([Wilson's theorem](./factorial.md#wilson-定理)) $(p-1)! \equiv -1 \pmod p$.
 
-???+ note "定理 3（Lagrange 定理）"
-    方程 $(6)$ 至多有 $n$ 个不同解．
+???+ note "Theorem 3 (Lagrange's theorem)"
+    Equation $(6)$ has at most $n$ distinct solutions.
 
-???+ note "证明"
-    假设 $f(x)$ 有 $n+1$ 个不同解 $x_1,x_2,\dots,x_{n+1}$，则由定理 2，对 $x_1,x_2,\dots,x_n$ 有
+???+ note "Proof"
+    Suppose $f(x)$ has $n+1$ distinct solutions $x_1,x_2,\dots,x_{n+1}$. By Theorem 2 applied to $x_1,x_2,\dots,x_n$,
     
     $$
     f(x)\equiv a_n\prod_{i=1}^n(x-x_i)\pmod p
     $$
     
-    令 $x=x_{n+1}$，则
+    Let $x=x_{n+1}$. Then
     
     $$
     0\equiv f(x_{n+1})\equiv a_n\prod_{i=1}^n(x_{n+1}-x_i)\pmod p
     $$
     
-    而右侧显然不是 $p$ 的倍数，因此假设矛盾．
+    But the right-hand side is clearly not a multiple of $p$, a contradiction.
 
-???+ note "推论 3"
-    若同余方程 $\sum_{i=0}^nb_ix^i\equiv 0\pmod p$ 的解数大于 $n$，则
+???+ note "Corollary 3"
+    If the congruence equation $\sum_{i=0}^nb_ix^i\equiv 0\pmod p$ has more than $n$ solutions, then
     
     $$
     (\forall i=0,1,\dots,n),~~p\mid b_i.
     $$
 
-???+ note "定理 4"
-    方程 $(6)$ 若解的个数不为 $p$，则必存在满足 $\deg r<p$ 的整系数多项式 $r(x)$ 使得 $f(x)\equiv 0\pmod p$ 和 $r(x)\equiv 0\pmod p$ 的解集相同．
+???+ note "Theorem 4"
+    If the number of solutions of $(6)$ is not $p$, then there must be a polynomial $r(x)$ with integer coefficients and $\deg r<p$ such that $f(x)\equiv 0\pmod p$ and $r(x)\equiv 0\pmod p$ have the same solution set.
 
-???+ note "证明"
-    不妨设 $n\geq p$，对 $f(x)$ 做多项式带余除法
+???+ note "Proof"
+    We may assume $n\geq p$. Do polynomial division with remainder on $f(x)$:
     
     $$
     f(x)=g(x)\left(x^p-x\right)+r(x)
     $$
     
-    其中 $\deg r<p$．
+    where $\deg r<p$.
     
-    由 [Fermat 小定理](./fermat.md) 知对任意整数 $x$ 有 $x^p\equiv x\pmod p$，从而
+    By [Fermat's little theorem](./fermat.md), $x^p\equiv x\pmod p$ for every integer $x$, so
     
-    -   若 $r(x)\equiv 0\pmod p$，则由推论 2 可知 $f(x)$ 有 $p$ 个不同的解．
-    -   若 $r(x)\not\equiv 0\pmod p$，则由 $f(x)\equiv r(x)\pmod p$ 可知 $f(x)$ 和 $r(x)$ 的解集相同．
+    -   if $r(x)\equiv 0\pmod p$, then by Corollary 2, $f(x)$ has $p$ distinct solutions;
+    -   if $r(x)\not\equiv 0\pmod p$, then since $f(x)\equiv r(x)\pmod p$, $f(x)$ and $r(x)$ have the same solution set.
 
-我们可以通过这个定理对同余方程降次．
+We can use this theorem to lower the degree of a congruence equation.
 
-???+ note "定理 5"
-    设 $n\leq p$，则方程
+???+ note "Theorem 5"
+    Let $n\leq p$. Then the equation
     
     $$
     x^n+\sum_{i=0}^{n-1}a_ix^i\equiv 0\pmod p\tag{7}
     $$
     
-    有 $n$ 个解当且仅当存在整系数多项式 $q(x)$，$r(x)~(\deg r < n)$ 使得
+    has $n$ solutions if and only if there exist polynomials with integer coefficients $q(x)$, $r(x)~(\deg r < n)$ such that
     
     $$
     x^p-x=f(x)q(x)+pr(x). \tag{8}
     $$
 
-???+ note "证明"
-    -   必要性：由多项式除法知存在整系数多项式 $q(x)$，$r_1(x)~(\deg r_1 < n)$ 使得
+???+ note "Proof"
+    -   Necessity: by polynomial division, there exist polynomials with integer coefficients $q(x)$, $r_1(x)~(\deg r_1 < n)$ such that
     
         $$
         x^p-x=f(x)q(x)+r_1(x).
         $$
     
-        若方程 $(7)$ 有 $n$ 个解，则 $r_1\equiv 0\pmod p$ 也有 $n$ 个相同的解，进而由推论 3 可知存在整系数多项式 $r(x)$ 满足 $r_1(x)=pr(x)$，从而命题得证．
-    -   充分性：若式 $(8)$ 成立，则由 [Fermat 小定理](./fermat.md) 可知，对任意整数 $x$,
+        If $(7)$ has $n$ solutions, then $r_1\equiv 0\pmod p$ also has these same $n$ solutions. By Corollary 3, there is a polynomial $r(x)$ with integer coefficients such that $r_1(x)=pr(x)$, which proves the claim.
+    -   Sufficiency: if $(8)$ holds, then by [Fermat's little theorem](./fermat.md), for every integer $x$,
     
         $$
         0\equiv x^p-x\equiv f(x)q(x)\pmod p.
         $$
     
-        即方程 $f(x)q(x)\equiv 0\pmod p$ 有 $p$ 个解．
+        That is, $f(x)q(x)\equiv 0\pmod p$ has $p$ solutions.
     
-        设方程 $(7)$ 的解数为 $s$，则由 Lagrange 定理可知 $s\leq n$．
+        Let $s$ be the number of solutions of $(7)$. By Lagrange's theorem, $s\leq n$.
     
-        又由于 $\deg q=p-n$，则由 Lagrange 定理可知 $q(x)\equiv 0\pmod p$ 的解数不超过 $p-n$，而方程 $f(x)q(x)\equiv 0\pmod p$ 的解集是 $f(x)\equiv 0\pmod p$ 解集和 $q(x)\equiv 0\pmod p$ 解集的并集，故 $s+(p-n)\geq p$，有 $s\geq n$．
+        Also, since $\deg q=p-n$, Lagrange's theorem says $q(x)\equiv 0\pmod p$ has at most $p-n$ solutions. The solution set of $f(x)q(x)\equiv 0\pmod p$ is the union of the solution sets of $f(x)\equiv 0\pmod p$ and $q(x)\equiv 0\pmod p$, so $s+(p-n)\geq p$, which gives $s\geq n$.
     
-        因此 $s=n$．
+        Therefore $s=n$.
 
-对于非首一多项式，由于 $\mathbf{Z}_p$ 是域，故可以将其化为首一多项式，从而适用该定理．
+For a polynomial that is not monic, since $\mathbf{Z}_p$ is a field, we can turn it into a monic polynomial, and then the theorem applies.
 
-???+ note "定理 6"
-    设 $n\mid p-1$，$p\nmid a$，则方程
+???+ note "Theorem 6"
+    Let $n\mid p-1$ and $p\nmid a$. Then the equation
     
     $$
     x^n\equiv a\pmod p\tag{9}
     $$
     
-    有解当且仅当
+    has a solution if and only if
     
     $$
     a^{\frac{p-1}{n}}\equiv 1\pmod p.
     $$
     
-    而且，若 $(9)$ 有解，则解数为 $n$．
+    Moreover, if $(9)$ has a solution, it has exactly $n$ solutions.
 
 ???+ note "Note"
-    方程 $(9)$ 解集的具体结构可参见 [k 次剩余](./residue.md)．
+    For the exact structure of the solution set of $(9)$, see [k-th Power Residues](./residue.md).
 
-???+ note "证明"
-    -   必要性：若方程 $(9)$ 有解 $x_0$，则
+???+ note "Proof"
+    -   Necessity: if $(9)$ has a solution $x_0$, then
     
         $$
         a^{\frac{p-1}{n}}\equiv {\left(x_0^n\right)}^{\frac{p-1}{n}}\equiv 1\pmod p
         $$
-    -   充分性：若 $a^{\frac{p-1}{n}}\equiv 1\pmod p$，则
+    -   Sufficiency: if $a^{\frac{p-1}{n}}\equiv 1\pmod p$, then
     
         $$
         \begin{aligned}
@@ -259,42 +259,42 @@ $$
         \end{aligned}
         $$
     
-        其中 $P(x)$ 是某个整系数多项式，因此由定理 5 可知方程 $(9)$ 有 $n$ 个解．
+        where $P(x)$ is some polynomial with integer coefficients. So by Theorem 5, $(9)$ has $n$ solutions.
 
-## 高次同余方程（组）的求解方法
+## Solving higher-degree congruence equations (and systems)
 
-首先我们可以借助 [中国剩余定理](./crt.md) 将求解 **同余方程组** 转为求解 **同余方程**，以及将求解模 **合数**  $m$ 的同余方程转化为求解模 **素数幂次** 的同余方程．之后我们借助 [定理 1](#素数幂模同余方程) 将求解模 **素数幂次** 的同余方程转化为求解模 **素数** 的同余方程．
+First, using the [Chinese remainder theorem](./crt.md), we can turn a **system of congruence equations** into single **congruence equations**, and turn a congruence equation modulo a **composite** $m$ into congruence equations modulo **prime powers**. Then, using [Theorem 1](#congruence-equations-modulo-prime-powers), we turn a congruence equation modulo a **prime power** into one modulo a **prime**.
 
-结合模素数同余方程的若干定理，我们只需考虑方程
+Combining the theorems on congruence equations modulo primes, we only need to consider how to solve
 
 $$
 x^n+\sum_{i=0}^{n-1}a_ix^i\equiv 0\pmod p
 $$
 
-的求法，其中 $p$ 是素数，$n<p$．
+where $p$ is prime and $n<p$.
 
-我们可以通过将 $x$ 代换为 $x-\dfrac{a_{n-1}}{n}$ 来消去 $x^{n-1}$ 项，从而我们只需考虑方程
+By substituting $x-\dfrac{a_{n-1}}{n}$ for $x$, we can eliminate the $x^{n-1}$ term, so we only need to consider how to solve
 
 $$
 x^n+\sum_{i=0}^{n-2}a_ix^i\equiv 0\pmod p\tag{10}
 $$
 
-的求法，其中 $p$ 是素数，$n<p$．
+where $p$ is prime and $n<p$.
 
--   若 $n=1$，则求法参见 [线性同余方程](./linear-equation.md)．
--   若 $n=2$，则求法参见 [二次剩余](./quad-residue.md)．
--   若方程 $(10)$ 可化为
+-   If $n=1$, see [Linear Congruence Equations](./linear-equation.md).
+-   If $n=2$, see [Quadratic Residues](./quad-residue.md).
+-   If $(10)$ can be rewritten as
 
     $$
     x^n\equiv a\pmod p,
     $$
 
-    则求法参见 [k 次剩余](./residue.md)．
+    see [k-th Power Residues](./residue.md).
 
-## 参考资料
+## References
 
 1.  [Congruence Equation -- from Wolfram MathWorld](https://mathworld.wolfram.com/CongruenceEquation.html)
 2.  [Lagrange's theorem (number theory) - Wikipedia](https://en.wikipedia.org/wiki/Lagrange%27s_theorem_%28number_theory%29)
-3.  潘承洞，潘承彪．初等数论．
-4.  冯克勤．初等数论及其应用．
-5.  闵嗣鹤，严士健．初等数论．
+3.  Pan Chengdong, Pan Chengbiao. Elementary Number Theory.
+4.  Feng Keqin. Elementary Number Theory and Its Applications.
+5.  Min Sihe, Yan Shijian. Elementary Number Theory.

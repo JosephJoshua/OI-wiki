@@ -1,355 +1,355 @@
-本文对于数论的开头部分做一个简介．
+This page gives a short introduction to the basics of number theory.
 
-## 整除
+## Divisibility
 
-???+ note "定义"
-    设 $a,b\in\mathbf{Z}$，$a\ne 0$．如果 $\exists q\in\mathbf{Z}$，使得 $b=aq$，那么就说 $b$ 可被 $a$  **整除**，记作 $a\mid b$；$b$ 不被 $a$ 整除记作 $a\nmid b$．
+???+ note "Definition"
+    Let $a,b\in\mathbf{Z}$ with $a\ne 0$. If $\exists q\in\mathbf{Z}$ such that $b=aq$, we say $b$ is **divisible** by $a$, written $a\mid b$. If $b$ is not divisible by $a$, we write $a\nmid b$.
 
-整除的性质：
+Properties of divisibility:
 
 -   $a\mid b\iff-a\mid b\iff a\mid-b\iff|a|\mid|b|$
 -   $a\mid b\land b\mid c\implies a\mid c$
 -   $a\mid b\land a\mid c\iff\forall x,y\in\mathbf{Z}, a\mid(xb+yc)$
 -   $a\mid b\land b\mid a\implies b=\pm a$
--   设 $m\ne0$，那么 $a\mid b\iff ma\mid mb$．
--   设 $b\ne0$，那么 $a\mid b\implies|a|\le|b|$．
--   设 $a\ne0,b=qa+c$，那么 $a\mid b\iff a\mid c$．
+-   If $m\ne0$, then $a\mid b\iff ma\mid mb$.
+-   If $b\ne0$, then $a\mid b\implies|a|\le|b|$.
+-   If $a\ne0,b=qa+c$, then $a\mid b\iff a\mid c$.
 
-### 约数
+### Divisors
 
-???+ note "定义"
-    若 $a\mid b$，则称 $b$ 是 $a$ 的 **倍数**，$a$ 是 $b$ 的 **约数**．
+???+ note "Definition"
+    If $a\mid b$, we call $b$ a **multiple** of $a$, and $a$ a **divisor** of $b$.
 
-$0$ 是所有非 $0$ 整数的倍数．对于整数 $b\ne0$，$b$ 的约数只有有限个．
+$0$ is a multiple of every nonzero integer. An integer $b\ne0$ has only finitely many divisors.
 
-平凡约数（平凡因数）：对于整数 $b\ne0$，$\pm1$、$\pm b$ 是 $b$ 的平凡约数．当 $b=\pm1$ 时，$b$ 只有两个平凡约数．
+Trivial divisors (trivial factors): for an integer $b\ne0$, $\pm1$ and $\pm b$ are the trivial divisors of $b$. When $b=\pm1$, $b$ has only two trivial divisors.
 
-对于整数 $b\ne 0$，$b$ 的其他约数称为真约数（真因数、非平凡约数、非平凡因数）．
+For an integer $b\ne 0$, the other divisors of $b$ are called proper divisors (also proper factors, nontrivial divisors, or nontrivial factors).
 
-约数的性质：
+Properties of divisors:
 
--   设整数 $b\ne0$．当 $d$ 遍历 $b$ 的全体约数的时候，$\dfrac{b}{d}$ 也遍历 $b$ 的全体约数．
--   设整数 $b\gt 0$，则当 $d$ 遍历 $b$ 的全体正约数的时候，$\dfrac{b}{d}$ 也遍历 $b$ 的全体正约数．
+-   Let $b\ne0$ be an integer. As $d$ runs over all divisors of $b$, $\dfrac{b}{d}$ also runs over all divisors of $b$.
+-   Let $b\gt 0$ be an integer. As $d$ runs over all positive divisors of $b$, $\dfrac{b}{d}$ also runs over all positive divisors of $b$.
 
-在具体问题中，**如果没有特别说明，约数总是指正约数．**
+In concrete problems, **unless stated otherwise, "divisor" always means a positive divisor.**
 
-## 带余数除法
+## Division with remainder
 
-???+ note "余数"
-    设 $a,b$ 为两个给定的整数，$a\ne0$．设 $d$ 是一个给定的整数．那么，一定存在唯一的一对整数 $q$ 和 $r$，满足 $b=qa+r,d\le r<|a|+d$．
+???+ note "Remainder"
+    Let $a,b$ be two given integers with $a\ne0$, and let $d$ be a given integer. Then there is exactly one pair of integers $q$ and $r$ such that $b=qa+r,d\le r<|a|+d$.
 
-无论整数 $d$ 取何值，$r$ 统称为余数．$a\mid b$ 等价于 $a\mid r$．
+Whatever the value of the integer $d$, $r$ is called a remainder. $a\mid b$ is equivalent to $a\mid r$.
 
-一般情况下，$d$ 取 $0$，此时等式 $b=qa+r,0\le r<|a|$ 称为带余数除法（带余除法）．这里的余数 $r$ 称为最小非负余数．
+Usually we take $d=0$. The equation $b=qa+r,0\le r<|a|$ is then called division with remainder. The remainder $r$ here is called the least nonnegative remainder.
 
-余数往往还有两种常见取法：
+Two other common choices of remainder are:
 
--   绝对最小余数：$d$ 取 $a$ 的绝对值的一半的相反数．即 $b=qa+r,-\dfrac{|a|}{2}\le r<|a|-\dfrac{|a|}{2}$．
--   最小正余数：$d$ 取 $1$．即 $b=qa+r,1\le r<|a|+1$．
+-   Absolute least remainder: take $d$ to be minus half the absolute value of $a$. That is, $b=qa+r,-\dfrac{|a|}{2}\le r<|a|-\dfrac{|a|}{2}$.
+-   Least positive remainder: take $d=1$. That is, $b=qa+r,1\le r<|a|+1$.
 
-带余数除法的余数只有最小非负余数．**如果没有特别说明，余数总是指最小非负余数．**
+The remainder in division with remainder is only the least nonnegative remainder. **Unless stated otherwise, "remainder" always means the least nonnegative remainder.**
 
-余数的性质：
+Properties of remainders:
 
--   任一整数被正整数 $a$ 除后，余数一定是且仅是 $0$ 到 $(a-1)$ 这 $a$ 个数中的一个．
--   相邻的 $a$ 个整数被正整数 $a$ 除后，恰好取到上述 $a$ 个余数．特别地，一定有且仅有一个数被 $a$ 整除．
+-   When any integer is divided by a positive integer $a$, the remainder is exactly one of the $a$ numbers $0$ to $(a-1)$.
+-   When $a$ consecutive integers are divided by a positive integer $a$, they give exactly the $a$ remainders above. In particular, exactly one of them is divisible by $a$.
 
-## 最大公约数与最小公倍数
+## Greatest common divisor and least common multiple
 
-关于公约数、公倍数、最大公约数与最小公倍数，四个名词的定义，见 [最大公约数](./gcd.md)．
+For the definitions of the four terms common divisor, common multiple, greatest common divisor and least common multiple, see [Greatest Common Divisor](./gcd.md).
 
 ???+ warning "Warning"
-    一些作者认为 $0$ 和 $0$ 的最大公约数无定义，其余作者一般将其视为 $0$．C++ STL 的实现中采用后者，即认为 $0$ 和 $0$ 的最大公约数为 $0$[^gcdcpp]．
+    Some authors say the greatest common divisor of $0$ and $0$ is undefined; others usually take it to be $0$. The C++ STL implementation uses the latter, that is, the greatest common divisor of $0$ and $0$ is $0$[^gcdcpp].
 
-最大公约数有如下性质：
+The greatest common divisor has the following properties:
 
--   $(a_1,\dots,a_n)=(|a_1|,\dots,|a_n|)$；
--   $(a,b)=(b,a)$；
--   若 $a\ne 0$，则 $(a,0)=(a,a)=|a|$；
--   $(bq+r,b)=(r,b)$；
--   $(a_1,\dots,a_n)=((a_1,a_2),a_3,\dots,a_n)$．进而 $\forall 1<k<n-1,~(a_1,\dots,a_n)=((a_1,\dots,a_k),(a_{k+1},\dots,a_n))$；
--   对不全为 $0$ 的整数 $a_1,\dots,a_n$ 和非零整数 $m$，$(ma_1,\dots,ma_n)=|m|(a_1,\dots,a_n)$；
--   对不全为 $0$ 的整数 $a_1,\dots,a_n$，若 $(a_1,\dots,a_n)=d$，则 $(a_1/d,\dots,a_n/d)=1$；
--   $(a^n,b^n)=(a,b)^n$．
+-   $(a_1,\dots,a_n)=(|a_1|,\dots,|a_n|)$;
+-   $(a,b)=(b,a)$;
+-   if $a\ne 0$, then $(a,0)=(a,a)=|a|$;
+-   $(bq+r,b)=(r,b)$;
+-   $(a_1,\dots,a_n)=((a_1,a_2),a_3,\dots,a_n)$. Furthermore, $\forall 1<k<n-1,~(a_1,\dots,a_n)=((a_1,\dots,a_k),(a_{k+1},\dots,a_n))$;
+-   for integers $a_1,\dots,a_n$ that are not all $0$ and a nonzero integer $m$, $(ma_1,\dots,ma_n)=|m|(a_1,\dots,a_n)$;
+-   for integers $a_1,\dots,a_n$ that are not all $0$, if $(a_1,\dots,a_n)=d$, then $(a_1/d,\dots,a_n/d)=1$;
+-   $(a^n,b^n)=(a,b)^n$.
 
-最大公约数还有如下与互素相关的性质：
+The greatest common divisor also has the following properties related to coprimality:
 
--   若 $b|ac$ 且 $(a,b)=1$，则 $b\mid c$；
--   若 $b|c$、$a|c$ 且 $(a,b)=1$，则 $ab\mid c$；
--   若 $(a,b)=1$，则 $(a,bc)=(a,c)$；
--   若 $(a_i,b_j)=1,~\forall 1\leq i\leq n,1\leq j\leq m$，则 $\left(\prod_i a_i,\prod_j b_j\right)=1$．特别地，若 $(a,b)=1$，则 $(a^n,b^m)=1$；
--   对整数 $a_1,\dots,a_n$，若 $\exists v\in \mathbf{Z},~\prod_i a_i=v^m$，且 $(a_i,a_j)=1,~\forall i\ne j$，则 $\forall 1\leq i\leq n,~\sqrt[m]{a_i}\in\mathbf{Z}$．
+-   if $b|ac$ and $(a,b)=1$, then $b\mid c$;
+-   if $b|c$, $a|c$ and $(a,b)=1$, then $ab\mid c$;
+-   if $(a,b)=1$, then $(a,bc)=(a,c)$;
+-   if $(a_i,b_j)=1,~\forall 1\leq i\leq n,1\leq j\leq m$, then $\left(\prod_i a_i,\prod_j b_j\right)=1$. In particular, if $(a,b)=1$, then $(a^n,b^m)=1$;
+-   for integers $a_1,\dots,a_n$, if $\exists v\in \mathbf{Z},~\prod_i a_i=v^m$ and $(a_i,a_j)=1,~\forall i\ne j$, then $\forall 1\leq i\leq n,~\sqrt[m]{a_i}\in\mathbf{Z}$.
 
-最小公倍数有如下性质：
+The least common multiple has the following properties:
 
--   $[a_1,\dots,a_n]=[|a_1|,\dots,|a_n|]$；
--   $[a,b]=[b,a]$；
--   若 $a\ne 0$，则 $[a,1]=[a,a]=|a|$；
--   若 $a\mid b$，则 $[a,b]=|b|$；
--   $[a_1,\dots,a_n]=[[a_1,a_2],a_3,\dots,a_n]$．进而 $\forall 1<k<n-1,~[a_1,\dots,a_n]=[[a_1,\dots,a_k],[a_{k+1},\dots,a_n]]$；
--   若 $a_i\mid m,~\forall 1\leq i\leq n$，则 $[a_1,\dots,a_n]\mid m$；
--   $[ma_1,\dots,ma_n]=|m|[a_1,\dots,a_n]$；
--   $[a,b,c][ab,bc,ca]=[a,b][b,c][c,a]$；
--   $[a^n,b^n]=[a,b]^n$．
+-   $[a_1,\dots,a_n]=[|a_1|,\dots,|a_n|]$;
+-   $[a,b]=[b,a]$;
+-   if $a\ne 0$, then $[a,1]=[a,a]=|a|$;
+-   if $a\mid b$, then $[a,b]=|b|$;
+-   $[a_1,\dots,a_n]=[[a_1,a_2],a_3,\dots,a_n]$. Furthermore, $\forall 1<k<n-1,~[a_1,\dots,a_n]=[[a_1,\dots,a_k],[a_{k+1},\dots,a_n]]$;
+-   if $a_i\mid m,~\forall 1\leq i\leq n$, then $[a_1,\dots,a_n]\mid m$;
+-   $[ma_1,\dots,ma_n]=|m|[a_1,\dots,a_n]$;
+-   $[a,b,c][ab,bc,ca]=[a,b][b,c][c,a]$;
+-   $[a^n,b^n]=[a,b]^n$.
 
-最大公约数和最小公倍数可以组合出很多奇妙的等式，如：
+The greatest common divisor and least common multiple combine into many neat identities, such as:
 
--   $(a,b)[a,b]=|ab|$；
--   $(ab,bc,ca)[a,b,c]=|abc|$；
--   $\dfrac{(a,b,c)^2}{(a,b)(b,c)(a,c)}=\dfrac{[a,b,c]^2}{[a,b][b,c][a,c]}$．
+-   $(a,b)[a,b]=|ab|$;
+-   $(ab,bc,ca)[a,b,c]=|abc|$;
+-   $\dfrac{(a,b,c)^2}{(a,b)(b,c)(a,c)}=\dfrac{[a,b,c]^2}{[a,b][b,c][a,c]}$.
 
-这些性质均可通过定义或 [唯一分解定理](#算术基本定理) 证明，其中使用唯一分解定理的证明更容易理解．
+All of these properties can be proved from the definitions or with the [unique factorization theorem](#fundamental-theorem-of-arithmetic). The proofs using unique factorization are easier to understand.
 
-### 互素
+### Coprime integers
 
-???+ note "定义"
-    若 $(a_1,a_2)=1$，则称 $a_1$ 和 $a_2$  **互素**（**既约**）．
+???+ note "Definition"
+    If $(a_1,a_2)=1$, we say $a_1$ and $a_2$ are **coprime** (**relatively prime**).
     
-    若 $(a_1,\ldots,a_k)=1$，则称 $a_1,\ldots,a_k$  **互素**（**既约**）．
+    If $(a_1,\ldots,a_k)=1$, we say $a_1,\ldots,a_k$ are **coprime** (**relatively prime**).
 
-多个整数互素，不一定两两互素．例如 $6$、$10$ 和 $15$ 互素，但是任意两个都不互素．
+Several integers being coprime does not mean they are pairwise coprime. For example, $6$, $10$ and $15$ are coprime, but no two of them are coprime.
 
-互素的性质与最大公约数理论：裴蜀定理（Bézout's identity）．见 [裴蜀定理](./bezouts.md)．
+For properties of coprimality and the theory of greatest common divisors, see Bézout's identity: [Bézout's Identity](./bezouts.md).
 
-### 辗转相除法
+### Euclidean algorithm
 
-辗转相除法是一种算法，也称 Euclid 算法．见 [最大公约数](./gcd.md)．
+The Euclidean algorithm (repeated division) is an algorithm, also called Euclid's algorithm. See [Greatest Common Divisor](./gcd.md).
 
-## 素数与合数
+## Primes and composites
 
-关于素数的算法见 [素数](./prime.md)．
+For algorithms on primes, see [Primes](./prime.md).
 
-???+ note "定义"
-    设整数 $p\ne0,\pm1$．如果 $p$ 除了平凡约数外没有其他约数，那么称 $p$ 为 **素数**（**不可约数**）．
+???+ note "Definition"
+    Let $p\ne0,\pm1$ be an integer. If $p$ has no divisors other than its trivial divisors, we call $p$ a **prime** (**irreducible**).
     
-    若整数 $a\ne0,\pm 1$ 且 $a$ 不是素数，则称 $a$ 为 **合数**．
+    If an integer $a\ne0,\pm 1$ is not prime, we call $a$ a **composite**.
 
-$p$ 和 $-p$ 总是同为素数或者同为合数．**如果没有特别说明，素数总是指正的素数．**
+$p$ and $-p$ are always both prime or both composite. **Unless stated otherwise, "prime" always means a positive prime.**
 
-整数的因数是素数，则该素数称为该整数的素因数（素约数）．
+If a divisor of an integer is prime, that prime is called a prime factor (prime divisor) of the integer.
 
-素数与合数的简单性质：
+Simple properties of primes and composites:
 
--   大于 $1$ 的整数 $a$ 是合数，等价于 $a$ 可以表示为整数 $d$ 和 $e$（$1<d,e<a$）的乘积．
--   如果素数 $p$ 有大于 $1$ 的约数 $d$，那么 $d=p$．
--   大于 $1$ 的整数 $a$ 一定可以表示为素数的乘积．
--   对于合数 $a$，一定存在素数 $p\le\sqrt{a}$ 使得 $p\mid a$．
--   素数有无穷多个．
--   所有大于 $3$ 的素数都可以表示为 $6n\pm 1$ 的形式[^ref1]．
+-   An integer $a$ greater than $1$ is composite if and only if $a$ can be written as a product of integers $d$ and $e$ ($1<d,e<a$).
+-   If a prime $p$ has a divisor $d$ greater than $1$, then $d=p$.
+-   Every integer $a$ greater than $1$ can be written as a product of primes.
+-   For a composite $a$, there is always a prime $p\le\sqrt{a}$ with $p\mid a$.
+-   There are infinitely many primes.
+-   Every prime greater than $3$ can be written in the form $6n\pm 1$[^ref1].
 
-## 算术基本定理
+## Fundamental theorem of arithmetic
 
-???+ note "算术基本引理"
-    设 $p$ 是素数，$p\mid a_1a_2$，那么 $p\mid a_1$ 和 $p\mid a_2$ 至少有一个成立．
+???+ note "Fundamental lemma of arithmetic"
+    Let $p$ be a prime with $p\mid a_1a_2$. Then at least one of $p\mid a_1$ and $p\mid a_2$ holds.
 
-算术基本引理的逆命题稍加修改也可以得到素数的另一种定义．
+With a small change, the converse of the fundamental lemma of arithmetic gives another definition of primes.
 
-???+ note "素数的另一种定义"
-    对整数 $p\ne 0,\pm 1$，若对任意满足 $p\mid a_1a_2$ 的整数 $a_1,a_2$ 均有 $p\mid a_1$ 或 $p\mid a_2$ 成立，则称 $p$ 是素数．
+???+ note "Another definition of primes"
+    For an integer $p\ne 0,\pm 1$, if $p\mid a_1$ or $p\mid a_2$ holds for all integers $a_1,a_2$ with $p\mid a_1a_2$, we call $p$ a prime.
 
 ??? tip "Tip"
-    这个定义的动机可以从 [素理想](../algebra/ring-theory.md#素理想) 中找到．
+    The motivation for this definition comes from [prime ideals](../algebra/ring-theory.md#素理想).
 
-???+ note "算术基本定理（唯一分解定理）"
-    设正整数 $a$，那么必有表示：
+???+ note "Fundamental theorem of arithmetic (unique factorization theorem)"
+    Every positive integer $a$ can be written as
     
     $$
     a=p_1p_2\cdots p_s
     $$
     
-    其中 $p_j(1\le j\le s)$ 是素数．并且在不计次序的意义下，该表示唯一．
+    where each $p_j(1\le j\le s)$ is prime. Moreover, this representation is unique up to the order of the factors.
 
-???+ note "标准素因数分解式"
-    将上述表示中，相同的素数合并，可得：
+???+ note "Standard prime factorization"
+    Grouping equal primes in the representation above gives
     
     $$
     a={p_1}^{\alpha_1}{p_2}^{\alpha_2}\cdots{p_s}^{\alpha_s},p_1<p_2<\cdots<p_s
     $$
     
-    称为正整数 $a$ 的标准素因数分解式．
+    which is called the standard prime factorization of the positive integer $a$.
 
-算术基本定理和算术基本引理，两个定理是等价的．
+The fundamental theorem of arithmetic and the fundamental lemma of arithmetic are equivalent.
 
-## 同余
+## Congruence
 
-???+ note "定义"
-    设整数 $m\ne0$．若 $m\mid(a-b)$，称 $m$ 为 **模数**（**模**），$a$ 同余于 $b$ 模 $m$，$b$ 是 $a$ 对模 $m$ 的 **剩余**．记作 $a\equiv b\pmod m$．
+???+ note "Definition"
+    Let $m\ne0$ be an integer. If $m\mid(a-b)$, we call $m$ the **modulus**, say that $a$ is congruent to $b$ modulo $m$, and call $b$ a **residue** of $a$ modulo $m$. We write $a\equiv b\pmod m$.
     
-    否则，$a$ 不同余于 $b$ 模 $m$，$b$ 不是 $a$ 对模 $m$ 的剩余．记作 $a\not\equiv b\pmod m$．
+    Otherwise, $a$ is not congruent to $b$ modulo $m$, and $b$ is not a residue of $a$ modulo $m$. We write $a\not\equiv b\pmod m$.
     
-    这样的等式，称为模 $m$ 的同余式，简称 **同余式**．
+    Such a relation is called a congruence modulo $m$, or simply a **congruence**.
 
-根据整除的性质，上述同余式也等价于 $a\equiv b\pmod{(-m)}$．
+By the properties of divisibility, the congruence above is also equivalent to $a\equiv b\pmod{(-m)}$.
 
-后文中，如果没有特别说明，模数总是 **正整数**．
+From here on, unless stated otherwise, the modulus is always a **positive integer**.
 
-式中的 $b$ 是 $a$ 对模 $m$ 的剩余，这个概念与余数完全一致．通过限定 $b$ 的范围，相应的有 $a$ 对模 $m$ 的最小非负剩余、绝对最小剩余、最小正剩余．
+Here $b$ is a residue of $a$ modulo $m$, and this concept is exactly the same as the remainder. By restricting the range of $b$, we get the least nonnegative residue, the absolute least residue and the least positive residue of $a$ modulo $m$.
 
-同余的性质：
+Properties of congruence:
 
--   同余是 [等价关系](../order-theory.md#二元关系)，即同余具有
-    -   自反性：$a\equiv a\pmod m$．
-    -   对称性：若 $a\equiv b\pmod m$，则 $b\equiv a\pmod m$．
-    -   传递性：若 $a\equiv b\pmod m,b\equiv c\pmod m$，则 $a\equiv c\pmod m$．
--   线性运算：若 $a,b,c,d\in\mathbf{Z},m\in\mathbf{N}^*,a\equiv b\pmod m,c\equiv d\pmod m$ 则有：
-    -   $a\pm c\equiv b\pm d\pmod m$．
-    -   $a\times c\equiv b\times d\pmod m$．
--   设 $f(x)=\sum_{i=0}^n a_ix^i$ 和 $g(x)=\sum_{i=0}^n b_ix^i$ 是两个整系数多项式，$m\in\mathbf{N}^*$，且 $a_i\equiv b_i\pmod m,~0\leq i\leq n$，则对任意整数 $x$ 均有 $f(x)\equiv g(x)\pmod m$．进而若 $s\equiv t\pmod m$，则 $f(s)\equiv g(t)\pmod m$．
--   若 $a,b\in\mathbf{Z},k,m\in\mathbf{N}^*,a\equiv b\pmod m$, 则 $ak\equiv bk\pmod{mk}$．
--   若 $a,b\in\mathbf{Z},d,m\in\mathbf{N}^*,d\mid a,d\mid b,d\mid m$，则当 $a\equiv b\pmod m$ 成立时，有 $\dfrac{a}{d}\equiv\dfrac{b}{d}\left(\bmod\;{\dfrac{m}{d}}\right)$．
--   若 $a,b\in\mathbf{Z},d,m\in\mathbf{N}^*,d\mid m$，则当 $a\equiv b\pmod m$ 成立时，有 $a\equiv b\pmod d$．
--   若 $a,b\in\mathbf{Z},d,m\in\mathbf{N}^*$，则当 $a\equiv b\pmod m$ 成立时，有 $(a,m)=(b,m)$．若 $d$ 能整除 $m$ 及 $a,b$ 中的一个，则 $d$ 必定能整除 $a,b$ 中的另一个．
+-   Congruence is an [equivalence relation](../order-theory.md#二元关系), that is, congruence is
+    -   Reflexive: $a\equiv a\pmod m$.
+    -   Symmetric: if $a\equiv b\pmod m$, then $b\equiv a\pmod m$.
+    -   Transitive: if $a\equiv b\pmod m,b\equiv c\pmod m$, then $a\equiv c\pmod m$.
+-   Linear operations: if $a,b,c,d\in\mathbf{Z},m\in\mathbf{N}^*,a\equiv b\pmod m,c\equiv d\pmod m$, then:
+    -   $a\pm c\equiv b\pm d\pmod m$.
+    -   $a\times c\equiv b\times d\pmod m$.
+-   Let $f(x)=\sum_{i=0}^n a_ix^i$ and $g(x)=\sum_{i=0}^n b_ix^i$ be two polynomials with integer coefficients, $m\in\mathbf{N}^*$, and $a_i\equiv b_i\pmod m,~0\leq i\leq n$. Then $f(x)\equiv g(x)\pmod m$ for every integer $x$. Furthermore, if $s\equiv t\pmod m$, then $f(s)\equiv g(t)\pmod m$.
+-   If $a,b\in\mathbf{Z},k,m\in\mathbf{N}^*,a\equiv b\pmod m$, then $ak\equiv bk\pmod{mk}$.
+-   If $a,b\in\mathbf{Z},d,m\in\mathbf{N}^*,d\mid a,d\mid b,d\mid m$, then whenever $a\equiv b\pmod m$ holds, we have $\dfrac{a}{d}\equiv\dfrac{b}{d}\left(\bmod\;{\dfrac{m}{d}}\right)$.
+-   If $a,b\in\mathbf{Z},d,m\in\mathbf{N}^*,d\mid m$, then whenever $a\equiv b\pmod m$ holds, we have $a\equiv b\pmod d$.
+-   If $a,b\in\mathbf{Z},d,m\in\mathbf{N}^*$, then whenever $a\equiv b\pmod m$ holds, we have $(a,m)=(b,m)$. If $d$ divides $m$ and one of $a,b$, then $d$ must also divide the other one.
 
-还有性质是乘法逆元．见 [乘法逆元](./inverse.md)．
+Another property is the modular multiplicative inverse. See [Modular Inverse](./inverse.md).
 
-## 同余类与剩余系
+## Residue classes and residue systems
 
-为方便讨论，对集合 $A,B$ 和元素 $r$，我们引入如下记号：
+For convenience, for sets $A,B$ and an element $r$, we introduce the following notation:
 
--   $r+A:=\{r+a:a\in A\}$；
--   $rA:=\{ra:a\in A\}$；
--   $A+B:=\{a+b:a\in A,b\in B\}$；
--   $AB:=\{ab:a\in A,b\in B\}$．
+-   $r+A:=\{r+a:a\in A\}$;
+-   $rA:=\{ra:a\in A\}$;
+-   $A+B:=\{a+b:a\in A,b\in B\}$;
+-   $AB:=\{ab:a\in A,b\in B\}$.
 
-???+ note "同余类"
-    对非零整数 $m$，把全体整数分成 $|m|$ 个两两不交的集合，且同一个集合中的任意两个数模 $m$ 均同余，我们把这 $|m|$ 个集合均称为模 $m$ 的 **同余类** 或 **剩余类**．用 $r\bmod m$ 表示含有整数 $r$ 的模 $m$ 的同余类．
+???+ note "Residue class"
+    For a nonzero integer $m$, split all integers into $|m|$ pairwise disjoint sets so that any two numbers in the same set are congruent modulo $m$. Each of these $|m|$ sets is called a **congruence class** or **residue class** modulo $m$. We write $r\bmod m$ for the residue class modulo $m$ that contains the integer $r$.
     
-    不难证明对任意非零整数 $m$，上述划分方案一定存在且唯一．
+    It is not hard to prove that for every nonzero integer $m$, such a partition exists and is unique.
 
-由同余类的定义可知：
+From the definition of residue classes:
 
--   $r\bmod m=\{r+km:k\in\mathbf{Z}\}$；
--   $r\bmod m=s\bmod m\iff r\equiv s\pmod m$；
--   对任意 $r,s\in\mathbf{Z}$，要么 $r\bmod m=s\bmod m$，要么 $(r\bmod m)\cap (s\bmod m)=\varnothing$；
--   若 $m_1\mid m$，则对任意整数 $r$ 均有 $r+m\mathbf{Z}\subseteq r+m_1\mathbf{Z}$．
+-   $r\bmod m=\{r+km:k\in\mathbf{Z}\}$;
+-   $r\bmod m=s\bmod m\iff r\equiv s\pmod m$;
+-   for any $r,s\in\mathbf{Z}$, either $r\bmod m=s\bmod m$ or $(r\bmod m)\cap (s\bmod m)=\varnothing$;
+-   if $m_1\mid m$, then $r+m\mathbf{Z}\subseteq r+m_1\mathbf{Z}$ for every integer $r$.
 
-注意到同余是等价关系，所以同余类即为同余关系的等价类．
+Since congruence is an equivalence relation, residue classes are exactly the equivalence classes of the congruence relation.
 
-我们把模 $m$ 的同余类全体构成的集合记为 $\mathbf{Z}_m$，即
+We write $\mathbf{Z}_m$ for the set of all residue classes modulo $m$, that is
 
 $$
 \mathbf{Z}_m:=\{r\bmod m:0\leq r<m\}
 $$
 
-不难发现：
+It is easy to see that:
 
--   对任意整数 $a$，$a+\mathbf{Z}_m=\mathbf{Z}_m$；
--   对任意与 $m$ 互质的整数 $b$，$b\mathbf{Z}_m=\mathbf{Z}_m$．
+-   for any integer $a$, $a+\mathbf{Z}_m=\mathbf{Z}_m$;
+-   for any integer $b$ coprime to $m$, $b\mathbf{Z}_m=\mathbf{Z}_m$.
 
-由 [商群](../algebra/group-theory.md#商群) 的定义可知 $\mathbf{Z}_m=\mathbf{Z}/m\mathbf{Z}$，所以有时我们也会用 $\mathbf{Z}/m\mathbf{Z}$ 表示 $\mathbf{Z}_m$．
+By the definition of a [quotient group](../algebra/group-theory.md#商群), $\mathbf{Z}_m=\mathbf{Z}/m\mathbf{Z}$, so we sometimes also write $\mathbf{Z}/m\mathbf{Z}$ for $\mathbf{Z}_m$.
 
-由 [抽屉原理](../combinatorics/drawer-principle.md) 可知：
+By the [pigeonhole principle](../combinatorics/drawer-principle.md):
 
--   任取 $m+1$ 个整数，必有两个整数模 $m$ 同余．
--   存在 $m$ 个两两模 $m$ 不同余的整数．
+-   Among any $m+1$ integers, two of them are congruent modulo $m$.
+-   There exist $m$ integers that are pairwise incongruent modulo $m$.
 
-由此我们给出完全剩余系的定义：
+This leads to the definition of a complete residue system:
 
-???+ note "（完全）剩余系"
-    对 $m$ 个整数 $a_1,a_2,\dots,a_m$，若对任意的数 $x$，有且仅有一个数 $a_i$ 使得 $x$ 与 $a_i$ 模 $m$ 同余，则称这 $m$ 个整数 $a_1,a_2,\dots,a_m$ 为模 $m$ 的 **完全剩余系**，简称 **剩余系**．
+???+ note "(Complete) residue system"
+    For $m$ integers $a_1,a_2,\dots,a_m$, if for every number $x$ there is exactly one $a_i$ with $x$ congruent to $a_i$ modulo $m$, then the $m$ integers $a_1,a_2,\dots,a_m$ are called a **complete residue system** modulo $m$, or simply a **residue system**.
 
-我们还可以定义模 $m$ 的：
+We can also define the following systems modulo $m$:
 
--   最小非负（完全）剩余系：$0,\dots,m-1$；
--   最小正（完全）剩余系：$1,\dots,m$；
--   绝对最小（完全）剩余系：$-\lfloor m/2\rfloor,\dots,-\lfloor -m/2\rfloor-1$；
--   最大非正（完全）剩余系：$-m+1,\dots,0$；
--   最大负（完全）剩余系：$-m,\dots,-1$．
+-   least nonnegative (complete) residue system: $0,\dots,m-1$;
+-   least positive (complete) residue system: $1,\dots,m$;
+-   absolute least (complete) residue system: $-\lfloor m/2\rfloor,\dots,-\lfloor -m/2\rfloor-1$;
+-   greatest nonpositive (complete) residue system: $-m+1,\dots,0$;
+-   greatest negative (complete) residue system: $-m,\dots,-1$.
 
-若无特殊说明，一般我们只用最小非负剩余系．
+Unless stated otherwise, we usually use only the least nonnegative residue system.
 
-我们注意到如下命题成立：
+Note that the following statement holds:
 
--   在模 $m$ 的任意一个同余类中，任取两个整数 $a_1,a_2$ 均有 $(a_1,m)=(a_2,m)$．
+-   In any residue class modulo $m$, any two integers $a_1,a_2$ satisfy $(a_1,m)=(a_2,m)$.
 
-考虑同余类 $r\bmod m$，若 $(r,m)=1$，则该同余类的所有元素均与 $m$ 互质，这说明我们也许可以通过类似方式得知所有与 $m$ 互质的整数构成的集合的结构．
+Consider the residue class $r\bmod m$. If $(r,m)=1$, then every element of this class is coprime to $m$. This suggests that we may be able to understand the structure of the set of all integers coprime to $m$ in a similar way.
 
-???+ note "既约同余类"
-    对同余类 $r\bmod m$，若 $(r,m)=1$，则称该同余类为 **既约同余类** 或 **既约剩余类**．
+???+ note "Reduced residue class"
+    For a residue class $r\bmod m$, if $(r,m)=1$, we call it a **reduced congruence class** or **reduced residue class**.
     
-    我们把模 $m$ 既约剩余类的个数记作 $\varphi(m)$，称其为 [Euler 函数](./euler-totient.md)．
+    We write $\varphi(m)$ for the number of reduced residue classes modulo $m$, and call it [Euler's totient function](./euler-totient.md).
 
-我们把模 $m$ 的既约同余类全体构成的集合记为 $\mathbf{Z}_m^*$，即
+We write $\mathbf{Z}_m^*$ for the set of all reduced residue classes modulo $m$, that is
 
 $$
 \mathbf{Z}_m^*:=\{r\bmod m:0\leq r<m,(r,m)=1\}
 $$
 
 ???+ warning "Warning"
-    对于任意的整数 $a$ 和与 $m$ 互质的整数 $b$，$b\mathbf{Z}_m^*=\mathbf{Z}_m^*$，但是 $a+\mathbf{Z}_m^*$ 不一定为 $\mathbf{Z}_m^*$．这一点与 $\mathbf{Z}_m$ 不同．
+    For any integer $a$ and any integer $b$ coprime to $m$, $b\mathbf{Z}_m^*=\mathbf{Z}_m^*$, but $a+\mathbf{Z}_m^*$ is not necessarily $\mathbf{Z}_m^*$. This is different from $\mathbf{Z}_m$.
 
-由 [抽屉原理](../combinatorics/drawer-principle.md) 可知：
+By the [pigeonhole principle](../combinatorics/drawer-principle.md):
 
--   任取 $\varphi(m)+1$ 个与 $m$ 互质的整数，必有两个整数模 $m$ 同余．
--   存在 $\varphi(m)$ 个与 $m$ 互质且两两模 $m$ 不同余的整数．
+-   Among any $\varphi(m)+1$ integers coprime to $m$, two of them are congruent modulo $m$.
+-   There exist $\varphi(m)$ integers that are coprime to $m$ and pairwise incongruent modulo $m$.
 
-由此我们给出既约剩余系的定义：
+This leads to the definition of a reduced residue system:
 
-???+ note "既约剩余系"
-    对 $t=\varphi(m)$ 个整数 $a_1,a_2,\dots,a_t$，若 $(a_i,m)=1,~\forall 1\leq i\leq t$，且对任意满足 $(x,m)=1$ 的数 $x$，有且仅有一个数 $a_i$ 使得 $x$ 与 $a_i$ 模 $m$ 同余，则称这 $t$ 个整数 $a_1,a_2,\dots,a_t$ 为模 $m$ 的 **既约剩余系**、**缩剩余系** 或 **简化剩余系**．
+???+ note "Reduced residue system"
+    For $t=\varphi(m)$ integers $a_1,a_2,\dots,a_t$, if $(a_i,m)=1,~\forall 1\leq i\leq t$, and for every number $x$ with $(x,m)=1$ there is exactly one $a_i$ with $x$ congruent to $a_i$ modulo $m$, then the $t$ integers $a_1,a_2,\dots,a_t$ are called a **reduced residue system**, **reduced system of residues** or **simplified residue system** modulo $m$.
 
-类似地，我们也可以定义最小非负既约剩余系等概念．
+In the same way, we can define the least nonnegative reduced residue system and similar concepts.
 
-若无特殊说明，一般我们只用最小非负既约剩余系．
+Unless stated otherwise, we usually use only the least nonnegative reduced residue system.
 
-### 剩余系的复合
+### Combining residue systems
 
-对正整数 $m$，我们有如下定理：
+For a positive integer $m$, we have the following theorem:
 
--   若 $m=m_1m_2,~1\leq m_1,m_2$，令 $Z_{m_1},Z_{m_2}$ 分别为模 $m_1,m_2$ 的 **完全** 剩余系，则对任意与 $m_1$ 互质的 $a$ 均有：
+-   If $m=m_1m_2,~1\leq m_1,m_2$, and $Z_{m_1},Z_{m_2}$ are **complete** residue systems modulo $m_1,m_2$ respectively, then for every $a$ coprime to $m_1$:
 
     $$
     Z_m=aZ_{m_1}+m_1Z_{m_2}.
     $$
 
-    为模 $m$ 的 **完全** 剩余系．进而，若 $m=\prod_{i=1}^k m_i,~1\leq m_1,m_2,\dots,m_k$，令 $Z_{m_1},\dots,Z_{m_k}$ 分别为模 $m_1,\dots,m_k$ 的 **完全** 剩余系，则：
+    is a **complete** residue system modulo $m$. Furthermore, if $m=\prod_{i=1}^k m_i,~1\leq m_1,m_2,\dots,m_k$, and $Z_{m_1},\dots,Z_{m_k}$ are **complete** residue systems modulo $m_1,\dots,m_k$ respectively, then:
 
     $$
     Z_m=\sum_{i=1}^k\left(\prod_{j=1}^{i-1}m_j\right)Z_{m_i}.
     $$
 
-    为模 $m$ 的 **完全** 剩余系．
+    is a **complete** residue system modulo $m$.
 
-???+ note "证明"
-    只需证明对任意满足 $ax+m_1y\equiv ax'+m_1y'\pmod{m_1m_2}$ 的 $x,x'\in Z_{m_1}$，$y,y'\in Z_{m_2}$，都有：
+???+ note "Proof"
+    We only need to show that for any $x,x'\in Z_{m_1}$, $y,y'\in Z_{m_2}$ with $ax+m_1y\equiv ax'+m_1y'\pmod{m_1m_2}$, we have:
     
     $$
     ax+m_1y=ax'+m_1y'.
     $$
     
-    实际上，由 $m_1\mid m_1m_2$，我们有 $ax+m_1y\equiv ax'+m_1y'\pmod{m_1}$，进而 $ax\equiv ax'\pmod{m_1}$，由 $(a,m_1)=1$ 可知 $x\equiv x'\pmod{m_1}$，进而有 $x=x'$．
+    Indeed, since $m_1\mid m_1m_2$, we have $ax+m_1y\equiv ax'+m_1y'\pmod{m_1}$, so $ax\equiv ax'\pmod{m_1}$. Since $(a,m_1)=1$, we get $x\equiv x'\pmod{m_1}$, and therefore $x=x'$.
     
-    进一步，$m_1y\equiv m_1y'\pmod{m_1m_2}$，则 $y\equiv y'\pmod{m_2}$，即 $y=y'$．
+    Next, $m_1y\equiv m_1y'\pmod{m_1m_2}$, so $y\equiv y'\pmod{m_2}$, that is, $y=y'$.
     
-    因此，
+    Therefore,
     
     $$
     ax+m_1y=ax'+m_1y'.
     $$
 
--   若 $m=m_1m_2,~1\leq m_1,m_2,(m_1,m_2)=1$，令 $Z_{m_1}^*,Z_{m_2}^*$ 分别为模 $m_1,m_2$ 的 **既约** 剩余系，则：
+-   If $m=m_1m_2,~1\leq m_1,m_2,(m_1,m_2)=1$, and $Z_{m_1}^*,Z_{m_2}^*$ are **reduced** residue systems modulo $m_1,m_2$ respectively, then:
 
     $$
     Z_m^*=m_2Z_{m_1}^*+m_1Z_{m_2}^*.
     $$
 
-    为模 $m$ 的 **既约** 剩余系．
+    is a **reduced** residue system modulo $m$.
 
 ???+ tip "Tip"
-    该定理等价于证明 Euler 函数为 [积性函数](#积性函数)．
+    This theorem is equivalent to the statement that Euler's totient function is [multiplicative](#multiplicative-functions).
 
-???+ note "证明"
-    令 $Z_{m_1},Z_{m_2}$ 分别为模 $m_1,m_2$ 的完全剩余系，我们已经证明了
+???+ note "Proof"
+    Let $Z_{m_1},Z_{m_2}$ be complete residue systems modulo $m_1,m_2$ respectively. We have already proved that
     
     $$
     Z_m=m_2Z_{m_1}+m_1Z_{m_2}
     $$
     
-    为模 $m$ 的完全剩余系．令 $M=\{a\in Z_m:(a,m)=1\}\subseteq Z_m$，显然 $M$ 为模 $m$ 的既约剩余系，所以我们只需证明 $M=Z_m^*$ 即可．
+    is a complete residue system modulo $m$. Let $M=\{a\in Z_m:(a,m)=1\}\subseteq Z_m$. Clearly $M$ is a reduced residue system modulo $m$, so we only need to prove $M=Z_m^*$.
     
-    显然 $Z_m^*\subseteq Z_m$．
+    Clearly $Z_m^*\subseteq Z_m$.
     
-    任取 $m_2x+m_1y\in M$，其中 $x\in Z_{m_1}$ 且 $y\in Z_{m_2}$，有 $(m_2x+m_1y,m_1m_2)=1$，由 $(m_1,m_2)=1$ 可得
+    Take any $m_2x+m_1y\in M$, where $x\in Z_{m_1}$ and $y\in Z_{m_2}$. Then $(m_2x+m_1y,m_1m_2)=1$. Since $(m_1,m_2)=1$, we get
     
     $$
     1=(m_2x+m_1y,m_1)=(m_2x,m_1)=(x,m_1),
@@ -359,9 +359,9 @@ $$
     1=(m_2x+m_1y,m_2)=(m_1y,m_2)=(y,m_2).
     $$
     
-    因此可得 $x\in Z_{m_1}^*$ 且 $y\in Z_{m_2}^*$，即 $M\subseteq Z_m^*$．
+    Hence $x\in Z_{m_1}^*$ and $y\in Z_{m_2}^*$, that is, $M\subseteq Z_m^*$.
     
-    任取 $m_2x+m_1y\in Z_m^*$，其中 $x\in Z_{m_1}^*$ 且 $y\in Z_{m_2}^*$，有 $(x,m_1)=1$ 且 $(y,m_2)=1$，由 $(m_1,m_2)=1$ 可得
+    Take any $m_2x+m_1y\in Z_m^*$, where $x\in Z_{m_1}^*$ and $y\in Z_{m_2}^*$. Then $(x,m_1)=1$ and $(y,m_2)=1$. Since $(m_1,m_2)=1$, we get
     
     $$
     (m_2x+m_1y,m_1)=(m_2x,m_1)=(x,m_1)=1,
@@ -371,30 +371,30 @@ $$
     (m_2x+m_1y,m_2)=(m_1y,m_2)=(x,m_2)=1,
     $$
     
-    因此可得 $(m_2x+m_1y,m_1m_2)=1$，即 $Z_m^*\subseteq M$．
+    Hence $(m_2x+m_1y,m_1m_2)=1$, that is, $Z_m^*\subseteq M$.
     
-    综上所述，
+    Putting it all together,
     
     $$
     Z_m^*=m_2Z_{m_1}^*+m_1Z_{m_2}^*.
     $$
     
-    为模 $m$ 的 **既约** 剩余系．
+    is a **reduced** residue system modulo $m$.
 
-## 数论函数
+## Arithmetic functions
 
-数论函数（也称算术函数）指定义域为正整数的函数．数论函数也可以视作一个数列．
+An arithmetic function (also called a number-theoretic function) is a function whose domain is the positive integers. An arithmetic function can also be seen as a sequence.
 
-### 积性函数
+### Multiplicative functions
 
-???+ note "定义"
-    在数论中，若函数 $f(n)$ 满足 $f(1)=1$，且 $f(xy)=f(x)f(y)$ 对任意互质的 $x, y \in\mathbf{N}^*$ 都成立，则 $f(n)$ 为 **积性函数**．
+???+ note "Definition"
+    In number theory, if a function $f(n)$ satisfies $f(1)=1$, and $f(xy)=f(x)f(y)$ holds for all coprime $x, y \in\mathbf{N}^*$, then $f(n)$ is a **multiplicative function**.
     
-    在数论中，若函数 $f(n)$ 满足 $f(1)=1$ 且 $f(xy)=f(x)f(y)$ 对任意的 $x, y \in\mathbf{N}^*$ 都成立，则 $f(n)$ 为 **完全积性函数**．
+    In number theory, if a function $f(n)$ satisfies $f(1)=1$ and $f(xy)=f(x)f(y)$ holds for all $x, y \in\mathbf{N}^*$, then $f(n)$ is a **completely multiplicative function**.
 
-#### 性质
+#### Properties
 
-若 $f(x)$ 和 $g(x)$ 均为积性函数，则以下函数也为积性函数：
+If $f(x)$ and $g(x)$ are both multiplicative, then the following functions are also multiplicative:
 
 $$
 \begin{aligned}
@@ -405,128 +405,128 @@ h(x)&=\sum_{d\mid x}f(d)g\left(\dfrac{x}{d}\right)
 \end{aligned}
 $$
 
-对正整数 $x$，设其唯一质因数分解为 $x=\prod p_i^{k_i}$，其中 $p_i$ 为质数．
+For a positive integer $x$, let its unique prime factorization be $x=\prod p_i^{k_i}$, where the $p_i$ are primes.
 
-若 $F(x)$ 为积性函数，则有 $F(x)=\prod F(p_i^{k_i})$．
+If $F(x)$ is multiplicative, then $F(x)=\prod F(p_i^{k_i})$.
 
-若 $F(x)$ 为完全积性函数，则有 $F(x)=\prod F(p_i^{k_i})=\prod F(p_i)^{k_i}$．
+If $F(x)$ is completely multiplicative, then $F(x)=\prod F(p_i^{k_i})=\prod F(p_i)^{k_i}$.
 
-#### 例子
+#### Examples
 
--   单位函数：$\varepsilon(n)=[n=1]$．（完全积性）
--   恒等函数：$\operatorname{id}_k(n)=n^k$，$\operatorname{id}_{1}(n)$ 通常简记作 $\operatorname{id}(n)$．（完全积性）
--   常数函数：$1(n)=1$．（完全积性）
--   除数函数：$\sigma_{k}(n)=\sum_{d\mid n}d^{k}$．$\sigma_{0}(n)$ 通常简记作 $d(n)$ 或 $\tau(n)$，$\sigma_{1}(n)$ 通常简记作 $\sigma(n)$．
--   欧拉函数：$\varphi(n)=\sum_{i=1}^n[(i,n)=1]$．
--   莫比乌斯函数：$\mu(n)=\begin{cases}1&n=1\\0&\exists d>1,d^{2}\mid n\\(-1)^{\omega(n)}&\text{otherwise}\end{cases}$，其中 $\omega(n)$ 表示 $n$ 的本质不同质因子个数．
+-   Unit function: $\varepsilon(n)=[n=1]$. (completely multiplicative)
+-   Power function: $\operatorname{id}_k(n)=n^k$. $\operatorname{id}_{1}(n)$ is usually written simply as $\operatorname{id}(n)$. (completely multiplicative)
+-   Constant function: $1(n)=1$. (completely multiplicative)
+-   Divisor function: $\sigma_{k}(n)=\sum_{d\mid n}d^{k}$. $\sigma_{0}(n)$ is usually written as $d(n)$ or $\tau(n)$, and $\sigma_{1}(n)$ is usually written as $\sigma(n)$.
+-   Euler's totient function: $\varphi(n)=\sum_{i=1}^n[(i,n)=1]$.
+-   Möbius function: $\mu(n)=\begin{cases}1&n=1\\0&\exists d>1,d^{2}\mid n\\(-1)^{\omega(n)}&\text{otherwise}\end{cases}$, where $\omega(n)$ is the number of distinct prime factors of $n$.
 
-### 加性函数
+### Additive functions
 
-???+ note "定义"
-    在数论中，若函数 $f(n)$ 满足 $f(1)=0$ 且 $f(xy)=f(x)+f(y)$ 对任意互质的 $x, y \in\mathbf{N}^*$ 都成立，则 $f(n)$ 为 **加性函数**．
+???+ note "Definition"
+    In number theory, if a function $f(n)$ satisfies $f(1)=0$ and $f(xy)=f(x)+f(y)$ holds for all coprime $x, y \in\mathbf{N}^*$, then $f(n)$ is an **additive function**.
     
-    在数论中，若函数 $f(n)$ 满足 $f(1)=0$ 且 $f(xy)=f(x)+f(y)$ 对任意的 $x, y \in\mathbf{N}^*$ 都成立，则 $f(n)$ 为 **完全加性函数**．
+    In number theory, if a function $f(n)$ satisfies $f(1)=0$ and $f(xy)=f(x)+f(y)$ holds for all $x, y \in\mathbf{N}^*$, then $f(n)$ is a **completely additive function**.
 
-???+ warning "加性函数"
-    本节中的加性函数指数论上的加性函数 (Additive function)，应与代数中的 Additive map 做区分．
+???+ warning "Additive functions"
+    In this section, "additive function" means an additive function in the number-theoretic sense (additive function). Do not confuse it with an additive map in algebra.
 
-#### 性质
+#### Properties
 
-对正整数 $x$，设其唯一质因数分解为 $x=\prod p_i^{k_i}$，其中 $p_i$ 为质数．
+For a positive integer $x$, let its unique prime factorization be $x=\prod p_i^{k_i}$, where the $p_i$ are primes.
 
-若 $F(x)$ 为加性函数，则有 $F(x)=\sum F(p_i^{k_i})$．
+If $F(x)$ is additive, then $F(x)=\sum F(p_i^{k_i})$.
 
-若 $F(x)$ 为完全加性函数，则有 $F(x)=\sum F(p_i^{k_i})=\sum F(p_i)\cdot k_i$．
+If $F(x)$ is completely additive, then $F(x)=\sum F(p_i^{k_i})=\sum F(p_i)\cdot k_i$.
 
-#### 例子
+#### Examples
 
-为方便叙述，令所有质数组成的集合为 $\mathbf P$.
+For convenience, let $\mathbf P$ be the set of all primes.
 
--   素因数分解中 $p$ 的重数：$\nu_p(n) = \max\{k\in\mathbf N: p^k\mid n\}$，其中，$p\in\mathbf P$．（完全加性）
--   所有质因子数目：$\Omega(n)=\sum_{p \in\mathbf P} \nu_p(n)$．（完全加性）
--   相异质因子数目：$\omega(n)=\sum_{p \in\mathbf P} [p \mid n]$．
--   所有质因子之和：$a_0(n)=\sum_{p \in\mathbf P} \nu_p(n)\cdot p$．（完全加性）
--   相异质因子之和：$a_1(n)=\sum_{p \in\mathbf P} [p \mid n] \cdot p$．
+-   Multiplicity of $p$ in the prime factorization: $\nu_p(n) = \max\{k\in\mathbf N: p^k\mid n\}$, where $p\in\mathbf P$. (completely additive)
+-   Number of prime factors counted with multiplicity: $\Omega(n)=\sum_{p \in\mathbf P} \nu_p(n)$. (completely additive)
+-   Number of distinct prime factors: $\omega(n)=\sum_{p \in\mathbf P} [p \mid n]$.
+-   Sum of prime factors counted with multiplicity: $a_0(n)=\sum_{p \in\mathbf P} \nu_p(n)\cdot p$. (completely additive)
+-   Sum of distinct prime factors: $a_1(n)=\sum_{p \in\mathbf P} [p \mid n] \cdot p$.
 
-## 取整函数
+## Floor and ceiling functions
 
-对于实数 $x$，定义 **下取整函数**（floor function）和 **上取整函数**（ceiling function）分别为
+For a real number $x$, the **floor function** and the **ceiling function** are defined as
 
 $$
 \lfloor x\rfloor = \max\{k\in\mathbf Z:k\le x\},~\lceil x\rceil = \min\{k\in\mathbf Z:k\ge x\}.
 $$
 
-利用下取整函数，一个实数可以分解为整数部分和小数部分：$x = \lfloor x\rfloor + \{x\}$．其中，$\{x\}$ 表示 $x$ 的小数部分．
+Using the floor function, a real number splits into an integer part and a fractional part: $x = \lfloor x\rfloor + \{x\}$. Here $\{x\}$ denotes the fractional part of $x$.
 
-取整函数有如下基本性质：（$x\in\mathbf R,~n\in\mathbf Z$）
+The floor and ceiling functions have the following basic properties ($x\in\mathbf R,~n\in\mathbf Z$):
 
--   $x\in\mathbf Z \iff x = \lfloor x\rfloor = \lceil x\rceil$．
--   $\lceil x\rceil - \lfloor x\rfloor = [x\notin\mathbf Z]$．
--   $x - 1 < \lfloor x\rfloor \le x \le \lceil x\rceil < x + 1$．
--   $\lfloor -x\rfloor = -\lceil x\rceil,~\lceil -x\rceil = -\lfloor x\rfloor$．
--   $\lfloor x + n\rfloor = \lfloor x\rfloor + n,~\lceil x + n\rceil = \lceil x \rceil + n$．
--   $\lfloor x\rfloor$ 和 $\lceil x\rceil$ 都是关于 $x$ 的单调弱增函数．
+-   $x\in\mathbf Z \iff x = \lfloor x\rfloor = \lceil x\rceil$.
+-   $\lceil x\rceil - \lfloor x\rfloor = [x\notin\mathbf Z]$.
+-   $x - 1 < \lfloor x\rfloor \le x \le \lceil x\rceil < x + 1$.
+-   $\lfloor -x\rfloor = -\lceil x\rceil,~\lceil -x\rceil = -\lfloor x\rfloor$.
+-   $\lfloor x + n\rfloor = \lfloor x\rfloor + n,~\lceil x + n\rceil = \lceil x \rceil + n$.
+-   $\lfloor x\rfloor$ and $\lceil x\rceil$ are both monotonically non-decreasing functions of $x$.
 
-证明关于下（上）取整函数的等式经常用到如下等价形式：（$x\in\mathbf R,~n\in\mathbf Z$）
+Proofs of identities involving floor (ceiling) often use the following equivalent forms ($x\in\mathbf R,~n\in\mathbf Z$):
 
--   $\lfloor x\rfloor = n \iff n \le x < n + 1 \iff x - 1 < n \le x$．
--   $\lceil x\rceil = n \iff n - 1 < x \le n \iff x \le n < x + 1$．
+-   $\lfloor x\rfloor = n \iff n \le x < n + 1 \iff x - 1 < n \le x$.
+-   $\lceil x\rceil = n \iff n - 1 < x \le n \iff x \le n < x + 1$.
 
-证明关于下（上）取整函数的不等式经常用到如下等价形式：（$x\in\mathbf R,~n\in\mathbf Z$）
+Proofs of inequalities involving floor (ceiling) often use the following equivalent forms ($x\in\mathbf R,~n\in\mathbf Z$):
 
--   $x < n \iff \lfloor x\rfloor < n$．
--   $n < x \iff n < \lceil x\rceil$．
--   $x \le n \iff \lceil x\rceil \le n$．
--   $n \le x \iff n \le \lfloor x\rfloor$．
+-   $x < n \iff \lfloor x\rfloor < n$.
+-   $n < x \iff n < \lceil x\rceil$.
+-   $x \le n \iff \lceil x\rceil \le n$.
+-   $n \le x \iff n \le \lfloor x\rfloor$.
 
-涉及和、差的性质如下：（$x,y\in\mathbf R$）
+Properties involving sums and differences ($x,y\in\mathbf R$):
 
--   $\lfloor x\rfloor + \lfloor y\rfloor \le \lfloor x + y\rfloor \le \lfloor x\rfloor + \lfloor y\rfloor + 1$，且恰有一个等号成立．
--   $\lceil x\rceil +\lceil y\rceil -1\leq \lceil x+y\rceil \leq \lceil x\rceil +\lceil y\rceil$，且恰有一个等号成立．
--   $\lfloor|x - y|\rfloor \le |\lfloor x\rfloor - \lfloor y\rfloor| \le \lceil|x - y|\rceil$．
--   $\lfloor|x - y|\rfloor \le |\lceil x\rceil - \lceil y\rceil| \le \lceil|x-y|\rceil$．
+-   $\lfloor x\rfloor + \lfloor y\rfloor \le \lfloor x + y\rfloor \le \lfloor x\rfloor + \lfloor y\rfloor + 1$, and exactly one of the two equalities holds.
+-   $\lceil x\rceil +\lceil y\rceil -1\leq \lceil x+y\rceil \leq \lceil x\rceil +\lceil y\rceil$, and exactly one of the two equalities holds.
+-   $\lfloor|x - y|\rfloor \le |\lfloor x\rfloor - \lfloor y\rfloor| \le \lceil|x - y|\rceil$.
+-   $\lfloor|x - y|\rfloor \le |\lceil x\rceil - \lceil y\rceil| \le \lceil|x-y|\rceil$.
 
-涉及商的性质如下：（$x\in\mathbf R,~n\in\mathbf Z,~m\in\mathbf Z_+$）
+Properties involving quotients ($x\in\mathbf R,~n\in\mathbf Z,~m\in\mathbf Z_+$):
 
--   $\left\lceil\dfrac{n}{m}\right\rceil = \left\lfloor\dfrac{n+m-1}{m}\right\rfloor,~\left\lfloor\dfrac{n}{m}\right\rfloor = \left\lceil\dfrac{n-m+1}{m}\right\rceil$．
--   $\left\lfloor\dfrac{x + n}{m} \right\rfloor = \left\lfloor\dfrac{\lfloor x\rfloor + n}{m} \right\rfloor,~\left\lceil\dfrac{x + n}{m} \right\rceil = \left\lceil\dfrac{\lceil x\rceil + n}{m} \right\rceil$．
--   $\left\lfloor\dfrac{\lfloor x/n\rfloor}{m}\right\rfloor = \left\lfloor\dfrac{x}{nm}\right\rfloor,~\left\lceil\dfrac{\lceil x/n\rceil}{m}\right\rceil = \left\lceil\dfrac{x}{nm}\right\rceil$．
--   对于 $x > 0$，有 $\displaystyle\left\lfloor\dfrac{x}{m}\right\rfloor = \sum_{k=1}^{\lfloor x\rfloor}[m\mid k]$．
+-   $\left\lceil\dfrac{n}{m}\right\rceil = \left\lfloor\dfrac{n+m-1}{m}\right\rfloor,~\left\lfloor\dfrac{n}{m}\right\rfloor = \left\lceil\dfrac{n-m+1}{m}\right\rceil$.
+-   $\left\lfloor\dfrac{x + n}{m} \right\rfloor = \left\lfloor\dfrac{\lfloor x\rfloor + n}{m} \right\rfloor,~\left\lceil\dfrac{x + n}{m} \right\rceil = \left\lceil\dfrac{\lceil x\rceil + n}{m} \right\rceil$.
+-   $\left\lfloor\dfrac{\lfloor x/n\rfloor}{m}\right\rfloor = \left\lfloor\dfrac{x}{nm}\right\rfloor,~\left\lceil\dfrac{\lceil x/n\rceil}{m}\right\rceil = \left\lceil\dfrac{x}{nm}\right\rceil$.
+-   For $x > 0$, $\displaystyle\left\lfloor\dfrac{x}{m}\right\rfloor = \sum_{k=1}^{\lfloor x\rfloor}[m\mid k]$.
 
-其中，第二条和第三条性质都可以看作是如下结论的直接推论：
+The second and third properties are both direct corollaries of the following result:
 
--   设 $f$ 为连续单增函数，且只要 $f(x)\in\mathbf Z$，就有 $x\in\mathbf Z$，那么
+-   Let $f$ be a continuous increasing function such that $f(x)\in\mathbf Z$ implies $x\in\mathbf Z$. Then
 
     $$
     \lfloor f(x)\rfloor = \lfloor f(\lfloor x\rfloor)\rfloor,~ \lceil f(x)\rceil = \lceil f(\lceil x\rceil)\rceil.
     $$
 
-    ??? note "证明"
-        由对称性，只需要证明第一个等式．如果 $x$ 是整数，那么命题显然．否则，$\lfloor x\rfloor < x$．由 $f$ 和下取整函数的单调性可知，$\lfloor f(x)\rfloor \ge \lfloor f(\lfloor x\rfloor)\rfloor$．如果等号不成立，那么设 $y = \lfloor f(x)\rfloor$，它满足 $\lfloor f(\lfloor x\rfloor)\rfloor < y \le \lfloor f(x)\rfloor$，这等价于 $f(\lfloor x\rfloor) < y \le f(x)$．由 $f$ 的连续性可知，存在 $\lfloor x\rfloor < x_0 \le x$ 使得 $f(x_0)=y$．因为 $y\in\mathbf Z$，所以 $x_0\in\mathbf Z$，这与 $\lfloor x\rfloor$ 的定义矛盾．故而，等号成立，即 $\lfloor f(x)\rfloor = \lfloor f(\lfloor x\rfloor)\rfloor$．
+    ??? note "Proof"
+        By symmetry, we only need to prove the first equation. If $x$ is an integer, the claim is obvious. Otherwise, $\lfloor x\rfloor < x$. Since $f$ and the floor function are monotonic, $\lfloor f(x)\rfloor \ge \lfloor f(\lfloor x\rfloor)\rfloor$. Suppose equality does not hold, and let $y = \lfloor f(x)\rfloor$. Then $\lfloor f(\lfloor x\rfloor)\rfloor < y \le \lfloor f(x)\rfloor$, which is equivalent to $f(\lfloor x\rfloor) < y \le f(x)$. Since $f$ is continuous, there is some $\lfloor x\rfloor < x_0 \le x$ with $f(x_0)=y$. Because $y\in\mathbf Z$, we get $x_0\in\mathbf Z$, which contradicts the definition of $\lfloor x\rfloor$. So equality holds, that is, $\lfloor f(x)\rfloor = \lfloor f(\lfloor x\rfloor)\rfloor$.
 
-最后是一组关于带有取整函数的求和式的结论：（$x\in\mathbf R,~n\in\mathbf Z,~m\in\mathbf Z_+$）
+Finally, here are some results on sums involving floor and ceiling ($x\in\mathbf R,~n\in\mathbf Z,~m\in\mathbf Z_+$):
 
--   $n = \left\lfloor\dfrac{n}{2}\right\rfloor + \left\lceil\dfrac{n}{2}\right\rceil$．
--   $n = \left\lfloor\dfrac{n}{m} \right\rfloor + \left\lfloor\dfrac{n+1}{m} \right\rfloor + \cdots + \left\lfloor\dfrac{n+m-1}{m} \right\rfloor$．
--   $n = \left\lceil\dfrac{n}{m} \right\rceil + \left\lceil\dfrac{n-1}{m} \right\rceil + \cdots + \left\lceil\dfrac{n-m+1}{m} \right\rceil$．
--   $\lfloor mx\rfloor = \lfloor x\rfloor + \left\lfloor x+\dfrac{1}{m}\right\rfloor + \cdots + \left\lfloor x+\dfrac{m-1}{m}\right\rfloor$．
--   $\lceil mx\rceil = \lceil x\rceil + \left\lceil x - \dfrac{1}{m}\right\rceil + \cdots + \left\lceil x - \dfrac{m-1}{m}\right\rceil$．
--   当 $m\perp n$ 时，$\displaystyle\sum_{k=1}^{m-1}\left\lfloor\dfrac{kn}{m}\right\rfloor=\dfrac{1}{2}(n-1)(m-1)$．
--   当 $m\perp n$ 时，$\displaystyle\sum_{k=1}^{m-1}\left\lceil\dfrac{kn}{m}\right\rceil=\dfrac{1}{2}(n+1)(m-1)$．
+-   $n = \left\lfloor\dfrac{n}{2}\right\rfloor + \left\lceil\dfrac{n}{2}\right\rceil$.
+-   $n = \left\lfloor\dfrac{n}{m} \right\rfloor + \left\lfloor\dfrac{n+1}{m} \right\rfloor + \cdots + \left\lfloor\dfrac{n+m-1}{m} \right\rfloor$.
+-   $n = \left\lceil\dfrac{n}{m} \right\rceil + \left\lceil\dfrac{n-1}{m} \right\rceil + \cdots + \left\lceil\dfrac{n-m+1}{m} \right\rceil$.
+-   $\lfloor mx\rfloor = \lfloor x\rfloor + \left\lfloor x+\dfrac{1}{m}\right\rfloor + \cdots + \left\lfloor x+\dfrac{m-1}{m}\right\rfloor$.
+-   $\lceil mx\rceil = \lceil x\rceil + \left\lceil x - \dfrac{1}{m}\right\rceil + \cdots + \left\lceil x - \dfrac{m-1}{m}\right\rceil$.
+-   When $m\perp n$, $\displaystyle\sum_{k=1}^{m-1}\left\lfloor\dfrac{kn}{m}\right\rfloor=\dfrac{1}{2}(n-1)(m-1)$.
+-   When $m\perp n$, $\displaystyle\sum_{k=1}^{m-1}\left\lceil\dfrac{kn}{m}\right\rceil=\dfrac{1}{2}(n+1)(m-1)$.
 
-这些乃至更一般的类似形式求和式的推导可以参考 [类欧几里得算法](./euclidean.md) 页面．
+For derivations of these and more general sums of this kind, see the [Floor Sum (Euclidean-like Algorithm)](./euclidean.md) page.
 
-取整函数的更多性质以及应用可以参考如下页面：
+For more properties and applications of floor and ceiling, see the following pages:
 
--   取模运算：$n\bmod m = n - \left\lfloor\dfrac{n}{m}\right\rfloor m$．它可以用于 [优化整数取模运算](./mod-arithmetic.md#相关算法)．
--   利用 Gauss 引理证明 [二次互反律](./quad-residue.md#二次互反律)．
--   [数论分块](./sqrt-decomposition.md)，尤其是它的性质证明部分．
--   计算阶乘中素数因子幂次的 [Legendre 公式](./factorial.md#legendre-公式)．
--   [Beatty 数列](../game-theory/impartial-game.md#wythoff-游戏)、Rayleigh 定理以及 Wythoff 博弈．
+-   The modulo operation: $n\bmod m = n - \left\lfloor\dfrac{n}{m}\right\rfloor m$. It can be used to [speed up integer modulo operations](./mod-arithmetic.md#相关算法).
+-   Using Gauss's lemma to prove the [law of quadratic reciprocity](./quad-residue.md#二次互反律).
+-   [Divisor blocks (sqrt decomposition in number theory)](./sqrt-decomposition.md), especially the proofs of its properties.
+-   [Legendre's formula](./factorial.md#legendre-公式) for the exponent of a prime in a factorial.
+-   [Beatty sequences](../game-theory/impartial-game.md#wythoff-游戏), Rayleigh's theorem, and Wythoff's game.
 
-## 参考资料与注释
+## References and notes
 
--   潘承洞，潘承彪．初等数论．北京大学出版社．
+-   Pan Chengdong, Pan Chengbiao. Elementary Number Theory. Peking University Press.
 -   [Floor and ceiling functions - Wikipedia](https://en.wikipedia.org/wiki/Floor_and_ceiling_functions)
 -   Graham, Ronald L., Donald E. Knuth, and Oren Patashnik. "Concrete mathematics: a foundation for computer science." (1989).
 
