@@ -1,86 +1,86 @@
 author: Link-cute, Xeonacid, ouuan, Alphnia, Lyccrius
 
-## 引入
+## Introduction
 
-在学习单调队列前，让我们先来看一道例题．
+Before learning about monotonic queues, let us look at an example problem.
 
-???+ note "例题"
+???+ note "Example problem"
     [Sliding Window](http://poj.org/problem?id=2823)
     
-    本题大意是给出一个长度为 $n$ 的数组，编程输出每 $k$ 个连续的数中的最大值和最小值．
+    In short: given an array of length $n$, output the maximum and minimum of every $k$ consecutive numbers.
 
-最暴力的想法很简单，对于每一段 $i \sim i+k-1$ 的序列，逐个比较来找出最大值（和最小值），时间复杂度约为 $O(n \times k)$．
+The brute-force idea is simple: for each segment $i \sim i+k-1$, compare the numbers one by one to find the maximum (and minimum). The time complexity is about $O(n \times k)$.
 
-很显然，这其中进行了大量重复工作，除了开头 $k-1$ 个和结尾 $k-1$ 个数之外，每个数都进行了 $k$ 次比较，而题中 $100\%$ 的数据为 $n \le 1000000$，当 $k$ 稍大的情况下，显然会 TLE．
+Clearly this does a lot of repeated work. Except for the first $k-1$ and the last $k-1$ numbers, every number is compared $k$ times. In this problem $100\%$ of the test data has $n \le 1000000$, so when $k$ is somewhat large, this will obviously get TLE.
 
-这时所用到的就是单调队列了．
+This is where the monotonic queue comes in.
 
-## 定义
+## Definition
 
-顾名思义，单调队列的重点分为「单调」和「队列」．
+As the name suggests, a monotonic queue has two key parts: "monotonic" and "queue".
 
-「单调」指的是元素的「规律」——递增（或递减）．
+"Monotonic" describes the "pattern" of the elements: increasing (or decreasing).
 
-「队列」指的是元素只能从队头和队尾进行操作．
+"Queue" means elements can only be operated on at the front and the back.
 
-Ps. 单调队列中的 "队列" 与正常的队列有一定的区别，稍后会提到
+P.S. The "queue" in a monotonic queue is somewhat different from an ordinary queue; we will come back to this later
 
-## 例题分析
+## Example analysis
 
-### 解释
+### Explanation
 
-有了上面「单调队列」的概念，很容易想到用单调队列进行优化．
+With the idea of a "monotonic queue" above, it is natural to think of using one to speed things up.
 
-要求的是每连续的 $k$ 个数中的最大（最小）值，很明显，当一个数进入所要 "寻找" 最大值的范围中时，若这个数比其前面（先进队）的数要大，显然，前面的数会比这个数先出队且不再可能是最大值．
+We want the maximum (minimum) of every $k$ consecutive numbers. Clearly, when a number enters the range in which we "look for" the maximum, if it is larger than a number before it (one that entered the queue earlier), then that earlier number will leave the queue before this one and can never be the maximum again.
 
-也就是说——当满足以上条件时，可将前面的数 "弹出"，再将该数真正 push 进队尾．
+In other words, when this condition holds, we can "pop" the earlier numbers and then actually push the new number onto the back of the queue.
 
-这就相当于维护了一个递减的队列，符合单调队列的定义，减少了重复的比较次数，不仅如此，由于维护出的队伍是查询范围内的且是递减的，队头必定是该查询区域内的最大值，因此输出时只需输出队头即可．
+This amounts to maintaining a decreasing queue, which fits the definition of a monotonic queue and cuts down repeated comparisons. Moreover, since the queue only holds elements inside the query range and is decreasing, the front of the queue must be the maximum of that range. So we only need to output the front of the queue.
 
-显而易见的是，在这样的算法中，每个数只要进队与出队各一次，因此时间复杂度被降到了 $O(n)$．
+Clearly, in this algorithm every number enters and leaves the queue at most once, so the time complexity drops to $O(n)$.
 
-而由于查询区间长度是固定的，超出查询空间的值再大也不能输出，因此还需要 site 数组记录第 $i$ 个队中的数在原数组中的位置，以弹出越界的队头．
+Since the query range has a fixed length, a value outside the range cannot be output no matter how large it is. So we also need a `site` array that records the position in the original array of the $i$-th number in the queue, so that we can pop a front element that has gone out of range.
 
-### 过程
+### Process
 
-例如我们构造一个单调递增的队列会如下：
+For example, building a monotonically increasing queue goes like this:
 
-原序列为：
+The original sequence is:
 
 ```text
 1 3 -1 -3 5 3 6 7
 ```
 
-因为我们始终要维护队列保证其 **递增** 的特点，所以会有如下的事情发生：（假设 $k = 3$）
+Because we must always keep the queue **increasing**, the following happens: (assume $k = 3$)
 
-| 操作                              | 队列状态      |
-| ------------------------------- | --------- |
-| 1 入队                            | `{1}`     |
-| 3 比 1 大，3 入队                    | `{1 3}`   |
-| -1 比队列中所有元素小，所以清空队列 -1 入队       | `{-1}`    |
-| -3 比队列中所有元素小，所以清空队列 -3 入队       | `{-3}`    |
-| 5 比 -3 大，直接入队                   | `{-3 5}`  |
-| 3 比 5 小，5 出队，3 入队               | `{-3 3}`  |
-| -3 已经在窗体外，所以 -3 出队；6 比 3 大，6 入队 | `{3 6}`   |
-| 7 比 6 大，7 入队                    | `{3 6 7}` |
+| Operation | Queue state |
+| --- | --- |
+| Push 1 | `{1}` |
+| 3 is larger than 1, push 3 | `{1 3}` |
+| -1 is smaller than every element in the queue, so clear the queue and push -1 | `{-1}` |
+| -3 is smaller than every element in the queue, so clear the queue and push -3 | `{-3}` |
+| 5 is larger than -3, push it directly | `{-3 5}` |
+| 3 is smaller than 5, pop 5, push 3 | `{-3 3}` |
+| -3 is now outside the window, so pop -3; 6 is larger than 3, push 6 | `{3 6}` |
+| 7 is larger than 6, push 7 | `{3 6 7}` |
 
-???+ note "例题参考代码"
+???+ note "Reference code for the example problem"
     ```cpp
     --8<-- "docs/ds/code/monotonic-queue/monotonic-queue_1.cpp"
     ```
 
-Ps. 此处的 "队列" 跟普通队列的一大不同就在于可以从队尾进行操作，STL 中有类似的数据结构 deque．
+P.S. One big difference between this "queue" and an ordinary queue is that we can also operate on its back. The STL has a similar data structure, deque.
 
-???+ note "例题 2 [Luogu P2698 Flowerpot S](https://www.luogu.com.cn/problem/P2698)"
-    给出 $N$ 滴水的坐标，$y$ 表示水滴的高度，$x$ 表示它下落到 $x$ 轴的位置．每滴水以每秒 1 个单位长度的速度下落．你需要把花盆放在 $x$ 轴上的某个位置，使得从被花盆接着的第 1 滴水开始，到被花盆接着的最后 1 滴水结束，之间的时间差至少为 $D$．
-    我们认为，只要水滴落到 $x$ 轴上，与花盆的边沿对齐，就认为被接住．给出 $N$ 滴水的坐标和 $D$ 的大小，请算出最小的花盆的宽度 $W$．$1\leq N \leq 100000 , 1 \leq D \leq 1000000, 0 \leq x,y\leq 10^6$
+???+ note "Example problem 2 [Luogu P2698 Flowerpot S](https://www.luogu.com.cn/problem/P2698)"
+    You are given the coordinates of $N$ water drops. $y$ is the height of a drop, and $x$ is where it lands on the $x$-axis. Each drop falls at 1 unit of length per second. You need to place a flowerpot somewhere on the $x$-axis so that the time between the first drop it catches and the last drop it catches is at least $D$.
+    A drop counts as caught as soon as it lands on the $x$-axis within the pot's edges (landing exactly on an edge also counts). Given the coordinates of the $N$ drops and the value of $D$, find the minimum width $W$ of the flowerpot. $1\leq N \leq 100000 , 1 \leq D \leq 1000000, 0 \leq x,y\leq 10^6$
 
-将所有水滴按照 $x$ 坐标排序之后，题意可以转化为求一个 $x$ 坐标差最小的区间使得这个区间内 $y$ 坐标的最大值和最小值之差至少为 $D$．我们发现这道题和上一道例题有相似之处，就是都与一个区间内的最大值最小值有关，但是这道题区间的大小不确定，而且区间大小本身还是我们要求的答案．
+After sorting all drops by $x$-coordinate, the problem becomes: find a range with the smallest difference in $x$-coordinates such that the difference between the maximum and minimum $y$-coordinates in it is at least $D$. This problem is similar to the previous example, since both involve the maximum and minimum of a range. But here the size of the range is not fixed, and the range size itself is the answer we want.
 
-我们依然可以使用一个递增，一个递减两个单调队列在 $R$ 不断后移时维护 $[L,R]$ 内的最大值和最小值，不过此时我们发现，如果 $L$ 固定，那么 $[L,R]$ 内的最大值只会越来越大，最小值只会越来越小，所以设 $f(R) = \max[L,R]-\min[L,R]$，则 $f(R)$ 是个关于 $R$ 的递增函数，故 $f(R)\geq D \implies f(r)\geq D,R\lt r \leq N$．这说明对于每个固定的 $L$，向右第一个满足条件的 $R$ 就是最优答案．
-所以我们整体求解的过程就是，先固定 $L$，从前往后移动 $R$，使用两个单调队列维护 $[L,R]$ 的最值．当找到了第一个满足条件的 $R$，就更新答案并将 $L$ 也向后移动．随着 $L$ 向后移动，两个单调队列都需及时弹出队头．这样，直到 $R$ 移到最后，每个元素依然是各进出队列一次，保证了 $O(n)$ 的时间复杂度．
+We can still use two monotonic queues, one increasing and one decreasing, to maintain the maximum and minimum of $[L,R]$ as $R$ keeps moving right. Now notice that if $L$ is fixed, the maximum of $[L,R]$ can only grow and the minimum can only shrink. Let $f(R) = \max[L,R]-\min[L,R]$. Then $f(R)$ is an increasing function of $R$, so $f(R)\geq D \implies f(r)\geq D,R\lt r \leq N$. This means that for each fixed $L$, the first $R$ to the right that satisfies the condition is the best answer.
+So the whole process is: first fix $L$ and move $R$ from left to right, using two monotonic queues to maintain the extreme values of $[L,R]$. When we find the first $R$ that satisfies the condition, update the answer and move $L$ to the right as well. As $L$ moves right, both monotonic queues must pop their fronts in time. This continues until $R$ reaches the end. Each element still enters and leaves each queue once, which guarantees $O(n)$ time complexity.
 
-???+ note "参考代码"
+???+ note "Reference code"
     ```cpp
     --8<-- "docs/ds/code/monotonic-queue/monotonic-queue_2.cpp"
     ```

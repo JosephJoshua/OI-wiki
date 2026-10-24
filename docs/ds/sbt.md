@@ -1,18 +1,18 @@
-Size Balanced Tree (SBT) 是由中国 OI 选手陈启峰在 2007 年提出的一种自平衡二叉搜索树 (Self-Balanced Binary Search Tree, SBBST), 通过检查子树的节点数量进行自身的平衡维护．相比于红黑树，AVL 等主流自平衡二叉搜索树而言，Size Balanced Tree 支持在 $O(\log n)$ 的时间复杂度内查询某个键值在树中的排名 (rank).
+The Size Balanced Tree (SBT) is a self-balancing binary search tree (Self-Balanced Binary Search Tree, SBBST) proposed in 2007 by Chen Qifeng, a Chinese OI contestant. It keeps itself balanced by checking the number of nodes in subtrees. Compared with mainstream self-balancing binary search trees such as red-black trees and AVL trees, the Size Balanced Tree can find the rank of a key in the tree in $O(\log n)$ time.
 
-## 节点定义
+## Node definition
 
-相比于普通二叉搜索树，SBT 的每个节点 $N$ 仅需要多维护一个整数字段 `size`, 用于储存以 $N$ 为根的子树中节点的个数．节点类型 `Node` 的具体定义如下：
+Compared with an ordinary binary search tree, each node $N$ of an SBT only needs one extra integer field `size`, which stores the number of nodes in the subtree rooted at $N$. The node type `Node` is defined as follows:
 
 | Identifier | Type    | Description     |
 | ---------- | ------- | --------------- |
-| `left`     | `Node*` | 左子节点引用          |
-| `right`    | `Node*` | 右子节点引用          |
-| `size`     | `int`   | 以该节点为根的子树中节点的个数 |
+| `left`     | `Node*` | Reference to the left child |
+| `right`    | `Node*` | Reference to the right child |
+| `size`     | `int`   | Number of nodes in the subtree rooted at this node |
 
-## 性质
+## Properties
 
-Size Balanced Tree 中任意节点 $N$ 满足如下几条性质：
+Every node $N$ in a Size Balanced Tree satisfies the following properties:
 
 ```text
 size(N.left) >= size(N.right.left)
@@ -21,13 +21,13 @@ size(N.right) >= size(N.left.left)
 size(N.right) >= size(N.left.right)
 ```
 
-使用自然语言可描述为：任意节点的 `size` 不小于其兄弟节点（Sibling）的所有子节点（Nephew）的 `size`.
+In plain words: the `size` of any node is no less than the `size` of each child (nephew) of its sibling.
 
-## 平衡维护
+## Rebalancing
 
-### 旋转
+### Rotation
 
-SBT 主要通过旋转操作改变自身高度从而进行平衡维护．其旋转操作与绝大部分自平衡二叉搜索树类似，唯一区别在于在完成旋转之后需要对旋转过程中左右子节点发生改变的节点更新 `size`. 示例代码如下：
+An SBT keeps itself balanced mainly by using rotations to change its height. Its rotations are like those of most self-balancing binary search trees. The only difference is that after a rotation, we must update `size` for the nodes whose children changed during the rotation. Example code:
 
 ```cpp
 void updateSize() {
@@ -77,7 +77,7 @@ static void rotateRight(NodePtr& node) {
 }
 ```
 
-### 维护
+### Maintenance
 
 #### Case 1
 
@@ -167,11 +167,11 @@ if (size(node->left->right) > size(node->right)) {
 }
 ```
 
-## 操作
+## Operations
 
-### 插入
+### Insertion
 
-SBT 的插入操作需要在完成普通二叉搜索树的插入操作的基础上递归地进行节点 `size` 字段的更新及平衡维护．示例代码如下：
+Insertion in an SBT does the ordinary binary search tree insertion, and on top of that recursively updates the `size` fields and rebalances. Example code:
 
 ```cpp
 if (compare(key, node->key)) {
@@ -197,13 +197,13 @@ if (compare(key, node->key)) {
 }
 ```
 
-### 删除
+### Deletion
 
-根据 Size Balanced Tree 的提出者陈启峰在其论文中对于删除操作的描述：
+Here is how Chen Qifeng, who proposed the Size Balanced Tree, describes deletion in his paper:
 
 > It can result in a destroyed SBT. But with the insertion above, a BST is still kept at the height of $O(\log n)$ where $n$ is the total number of insertions, not the current size.
 
-删除操作虽然有可能使得 SBT 的性质被打破，但并不会使树的高度增高，因此不会影响后续操作的效率．但在实际情况下，如果在一次批量插入操作后只进行大量的删除和查询操作，依然有可能由于树的失衡影响整体效率，因此本文在实现 SBT 的删除操作时依然选择加入平衡维护．参考代码如下：
+Although deletion may break the SBT properties, it does not increase the height of the tree, so it does not hurt the efficiency of later operations. In practice, however, if a batch of insertions is followed only by many deletions and queries, the imbalance can still hurt overall efficiency. So the implementation in this article still rebalances during deletion. Reference code:
 
 ```cpp
 bool remove(NodePtr& node, K key, NodeConsumer action) {
@@ -327,11 +327,11 @@ bool remove(NodePtr& node, K key, NodeConsumer action) {
 }
 ```
 
-值得注意的是，在上述代码的 Case 5 中使用后继节点 $S$（也可以选择前驱节点）替换待删除节点 $N$ 并删除替换后的 $N$ 以后，需要更新替换前 $S$ 节点的父节点 $P$ 到替换后的 $S$ 节点这条路径（如代码中注释所示）上的所有节点的 `size` 字段．本文的实现选择使用栈依次记录路径上的节点，最后再按遍历的相反顺序出栈进行更新．
+Note that in Case 5 of the code above, after we replace the node $N$ to delete with its successor $S$ (the predecessor also works) and delete the swapped $N$, we must update the `size` field of every node on the path from $P$, the parent of $S$ before the swap, to the swapped $S$ (as shown in the code comments). This implementation uses a stack to record the nodes along the path, and then pops them in reverse order of traversal to update them.
 
-### 查询排名
+### Querying the rank
 
-由于 SBT 节点中储存了子树节点个数的信息，因此可以在 $O(\log n)$ 的时间复杂度下查询某个 `key` 的排名（或者大于/小于某个 `key` 的节点个数）．示例代码如下：
+Since SBT nodes store the size of their subtrees, we can find the rank of a `key` (or the number of nodes greater/less than a `key`) in $O(\log n)$ time. Example code:
 
 ```cpp
 USize countLess(ConstNodePtr node, K key, bool countEqual = false) const {
@@ -359,11 +359,11 @@ USize countGreater(ConstNodePtr node, K key, bool countEqual = false) const {
 }
 ```
 
-## 参考代码
+## Reference code
 
-下面的代码是用 SBT 实现的 `Map`，即有序不可重映射：
+The code below uses an SBT to implement `Map`, an ordered map with no duplicate keys:
 
-??? note "完整代码"
+??? note "Full code"
     ```cpp
     --8<-- "docs/ds/code/size-balanced-tree/SizeBalancedTreeMap.hpp"
     ```

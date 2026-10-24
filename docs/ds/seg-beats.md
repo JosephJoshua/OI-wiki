@@ -1,175 +1,175 @@
-本文讲解吉老师在 [2016 年国家集训队论文](https://github.com/OI-wiki/libs/blob/master/%E9%9B%86%E8%AE%AD%E9%98%9F%E5%8E%86%E5%B9%B4%E8%AE%BA%E6%96%87/%E5%9B%BD%E5%AE%B6%E9%9B%86%E8%AE%AD%E9%98%9F2016%E8%AE%BA%E6%96%87%E9%9B%86.pdf) 中提到的线段树处理历史区间最值的问题．
+This article explains how segment trees handle range chmin/chmax operations and historical extreme values, as described by Ji Ruyi in his [2016 Chinese National Training Team paper](https://github.com/OI-wiki/libs/blob/master/%E9%9B%86%E8%AE%AD%E9%98%9F%E5%8E%86%E5%B9%B4%E8%AE%BA%E6%96%87/%E5%9B%BD%E5%AE%B6%E9%9B%86%E8%AE%AD%E9%98%9F2016%E8%AE%BA%E6%96%87%E9%9B%86.pdf) (this technique is often called "Segment Tree Beats").
 
-## 区间最值
+## Range chmin/chmax
 
-笼统地说，区间最值操作指，将区间 $[l,r]$ 的数全部对 $x$ 取 $\max$ 或 $\min$，即 $a_i=\max(a_i,x)$ 或者 $a_i=\min(a_i,x)$．
+Roughly speaking, a range chmin/chmax operation replaces every number in the range $[l,r]$ with its $\max$ or $\min$ with $x$, that is, $a_i=\max(a_i,x)$ or $a_i=\min(a_i,x)$.
 
 ???+ note "[HDU5306 Gorgeous Sequence](https://acm.hdu.edu.cn/showproblem.php?pid=5306)"
-    维护一个序列 $a$，执行以下操作：
+    Maintain a sequence $a$ and perform the following operations:
     
-    1.  `0 l r t` $\forall l\le i\le r,~ a_i=\min(a_i,t)$．
-    2.  `1 l r` 输出 $\max\limits_{i=l}^r a_i$．
-    3.  `2 l r` 输出 $\sum\limits_{i=l}^r a_i$．
+    1.  `0 l r t`: $\forall l\le i\le r,~ a_i=\min(a_i,t)$.
+    2.  `1 l r`: output $\max\limits_{i=l}^r a_i$.
+    3.  `2 l r`: output $\sum\limits_{i=l}^r a_i$.
     
-    多组测试数据，保证 $T\le 100,~\sum n,\sum m\le 10^6$．
+    There are multiple test cases, with $T\le 100,~\sum n,\sum m\le 10^6$.
 
-区间取 $\min$，意味着只对那些大于 $t$ 的数有更改．因此这个操作的对象不再是整个区间，而是「这个区间中大于 $t$ 的数」．于是我们可以有这样的思路：每个结点维护该区间的最大值 $Max$、次大值 $Se$、区间和 $Sum$ 以及最大值的个数 $Cnt$．接下来我们考虑区间对 $t$ 取 $\min$ 的操作．
+Taking the range $\min$ only changes the numbers larger than $t$. So the operation no longer targets the whole range, but "the numbers in this range that are larger than $t$". This suggests the following idea: each node stores the range maximum $Max$, the second maximum (strictly smaller) $Se$, the range sum $Sum$, and the count $Cnt$ of the maximum. Now consider taking the range $\min$ with $t$.
 
-1.  如果 $Max\le t$，显然这个 $t$ 是没有意义的，直接返回；
-2.  如果 $Se<t < Max$，那么这个 $t$ 就能更新当前区间中的最大值．于是我们让区间和加上 $Cnt(t-Max)$，然后更新 $Max$ 为 $t$，并打一个标记．
-3.  如果 $t\le Se$，那么这时你发现你不知道有多少个数涉及到更新的问题．于是我们的策略就是，暴力递归向下操作．然后上传信息．
+1.  If $Max\le t$, clearly $t$ has no effect, so return directly;
+2.  If $Se<t < Max$, then $t$ only updates the maximum values of the current range. We add $Cnt(t-Max)$ to the range sum, set $Max$ to $t$, and put a tag on the node.
+3.  If $t\le Se$, we do not know how many numbers need updating. So our strategy is to recurse downward by brute force, and then push the information back up.
 
-这个算法的复杂度如何？使用势能分析法可以得到复杂度是 $O(m\log n)$ 的．具体分析过程见论文．
+What is the complexity of this algorithm? Using potential analysis, it can be shown to be $O(m\log n)$. See the paper for the detailed analysis.
 
 ```cpp
 --8<-- "docs/ds/code/seg-beats/seg-beats_1.cpp"
 ```
 
-???+ note "[BZOJ4695 最假女选手](https://loj.ac/p/6565)"
-    维护一个序列 $a$，执行以下操作：
+???+ note "[BZOJ4695 The Fakest Female Contestant](https://loj.ac/p/6565)"
+    Maintain a sequence $a$ and perform the following operations:
     
-    1.  `1 l r x` $\forall l\le i\le r,~ a_i=a_i+x$．
-    2.  `2 l r x` $\forall l\le i\le r,~ a_i=\max(a_i,x)$．
-    3.  `3 l r x` $\forall l\le i\le r,~ a_i=\min(a_i,x)$．
-    4.  `4 l r` 输出 $\sum\limits_{i=l}^r a_i$．
-    5.  `5 l r` 输出 $\max\limits_{i=l}^r a_i$．
-    6.  `6 l r` 输出 $\min\limits_{i=l}^r a_i$．
+    1.  `1 l r x`: $\forall l\le i\le r,~ a_i=a_i+x$.
+    2.  `2 l r x`: $\forall l\le i\le r,~ a_i=\max(a_i,x)$.
+    3.  `3 l r x`: $\forall l\le i\le r,~ a_i=\min(a_i,x)$.
+    4.  `4 l r`: output $\sum\limits_{i=l}^r a_i$.
+    5.  `5 l r`: output $\max\limits_{i=l}^r a_i$.
+    6.  `6 l r`: output $\min\limits_{i=l}^r a_i$.
     
-    $n,m\le 5\times 10^5,~|a_i|\le 10^8$．所有类型 $1$ 操作有 $|x|\le 10^3$，其余操作满足 $|x|\le10^8$．
+    $n,m\le 5\times 10^5,~|a_i|\le 10^8$. All operations of type $1$ have $|x|\le 10^3$, and the other operations have $|x|\le10^8$.
 
-同样的方法，我们维护最大、次大、最大个数、最小、次小、最小个数、区间和．除了这些信息，我们还需要维护区间 $\max$、区间 $\min$、区间加的标记．相比上一道题，这就涉及到标记下传的顺序问题了．我们采用这样的策略：
+In the same way, we maintain the maximum, second maximum, count of the maximum, minimum, second minimum, count of the minimum, and the range sum. Besides this information, we also need tags for range $\max$, range $\min$ and range add. Compared with the previous problem, this raises the question of the order in which tags are pushed down. We use the following strategy:
 
-1.  我们认为区间加的标记是最优先的，其余两种标记地位平等．
-2.  对一个结点加上一个 $v$ 标记，除了用 $v$ 更新卫星信息和当前结点的区间加标记外，我们用这个 v 更新区间 $\max$ 和区间 $\min$ 的标记．
-3.  对一个结点取 $v$ 的 $\min$（这里忽略暴搜的过程，假定标记满足添加的条件），除了更新卫星信息，我们要与区间 $\max$ 的标记做比较．如果 $v$ 小于区间 $\max$ 的标记，则所有的数最后都会变成 v，那么把区间 $\max$ 的标记也变成 $v$．否则不管．
-4.  区间取 v 的 $\max$ 同理．
+1.  The range-add tag has the highest priority, and the other two tags have equal priority.
+2.  When we add $v$ to a node, besides using $v$ to update the stored information and the node's range-add tag, we also use this v to update the range-$\max$ and range-$\min$ tags.
+3.  When we take the $\min$ of a node with $v$ (ignoring the brute-force recursion here and assuming the tag can be applied), besides updating the stored information, we compare it with the range-$\max$ tag. If $v$ is smaller than the range-$\max$ tag, then all numbers will end up as v, so we set the range-$\max$ tag to $v$ as well. Otherwise we leave it alone.
+4.  Taking the range $\max$ with v works the same way.
 
-在维护信息的时候，当只有一个数或两个数的时候可能发生数集重合，比如一个数既是最大值又是次小值，需要特判．
+When maintaining the information, if the range has only one or two numbers, the value sets may overlap. For example, one number may be both the maximum and the second minimum. This needs special handling.
 
 ```cpp
 --8<-- "docs/ds/code/seg-beats/seg-beats_2.cpp"
 ```
 
-吉老师证出来这个算法的复杂度是 $O(m\log^2 n)$ 的．
+Ji Ruyi proved that the complexity of this algorithm is $O(m\log^2 n)$.
 
 ???+ note "Mzl loves segment tree"
-    两个序列 $A,B$，一开始 $B$ 中的数都是 $0$．维护的操作是：
+    There are two sequences $A,B$, and initially all numbers in $B$ are $0$. The operations to maintain are:
     
-    1.  对 $A$ 做区间取 $\min$
-    2.  对 $A$ 做区间取 $\max$
-    3.  对 $A$ 做区间加
-    4.  询问 $B$ 的区间和
+    1.  Range $\min$ on $A$
+    2.  Range $\max$ on $A$
+    3.  Range add on $A$
+    4.  Query a range sum of $B$
     
-    每次操作完后，如果 $A_i$ 的值发生变化，就给 $B_i$ 加 $1$．$n,m\le 3\times 10^5$．
+    After each operation, whenever the value of $A_i$ changes, add $1$ to $B_i$. $n,m\le 3\times 10^5$.
 
-先考虑最容易的区间加操作．只要 $x\neq 0$ 那么整个区间的数都变化，所以给 B 作一次区间加即可．
+First consider the easiest operation, range add. As long as $x\neq 0$, every number in the range changes, so we just do a range add of 1 on B.
 
-对于区间取最值的操作，你发现你打标记与下传标记是与 $B$ 数组一一对应的．本质上你将序列的数分成三类：最大值、最小值、非最值．并分别维护（只不过你没有建出具体的最值集合而已，但这并不妨碍维护的操作）．因此在打标记的时候顺便给 $B$ 更新信息即可（注意不是给 $B$ 打标记！是更新信息！）．查询的时候，你在 $A$ 上查询，下传标记的时候顺便给 $B$ 更新信息．找到需要的结点后，返回 $B$ 的信息即可．这种操作本质上就是把最值的信息拿给 $B$ 去维护了．另外仍要处理数集的重复问题．
+For range chmin/chmax operations, notice that applying and pushing down tags corresponds one-to-one with changes to array $B$. In essence, you split the numbers of the sequence into three classes, maximum, minimum, and neither, and maintain each separately (you just never build the sets of maxima and minima explicitly, but that does not get in the way). So whenever you apply a tag, you also update the information of $B$ (note: you do not put a tag on $B$! You update the information!). When querying, you query on $A$, and while pushing down tags you also update $B$'s information. Once you reach the needed nodes, return $B$'s information. In essence, this hands the information about extreme values over to $B$ to maintain. You still have to handle overlapping value sets.
 
 ???+ note "[CTSN loves segment tree](https://www.luogu.com.cn/problem/U180387)"
-    维护两个序列 $a,b$，执行以下操作：
+    Maintain two sequences $a,b$ and perform the following operations:
     
-    1.  `1 l r x` $\forall l\le i\le r,~ a_i=\min(a_i,x)$．
-    2.  `2 l r x` $\forall l\le i\le r,~ b_i=\min(b_i,x)$．
-    3.  `3 l r x` $\forall l\le i\le r,~ a_i=a_i+x$．
-    4.  `4 l r x` $\forall l\le i\le r,~ b_i=b_i+x$．
-    5.  `5 l r` 输出 $\max\limits_{i=l}^r (a_i+b_i)$．
+    1.  `1 l r x`: $\forall l\le i\le r,~ a_i=\min(a_i,x)$.
+    2.  `2 l r x`: $\forall l\le i\le r,~ b_i=\min(b_i,x)$.
+    3.  `3 l r x`: $\forall l\le i\le r,~ a_i=a_i+x$.
+    4.  `4 l r x`: $\forall l\le i\le r,~ b_i=b_i+x$.
+    5.  `5 l r`: output $\max\limits_{i=l}^r (a_i+b_i)$.
     
-    $n,m\le 3\times 10^5,~|a_i|,|b_i|,|x|\le 10^9$．
+    $n,m\le 3\times 10^5,~|a_i|,|b_i|,|x|\le 10^9$.
 
-我们把区间 $[l,r]$ 中的备选答案 $A_i+B_i$ 分成四类：$A_i,B_i$ 均不是序列 $A,B$ 区间最大值、$A_i$ 是序列 $A$ 区间最大值但是 $B_i$ 不是序列 $B$ 区间最大值、$A_i$ 不是序列 $A$ 区间最大值但是 $B_i$ 是序列 $B$ 区间最大值、$A_i,B_i$ 均是序列 $A,B$ 区间最大值．我们不妨分别设为 $C_{0,0},C_{1,0},C_{0,1},C_{1,1}$．此外我们正常维护序列 $A,B$ 的区间最大值和次大值．下传区间加法标记和 $\min$ 标记时对 $A,B$ 最大值和次大值的处理与上述两个例题一致．对 $A$ 的 $\min$ 标记会影响到 $C_{1,1}$ 和 $C_{1,0}$，对 $B$ 的标记会影响到 $C_{1,1}$ 和 $C_{0,1}$．对 $A,B$ 的加法则会对 $C_{0,0},C_{1,0},C_{0,1},C_{1,1}$ 均产生影响．只需要注意 $C_{0,0},C_{1,0},C_{0,1}$ 不存在的边界情况即可（例如区间 $[i,i]$ 只有 $A,B$ 的最大值与 $C_{1,1}$ 存在）．
+We split the candidate answers $A_i+B_i$ in the range $[l,r]$ into four classes: $A_i,B_i$ are both not the range maxima of sequences $A,B$; $A_i$ is the range maximum of sequence $A$ but $B_i$ is not the range maximum of sequence $B$; $A_i$ is not the range maximum of sequence $A$ but $B_i$ is the range maximum of sequence $B$; $A_i,B_i$ are both the range maxima of sequences $A,B$. Call the best values of these classes $C_{0,0},C_{1,0},C_{0,1},C_{1,1}$. We also maintain the range maximum and second maximum of sequences $A,B$ as usual. When pushing down range-add tags and $\min$ tags, the maxima and second maxima of $A,B$ are handled the same way as in the two examples above. A $\min$ tag on $A$ affects $C_{1,1}$ and $C_{1,0}$, and a tag on $B$ affects $C_{1,1}$ and $C_{0,1}$. Adding to $A,B$ affects all of $C_{0,0},C_{1,0},C_{0,1},C_{1,1}$. Just watch out for the edge cases where $C_{0,0},C_{1,0},C_{0,1}$ do not exist (for example, in a range $[i,i]$ only the maxima of $A,B$ and $C_{1,1}$ exist).
 
-接下来需要考虑在 pushup 时如何维护 $C_{0,0},C_{1,0},C_{0,1},C_{1,1}$．我们可以考虑一下完成 $A,B$ 最大值的更新之后，讨论左右儿子的 $A,B$ 最大值是否与当前节点 $A,B$ 最大值相等．我们以左儿子为例进行讲解，右儿子类似处理：
+Next, consider how to maintain $C_{0,0},C_{1,0},C_{0,1},C_{1,1}$ in pushup. After updating the maxima of $A,B$, we check whether the left and right children's maxima of $A,B$ equal the current node's maxima of $A,B$. We explain using the left child; the right child is handled the same way:
 
--   当左儿子的 $A,B$ 最大值与当前节点的 $A,B$ 最大值均相等时，左儿子的 $C_{0,0},C_{1,0},C_{0,1},C_{1,1}$ 会分别对当前节点的 $C_{0,0},C_{1,0},C_{0,1},C_{1,1}$ 产生贡献．
--   当左儿子的 $A$ 最大值与当前节点 $A$ 最大值相等，但是 $B$ 最大值不相等时，左儿子的 $C_{1,0},C_{1,1}$ 会对该节点的 $C_{1,0}$ 产生贡献，$C_{0,0},C_{0,1}$ 会对该节点的 $C_{0,0}$ 产生贡献．
--   当左儿子的 $A$ 最大值与当前节点 $A$ 最大值不相等，但是 $B$ 最大值相等时，左儿子的 $C_{0,1},C_{1,1}$ 会对该节点的 $C_{0,1}$ 产生贡献，$C_{0,0},C_{1,0}$ 会对该节点的 $C_{0,0}$ 产生贡献．
--   当左儿子的 $A,B$ 最大值与当前节点的 $A,B$ 最大值均不相等时，左儿子的 $C_{0,0},C_{1,0},C_{0,1},C_{1,1}$ 仅会对该节点的 $C_{0,0}$ 产生贡献．
+-   If the left child's maxima of $A,B$ both equal the current node's maxima of $A,B$, the left child's $C_{0,0},C_{1,0},C_{0,1},C_{1,1}$ contribute to the current node's $C_{0,0},C_{1,0},C_{0,1},C_{1,1}$ respectively.
+-   If the left child's $A$ maximum equals the current node's $A$ maximum but the $B$ maxima differ, the left child's $C_{1,0},C_{1,1}$ contribute to the node's $C_{1,0}$, and $C_{0,0},C_{0,1}$ contribute to the node's $C_{0,0}$.
+-   If the left child's $A$ maximum differs from the current node's $A$ maximum but the $B$ maxima are equal, the left child's $C_{0,1},C_{1,1}$ contribute to the node's $C_{0,1}$, and $C_{0,0},C_{1,0}$ contribute to the node's $C_{0,0}$.
+-   If the left child's maxima of $A,B$ both differ from the current node's maxima of $A,B$, the left child's $C_{0,0},C_{1,0},C_{0,1},C_{1,1}$ only contribute to the node's $C_{0,0}$.
 
-区间查询结果的 $\max(C_{0,0},C_{1,0},C_{0,1},C_{1,1})$ 即为所求．
+The answer to a range query is $\max(C_{0,0},C_{1,0},C_{0,1},C_{1,1})$.
 
-由于需要同时维护区间 $\min$ 和区间加法，所以复杂度仍是 $O(m\log^2 n)$．
+Since we need to maintain both range $\min$ and range add, the complexity is still $O(m\log^2 n)$.
 
 ```cpp
 --8<-- "docs/ds/code/seg-beats/seg-beats_4.cpp"
 ```
 
-### 小结
+### Summary
 
-在第本章节中我们给出了四道例题，分别讲解了基本区间最值操作的维护、多个标记的优先级处理、数集分类的思想以及多个分类的维护．本质上处理区间最值的基本思想就是数集信息的分类维护与高效合并．在下一章节中，我们将探讨历史区间最值的相关问题．
+In this section we gave four example problems, covering the maintenance of basic range chmin/chmax operations, handling the priority of several tags, the idea of splitting values into classes, and maintaining several classes at once. In essence, the basic idea behind range chmin/chmax is to maintain information for each class of values separately and merge it efficiently. In the next section, we look at problems about historical extreme values.
 
-## 历史最值问题
+## Historical extreme values
 
-### 历史最值不等于可持久化
+### Historical extremes are not persistence
 
-注意，本章所讲到的历史最值问题不同于所谓的可持久化数据结构．这类特殊的问题我们将其称为历史最值问题．历史最值的问题可以分为三类．
+Note that the historical-value problems in this section are different from so-called persistent data structures. We call this special kind of problem a historical extreme value problem. These problems fall into three kinds.
 
-#### 历史最大值
+#### Historical maximum
 
-简单地说，一个位置的历史最大值就是当前位置下曾经出现过的数的最大值．形式化地定义，我们定义一个辅助数组 $B$，一开始与 $A$ 完全相同．在 $A$ 的每次操作后，我们对整个数组取 $\max$：
+Simply put, the historical maximum of a position is the largest number that has ever appeared at that position. Formally, we define an auxiliary array $B$ that starts out identical to $A$. After each operation on $A$, we take the $\max$ over the whole array:
 
 $$
 \forall i\in[1,n],\ B_i=\max(B_i,A_i)
 $$
 
-这时，我们将 $B_i$ 称作这个位置的历史最大值，
+Then we call $B_i$ the historical maximum of this position,
 
-#### 历史最小值
+#### Historical minimum
 
-定义与历史最大值类似，在 $A$ 的每次操作后，我们对整个数组取 $\min$．这时，我们将 $B_i$ 称作这个位置的历史最小值，
+The definition is similar to the historical maximum: after each operation on $A$, we take the $\min$ over the whole array. Then we call $B_i$ the historical minimum of this position,
 
-#### 历史版本和
+#### Historical version sum
 
-辅助数组 $B$ 一开始全部是 $0$．在每一次操作后，我们把整个 $A$ 数组累加到 $B$ 数组上
+The auxiliary array $B$ starts out all $0$. After each operation, we add the whole array $A$ onto array $B$
 
 $$
 \forall i\in[1,n], \ B_i=B_i+A_i
 $$
 
-我们称 $B_i$ 为 $i$ 这个位置上的历史版本和．
+We call $B_i$ the historical version sum at position $i$.
 
-接下来，我们将历史最值问题分成四类讨论．
+Next, we discuss historical extreme value problems in four categories.
 
-### 可以用标记处理的问题
+### Problems that can be handled with tags
 
-???+ note "[CPU 监控](https://www.luogu.com.cn/problem/P4314)"
-    序列 $A,B$ 一开始相同：
+???+ note "[CPU Monitoring](https://www.luogu.com.cn/problem/P4314)"
+    Sequences $A,B$ start out the same:
     
-    1.  对 $A$ 做区间覆盖 $x$
-    2.  对 $A$ 做区间加 $x$
-    3.  询问 $A$ 的区间 $\max$
-    4.  询问 $B$ 的区间 $\max$
+    1.  Range assign $x$ on $A$
+    2.  Range add $x$ on $A$
+    3.  Query a range $\max$ of $A$
+    4.  Query a range $\max$ of $B$
     
-    每次操作后，我们都进行一次更新，$\forall i\in [1,n],\ B_i=\max(B_i,A_i)$．$n,m\le 10^5$．
+    After each operation, we update $\forall i\in [1,n],\ B_i=\max(B_i,A_i)$. $n,m\le 10^5$.
 
-我们先不考虑操作 1．那么只有区间加的操作，我们维护标记 $Add$ 表示当前区间增加的值，这个标记可以解决区间 $\max$ 的问题．接下来考虑历史区间 $\max$．我们定义标记 $Pre$，该标记的含义是：在该标记的生存周期内，$Add$ 标记的历史最大值．
+Ignore operation 1 for now. Then there is only range add, and we maintain a tag $Add$ for the value added to the current range. This tag handles range $\max$. Next consider the historical range $\max$. We define a tag $Pre$, meaning: the historical maximum of the $Add$ tag during the lifetime of this tag.
 
-这个定义可能比较模糊．因此我们先解释一下标记的生存周期．一个标记会经历这样的过程：
+This definition may be a bit vague, so let us first explain the lifetime of a tag. A tag goes through this process:
 
-1.  在结点 $u$ 被建立．
-2.  在结点 $u$ 接受若干个新的标记的同时，与新的标记合并（指同类标记）
-3.  结点 $u$ 的标记下传给 $u$ 的儿子，$u$ 的标记清空
+1.  It is created at node $u$.
+2.  While node $u$ receives several new tags, it merges with them (tags of the same kind)
+3.  The tag of node $u$ is pushed down to $u$'s children, and $u$'s tag is cleared
 
-我们认为在这个过程中，从 1 开始到 3 之前，都是结点 $u$ 的标记的生存周期．两个标记合并后，成为同一个标记，那么他们的生存周期也会合并（即取建立时间较早的那个作为生存周期的开始）．一个与之等价的说法是，从上次把这个结点的标记下传的时刻到当前时刻这一时间段．
+We say the lifetime of node $u$'s tag runs from step 1 up to just before step 3. When two tags are merged, they become one tag, and their lifetimes merge too (the earlier creation time is taken as the start of the lifetime). An equivalent way to say it: the lifetime is the period from the last time this node's tag was pushed down until now.
 
-为什么要定义生存周期？利用这个概念，我们可以证明：在一个结点标记的生存周期内，其子结点均不会发生任何变化，并保留在这个生存周期之前的状态．道理很简单，因为在这个期间你是没有下传标记的．
+Why define a lifetime? With this concept we can prove: during the lifetime of a node's tag, none of its children change at all, and they keep the state they had before this lifetime began. The reason is simple: during this period no tags are pushed down.
 
-于是，你就可以保证，在当前标记生存周期内的历史 $Add$ 的最大值是可以更新到子结点的标记和信息上的．因为子结点的标记和信息在这个时间段内都没有变过．于是我们把 $u$ 的标记下传给它的儿子 $s$，不难发现
+So we can be sure that the maximum historical $Add$ during the current tag's lifetime can be applied to the tags and information of the children, because the children's tags and information have not changed during this period. So when we push the tag of $u$ down to its child $s$, it is easy to see that
 
 $$
 Pre_s=\max(Pre_s,Pre_u+Add_s),Add_s=Add_u+Add_s
 $$
 
-那么信息的更新也是类似的，拿对应的标记更新即可．
+The information is updated in a similar way, using the corresponding tags.
 
-接下来，我们考虑操作 1．
+Next, consider operation 1.
 
-区间覆盖操作，会把所有的数变成一个数．在这之后，无论是区间加减还是覆盖，整个区间的数仍是同一个（除非你结束当前标记的生存周期，下传标记）．因此我们可以把第一次区间覆盖后的所有标记都看成区间覆盖标记．也就是说一个标记的生存周期被大致分成两个阶段：
+A range assign turns all numbers into one value. After that, whether we add to or assign the range, all numbers in the range stay equal (unless we end the current tag's lifetime by pushing the tag down). So we can treat every tag after the first range assign as a range assign tag. In other words, a tag's lifetime splits roughly into two stages:
 
-1.  若干个加减操作标记的合并，没有接收过覆盖标记．
-2.  覆盖操作的标记，没有所谓的加减标记（加减标记转化为覆盖标记）
+1.  A merge of several add tags, with no assign tag received yet.
+2.  Assign tags, with no add tags as such (add tags are turned into assign tags)
 
-于是我们把这个结点的 Pre 标记拆成 $(P_1,P_2)$．$P_1$ 表示第一阶段的最大加减标记；$P_2$ 表示第二阶段的最大覆盖标记．利用相似的方法，我们可以对这个做标记下传和信息更新．时间复杂度是 $O(m\log n)$ 的（这个问题并没有区间对 $x$ 取最值的操作哦～）
+So we split the node's Pre tag into $(P_1,P_2)$. $P_1$ is the largest add tag in the first stage, and $P_2$ is the largest assign tag in the second stage. With a similar method, we can push down tags and update information for this. The time complexity is $O(m\log n)$ (note that this problem has no range chmin/chmax with $x$!)
 
 ```cpp
 --8<-- "docs/ds/code/seg-beats/seg-beats_3.cpp"

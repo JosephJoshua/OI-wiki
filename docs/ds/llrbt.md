@@ -1,70 +1,70 @@
 author: c-forrest, Enter-tainer, giiiiiithub, hly1204, iamtwz, Ir1d, kigawas, ksyx, luxuryspark567, mgt, orzAtalod, sandyzikun, SunsetGlow95, Tiphereth-A, current2020, untitledunrevised, yuhuoji
 
-左偏红黑树是 [红黑树](./rbtree.md) 的一种变体，它的对红边（点）的位置做了一定限制，使得其插入与删除操作可以与 [2-3 树](https://en.wikipedia.org/wiki/2%E2%80%933_tree) 构成一一对应．
+A left-leaning red-black tree is a variant of the [red-black tree](./rbtree.md). It puts some restrictions on where red edges (nodes) may appear, so that its insertion and deletion operations correspond one-to-one with those of a [2-3 tree](https://en.wikipedia.org/wiki/2%E2%80%933_tree).
 
-我们假设读者已经至少掌握了一种基于旋转的平衡树，因此本文不会对旋转操作进行讲解．
+We assume the reader already knows at least one rotation-based balanced binary search tree, so this article does not explain rotations.
 
-## 红黑树
+## Red-black tree
 
-### 性质
+### Properties
 
-一棵红黑树满足如下性质：
+A red-black tree satisfies the following properties:
 
-1.  节点是红色或黑色；
-2.  NIL 节点（空叶子节点）为黑色；
-3.  红色的节点的所有儿子的颜色必须是黑色，即从每个叶子到根的所有路径上不能有两个连续的红色节点；
-4.  从任一节点到其子树中的每个叶子的所有简单路径上都包含相同数目的黑色节点．（黑高平衡）
+1.  Every node is either red or black;
+2.  NIL nodes (empty leaves) are black;
+3.  All children of a red node must be black. In other words, no path from a leaf to the root may contain two red nodes in a row;
+4.  For any node, every simple path from it to a leaf in its subtree contains the same number of black nodes. (Black-height balance)
 
-这保证了从根节点到任意叶子的最长路径（红黑交替）不会超过最短路径（全黑）的二倍．从而保证了树的平衡性．
+This guarantees that the longest path from the root to a leaf (alternating red and black) is at most twice as long as the shortest path (all black). That is what keeps the tree balanced.
 
-维护这些性质是比较复杂的，如果我们要插入一个节点，首先，它一定会被染色成红色，否则会破坏性质 4．即使这样，我们还是有可能会破坏性质 3．因此需要进行调整．而删除节点就更加麻烦，与插入类似，我们不能删除黑色节点，否则会破坏黑高的平衡．如何方便地解决这些问题呢？
+Maintaining these properties is fairly complicated. When we insert a node, it must first be colored red; otherwise property 4 would break. Even so, we may still break property 3, so some fixing is needed. Deleting a node is even more troublesome. As with insertion, we cannot delete a black node, or the black heights would no longer be balanced. How can we handle these problems more easily?
 
-## 左偏红黑树（Left Leaning Red Black Tree）
+## Left-leaning red-black tree
 
-### 解释
+### Explanation
 
-左偏红黑树是一种容易实现的红黑树变体．
+The left-leaning red-black tree is a red-black tree variant that is easy to implement.
 
-在以下左偏红黑树示意图中，是边具有颜色而不是节点具有颜色．我们习惯用一个节点的颜色代指它的父亲边的颜色．
+In the diagrams of left-leaning red-black trees below, edges have colors instead of nodes. By convention, we use a node's color to mean the color of the edge to its parent.
 
-左偏红黑树对红黑树进行了进一步限制，一个黑色节点的左右儿子：
+A left-leaning red-black tree adds a further restriction to the red-black tree. The two children of a black node must be either:
 
--   要么全是黑色；
--   要么左儿子是红色，右儿子是黑色．
+-   both black; or
+-   a red left child and a black right child.
 
-符合条件的情况：
+Allowed cases:
 
 ![llrbt1](./images/llrbt-1.png)
 
-不符合条件的情况：
+Disallowed cases:
 
 ![llrbt2](./images/llrbt-2.png)
 
-这是左偏树的「左偏」性质：红色边只能是左偏的．
+This is the "left-leaning" property of the tree: red edges may only lean left.
 
-### 过程
+### Process
 
-#### 插入
+#### Insertion
 
-我们首先使用普通的 BST 插入方法，在树的底部插入一个红色的叶子节点，然后通过从下向上的调整，使得插入后的树仍然符合左偏红黑树的性质．下面描述调整的过程：
+First, we use the ordinary BST insertion method to insert a red leaf at the bottom of the tree. Then we fix the tree from the bottom up so that it again satisfies the left-leaning red-black tree properties. The fixing process works as follows:
 
 ![llrbt3](./images/llrbt-3.png)
 
-插入后，可能会产生一条右偏的红色边，因此需要对红边右偏的情况进行一次左旋：
+After insertion, a right-leaning red edge may appear, so we do a left rotation whenever a red edge leans right:
 
 ![llrbt4](./images/llrbt-4.png)
 
-考虑左旋后会产生两条连续的左偏红色边：
+After the left rotation, two left-leaning red edges in a row may appear:
 
 ![llrbt5](./images/llrbt-5.png)
 
-因此需要把它进行一次右旋．而对于右旋后的情况，我们应该对它进行 `color_flip`：即翻转该节点和它的两个儿子的颜色
+So we do a right rotation on it. After the right rotation, we apply `color_flip`: flip the colors of the node and its two children
 
 ![llrbt6](./images/llrbt-6.png)
 
-从而消灭右偏的红边．
+This removes the right-leaning red edge.
 
-??? note "参考代码（部分）"
+??? note "Reference code (partial)"
     ```cpp
     template <class Key, class Compare>
     typename Set<Key, Compare>::Node *Set<Key, Compare>::fix_up(
@@ -96,35 +96,35 @@ author: c-forrest, Enter-tainer, giiiiiithub, hly1204, iamtwz, Ir1d, kigawas, ks
     }
     ```
 
-#### 删除
+#### Deletion
 
-删除操作基于这样的思想：我们不能删除黑色的节点，因为这样会破坏黑高．所以我们需要保证我们最后删除的节点是红色的．
+Deletion is based on this idea: we cannot delete a black node, because that would break the black height. So we must make sure that the node we finally delete is red.
 
-##### 删除最小值节点
+##### Deleting the minimum node
 
-首先来试一下删除整棵树里的最小值．
+Let us first try deleting the minimum of the whole tree.
 
-怎么才能保证最后删除的节点是红色的呢？我们需要在向下递归的过程中保证一个性质：如果当前节点是 `h`，那么需要保证 `h` 是红色，或者 `h->lc` 是红色．
+How can we make sure the node we finally delete is red? While recursing downward, we maintain an invariant: if the current node is `h`, then either `h` is red or `h->lc` is red.
 
-考虑这样做的正确性，如果我们能够通过各种旋转和反转颜色操作成功维护这个性质，那么当我们到达最小的节点 `h_min` 的时候，有 `h_min` 是红色，或者 `h_min` 的左子树——但是 `h_min` 根本没有左子树！所以这就保证了最小值节点一定是红的，既然它是红色的，我们就可以大胆的删除它，然后用与插入操作相同的调整思路对树进行调整．
+Why does this work? If we can keep this invariant using rotations and color flips, then when we reach the minimum node `h_min`, either `h_min` is red, or the left subtree of `h_min` is—but `h_min` has no left subtree at all! So the minimum node is guaranteed to be red. Since it is red, we can safely delete it, and then fix the tree using the same idea as in insertion.
 
-下面我们来考虑怎么满足这个性质，注意，我们会在向下递归的时候 **临时地** 破坏左偏红黑树的若干性质，但是当我们从递归中返回时还会将其恢复．
+Now let us see how to maintain this invariant. Note that while recursing downward we **temporarily** break some properties of the left-leaning red-black tree, but we restore them when returning from the recursion.
 
-如下图所描述的，是一种较为简单的情况，此时 `h->rc->lc` 为黑色，我们只需要一次翻转颜色即可：
+The figure below shows a fairly simple case. Here `h->rc->lc` is black, and one color flip is enough:
 
 ![llrbt-7](./images/llrbt-7.png)
 
-并且，在如上所示的翻转之后，不会使 `h->rc` 与 `h->rc->lc` 形成连续的红边；
+Moreover, after the flip shown above, `h->rc` and `h->rc->lc` will not form two red edges in a row;
 
-但如果 `h->rc->lc` 是红色，情况会比较复杂：
+But if `h->rc->lc` is red, things get more complicated:
 
 ![llrbt-8](./images/llrbt-8.png)
 
-如果只进行翻转颜色，会产生连续的红边，而考虑我们递归返回的时候，是无法修复这样的情况的，因此需要进行处理．
+If we only flip colors, we get two red edges in a row. We cannot fix this case when returning from the recursion, so we must handle it here.
 
-然后就可以进行删除了：
+Then we can do the deletion:
 
-??? note "参考代码（部分）"
+??? note "Reference code (partial)"
     ```cpp
     template <class Key, class Compare>
     typename Set<Key, Compare>::Node *Set<Key, Compare>::move_red_left(
@@ -156,17 +156,17 @@ author: c-forrest, Enter-tainer, giiiiiithub, hly1204, iamtwz, Ir1d, kigawas, ks
     }
     ```
 
-##### 删除任意节点
+##### Deleting an arbitrary node
 
-我们首先考虑删除叶子：与删最小值类似，我们在删除任意值的过程中也要维护一个性质，不过这次比较特殊，因为我们不是只向左边走，而是可以向左右两个方向走，因此在删除过程中维护的性质是这样的：如果往左走，当前节点是 `h`，那么需要保证 `h` 是红色，或者 `h->lc` 是红色；如果往右走，当前节点是 `h`，那么需要保证 `h` 是红色，或者 `h->rc` 是红色．这样可以保证我们最后总会删掉一个红色节点．
+First consider deleting a leaf. As with deleting the minimum, we maintain an invariant while deleting an arbitrary value. This time it is a bit different, because we may go both left and right instead of only left. The invariant is: if we go left and the current node is `h`, then either `h` or `h->lc` is red; if we go right and the current node is `h`, then either `h` or `h->rc` is red. This guarantees that we always delete a red node in the end.
 
-下面考虑删除非叶子节点，我们只需要找到其右子树（如果有）里的最小节点，然后用右子树的最小节点的值代替该节点的值，最后删除右子树里的最小节点．
+Now consider deleting a non-leaf node. We find the minimum node in its right subtree (if there is one), replace the node's value with that minimum value, and then delete the minimum node from the right subtree.
 
 ![llrbt-9](./images/llrbt-9.png)
 
-那如果没有右子树怎么办？我们需要把左子树旋转过来，这样就不会出现这个问题了．
+What if there is no right subtree? We rotate the left subtree over to the right, and then this problem cannot occur.
 
-??? note "参考代码（部分）"
+??? note "Reference code (partial)"
     ```cpp
     template <class Key, class Compare>
     typename Set<Key, Compare>::Node *Set<Key, Compare>::delete_arbitrary(
@@ -199,11 +199,11 @@ author: c-forrest, Enter-tainer, giiiiiithub, hly1204, iamtwz, Ir1d, kigawas, ks
     }
     ```
 
-## 实现
+## Implementation
 
-下面的代码是用左偏红黑树实现的 `Set`，即有序不可重集合：
+The code below uses a left-leaning red-black tree to implement `Set`, an ordered set with no duplicates:
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     #include <algorithm>
     #include <memory>
@@ -517,25 +517,25 @@ author: c-forrest, Enter-tainer, giiiiiithub, hly1204, iamtwz, Ir1d, kigawas, ks
     }
     ```
 
-## 与 2-3 树的关系
+## Relation to 2-3 trees
 
-2-3 树是 3 阶 B 树，每个结点都是 2 结点或 3 结点，存储一个或两个数据元素．非叶结点的 2 结点和 3 结点分别只能有两个或三个孩子．而且，2-3 树中存储的所有数据都是有序的．
+A 2-3 tree is a B-tree of order 3. Every node is either a 2-node or a 3-node and stores one or two data elements. A non-leaf 2-node must have exactly two children, and a non-leaf 3-node must have exactly three. All data stored in a 2-3 tree is kept in sorted order.
 
-2-3 树和左偏红黑树实质是等价的．2-3 树中一个节点可以存储 1 个元素或 2 个元素，而红黑树的一个节点只能存储一个元素．如下图所示，2-3 树的 2 节点对应一个黑色节点，3 节点对应一个红色节点和一个黑色节点（可以将 bc 视作平行）．
+2-3 trees and left-leaning red-black trees are essentially equivalent. A node in a 2-3 tree can store 1 or 2 elements, while a node in a red-black tree stores only one. As shown below, a 2-node of a 2-3 tree corresponds to one black node, and a 3-node corresponds to one red node plus one black node (you can think of b and c as being side by side).
 
 ![2-3-tree-rbt](images/2-3-tree-rbt-1.svg)
 
 ![2-3-tree-rbt](images/2-3-tree-rbt-2.svg)
 
-下图是一棵 2-3 树对应的左偏红黑树．
+The figure below shows the left-leaning red-black tree that corresponds to a 2-3 tree.
 
 ![2-3-tree-rbt](images/2-3-tree-rbt-3.svg)
 
-2-3 树和左偏红黑树的插入与删除操作是一一对应的．[^23-vs-llrbt]
+The insertion and deletion operations of 2-3 trees and left-leaning red-black trees correspond one-to-one.[^23-vs-llrbt]
 
-## 参考资料与拓展阅读
+## References and further reading
 
 -   [Left-Leaning Red-Black Trees](https://sedgewick.io/wp-content/themes/sedgewick/papers/2008LLRB.pdf)-  Robert Sedgewick Princeton University
 -   [Balanced Search Trees](https://algs4.cs.princeton.edu/lectures/keynote/33BalancedSearchTrees-2x2.pdf)-\_Algorithms\_Robert Sedgewick | Kevin Wayne
 
-[^23-vs-llrbt]: [这篇博文](https://riteme.site/blog/2016-3-12/2-3-tree-and-red-black-tree.html) 提供了详细的描述．文中的「红黑树」实际上指的是「左偏红黑树」．
+[^23-vs-llrbt]: [This blog post](https://riteme.site/blog/2016-3-12/2-3-tree-and-red-black-tree.html) gives a detailed description. The "red-black tree" in that post actually means the "left-leaning red-black tree".

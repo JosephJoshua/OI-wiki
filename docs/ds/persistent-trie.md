@@ -1,22 +1,22 @@
-## 引入
+## Introduction
 
-可持久化 Trie 的方式和可持久化线段树的方式是相似的，即每次只修改被添加或值被修改的节点，而保留没有被改动的节点，在上一个版本的基础上连边，使最后每个版本的 Trie 树的根遍历所能分离出的 Trie 树都是完整且包含全部信息的．
+A persistent trie works much like a persistent segment tree. Each time, we only create the nodes that are added or whose values change, and keep the unchanged nodes, linking edges onto the previous version. In the end, the trie reached by traversing from each version's root is complete and contains all the information of that version.
 
-大部分的可持久化 Trie 题中，Trie 都是以 [01-Trie](../string/trie.md#维护异或极值) 的形式出现的．
+In most persistent trie problems, the trie appears as a [01-trie (binary trie)](../string/trie.md#维护异或极值).
 
-??? note "例题 [最大异或和](https://www.luogu.com.cn/problem/P4735)"
-    对一个长度为 $n$ 的数组 $a$ 维护以下操作：
+??? note "Example problem [Maximum XOR Sum](https://www.luogu.com.cn/problem/P4735)"
+    Maintain the following operations on an array $a$ of length $n$:
     
-    1.  在数组的末尾添加一个数 $x$，数组的长度 $n$ 自增 $1$．
-    2.  给出查询区间 $[l,r]$ 和一个值 $k$，求当 $l\le p\le r$ 时，$k \oplus \bigoplus^{n}_{i=p} a_i$ 的最大值．
+    1.  Append a number $x$ to the end of the array; the length $n$ increases by $1$.
+    2.  Given a query range $[l,r]$ and a value $k$, find the maximum of $k \oplus \bigoplus^{n}_{i=p} a_i$ over $l\le p\le r$.
 
-## 过程
+## Process
 
-这个求的值可能有些麻烦，利用常用的处理连续异或的方法，记 $s_x=\bigoplus_{i=1}^x a_i$，则原式等价于 $s_{p-1}\oplus s_n\oplus k$，观察到 $s_n \oplus k$ 在查询的过程中是固定的，题目的查询变化为查询在区间 $[l-1,r-1]$ 中异或定值（$s_n\oplus k$）的最大值．
+The value being asked for looks a bit awkward. Using the usual trick for consecutive XORs, let $s_x=\bigoplus_{i=1}^x a_i$. Then the expression equals $s_{p-1}\oplus s_n\oplus k$. Since $s_n \oplus k$ is fixed during a query, the query becomes: find the maximum XOR of a fixed value ($s_n\oplus k$) with an element in the range $[l-1,r-1]$.
 
-继续按类似于可持久化线段树的思路，考虑每次的查询都查询整个区间．我们只需把这个区间建一棵 Trie 树，将这个区间中的每个树都加入这棵 Trie 中，查询的时候，尽量往与当前位不相同的地方跳．
+Following the same idea as the persistent segment tree, first suppose each query asks about the whole range. We just build a trie over the range, inserting every number in it. When querying, we try to go to the child whose bit differs from the current bit whenever possible.
 
-查询区间，只需要利用前缀和和差分的思想，用两棵前缀 Trie 树（也就是按顺序添加数的两个历史版本）相减即得到该区间的 Trie 树．再利用动态开点的思想，不添加没有计算过的点，以减少空间占用．
+To query a range, we use the idea of prefix sums and differences: subtracting two prefix tries (that is, two historical versions from inserting numbers in order) gives the trie for that range. We also create nodes dynamically and never add nodes that were not computed, which saves memory.
 
 ```cpp
 --8<-- "docs/ds/code/persistent-trie/persistent-trie_1.cpp"

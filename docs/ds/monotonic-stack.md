@@ -1,26 +1,26 @@
-## 引入
+## Introduction
 
-何为单调栈？顾名思义，单调栈即满足单调性的栈结构．与单调队列相比，其只在一端进行进出．
+What is a monotonic stack? As the name suggests, a monotonic stack is a stack whose elements are monotonic. Compared with a monotonic queue, elements enter and leave it at only one end.
 
-为了描述方便，以下举例及伪代码以维护一个整数的单调递增栈为例．
+For convenience, the examples and pseudocode below maintain a monotonically increasing stack of integers.
 
-## 过程
+## Process
 
-### 插入
+### Insertion
 
-将一个元素插入单调栈时，为了维护栈的单调性，需要在保证将该元素插入到栈顶后整个栈满足单调性的前提下弹出最少的元素．
+When inserting an element into a monotonic stack, to keep the stack monotonic, we pop as few elements as possible such that the whole stack is still monotonic after the new element is pushed on top.
 
-例如，栈中自顶向下的元素为 $\{0,11,45,81\}$．
+For example, suppose the elements in the stack from top to bottom are $\{0,11,45,81\}$.
 
 ![](images/monotonic-stack-before.svg)
 
-插入元素 $14$ 时为了保证单调性需要依次弹出元素 $0,11$，操作后栈变为 $\{14,45,81\}$．
+To insert $14$ while keeping the stack monotonic, we must pop the elements $0,11$ in order. After that, the stack becomes $\{14,45,81\}$.
 
 ![](images/monotonic-stack-after.svg)
 
-用伪代码描述如下：
+In pseudocode:
 
-???+ note "实现"
+???+ note "Implementation"
     ```text
     insert x
     while !sta.empty() && sta.top()<x
@@ -28,24 +28,24 @@
     sta.push(x)
     ```
 
-### 使用
+### Usage
 
-自然就是从栈顶读出来一个元素，该元素满足单调性的某一端．
+We simply read an element from the top of the stack. This element is at one end of the monotonic order.
 
-例如举例中取出的即栈中的最小值．
+For instance, in the example above it is the minimum value in the stack.
 
-## 应用
+## Applications
 
 ??? note "[POJ3250 Bad Hair Day](http://poj.org/problem?id=3250)"
-    有 $N$ 头牛从左到右排成一排，每头牛有一个高度 $h_i$，设左数第 $i$ 头牛与「它右边第一头高度 $≥h_i$」的牛之间有 $c_i$ 头牛，试求 $\sum_{i=1}^{N} c_i$．
+    $N$ cows stand in a row from left to right, and each cow has a height $h_i$. Let $c_i$ be the number of cows between the $i$-th cow from the left and "the first cow to its right with height $≥h_i$". Find $\sum_{i=1}^{N} c_i$.
 
-比较基础的应用有这一题，就是个单调栈的简单应用，记录每头牛被弹出的位置，如果没有被弹出过则为最远端，稍微处理一下即可计算出题目所需结果．
+A basic application is this problem, which is just a simple use of a monotonic stack. Record the position where each cow gets popped; if a cow is never popped, use the far end. With a little extra processing you get the required result.
 
-另外，单调栈也可以用于离线解决 RMQ 问题．
+A monotonic stack can also be used to solve the RMQ problem offline.
 
-我们可以把所有询问按右端点排序，然后每次在序列上从左往右扫描到当前询问的右端点处，并把扫描到的元素插入到单调栈中．这样，每次回答询问时，单调栈中存储的值都是位置 $\le r$ 的、可能成为答案的决策点，并且这些元素满足单调性质．此时，单调栈上第一个位置 $\ge l$ 的元素就是当前询问的答案，这个过程可以用二分查找实现．使用单调栈解决 RMQ 问题的时间复杂度为 $O(q\log q + q\log n)$，空间复杂度为 $O(n)$．
+We sort all queries by their right endpoint. Then we scan the sequence from left to right up to the right endpoint of the current query, inserting each scanned element into the monotonic stack. This way, whenever we answer a query, the stack holds the candidate positions $\le r$ that could be the answer, and these elements are monotonic. The first element in the stack at a position $\ge l$ is the answer to the current query, and we can find it with binary search. Solving RMQ with a monotonic stack takes $O(q\log q + q\log n)$ time and $O(n)$ space.
 
-## 习题
+## Exercises
 
--   [洛谷 P5788【模板】单调栈](https://www.luogu.com.cn/problem/P5788)
--   [洛谷 P1901 发射站](https://www.luogu.com.cn/problem/P1901)
+-   [Luogu P5788 [Template] Monotonic Stack](https://www.luogu.com.cn/problem/P5788)
+-   [Luogu P1901 Transmitting Stations](https://www.luogu.com.cn/problem/P1901)

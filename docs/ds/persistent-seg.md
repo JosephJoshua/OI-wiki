@@ -1,77 +1,77 @@
-## 主席树
+## Persistent segment tree (Chairman tree)
 
-主席树全称是可持久化权值线段树，参见 [知乎讨论](https://www.zhihu.com/question/59195374)．
+The "Chairman tree" (the common Chinese nickname for this structure) is short for the persistent value-domain segment tree, that is, a persistent segment tree built over values; see [this Zhihu discussion](https://www.zhihu.com/question/59195374).
 
-???+ warning "关于函数式线段树"
-    **函数式线段树** 是指使用函数式编程思想的线段树．在函数式编程思想中，将计算机运算视为数学函数，并避免可改变的状态或变量．不难发现，函数式线段树是 [完全可持久化](persistent.md#完全可持久化-fully-persistent) 的．
+???+ warning "About functional segment trees"
+    A **functional segment tree** is a segment tree built with the ideas of functional programming. Functional programming treats computation as evaluating mathematical functions and avoids mutable state or variables. It is easy to see that a functional segment tree is [fully persistent](persistent.md#完全可持久化-fully-persistent).
 
-## 引入
+## Introduction
 
-先引入一道题目：给定 $n$ 个整数构成的序列 $a$，将对于指定的闭区间 $[l, r]$ 查询其区间内的第 $k$ 小值．
+Let us start with a problem: given a sequence $a$ of $n$ integers, answer queries for the $k$-th smallest value in a given closed range $[l, r]$.
 
-你该如何解决？
+How would you solve it?
 
-一种可行的方案是：使用主席树．
-主席树的主要思想就是：保存每次插入操作时的历史版本，以便查询区间第 $k$ 小．
+One workable approach is to use a persistent segment tree.
+The main idea of the persistent segment tree is: keep the historical version after each insertion, so that we can query the $k$-th smallest value in a range.
 
-怎么保存呢？简单暴力一点，每次开一棵线段树呗．  
-那空间还不爆掉？
+How do we keep them? The simple brute-force way is to build a whole new segment tree each time.  
+But wouldn't that blow up the memory?
 
-## 解释
+## Explanation
 
-我们分析一下，发现每次修改操作修改的点的个数是一样的．  
-（例如下图，修改了 $[1,8]$ 中对应权值为 1 的结点，红色的点即为更改的点）  
+Looking closer, we see that each modification changes the same number of nodes.  
+(For example, in the figure below we modify the node for value 1 in $[1,8]$; the red nodes are the changed ones.)  
 ![](./images/persistent-seg.png)
 
-只更改了 $O(\log{n})$ 个结点，形成一条链，也就是说每次更改的结点数 = 树的高度．  
-注意主席树不能使用堆式存储法，就是说不能用 $x\times 2$，$x\times 2+1$ 来表示左右儿子，而是应该动态开点，并保存每个节点的左右儿子编号．  
-所以我们只要在记录左右儿子的基础上，保存插入每个数的时候的根节点就可以实现持久化了．
+Only $O(\log{n})$ nodes change, and they form a chain. In other words, the number of nodes changed each time equals the height of the tree.  
+Note that a persistent segment tree cannot use heap-style storage, which means you cannot use $x\times 2$ and $x\times 2+1$ for the left and right children. Instead, create nodes dynamically and store the indices of each node's left and right children.  
+So as long as we record the left and right children and save the root after inserting each number, we get persistence.
 
-我们把问题简化一下：每次求 $[1,r]$ 区间内的 $k$ 小值．  
-怎么做呢？只需要找到插入 r 时的根节点版本，然后用普通权值线段树（有的叫键值线段树/值域线段树）做就行了．
+Let us simplify the problem first: each query asks for the $k$-th smallest value in $[1,r]$.  
+How? Just find the root of the version right after inserting r, and then query it as an ordinary value-domain segment tree (also called a key-value segment tree or range-of-values segment tree).
 
-这个相信大家都能理解，回到原问题——求 $[l,r]$ 区间 $k$ 小值．  
-这里我们再联系另外一个知识：**前缀和**．  
-这个小东西巧妙运用了区间减法的性质，通过预处理从而达到 $O(1)$ 回答每个询问．
+That should be easy to understand. Now back to the original problem: find the $k$-th smallest value in $[l,r]$.  
+Here we connect it with another idea: **prefix sums**.  
+This little trick cleverly uses the fact that ranges can be subtracted, and with preprocessing it answers each query in $O(1)$.
 
-我们可以发现，主席树统计的信息也满足这个性质．  
-所以……如果需要得到 $[l,r]$ 的统计信息，只需要用 $[1,r]$ 的信息减去 $[1,l - 1]$ 的信息就行了．
+We can see that the counts stored in a persistent segment tree have the same property.  
+So... to get the counts for $[l,r]$, just subtract the counts for $[1,l - 1]$ from the counts for $[1,r]$.
 
-至此，该问题解决！
+And the problem is solved!
 
-关于空间问题，我们分析一下：由于我们是动态开点的，所以一棵线段树只会出现 $2n-1$ 个结点．  
-然后，有 $n$ 次修改，每次至多增加 $\lceil\log_2{n}\rceil+1$ 个结点．因此，最坏情况下 $n$ 次修改后的结点总数会达到 $2n-1+n(\lceil\log_2{n}\rceil+1)$．
-此题的 $n \leq 10^5$，单次修改至多增加 $\lceil\log_2{10^5}\rceil+1 = 18$ 个结点，故 $n$ 次修改后的结点总数为 $2\times 10^5-1+18\times 10^5$，忽略掉 $-1$，大概就是 $20\times 10^5$．
+Now let us analyze the memory. Since nodes are created dynamically, one segment tree has only $2n-1$ nodes.  
+Then there are $n$ modifications, each adding at most $\lceil\log_2{n}\rceil+1$ nodes. So in the worst case, after $n$ modifications the total number of nodes reaches $2n-1+n(\lceil\log_2{n}\rceil+1)$.
+In this problem $n \leq 10^5$, and each modification adds at most $\lceil\log_2{10^5}\rceil+1 = 18$ nodes. So after $n$ modifications there are $2\times 10^5-1+18\times 10^5$ nodes in total. Ignoring the $-1$, that is about $20\times 10^5$.
 
-最后给一个忠告：千万不要吝啬空间（大多数题目中空间限制都较为宽松，因此一般不用担心空间超限的问题）！大胆一点，直接上个 $2^5\times 10^5$，接近原空间的两倍（即 `n << 5`）．
+One last piece of advice: do not be stingy with memory (in most problems the memory limit is fairly generous, so you usually need not worry about exceeding it)! Be bold and just allocate $2^5\times 10^5$, close to twice the computed size (that is, `n << 5`).
 
-## 实现
+## Implementation
 
 ```cpp
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
 using namespace std;
-constexpr int MAXN = 1e5;  // 数据范围
+constexpr int MAXN = 1e5;  // data range
 int tot, n, m;
 int sum[(MAXN << 5) + 10], rt[MAXN + 10], ls[(MAXN << 5) + 10],
     rs[(MAXN << 5) + 10];
 int a[MAXN + 10], ind[MAXN + 10], len;
 
-int getid(const int &val) {  // 离散化
+int getid(const int &val) {  // coordinate compression
   return lower_bound(ind + 1, ind + len + 1, val) - ind;
 }
 
-int build(int l, int r) {  // 建树
+int build(int l, int r) {  // build the tree
   int root = ++tot;
   if (l == r) return root;
   int mid = l + r >> 1;
   ls[root] = build(l, mid);
   rs[root] = build(mid + 1, r);
-  return root;  // 返回该子树的根节点
+  return root;  // return the root of this subtree
 }
 
-int update(int k, int l, int r, int root) {  // 插入操作
+int update(int k, int l, int r, int root) {  // insertion
   int dir = ++tot;
   ls[dir] = ls[root], rs[dir] = rs[root], sum[dir] = sum[root] + 1;
   if (l == r) return dir;
@@ -83,13 +83,13 @@ int update(int k, int l, int r, int root) {  // 插入操作
   return dir;
 }
 
-int query(int u, int v, int l, int r, int k) {  // 查询操作
+int query(int u, int v, int l, int r, int k) {  // query
   int mid = l + r >> 1,
-      x = sum[ls[v]] - sum[ls[u]];  // 通过区间减法得到左儿子中所存储的数值个数
+      x = sum[ls[v]] - sum[ls[u]];  // range subtraction gives the count of numbers stored in the left child
   if (l == r) return l;
-  if (k <= x)  // 若 k 小于等于 x ，则说明第 k 小的数字存储在左儿子中
+  if (k <= x)  // if k <= x, the k-th smallest number is in the left child
     return query(ls[u], ls[v], l, mid, k);
-  else  // 否则说明在右儿子中
+  else  // otherwise it is in the right child
     return query(rs[u], rs[v], mid + 1, r, k - x);
 }
 
@@ -108,7 +108,7 @@ int l, r, k;
 void work() {
   while (m--) {
     scanf("%d%d%d", &l, &r, &k);
-    printf("%d\n", ind[query(rt[l - 1], rt[r], 1, len, k)]);  // 回答询问
+    printf("%d\n", ind[query(rt[l - 1], rt[r], 1, len, k)]);  // answer the query
   }
 }
 
@@ -119,15 +119,15 @@ int main() {
 }
 ```
 
-## 拓展：基于主席树的可持久化并查集
+## Extension: persistent DSU based on a persistent segment tree
 
-主席树是实现可持久化并查集的便捷方式，在此也提供一个基于主席树的可持久化并查集实现示例．
+A persistent segment tree is a convenient way to implement a persistent disjoint set union. Here is an example implementation of a persistent DSU based on a persistent segment tree.
 
 ```cpp
 --8<-- "docs/ds/code/persistent-seg/persistent-seg_1.cpp"
 ```
 
-## 参考
+## References
 
 <https://en.wikipedia.org/wiki/Persistent_data_structure>
 

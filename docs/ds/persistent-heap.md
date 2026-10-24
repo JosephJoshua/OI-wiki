@@ -1,40 +1,40 @@
-可持久化可并堆一般用于求解 $k$ 短路问题．
+Persistent mergeable heaps are mainly used to solve the $k$-th shortest path problem.
 
-如果一种可并堆的时间复杂度不是均摊的，那么它在可持久化后单次操作的时间复杂度就保证是 $O(\log n)$ 的，即不会因为特殊数据而使复杂度退化．
+If a mergeable heap's time complexity is not amortized, then after making it persistent each operation is still guaranteed to take $O(\log n)$ time. That is, special inputs cannot make the complexity degrade.
 
-## 可持久化左偏树
+## Persistent leftist heap
 
-在学习本内容前，请先了解 [左偏树](./leftist-tree.md) 的相关内容．
+Before reading this, please learn about the [leftist heap](./leftist-tree.md) first.
 
-### 过程
+### Process
 
-回顾左偏树的合并过程，假设我们要合并分别以 $x,y$ 为根节点的两棵左偏树，且维护的左偏树满足小根堆的性质：
+Recall how leftist heaps are merged. Suppose we want to merge two leftist heaps with roots $x,y$ respectively, and the heaps are min-heaps:
 
-1.  如果 $x,y$ 中有结点为空，返回 $x+y$．
+1.  If one of $x,y$ is empty, return $x+y$.
 
-2.  选择 $x,y$ 两结点中权值更小的结点，作为合并后左偏树的根．
+2.  Of the two nodes $x,y$, pick the one with the smaller value as the root of the merged heap.
 
-3.  递归合并 $x$ 的右子树与 $y$，将合并后的根节点作为 $x$ 的右儿子．
+3.  Recursively merge the right subtree of $x$ with $y$, and make the merged root the right child of $x$.
 
-4.  维护当前合并后左偏树的左偏性质，维护 `dist` 值，返回选择的根节点．
+4.  Restore the leftist property of the merged heap, update the `dist` value, and return the chosen root.
 
-由于每次递归都会使 `dist[x]+dist[y]` 减少一，而 `dist[x]` 是 $O(\log n)$ 的，一次最多只会修改 $O(\log n)$ 个结点，所以这样做的时间复杂度是 $O(\log n)$ 的．
+Each recursive call decreases `dist[x]+dist[y]` by one, and `dist[x]` is $O(\log n)$, so at most $O(\log n)$ nodes are changed per merge. Thus the time complexity is $O(\log n)$.
 
-可持久化要求保留历史信息，使得之后能够访问之前的版本．要将左偏树可持久化，就要将其沿途修改的路径复制一遍．
+Persistence requires keeping historical information so that earlier versions can be accessed later. To make a leftist heap persistent, we copy every node along the path we modify.
 
-所以可持久化左偏树的合并过程是这样的：
+So merging in a persistent leftist heap works like this:
 
-1.  如果 $x,y$ 中有结点为空，返回 $x+y$．
+1.  If one of $x,y$ is empty, return $x+y$.
 
-2.  选择 $x,y$ 两结点中权值更小的结点，新建该结点的一个复制 $p$，作为合并后左偏树的根．
+2.  Of the two nodes $x,y$, pick the one with the smaller value, create a copy $p$ of it, and use it as the root of the merged heap.
 
-3.  递归合并 $p$ 的右子树与 $y$，将合并后的根节点作为 $p$ 的右儿子．
+3.  Recursively merge the right subtree of $p$ with $y$, and make the merged root the right child of $p$.
 
-4.  维护以 $p$ 为根的左偏树的左偏性质，维护其 `dist` 值，返回 $p$．
+4.  Restore the leftist property of the heap rooted at $p$, update its `dist` value, and return $p$.
 
-由于左偏树一次最多只会修改并新建 $O(\log n)$ 个结点，设操作次数为 $m$，则可持久化左偏树的时间复杂度和空间复杂度均为 $O(m\log n)$．
+A leftist heap changes and creates at most $O(\log n)$ nodes per operation. If there are $m$ operations, the persistent leftist heap has time and space complexity $O(m\log n)$.
 
-### 参考实现
+### Reference implementation
 
 ```cpp
 int merge(int x, int y) {

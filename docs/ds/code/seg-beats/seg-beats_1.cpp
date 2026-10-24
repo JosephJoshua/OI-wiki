@@ -9,7 +9,7 @@ int a[N];
 int mx[N << 2], se[N << 2], cn[N << 2], tag[N << 2];
 long long sum[N << 2];
 
-void pushup(int u) {  // 向上更新标记
+void pushup(int u) {  // push information up
   const int ls = u << 1, rs = u << 1 | 1;
   sum[u] = sum[ls] + sum[rs];
   if (mx[ls] == mx[rs]) {
@@ -27,19 +27,19 @@ void pushup(int u) {  // 向上更新标记
   }
 }
 
-void pushtag(int u, int tg) {  // 单纯地打标记，不暴搜
+void pushtag(int u, int tg) {  // just apply the tag, no brute-force recursion
   if (mx[u] <= tg) return;
   sum[u] += (1ll * tg - mx[u]) * cn[u];
   mx[u] = tag[u] = tg;
 }
 
-void pushdown(int u) {  // 下传标记
+void pushdown(int u) {  // push the tag down
   if (tag[u] == -1) return;
   pushtag(u << 1, tag[u]), pushtag(u << 1 | 1, tag[u]);
   tag[u] = -1;
 }
 
-void build(int u = 1, int l = 1, int r = n) {  // 建树
+void build(int u = 1, int l = 1, int r = n) {  // build the tree
   tag[u] = -1;
   if (l == r) {
     sum[u] = mx[u] = a[l], se[u] = -1, cn[u] = 1;
@@ -60,7 +60,7 @@ void modify_min(int L, int R, int v, int u = 1, int l = 1, int r = n) {
   pushup(u);
 }
 
-int query_max(int L, int R, int u = 1, int l = 1, int r = n) {  // 查询最值
+int query_max(int L, int R, int u = 1, int l = 1, int r = n) {  // query the maximum
   if (L <= l && r <= R) return mx[u];
   int mid = (l + r) >> 1, r1 = -1, r2 = -1;
   pushdown(u);
@@ -69,7 +69,7 @@ int query_max(int L, int R, int u = 1, int l = 1, int r = n) {  // 查询最值
   return max(r1, r2);
 }
 
-long long query_sum(int L, int R, int u = 1, int l = 1, int r = n) {  // 数值
+long long query_sum(int L, int R, int u = 1, int l = 1, int r = n) {  // sum of values
   if (L <= l && r <= R) return sum[u];
   int mid = (l + r) >> 1;
   long long res = 0;
@@ -79,7 +79,7 @@ long long query_sum(int L, int R, int u = 1, int l = 1, int r = n) {  // 数值
   return res;
 }
 
-void go() {  // 根据题意
+void go() {  // as described in the problem
   cin >> n >> m;
   for (int i = 1; i <= n; i++) cin >> a[i];
   build();

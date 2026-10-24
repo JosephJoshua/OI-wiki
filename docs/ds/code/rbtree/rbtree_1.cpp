@@ -46,7 +46,7 @@ struct IO_luogu_P3369_P6136 {
   }
 };
 
-// 把这里的模板参数改为 false 即为「Luogu P3369【模板】普通平衡树」的代码
+// change the template argument here to false to get the code for "Luogu P3369 [Template] Ordinary Balanced Tree"
 IO_luogu_P3369_P6136<true> io;
 
 int main() {

@@ -1,160 +1,160 @@
 author: isdanni,xyf007
 
-PQ 树是一种基于树的数据结构，代表一组元素上的一系列排列，由 Kellogg S. Booth 和 George S. Lueker 于 1976 年发现命名，用来解决以下问题
+A PQ tree is a tree-based data structure that represents a family of permutations of a set of elements. It was discovered and named by Kellogg S. Booth and George S. Lueker in 1976, to solve the following problem
 
-> 给出 $m$ 个集合 $S_i$，你要找到一个 $1\sim n$ 的排列，使得每个集合内的元素都相邻．
+> Given $m$ sets $S_i$, find a permutation of $1\sim n$ such that the elements of each set are adjacent.
 
-PQ 树可以在 $O(n+\sum|S_i|)$ 时间内构建．本文中介绍的构建方法时间复杂度为 $O(nm)$．
+A PQ tree can be built in $O(n+\sum|S_i|)$ time. The construction described in this article takes $O(nm)$ time.
 
-## 定义
+## Definition
 
-PQ 树有三种结点：**叶子结点**、**P 结点** 和 **Q 结点**．其中叶子结点代表排列中的一个元素，P 结点表示它的子结点可以任意排列，Q 结点表示它的儿子顺序可以反转．所有非叶子结点都是 P 结点或 Q 结点中的一种．P 结点至少有 2 个儿子，Q 结点至少有 3 个儿子．  
-由于结点的定义，PQ 树本身代表了 **所有的** 合法方案，其先序遍历就是其中之一．  
-下图是一棵 PQ 树．  
+A PQ tree has three kinds of nodes: **leaves**, **P-nodes** and **Q-nodes**. A leaf represents one element of the permutation. A P-node means its children may be arranged in any order. A Q-node means the order of its children may be reversed. Every non-leaf node is either a P-node or a Q-node. A P-node has at least 2 children, and a Q-node has at least 3 children.  
+Because of how nodes are defined, a PQ tree represents **all** valid arrangements, and its preorder traversal is one of them.  
+The figure below shows a PQ tree.  
 ![](https://gregable.com/2008/11/i/pq-tree.webp)  
-其先序遍历 1,2,3,4,5 代表了一个合法方案．如果 P 结点的儿子重排列为 4,2,3，我们得到了另一个合法方案 1,4,2,3,5．保持 P 结点儿子顺序不变，Q 结点的儿子顺序反转，得到了另一个合法方案 5,3,2,4,1．
+Its preorder traversal 1,2,3,4,5 is a valid arrangement. If we reorder the children of the P-node to 4,2,3, we get another valid arrangement 1,4,2,3,5. If we keep the order of the P-node's children and reverse the children of the Q-node, we get another valid arrangement 5,3,2,4,1.
 
-## 构建
+## Construction
 
-**PQ 树使用儿子 - 兄弟表示法．**
+**A PQ tree uses the child-sibling representation.**
 
-我们增量构建一棵 PQ 树．
+We build a PQ tree incrementally.
 
-首先建立一棵树，其根为 P，总共 $n$ 个儿子，分别是 $1,2,\ldots,n$，代表没有任何限制时的 PQ 树．随着限制的不断加入，我们不断修改这棵树．
+First, build a tree whose root is a P-node with $n$ children $1,2,\ldots,n$. This is the PQ tree with no constraints. As constraints are added, we keep modifying this tree.
 
-当加入一个新的限制集合 $S$ 时，我们把所有属于这个集合的叶子结点标记为 **黑色**，不在这个集合内的叶子结点标记为 **白色**．对于所有非叶子结点，如果其所有儿子均为黑色，将其也标记为黑色；如果其所有儿子均为白色，将其也标记为白色；否则将其标记为 **灰色**．在下面的图中，黑色结点、白色结点、灰色结点分别用黑色、灰色、一半黑一半灰来表示．
+When a new constraint set $S$ is added, we color every leaf in the set **black** and every leaf not in the set **white**. For each non-leaf node, if all its children are black, color it black; if all its children are white, color it white; otherwise color it **gray**. In the figures below, black, white and gray nodes are drawn as black, gray, and half black/half gray respectively.
 
-我们要求 PQ 树中的结点按照颜色排序．
+We require the nodes of the PQ tree to be ordered by color.
 
-### 自底向上法
+### Bottom-up method
 
-包含所有黑色结点的最小子树被称为 **相关子树**，相关子树的根（不一定是整棵树的根）被称为 **相关根**．
+The smallest subtree containing all black nodes is called the **pertinent subtree**, and its root (not necessarily the root of the whole tree) is called the **pertinent root**.
 
-添加一个限制的过程被称为 reduction．一次 reduction 分为两个阶段：冒泡阶段和减少阶段．
+The process of adding a constraint is called a reduction. A reduction has two phases: the bubble phase and the reduce phase.
 
-#### 冒泡阶段
+#### Bubble phase
 
-冒泡阶段只处理相关子树．我们将相关子树中的所有结点标记为黑色或灰色，并为每个结点计算其拥有的相关子结点数量．为了高效地完成这个过程，我们从叶子往根处理相关子树．这需要记录每个点的父亲结点，但在减少阶段一个点的父亲结点经常要被修改．为了在线性时间内构造，只有 P 结点的儿子和 **Q 结点的最后一个儿子** 始终记录正确的父亲结点．对于 Q 结点的其他儿子，在冒泡阶段用最后一个儿子的父亲更新他们的父亲．
+The bubble phase only deals with the pertinent subtree. We mark every node in the pertinent subtree as black or gray and compute for each node how many pertinent children it has. To do this efficiently, we process the pertinent subtree from the leaves toward the root. This requires knowing each node's parent, but during the reduce phase parents change often. To keep the construction linear, only the children of P-nodes and **the end children of Q-nodes** always store the correct parent. For the other children of a Q-node, during the bubble phase we update their parent using the parent of an end child.
 
-当遇到一个中间的结点时，我们看一下它的兄弟是否已经有合法的父亲结点．如果没有，将其标记为 **阻塞** 的．如果后面它的兄弟有了合法的父亲，那么修改这个结点的父亲并且取消标记．如果在冒泡阶段结束时，仍然有一段连续的阻塞结点（如下面的情况 Q3），一个没有父结点的「伪结点」成为该块的父结点，并在减少阶段时被去除．
+When we reach a middle child, we check whether its siblings already have a valid parent. If not, we mark it as **blocked**. If one of its siblings gets a valid parent later, we update this node's parent and remove the mark. If at the end of the bubble phase there is still a consecutive run of blocked nodes (like case Q3 below), a parentless "pseudo-node" becomes the parent of that block, and it is removed during the reduce phase.
 
-#### 减少阶段
+#### Reduce phase
 
-减少阶段用一个队列来处理结点．首先将所有限制内的叶子结点加入队列．每次取出队首的结点 $u$ 并处理．如果 $u$ 的父亲也是相关子树内的结点，那么将 $\mathit{fa}_u$ 入队．  
-对于每一个结点 $u$，我们分情况讨论．如果不属于其中任何一种情况，则无解．
+The reduce phase processes nodes with a queue. First push all leaves in the constraint into the queue. Each time, take the node $u$ at the front of the queue and process it. If $u$'s parent is also in the pertinent subtree, push $\mathit{fa}_u$ into the queue.  
+For each node $u$, we consider several cases. If none of the cases applies, there is no solution.
 
-##### 叶子结点
+##### Leaf
 
-将 $u$ 标记为黑色．
+Color $u$ black.
 
-##### P 结点
+##### P-node
 
-如果所有儿子均为黑色，将 $u$ 标记为黑色．  
+If all children are black, color $u$ black.  
 ![](https://gregable.com/2008/11/i/p1-template.png)  
 ![](https://gregable.com/2008/11/i/p1-replacement.png)
 
-如果 $u$ 有黑色儿子和白色儿子，且 $u$ 是相关根，那么新建一个 P 结点 $v$ 成为它所有黑色儿子的根．  
+If $u$ has both black and white children and $u$ is the pertinent root, create a new P-node $v$ as the root of all its black children.  
 ![](https://gregable.com/2008/11/i/p2-template.png)  
 ![](https://gregable.com/2008/11/i/p2-replacement.png)
 
-如果 $u$ 有黑色儿子和白色儿子，且 $u$ 不是相关根，那么做以下操作：
+If $u$ has both black and white children and $u$ is not the pertinent root, do the following:
 
--   新建一个 P 结点 $f$ 成为所有黑色儿子的根．
--   新建一个 P 结点 $e$ 成为所有白色儿子的根．
--   如果 $e$（和/或 $f$）只有一个儿子，那么不要新建结点，而是将 $e$（和/或 $f$）直接赋值成那个儿子．
--   将 $u$ 改成 Q 结点并把其儿子设为 $e$ 和 $f$，将其标记为灰色．
+-   Create a new P-node $f$ as the root of all black children.
+-   Create a new P-node $e$ as the root of all white children.
+-   If $e$ (and/or $f$) would have only one child, do not create a new node; just set $e$ (and/or $f$) to that child.
+-   Turn $u$ into a Q-node with children $e$ and $f$, and color it gray.
 
-注意到根据之前的定义，Q 结点至少有 3 个儿子，因此这里的 $u$ 被视为一个「伪结点」，并且将在后面被继续处理．  
+By the earlier definition, a Q-node has at least 3 children, so $u$ here is treated as a "pseudo-node" and will be processed further later.  
 ![](https://gregable.com/2008/11/i/p3-template.png)  
 ![](https://gregable.com/2008/11/i/p3-replacement.png)
 
-如果 $u$ 有一个灰色儿子 $p$，且 $u$ 是相关根，那么新建一个 P 结点 $v$ 作为其所有黑色儿子的根，将 $v$ 的兄弟设为 $p$ 最后一个黑色儿子，然后把 $v$ 设为 $p$ 的最后一个儿子．  
+If $u$ has one gray child $p$ and $u$ is the pertinent root, create a new P-node $v$ as the root of all its black children, make the last black child of $p$ the sibling of $v$, and then make $v$ the last child of $p$.  
 ![](https://gregable.com/2008/11/i/p4-template.png)  
 ![](https://gregable.com/2008/11/i/p4-replacement.png)
 
-如果 $u$ 有一个灰色儿子 $p$，且 $u$ 不是相关根，那么进行以下操作：
+If $u$ has one gray child $p$ and $u$ is not the pertinent root, do the following:
 
--   新建一个 P 结点 $f$ 成为所有黑色儿子的根．
--   新建一个 P 结点 $e$ 成为所有白色儿子的根．
--   如果 $e$（和/或 $f$）只有一个儿子，那么不要新建结点，而是将 $e$（和/或 $f$）直接赋值成那个儿子．
--   将 $e$ 的兄弟设为 $p$ 最后一个白色儿子，然后把 $e$ 设为 $p$ 的最后一个儿子．
--   将 $f$ 的兄弟设为 $p$ 最后一个黑色儿子，然后把 $f$ 设为 $p$ 的最后一个儿子．
+-   Create a new P-node $f$ as the root of all black children.
+-   Create a new P-node $e$ as the root of all white children.
+-   If $e$ (and/or $f$) would have only one child, do not create a new node; just set $e$ (and/or $f$) to that child.
+-   Make the last white child of $p$ the sibling of $e$, and then make $e$ the last child of $p$.
+-   Make the last black child of $p$ the sibling of $f$, and then make $f$ the last child of $p$.
 
 ![](https://gregable.com/2008/11/i/p5-template.png)  
 ![](https://gregable.com/2008/11/i/p5-replacement.png)
 
-如果 $u$ 恰有两个灰色儿子 $p_1,p_2$，那么进行以下操作：
+If $u$ has exactly two gray children $p_1,p_2$, do the following:
 
--   新建一个 P 结点 $f$ 成为所有黑色儿子的根．
--   如果 $f$ 只有一个儿子，那么不要新建结点，而是将 $f$ 直接赋值成那个儿子．
--   把 $p_1$ 的最后一个黑色儿子的兄弟设为 $f$．
--   把 $f$ 的兄弟设为 $p_2$ 的最后一个黑色儿子．
--   把 $p_2$ 的最后一个儿子设为 $p_2$ 的最后一个白色儿子．
+-   Create a new P-node $f$ as the root of all black children.
+-   If $f$ would have only one child, do not create a new node; just set $f$ to that child.
+-   Make $f$ the sibling of the last black child of $p_1$.
+-   Make the last black child of $p_2$ the sibling of $f$.
+-   Make the last white child of $p_2$ the last child of $p_2$.
 
-可以发现这样 $p_2$ 就被合并进了 $p_1$．  
+You can see that this merges $p_2$ into $p_1$.  
 ![](https://gregable.com/2008/11/i/p6-template.png)  
 ![](https://gregable.com/2008/11/i/p6-replacement.png)
 
-##### Q 结点
+##### Q-node
 
-如果 $u$ 只有黑色儿子，那么将 $u$ 标记成黑色．（下面的图的形状错了．）  
+If $u$ has only black children, color $u$ black. (The shape in the figure below is wrong.)  
 ![](https://gregable.com/2008/11/i/q1-template.png)  
 ![](https://gregable.com/2008/11/i/q1-replacement.png)
 
-如果 $u$ 有一个灰色儿子 $p$，且所有标记相同的儿子均连续出现，那么进行如下操作：
+If $u$ has one gray child $p$, and children with the same color all appear consecutively, do the following:
 
--   设 $p_f$ 为 $p$ 最后一个黑色儿子，$p_e$ 为 $p$ 最后一个白色儿子，$f$ 为 $p$ 的黑色兄弟，$e$ 为 $p$ 的白色兄弟．
--   将 $f$ 的兄弟设为 $p_f$，$e$ 的兄弟设为 $p_e$．
--   如果 $p$ 没有一个白色兄弟或黑色兄弟，将 $u$ 的最后一个儿子设成 $p$ 的最后一个儿子．
--   删除 $p$．
+-   Let $p_f$ be the last black child of $p$, $p_e$ the last white child of $p$, $f$ the black sibling of $p$, and $e$ the white sibling of $p$.
+-   Make $p_f$ the sibling of $f$, and $p_e$ the sibling of $e$.
+-   If $p$ has no white sibling or no black sibling, make the last child of $p$ the last child of $u$.
+-   Delete $p$.
 
 ![](https://gregable.com/2008/11/i/q2-template.png)  
 ![](https://gregable.com/2008/11/i/q2-replacement.png)
 
-如果 $u$ 恰有两个灰色儿子 $p_1,p_2$，且所有标记相同的儿子均连续出现，那么对 $p_1,p_2$ 都进行上一种操作即可．  
+If $u$ has exactly two gray children $p_1,p_2$, and children with the same color all appear consecutively, just apply the previous operation to each of $p_1,p_2$.  
 ![](https://gregable.com/2008/11/i/q3-template.png)  
 ![](https://gregable.com/2008/11/i/q3-replacement.png)
 
-该构建方法是原论文中的，但是实现较为不便．
+This construction comes from the original paper, but it is rather inconvenient to implement.
 
-### 自顶向下法
+### Top-down method
 
-目前 OI 中的实现大多采用该方法．其实方法类似，下面出现的情况基本都能在上面找到．
+Most implementations in OI today use this method. It is actually similar, and almost every case below has a counterpart above.
 
-注意到根据之前的染色过程，所有黑色和白色的点都已经满足条件，因此我们 **只需要处理灰色结点**．
+Note that after the coloring step, all black and white nodes already satisfy the constraint, so we **only need to handle gray nodes**.
 
-#### P 结点
+#### P-node
 
--   如果 $u$ 有多于两个灰色儿子，无解．
--   如果 $u$ 只有一个灰色儿子，且没有黑色儿子，递归处理灰色儿子．
--   否则先清空 $u$ 的儿子，然后加入所有的白色儿子．新建一个 Q 结点 $q_1$ 并成为 $u$ 的儿子．在 $q_1$ 中加入所有的灰色儿子．新建一个 P 结点 $p$ 作为所有黑色儿子的根，将 $p$ 插入 $q_1$ 的中间．（对应了自底向上法 P 结点的所有情况．）
+-   If $u$ has more than two gray children, there is no solution.
+-   If $u$ has only one gray child and no black children, recursively handle the gray child.
+-   Otherwise, first clear $u$'s children and then add back all the white children. Create a new Q-node $q_1$ as a child of $u$. Add all gray children to $q_1$. Create a new P-node $p$ as the root of all black children, and insert $p$ into the middle of $q_1$. (This covers all the P-node cases of the bottom-up method.)
 
-注意到我们会要求两个灰色节点白色全在左侧，黑色全在右侧（或相反），因此我们需要实现一个分裂函数 `split`，可以把这个子树的点分裂成黑白部分，并同时保留分裂成的子树的节点的 **所有可能**．
+Note that for the two gray nodes we require all white parts to be on the left and all black parts on the right (or the opposite). So we need a split function `split` that splits a subtree into its white and black parts while keeping **all possible arrangements** of the nodes in the resulting subtrees.
 
-#### Q 结点
+#### Q-node
 
--   找到最左边和最右边的非白色节点位置 $l,r$．如果 $[l+1,r-1]$ 内有非黑色节点，无解．
--   如果没有黑色节点，只有一个灰色节点，递归处理这个灰色节点，否则只需要将 $l$ 和 $r$ 位置的节点分裂．
+-   Find the positions $l,r$ of the leftmost and rightmost non-white nodes. If $[l+1,r-1]$ contains a non-black node, there is no solution.
+-   If there are no black nodes and only one gray node, recursively handle that gray node. Otherwise, just split the nodes at positions $l$ and $r$.
 
-#### 分裂函数
+#### Split function
 
-令要分裂的点为 $u$，我们想把 $u$ 分裂成左边全是白色，右边全是黑色的森林．如果 $u$ 不是灰色结点则直接返回子树．只考虑灰色结点的情况．
-如果 $u$ 是 P 类结点：
+Let $u$ be the node to split. We want to split $u$ into a forest with all white on the left and all black on the right. If $u$ is not gray, just return its subtree. We only need to consider gray nodes.
+If $u$ is a P-node:
 
--   如果 $u$ 有至少两个灰色儿子，则无解．
--   否则左边是所有白色儿子，中间递归处理灰色儿子，右边是所有黑色儿子．注意到要保留所有的可能，因此要新建两个 P 结点分别作为白色儿子和黑色儿子的根．（对应自底向上法的 P4 情况．）
--   删除 $u$．
+-   If $u$ has at least two gray children, there is no solution.
+-   Otherwise, put all white children on the left, recursively split the gray child in the middle, and put all black children on the right. Since we must keep all possible arrangements, we create two new P-nodes as the roots of the white children and the black children respectively. (This corresponds to case P4 of the bottom-up method.)
+-   Delete $u$.
 
-如果 $u$ 是 Q 类结点：
+If $u$ is a Q-node:
 
--   如果正序和反序都不满足白 - 灰 - 黑，则无解．
--   如果有至少两个灰色儿子，也无解．
--   否则递归分裂灰色儿子即可．
--   删除 $u$．
+-   If neither the forward nor the reversed order has the form white - gray - black, there is no solution.
+-   If there are at least two gray children, there is also no solution.
+-   Otherwise, just recursively split the gray child.
+-   Delete $u$.
 
-最后把所有多余的结点（只有一个儿子的结点）删除．
+Finally, delete all redundant nodes (nodes with only one child).
 
-## 代码实现
+## Implementation
 
 ```cpp
 class PQTree {
@@ -353,12 +353,12 @@ class PQTree {
 } T;
 ```
 
-## 习题
+## Exercises
 
 -   [CF243E Matrix](https://codeforces.com/problemset/problem/243/E)
 -   [CF1552I Organizing a Music Festival](https://codeforces.com/contest/1552/problem/I)
 
-## 参考资料
+## References
 
 -   Booth, Kellogg S. & Lueker, George S. (1976).["Testing for the consecutive ones property, interval graphs, and graph planarity using PQ-tree algorithms"](https://www.sciencedirect.com/science/article/pii/S0022000076800451?via%3Dihub).*[Journal of Computer and System Sciences](https://en.wikipedia.org/wiki/Journal_of_Computer_and_System_Sciences)*.**13**(3): 335–379.[doi](https://en.wikipedia.org/wiki/Doi_%28identifier%29):[10.1016/S0022-0000(76)80045-1](https://doi.org/10.1016%2FS0022-0000%2876%2980045-1).
 -   [PQ Tree Algorithm and Consecutive Ones Problem](https://gregable.com/2008/11/pq-tree-algorithm.html)

@@ -11,7 +11,7 @@ constexpr int MAXM = 200000 + 5;
 
 SegmentTree
     t[MAXN * 2 +
-      MAXM * 40];  // 每次操作1会修改两次，一次修改父节点，一次修改父节点的秩
+      MAXM * 40];  // each type-1 operation modifies twice: once the parent, once the parent's rank
 int rt[MAXM];
 int n, m, tot;
 
@@ -28,7 +28,7 @@ int build(int l, int r) {
   return p;
 }
 
-int getRnk(int p, int l, int r, int pos) {  // 查询秩
+int getRnk(int p, int l, int r, int pos) {  // query the rank
   if (l == r) {
     return t[p].rnk;
   }
@@ -40,7 +40,7 @@ int getRnk(int p, int l, int r, int pos) {  // 查询秩
   }
 }
 
-int modifyRnk(int now, int l, int r, int pos, int val) {  // 修改秩（高度）
+int modifyRnk(int now, int l, int r, int pos, int val) {  // modify the rank (height)
   int p = ++tot;
   t[p] = t[now];
   if (l == r) {
@@ -56,7 +56,7 @@ int modifyRnk(int now, int l, int r, int pos, int val) {  // 修改秩（高度�
   return p;
 }
 
-int query(int p, int l, int r, int pos) {  // 查询父节点（序列中的值）
+int query(int p, int l, int r, int pos) {  // query the parent (the value in the sequence)
   if (l == r) {
     return t[p].val;
   }
@@ -68,7 +68,7 @@ int query(int p, int l, int r, int pos) {  // 查询父节点（序列中的值�
   }
 }
 
-int findRoot(int p, int pos) {  // 查询根节点
+int findRoot(int p, int pos) {  // find the root
   int f = query(p, 1, n, pos);
   if (pos == f) {
     return pos;
@@ -76,7 +76,7 @@ int findRoot(int p, int pos) {  // 查询根节点
   return findRoot(p, f);
 }
 
-int modify(int now, int l, int r, int pos, int fa) {  // 修改父节点（合并）
+int modify(int now, int l, int r, int pos, int fa) {  // modify the parent (union)
   int p = ++tot;
   t[p] = t[now];
   if (l == r) {
@@ -105,7 +105,7 @@ int main() {
       int fa = findRoot(rt[i - 1], a), fb = findRoot(rt[i - 1], b);
       if (fa != fb) {
         if (getRnk(rt[i - 1], 1, n, fa) >
-            getRnk(rt[i - 1], 1, n, fb)) {  // 按秩合并
+            getRnk(rt[i - 1], 1, n, fb)) {  // union by rank
           swap(fa, fb);
         }
         int tmp = modify(rt[i - 1], 1, n, fa, fb);
