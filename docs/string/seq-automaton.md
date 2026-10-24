@@ -1,30 +1,30 @@
-在阅读本文之前，请先阅读 [自动机](../misc/fsm.md)．
+Before reading this article, please read [Automata](../misc/fsm.md) first.
 
-## 定义
+## Definition
 
-序列自动机是接受且仅接受一个字符串的子序列的自动机．
+A subsequence automaton (sequence automaton) is an automaton that accepts exactly the subsequences of a string, and nothing else.
 
-本文中用 $s$ 代指这个字符串．
+In this article, $s$ denotes this string.
 
-### 状态
+### States
 
-若 $s$ 包含 $n$ 个字符，那么序列自动机包含 $n+1$ 个状态．
+If $s$ has $n$ characters, the subsequence automaton has $n+1$ states.
 
-令 $t$ 是 $s$ 的一个子序列，那么 $\delta(start, t)$ 是 $t$ 在 $s$ 中第一次出现时末端的位置．
+Let $t$ be a subsequence of $s$. Then $\delta(start, t)$ is the position where the first occurrence of $t$ in $s$ ends.
 
-也就是说，一个状态 $i$ 表示前缀 $s[1..i]$ 的子序列与前缀 $s[1..i-1]$ 的子序列的差集．
+In other words, a state $i$ represents the set difference between the subsequences of the prefix $s[1..i]$ and the subsequences of the prefix $s[1..i-1]$.
 
-序列自动机上的所有状态都是接受状态．
+All states of the subsequence automaton are accepting states.
 
-### 转移
+### Transitions
 
-由状态定义可以得到，$\delta(u, c)=\min\{i|i>u,s[i]=c\}$，也就是字符 $c$ 下一次出现的位置．
+From the definition of states, we get $\delta(u, c)=\min\{i|i>u,s[i]=c\}$, that is, the position of the next occurrence of character $c$.
 
-为什么是「下一次」出现的位置呢？因为若 $i>j$，后缀 $s[i..|s|]$ 的子序列是后缀 $s[j..|s|]$ 的子序列的子集，一定是选尽量靠前的最优．
+Why the "next" occurrence? Because if $i>j$, the subsequences of the suffix $s[i..|s|]$ form a subset of the subsequences of the suffix $s[j..|s|]$, so it is always best to pick a position as early as possible.
 
-## 实现
+## Implementation
 
-从后向前扫描，过程中维护每个字符最前的出现位置：
+Scan from back to front, and keep track of the earliest position of each character seen so far:
 
 $$
 \begin{array}{ll}
@@ -41,32 +41,32 @@ $$
 \end{array}
 $$
 
-这样构建的复杂度是 $O(n|\Sigma|)$．
+Building it this way takes $O(n|\Sigma|)$ time.
 
-## 例题
+## Example problem
 
-???+ example "[「HEOI2015」最短不公共子串](https://loj.ac/problem/2123)"
-    给你两个由小写英文字母组成的串 $A$ 和 $B$（$1\le |A|, |B|\le 2000$），求：
+???+ example "[HEOI 2015 Shortest Uncommon Substring](https://loj.ac/problem/2123)"
+    You are given two strings $A$ and $B$ of lowercase English letters ($1\le |A|, |B|\le 2000$). Find:
     
-    1.  $A$ 的一个最短的子串，它不是 $B$ 的子串；
-    2.  $A$ 的一个最短的子串，它不是 $B$ 的子序列；
-    3.  $A$ 的一个最短的子序列，它不是 $B$ 的子串；
-    4.  $A$ 的一个最短的子序列，它不是 $B$ 的子序列．
+    1.  a shortest substring of $A$ that is not a substring of $B$;
+    2.  a shortest substring of $A$ that is not a subsequence of $B$;
+    3.  a shortest subsequence of $A$ that is not a substring of $B$;
+    4.  a shortest subsequence of $A$ that is not a subsequence of $B$.
 
-??? note "题解"
-    题目的 1 和 3 两问需要后缀自动机，而且做法类似，在这里只讲解 2 和 4 两问．
+??? note "Solution"
+    Parts 1 and 3 need a suffix automaton and are solved in a similar way, so here we only explain parts 2 and 4.
     
-    第 2 问比较简单，枚举 A 的子串输入进 B 的序列自动机，若不接受则计入答案．
+    Part 2 is fairly easy: enumerate the substrings of A and feed each one into the subsequence automaton of B. If it is not accepted, count it toward the answer.
     
-    第 4 问需要 DP．令 $f(i, j)$ 表示在 A 的序列自动机中处于状态 $i$，在 B 的序列自动机中处于状态 $j$，需要再添加多少个字符能够不是公共子序列．状态转移方程为：
+    Part 4 needs DP. Let $f(i, j)$ be the number of characters we still need to add so that the string is no longer a common subsequence, when we are at state $i$ in the subsequence automaton of A and at state $j$ in the subsequence automaton of B. The transition is:
     
     $$
     f(i, j)=\min_{\delta_A(i,c)\ne \textit{null}}f(\delta_A(i, c), \delta_B(j, c))+1.
     $$
     
-    转移起点为 $f(i, \textit{null})=0$．
+    The base case is $f(i, \textit{null})=0$.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/string/code/seq-automaton/seq-automaton_1.cpp"
     ```

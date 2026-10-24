@@ -1,28 +1,28 @@
 author: LeoJacob, Marcythm, minghu6
 
-约定：字符串下标以 $0$ 为起点．
+Convention: string indices start from $0$.
 
-## 定义
+## Definition
 
-对于一个长度为 $n$ 的字符串 $s$，定义函数 $z[i]$ 表示 $s$ 和 $s[i,n-1]$（即以 $s[i]$ 开头的后缀）的最长公共前缀（LCP）的长度，则 $z$ 被称为 $s$ 的 **Z 函数**．特别地，$z[0] = 0$．
+For a string $s$ of length $n$, define $z[i]$ as the length of the longest common prefix (LCP) of $s$ and $s[i,n-1]$ (the suffix starting at $s[i]$). Then $z$ is called the **Z-function** of $s$. In particular, $z[0] = 0$.
 
-国外一般将计算该数组的算法称为 **Z Algorithm**，而国内则称其为 **扩展 KMP**（exKMP）．
+Outside China, the algorithm that computes this array is usually called the **Z Algorithm**, while in China it is called **extended KMP** (exKMP).
 
-这篇文章介绍在 $O(n)$ 时间复杂度内计算 Z 函数的算法以及其各种应用．
+This article introduces an algorithm that computes the Z-function in $O(n)$ time, along with its various applications.
 
-## 解释
+## Explanation
 
-下面若干样例展示了对于不同字符串的 Z 函数：
+The following examples show the Z-function of a few different strings:
 
 -   $z(\mathtt{aaaaa}) = [0, 4, 3, 2, 1]$
 -   $z(\mathtt{aaabaab}) = [0, 2, 1, 0, 2, 1, 0]$
 -   $z(\mathtt{abacaba}) = [0, 0, 1, 0, 3, 0, 1]$
 
-## 朴素算法
+## Naive algorithm
 
-Z 函数的朴素算法复杂度为 $O(n^2)$：
+The naive algorithm for the Z-function takes $O(n^2)$ time:
 
-???+ note "实现"
+???+ note "Implementation"
     === "C++"
         ```cpp
         vector<int> z_function_trivial(string s) {
@@ -45,27 +45,27 @@ Z 函数的朴素算法复杂度为 $O(n^2)$：
             return z
         ```
 
-## 线性算法
+## Linear algorithm
 
-如同大多数字符串主题所介绍的算法，其关键在于，运用自动机的思想寻找限制条件下的状态转移函数，使得可以借助之前的状态来加速计算新的状态．
+As with most algorithms in string topics, the key is to use the idea of automata: find a state transition under certain constraints, so that earlier states help us compute new states faster.
 
-在该算法中，我们从 $1$ 到 $n-1$ 顺次计算 $z[i]$ 的值（$z[0]=0$）．在计算 $z[i]$ 的过程中，我们会利用已经计算好的 $z[0],\ldots,z[i-1]$．
+In this algorithm, we compute $z[i]$ in order for $i$ from $1$ to $n-1$ (with $z[0]=0$). While computing $z[i]$, we use the already computed values $z[0],\ldots,z[i-1]$.
 
-对于 $i$，我们称区间 $[i,i+z[i]-1]$ 是 $i$ 的 **匹配段**，也可以叫 Z-box．
+For $i$, we call the interval $[i,i+z[i]-1]$ the **match segment** of $i$, also called the Z-box.
 
-算法的过程中我们维护右端点最靠右的匹配段．为了方便，记作 $[l,r]$．根据定义，$s[l,r]$ 是 $s$ 的前缀．在计算 $z[i]$ 时我们保证 $l\le i$．初始时 $l=r=0$．
+During the algorithm, we keep the match segment whose right endpoint is furthest to the right. For convenience, we denote it $[l,r]$. By definition, $s[l,r]$ is a prefix of $s$. When computing $z[i]$, we make sure that $l\le i$. Initially $l=r=0$.
 
-在计算 $z[i]$ 的过程中：
+While computing $z[i]$:
 
--   如果 $i\le r$，那么根据 $[l,r]$ 的定义有 $s[i,r] = s[i-l,r-l]$，因此 $z[i]\ge \min(z[i-l],r-i+1)$．这时：
-    -   若 $z[i-l] < r-i+1$，则 $z[i] = z[i-l]$．
-    -   否则 $z[i-l]\ge r-i+1$，这时我们令 $z[i] = r-i+1$，然后暴力枚举下一个字符扩展 $z[i]$ 直到不能扩展为止．
--   如果 $i>r$，那么我们直接按照朴素算法，从 $s[i]$ 开始比较，暴力求出 $z[i]$．
--   在求出 $z[i]$ 后，如果 $i+z[i]-1>r$，我们就需要更新 $[l,r]$，即令 $l=i, r=i+z[i]-1$．
+-   If $i\le r$, then by the definition of $[l,r]$ we have $s[i,r] = s[i-l,r-l]$, so $z[i]\ge \min(z[i-l],r-i+1)$. Then:
+    -   If $z[i-l] < r-i+1$, then $z[i] = z[i-l]$.
+    -   Otherwise $z[i-l]\ge r-i+1$. In this case, set $z[i] = r-i+1$, then extend $z[i]$ by brute force, checking the next character one at a time until it can no longer be extended.
+-   If $i>r$, we just use the naive algorithm: compare starting from $s[i]$ and compute $z[i]$ by brute force.
+-   After computing $z[i]$, if $i+z[i]-1>r$, we need to update $[l,r]$, i.e., set $l=i, r=i+z[i]-1$.
 
-可以访问 [这个网站](https://personal.utdallas.edu/~besp/demo/John2010/z-algorithm.htm) 来看 Z 函数的模拟过程．
+You can visit [this website](https://personal.utdallas.edu/~besp/demo/John2010/z-algorithm.htm) to see a simulation of the Z-function computation.
 
-### 实现
+### Implementation
 
 === "C++"
     ```cpp
@@ -104,58 +104,58 @@ Z 函数的朴素算法复杂度为 $O(n^2)$：
         return z
     ```
 
-## 复杂度分析
+## Complexity analysis
 
-对于内层 `while` 循环，每次执行都会使得 $r$ 向后移至少 $1$ 位，而 $r< n-1$，所以总共只会执行 $n$ 次．
+Each run of the inner `while` loop moves $r$ to the right by at least $1$, and $r< n-1$, so it runs only $n$ times in total.
 
-对于外层循环，只有一遍线性遍历．
+The outer loop is a single linear pass.
 
-总复杂度为 $O(n)$．
+The total complexity is $O(n)$.
 
-## 应用
+## Applications
 
-我们现在来考虑在若干具体情况下 Z 函数的应用．
+Let's now look at how the Z-function is used in several concrete situations.
 
-这些应用在很大程度上同 [前缀函数](./kmp.md) 的应用类似．
+These applications are largely similar to those of the [prefix function](./kmp.md).
 
-### 匹配所有子串
+### Finding all occurrences of a pattern
 
-为了避免混淆，我们将 $t$ 称作 **文本**，将 $p$ 称作 **模式**．所给出的问题是：寻找在文本 $t$ 中模式 $p$ 的所有出现（occurrence）．
+To avoid confusion, we call $t$ the **text** and $p$ the **pattern**. The problem is: find all occurrences of the pattern $p$ in the text $t$.
 
-为了解决该问题，我们构造一个新的字符串 $s = p + \diamond + t$，也即我们将 $p$ 和 $t$ 连接在一起，但是在中间放置了一个分割字符 $\diamond$（我们将如此选取 $\diamond$ 使得其必定不出现在 $p$ 和 $t$ 中）．
+To solve this, we build a new string $s = p + \diamond + t$, i.e., we concatenate $p$ and $t$ with a separator character $\diamond$ in between (we choose $\diamond$ so that it never appears in $p$ or $t$).
 
-首先计算 $s$ 的 Z 函数．接下来，对于在区间 $[0,|t| - 1]$ 中的任意 $i$，我们考虑以 $t[i]$ 为开头的后缀在 $s$ 中的 Z 函数值 $k = z[i + |p| + 1]$．如果 $k = |p|$，那么我们知道有一个 $p$ 的出现位于 $t$ 的第 $i$ 个位置，否则没有 $p$ 的出现位于 $t$ 的第 $i$ 个位置．
+First compute the Z-function of $s$. Then, for any $i$ in the range $[0,|t| - 1]$, look at the Z-function value $k = z[i + |p| + 1]$ of the suffix of $s$ starting at $t[i]$. If $k = |p|$, then $p$ occurs at position $i$ of $t$; otherwise it does not.
 
-其时间复杂度（同时也是其空间复杂度）为 $O(|t| + |p|)$．
+The time complexity (and also the space complexity) is $O(|t| + |p|)$.
 
-### 本质不同子串数
+### Number of distinct substrings
 
-给定一个长度为 $n$ 的字符串 $s$，计算 $s$ 的本质不同子串的数目．
+Given a string $s$ of length $n$, count the number of distinct substrings of $s$.
 
-考虑计算增量，即在知道当前 $s$ 的本质不同子串数的情况下，计算出在 $s$ 末尾添加一个字符后的本质不同子串数．
+We compute the increase: knowing the number of distinct substrings of the current $s$, compute the number after appending one character to the end of $s$.
 
-令 $k$ 为当前 $s$ 的本质不同子串数．我们添加一个新的字符 $c$ 至 $s$ 的末尾．显然，会出现一些以 $c$ 结尾的新的子串（以 $c$ 结尾且之前未出现过的子串）．
+Let $k$ be the number of distinct substrings of the current $s$. We append a new character $c$ to the end of $s$. Clearly, some new substrings ending in $c$ appear (substrings ending in $c$ that did not appear before).
 
-设串 $t$ 是 $s + c$ 的反串（反串指将原字符串的字符倒序排列形成的字符串）．我们的任务是计算有多少 $t$ 的前缀未在 $t$ 的其他地方出现．考虑计算 $t$ 的 Z 函数并找到其最大值 $z_{\max}$．则 $t$ 的长度小于等于 $z_{\max}$ 的前缀的反串在 $s$ 中是已经出现过的以 $c$ 结尾的子串．
+Let $t$ be the reverse of $s + c$ (the reverse is the string with the characters of the original in reverse order). Our task is to count how many prefixes of $t$ do not appear anywhere else in $t$. Compute the Z-function of $t$ and find its maximum $z_{\max}$. Then the reverses of the prefixes of $t$ with length at most $z_{\max}$ are substrings ending in $c$ that already appeared in $s$.
 
-所以，将字符 $c$ 添加至 $s$ 后新出现的子串数目为 $|t| - z_{\max}$．
+So the number of new substrings after appending $c$ to $s$ is $|t| - z_{\max}$.
 
-算法时间复杂度为 $O(n^2)$．
+The time complexity of the algorithm is $O(n^2)$.
 
-值得注意的是，我们可以用同样的方法在 $O(n)$ 时间内，重新计算在端点处添加一个字符或者删除一个字符（从尾或者头）后的本质不同子串数目．
+It is worth noting that, in the same way, we can recompute the number of distinct substrings in $O(n)$ time after adding or deleting one character at either end (the back or the front).
 
-### 字符串整周期
+### Period of a string
 
-给定一个长度为 $n$ 的字符串 $s$，找到其最短的整周期，即寻找一个最短的字符串 $t$，使得 $s$ 可以被若干个 $t$ 拼接而成的字符串表示．
+Given a string $s$ of length $n$, find its shortest full period, i.e., the shortest string $t$ such that $s$ is a concatenation of several copies of $t$.
 
-考虑计算 $s$ 的 Z 函数，则其整周期的长度为最小的 $n$ 的因数 $i$，满足 $i+z[i]=n$．
+Compute the Z-function of $s$. Then the length of the shortest period is the smallest divisor $i$ of $n$ such that $i+z[i]=n$.
 
-该事实的证明同应用 [前缀函数](./kmp.md) 的证明一样．
+The proof of this fact is the same as the one for the [prefix function](./kmp.md).
 
-## 练习题目
+## Exercises
 
--   [luogu P5410【模板】扩展 KMP/exKMP（Z 函数）](https://www.luogu.com.cn/problem/P5410)
--   [luogu P7114【NOIP2020】字符串匹配](https://www.luogu.com.cn/problem/P7114)
+-   [Luogu P5410 [Template] Extended KMP/exKMP (Z-function)](https://www.luogu.com.cn/problem/P5410)
+-   [Luogu P7114 [NOIP2020] String Matching](https://www.luogu.com.cn/problem/P7114)
 -   [CF126B Password](http://codeforces.com/problemset/problem/126/B)
 -   [UVa # 455 Periodic Strings](http://uva.onlinejudge.org/index.php?option=onlinejudge&page=show_problem&problem=396)
 -   [UVa # 11022 String Factoring](http://uva.onlinejudge.org/index.php?option=onlinejudge&page=show_problem&problem=1963)
@@ -164,4 +164,4 @@ Z 函数的朴素算法复杂度为 $O(n^2)$：
 -   [Codeforces - Prefixes and Suffixes](http://codeforces.com/problemset/problem/432/D)
 -   [Leetcode 2223 - Sum of Scores of Built Strings](https://leetcode.com/problems/sum-of-scores-of-built-strings/)
 
-**本页面主要译自博文 [Z-функция строки и её вычисление](http://e-maxx.ru/algo/z_function) 与其英文翻译版 [Z-function and its calculation](https://cp-algorithms.com/string/z-function.html)．其中俄文版版权协议为 Public Domain + Leave a Link；英文版版权协议为 CC-BY-SA 4.0．**
+**This page is mainly translated from the blog post [Z-функция строки и её вычисление](http://e-maxx.ru/algo/z_function) and its English translation [Z-function and its calculation](https://cp-algorithms.com/string/z-function.html). The Russian version is licensed under Public Domain + Leave a Link; the English version is licensed under CC-BY-SA 4.0.**

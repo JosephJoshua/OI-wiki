@@ -1,40 +1,40 @@
-## 定义
+## Definition
 
-字典树，英文名 trie．顾名思义，就是一个像字典一样的树．
+A trie (also called a prefix tree or dictionary tree) is, as the Chinese name "dictionary tree" suggests, a tree that works like a dictionary.
 
-## 引入
+## Introduction
 
-先放一张图：
+Here is a picture first:
 
 ![trie1](./images/trie1.png)
 
-可以发现，这棵字典树用边来代表字母，而从根结点到树上某一结点的路径就代表了一个字符串．举个例子，$1\to4\to 8\to 12$ 表示的就是字符串 `caa`．
+You can see that this trie uses edges to represent letters, and the path from the root to any node represents a string. For example, $1\to4\to 8\to 12$ represents the string `caa`.
 
-trie 的结构非常好懂，我们用 $\delta(u,c)$ 表示结点 $u$ 的 $c$ 字符指向的下一个结点，或者说是结点 $u$ 代表的字符串后面添加一个字符 $c$ 形成的字符串的结点．（$c$ 的取值范围和字符集大小有关，不一定是 $0\sim 26$．）
+The structure of a trie is easy to understand. We use $\delta(u,c)$ to denote the next node that node $u$ points to by character $c$, or in other words, the node of the string formed by appending character $c$ to the string of node $u$. (The range of $c$ depends on the alphabet size and is not necessarily $0\sim 26$.)
 
-有时需要标记插入进 trie 的是哪些字符串，每次插入完成时在这个字符串所代表的节点处打上标记即可．
+Sometimes we need to mark which strings were inserted into the trie. Just put a mark on the node representing each string when its insertion finishes.
 
-## 实现
+## Implementation
 
-放一个结构体封装的模板：
+Here is a template wrapped in a struct:
 
 === "C++"
     ```cpp
     struct trie {
       int nex[100000][26], cnt;
-      bool exist[100000];  // 该结点结尾的字符串是否存在
+      bool exist[100000];  // whether a string ending at this node exists
     
-      void insert(char *s, int l) {  // 插入字符串
+      void insert(char *s, int l) {  // insert a string
         int p = 0;
         for (int i = 0; i < l; i++) {
           int c = s[i] - 'a';
-          if (!nex[p][c]) nex[p][c] = ++cnt;  // 如果没有，就添加结点
+          if (!nex[p][c]) nex[p][c] = ++cnt;  // if it does not exist, add a node
           p = nex[p][c];
         }
         exist[p] = true;
       }
     
-      bool find(char *s, int l) {  // 查找字符串
+      bool find(char *s, int l) {  // look up a string
         int p = 0;
         for (int i = 0; i < l; i++) {
           int c = s[i] - 'a';
@@ -52,19 +52,19 @@ trie 的结构非常好懂，我们用 $\delta(u,c)$ 表示结点 $u$ 的 $c$ �
         def __init__(self):
             self.nex = [[0 for i in range(26)] for j in range(100000)]
             self.cnt = 0
-            self.exist = [False] * 100000  # 该结点结尾的字符串是否存在
+            self.exist = [False] * 100000  # whether a string ending at this node exists
     
-        def insert(self, s):  # 插入字符串
+        def insert(self, s):  # insert a string
             p = 0
             for i in s:
                 c = ord(i) - ord("a")
                 if not self.nex[p][c]:
                     self.cnt += 1
-                    self.nex[p][c] = self.cnt  # 如果没有，就添加结点
+                    self.nex[p][c] = self.cnt  # if it does not exist, add a node
                 p = self.nex[p][c]
             self.exist[p] = True
     
-        def find(self, s):  # 查找字符串
+        def find(self, s):  # look up a string
             p = 0
             for i in s:
                 c = ord(i) - ord("a")
@@ -109,71 +109,71 @@ trie 的结构非常好懂，我们用 $\delta(u,c)$ 表示结点 $u$ 的 $c$ �
     }
     ```
 
-## 应用
+## Applications
 
-### 检索字符串
+### Looking up strings
 
-字典树最基础的应用——查找一个字符串是否在「字典」中出现过．
+The most basic use of a trie: checking whether a string appears in the "dictionary".
 
-???+ note "[于是他错误的点名开始了](https://www.luogu.com.cn/problem/P2580)"
-    给你 $n$ 个名字串，然后进行 $m$ 次点名，每次你需要回答「名字不存在」、「第一次点到这个名字」、「已经点过这个名字」之一．
+???+ note "[And So His Wrong Roll Call Began](https://www.luogu.com.cn/problem/P2580)"
+    You are given $n$ names, and then there are $m$ roll calls. For each one, you must answer one of "the name does not exist", "this name is called for the first time", or "this name has already been called".
     
-    $1\le n\le 10^4$，$1\le m\le 10^5$，所有字符串长度不超过 $50$．
+    $1\le n\le 10^4$, $1\le m\le 10^5$, and every string has length at most $50$.
     
-    ??? note "题解"
-        对所有名字建 trie，再在 trie 中查询字符串是否存在、是否已经点过名，第一次点名时标记为点过名．
+    ??? note "Solution"
+        Build a trie of all the names. Then query the trie to check whether a string exists and whether it has already been called; mark it as called the first time it is called.
     
-    ??? note "参考代码"
+    ??? note "Reference code"
         ```cpp
         --8<-- "docs/string/code/trie/trie_1.cpp"
         ```
 
-### AC 自动机
+### Aho–Corasick automaton
 
-trie 是 [AC 自动机](./ac-automaton.md) 的一部分．
+A trie is part of the [Aho–Corasick automaton](./ac-automaton.md).
 
-### 维护异或极值
+### Maximum XOR
 
-将数的二进制表示看做一个字符串，就可以建出字符集为 $\{0,1\}$ 的 trie 树．
+Treat the binary representation of a number as a string, and you can build a trie over the alphabet $\{0,1\}$.
 
-???+ note "[BZOJ1954 最长异或路径](https://hydro.ac/p/bzoj-P1954)"
-    给你一棵带边权的树，求 $(u, v)$ 使得 $u$ 到 $v$ 的路径上的边权异或和最大，输出这个最大值．这里的异或和指的是所有边权的异或．
+???+ note "[BZOJ1954 Longest XOR Path](https://hydro.ac/p/bzoj-P1954)"
+    You are given a tree with edge weights. Find $(u, v)$ such that the XOR sum of edge weights on the path from $u$ to $v$ is maximum, and output this maximum. Here the XOR sum means the XOR of all edge weights.
     
-    点数不超过 $10^5$，边权在 $[0,2^{31})$ 内．
+    There are at most $10^5$ vertices, and edge weights are in $[0,2^{31})$.
     
-    ??? note "题解"
-        随便指定一个根 $root$，用 $T(u, v)$ 表示 $u$ 和 $v$ 之间的路径的边权异或和，那么 $T(u,v)=T(root, u)\oplus T(root,v)$，因为 [LCA](../graph/lca.md) 以上的部分异或两次抵消了．
+    ??? note "Solution"
+        Pick any vertex as the root $root$. Let $T(u, v)$ be the XOR sum of edge weights on the path between $u$ and $v$. Then $T(u,v)=T(root, u)\oplus T(root,v)$, because the part above the [LCA](../graph/lca.md) is XORed twice and cancels out.
         
-        那么，如果将所有 $T(root, u)$ 插入到一棵 trie 中，就可以对每个 $T(root, u)$ 快速求出和它异或和最大的 $T(root, v)$：
+        So if we insert all $T(root, u)$ into a trie, then for each $T(root, u)$ we can quickly find the $T(root, v)$ whose XOR with it is the largest:
         
-        从 trie 的根开始，如果能向和 $T(root, u)$ 的当前位不同的子树走，就向那边走，否则没有选择．
+        Start from the root of the trie. If we can go into the subtree whose current bit differs from the current bit of $T(root, u)$, go there; otherwise we have no choice.
         
-        贪心的正确性：如果这么走，这一位为 $1$；如果不这么走，这一位就会为 $0$．而高位是需要优先尽量大的．
+        Why this greedy is correct: if we go that way, this bit is $1$; if we don't, this bit becomes $0$. And higher bits should be made as large as possible first.
     
-    ??? note "参考代码"
+    ??? note "Reference code"
         ```cpp
         --8<-- "docs/string/code/trie/trie_2.cpp"
         ```
 
-### 维护异或和
+### Maintaining XOR sums
 
-01-trie 是指字符集为 $\{0,1\}$ 的 trie．01-trie 可以用来维护一些数字的异或和，支持修改（删除 + 重新插入），和全局加一（即：让其所维护所有数值递增 `1`，本质上是一种特殊的修改操作）．
+A 01-trie is a trie over the alphabet $\{0,1\}$. A 01-trie can maintain the XOR sum of a set of numbers, and supports modification (delete + reinsert) and global increment (i.e., increasing every value it stores by `1`, which is really a special kind of modification).
 
-如果要维护异或和，需要按值从低位到高位建立 trie．
+To maintain XOR sums, build the trie from the lowest bit of each value to the highest.
 
-**一个约定**：文中说当前节点 **往上** 指当前节点到根这条路径，当前节点 **往下** 指当前结点的子树．
+**A convention**: in this text, **above** the current node means the path from the current node to the root, and **below** the current node means the subtree of the current node.
 
-#### 插入 & 删除
+#### Insertion & deletion
 
-如果要维护异或和，我们 **只需要** 知道某一位上 `0` 和 `1` 个数的 **奇偶性** 即可，也就是对于数字 `1` 来说，当且仅当这一位上数字 `1` 的个数为奇数时，这一位上的数字才是 `1`，请时刻记住这段文字：如果只是维护异或和，我们只需要知道某一位上 `1` 的数量即可，而不需要知道 trie 到底维护了哪些数字．
+To maintain the XOR sum, we **only** need to know the **parity** of the number of `0`s and `1`s at each bit. That is, the XOR has a `1` at a bit if and only if the number of `1`s at that bit is odd. Always keep this in mind: if we only maintain the XOR sum, we only need to know the number of `1`s at each bit, not which exact numbers the trie stores.
 
-对于每一个节点，我们需要记录以下三个量：
+For each node, we record the following three quantities:
 
--   `ch[o][0/1]` 指节点 `o` 的两个儿子，`ch[o][0]` 指下一位是 `0`，同理 `ch[o][1]` 指下一位是 `1`．
--   `w[o]` 指节点 `o` 到其父亲节点这条边上数值的数量（权值）．每插入一个数字 `x`，`x` 二进制拆分后在 trie 上 路径的权值都会 `+1`．
--   `xorv[o]` 指以 `o` 为根的子树维护的异或和．
+-   `ch[o][0/1]` are the two children of node `o`: `ch[o][0]` means the next bit is `0`, and likewise `ch[o][1]` means the next bit is `1`.
+-   `w[o]` is the number of values on the edge from node `o` to its parent (its weight). Each time a number `x` is inserted, the weight of every edge on its binary path in the trie increases by `1`.
+-   `xorv[o]` is the XOR sum maintained by the subtree rooted at `o`.
 
-具体维护结点的代码如下所示．
+The code that maintains a node is shown below.
 
 ```cpp
 void maintain(int o) {
@@ -187,19 +187,19 @@ void maintain(int o) {
     xorv[o] ^= (xorv[ch[o][1]] << 1) | (w[ch[o][1]] & 1);
   }
   // w[o] = w[o] & 1;
-  // 只需知道奇偶性即可，不需要具体的值．当然这句话删掉也可以，因为上文就只利用了他的奇偶性．
+  // We only need the parity, not the exact value. You can also delete this line, since the code above only uses its parity.
 }
 ```
 
-插入和删除的代码非常相似．
+The code for insertion and deletion is very similar.
 
-需要注意的地方就是：
+Things to note:
 
--   这里的 `MAXH` 指 trie 的深度，也就是强制让每一个叶子节点到根的距离为 `MAXH`．对于一些比较小的值，可能有时候不需要建立这么深（例如：如果插入数字 `4`，分解成二进制后为 `100`，从根开始插入 `001` 这三位即可），但是我们强制插入 `MAXH` 位．这样做的目的是为了便于全局 `+1` 时处理进位．例如：如果原数字是 `3`（`11`），递增之后变成 `4`（`100`），如果当初插入 `3` 时只插入了 `2` 位，那这里的进位就没了．
+-   Here `MAXH` is the depth of the trie, i.e., we force every leaf to be at distance `MAXH` from the root. For small values, we sometimes would not need to go this deep (for example, inserting `4`, which is `100` in binary, only needs the three bits `001` starting from the root), but we always insert `MAXH` bits. This makes it easy to handle carries during a global `+1`. For example, if the original number is `3` (`11`), it becomes `4` (`100`) after incrementing; if we had inserted only `2` bits when inserting `3`, this carry would be lost.
 
--   插入和删除，只需要修改叶子节点的 `w[]` 即可，在回溯的过程中一路维护即可．
+-   For insertion and deletion, we only need to change `w[]` of the leaf, and then maintain the values on the way back up.
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     namespace trie {
     constexpr int MAXH = 21;
@@ -240,11 +240,11 @@ void maintain(int o) {
     }  // namespace trie
     ```
 
-#### 全局加一
+#### Global increment
 
-所谓全局加一就是指，让这棵 trie 中所有的数值 `+1`．
+Global increment means adding `1` to every value in the trie.
 
-形式化的讲，设 trie 中维护的数值有 $V_1, V_2, V_3 \dots V_n$, 全局加一后 其中维护的值应该变成 $V_1+1, V_2+1, V_3+1 \dots V_n+1$
+Formally, if the values stored in the trie are $V_1, V_2, V_3 \dots V_n$, then after a global increment they should become $V_1+1, V_2+1, V_3+1 \dots V_n+1$.
 
 ```cpp
 void addall(int o) {
@@ -254,13 +254,13 @@ void addall(int o) {
 }
 ```
 
-##### 过程
+##### Process
 
-我们思考一下二进制意义下 `+1` 是如何操作的．
+Let's think about how `+1` works in binary.
 
-我们只需要从低位到高位开始找第一个出现的 `0`，把它变成 `1`，然后这个位置后面的 `1` 都变成 `0` 即可．
+We just find the first `0` going from the lowest bit up, change it to `1`, and change all the `1`s below that position to `0`.
 
-下面给出几个例子感受一下：（括号内的数字表示其对应的十进制数字）
+Here are a few examples to get a feel for it (the number in parentheses is the decimal value):
 
     1000(8)  + 1 = 1001(9)  ;
     10011(19) + 1 = 10100(20) ;
@@ -268,47 +268,47 @@ void addall(int o) {
     10101(21) + 1 = 10110(22) ;
     100000000111111(16447) + 1 = 100000001000000(16448);
 
-对应 trie 的操作，其实就是交换其左右儿子，顺着 **交换后** 的 `0` 边往下递归操作即可．
+In the trie, this simply means swapping the left and right children, and then recursing down along the `0` edge **after the swap**.
 
-回顾一下 `w[o]` 的定义：`w[o]` 指节点 `o` 到其父亲节点这条边上数值的数量（权值）．
+Recall the definition of `w[o]`: `w[o]` is the number of values on the edge from node `o` to its parent (its weight).
 
-有没有感觉这个定义有点怪呢？如果在父亲结点存储到两个儿子的这条边的边权也许会更接近于习惯．但是在这里，在交换左右儿子的时候，在儿子结点存储到父亲这条边的距离，显然更加方便．
+Does this definition feel a bit odd? Storing the weights of the edges to the two children in the parent node might feel more natural. But here, since we swap the left and right children, storing the weight of the edge to the parent in the child node is clearly more convenient.
 
-### 01-trie 合并
+### Merging 01-tries
 
-指的是将上述的两个 01-trie 进行合并，同时合并维护的信息．
+This means merging two 01-tries like the ones above, along with the information they maintain.
 
-可能关于合并 trie 的文章比较少，其实合并 trie 和合并线段树的思路非常相似，可以搜索「合并线段树」来学习如何合并 trie．
+There may not be many articles about merging tries, but merging tries is very similar to merging segment trees. You can search for "segment tree merging" to learn how to merge tries.
 
-其实合并 trie 非常简单，就是考虑一下我们有一个 `int merge(int a, int b)` 函数，这个函数传入两个 trie 树位于同一相对位置的结点编号，然后合并完成后返回合并完成的结点编号．
+Merging tries is actually quite simple. Imagine a function `int merge(int a, int b)` that takes the node indices of two tries at the same relative position, merges them, and returns the index of the merged node.
 
-#### 过程
+#### Process
 
-考虑怎么实现？
+How do we implement it?
 
-分三种情况：
+There are three cases:
 
--   如果 `a` 没有这个位置上的结点，新合并的结点就是 `b`
--   如果 `b` 没有这个位置上的结点，新合并的结点就是 `a`
--   如果 `a`,`b` 都存在，那就把 `b` 的信息合并到 `a` 上，新合并的结点就是 `a`，然后递归操作处理 a 的左右儿子．
+-   If `a` has no node at this position, the merged node is `b`.
+-   If `b` has no node at this position, the merged node is `a`.
+-   If both `a` and `b` exist, merge the information of `b` into `a`; the merged node is `a`. Then recursively handle the left and right children of a.
 
-    **提示**：如果需要的合并是将 a，b 合并到一棵新树上，这里可以新建结点，然后合并到这个新结点上，这里的代码实现仅仅是将 b 的信息合并到 a 上．
+    **Hint**: if you need to merge a and b into a new tree, you can create a new node here and merge into it. The code below only merges the information of b into a.
 
-#### 实现
+#### Implementation
 
 ```cpp
 int merge(int a, int b) {
-  if (!a) return b;  // 如果 a 没有这个位置上的结点，返回 b
-  if (!b) return a;  // 如果 b 没有这个位置上的结点，返回 a
+  if (!a) return b;  // if a has no node at this position, return b
+  if (!b) return a;  // if b has no node at this position, return a
   /*
-    如果 `a`, `b` 都存在，
-    那就把 `b` 的信息合并到 `a` 上．
+    If both `a` and `b` exist,
+    merge the information of `b` into `a`.
   */
   w[a] = w[a] + w[b];
   xorv[a] ^= xorv[b];
-  /* 不要使用 maintain()，
-    maintain() 是合并a的两个儿子的信息
-    而这里需要 a b 两个节点进行信息合并
+  /* Do not use maintain():
+    maintain() merges the information of a's two children,
+    but here we need to merge the information of nodes a and b
    */
   ch[a][0] = merge(ch[a][0], ch[b][0]);
   ch[a][1] = merge(ch[a][1], ch[b][1]);
@@ -316,41 +316,41 @@ int merge(int a, int b) {
 }
 ```
 
-其实 trie 都可以合并，换句话说，trie 合并不仅仅限于 01-trie．
+In fact, any trie can be merged; in other words, trie merging is not limited to 01-tries.
 
-???+ note "[【luogu-P6018】【Ynoi2010】Fusion tree](https://www.luogu.com.cn/problem/P6018)"
-    给你一棵 $n$ 个结点的树，每个结点有权值．$m$ 次操作．
-    需要支持以下操作．
+???+ note "[[Luogu P6018] [Ynoi2010] Fusion tree](https://www.luogu.com.cn/problem/P6018)"
+    You are given a tree with $n$ nodes, each with a weight. There are $m$ operations.
+    The following operations must be supported:
     
-    -   将树上与一个节点 $x$ 距离为 $1$ 的节点上的权值 $+1$．这里树上两点间的距离定义为从一点出发到另外一点的最短路径上边的条数．
+    -   Add $1$ to the weight of every node at distance $1$ from a node $x$. Here the distance between two nodes in the tree is the number of edges on the shortest path between them.
     
-    -   在一个节点 $x$ 上的权值 $-v$．
+    -   Subtract $v$ from the weight of a node $x$.
     
-    -   询问树上与一个节点 $x$ 距离为 $1$ 的所有节点上的权值的异或和．
-        对于 $100\%$ 的数据，满足 $1\le n \le 5\times 10^5$，$1\le m \le 5\times 10^5$，$0\le a_i \le 10^5$，$1 \le x \le n$，$opt\in\{1,2,3\}$．
-        保证任意时刻每个节点的权值非负．
+    -   Query the XOR sum of the weights of all nodes at distance $1$ from a node $x$.
+        For $100\%$ of the data, $1\le n \le 5\times 10^5$, $1\le m \le 5\times 10^5$, $0\le a_i \le 10^5$, $1 \le x \le n$, $opt\in\{1,2,3\}$.
+        It is guaranteed that every node's weight is non-negative at all times.
     
-    ??? note "题解"
-        每个结点建立一棵 trie 维护其儿子的权值，trie 应该支持全局加一．
-        可以使用在每一个结点上设置懒标记来标记儿子的权值的增加量．
+    ??? note "Solution"
+        For each node, build a trie storing the weights of its children; the trie should support global increment.
+        You can put a lazy tag on each node to record how much its children's weights have increased.
     
-    ??? note "参考代码"
+    ??? note "Reference code"
         ```cpp
         --8<-- "docs/string/code/trie/trie_3.cpp"
         ```
 
-???+ note "[【luogu-P6623】【省选联考 2020 A 卷】树](https://www.luogu.com.cn/problem/P6623)"
-    给定一棵 $n$ 个结点的有根树 $T$，结点从 $1$ 开始编号，根结点为 $1$ 号结点，每个结点有一个正整数权值 $v_i$．
-    设 $x$ 号结点的子树内（包含 $x$ 自身）的所有结点编号为 $c_1,c_2,\dots,c_k$，定义 $x$ 的价值为：  
-    $val(x)=(v_{c_1}+d(c_1,x)) \oplus (v_{c_2}+d(c_2,x)) \oplus \cdots \oplus (v_{c_k}+d(c_k, x))$ 其中 $d(x,y)$．  
-    表示树上 $x$ 号结点与 $y$ 号结点间唯一简单路径所包含的边数，$d(x,x) = 0$．$\oplus$ 表示异或运算．
-    请你求出 $\sum\limits_{i=1}^n val(i)$ 的结果．
+???+ note "[[Luogu P6623] [Provincial Selection Joint Exam 2020 Paper A] Tree](https://www.luogu.com.cn/problem/P6623)"
+    You are given a rooted tree $T$ with $n$ nodes, numbered from $1$, with node $1$ as the root. Each node has a positive integer weight $v_i$.
+    Let the nodes in the subtree of node $x$ (including $x$ itself) be $c_1,c_2,\dots,c_k$. Define the value of $x$ as:  
+    $val(x)=(v_{c_1}+d(c_1,x)) \oplus (v_{c_2}+d(c_2,x)) \oplus \cdots \oplus (v_{c_k}+d(c_k, x))$, where $d(x,y)$  
+    is the number of edges on the unique simple path between nodes $x$ and $y$ in the tree, and $d(x,x) = 0$. $\oplus$ denotes XOR.
+    Find the value of $\sum\limits_{i=1}^n val(i)$.
     
-    ??? note "题解"
-        考虑每个结点对其所有祖先的贡献．
-        每个结点建立 trie，初始先只存这个结点的权值，然后从底向上合并每个儿子结点上的 trie，然后再全局加一，完成后统计答案．
+    ??? note "Solution"
+        Consider the contribution of each node to all its ancestors.
+        Build a trie for each node, initially storing only that node's weight. Then, from the bottom up, merge the tries of each child into it, apply a global increment, and then add up the answer.
     
-    ??? note "参考代码"
+    ??? note "Reference code"
         ```cpp
         constexpr int _ = 526010;
         int n;
@@ -430,6 +430,6 @@ int merge(int a, int b) {
         }
         ```
 
-### 可持久化字典树
+### Persistent trie
 
-参见 [可持久化字典树](../ds/persistent-trie.md)．
+See [Persistent trie](../ds/persistent-trie.md).

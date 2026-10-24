@@ -1,39 +1,39 @@
-后缀树是一种维护一个字符串所有后缀的数据结构．
+A suffix tree is a data structure that stores all suffixes of a string.
 
-## 一些记号
+## Notation
 
-记构建后缀树的母串为 $S$，长度为 $n$，字符集为 $\Sigma$．
+Let $S$ be the string we build the suffix tree for, with length $n$ and alphabet $\Sigma$.
 
-令 $S[i]$ 表示 $S$ 中的第 $i$ 个字符，其中 $1 \le i \le n$．
+Let $S[i]$ denote the $i$-th character of $S$, where $1 \le i \le n$.
 
-令 $S [l, r]$ 表示 $S$ 中第 $l$ 个字符至第 $r$ 个字符组成的字符串，称为 $S$ 的一个子串．
+Let $S [l, r]$ denote the string made of the $l$-th through $r$-th characters of $S$; it is called a substring of $S$.
 
-记 $S [i, n]$ 为 $S$ 的以 $i$ 开头的后缀，$S [1, i]$ 为 $S$ 的以 $i$ 结尾的前缀．
+Let $S [i, n]$ be the suffix of $S$ starting at $i$, and $S [1, i]$ be the prefix of $S$ ending at $i$.
 
-## 定义
+## Definition
 
-定义字符串 $S$ 的 **后缀 trie** 为将 S 的所有后缀插入至 trie 树中得到的字典树．在后缀 trie 中，节点 x 对应的字符串为从根节点走到 x 的路径上经过的字符拼接而成的字符串．记后
-缀 trie 中所有对应 $S$ 的某个后缀的节点为后缀节点．
+The **suffix trie** of a string $S$ is the trie obtained by inserting all suffixes of S into a trie. In the suffix trie, the string of a node x is the string formed by the characters on the path from the root to x. Nodes in the suffix trie whose string is some
+suffix of $S$ are called suffix nodes.
 
-容易看出后缀 trie 的优越性质：它的非根节点恰好能接受 $S$ 的所有本质不同非空子串．但构建后缀 trie 的时空复杂度均为 $O(n^2)$，在很多情况下不能接受，所以我们引入后缀树的概念．
+The suffix trie has a nice property: its non-root nodes accept exactly all distinct non-empty substrings of $S$. But building a suffix trie takes $O(n^2)$ time and space, which is often too much, so we introduce the suffix tree.
 
-如果令后缀 trie 中所有拥有多于一个儿子的节点和后缀节点为关键点，定义只保留关键点，将非关键点形成的链压缩成一条边形成的压缩 trie 树为 **后缀树 (Suffix Tree)**．如果仅令后缀 trie 中所有拥有多于一个儿子的节点和叶结点为关键点，定义只保留关键点形成的压缩 trie 树为 **隐式后缀树 (Implicit Suffix Tree)**．容易看出隐式后缀树为后缀树进一步压缩后得到的结果．
+Call a node of the suffix trie a key node if it has more than one child or it is a suffix node. Keep only the key nodes and compress each chain of non-key nodes into a single edge; the resulting compressed trie is the **suffix tree**. If instead we call a node a key node only if it has more than one child or it is a leaf, then the compressed trie that keeps only these key nodes is the **implicit suffix tree**. Clearly, the implicit suffix tree is a further compressed version of the suffix tree.
 
-在后缀树和隐式后缀树中，每条边对应一个字符串；每个非根节点 $x$ 对应了一个字符串集合，为从根节点走到 $x$ 的父亲节点 $fa_x$ 经过的字符串，拼接上 $fa_x$ 至 $x$ 的树边对应的字符串的任意一个非空前缀，称为 $str_x$．同时，在隐式后缀树中，称一个没有对应任何节点的后缀为 **隐式后缀**．
+In the suffix tree and the implicit suffix tree, each edge corresponds to a string. Each non-root node $x$ corresponds to a set of strings: take the string on the path from the root to $x$'s parent $fa_x$, then append any non-empty prefix of the string on the edge from $fa_x$ to $x$. We call this $str_x$. Also, in the implicit suffix tree, a suffix that does not correspond to any node is called an **implicit suffix**.
 
-下图从左至右分别为以字符串 $\texttt{cabab}$ 为母串构建的后缀 trie、后缀树和隐式后缀树．
+The figure below shows, from left to right, the suffix trie, the suffix tree and the implicit suffix tree of the string $\texttt{cabab}$.
 
 ![suffix-tree\_cabab1.png](./images/suffix-tree1.png)
 
-考虑将 $S$ 的后缀逐个插入至后缀 trie 中．从第二次插入开始，每次最多新增一个拥有多于一个儿子的节点和一个后缀节点，所以后缀树中节点个数最多为 $2n$ 个，十分优秀．
+Consider inserting the suffixes of $S$ into the suffix trie one by one. From the second insertion on, each insertion adds at most one node with more than one child and one suffix node. So the suffix tree has at most $2n$ nodes, which is very good.
 
-## 后缀树的建立
+## Building the suffix tree
 
-### 支持前端动态添加字符的算法
+### An algorithm that supports adding characters at the front
 
-反串建 SAM 建出的 parent 树就是这个串的后缀树，所以我们将反串的字符逐个加入 SAM 即可．
+The parent tree of the SAM built on the reversed string is exactly the suffix tree of the string. So we just add the characters of the reversed string to a SAM one by one.
 
-???+ note "参考实现"
+???+ note "Reference implementation"
     ```cpp
     struct SuffixAutomaton {
       int tot, lst;
@@ -70,72 +70,72 @@
     } SAM;
     ```
 
-### 支持后端动态添加字符的算法
+### An algorithm that supports adding characters at the end
 
-Ukkonen 算法是一种增量构造算法．我们依次向树中插入串 $S$ 的每一个字符，并在每一次插入之后正确地维护当前的后缀树．
+Ukkonen's algorithm is an incremental construction algorithm. We insert the characters of $S$ into the tree one at a time, and after each insertion we correctly maintain the current suffix tree.
 
-#### 朴素算法
+#### The naive algorithm
 
-首先介绍一下一种较为暴力的构建方式，我们用字符串 $\texttt {abbbc}$ 来演示一下构建的过程．
+First, let's look at a fairly brute-force way to build it. We use the string $\texttt {abbbc}$ to show the process.
 
-初始建立一个根节点，称为 $0$ 号节点．同时每条边我们维护一个区间 $[l,r]$ 表示这条边上的字符串为 $S[l,r]$．另外，维护已经插入的字符个数 $m$，初始为 $0$．
+Start with a root node, called node $0$. For each edge we keep an interval $[l,r]$, meaning the string on this edge is $S[l,r]$. We also keep $m$, the number of characters inserted so far, initially $0$.
 
-首先插入字符 $\texttt a$，直接从 $0$ 号节点伸出一条边，标为 $[1,\infty]$，指向一个新建的节点．这里的 $\infty$ 是一个极大值，可理解为串的结尾，这样在插入新字符时，这条边会自动的包含新的字符．
+First insert the character $\texttt a$: add an edge from node $0$ labeled $[1,\infty]$, pointing to a new node. Here $\infty$ is a very large value, which you can think of as the end of the string. This way, when new characters are inserted, this edge automatically includes them.
 
 ![suffix-tree\_a.webp](./images/suffix-tree2.webp)
 
-接下来我们插入字符 $\texttt b$，同样从 $0$ 伸出一条边，标为 $[2,\infty⁡]$．注意到之前延伸出的边 $[1,\infty]$ 的意义自动地发生了变化，随着串结尾的改变，其表示的串从 $\texttt a$ 变为了 $\texttt {ab}$．这样是正确的，因为之前所有后缀都已经以一个叶节点的形式出现在树中，只需要向所有叶节点的末端插入一个当前字符即可．
+Next we insert the character $\texttt b$. Again we add an edge from $0$, labeled $[2,\infty⁡]$. Notice that the meaning of the earlier edge $[1,\infty]$ changes automatically: as the end of the string moves, the string it represents changes from $\texttt a$ to $\texttt {ab}$. This is correct, because all earlier suffixes already appear in the tree as leaves, and we only need to append the current character to the end of every leaf.
 
 ![suffix-tree\_ab.webp](./images/suffix-tree3.webp)
 
-接下来，我们要再次插入一个字符 $\texttt b$，但是 $\texttt b$ 是之前已经插入的字符串的一个子串，因此原树已经包含 $\texttt b$，此时，我们什么都不做，记录一个 $k$ 表示 $S[k,m]$ 是当前最长的隐式后缀．
+Next we insert another $\texttt b$. But $\texttt b$ is a substring of the string inserted so far, so the tree already contains $\texttt b$. In this case we do nothing, and record $k$ such that $S[k,m]$ is the current longest implicit suffix.
 
 ![suffix-tree\_abb.webp](./images/suffix-tree4.webp)
 
-接下来我们插入另一个 $\texttt b$．因为前一个 $\texttt b$ 没有插入成功，此时 $k=3$，代表要插入的后缀为 $\texttt {bb}$．我们从根开始向下寻找 $\texttt {bb}$，发现也在原树之中．同样，我们还是什么都不做．
+Next we insert one more $\texttt b$. Since the previous $\texttt b$ was not inserted, now $k=3$, meaning the suffix to insert is $\texttt {bb}$. We search for $\texttt {bb}$ from the root and find that it is also already in the tree. So again, we do nothing.
 
 ![suffix-tree\_abbb.webp](./images/suffix-tree5.webp)
 
-注意到我们没有管 $k$ 之后的后缀．因为如果 $S[k,m]$ 是一个隐式后缀，那么对于 $l>k$，$S[l,m]$ 都是隐式后缀．因为由 $S[k,m]$ 为隐式后缀可知，存在字符 $c$ 使得 $S[k, m] + c$ 为 $S$ 的子串，所以 $S [ l, m] + c$ 也为 $S$ 的子串，由隐式后缀树的定义可知 $S[ l, m]$ 也不作为叶结点出现．
+Notice that we ignore the suffixes after $k$. This is because if $S[k,m]$ is an implicit suffix, then $S[l,m]$ is also an implicit suffix for every $l>k$. Since $S[k,m]$ is an implicit suffix, there is a character $c$ such that $S[k, m] + c$ is a substring of $S$. So $S [ l, m] + c$ is also a substring of $S$, and by the definition of the implicit suffix tree, $S[ l, m]$ does not appear as a leaf either.
 
-接下来我们插入 $\texttt c$，此时 $k=3$，因此我们需要沿着根向下寻找 $\texttt {bbc}$，发现不在原树中．我们需要在 $\texttt {bb}$ 处代表的节点延伸出一条为 $[5,\infty]$ 的出边．但发现这个节点其实不存在，而是包含在一条边中，因此我们需要分裂这条边，创建一个新节点，再在创建的节点处伸展出我们要创建的出边．此时成功插入，令 $k\to k+1$，因为 $S[k,m]$ 不再是隐式后缀．
+Next we insert $\texttt c$. Now $k=3$, so we search down from the root for $\texttt {bbc}$ and find that it is not in the tree. We need to add an outgoing edge $[5,\infty]$ from the node representing $\texttt {bb}$. But this node does not actually exist; it lies in the middle of an edge. So we split that edge, create a new node, and add the new outgoing edge from the created node. The insertion succeeds, so we set $k\to k+1$, since $S[k,m]$ is no longer an implicit suffix.
 
 ![suffix-tree\_abbbc1.webp](./images/suffix-tree6.webp)
 
-接下来，因为 $k$ 变化了，我们重复这个过程，直到再次出现隐式后缀，或 $k>m$（在这个例子中，是后者）．
+Since $k$ has changed, we repeat this process until an implicit suffix appears again, or $k>m$ (in this example, the latter).
 
 ![suffix-tree\_abbbc2.webp](./images/suffix-tree7.webp)
 
-构建过程结束．
+The construction is done.
 
-该算法每次暴力从根向下寻找并插入的复杂度最坏为 $O(n)$，所以总的复杂度为 $O(n^2)$．
+Each brute-force search and insertion from the root costs $O(n)$ in the worst case, so the total complexity is $O(n^2)$.
 
-#### 后缀链接
+#### Suffix links
 
-朴素算法慢主要是因为每次 extend 都要从根找到最长隐式后缀的插入位置．所以考虑把这个位置记下来．首先，我们采用一个二元组 $(now,rem)$ 来描述当前这个最长的被隐式包含的后缀 $S[k,m]$．沿着节点 $now$ 的开头为 $S[m-rem+1]$ 的出边走长度 $rem$ 到达的位置应该唯一表示一个字符串，每次插入新的字符时，我们只需要从 $now$ 和 $rem$ 描述的位置查找即可．
+The naive algorithm is slow mainly because every extend has to search from the root for the insertion position of the longest implicit suffix. So we remember this position. We use a pair $(now,rem)$ to describe the current longest implicitly contained suffix $S[k,m]$: starting at node $now$, take the outgoing edge that begins with $S[m-rem+1]$ and walk a length of $rem$; the position reached represents a unique string. When inserting a new character, we only need to search from the position described by $now$ and $rem$.
 
-现在，我们只需要在 $k\to k + 1$ 时更新 $(now,rem)$．此时如果 $now=0$，只需要让 $rem \to rem-1$，因为下一个要插入的后缀是刚才插入的长度 $-1$．否则，设 $str_{now}$ 对应的子串为 $S[l,r]$，我们需要找到一个节点 $now'$ 对应 $S[l+1,r]$，令 $now\to now'$ 即可．
+Now we only need to update $(now,rem)$ when $k\to k + 1$. If $now=0$, we just set $rem \to rem-1$, because the next suffix to insert is one shorter than the one just inserted. Otherwise, let the substring of $str_{now}$ be $S[l,r]$; we need to find a node $now'$ corresponding to $S[l+1,r]$ and set $now\to now'$.
 
-首先有引理：对隐式后缀树中任意非叶非根节点 $x$，在树中存在另一非叶节点 $y$，使得 $str_y$ 是 $str_x$ 对应的子串删去开头的字符．
+First, a lemma: for any node $x$ in the implicit suffix tree that is neither a leaf nor the root, there is another non-leaf node $y$ in the tree such that $str_y$ is the substring of $str_x$ with its first character removed.
 
-证明．令 $s$ 表示 $str_x$ 删去开头字符形成的字符串．由隐式后缀树的定义可知，存在两个不同的字符 $c_1,c_2$，满足 $str_x + c1$ 与 $str_x + c_2$ 均为 $S$ 的子串．所以，$s + c_1$ 与 $s + c_2$ 也为 $S$ 的子串，所以 $s$ 在后缀 trie 中也对应了一个有分叉的关键点，即在隐式后缀 trie 中存在 $y$ 使得 $str_y=s$．证毕．
+Proof. Let $s$ be the string obtained by removing the first character of $str_x$. By the definition of the implicit suffix tree, there are two different characters $c_1,c_2$ such that both $str_x + c1$ and $str_x + c_2$ are substrings of $S$. So $s + c_1$ and $s + c_2$ are also substrings of $S$, which means $s$ also corresponds to a branching key node in the suffix trie, i.e., there is a $y$ in the implicit suffix trie with $str_y=s$. This completes the proof.
 
-由该引理，我们定义 $\operatorname{Link}(x)=y$，称为 x 的 **后缀链接 (Suffix Link)**．于是 $now'=\operatorname{Link}(now)$ 一定存在．现在我们只要能求出隐式后缀树中所有非根非叶节点的 $\operatorname{Link}$ 即可．
+By this lemma, we define $\operatorname{Link}(x)=y$, called the **suffix link** of x. So $now'=\operatorname{Link}(now)$ always exists. Now we just need to compute $\operatorname{Link}$ for every node of the implicit suffix tree that is neither the root nor a leaf.
 
-#### Ukkonen 算法
+#### Ukkonen's algorithm
 
-Ukkonen 算法的整体流程如下：
+The overall process of Ukkonen's algorithm is as follows.
 
-为了构建隐式后缀树，我们从前往后加入 $S$ 中的字符．假设根节点为 $0$，且当前已经建出 $S[1, m]$ 的隐式后缀树且维护好了后缀链接．$S [1, m]$ 的最长隐式后缀为 $S [k, m]$，在树中的位置为 $(now, rem)$．设 $S [m + 1] = x$, 现在我们需要加入字符 $x$．此时，$S [1, m]$ 的每一个后缀都需要在末尾添加字符 $x$．由于所有显式后缀都对应树中某个叶结点，它们父边右端点为 $\infty$，无需维护．所以，现在我们只用考虑隐式后缀末尾添加 x 对树的形态产生的影响．首先考虑 $S [k, m]$，有两种情况：
+To build the implicit suffix tree, we add the characters of $S$ from front to back. Suppose the root is $0$, and we have already built the implicit suffix tree of $S[1, m]$ with its suffix links. The longest implicit suffix of $S [1, m]$ is $S [k, m]$, at position $(now, rem)$ in the tree. Let $S [m + 1] = x$; now we need to add the character $x$. Every suffix of $S [1, m]$ needs $x$ appended to its end. Since every explicit suffix corresponds to some leaf whose parent edge has right endpoint $\infty$, they need no work. So we only have to consider how appending x to the implicit suffixes changes the shape of the tree. First consider $S [k, m]$. There are two cases:
 
-1.  $(now, rem)$ 位置已经存在 $x$ 的转移．此时后缀树形态不会发生变化．由于 $S [k, m+1]$ 已经在后缀树中出现，所以对于 $l > k$，$S [ l, m + 1]$ 也会在后缀树中出现，此时只需将 $rem\to rem + 1$，不需做任何修改．
-2.  $(now, rem)$ 不存在 $x$ 的转移．如果 $(now, rem)$ 恰好为树中的节点，则此节点新增一条出边 $x$；否则需要对节点进行分裂，在此位置新增一个节点，并在新增节处添加出边 $x$．此时对于 $l > k$，我们并不知道 $S [ l, m]$ 会对后缀树形态造成什么影响，所以我们还需继续考虑 $S [k + 1, m]$．考虑怎么求出 $S [k + 1, m]$ 在后缀树中的位置：如果 $now$ 不为 $0$，可以利用后缀链接，令 $now = \operatorname{Link}(now)$；否则，令 $rem\to rem − 1$．最后令 $k\to k + 1$，再次重复这个过程．
+1.  There is already a transition by $x$ at position $(now, rem)$. Then the shape of the suffix tree does not change. Since $S [k, m+1]$ already appears in the suffix tree, $S [ l, m + 1]$ also appears in it for every $l > k$. We just set $rem\to rem + 1$ and make no other changes.
+2.  There is no transition by $x$ at $(now, rem)$. If $(now, rem)$ is exactly a node of the tree, add a new outgoing edge $x$ to this node; otherwise split at this position, add a new node there, and add the outgoing edge $x$ to the new node. Now, for $l > k$, we do not know how $S [ l, m]$ will affect the shape of the suffix tree, so we must go on to consider $S [k + 1, m]$. To find the position of $S [k + 1, m]$ in the suffix tree: if $now$ is not $0$, use the suffix link and set $now = \operatorname{Link}(now)$; otherwise set $rem\to rem − 1$. Finally set $k\to k + 1$ and repeat this process.
 
-每一步都只消耗常数时间，而算法在插入全部的字符后停止，所以时间复杂度为 $O(n)$．
+Each step takes only constant time, and the algorithm stops after all characters are inserted, so the time complexity is $O(n)$.
 
-由于 Ukkonen 算法只能处理出 $S$ 的隐式后缀树，而隐式后缀树在一些问题中的功能可能不如后缀树强大，所以在需要时，可以在 $S$ 的末端添加一个从未出现过的字符，这时 S 的所有后缀可以和树的所有叶子一一对应．
+Ukkonen's algorithm only builds the implicit suffix tree of $S$, and the implicit suffix tree may be less powerful than the suffix tree for some problems. When needed, append a character that never appears in $S$ to its end; then all suffixes of S correspond one-to-one with the leaves of the tree.
 
-???+ note "参考实现"
+???+ note "Reference implementation"
     ```cpp
     struct SuffixTree {
       int ch[M + 5][RNG + 1], st[M + 5], len[M + 5], link[M + 5];
@@ -181,53 +181,53 @@ Ukkonen 算法的整体流程如下：
     } Tree;
     ```
 
-## 作用
+## Applications
 
-后缀树上每一个节点到根的路径都是 $S$ 的一个非空子串，这在处理很多字符串问题时都很有用．
+The path from any node of the suffix tree to the root is a non-empty substring of $S$, which is useful for many string problems.
 
-后缀树的 DFS 序就是后缀数组．后缀树的一个子树也就对应到后缀数组上的一个区间．后缀树上两个后缀的最长公共前缀是它们对应的叶节点的 LCA，因此，后缀数组的 height 的结论可以理解为树上若干个节点的 LCA 等于 DFS 序最小的和最大的节点的 LCA．
+The DFS order of the suffix tree is the suffix array. A subtree of the suffix tree corresponds to a range of the suffix array. The longest common prefix of two suffixes is the LCA of their leaves in the suffix tree. So the result about the height array of the suffix array can be understood as: the LCA of several nodes in a tree equals the LCA of the nodes with the smallest and largest DFS order.
 
-## 例题
+## Example problems
 
-### [洛谷 P3804【模板】后缀自动机（SAM）](https://www.luogu.com.cn/problem/P3804)
+### [Luogu P3804 [Template] Suffix Automaton (SAM)](https://www.luogu.com.cn/problem/P3804)
 
-题意：
+Problem:
 
-给定一个只包含小写字母的字符串 $S$．
+You are given a string $S$ of lowercase letters.
 
-请你求出 $S$ 的所有出现次数不为 $1$ 的子串的出现次数乘上该子串长度的最大值．
+Among all substrings of $S$ that occur more than once, find the maximum value of (number of occurrences) times (length of the substring).
 
-??? note "解法"
-    建出插入一个终止符的隐式后缀树．树上每条从根出发的路径都构成子串．一个显示后缀的出现次数即为对应节点子树内的叶子节点个数，隐式后缀不用考虑，因为一个隐式后缀的出现次数等于向下走到的第一个节点对应显示后缀的出现次数，而且一定没有该显示后缀长．所以遍历整棵树，求出每个节点子树内叶子个数和每个节点到根的路径长度．如果叶子个数 $>1$ 则更新答案．复杂度 $O(|S||\Sigma|)$．
+??? note "Solution"
+    Build the implicit suffix tree with a terminator character inserted. Every path from the root in the tree forms a substring. The number of occurrences of an explicit suffix is the number of leaves in the subtree of its node. Implicit suffixes can be ignored: the occurrence count of an implicit suffix equals that of the explicit suffix at the first node below it, and that explicit suffix is always longer. So traverse the whole tree, computing the number of leaves in each node's subtree and the length of the path from each node to the root. If the leaf count is $>1$, update the answer. The complexity is $O(|S||\Sigma|)$.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/string/code/suffix-tree/suffix-tree_1.cpp"
     ```
 
 ### [CF235C Cyclical Quest](https://codeforces.com/problemset/problem/235/C)
 
-题意：给定一个小写字母主串 $S$ 和 $n$ 个询问串，求每个询问串 $x_i$ 的所有循环同构在主串中出现的次数总和．
+Problem: given a main string $S$ of lowercase letters and $n$ query strings, for each query string $x_i$, find the total number of occurrences in the main string of all its cyclic rotations.
 
-??? note "解法"
-    建立插入终止符的隐式后缀树．
+??? note "Solution"
+    Build the implicit suffix tree with a terminator character inserted.
     
-    枚举当前在那个循环节，记录在树上能查找到多长的前缀．
+    Enumerate which rotation we are at, and record how long a prefix we can find in the tree.
     
-    重复类似 Ukkonen 算法的过程，记录当前能匹配到的位置 $(now,rem)$．每次尝试插入下一个字符，如果成功则继续插入，否则跳出循环．
+    Repeat a process similar to Ukkonen's algorithm, keeping the current matched position $(now,rem)$. Each time, try to insert the next character; if it succeeds, keep going, otherwise break out of the loop.
     
-    如果某一个次成功匹配了当前的循环节，且该循环节之前没出现过，则更新答案．
+    If at some point the current rotation is fully matched, and this rotation has not appeared before, update the answer.
     
-    然后切换到下个循环节的时候，我们要删去当前匹配的子串开头的字符：这正好就相当于令 $now \to \operatorname{Link}(now)$．当然，如果 $now=1$ 则直接让 $rem\to rem-1$ 就行了．
+    Then, when moving to the next rotation, we need to delete the first character of the currently matched substring: this is exactly setting $now \to \operatorname{Link}(now)$. Of course, if $now=1$, we just set $rem\to rem-1$.
     
-    复杂度 $O(|S||\Sigma|+\sum|x_i|)$
+    The complexity is $O(|S||\Sigma|+\sum|x_i|)$.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/string/code/suffix-tree/suffix-tree_2.cpp"
     ```
 
-## 参考文献
+## References
 
-1.  2021 国家集训队论文《后缀树的构建》代晨昕
-2.  [炫酷后缀树魔术 - EternalAlexander 的博客](https://www.luogu.com.cn/blog/EternalAlexander/xuan-ku-hou-zhui-shu-mo-shu)
+1.  Dai Chenxin, "Construction of Suffix Trees", 2021 China National Training Team paper
+2.  [Cool Suffix Tree Magic - EternalAlexander's blog](https://www.luogu.com.cn/blog/EternalAlexander/xuan-ku-hou-zhui-shu-mo-shu)

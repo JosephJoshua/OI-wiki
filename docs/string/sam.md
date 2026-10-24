@@ -1,106 +1,106 @@
 author: GoodCoder666, abc1763613206, ksyx
 
-## 一些记号
+## Notation
 
--   $\Sigma$：字符集．字符集大小记为 $|\Sigma|$．
--   $s$：字符串．字符串长 $|s| = n$，标号自 $0$ 开始．
--   $t_0$：初始状态．
--   $\operatorname{endpos}(t)$：字符串 $s$ 中子串 $t$ 的结束位置的集合．
--   $\operatorname{link}(v)$：状态 $v$ 的后缀链接．
--   $\operatorname{len}(v)$：状态 $v$ 对应的最长子串的长度．
--   $\operatorname{longest}(v)$：状态 $v$ 对应的最长子串．
--   $\operatorname{minlen}(v)$：状态 $v$ 对应的最短子串的长度．
--   $\operatorname{shortest}(v)$：状态 $v$ 对应的最短子串．
+-   $\Sigma$: the alphabet. Its size is written $|\Sigma|$.
+-   $s$: the string. Its length is $|s| = n$, and indices start from $0$.
+-   $t_0$: the initial state.
+-   $\operatorname{endpos}(t)$: the set of end positions of the substring $t$ in the string $s$.
+-   $\operatorname{link}(v)$: the suffix link of state $v$.
+-   $\operatorname{len}(v)$: the length of the longest substring of state $v$.
+-   $\operatorname{longest}(v)$: the longest substring of state $v$.
+-   $\operatorname{minlen}(v)$: the length of the shortest substring of state $v$.
+-   $\operatorname{shortest}(v)$: the shortest substring of state $v$.
 
-## 后缀自动机概述
+## Overview of the suffix automaton
 
-**后缀自动机**（suffix automaton, SAM）是一个能解决许多字符串相关问题的有力的数据结构．
+The **suffix automaton** (SAM) is a powerful data structure that solves many string problems.
 
-举个例子，以下的字符串问题都可以在线性时间内通过 SAM 解决：
+For example, the following string problems can all be solved in linear time with a SAM:
 
--   在另一个字符串中搜索一个字符串的所有出现位置；
--   计算给定的字符串中有多少个不同的子串．
+-   find all occurrences of one string inside another string;
+-   count how many distinct substrings a given string has.
 
-直观上，字符串的 SAM 可以理解为给定字符串的 **所有子串** 的压缩形式．值得注意的事实是，SAM 将所有的这些信息以高度压缩的形式储存．对于一个长度为 $n$ 的字符串，它的空间复杂度仅为 $O(n)$．而且，构造 SAM 的时间复杂度也仅为 $O(n)$．准确地说，当 $n\ge 3$ 时，一个 SAM 最多有 $2n-1$ 个结点和 $3n-4$ 条转移边．
+Intuitively, the SAM of a string can be seen as a compressed form of **all substrings** of the string. Notably, the SAM stores all this information in a highly compressed form. For a string of length $n$, it takes only $O(n)$ space, and it can be built in only $O(n)$ time. More precisely, for $n\ge 3$, a SAM has at most $2n-1$ nodes and $3n-4$ transitions.
 
-## 定义
+## Definition
 
-字符串 $s$ 的 SAM 是一个接受 $s$ 的所有后缀的最小 [DFA](../misc/fsm.md#确定性有限状态自动机)．
+The SAM of a string $s$ is the minimal [DFA](../misc/fsm.md#确定性有限状态自动机) that accepts all suffixes of $s$.
 
-换句话说：
+In other words:
 
--   SAM 是一张有向无环图．结点被称作 **状态**，边被称作状态间的 **转移**．
--   图存在一个源点 $t_0$，称作 **初始状态**，其它各结点均可从 $t_0$ 出发到达．
--   每个 **转移** 都标有某个字符．从一个结点出发的所有转移均 **不同**．
--   存在一个或多个 **终止状态**．如果我们从初始状态 $t_0$ 出发，最终转移到了一个终止状态，则路径上的所有转移的标号连接起来一定是字符串 $s$ 的一个后缀．反过来，$s$ 的每个后缀均可用一条从 $t_0$ 到某个终止状态的路径构成．
--   在所有满足上述条件的自动机中，SAM 的结点数是最少的．
+-   A SAM is a directed acyclic graph. Its nodes are called **states**, and its edges are called **transitions** between states.
+-   The graph has a source $t_0$, called the **initial state**; every other node can be reached from $t_0$.
+-   Each **transition** is labeled with a character. All transitions leaving a node have **different** labels.
+-   There are one or more **terminal states**. If we start from the initial state $t_0$ and end in a terminal state, the labels of the transitions on the path, joined together, always form a suffix of $s$. Conversely, every suffix of $s$ is formed by some path from $t_0$ to a terminal state.
+-   Among all automata that satisfy the conditions above, the SAM has the fewest nodes.
 
-SAM 的关键恰在于这个最小性．实际上，直接对字符串 $s$ 的所有后缀建立 [字典树](./trie.md)（即后缀 Trie）同样可以得到一个接受 $s$ 的所有后缀的 DFA．但是，最差情况下，这样得到的自动机有 $\Theta(n^2)$ 个结点，复杂度难以接受．从下面的例子可以看出，对所有后缀建立字典树得到的 DFA 中很多结点是重复的，因而可以合并．SAM 正是将结点的合并做到了极致，故而将得到的 DFA 的规模控制在 $O(n)$．从这个意义上，SAM 是字符串的全体后缀的「压缩」的字典树．
+The key to the SAM is exactly this minimality. In fact, simply building a [trie](./trie.md) of all suffixes of $s$ (the suffix trie) also gives a DFA that accepts all suffixes of $s$. But in the worst case, that automaton has $\Theta(n^2)$ nodes, which is too many. As the examples below show, many nodes in the DFA obtained from the trie of all suffixes are duplicates and can be merged. The SAM pushes this merging of nodes to the limit, keeping the size of the resulting DFA at $O(n)$. In this sense, the SAM is a "compressed" trie of all suffixes of the string.
 
-### 子串和路径
+### Substrings and paths
 
-SAM 最简单、也最重要的性质是，它包含关于字符串 $s$ 的所有子串的信息．任意从初始状态 $t_0$ 开始的路径，如果我们将路径上的所有转移的标号写下来，都会形成 $s$ 的一个 **子串**．反之，每个 $s$ 的子串都对应从 $t_0$ 开始的某条路径．
+The simplest and most important property of the SAM is that it contains information about all substrings of $s$. For any path starting from the initial state $t_0$, if we write down the labels of all transitions on the path, we get a **substring** of $s$. Conversely, every substring of $s$ corresponds to some path starting from $t_0$.
 
-为了简化表达，我们称子串 **对应** 这条（从 $t_0$ 出发且它上面所有转移的标号构成这个子串的）路径．反过来，我们说任意一条路径都 **对应** 它的标号构成的字符串．
+To keep things simple, we say a substring **corresponds** to this path (the one that starts from $t_0$ and whose transition labels spell out the substring). Conversely, we say any path **corresponds** to the string formed by its labels.
 
-到达某个状态的路径可能不止一条，因此我们说一个状态对应一些字符串的集合，这个集合中的字符串分别对应着这些路径．
+There may be more than one path reaching a state, so we say a state corresponds to a set of strings, where each string in the set corresponds to one of these paths.
 
-### 简单例子
+### Simple examples
 
-我们将会在这里展示一些简单的字符串的后缀自动机．
+Here we show the suffix automata of a few simple strings.
 
-我们用蓝色表示初始状态，用绿色表示终止状态．
+The initial state is shown in blue, and terminal states in green.
 
-对于字符串 $s=\varepsilon$：
+For the string $s=\varepsilon$:
 
 ![](./images/SAM/SA.svg)
 
-对于字符串 $s=\texttt{a}$：
+For the string $s=\texttt{a}$:
 
 ![](./images/SAM/SAa.svg)
 
-对于字符串 $s=\texttt{aa}$：
+For the string $s=\texttt{aa}$:
 
 ![](./images/SAM/SAaa.svg)
 
-对于字符串 $s=\texttt{ab}$：
+For the string $s=\texttt{ab}$:
 
 ![](./images/SAM/SAab.svg)
 
-对于字符串 $s=\texttt{abb}$：
+For the string $s=\texttt{abb}$:
 
 ![](./images/SAM/SAabb.svg)
 
-对于字符串 $s=\texttt{abbb}$：
+For the string $s=\texttt{abbb}$:
 
 ![](./images/SAM/SAabbb.svg)
 
-在最后这个例子中可以看到，如果直接建立它的所有后缀的字典树，路径 $\texttt{bbb}$ 和路径 $\texttt{abbb}$ 应当导向不同的结点，但是这两个结点都是终止状态，且无论再添加任何字符，都不会得到更长的匹配串，这说明两个结点在自动机的转移上表现出同样的性质，因而可以合并成同一个结点．这样就得到了如图所示的 SAM．下面的讨论会将合并结点这一想法拓展到所有的情形，并说明，只要合理地合并结点，最后得到的 SAM 只有 $O(n)$ 个结点和转移．
+In the last example, if we built the trie of all suffixes directly, the paths $\texttt{bbb}$ and $\texttt{abbb}$ would lead to different nodes. But both nodes are terminal states, and adding any further characters never gives a longer match. This means the two nodes behave the same way under the automaton's transitions, so they can be merged into one node. This gives the SAM shown in the figure. The discussion below extends this idea of merging nodes to all cases, and shows that if we merge nodes properly, the resulting SAM has only $O(n)$ nodes and transitions.
 
-## 线性复杂度的构造算法
+## A linear-time construction algorithm
 
-在我们描述线性时间内构造 SAM 的算法之前，我们需要引入两个对理解构造过程非常重要的概念，并对其性质进行简单证明．其中，结束位置 $\operatorname{endpos}$ 定义了 SAM 中的结点（亦即指出了结点可以合并的充要条件），而后缀链接 $\operatorname{link}$ 不过是 AC 自动机中的 [失配指针](./ac-automaton.md#失配指针) 在 SAM 中的自然对应．
+Before describing the algorithm that builds a SAM in linear time, we need to introduce two concepts that are very important for understanding the construction, and briefly prove their properties. The end-position set $\operatorname{endpos}$ defines the nodes of the SAM (that is, it gives the necessary and sufficient condition for nodes to be merged), while the suffix link $\operatorname{link}$ is simply the natural counterpart in the SAM of the [fail pointer](./ac-automaton.md#失配指针) in the Aho–Corasick automaton.
 
-### 结束位置 `endpos`
+### End positions `endpos`
 
-考虑字符串 $s$ 的任意非空子串 $t$，我们记 $\operatorname{endpos}(t)$ 为在字符串 $s$ 中 $t$ 的所有结束位置的集合（假设对字符串中字符的编号从零开始）．例如，对于字符串 $\texttt{abcbc}$，我们有 $\operatorname{endpos}(\texttt{bc})=\{2,4\}$．
+Consider any non-empty substring $t$ of the string $s$. We write $\operatorname{endpos}(t)$ for the set of all positions in $s$ where $t$ ends (assuming characters are numbered from zero). For example, for the string $\texttt{abcbc}$, we have $\operatorname{endpos}(\texttt{bc})=\{2,4\}$.
 
-两个子串 $t_1$ 与 $t_2$ 的结束位置可能完全相同：$\operatorname{endpos}(t_1)=\operatorname{endpos}(t_2)$．这定义了字符串 $s$ 的子串之间的等价关系．字符串 $s$ 的所有非空子串可以根据它们的结束位置集合 $\operatorname{endpos}$ 分为若干 **等价类**．
+Two substrings $t_1$ and $t_2$ may have exactly the same end positions: $\operatorname{endpos}(t_1)=\operatorname{endpos}(t_2)$. This defines an equivalence relation on the substrings of $s$. All non-empty substrings of $s$ can be divided into several **equivalence classes** by their end-position sets $\operatorname{endpos}$.
 
-一个事实是，每个这样的等价类都对应 SAM 的一个状态[^state-endpos]．也就是说，只要两个子串的结束位置相同，它们在 SAM 中的路径就对应着同一个状态．换句话说，SAM 中的每个非初始状态都对应一个或多个 $\operatorname{endpos}$ 相同的非空子串．总之，SAM 中的状态就是所有非空子串的等价类，再加上初始状态．
+It turns out that each such equivalence class corresponds to one state of the SAM[^state-endpos]. That is, whenever two substrings have the same end positions, their paths in the SAM lead to the same state. In other words, each non-initial state of the SAM corresponds to one or more non-empty substrings with the same $\operatorname{endpos}$. In short, the states of the SAM are exactly the equivalence classes of all non-empty substrings, plus the initial state.
 
-暂且接受这个事实，我们将基于它介绍构造 SAM 的算法．我们还将说明，SAM 需要满足的所有性质，除了最小性以外都满足了；而最小性可以由 [Myhill–Nerode 定理](../misc/fsm.md#myhillnerode-定理) 得出．
+Let's accept this fact for now; we will build the SAM construction algorithm on it. We will also show that the result satisfies all the properties a SAM must have except minimality, and minimality follows from the [Myhill–Nerode theorem](../misc/fsm.md#myhillnerode-定理).
 
-由 $\operatorname{endpos}$ 的值我们可以得到一些重要结论，它们解释了同一个状态对应的不同的子串之间的关系．
+From the values of $\operatorname{endpos}$ we can draw some important conclusions, which explain how the different substrings of the same state relate to each other.
 
-???+ note "引理 1"
-    字符串 $s$ 的两个非空子串 $u$ 和 $w$（假设 $\left|u\right|\le \left|w\right|$）的 $\operatorname{endpos}$ 相同，当且仅当字符串 $u$ 在 $s$ 中每次出现时，都是以 $w$ 的后缀的形式存在的．
+???+ note "Lemma 1"
+    Two non-empty substrings $u$ and $w$ of $s$ (assume $\left|u\right|\le \left|w\right|$) have the same $\operatorname{endpos}$ if and only if every occurrence of $u$ in $s$ is as a suffix of $w$.
 
-??? note "证明"
-    引理显然成立．如果 $u$ 和 $w$ 的 $\operatorname{endpos}$ 相同，则 $u$ 是 $w$ 的一个后缀，且在 $s$ 中只以 $w$ 的后缀的形式出现．反过来，根据定义，如果 $u$ 为 $w$ 的一个后缀，且只以 $w$ 的后缀的形式在 $s$ 中出现，那么两个子串的 $\operatorname{endpos}$ 相同．
+??? note "Proof"
+    The lemma clearly holds. If $u$ and $w$ have the same $\operatorname{endpos}$, then $u$ is a suffix of $w$, and it appears in $s$ only as a suffix of $w$. Conversely, by definition, if $u$ is a suffix of $w$ and appears in $s$ only as a suffix of $w$, then the two substrings have the same $\operatorname{endpos}$.
 
-???+ note "引理 2"
-    考虑两个非空子串 $u$ 和 $w$（假设 $\left|u\right|\le \left|w\right|$）．那么，要么 $\operatorname{endpos}(u)\cap \operatorname{endpos}(w)=\varnothing$，要么 $\operatorname{endpos}(w)\subseteq \operatorname{endpos}(u)$，取决于 $u$ 是否为 $w$ 的一个后缀：
+???+ note "Lemma 2"
+    Consider two non-empty substrings $u$ and $w$ (assume $\left|u\right|\le \left|w\right|$). Then either $\operatorname{endpos}(u)\cap \operatorname{endpos}(w)=\varnothing$ or $\operatorname{endpos}(w)\subseteq \operatorname{endpos}(u)$, depending on whether $u$ is a suffix of $w$:
     
     $$
     \begin{cases}
@@ -109,213 +109,213 @@ SAM 最简单、也最重要的性质是，它包含关于字符串 $s$ 的所�
     \end{cases}
     $$
 
-??? note "证明"
-    如果集合 $\operatorname{endpos}(u)$ 与 $\operatorname{endpos}(w)$ 有至少一个公共元素，那么由于字符串 $u$ 与 $w$ 在相同位置结束，$u$ 是 $w$ 的一个后缀．所以在每次 $w$ 出现的位置，子串 $u$ 也会出现．所以 $\operatorname{endpos}(w)\subseteq \operatorname{endpos}(u)$．
+??? note "Proof"
+    If the sets $\operatorname{endpos}(u)$ and $\operatorname{endpos}(w)$ have at least one common element, then since $u$ and $w$ end at the same position, $u$ is a suffix of $w$. So wherever $w$ occurs, the substring $u$ also occurs. Therefore $\operatorname{endpos}(w)\subseteq \operatorname{endpos}(u)$.
 
-???+ note "引理 3"
-    考虑一个 $\operatorname{endpos}$ 相同的子串等价类，将类中的所有子串按长度递减的顺序排序．那么，每个子串都比它前一个子串恰好短 $1$，与此同时每个子串也是它前一个子串的后缀．换句话说，对于同一等价类的任意两子串，较短者为较长者的后缀，且该等价类中的子串长度是连续的，取遍某个区间内的所有整数值．
+???+ note "Lemma 3"
+    Consider an equivalence class of substrings with the same $\operatorname{endpos}$, and sort all substrings in the class by decreasing length. Then each substring is exactly $1$ shorter than the one before it, and each substring is also a suffix of the one before it. In other words, for any two substrings in the same equivalence class, the shorter one is a suffix of the longer one, and the lengths of the substrings in the class are consecutive, covering every integer in some interval.
 
-??? note "证明"
-    如果等价类中只包含一个子串，引理显然成立．现在我们来讨论子串元素个数大于 $1$ 的等价类．
+??? note "Proof"
+    If the equivalence class contains only one substring, the lemma clearly holds. Now consider equivalence classes with more than $1$ substring.
     
-    由引理 1，$\operatorname{endpos}$ 相同的两个不同字符串中，必定一长一短，且较短者总是较长者的真后缀．也就是说，等价类中没有等长的字符串．
+    By Lemma 1, of two different strings with the same $\operatorname{endpos}$, one must be longer than the other, and the shorter one is always a proper suffix of the longer one. That is, an equivalence class never contains two strings of the same length.
     
-    记 $w$ 为等价类中最长的字符串，$u$ 为等价类中最短的字符串．由引理 1，字符串 $u$ 是字符串 $w$ 的真后缀．现在考虑长度在区间 $[\left|u\right|,\left|w\right|]$ 中的 $w$ 的任意后缀．容易看出，这个后缀也在同一等价类中，因为这个后缀只能在字符串 $s$ 中以 $w$ 的一个后缀的形式存在（这是因为较短的后缀 $u$ 在 $s$ 中只以 $w$ 的后缀的形式存在）．因此，由引理 1，这个后缀和字符串 $w$ 的 $\operatorname{endpos}$ 相同．
+    Let $w$ be the longest string in the class and $u$ the shortest. By Lemma 1, $u$ is a proper suffix of $w$. Now consider any suffix of $w$ whose length is in the interval $[\left|u\right|,\left|w\right|]$. It is easy to see that this suffix is also in the same class, because it can only appear in $s$ as a suffix of $w$ (since the shorter suffix $u$ appears in $s$ only as a suffix of $w$). So by Lemma 1, this suffix has the same $\operatorname{endpos}$ as $w$.
 
-一句话概括，同一个状态对应的子串的长度各不相同，而且是连续的若干自然数，其中较短的总是较长的子串的后缀．
+In one sentence: the substrings of the same state all have different lengths, which form a run of consecutive natural numbers, and the shorter ones are always suffixes of the longer ones.
 
-### 后缀链接 `link`
+### Suffix links `link`
 
-考虑 SAM 中某个状态 $v\neq t_0$．我们已经知道，状态 $v$ 对应于具有相同 $\operatorname{endpos}$ 的子串等价类．我们如果定义 $w$ 为这些字符串中最长的一个，则所有其它的字符串都是 $w$ 的后缀．
+Consider some state $v\neq t_0$ of the SAM. We already know that state $v$ corresponds to an equivalence class of substrings with the same $\operatorname{endpos}$. If we let $w$ be the longest of these strings, then all the other strings are suffixes of $w$.
 
-我们还知道字符串 $w$ 的前几个后缀（按长度降序考虑）全部属于这个等价类，且其它后缀（至少有一个——空后缀）在别的等价类中．我们记 $t$ 为其它后缀中最长的，然后将 $v$ 的后缀链接连到 $t$ 所属等价类对应的状态上．
+We also know that the first few suffixes of $w$ (in decreasing order of length) all belong to this equivalence class, and the other suffixes (there is at least one: the empty suffix) are in other classes. Let $t$ be the longest of those other suffixes; we then point the suffix link of $v$ to the state of the equivalence class that $t$ belongs to.
 
-换句话说，$v$ 的 **后缀链接** $\operatorname{link}(v)$ 连接到的状态，对应于 $w$ 的后缀中与它的 $\operatorname{endpos}$ 集合不同且最长的那个，也是 $w$ 的后缀中在 $s$ 中的出现次数比 $w$ 更多且最长的那个．
+In other words, the **suffix link** $\operatorname{link}(v)$ of $v$ points to the state of the longest suffix of $w$ whose $\operatorname{endpos}$ set differs from that of $w$; this is also the longest suffix of $w$ that occurs more times in $s$ than $w$ does.
 
-为方便讨论，我们规定初始状态 $t_0$ 对应的等价类，只包含一个空字符串，而且 $\operatorname{endpos}(t_0)=\{-1,0,\ldots,\left|s\right|-1\}$．
+For convenience, we say that the equivalence class of the initial state $t_0$ contains only the empty string, and $\operatorname{endpos}(t_0)=\{-1,0,\ldots,\left|s\right|-1\}$.
 
-???+ note "引理 4"
-    所有后缀链接构成一棵根节点为 $t_0$ 的树．
+???+ note "Lemma 4"
+    All suffix links form a tree rooted at $t_0$.
 
-??? note "证明"
-    考虑任意状态 $v\neq t_0$，后缀链接 $\operatorname{link}(v)$ 连接到的状态对应于严格更短的字符串（后缀链接的定义、引理 3）．因此，沿后缀链接移动，我们总是能到达对应空串的初始状态 $t_0$．
+??? note "Proof"
+    For any state $v\neq t_0$, the state that the suffix link $\operatorname{link}(v)$ points to corresponds to strictly shorter strings (by the definition of suffix links and Lemma 3). So by following suffix links, we always reach the initial state $t_0$, which corresponds to the empty string.
 
-???+ note "引理 5"
-    以 $\operatorname{endpos}$ 集合为结点、集合的包含关系作为边，这样构造的树（即每个子节点的 $\operatorname{endpos}$ 集合都包含在父节点的 $\operatorname{endpos}$ 集合中）与通过后缀链接 $\operatorname{link}$ 构造的树相同．
+???+ note "Lemma 5"
+    Build a tree whose nodes are the $\operatorname{endpos}$ sets and whose edges are given by set inclusion (i.e., the $\operatorname{endpos}$ set of each child is contained in that of its parent). This tree is the same as the tree formed by the suffix links $\operatorname{link}$.
 
-??? note "证明"
-    由引理 2，任意一个 SAM 的 $\operatorname{endpos}$ 集合形成了一棵树（因为两个集合要么完全没有交集要么其中一个是另一个的子集）．
+??? note "Proof"
+    By Lemma 2, the $\operatorname{endpos}$ sets of any SAM form a tree (since any two sets are either disjoint or one is a subset of the other).
     
-    我们现在考虑任意状态 $v\neq t_0$ 及后缀链接 $\operatorname{link}(v)$，由后缀链接和引理 2，我们可以得到
+    Now consider any state $v\neq t_0$ and its suffix link $\operatorname{link}(v)$. From the definition of suffix links and Lemma 2, we get
     
     $$
     \operatorname{endpos}(v)\subsetneq \operatorname{endpos}(\operatorname{link}(v)).
     $$
     
-    注意这里应该是 $\subsetneq$ 而不是 $\subseteq$，因为若 $\operatorname{endpos}(v)=\operatorname{endpos}(\operatorname{link}(v))$，那么 $v$ 和 $\operatorname{link}(v)$ 应该被合并为一个结点．
+    Note that this must be $\subsetneq$ and not $\subseteq$, because if $\operatorname{endpos}(v)=\operatorname{endpos}(\operatorname{link}(v))$, then $v$ and $\operatorname{link}(v)$ should have been merged into one node.
     
-    而且，$\operatorname{endpos}(\operatorname{link}(v))$ 恰为真包含 $\operatorname{endpos}(v)$ 的最小的 $\operatorname{endpos}$ 集合．
+    Moreover, $\operatorname{endpos}(\operatorname{link}(v))$ is exactly the smallest $\operatorname{endpos}$ set that strictly contains $\operatorname{endpos}(v)$.
 
-结合前面的引理有：后缀链接构成的树本质上是 $\operatorname{endpos}$ 集合构成的一棵树．
+Combining this with the earlier lemmas: the tree formed by suffix links is essentially a tree of $\operatorname{endpos}$ sets.
 
-以下是对字符串 $\texttt{abcbc}$ 构造 SAM 时产生的后缀链接树的一个 **例子**，结点被标记为对应等价类中最长的子串．
+Below is an **example** of the suffix link tree produced when building the SAM of the string $\texttt{abcbc}$. Each node is labeled with the longest substring of its equivalence class.
 
 ![](./images/SAM/SA_suffix_links.svg)
 
-结合图示，如果能够形成一些对于后缀自动机的认识，将对下文理解其构造算法和应用都有所帮助．
+If the figure helps you build some intuition about the suffix automaton, that will make it easier to understand its construction algorithm and applications below.
 
-???+ example "对图示的解释"
-    -   SAM 上存在一条最长的路径，其标号恰好为字符串 $\texttt{abcbc}$ 本身．该路径从初始状态开始，经过的每个状态都对应着字符串 $\texttt{abcbc}$ 的前缀（$\varepsilon,\texttt{a},\texttt{ab},\texttt{abc},\texttt{abcb},\texttt{abcbc}$）．这些状态在后续 [应用](#后缀链接树) 中至关重要．
-    -   后缀链接树可以看做是将这些「前缀状态」沿着后缀链接移动到根节点（即初始状态）的路径「压缩」得到．
+???+ example "Explanation of the figure"
+    -   The SAM has a longest path whose labels spell exactly the string $\texttt{abcbc}$ itself. This path starts from the initial state, and each state it passes corresponds to a prefix of $\texttt{abcbc}$ ($\varepsilon,\texttt{a},\texttt{ab},\texttt{abc},\texttt{abcb},\texttt{abcbc}$). These states are crucial in later [applications](#suffix-link-tree).
+    -   The suffix link tree can be seen as what you get by "compressing" the paths along which these "prefix states" move to the root (the initial state) by following suffix links.
     
-        -   沿着每条路径，结点对应的字符串集合构成了相应的前缀的所有后缀的分划．例如，标记为 $\texttt{abcbc}$ 的状态沿着后缀链接移动到根节点的路径为 $\texttt{abcbc}\rightarrow\texttt{bc}\rightarrow\varepsilon$．其中，结点 $\texttt{abcbc}$ 实际对应着字符串集合 $\{\texttt{abcbc},\texttt{bcbc},\texttt{cbc}\}$，结点 $\texttt{bc}$ 实际对应着字符串集合 $\{\texttt{bc},\texttt{c}\}$，结点 $\varepsilon$ 就对应空字符串．
-        -   不同的路径可能共用同一个结点，这就是为什么会有「压缩」．例如，路径 $\texttt{abc}\rightarrow\texttt{bc}\rightarrow\varepsilon$ 和路径 $\texttt{abcbc}\rightarrow\texttt{bc}\rightarrow\varepsilon$ 共用了结点 $\texttt{bc}$．这是因为 $\operatorname{endpos}(\texttt{bc})=\{2,4\}$，而结束在位置 $2$ 的字符串 $\texttt{bc}$ 前紧接着字符 $\texttt{a}$ 而结束在位置 $4$ 的字符串 $\texttt{bc}$ 前紧接着字符 $\texttt{c}$，因此，当在前方添加字符（即逆着后缀链接移动）时，结束位置集合（即状态）会分裂．
-        -   后缀链接树只需要将这些后缀路径合理地「压缩」在一起即可，而不需要考虑别的结点．这是因为，所有子串都是某个前缀的后缀，故而必然出现在某个这样的路径中．后文的构造算法本质上就是逐个添加字符，并为每个新增加的前缀，构造这样一条后缀路径，并使其合理地「压缩」到之前已有的路径中（即不重复构造已经存在的状态和转移）．
-        -   终止状态恰为字符串 $\texttt{abcbc}$ 本身所在的后缀路径上的所有结点．
-    -   到达同一个状态的转移必然具有相同的标号，而且这些转移的起点一定是位于后缀链接树上的某条（连续的）路径．比如，转移到状态 $\texttt{abcb}$ 的状态就有两个：$\texttt{abc}$ 和 $\texttt{bc}$．它们位于后缀链接树上的路径 $\texttt{abc}\rightarrow\texttt{bc}$ 上．注意，它们分别对应于字符串集合 $\{\texttt{abc}\}$ 和 $\{\texttt{bc},\texttt{c}\}$，这些字符串在后面添加字符 $\texttt{b}$，就得到状态 $\texttt{abcb}$ 对应的字符串集合 $\{\texttt{abcb},\texttt{bcb},\texttt{cb}\}$．
+        -   Along each path, the sets of strings of the nodes form a partition of all suffixes of the corresponding prefix. For example, the path from the state labeled $\texttt{abcbc}$ to the root along suffix links is $\texttt{abcbc}\rightarrow\texttt{bc}\rightarrow\varepsilon$. Here, the node $\texttt{abcbc}$ actually corresponds to the set of strings $\{\texttt{abcbc},\texttt{bcbc},\texttt{cbc}\}$, the node $\texttt{bc}$ corresponds to $\{\texttt{bc},\texttt{c}\}$, and the node $\varepsilon$ corresponds to the empty string.
+        -   Different paths may share the same node, which is why there is "compression". For example, the paths $\texttt{abc}\rightarrow\texttt{bc}\rightarrow\varepsilon$ and $\texttt{abcbc}\rightarrow\texttt{bc}\rightarrow\varepsilon$ share the node $\texttt{bc}$. This is because $\operatorname{endpos}(\texttt{bc})=\{2,4\}$: the occurrence of $\texttt{bc}$ ending at position $2$ is immediately preceded by the character $\texttt{a}$, while the one ending at position $4$ is immediately preceded by $\texttt{c}$. So when we add characters in front (i.e., move against the suffix links), the end-position set (i.e., the state) splits.
+        -   The suffix link tree only needs to "compress" these suffix paths together properly, and no other nodes need to be considered. This is because every substring is a suffix of some prefix, so it must appear on one of these paths. The construction algorithm below essentially adds characters one by one, and for each new prefix builds such a suffix path and "compresses" it properly into the existing paths (i.e., without rebuilding states and transitions that already exist).
+        -   The terminal states are exactly the nodes on the suffix path of the whole string $\texttt{abcbc}$.
+    -   Transitions into the same state always have the same label, and their source states always lie on some (contiguous) path in the suffix link tree. For example, two states transition into state $\texttt{abcb}$: $\texttt{abc}$ and $\texttt{bc}$. They lie on the path $\texttt{abc}\rightarrow\texttt{bc}$ in the suffix link tree. Note that they correspond to the string sets $\{\texttt{abc}\}$ and $\{\texttt{bc},\texttt{c}\}$; appending the character $\texttt{b}$ to these strings gives the string set $\{\texttt{abcb},\texttt{bcb},\texttt{cb}\}$ of state $\texttt{abcb}$.
     
-        -   添加字符后，不同状态可能转移到同一个状态，是因为在末尾添加字符后，出现位置只会减少，原本不同的结束位置集合可能变得相同．
-    -   后缀链接树上，每个结点的 $\operatorname{endpos}$ 集合都是其子节点的 $\operatorname{endpos}$ 集合的并集，至多再增加一个位置．而且，这个新位置存在，当且仅当该结点恰好对应着结束在该位置的原字符串的前缀．因为图示中，后缀链接树的非根非叶的结点都不对应着字符串 $\texttt{abcbc}$ 的前缀，所以不存在这种情形．
+        -   Different states can transition into the same state after adding a character because appending a character can only reduce the set of occurrence positions, so end-position sets that were different may become the same.
+    -   In the suffix link tree, the $\operatorname{endpos}$ set of each node is the union of the $\operatorname{endpos}$ sets of its children, plus at most one more position. Moreover, this new position exists if and only if the node corresponds exactly to the prefix of the original string ending at that position. In the figure, no node of the suffix link tree that is neither the root nor a leaf corresponds to a prefix of $\texttt{abcbc}$, so this case does not occur.
 
-后缀自动机中存储着字符串全部子串的信息．这件事可以通过两个角度理解：
+The suffix automaton stores information about all substrings of the string. This can be understood from two angles:
 
--   SAM 本身可以看作是字符串全体后缀的字典树的压缩版本．因此，它存储了字符串的全体后缀的所有前缀的信息，这就相当于存储了字符串全体子串的信息．
--   SAM 的后缀链接树可以看做是字符串全体前缀的后缀路径的压缩版本．因此，它存储了字符串的全体前缀的所有后缀的信息，这也相当于存储了字符串全体子串的信息．
+-   The SAM itself can be seen as a compressed version of the trie of all suffixes of the string. So it stores information about all prefixes of all suffixes, which amounts to all substrings of the string.
+-   The suffix link tree of the SAM can be seen as a compressed version of the suffix paths of all prefixes of the string. So it stores information about all suffixes of all prefixes, which also amounts to all substrings of the string.
 
-这两种思考的角度在处理不同问题时都是有用的．
+Both angles are useful for different problems.
 
-### 小结
+### Summary
 
-在进一步讨论算法本身前，我们总结一下之前的内容，并引入一些辅助记号．
+Before discussing the algorithm itself, let's summarize what we have so far and introduce some helper notation.
 
--   $s$ 的子串可以根据它们的结束位置集合 $\operatorname{endpos}$ 划分为多个等价类；
+-   The substrings of $s$ can be divided into several equivalence classes by their end-position sets $\operatorname{endpos}$;
 
--   SAM 由初始状态 $t_0$ 和与每一个（非空子串的）$\operatorname{endpos}$ 等价类对应的每个状态组成；
+-   The SAM consists of the initial state $t_0$ and one state for each $\operatorname{endpos}$ equivalence class (of non-empty substrings);
 
--   每一个状态 $v$ 都匹配一个或多个子串．我们记 $\operatorname{longest}(v)$ 为其中最长的一个字符串，记 $\operatorname{len}(v)$ 为它的长度．类似地，记 $\operatorname{shortest}(v)$ 为最短的子串，它的长度为 $\operatorname{minlen}(v)$．那么对应这个状态的所有字符串都是字符串 $\operatorname{longest}(v)$ 的不同的后缀，且所有字符串的长度恰好取遍区间 $[\operatorname{minlen}(v),\operatorname{len}(v)]$ 中的每一个整数．
+-   Each state $v$ matches one or more substrings. We write $\operatorname{longest}(v)$ for the longest of them and $\operatorname{len}(v)$ for its length. Similarly, $\operatorname{shortest}(v)$ is the shortest substring, and its length is $\operatorname{minlen}(v)$. Then all strings of this state are different suffixes of $\operatorname{longest}(v)$, and their lengths cover every integer in the interval $[\operatorname{minlen}(v),\operatorname{len}(v)]$ exactly once.
 
--   对于任意状态 $v\neq t_0$，定义后缀链接为连接到对应字符串 $\operatorname{longest}(v)$ 的长度为 $\operatorname{minlen}(v)-1$ 的后缀的一条边．所有后缀链接可以形成一棵以 $t_0$ 为根的树．这棵树也表示 $\operatorname{endpos}$ 集合间的包含关系．
+-   For any state $v\neq t_0$, the suffix link is an edge to the state of the suffix of $\operatorname{longest}(v)$ with length $\operatorname{minlen}(v)-1$. All suffix links form a tree rooted at $t_0$. This tree also represents the inclusion relation between $\operatorname{endpos}$ sets.
 
--   对于任意状态 $v\neq t_0$，可用后缀链接 $\operatorname{link}(v)$ 表达 $\operatorname{minlen}(v)$：
+-   For any state $v\neq t_0$, $\operatorname{minlen}(v)$ can be expressed using the suffix link $\operatorname{link}(v)$:
 
     $$
     \operatorname{minlen}(v)=\operatorname{len}(\operatorname{link}(v))+1.
     $$
 
--   如果我们从任意状态 $v_0$ 开始顺着后缀链接遍历，总会到达初始状态 $t_0$．这种情况下我们可以得到一个互不相交的区间 $[\operatorname{minlen}(v_i),\operatorname{len}(v_i)]$ 的序列，且它们的并集形成了连续的区间 $[0,\operatorname{len}(v_0)]$．
+-   If we start from any state $v_0$ and follow suffix links, we always reach the initial state $t_0$. Along the way we get a sequence of pairwise disjoint intervals $[\operatorname{minlen}(v_i),\operatorname{len}(v_i)]$, whose union is the contiguous interval $[0,\operatorname{len}(v_0)]$.
 
-### 算法
+### Algorithm
 
-现在我们可以讨论构造 SAM 的算法了．这个算法是 **在线** 算法，我们可以逐个加入字符串中的每个字符，并且在每一步中对应地维护 SAM．
+Now we can discuss the algorithm that builds the SAM. It is an **online** algorithm: we add the characters of the string one by one and update the SAM accordingly at each step.
 
-在讨论详细的实现之前，首先通过图示初步感受一下增加新字符 $c$ 时，SAM 可能发生的变化．
+Before going into the detailed implementation, let's first use figures to get a feel for how the SAM may change when a new character $c$ is added.
 
-???+ note "简单理解增量构造过程"
-    在字符串 $s$ 的 SAM 的基础上，可以构造字符串 $s+c$ 的 SAM．根据前文对图示的解释，只需要构造出新增加的前缀（即 $s+c$）的后缀路径，并压缩到现有的路径上即可．而且，根据前文的描述，新的后缀路径上的结点必然都可以通过原字符串 $s$ 的后缀路径上的结点经由字符 $c$ 转移而来．
+???+ note "An intuitive look at the incremental construction"
+    We can build the SAM of $s+c$ on top of the SAM of $s$. From the explanation of the figure above, we only need to build the suffix path of the newly added prefix (i.e., $s+c$) and compress it into the existing paths. Moreover, as described above, every node on the new suffix path must be reachable by a transition by $c$ from some node on the suffix path of the original string $s$.
     
-    我们首先考虑在添加新字符 $c$ 之前，原来的字符串 $s$ 的后缀路径可能具有什么形式，而且会怎样经由字符 $c$ 转移．最一般的情形，如下图示：
+    Let's first consider what the suffix path of $s$ may look like before adding the new character $c$, and how it transitions by $c$. The most general case is shown below:
     
     ![](./images/SAM/sam-suffix-path-1.svg)
     
-    图中，原字符串 $s$ 的后缀路径为 $p_0\rightarrow p_1\rightarrow\cdots\rightarrow p_6\rightarrow t_0$，后缀链接由红色箭头表示．其中部分结点（即 $p_2\sim p_6$）已经存在经由字符 $c$ 的转移；因为将连续的后缀串添加同一个字符会同样得到连续的后缀，所以这些转移的终点组成另一串后缀路径 $q_1\rightarrow q_2\rightarrow q_3\rightarrow t_0$．此时，有两点观察：
+    In the figure, the suffix path of the original string $s$ is $p_0\rightarrow p_1\rightarrow\cdots\rightarrow p_6\rightarrow t_0$, with suffix links shown as red arrows. Some of the nodes (namely $p_2\sim p_6$) already have transitions by $c$. Since appending the same character to consecutive suffixes again gives consecutive suffixes, the targets of these transitions form another suffix path $q_1\rightarrow q_2\rightarrow q_3\rightarrow t_0$. We can make two observations:
     
-    -   原字符串 $s$ 的后缀路径上，没有经由 $c$ 的转移的结点一定是最初的几个结点．只要从某个结点（图中的 $p_2$）开始，存在经由 $c$ 的转移，后续经过的结点也一定存在经由 $c$ 的转移．
+    -   On the suffix path of $s$, the nodes without a transition by $c$ must be the first few nodes. Once some node (here $p_2$) has a transition by $c$, every later node on the path also has one.
     
-        **解释**：设 $s_2=\operatorname{longest}(p_2)$，那么后续经过的所有结点都对应 $s_2$ 的后缀，因而如果 $s_2+c$ 也出现在 $s$ 中，那么 $s_2$ 的后缀再加 $c$ 的结果也一定出现在 $s$ 中，因此这些结点都有经由 $c$ 的转移．
-    -   虽然经由字符 $c$ 能够到达结点 $q_i$ 的结点一定是后缀链接树上的连续段，但是这个连续段未必全体都位于自 $p_0$ 到根的后缀路径上．特别地，只有第一个结点 $q_1$ 对应的连续段中起始的若干个结点 **可能** 不在这个后缀路径上．例如图中的结点 $q_1$ 就对应结点 $p_1'\rightarrow p_2\rightarrow p_3$，其中，$p_1'$ 不在 $p_0$ 的后缀路径上．
+        **Explanation**: let $s_2=\operatorname{longest}(p_2)$. All later nodes correspond to suffixes of $s_2$. So if $s_2+c$ also appears in $s$, then any suffix of $s_2$ followed by $c$ also appears in $s$, and therefore all these nodes have transitions by $c$.
+    -   The nodes that reach a node $q_i$ by $c$ always form a contiguous segment in the suffix link tree, but this segment does not have to lie entirely on the suffix path from $p_0$ to the root. In particular, only the first few nodes of the segment for the first node $q_1$ **may** be off this suffix path. For example, in the figure, node $q_1$ corresponds to the nodes $p_1'\rightarrow p_2\rightarrow p_3$, where $p_1'$ is not on the suffix path of $p_0$.
     
-        **解释**：设 $s_2=\operatorname{longest}(p_2)$，则 $s_2+c$ 对应着 $q_1$，但是图中显然有 $s_2+c\neq\operatorname{longest}(q_1)$，因为后者是 $\operatorname{longest}(p'_1)+c$．这就说明，$q_1$ 对应的部分字符串不能由 $s_2$ 及其后缀转移来．反过来，$q_2$ 中的字符串必然是 $s_2+c$ 的后缀，因此删去末尾的 $c$ 后必然是 $s_2$ 的后缀．也就是说，经由 $c$ 转移到 $q_2$ 的结点必然在 $p_2$ 起始的后缀路径上．这也是为什么只有起始的 $q_1$ 对应的连续段中的部分结点可能不在 $p_0$ 的后缀路径上．
+        **Explanation**: let $s_2=\operatorname{longest}(p_2)$. Then $s_2+c$ corresponds to $q_1$, but clearly $s_2+c\neq\operatorname{longest}(q_1)$ in the figure, since the latter is $\operatorname{longest}(p'_1)+c$. This shows that some of the strings of $q_1$ cannot be reached from $s_2$ and its suffixes. On the other hand, the strings in $q_2$ must be suffixes of $s_2+c$, so after removing the trailing $c$ they must be suffixes of $s_2$. That is, the nodes that transition by $c$ into $q_2$ must lie on the suffix path starting at $p_2$. This is also why only some nodes in the segment of the first node $q_1$ may be off the suffix path of $p_0$.
     
-    对于这个图示，如果要在原字符串 $s$ 的末尾添加一个字符 $c$，并构造出相应的后缀路径，会发生什么变化呢？答案是如下图所示：
+    For this figure, what changes if we append a character $c$ to the end of $s$ and build the corresponding suffix path? The answer is shown below:
     
     ![](./images/SAM/sam-suffix-path-2.svg)
     
-    因为结点 $q_0$ 由原字符串 $s$ 对应结点 $p_0$ 经由字符 $c$ 转移而来，它就对应新字符串 $s+c$．所以，它的后缀路径 $q_0\rightarrow q_1''\rightarrow q_2\rightarrow q_3\rightarrow t_0$ 就是新增的后缀路径．如果原来的后缀路径上的结点 $p_i$ 本就有经由 $c$ 的转移，那么新的后缀路径也必然会经过这些转移到达的结点，因此可以直接复用旧有的结点．新的后缀路径上有且只有一个完全新建的节点 $q_0$，用于接受原来的后缀路径上起始的那些没有经由 $c$ 的转移的结点的转移．
+    Since node $q_0$ is reached by $c$ from node $p_0$, which corresponds to the original string $s$, it corresponds to the new string $s+c$. So its suffix path $q_0\rightarrow q_1''\rightarrow q_2\rightarrow q_3\rightarrow t_0$ is the new suffix path. If a node $p_i$ on the old suffix path already has a transition by $c$, the new suffix path must also pass through the node that transition reaches, so the old nodes can be reused directly. The new suffix path has one and only one brand-new node, $q_0$, which receives the transitions from the first nodes of the old suffix path that had no transition by $c$.
     
-    除了这些显然的事实外，还可以注意到，原来的结点 $q_1$ 也经过了一次复制，或者说是分裂成了两个结点 $q'_1\rightarrow q_1''$．这是因为新增的后缀路径只是与现有路径部分重合：原来的结点 $q_1$ 对应的字符串中，只有较短的那些（即结点 $p_2$ 和 $p_3$ 能够转移到的那些）才会出现在新增的后缀路径上，而较长的那些（即结点 $p_1'$ 能够转移到的那些）并不会出现在新增的后缀路径上，因此新增的后缀路径只能经过结点 $q_1$ 的一部分，后者只能分裂成两个结点用于表示这种情形．同样的道理，前面已经解释过，$q_1$ 之后的结点 $q_2$ 和 $q_3$ 都无法由不在 $p_0$ 的后缀路径上的结点转移，因此这些结点对应的所有字符串都会出现在新增的后缀路径上，也就不需要分裂了．
+    Besides these obvious facts, notice that the old node $q_1$ is also copied, or in other words split into two nodes $q'_1\rightarrow q_1''$. This is because the new suffix path only partly overlaps the existing paths: among the strings of the old node $q_1$, only the shorter ones (those reachable from nodes $p_2$ and $p_3$) appear on the new suffix path, while the longer ones (those reachable from node $p_1'$) do not. So the new suffix path can only pass through part of node $q_1$, and $q_1$ has to be split into two nodes to represent this. By the same reasoning, as explained above, the nodes $q_2$ and $q_3$ after $q_1$ cannot be reached from nodes off the suffix path of $p_0$, so all of their strings appear on the new suffix path, and they do not need to be split.
     
-    从 SAM 中状态代表的含义看，每个状态都是一个 $\operatorname{endpos}$ 集合．设延长字符串时，新增的结束位置为 $i$，那么新增的结点 $q_0$ 就是结束位置集合 $\{i\}$，而分裂的结点 $q_1'$ 和 $q_1''$ 分别对应集合 $\operatorname{endpos}(q_1)$ 和 $\operatorname{endpos}(q_1)\cup\{i\}$，之后的结点 $q_2$ 和 $q_3$ 其实都在原有的结束位置集合上新增了 $i$．也就是说，虽然 $q_2$ 和 $q_3$ 及其相关的转移没有发生变化，但是它们对应的 $\operatorname{endpos}$ 集合的确扩大了．
+    In terms of what SAM states mean, each state is an $\operatorname{endpos}$ set. Let $i$ be the new end position when the string is extended. Then the new node $q_0$ is the end-position set $\{i\}$, the split nodes $q_1'$ and $q_1''$ correspond to the sets $\operatorname{endpos}(q_1)$ and $\operatorname{endpos}(q_1)\cup\{i\}$, and the later nodes $q_2$ and $q_3$ actually have $i$ added to their old end-position sets. That is, although $q_2$, $q_3$ and their transitions do not change, their $\operatorname{endpos}$ sets do grow.
     
-    以上说明的是最复杂、最一般的情形（即下文的 **情况三**）．实际操作时，可能并不存在结点 $p'_1$，因而也就不需要分裂（即下文的 **情况二**）．要判断这种情形，只需要判断 $\operatorname{longest}(q_1)=\operatorname{longest}(p_2)+c$ 即可，亦即 $\operatorname{len}(q_1)=\operatorname{len}(p_2)+1$．也有可能 $p_0$ 的后缀路径上的所有结点都没有经由 $c$ 的转移，此时，只要新建 $q_0$ 就好了（即下文的 **情况一**）．
+    This explains the most complex, most general case (**case 3** below). In practice, the node $p'_1$ may not exist, and then no split is needed (**case 2** below). To detect this case, we only need to check whether $\operatorname{longest}(q_1)=\operatorname{longest}(p_2)+c$, i.e., $\operatorname{len}(q_1)=\operatorname{len}(p_2)+1$. It is also possible that no node on the suffix path of $p_0$ has a transition by $c$; then we only need to create $q_0$ (**case 1** below).
 
-掌握了新增后缀路径的思想后，现在讨论增量构造的具体步骤．
+Now that we have the idea of adding a new suffix path, let's go through the concrete steps of the incremental construction.
 
-#### 过程
+#### Process
 
-为了保证线性的空间复杂度，我们将只保存 $\operatorname{len}$ 和 $\operatorname{link}$ 的值和每个状态的转移列表，我们不会标记终止状态（但是我们稍后会展示在构造 SAM 后如何分配这些标记）．
+To keep the space complexity linear, we store only the values of $\operatorname{len}$ and $\operatorname{link}$ and the list of transitions of each state. We do not mark terminal states (but we will show later how to assign these marks after the SAM is built).
 
-一开始 SAM 只包含一个状态 $t_0$，编号为 $0$（其它状态的编号为 $1,2,\ldots$）．为了方便，对于状态 $t_0$ 我们指定 $\operatorname{len}(t_0)=0$，$\operatorname{link}(t_0)=-1$（$-1$ 表示虚拟状态）．
+At first, the SAM contains only one state $t_0$, numbered $0$ (the other states are numbered $1,2,\ldots$). For convenience, we set $\operatorname{len}(t_0)=0$ and $\operatorname{link}(t_0)=-1$ for state $t_0$ ($-1$ stands for a virtual state).
 
-现在，只需要实现给当前字符串添加一个字符 $c$ 的过程．算法流程如下：
+Now we only need to implement the process of adding one character $c$ to the current string. The algorithm goes as follows:
 
-???+ note "SAM 增量构造过程"
-    -   令 $\textit{last}$ 为添加字符 $c$ 之前，整个字符串对应的状态（一开始我们设 $\textit{last}=0$，算法的最后一步更新 $\textit{last}$）．
-    -   创建一个新的状态 $\textit{cur}$，并将 $\operatorname{len}(\textit{cur})$ 赋值为 $\operatorname{len}(\textit{last})+1$，在这时 $\operatorname{link}(\textit{cur})$ 的值还未知．
-    -   现在我们进行如下流程：从状态 $\textit{last}$ 开始，如果当前状态还没有标号为字符 $c$ 的转移，我们就添加一个经字符 $c$ 到状态 $\textit{cur}$ 的转移，并将当前状态沿后缀链接移动．如果过程中遇到某个状态已经存在到字符 $c$ 的转移，我们就停下来，并将这个状态标记为 $p$．
-    -   **情况一**：如果没有找到这样的状态 $p$，我们就到达了虚拟状态 $-1$，我们将 $\operatorname{link}(\textit{cur})$ 赋值为 $0$，然后转到最后一步．
-    -   假设现在我们找到了一个状态 $p$，它可以通过字符 $c$ 转移．我们将转移到的状态标记为 $q$．此时，要么 $\operatorname{len}(p)+1=\operatorname{len}(q)$，要么 $\operatorname{len}(p)+1<\operatorname{len}(q)$．
-    -   **情况二**：如果 $\operatorname{len}(p)+1=\operatorname{len}(q)$，我们只要将 $\operatorname{link}(\textit{cur})$ 赋值为 $q$，然后转到最后一步．
-    -   **情况三**：否则就会有些复杂，需要 **复制** 状态 $q$：我们创建一个新的状态 $\textit{clone}$，复制 $q$ 的除了 $\operatorname{len}$ 的值以外的所有信息（后缀链接和转移）．我们将 $\operatorname{len}(\textit{clone})$ 赋值为 $\operatorname{len}(p)+1$．
+???+ note "Incremental SAM construction"
+    -   Let $\textit{last}$ be the state corresponding to the whole string before adding character $c$ (initially $\textit{last}=0$; the last step of the algorithm updates $\textit{last}$).
+    -   Create a new state $\textit{cur}$ and set $\operatorname{len}(\textit{cur})$ to $\operatorname{len}(\textit{last})+1$. At this point the value of $\operatorname{link}(\textit{cur})$ is not yet known.
+    -   Now do the following: start from state $\textit{last}$. If the current state has no transition labeled $c$, add a transition by $c$ to state $\textit{cur}$, and move the current state along its suffix link. If at some point we reach a state that already has a transition by $c$, stop and call this state $p$.
+    -   **Case 1**: if no such state $p$ is found, we have reached the virtual state $-1$. Set $\operatorname{link}(\textit{cur})$ to $0$ and go to the last step.
+    -   Suppose we have found a state $p$ that has a transition by $c$. Call the target state $q$. Now either $\operatorname{len}(p)+1=\operatorname{len}(q)$ or $\operatorname{len}(p)+1<\operatorname{len}(q)$.
+    -   **Case 2**: if $\operatorname{len}(p)+1=\operatorname{len}(q)$, just set $\operatorname{link}(\textit{cur})$ to $q$ and go to the last step.
+    -   **Case 3**: otherwise things are a bit more complex, and we need to **clone** state $q$: create a new state $\textit{clone}$ and copy all the information of $q$ except $\operatorname{len}$ (the suffix link and the transitions). Set $\operatorname{len}(\textit{clone})$ to $\operatorname{len}(p)+1$.
     
-        复制之后，我们将后缀链接从 $\textit{cur}$ 指向 $\textit{clone}$，也从 $q$ 指向 $\textit{clone}$．
+        After cloning, point the suffix link of $\textit{cur}$ to $\textit{clone}$, and also point the suffix link of $q$ to $\textit{clone}$.
     
-        最终我们需要沿着后缀链接从状态 $p$ 往回走，只要经过的状态存在指向状态 $q$ 的转移，就将该转移重新连接到状态 $\textit{clone}$．
-    -   处理完以上三种情况后，我们都需要将 $\textit{last}$ 的值更新为状态 $\textit{cur}$．
+        Finally, walk back from state $p$ along suffix links. As long as the state we pass has a transition to state $q$, redirect that transition to state $\textit{clone}$.
+    -   After handling any of the three cases above, update $\textit{last}$ to state $\textit{cur}$.
 
-如果我们还想知道哪些状态是 **终止状态** 而哪些不是，我们可以在为字符串 $s$ 构造完完整的 SAM 后找到所有的终止状态．为此，我们从对应整个字符串的状态（存储在变量 $\textit{last}$ 中），遍历它的后缀链接，直到到达初始状态．我们将所有遍历到的状态都标记为终止状态．容易理解这样做我们会准确地标记字符串 $s$ 的所有后缀，这些状态都是终止状态．
+If we also want to know which states are **terminal** and which are not, we can find all terminal states after building the complete SAM of $s$. To do this, start from the state of the whole string (stored in the variable $\textit{last}$) and follow its suffix links until reaching the initial state. Mark every state visited as terminal. It is easy to see that this marks exactly all suffixes of $s$, and these states are the terminal states.
 
-因为我们只为 $s$ 的每个字符创建一个或两个新状态，所以 SAM 只包含 **线性个** 状态．而 SAM 只有线性规模的转移个数，以及算法总体的线性运行时间，都还没有说清楚，将在后文说明．
+Since we create only one or two new states for each character of $s$, the SAM has only a **linear number** of states. That the SAM has only a linear number of transitions, and that the whole algorithm runs in linear time, have not been explained yet; we will show them later.
 
-#### 解释
+#### Explanation
 
-我们详细解释算法每一步的细节，并说明它的 **正确性**．
+We now explain each step of the algorithm in detail and show that it is **correct**.
 
-???+ note "对算法的详细解释"
-    -   若一个转移 $(p,q)$ 满足 $\operatorname{len}(p)+1=\operatorname{len}(q)$，则我们称这个转移是 **连续的**．否则，即当 $\operatorname{len}(p)+1<\operatorname{len}(q)$ 时，这个转移被称为 **不连续的**．
+???+ note "Detailed explanation of the algorithm"
+    -   A transition $(p,q)$ is called **continuous** if $\operatorname{len}(p)+1=\operatorname{len}(q)$. Otherwise, i.e., when $\operatorname{len}(p)+1<\operatorname{len}(q)$, the transition is called **non-continuous**.
     
-        从算法描述中可以看出，连续的和不连续的转移，在算法中的处理也并不相同．连续的转移是固定的，我们不会再改变了．与此相反，当向字符串中插入一个新的字符时，不连续的转移可能会改变（转移边的端点可能会改变）．
-    -   为了避免引起歧义，我们记向 SAM 中插入当前字符 $c$ 之前的字符串为 $s$．
-    -   算法从创建一个新状态 $\textit{cur}$ 开始，对应于整个字符串 $s+c$．我们创建一个新的节点的原因很清楚．与此同时我们也创建了一个新的等价类．
-    -   在创建一个新的状态之后，我们会从对应整个字符串 $s$ 的状态 $\textit{last}$ 沿着后缀链接进行移动．对于经过的每一个状态，我们尝试添加一个通过字符 $c$ 到新状态 $\textit{cur}$ 的转移．
+        As the algorithm description shows, continuous and non-continuous transitions are handled differently. Continuous transitions are fixed and will never change again. In contrast, when a new character is inserted into the string, non-continuous transitions may change (the endpoint of the transition edge may change).
+    -   To avoid ambiguity, we write $s$ for the string before inserting the current character $c$ into the SAM.
+    -   The algorithm begins by creating a new state $\textit{cur}$, which corresponds to the whole string $s+c$. The reason for creating a new node is clear. At the same time, we also create a new equivalence class.
+    -   After creating the new state, we move along suffix links from the state $\textit{last}$, which corresponds to the whole string $s$. For each state we pass, we try to add a transition by character $c$ to the new state $\textit{cur}$.
     
-        然而我们只能添加与原有转移不冲突的转移．因此我们只要找到已存在的 $c$ 的转移，我们就必须停止．
-    -   最简单的情况是我们到达了虚拟状态 $-1$，这意味着我们为所有 $s$ 的后缀添加了 $c$ 的转移．这也意味着，字符 $c$ 从未在字符串 $s$ 中出现过．因此 $\textit{cur}$ 的后缀链接为状态 $0$．
-    -   否则（即情况二和情况三），我们找到了现有的转移 $(p,q)$．这意味着我们尝试向自动机内添加一个 **已经存在的** 字符串 $x+c$（其中 $x=\operatorname{longest}(p)$ 为 $s$ 的一个后缀，且字符串 $x+c$ 已经作为 $s$ 的一个子串出现过了）．因为我们假设字符串 $s$ 的自动机的构造是正确的，我们不应该在这里添加一个新的转移．
+        However, we can only add transitions that do not conflict with existing ones. So as soon as we find an existing transition by $c$, we must stop.
+    -   The simplest case is reaching the virtual state $-1$. This means we have added transitions by $c$ for all suffixes of $s$. It also means the character $c$ has never appeared in $s$ before. So the suffix link of $\textit{cur}$ is state $0$.
+    -   Otherwise (cases 2 and 3), we have found an existing transition $(p,q)$. This means we are trying to add a string $x+c$ that **already exists** in the automaton (where $x=\operatorname{longest}(p)$ is a suffix of $s$, and $x+c$ has already appeared as a substring of $s$). Since we assume the automaton of $s$ is built correctly, we should not add a new transition here.
     
-        然而，难点在于，从状态 $\textit{cur}$ 出发的后缀链接应该连接到哪个状态呢？我们要把后缀链接连到一个状态上，且对应的最长的字符串恰好是 $x+c$，即这个状态的 $\operatorname{len}$ 应该是 $\operatorname{len}(p)+1$．然而这样的状态有可能并不存在，即 $\operatorname{len}(q)>\operatorname{len}(p)+1$．这种情况下，我们必须通过拆开状态 $q$ 来创建一个这样的状态．
-    -   当然，如果转移 $(p,\,q)$ 是连续的，那么 $\operatorname{len}(q)=\operatorname{len}(p)+1$．在这种情况下一切都很简单．我们只需要将 $\textit{cur}$ 的后缀链接指向状态 $q$．
-    -   否则转移是不连续的，即 $\operatorname{len}(q)>\operatorname{len}(p)+1$，这意味着状态 $q$ 不只对应于长度为 $\operatorname{len}(p)+1$ 的后缀 $x+c$，还对应于 $s$ 的更长的子串．除了将状态 $q$ 拆成两个子状态以外我们别无他法，所以第一个子状态的长度就是 $\operatorname{len}(p)+1$ 了．
+        The difficulty, however, is: which state should the suffix link from $\textit{cur}$ point to? We need to point it to a state whose longest string is exactly $x+c$, i.e., whose $\operatorname{len}$ is $\operatorname{len}(p)+1$. But such a state may not exist, i.e., $\operatorname{len}(q)>\operatorname{len}(p)+1$. In this case, we must create such a state by splitting state $q$.
+    -   Of course, if the transition $(p,\,q)$ is continuous, then $\operatorname{len}(q)=\operatorname{len}(p)+1$. In this case everything is simple: we just point the suffix link of $\textit{cur}$ to state $q$.
+    -   Otherwise the transition is non-continuous, i.e., $\operatorname{len}(q)>\operatorname{len}(p)+1$. This means state $q$ corresponds not only to the suffix $x+c$ of length $\operatorname{len}(p)+1$, but also to longer substrings of $s$. We have no choice but to split state $q$ into two sub-states, so that the first one has length $\operatorname{len}(p)+1$.
     
-        我们如何拆开一个状态呢？我们 **复制** 状态 $q$，产生一个状态 $\textit{clone}$，我们将 $\operatorname{len}(\textit{clone})$ 赋值为 $\operatorname{len}(p)+1$．由于我们不想改变经过 $q$ 的路径，我们将 $q$ 的所有转移复制到 $\textit{clone}$．我们也将从 $\textit{clone}$ 出发的后缀链接设置为 $q$ 的后缀链接的目标，并设置 $q$ 的后缀链接为 $\textit{clone}$．
+        How do we split a state? We **clone** state $q$ to get a state $\textit{clone}$, and set $\operatorname{len}(\textit{clone})$ to $\operatorname{len}(p)+1$. Since we don't want to change the paths through $q$, we copy all transitions of $q$ to $\textit{clone}$. We also set the suffix link of $\textit{clone}$ to the target of $q$'s suffix link, and set the suffix link of $q$ to $\textit{clone}$.
     
-        在拆开状态后，我们将从 $\textit{cur}$ 出发的后缀链接设置为 $\textit{clone}$．
+        After splitting the state, we set the suffix link from $\textit{cur}$ to $\textit{clone}$.
     
-        最后一步我们将一些原本指向 $q$ 的转移重新连接到 $\textit{clone}$．我们需要修改哪些转移呢？只需重新连接对应于字符串 $x+c$（其中 $x=\operatorname{longest}(p)$）的所有后缀的转移就够了．也就是说，我们需要继续沿着后缀链接移动，从结点 $p$ 直到虚拟状态 $-1$，或者当前状态经 $c$ 的转移不再指向状态 $q$．
+        In the last step, we redirect some transitions that pointed to $q$ so that they point to $\textit{clone}$. Which transitions do we need to change? It is enough to redirect the transitions corresponding to all suffixes of the string $x+c$ (where $x=\operatorname{longest}(p)$). That is, we keep moving along suffix links from node $p$ until we reach the virtual state $-1$, or until the current state's transition by $c$ no longer points to state $q$.
 
-### 线性时间复杂度
+### Linear time complexity
 
-我们假设字符集大小为 **常数**，即每次对一个字符搜索转移、添加转移、查找下一个转移这些操作的时间复杂度都为 $O(1)$ 的．如果将每个结点的转移分别存储为一个长度为 $\left|\Sigma\right|$ 的数组（用于快速查询给定标号的转移）和一个动态列表（用于快速遍历所有可用转移），以空间换时间，那么算法的时间复杂度[^time-complexity]为 $O(n)$，空间复杂度为 $O(n\left|\Sigma\right|)$．
+We assume the alphabet size is a **constant**, i.e., searching for a transition by a character, adding a transition, and finding the next transition each take $O(1)$ time. If we store the transitions of each node both as an array of length $\left|\Sigma\right|$ (for fast lookup of a transition by label) and as a dynamic list (for fast traversal of all existing transitions), trading space for time, then the algorithm runs in $O(n)$ time[^time-complexity] and $O(n\left|\Sigma\right|)$ space.
 
-??? note "证明"
-    如果我们考虑算法的各个部分，算法中有三处时间复杂度不明显是线性的：
+??? note "Proof"
+    Looking at the parts of the algorithm, there are three places where it is not obvious that the time is linear:
     
-    -   第一处是遍历所有状态 $\textit{last}$ 的后缀链接，添加字符 $c$ 的转移．
-    -   第二处是当状态 $q$ 被复制到一个新的状态 $\textit{clone}$ 时复制转移的过程．
-    -   第三处是修改指向 $q$ 的转移，将它们重新连接到 $\textit{clone}$ 的过程．
+    -   The first is walking along the suffix links from state $\textit{last}$ and adding transitions by $c$.
+    -   The second is copying the transitions when state $q$ is cloned into a new state $\textit{clone}$.
+    -   The third is changing the transitions that point to $q$ so that they point to $\textit{clone}$.
     
-    我们使用 SAM 的大小（状态数和转移数）为 **线性** 的事实（对状态数是线性的证明就是算法本身，对转移数为线性的证明将在稍后实现算法后给出）．
+    We use the fact that the size of the SAM (the number of states and transitions) is **linear** (the proof for the number of states is the algorithm itself; the proof for the number of transitions will be given after we implement the algorithm).
     
-    因此上述 **第一处和第二处** 的总复杂度显然为线性的，因为单次操作均摊只为自动机添加了一个新转移．
+    So the total cost of the **first and second** parts above is clearly linear, since each operation adds, amortized, only one new transition to the automaton.
     
-    还需为 **第三处** 估计总复杂度，我们将最初指向 $q$ 的转移重新连接到 $\textit{clone}$．我们记 $v=\operatorname{longest}(p)$，这是字符串 $s$ 的一个后缀．每迭代一次，$v$ 的长度都减小，因而 $v$ 作为 $s$ 的后缀的起始位置必然在后移．因此，循环中 $p$ 沿后缀链接移动的次数，不超过 $v$ 作为 $s$ 的后缀的起始位置向后移动的距离．因为 $p$ 至少要向后移动一次，才能终止循环，而且 $p$ 至少是 $\textit{last}$ 沿后缀链接移动一次的结果，因此循环终止时，$v$ 作为 $s$ 的后缀的起始位置并不比字符串 $\operatorname{longest}(\operatorname{link}(\operatorname{link}(\textit{last})))$ 更靠前．而且，循环终止时，字符串 $v$ 作为 $s$ 的后缀的起始位置将恰好是 $v+c$ 作为 $s+c$ 的后缀的起始位置，而作为 $s+c$ 的后缀，字符串 $v+c$ 恰好是字符串 $\operatorname{longest}(\operatorname{link}(\operatorname{link}(\textit{cur})))$．因为 $\textit{cur}$ 是更新后的 $\textit{last}$ 的值，所以循环中移动的次数不会超过更新前后 $\operatorname{longest}(\operatorname{link}(\operatorname{link}(\textit{last})))$ 作为当前字符串后缀的起始位置向后移动的距离，再加一（即为了终止循环必须移动的次数）．
+    It remains to bound the total cost of the **third** part, where we redirect transitions that originally pointed to $q$ to $\textit{clone}$. Let $v=\operatorname{longest}(p)$, which is a suffix of $s$. With each iteration, the length of $v$ decreases, so the starting position of $v$ as a suffix of $s$ must move to the right. Therefore, the number of times $p$ moves along a suffix link in the loop is at most the distance the starting position of $v$ as a suffix of $s$ moves to the right. Since $p$ must move at least once to end the loop, and $p$ is at least the result of moving $\textit{last}$ once along its suffix link, when the loop ends the starting position of $v$ as a suffix of $s$ is no further left than that of the string $\operatorname{longest}(\operatorname{link}(\operatorname{link}(\textit{last})))$. Also, when the loop ends, the starting position of $v$ as a suffix of $s$ is exactly the starting position of $v+c$ as a suffix of $s+c$, and as a suffix of $s+c$, the string $v+c$ is exactly $\operatorname{longest}(\operatorname{link}(\operatorname{link}(\textit{cur})))$. Since $\textit{cur}$ is the updated value of $\textit{last}$, the number of moves in the loop is at most the distance that the starting position of $\operatorname{longest}(\operatorname{link}(\operatorname{link}(\textit{last})))$, as a suffix of the current string, moves to the right before and after the update, plus one (the move needed to end the loop).
     
-    因为作为当前字符串后缀的字符串 $\operatorname{longest}(\operatorname{link}(\operatorname{link}(\textit{last})))$ 的位置在整个 SAM 构造过程中单调递增[^monotone-loc]，它的总移动距离必然不超过 $n$．这就说明，需要修改指向 $q$ 的转移的循环中，迭代次数不超过 $2n$．这正是我们需要证明的．
+    Since the position of $\operatorname{longest}(\operatorname{link}(\operatorname{link}(\textit{last})))$ as a suffix of the current string is monotonically increasing during the whole SAM construction[^monotone-loc], its total movement is at most $n$. This shows that the loop that changes the transitions pointing to $q$ runs at most $2n$ iterations in total, which is exactly what we needed to prove.
 
-当然，如果字符集大小不是常数，又不愿付出 $O(n\left|\Sigma\right|)$ 的空间，SAM 的时间复杂度就不是线性的．从一个结点出发的转移需要存储在支持快速查询和插入的平衡树中．因此如果我们记 $\Sigma$ 为字符集，$\left|\Sigma\right|$ 为字符集大小，则算法的渐近时间复杂度为 $O(n\log\left|\Sigma\right|)$，空间复杂度为 $O(n)$．
+Of course, if the alphabet size is not a constant and we don't want to pay $O(n\left|\Sigma\right|)$ space, the SAM's time complexity is not linear. The transitions out of a node then need to be stored in a balanced tree that supports fast lookup and insertion. So if $\Sigma$ is the alphabet and $\left|\Sigma\right|$ its size, the asymptotic time complexity of the algorithm is $O(n\log\left|\Sigma\right|)$ and the space complexity is $O(n)$.
 
-### 实现
+### Implementation
 
-首先，我们实现一种存储一个转移的全部信息的数据结构．如果需要的话，你可以在这里加入一个终止标记，也可以是一些其它信息．我们将用一个 `map` 存储转移的列表，允许我们在总计 $O(n)$ 的空间复杂度和 $O(n\log\left|\Sigma\right|)$ 的时间复杂度内处理整个字符串．当然，在字符集大小 $\left|\Sigma\right|=K$ 为较小的常数（比如 26）时，将 `next` 声明为 `int[K]` 更方便．
+First, we implement a data structure that stores all the information about the transitions of a state. If needed, you can add a terminal mark or other information here. We use a `map` to store the list of transitions, which lets us process the whole string with $O(n)$ total space and $O(n\log\left|\Sigma\right|)$ time. Of course, when the alphabet size $\left|\Sigma\right|=K$ is a small constant (such as 26), it is more convenient to declare `next` as `int[K]`.
 
 ```cpp
 struct state {
@@ -324,7 +324,7 @@ struct state {
 };
 ```
 
-SAM 本身将会存储在一个 `state` 结构体数组中．我们记录当前自动机的大小 `sz` 和变量 `last`，当前整个字符串对应的状态．
+The SAM itself is stored in an array of `state` structs. We keep the current size of the automaton `sz` and the variable `last`, the state corresponding to the whole current string.
 
 ```cpp
 constexpr int MAXLEN = 100000;
@@ -332,7 +332,7 @@ state st[MAXLEN * 2];
 int sz, last;
 ```
 
-我们定义一个函数来初始化 SAM（创建一个只有初始状态的 SAM）．
+We define a function to initialize the SAM (create a SAM with only the initial state).
 
 ```cpp
 void sam_init() {
@@ -344,9 +344,9 @@ void sam_init() {
 }
 ```
 
-最终我们给出主函数的实现：给当前字符串末尾增加一个字符，对应地在之前的基础上建造自动机．
+Finally, here is the main function: it appends one character to the current string and updates the automaton built so far accordingly.
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     void sam_extend(char c) {
       int cur = sz++;
@@ -378,251 +378,251 @@ void sam_init() {
     }
     ```
 
-正如之前提到的一样，如果你用内存换时间（空间复杂度为 $O(n\left|\Sigma\right|)$，其中 $\left|\Sigma\right|$ 为字符集大小），你可以在 $O(n)$ 的时间[^time-complexity]内构造字符集大小任意的 SAM．但是这样你需要为每一个状态储存一个大小为 $\left|\Sigma\right|$ 的数组（用于快速根据字符找到相应的转移）以及一个包含所有可用转移的列表（用于快速遍历所有可用的转移）．
+As mentioned before, if you trade memory for time (space complexity $O(n\left|\Sigma\right|)$, where $\left|\Sigma\right|$ is the alphabet size), you can build a SAM for any alphabet size in $O(n)$ time[^time-complexity]. But then you need to store, for each state, an array of size $\left|\Sigma\right|$ (to quickly find the transition for a character) and a list of all existing transitions (to quickly traverse them).
 
-## 更多性质
+## More properties
 
-### 状态数
+### Number of states
 
-对于一个长度为 $n$ 的字符串 $s$，它的 SAM 中的状态数 **不会超过**  $2n-1$（假设 $n\ge 2$）．
+For a string $s$ of length $n$, the number of states in its SAM is **at most**  $2n-1$ (assuming $n\ge 2$).
 
-??? note "证明"
-    算法本身即可证明该结论．一开始，自动机含有一个状态，第一次和第二次迭代中只会创建一个节点，剩余的 $n-2$ 步中每步会创建至多 $2$ 个状态．
+??? note "Proof"
+    The algorithm itself proves this. At the start, the automaton has one state; the first and second iterations each create only one node, and each of the remaining $n-2$ steps creates at most $2$ states.
     
-    然而我们也能在 **不借助这个算法** 的情况下 **证明** 这个估计值．若 $s$ 由同一个字符构成，则状态数为 $n+1$，结论显然；下面设 $s$ 中至少有两种字符．我们回忆一下状态数等于不同的 $\operatorname{endpos}$ 集合个数．这些 $\operatorname{endpos}$ 集合形成了一棵树（父节点的 $\operatorname{endpos}$ 集合包含子节点的 $\operatorname{endpos}$ 集合）．考虑将这棵树稍微变形一下：只要它有一个只有一个子节点的内部节点（这意味着该子节点的集合至少遗漏了它的父节点的集合中的一个位置），我们就创建一个含有这些遗漏位置的集合作为它的子节点．最后我们可以获得一棵每一个内部结点的子节点数都大于一的树，且叶子节点的个数不超过 $n$．这样的树里有不超过 $2n-1$ 个节点，因此，原来的不同的 $\operatorname{endpos}$ 集合个数也不超过 $2n-1$．
+    But we can also **prove** this bound **without using the algorithm**. If $s$ consists of a single repeated character, the number of states is $n+1$ and the claim is obvious; so assume $s$ has at least two distinct characters. Recall that the number of states equals the number of distinct $\operatorname{endpos}$ sets. These $\operatorname{endpos}$ sets form a tree (a parent's $\operatorname{endpos}$ set contains its children's). Let's modify this tree slightly: whenever it has an internal node with only one child (which means the child's set misses at least one position of its parent's set), we create a set containing these missing positions as another child. In the end we get a tree in which every internal node has more than one child, and there are at most $n$ leaves. Such a tree has at most $2n-1$ nodes, so the original number of distinct $\operatorname{endpos}$ sets is also at most $2n-1$.
     
-    字符串 $\texttt{abbb} \cdots \texttt{bbb}$ 的状态数达到了该上界：从第三次迭代开始的每次迭代，算法都会拆开一个状态，最终产生恰好 $2n-1$ 个状态．
+    The string $\texttt{abbb} \cdots \texttt{bbb}$ reaches this bound: from the third iteration on, the algorithm splits one state in every iteration, ending with exactly $2n-1$ states.
 
-### 转移数
+### Number of transitions
 
-对于一个长度为 $n$ 的字符串 $s$，它的 SAM 中的转移数 **不会超过**  $3n-4$（假设 $n\ge 3$）．
+For a string $s$ of length $n$, the number of transitions in its SAM is **at most**  $3n-4$ (assuming $n\ge 3$).
 
-??? note "证明"
-    我们首先估计连续的转移的数量．考虑自动机中由从状态 $t_0$ 开始到达所有状态的最长路径组成的生成树．生成树只包含连续的边，因此数量少于状态数，即边数不会超过 $2n-2$．
+??? note "Proof"
+    First we bound the number of continuous transitions. Consider the spanning tree of the automaton made of the longest paths from state $t_0$ to every state. This spanning tree contains only continuous edges, so there are fewer of them than states, i.e., at most $2n-2$ edges.
     
-    现在我们来估计不连续的转移的数量．令当前不连续转移为 $(p,\,q)$，其字符为 $c$．我们取它的对应字符串 $u+c+w$，其中字符串 $u$ 对应于初始状态到 $p$ 的最长路径，$w$ 对应于从 $q$ 到任意终止状态的最长路径．一方面，每个不连续的转移所对应的形如 $u+c+w$ 的字符串是不同的（因为 $u$ 仅由连续的转移组成，沿 $u+c+w$ 经过的第一个不连续的转移恰为 $(p,\,q)$）．另一方面，由终止状态的定义，每个形如 $u+c+w$ 的字符串都是整个字符串 $s$ 的后缀．因为 $s$ 只有 $n$ 个非空后缀，且形如 $u+c+w$ 的字符串都不等于 $s$（因为 $s$ 对应的路径只包含连续的转移），所以不连续的转移的总数不会超过 $n-1$．
+    Now we bound the number of non-continuous transitions. Let $(p,\,q)$ be a non-continuous transition with character $c$. Take its corresponding string $u+c+w$, where $u$ corresponds to the longest path from the initial state to $p$, and $w$ corresponds to the longest path from $q$ to any terminal state. On one hand, the strings $u+c+w$ for different non-continuous transitions are all different (since $u$ consists only of continuous transitions, the first non-continuous transition along $u+c+w$ is exactly $(p,\,q)$). On the other hand, by the definition of terminal states, every string of the form $u+c+w$ is a suffix of the whole string $s$. Since $s$ has only $n$ non-empty suffixes, and no string of the form $u+c+w$ equals $s$ (because the path of $s$ contains only continuous transitions), the total number of non-continuous transitions is at most $n-1$.
     
-    将以上两个估计值相加，我们可以得到上界 $3n-3$．然而，最大的状态数只能在类似于 $\texttt{abbb} \cdots \texttt{bbb}$ 的情况中产生，而此时转移数量显然少于 $3n-3$．
+    Adding these two bounds gives an upper bound of $3n-3$. However, the maximum number of states only occurs in cases like $\texttt{abbb} \cdots \texttt{bbb}$, and there the number of transitions is clearly less than $3n-3$.
     
-    因此我们可以获得更为紧确的 SAM 的转移数的上界：$3n-4$．字符串 $\texttt{abbb} \cdots \texttt{bbbc}$ 就达到了这个上界．
+    So we get a tighter upper bound on the number of transitions of a SAM: $3n-4$. The string $\texttt{abbb} \cdots \texttt{bbbc}$ reaches this bound.
 
-### 后缀链接树
+### Suffix link tree
 
-尽管构造 SAM 是为了得到它的状态和转移的信息，但是构造过程中记录的后缀链接 $\operatorname{link}$ 和该状态对应的最长子串长度 $\operatorname{len}$ 在应用中常常比 SAM 的转移更为重要，甚至可以抛开转移单独使用．
+Although we build a SAM to get its states and transitions, the suffix links $\operatorname{link}$ and the lengths $\operatorname{len}$ of the longest substrings recorded during construction are often more important in applications than the SAM's transitions, and can even be used on their own without the transitions.
 
-在构建 SAM 的过程中，需要更新 $\textit{last}$ 状态的值．它对应的是每次添加字符前（后）的字符串，也就是整个字符串 $s$ 的所有前缀．将第 $i$ 个前缀对应的状态记为 $v_i$，这样就得到 $v_0,v_1,\cdots,v_{n-1}$ 共计 $n$ 个状态．另外，规定初始状态 $t_0$ 为 $v_{-1}$，对应着空前缀．这些状态姑且称为「前缀节点」．
+While building the SAM, we keep updating the state $\textit{last}$. It corresponds to the string before (after) each added character, i.e., to every prefix of the whole string $s$. Let $v_i$ be the state of the $i$-th prefix; this gives $n$ states $v_0,v_1,\cdots,v_{n-1}$. Also, let the initial state $t_0$ be $v_{-1}$, corresponding to the empty prefix. For now we call these states "prefix nodes".
 
-引理 4 中提及，所有状态和所有后缀链接构成根为 $t_0$ 的根向树，这个树也称为 **后缀链接树**（国内 OI 选手也常称它为 **parent 树**）．它记录了字符串全体前缀的所有后缀的信息，亦即全体子串的信息．
+As mentioned in Lemma 4, all states and all suffix links form a tree rooted at $t_0$ with edges pointing toward the root. This tree is called the **suffix link tree** (Chinese OI contestants also often call it the **parent tree**). It records information about all suffixes of all prefixes of the string, i.e., about all substrings.
 
-后缀链接树有如下性质：
+The suffix link tree has the following properties:
 
--   祖先节点对应的字符串总是子孙节点对应的字符串的后缀．
--   每个节点处的 $\operatorname{endpos}$ 集合就是它的子树内的所有「前缀节点」$v_i$ 的下标 $i$ 的集合．
--   后缀链接树的祖先节点的 $\operatorname{endpos}$ 集合总是严格包含子孙节点的 $\operatorname{endpos}$ 集合．
--   每个节点处的 $\operatorname{len}$ 的值就是它的子树内的所有「前缀节点」$v_i$ 对应前缀的最长公共后缀的长度．
--   除根节点 $t_0$ 外，每个节点对应的不同子串的数目，就是它的 $\operatorname{len}$ 值，减去它的父节点的 $\operatorname{len}$ 值，即 $\operatorname{len}(v)-\operatorname{len}(\operatorname{link}(v))$．
+-   The string of an ancestor is always a suffix of the string of a descendant.
+-   The $\operatorname{endpos}$ set of each node is exactly the set of indices $i$ of all "prefix nodes" $v_i$ in its subtree.
+-   The $\operatorname{endpos}$ set of an ancestor in the suffix link tree always strictly contains the $\operatorname{endpos}$ set of a descendant.
+-   The value of $\operatorname{len}$ at each node is exactly the length of the longest common suffix of the prefixes of all "prefix nodes" $v_i$ in its subtree.
+-   Except for the root $t_0$, the number of distinct substrings of each node is its $\operatorname{len}$ value minus its parent's $\operatorname{len}$ value, i.e., $\operatorname{len}(v)-\operatorname{len}(\operatorname{link}(v))$.
 
-这些性质有很多应用．比如，第 $i$ 个前缀和第 $j$ 个前缀的最长公共后缀对应的字符串就是 $v_i$ 和 $v_j$ 的 LCA 对应的最长字符串．
+These properties have many applications. For example, the longest common suffix of the $i$-th and $j$-th prefixes is the longest string of the LCA of $v_i$ and $v_j$.
 
-最后，对字符串 $s$ 建立的后缀链接树与对它的翻转 $s_R$ 建立的 [后缀树](./suffix-tree.md) 有相同的结构．这一点常常用于离线构造后缀树．
+Finally, the suffix link tree of a string $s$ has the same structure as the [suffix tree](./suffix-tree.md) of its reverse $s_R$. This is often used to build suffix trees offline.
 
-## 应用
+## Applications
 
-下面我们来看一些可以用 SAM 解决的问题．简单起见，假设字符集的大小 $|\Sigma|$ 为常数．这允许我们认为增加一个字符和遍历的复杂度为常数．
+Let's now look at some problems that can be solved with a SAM. For simplicity, assume the alphabet size $|\Sigma|$ is a constant. This lets us treat adding a character and traversal as constant-time operations.
 
-### 检查字符串是否出现
+### Checking whether a string occurs
 
-???+ example "问题"
-    给一个文本串 $T$ 和多个模式串 $P$，我们要检查字符串 $P$ 是否作为 $T$ 的一个子串出现．
+???+ example "Problem"
+    Given a text $T$ and several patterns $P$, check whether each string $P$ occurs as a substring of $T$.
 
-??? note "解法"
-    我们在 $O(\left|T\right|)$ 的时间内对文本串 $T$ 构造后缀自动机．为了检查模式串 $P$ 是否在 $T$ 中出现，我们沿转移（边）从 $t_0$ 开始根据 $P$ 的字符进行转移．如果在某个点无法转移下去，则模式串 $P$ 不是 $T$ 的一个子串．如果我们能够这样处理完整个字符串 $P$，那么模式串在 $T$ 中出现过．
+??? note "Solution"
+    Build the suffix automaton of the text $T$ in $O(\left|T\right|)$ time. To check whether a pattern $P$ occurs in $T$, start from $t_0$ and follow the transitions (edges) given by the characters of $P$. If at some point there is no transition to follow, $P$ is not a substring of $T$. If we can process the whole string $P$ this way, then the pattern occurs in $T$.
     
-    对于每个字符串 $P$，算法的时间复杂度为 $O(\left|P\right|)$．此外，这个算法还找到了模式串 $P$ 在文本串中出现的最大前缀长度．
+    For each string $P$, the algorithm takes $O(\left|P\right|)$ time. In addition, it also finds the length of the longest prefix of $P$ that occurs in the text.
 
-### 不同子串个数
+### Number of distinct substrings
 
-???+ example "问题"
-    给一个字符串 $S$，计算不同子串的个数．
+???+ example "Problem"
+    Given a string $S$, count its distinct substrings.
 
-??? note "解法一"
-    对字符串 $S$ 构造后缀自动机．
+??? note "Solution 1"
+    Build the suffix automaton of $S$.
     
-    每个 $S$ 的子串都相当于自动机中的一条路径．因此不同子串的个数等于自动机中以 $t_0$ 为起点的不同非空路径的条数．
+    Each substring of $S$ corresponds to a path in the automaton. So the number of distinct substrings equals the number of distinct non-empty paths in the automaton starting at $t_0$.
     
-    考虑到 SAM 为有向无环图，不同路径的条数可以通过动态规划计算．即令 $d_{v}$ 为从状态 $v$ 开始的路径数量（包括长度为零的路径），则我们有如下递推方程：
+    Since a SAM is a directed acyclic graph, the number of distinct paths can be computed with dynamic programming. Let $d_{v}$ be the number of paths starting at state $v$ (including the path of length zero). Then we have the recurrence:
     
     $$
     d_{v}=1+\sum_{w:(v,w,c)\in \text{SAM}}d_{w}
     $$
     
-    即，$d_{v}$ 等于 $1$ 加上 $v$ 的所有转移的终点的 $d$ 值之和，其中 $(v,w,c)\in \text{SAM}$ 表示后缀自动机中存在自 $v$ 经 $c$ 至 $w$ 的转移．
+    That is, $d_{v}$ equals $1$ plus the sum of $d$ over the targets of all transitions of $v$, where $(v,w,c)\in \text{SAM}$ means the suffix automaton has a transition from $v$ to $w$ by $c$.
     
-    所以不同子串的个数为 $d_{t_0}-1$（因为要去掉空子串）．
+    So the number of distinct substrings is $d_{t_0}-1$ (subtracting the empty substring).
     
-    总时间复杂度为：$O(\left|S\right|)$．
+    The total time complexity is $O(\left|S\right|)$.
 
-??? note "解法二"
-    另一种方法是在构造完后缀自动机后，利用得到的后缀链接树的信息．每个节点对应的子串数量是 $\operatorname{len}(v)-\operatorname{len}(\operatorname{link}(v))$，对除 $t_0$ 外的所有节点求和即可．
+??? note "Solution 2"
+    Another way is to use the suffix link tree after building the suffix automaton. The number of substrings of each node is $\operatorname{len}(v)-\operatorname{len}(\operatorname{link}(v))$; just sum this over all nodes except $t_0$.
     
-    总时间复杂度仍然为：$O(\left|S\right|)$．
+    The total time complexity is still $O(\left|S\right|)$.
 
-例题：[【模板】后缀自动机](https://www.luogu.com.cn/problem/P3804)，[SDOI2016 生成魔咒](https://loj.ac/problem/2033)
+Example problems: [[Template] Suffix Automaton](https://www.luogu.com.cn/problem/P3804), [SDOI2016 Generating Spells](https://loj.ac/problem/2033)
 
-### 所有不同子串的总长度
+### Total length of all distinct substrings
 
-???+ example "问题"
-    给定一个字符串 $S$，计算所有不同子串的总长度．
+???+ example "Problem"
+    Given a string $S$, compute the total length of all its distinct substrings.
 
-??? note "解法一"
-    本题做法与上一题类似，只是现在我们需要考虑分两部分进行动态规划：不同子串的数量 $d_{v}$ 和它们的总长度 $ans_{v}$．
+??? note "Solution 1"
+    This is similar to the previous problem, but now the DP has two parts: the number of distinct substrings $d_{v}$ and their total length $ans_{v}$.
     
-    我们已经在上一题中介绍了如何计算 $d_{v}$．$ans_{v}$ 的值可以通过以下递推式计算：
+    We already showed how to compute $d_{v}$ in the previous problem. The value of $ans_{v}$ can be computed with the following recurrence:
     
     $$
     ans_{v}=\sum_{w:(v,w,c)\in \text{SAM}}(d_{w}+ans_{w})
     $$
     
-    我们取每个邻接结点 $w$ 的答案，并加上 $d_{w}$（因为从状态 $v$ 出发的子串都增加了一个字符）．
+    We take the answer of each neighbor $w$ and add $d_{w}$ (since each substring starting from state $v$ gains one character).
     
-    算法的时间复杂度仍然是 $O(\left|S\right|)$．
+    The time complexity of the algorithm is still $O(\left|S\right|)$.
 
-??? note "解法二"
-    同样可以利用后缀链接树的信息．每个节点对应的最长子串的所有后缀长度之和是
+??? note "Solution 2"
+    We can also use the suffix link tree. The sum of the lengths of all suffixes of the longest substring of each node is
     
     $$
     \dfrac{\operatorname{len}(v)\times (\operatorname{len}(v)+1)}{2},
     $$
     
-    减去其 $\operatorname{link}$ 节点的对应值就是该节点的净贡献，对除 $t_0$ 外的所有节点求和即可．
+    and subtracting the same value for its $\operatorname{link}$ node gives the node's net contribution. Just sum this over all nodes except $t_0$.
     
-    总时间复杂度仍然为：$O(\left|S\right|)$．
+    The total time complexity is still $O(\left|S\right|)$.
 
-### 字典序第 k 小子串
+### The k-th smallest substring in lexicographic order
 
-???+ example "问题"
-    给定一个字符串 $S$．多组询问，每组询问给定一个数 $K_i$，查询 $S$ 的所有本质不同的子串中字典序第 $K_i$ 小的子串．
+???+ example "Problem"
+    Given a string $S$ and several queries. Each query gives a number $K_i$; find the $K_i$-th smallest substring in lexicographic order among all distinct substrings of $S$.
 
-??? note "解法"
-    解决这个问题的思路可以从解决前两个问题的思路发展而来．字典序第 $K_i$ 小的子串对应于 SAM 中字典序第 $K_i$ 小的非空路径，因此在计算每个状态的路径数后，我们可以很容易地从 SAM 的根开始找到第 $K_i$ 小的路径．
+??? note "Solution"
+    The idea grows out of the previous two problems. The $K_i$-th smallest substring in lexicographic order corresponds to the $K_i$-th smallest non-empty path in the SAM in lexicographic order. So after computing the number of paths from each state, we can easily find the $K_i$-th smallest path starting from the root of the SAM.
     
-    预处理的时间复杂度为 $O(\left|S\right|)$，单次查询的复杂度为 $O(\left|ans\right|\cdot\left|\Sigma\right|)$（其中 $ans$ 是查询的答案，$\left|\Sigma\right|$ 为字符集的大小）．
+    Preprocessing takes $O(\left|S\right|)$ time, and each query takes $O(\left|ans\right|\cdot\left|\Sigma\right|)$ (where $ans$ is the answer to the query and $\left|\Sigma\right|$ is the alphabet size).
 
-??? info "另注"
-    虽然该题是后缀自动机的经典题，但实际上这题由于涉及字典序，用后缀数组做最方便．
+??? info "Side note"
+    Although this is a classic suffix automaton problem, since it involves lexicographic order, it is actually most convenient to solve with a suffix array.
 
-例题：[SPOJ - SUBLEX](https://www.spoj.com/problems/SUBLEX/)，[TJOI2015 弦论](https://loj.ac/problem/2102)
+Example problems: [SPOJ - SUBLEX](https://www.spoj.com/problems/SUBLEX/), [TJOI2015 String Theory](https://loj.ac/problem/2102)
 
-### 最小循环移位
+### Minimum cyclic shift
 
-???+ example "问题"
-    给定一个字符串 $S$．找出字典序最小的循环移位．
+???+ example "Problem"
+    Given a string $S$, find its lexicographically smallest cyclic shift.
 
-??? note "解法"
-    容易发现字符串 $S+S$ 包含字符串 $S$ 的所有循环移位作为子串．
+??? note "Solution"
+    It is easy to see that the string $S+S$ contains all cyclic shifts of $S$ as substrings.
     
-    所以问题简化为在 $S+S$ 对应的后缀自动机上寻找最小的长度为 $\left|S\right|$ 的路径，这可以通过平凡的方法做到：我们从初始状态开始，贪心地访问最小的字符即可．
+    So the problem reduces to finding the smallest path of length $\left|S\right|$ in the suffix automaton of $S+S$. This can be done in a straightforward way: start from the initial state and greedily follow the smallest character.
     
-    总的时间复杂度为 $O(\left|S\right|)$．
+    The total time complexity is $O(\left|S\right|)$.
 
-### 出现次数
+### Number of occurrences
 
-???+ example "问题"
-    对于一个给定的文本串 $T$，有多组询问，每组询问给一个模式串 $P$，回答模式串 $P$ 在字符串 $T$ 中作为子串出现了多少次．
+???+ example "Problem"
+    Given a text $T$ and several queries. Each query gives a pattern $P$; answer how many times $P$ occurs as a substring of $T$.
 
-??? note "解法一"
-    利用后缀链接树的信息，进行 dfs 即可预处理每个节点的 $\operatorname{endpos}$ 集合的大小．
+??? note "Solution 1"
+    Using the suffix link tree, a DFS can precompute the size of the $\operatorname{endpos}$ set of every node.
     
-    所有「前缀节点」的初始集合大小为 $1$，非「前缀节点」的初始集合大小为 $0$．然后，沿着后缀链接自下向上回溯时，每个父节点的集合大小都加上它的所有子节点的集合大小（不要遗漏父节点本身的初始值）．这样得到的每个节点处的值，就是该节点的 $\operatorname{endpos}$ 集合的大小．不同子节点的集合大小可以直接相加的理由是，同一个 $v_i$ 只会出现在一个子树内，故而相加不会重复．
+    Every "prefix node" starts with a set size of $1$, and every other node starts with $0$. Then, going back up along the suffix links from the bottom, add the set sizes of all children to each parent (don't forget the parent's own initial value). The resulting value at each node is the size of its $\operatorname{endpos}$ set. The set sizes of different children can simply be added because each $v_i$ appears in only one subtree, so nothing is counted twice.
     
-    查询时，在自动机上查找模式串 $P$ 对应的节点，如果存在，则答案就是该节点的 $\operatorname{endpos}$ 集合的大小；如果不存在，则答案为 $0$．
+    To answer a query, find the node of the pattern $P$ in the automaton. If it exists, the answer is the size of that node's $\operatorname{endpos}$ set; otherwise the answer is $0$.
     
-    预处理时间复杂度为 $O(|T|)$．单次查询的时间复杂度为 $O(|P|)$．
+    Preprocessing takes $O(|T|)$ time, and each query takes $O(|P|)$ time.
 
-??? note "解法二"
-    对文本串 $T$ 构造后缀自动机．
+??? note "Solution 2"
+    Build the suffix automaton of the text $T$.
     
-    接下来做预处理：对于自动机中的每个状态 $v$，预处理 $cnt_{v}$，使之等于 $\operatorname{endpos}(v)$ 集合的大小．事实上，对应同一状态 $v$ 的所有子串在文本串 $T$ 中的出现次数相同，这相当于集合 $\operatorname{endpos}$ 中的位置数．
+    Next, preprocess: for each state $v$ of the automaton, compute $cnt_{v}$ equal to the size of the set $\operatorname{endpos}(v)$. In fact, all substrings of the same state $v$ occur the same number of times in $T$, which equals the number of positions in the set $\operatorname{endpos}$.
     
-    然而我们不能明确地构造集合 $\operatorname{endpos}$，因此我们只考虑它们的大小 $cnt$．
+    However, we cannot build the sets $\operatorname{endpos}$ explicitly, so we only consider their sizes $cnt$.
     
-    为了计算这些值，我们进行以下操作．对于每个状态，如果它不是通过复制创建的（且它不是初始状态 $t_0$），我们将它的 $cnt$ 初始化为 1．然后我们按它们的长度 $\operatorname{len}$ 降序遍历所有状态，并将当前的 $cnt_{v}$ 的值加到后缀链接指向的状态上，即：
+    To compute these values, we do the following. For each state, if it was not created by cloning (and it is not the initial state $t_0$), initialize its $cnt$ to 1. Then go through all states in decreasing order of length $\operatorname{len}$, and add the current value $cnt_{v}$ to the state its suffix link points to, i.e.:
     
     $$
     cnt_{\operatorname{link}(v)}+=cnt_{v}
     $$
     
-    这样做每个状态的答案都是正确的．
+    After this, the answer for every state is correct.
     
-    为什么这是正确的？不是通过复制获得的状态（除 $t_0$ 外）恰好有 $\left|T\right|$ 个，并且它们中的前 $i$ 个在我们插入前 $i$ 个字符时产生，各自对应一个结束位置．因此我们初始将这些状态的 $cnt$ 的值赋为 $1$，其它状态的 $cnt$ 值赋为 $0$．
+    Why is this correct? There are exactly $\left|T\right|$ states not created by cloning (excluding $t_0$), and the first $i$ of them are created when we insert the first $i$ characters, each corresponding to one end position. So we initialize the $cnt$ of these states to $1$ and the $cnt$ of all other states to $0$.
     
-    接下来我们对每一个 $v$ 执行以下操作：$cnt_{\operatorname{link}(v)}+=cnt_{v}$．其背后的含义是，如果状态 $v$ 对应的字符串出现了 $cnt_{v}$ 次，那么它的所有后缀也在完全相同的地方结束，即也出现了 $cnt_{v}$ 次．
+    Then for each $v$ we do: $cnt_{\operatorname{link}(v)}+=cnt_{v}$. The meaning behind this is that if the strings of state $v$ occur $cnt_{v}$ times, then all their suffixes end at exactly the same places, so they also occur $cnt_{v}$ times.
     
-    为什么我们在这个过程中不会重复计数（即把某些位置数了两次）呢？因为我们只将一个状态的位置添加到 **一个** 其它的状态上，所以一个状态不可能以两种不同的方式将其位置重复地指向另一个状态．
+    Why don't we count anything twice in this process (i.e., count some position twice)? Because we add the positions of a state to only **one** other state, so a state cannot pass its positions to another state twice through two different routes.
     
-    因此，我们可以在 $O(\left|T\right|)$ 的时间内计算出所有状态的 $cnt$ 的值．
+    So we can compute $cnt$ for all states in $O(\left|T\right|)$ time.
     
-    最后回答询问只需要查找值 $cnt_{t}$，其中 $t$ 为模式串对应的状态，如果该模式串不存在答案就为 $0$．单次查询的时间复杂度为 $O(\left|P\right|)$．
+    Finally, to answer a query we just look up $cnt_{t}$, where $t$ is the state of the pattern; if the pattern does not exist, the answer is $0$. Each query takes $O(\left|P\right|)$ time.
 
-### 第一次出现的位置
+### Position of the first occurrence
 
-???+ example "问题"
-    给定一个文本串 $T$，多组查询．每次查询字符串 $P$ 在字符串 $T$ 中第一次出现的位置（$P$ 的开头位置）．
+???+ example "Problem"
+    Given a text $T$ and several queries. Each query asks for the position of the first occurrence of a string $P$ in $T$ (the starting position of $P$).
 
-??? note "解法一"
-    利用后缀链接树的信息，进行 dfs 即可预处理每个节点的 $\operatorname{endpos}$ 集合中的最小值．
+??? note "Solution 1"
+    Using the suffix link tree, a DFS can precompute the minimum of the $\operatorname{endpos}$ set of every node.
     
-    所有「前缀节点」$v_i$ 的初始值为 $i$，非「前缀节点」的初始值为 $\infty$．然后，沿着后缀链接自下向上回溯时，每个父节点的值都与它的所有子节点的值比较，取最小值（不要遗漏父节点本身的初始值）．这样得到的每个节点处的值，就是该节点的 $\operatorname{endpos}$ 集合中的最小值．
+    Every "prefix node" $v_i$ starts with the value $i$, and every other node starts with $\infty$. Then, going back up along the suffix links from the bottom, each parent takes the minimum of its own value and the values of all its children (don't forget the parent's own initial value). The resulting value at each node is the minimum of its $\operatorname{endpos}$ set.
     
-    查询时，在自动机上查找模式串 $P$ 对应的节点，如果存在，则答案就是该节点的值，减去 $|P|-1$；如果不存在，则答案不存在．
+    To answer a query, find the node of the pattern $P$ in the automaton. If it exists, the answer is that node's value minus $|P|-1$; otherwise there is no answer.
     
-    预处理时间复杂度为 $O(|T|)$．单次查询的时间复杂度为 $O(|P|)$．
+    Preprocessing takes $O(|T|)$ time, and each query takes $O(|P|)$ time.
 
-??? note "解法二"
-    我们构造一个后缀自动机．我们对 SAM 中的所有状态预处理位置 $\operatorname{firstpos}$．即，对每个状态 $v$ 我们想要找到第一次出现这个状态的末端的位置 $\operatorname{firstpos}[v]$．换句话说，我们希望先找到每个集合 $\operatorname{endpos}$ 中的最小的元素（显然我们不能显式地维护所有 $\operatorname{endpos}$ 集合）．
+??? note "Solution 2"
+    Build a suffix automaton. We precompute the position $\operatorname{firstpos}$ for every state of the SAM. That is, for each state $v$ we want the position $\operatorname{firstpos}[v]$ where the first occurrence of this state ends. In other words, we want to find the smallest element of each set $\operatorname{endpos}$ in advance (clearly we cannot maintain all $\operatorname{endpos}$ sets explicitly).
     
-    为了维护 $\operatorname{firstpos}$ 这些位置，我们对函数 `sam_extend()` 进行扩展．当我们创建新状态 $\textit{cur}$ 时，我们令：
+    To maintain these positions $\operatorname{firstpos}$, we extend the function `sam_extend()`. When we create a new state $\textit{cur}$, we set:
     
     $$
     \operatorname{firstpos}(\textit{cur})=\operatorname{len}(\textit{cur})-1.
     $$
     
-    当我们将结点 $q$ 复制到 $\textit{clone}$ 时，我们令：
+    When we clone node $q$ into $\textit{clone}$, we set:
     
     $$
     \operatorname{firstpos}(\textit{clone})=\operatorname{firstpos}(q).
     $$
     
-    （因为值的唯一的其它选项 $\operatorname{firstpos}(\textit{cur})$ 显然太大了）．
+    (because the only other option, $\operatorname{firstpos}(\textit{cur})$, is clearly too large).
     
-    那么查询的答案就是 $\operatorname{firstpos}(t)-\left|P\right|+1$，其中 $t$ 为对应字符串 $P$ 的状态．单次查询只需要 $O(\left|P\right|)$ 的时间．
+    Then the answer to a query is $\operatorname{firstpos}(t)-\left|P\right|+1$, where $t$ is the state of the string $P$. Each query takes only $O(\left|P\right|)$ time.
 
-### 所有出现的位置
+### All occurrence positions
 
-???+ example "问题"
-    问题同上，这一次需要查询文本串 $T$ 中模式串 $P$ 出现的所有位置．
+???+ example "Problem"
+    Same as above, but this time we need to find all positions where the pattern $P$ occurs in the text $T$.
 
-??? note "解法一"
-    找到模式串 $P$ 对应的节点后，利用后缀链接树的信息，遍历子树，一旦发现「前缀节点」就输出．
+??? note "Solution 1"
+    After finding the node of the pattern $P$, use the suffix link tree: traverse its subtree and output every "prefix node" found.
     
-    单次查询复杂度为 $O(|P|)+O(\textit{answer}(P))$，其中，$\textit{answer}(P)$ 为本次询问的答案数目．仿照 [状态数为线性的证明](#状态数) 可以说明，后缀链接树的子树大小不会超过该节点的 $\operatorname{endpos}$ 集合的大小的二倍，因此遍历子树的复杂度是 $O(\textit{answer}(P))$ 的．
+    Each query takes $O(|P|)+O(\textit{answer}(P))$, where $\textit{answer}(P)$ is the number of answers to this query. Following the [proof that the number of states is linear](#number-of-states), we can show that the size of a subtree of the suffix link tree is at most twice the size of the node's $\operatorname{endpos}$ set, so traversing the subtree takes $O(\textit{answer}(P))$.
 
-??? note "解法二"
-    我们还是对文本串 $T$ 构造后缀自动机．与上一个问题相似，我们为所有状态计算位置 $\operatorname{firstpos}$．
+??? note "Solution 2"
+    Again we build the suffix automaton of the text $T$. As in the previous problem, we compute the position $\operatorname{firstpos}$ for every state.
     
-    如果 $t$ 为对应于模式串 $P$ 的状态，显然 $\operatorname{firstpos}(t)$ 为答案之一．我们已经找到了自动机中对应于 $P$ 的状态．还需要找到其它哪些位置？正是那些对应于以 $P$ 为后缀的字符串的状态．换句话说，我们要找到所有可以通过后缀链接到达状态 $t$ 的状态．
+    If $t$ is the state of the pattern $P$, then clearly $\operatorname{firstpos}(t)$ is one of the answers. We have found the state of $P$ in the automaton. What other positions do we need? Exactly those of the states whose strings have $P$ as a suffix. In other words, we need to find all states from which state $t$ can be reached via suffix links.
     
-    因此为了解决这个问题，我们需要为每一个状态保存一个指向它的后缀链接列表．查询的答案就包含了对于每个我们能从状态 $t$ 只使用反向的后缀链接进行 DFS 或 BFS 找到的所有状态的 $\operatorname{firstpos}$ 值．
+    So to solve this problem, for each state we store a list of the suffix links pointing to it. The answer to a query consists of the $\operatorname{firstpos}$ values of all states we can find from state $t$ by a DFS or BFS using only reversed suffix links.
     
-    预处理的复杂度为 $O(|T|)$，单次查询的复杂度为 $O(|P|+\textit{answer}(P))$．
+    Preprocessing takes $O(|T|)$, and each query takes $O(|P|+\textit{answer}(P))$.
     
-    我们不会重复访问一个状态（因为每个状态仅有一条后缀链接，所以不存在两条不同的路径指向同一状态）．
+    We never visit a state twice (each state has only one suffix link, so there cannot be two different paths to the same state).
     
-    我们只需要考虑两个可能有相同 $\operatorname{firstpos}$ 值的不同状态．这种情形只在一个状态是由另一个状态复制而来时发生．然而，这并不会对复杂度分析造成影响．仿照 [状态数为线性的证明](#状态数)，所有这种后缀为 $P$ 的状态数目不会超过 $2\textit{answer}(P)$．
+    We only need to consider two different states that may have the same $\operatorname{firstpos}$ value. This happens only when one state was cloned from the other. However, this does not affect the complexity analysis. Following the [proof that the number of states is linear](#number-of-states), the number of such states with suffix $P$ is at most $2\textit{answer}(P)$.
     
-    此外，我们可以通过不考虑复制而来的节点的 $\operatorname{firstpos}$ 值来去除重复的位置．事实上，$t$ 的子树中每个出现位置恰好对应一个非复制而来的状态．因此，如果我们给每个状态记录标记 `is_clone` 来代表这个状态是不是被复制出来的，我们就可以简单地忽略掉被复制的状态，只输出其它所有状态的 $\operatorname{firstpos}$ 的值．
+    In addition, we can remove duplicate positions by ignoring the $\operatorname{firstpos}$ values of cloned nodes. In fact, each occurrence position in the subtree of $t$ corresponds to exactly one non-cloned state. So if we keep a flag `is_clone` for each state indicating whether it was cloned, we can simply skip the cloned states and output the $\operatorname{firstpos}$ values of all the other states.
     
-    以下是大致的实现：
+    Here is a rough implementation:
     
     ```cpp
     struct state {
@@ -632,65 +632,65 @@ void sam_init() {
       // some other variables
     };
     
-    // 在构造 SAM 后
+    // after building the SAM
     for (int v = 1; v < sz; v++) st[st[v].link].inv_link.push_back(v);
     
-    // 输出所有出现位置
+    // output all occurrence positions
     void output_all_occurrences(int v, int P_length) {
       if (!st[v].is_clone) cout << st[v].first_pos - P_length + 1 << endl;
       for (int u : st[v].inv_link) output_all_occurrences(u, P_length);
     }
     ```
 
-### 最短的没有出现的字符串
+### Shortest string that does not occur
 
-???+ example "问题"
-    给定一个字符串 $S$ 和一个特定的字符集，我们要找一个长度最短的没有在 $S$ 中出现过的字符串．
+???+ example "Problem"
+    Given a string $S$ and a fixed alphabet, find a shortest string that does not occur in $S$.
 
-??? note "解法"
-    我们在字符串 $S$ 的后缀自动机上做动态规划．
+??? note "Solution"
+    We do dynamic programming on the suffix automaton of $S$.
     
-    假定我们已经处理完了子串的一部分，当前在状态 $v$，想找到为了遇到不存在的转移需要添加的最小字符数量，将节点 $v$ 处的这个数量记作 $d_v$．
+    Suppose we have already processed part of the substring and are now at state $v$. We want the minimum number of characters we need to add to hit a missing transition; call this number $d_v$ for node $v$.
     
-    计算 $d_{v}$ 非常简单．如果字符集中至少有一个字符在 $v$ 处没有转移，则 $d_{v}=1$．否则添加一个字符是不够的，我们需要求出所有转移中的最小值：
+    Computing $d_{v}$ is very simple. If at least one character of the alphabet has no transition from $v$, then $d_{v}=1$. Otherwise adding one character is not enough, and we take the minimum over all transitions:
     
     $$
     d_{v}=1+\min_{w:(v,w,c)\in \text{SAM}}d_{w}
     $$
     
-    问题的答案就是 $d_{t_0}$，字符串可以通过计算过的数组 $d$ 逆推回去．
+    The answer is $d_{t_0}$, and the string itself can be recovered by tracing back through the computed array $d$.
 
-### 两个字符串的最长公共子串
+### Longest common substring of two strings
 
-???+ example "问题"
-    给定两个字符串 $S$ 和 $T$，求出最长公共子串，公共子串定义为在 $S$ 和 $T$ 中都作为子串出现过的字符串 $X$．
+???+ example "Problem"
+    Given two strings $S$ and $T$, find their longest common substring. A common substring is a string $X$ that occurs as a substring in both $S$ and $T$.
 
-??? note "解法"
-    我们对字符串 $S$ 构造后缀自动机．
+??? note "Solution"
+    Build the suffix automaton of $S$.
     
-    我们现在处理字符串 $T$，对于每一个前缀，都在 $S$ 中寻找这个前缀的最长后缀．换句话说，对于每个字符串 $T$ 中的位置，我们想要找到这个位置结束的 $S$ 和 $T$ 的最长公共子串的长度．
+    Now we process $T$. For each prefix of $T$, we look for the longest suffix of that prefix that occurs in $S$. In other words, for each position in $T$, we want the length of the longest common substring of $S$ and $T$ ending at that position.
     
-    为了达到这一目的，我们使用两个变量，**当前状态**  $v$ 和 **当前长度**  $l$．这两个变量描述当前匹配的部分：它的长度和它对应的状态．
+    To do this, we use two variables: the **current state**  $v$ and the **current length**  $l$. These two variables describe the currently matched part: its length and its state.
     
-    一开始 $v=t_0$ 且 $l=0$，即，匹配为空串．
+    Initially $v=t_0$ and $l=0$, i.e., the match is the empty string.
     
-    现在我们来描述如何添加一个字符 $T_{i}$ 并为其重新计算答案：
+    Now let's describe how to add a character $T_{i}$ and recompute the answer for it:
     
-    -   如果存在一个从 $v$ 到字符 $T_{i}$ 的转移，我们只需要转移并让 $l$ 自增一．
-    -   如果不存在这样的转移，我们需要缩短当前匹配的部分，这意味着我们需要按照后缀链接进行转移：
+    -   If there is a transition from $v$ by the character $T_{i}$, we just follow it and increase $l$ by one.
+    -   If there is no such transition, we need to shorten the currently matched part, which means following the suffix link:
     
         $$
         v=\operatorname{link}(v)
         $$
     
-        与此同时，需要缩短当前长度．显然我们需要将 $l$ 赋值为 $\operatorname{len}(v)$，因为经过这个后缀链接后我们到达的状态所对应的最长字符串是一个子串．
-    -   如果仍然没有使用这一字符的转移，我们继续重复经过后缀链接并减小 $l$，直到我们找到一个转移，或到达初始状态 $t_0$ 且它也没有这一转移（这意味着字符 $T_{i}$ 根本没有在 $S$ 中出现过，此时 $v=l=0$）．
+        At the same time, we need to shorten the current length. Clearly we should set $l$ to $\operatorname{len}(v)$, because the longest string of the state we reach after following this suffix link is a substring.
+    -   If there is still no transition by this character, we keep following suffix links and decreasing $l$ until we find a transition, or reach the initial state $t_0$ and it has no such transition either (which means the character $T_{i}$ never occurs in $S$; then $v=l=0$).
     
-    显然问题的答案就是所有 $l$ 的最大值．
+    Clearly, the answer to the problem is the maximum of all values of $l$.
     
-    这一部分的时间复杂度为 $O(\left|T\right|)$，因为每次移动我们要么可以使 $l$ 增加一，要么可以在后缀链接间移动几次，每次都减小 $l$ 的值．
+    This part takes $O(\left|T\right|)$ time, because in each move we either increase $l$ by one, or move along suffix links several times, each time decreasing $l$.
     
-    代码实现：
+    Implementation:
     
     ```cpp
     string lcs(const string &S, const string &T) {
@@ -717,43 +717,43 @@ void sam_init() {
     }
     ```
 
-例题：[SPOJ Longest Common Substring](https://www.spoj.com/problems/LCS/en/)
+Example problem: [SPOJ Longest Common Substring](https://www.spoj.com/problems/LCS/en/)
 
-### 多个字符串间的最长公共子串
+### Longest common substring of several strings
 
-???+ example "问题"
-    给定 $k$ 个字符串 $S_i$．我们需要找到它们的最长公共子串，即作为子串出现在每个字符串中的字符串 $X$．
+???+ example "Problem"
+    Given $k$ strings $S_i$, find their longest common substring, i.e., a string $X$ that occurs as a substring in every string.
 
-??? note "解法一"
-    我们将所有的字符串连接成一个较长的字符串 $T$，以特殊字符 $D_i$ 分开每个字符串（一个字符对应一个字符串）：
+??? note "Solution 1"
+    Concatenate all the strings into one longer string $T$, separating them with special characters $D_i$ (one character per string):
     
     $$
     T=S_1+D_1+S_2+D_2+\cdots+S_k+D_k.
     $$
     
-    然后对字符串 $T$ 构造后缀自动机．
+    Then build the suffix automaton of $T$.
     
-    现在我们需要在自动机中找到存在于所有字符串 $S_i$ 中的一个字符串，为此可以利用添加的特殊字符．如果 $S_j$ 包含了一个子串 $X$，则从子串 $X$ 对应的节点 $t$ 出发，必然存在一条到达 $D_j$ 但是不经过任何其它特殊字符 $D_1,\cdots,D_{j-1},D_{j+1},\cdots,D_k$ 的路径．对于公共子串 $X$，应当对每个特殊字符 $D_j$ 都存在这样的路径．
+    Now we need to find in the automaton a string that occurs in every string $S_i$, and the added special characters help with this. If $S_j$ contains a substring $X$, then from the node $t$ of the substring $X$ there must be a path that reaches $D_j$ without passing through any other special character $D_1,\cdots,D_{j-1},D_{j+1},\cdots,D_k$. For a common substring $X$, such a path must exist for every special character $D_j$.
     
-    因此我们需要计算可达性，即对于自动机中的每个状态和每个字符 $D_i$，是否存在这样的一条路径．这可以容易地通过 DFS 或 BFS 及动态规划计算．这之后，问题的答案就是所有能够达到所有特殊字符的状态 $v$ 对应的最长子串 $\operatorname{longest}(v)$ 中最长的那个．
+    So we need to compute reachability: for each state of the automaton and each character $D_i$, whether such a path exists. This is easy to compute with DFS or BFS plus dynamic programming. After that, the answer is the longest among the strings $\operatorname{longest}(v)$ of all states $v$ that can reach every special character.
 
-??? note "解法二"
-    不妨设 **最短** 的字符串为 $S_1$，对它构造 SAM．利用解决两个字符串最长公共子串的算法，计算剩余的每个字符串与 $S_1$ 的最长公共子串长度．在匹配过程中，每添加一个要匹配的字符串 $S_j$ 中的字符，就相应地在 SAM 上移动，因此，可以直接记录 **在匹配过程中** SAM 每个状态能够匹配上的 $S_j$ 的最长子串的长度．
+??? note "Solution 2"
+    Let $S_1$ be the **shortest** string, and build its SAM. Use the algorithm for the longest common substring of two strings to compute the longest common substring length of $S_1$ with each of the other strings. During matching, each time we add a character of the string $S_j$ being matched, we move on the SAM accordingly, so we can directly record, for each state of the SAM, the length of the longest substring of $S_j$ that it matches **during the matching process**.
     
-    因为匹配过程中，每次匹配到 SAM 的一个状态时，必然同时匹配到了它在后缀链接树上的所有祖先节点，但是祖先节点的匹配长度的信息并没有更新．所以，在完成对字符串 $S_j$ 的匹配后，需要自下而上地沿着后缀链接更新，将子节点匹配到的最长子串的信息更新到父节点．此时，需要注意父节点记录的最长匹配长度不能超过它自身的 $\operatorname{len}$ 值．这样，就得到了 $S_1$ 的 SAM 上每个状态 **实际能够匹配到** 的 $S_j$ 的最长子串长度．
+    During matching, whenever we reach a state of the SAM, we have also matched all of its ancestors in the suffix link tree, but the match lengths of those ancestors have not been updated. So after finishing the matching of $S_j$, we need to update from the bottom up along the suffix links, passing the longest match of each child up to its parent. Note that the longest match length recorded at a parent cannot exceed its own $\operatorname{len}$ value. This gives, for each state of the SAM of $S_1$, the length of the longest substring of $S_j$ it **can actually match**.
     
-    最后，只需要对每个 $S_2,\cdots,S_k$ 都匹配一遍，再对 SAM 上每个状态记录的实际匹配到的长度取最小值，就得到 SAM 上每个状态实际能够匹配到的 $S_2,\cdots,S_k$ 的最长公共子串的长度．然后，遍历 SAM 所有状态，取最大值就是这 $k$ 个串的最长公共子串长度．
+    Finally, match each of $S_2,\cdots,S_k$ once, and for each state of the SAM take the minimum of the actually matched lengths. This gives, for each state of the SAM, the length of the longest common substring of $S_2,\cdots,S_k$ it can actually match. Then go over all states of the SAM; the maximum is the length of the longest common substring of these $k$ strings.
     
-    算法时间复杂度是 $O(\sum_i |S_i|)$ 的．字符串 $S_1$ 的 SAM 虽然遍历了 $k$ 遍，但是因为 $|S_1|$ 是最小的，所以 $k|S_1|\le \sum_i |S_i|$，复杂度的主要项依然是匹配过程遍历所有字符串．
+    The time complexity of the algorithm is $O(\sum_i |S_i|)$. Although the SAM of $S_1$ is traversed $k$ times, since $|S_1|$ is the smallest, $k|S_1|\le \sum_i |S_i|$, and the dominant term is still the matching process going through all strings.
 
-例题：[SPOJ Longest Common Substring II](https://www.spoj.com/problems/LCS2/)
+Example problem: [SPOJ Longest Common Substring II](https://www.spoj.com/problems/LCS2/)
 
-## 习题
+## Exercises
 
--   [【模板】后缀自动机](https://www.luogu.com.cn/problem/P3804)
--   [SDOI2016 生成魔咒](https://loj.ac/problem/2033)
+-   [[Template] Suffix Automaton](https://www.luogu.com.cn/problem/P3804)
+-   [SDOI2016 Generating Spells](https://loj.ac/problem/2033)
 -   [SPOJ - SUBLEX](https://www.spoj.com/problems/SUBLEX/)
--   [TJOI2015 弦论](https://loj.ac/problem/2102)
+-   [TJOI2015 String Theory](https://loj.ac/problem/2102)
 -   [SPOJ Longest Common Substring](https://www.spoj.com/problems/LCS/en/)
 -   [SPOJ Longest Common Substring II](https://www.spoj.com/problems/LCS2/)
 -   [Codeforces 1037H Security](https://codeforces.com/problemset/problem/1037/H)
@@ -762,12 +762,12 @@ void sam_init() {
 -   [HDU4436 str2int](https://acm.hdu.edu.cn/showproblem.php?pid=4436)
 -   [HDU6583 Typewriter](https://acm.hdu.edu.cn/showproblem.php?pid=6583)
 -   [Codeforces 235C Cyclical Quest](https://codeforces.com/problemset/problem/235/C)
--   [CTSC2012 熟悉的文章](https://www.luogu.com.cn/problem/P4022)
--   [NOI2018 你的名字](https://uoj.ac/problem/395)
+-   [CTSC2012 Familiar Articles](https://www.luogu.com.cn/problem/P4022)
+-   [NOI2018 Your Name](https://uoj.ac/problem/395)
 
-## 相关资料
+## Further reading
 
-我们先给出与 SAM 有关的最初的一些文献：
+First, here are some of the earliest papers related to the SAM:
 
 -   A. Blumer, J. Blumer, A. Ehrenfeucht, D. Haussler, R. McConnell. Linear Size Finite Automata for the Set of All Subwords of a Word. An Outline of Results. \[1983]
 -   A. Blumer, J. Blumer, A. Ehrenfeucht, D. Haussler. The Smallest Automaton Recognizing the Subwords of a Text. \[1984]
@@ -775,25 +775,25 @@ void sam_init() {
 -   Maxime Crochemore. Transducers and Repetitions. \[1986]
 -   A. Nerode. Linear automaton transformations. \[1958]
 
-另外，在更新的一些资源以及很多关于字符串算法的书中，都能找到这个主题：
+This topic can also be found in some more recent resources and in many books on string algorithms:
 
 -   Maxime Crochemore, Wojciech Rytter. Jewels of Stringology. \[2002]
 -   Bill Smyth. Computing Patterns in Strings. \[2003]
--   Bill Smyth. Методы и алгоритмы вычислений на строках（上一本书的俄译本）．\[2006]
+-   Bill Smyth. Методы и алгоритмы вычислений на строках (Russian translation of the previous book). \[2006]
 
-另外，还有一些资料：
+There are also some other materials:
 
--   《后缀自动机》，陈立杰．
--   《后缀自动机在字典树上的拓展》，刘研绎．
--   《后缀自动机及其应用》，张天扬．
+-   "Suffix Automaton", Chen Lijie.
+-   "Extending the Suffix Automaton to Tries", Liu Yanyi.
+-   "The Suffix Automaton and Its Applications", Zhang Tianyang.
 -   <https://www.cnblogs.com/zinthos/p/3899679.html>
 -   <https://codeforces.com/blog/entry/20861>
 -   <https://zhuanlan.zhihu.com/p/25948077>
 
-**本页面主要译自博文 [Суффиксный автомат](http://e-maxx.ru/algo/suffix_automata) 与其英文翻译版 [Suffix Automaton](https://cp-algorithms.com/string/suffix-automaton.html)．其中俄文版版权协议为 Public Domain + Leave a Link；英文版版权协议为 CC-BY-SA 4.0．**
+**This page is mainly translated from the blog post [Суффиксный автомат](http://e-maxx.ru/algo/suffix_automata) and its English translation [Suffix Automaton](https://cp-algorithms.com/string/suffix-automaton.html). The Russian version is licensed under Public Domain + Leave a Link; the English version is licensed under CC-BY-SA 4.0.**
 
-[^state-endpos]: 需要将每个状态都取作一个 $\operatorname{endpos}$ 等价类的原因，其实就是下一段提到的 Myhill–Nerode 定理．简单来说，如果两个字符串 $t$ 和 $u$ 的 $\operatorname{endpos}$ 集合不同，那么它们不能对应于 SAM 的同一个状态：同一个状态到达终止状态的路径总是一样的，这意味着在 $t$ 和 $u$ 末尾添加字符到达 $s$ 的结尾的方式也是一样的，而这正说明 $t$ 和 $u$ 在字符串 $s$ 中的结束位置一样．反过来，只要两个字符串 $t$ 和 $u$ 的 $\operatorname{endpos}$ 集合相同，就可以将它们对应到 SAM 的同一个状态．这样做可行，就是 Myhill–Nerode 定理的证明的内容，在此不多讨论．但是，此处的讨论至少可以相信，将 $\operatorname{endpos}$ 集合相同的字符串放到同一个状态，这样得到的 SAM 一定是最小的，因为进一步合并节点是不可能的．
+[^state-endpos]: The reason each state must be exactly one $\operatorname{endpos}$ equivalence class is really the Myhill–Nerode theorem mentioned in the next paragraph. In short, if two strings $t$ and $u$ have different $\operatorname{endpos}$ sets, they cannot correspond to the same state of the SAM: the paths from the same state to terminal states are always the same, which means the ways to append characters to $t$ and $u$ to reach the end of $s$ are also the same, and this says exactly that $t$ and $u$ have the same end positions in $s$. Conversely, whenever two strings $t$ and $u$ have the same $\operatorname{endpos}$ set, they can be mapped to the same state of the SAM. Why this works is the content of the proof of the Myhill–Nerode theorem, which we won't go into here. But the discussion here at least convinces us that putting strings with the same $\operatorname{endpos}$ set into the same state gives a SAM that is minimal, since no further merging of nodes is possible.
 
-[^time-complexity]: 如果不额外使用列表记录当前状态的可用转移，只用数组存储所有可能的转移（无论是否存在）并在复制节点时直接复制，那么时间复杂度也是 $O(n\left|\Sigma\right|)$ 的．
+[^time-complexity]: If we don't use an extra list to record the existing transitions of each state, and instead store all possible transitions (whether they exist or not) in an array and copy the whole array when cloning a node, then the time complexity is also $O(n\left|\Sigma\right|)$.
 
-[^monotone-loc]: 此处正文没有解释的是，在情况一和情况二中，$\operatorname{longest}(\operatorname{link}(\operatorname{link}(\textit{last})))$ 的位置是否也是单调（弱）递增的．情况一容易验证，因为更新后 $\operatorname{link}(\textit{last})=t_0$，而 $\operatorname{link}(\operatorname{link}(\textit{last}))$ 是虚拟状态 $-1$，不妨将它对应的字符串视为位于当前字符串末尾的空串，其位置取到最大值．情况二，转移是连续的，说明 $\operatorname{longest}(q) = \operatorname{longest}(p)+c$．然而，向子串的末尾添加新的字符只会使得该子串更难以出现在字符串中，也就是说，当字符串 $\operatorname{longest}(p)$ 的长度为 $\operatorname{len}(\operatorname{link}(p))$ 的后缀的结束位置集合严格包含 $\operatorname{endpos}(p)$ 时，字符串 $\operatorname{longest}(q)$ 的长度为 $\operatorname{len}(\operatorname{link}(p))+1$ 的后缀的结束位置集合可能仍然与 $\operatorname{endpos}(q)$ 相同．故而，$\operatorname{len}(\operatorname{link}(q))\le\operatorname{len}(\operatorname{link}(p))+1$，亦即 $\operatorname{longest}(\operatorname{link}(p))$ 作为 $s$ 的后缀的起始位置必然不大于 $\operatorname{longest}(\operatorname{link}(q))$ 作为 $s+c$ 的后缀的起始位置．而当首次找到状态 $p$ 使得存在经由 $c$ 的转移时，必定移动了至少一次，这说明 $\operatorname{longest}(\operatorname{link}(p))$ 作为 $s$ 的后缀的起始位置不小于 $\operatorname{longest}(\operatorname{link}(\operatorname{link}(\textit{last})))$ 作为 $s$ 的后缀的起始位置．最后，$\operatorname{longest}(\operatorname{link}(q))=\operatorname{longest}(\operatorname{link}(\operatorname{link}(\textit{cur})))$．这就说明，在情况二中，$\operatorname{longest}(\operatorname{link}(\operatorname{link}(\textit{last})))$ 的位置也是单调（弱）递增的．
+[^monotone-loc]: What the main text does not explain is whether the position of $\operatorname{longest}(\operatorname{link}(\operatorname{link}(\textit{last})))$ is also monotonically (weakly) increasing in cases 1 and 2. Case 1 is easy to check: after the update, $\operatorname{link}(\textit{last})=t_0$, and $\operatorname{link}(\operatorname{link}(\textit{last}))$ is the virtual state $-1$; we can regard its string as the empty string at the end of the current string, whose position takes the maximum value. In case 2, the transition is continuous, which means $\operatorname{longest}(q) = \operatorname{longest}(p)+c$. However, appending a new character to a substring only makes it harder for it to appear in the string. That is, when the end-position set of the suffix of $\operatorname{longest}(p)$ of length $\operatorname{len}(\operatorname{link}(p))$ strictly contains $\operatorname{endpos}(p)$, the end-position set of the suffix of $\operatorname{longest}(q)$ of length $\operatorname{len}(\operatorname{link}(p))+1$ may still equal $\operatorname{endpos}(q)$. Therefore $\operatorname{len}(\operatorname{link}(q))\le\operatorname{len}(\operatorname{link}(p))+1$, i.e., the starting position of $\operatorname{longest}(\operatorname{link}(p))$ as a suffix of $s$ is never greater than the starting position of $\operatorname{longest}(\operatorname{link}(q))$ as a suffix of $s+c$. Also, when we first find a state $p$ with a transition by $c$, we must have moved at least once, which means the starting position of $\operatorname{longest}(\operatorname{link}(p))$ as a suffix of $s$ is no less than the starting position of $\operatorname{longest}(\operatorname{link}(\operatorname{link}(\textit{last})))$ as a suffix of $s$. Finally, $\operatorname{longest}(\operatorname{link}(q))=\operatorname{longest}(\operatorname{link}(\operatorname{link}(\textit{cur})))$. This shows that in case 2, the position of $\operatorname{longest}(\operatorname{link}(\operatorname{link}(\textit{last})))$ is also monotonically (weakly) increasing.
