@@ -1,53 +1,53 @@
-本页面将简要介绍欧拉图的概念、实现和应用．
+This page gives a short introduction to the concept, implementation and applications of Eulerian graphs.
 
-## 定义
+## Definition
 
-本文中仅讨论有限图．
+This article only discusses finite graphs.
 
-在图论中，**欧拉路径（Eulerian path）**是经过图中每条边恰好一次的路径，**欧拉回路（Eulerian circuit）**是经过图中每条边恰好一次的回路．
-如果一个图中存在欧拉回路，则这个图被称为**欧拉图（Eulerian graph）**；如果一个图中不存在欧拉回路但是存在欧拉路径，则这个图被称为**半欧拉图（semi-Eulerian graph）**．
+In graph theory, an **Eulerian path** is a path that uses every edge of the graph exactly once, and an **Eulerian circuit** is a circuit that uses every edge of the graph exactly once.
+A graph that has an Eulerian circuit is called an **Eulerian graph**. A graph that has no Eulerian circuit but has an Eulerian path is called a **semi-Eulerian graph**.
 
 ??? warning "Warning"
-    此处定义中虽然使用「路径」一词，但严格说来此处使用的概念应该是「迹（trail）」．欧拉路径与欧拉回路仅能使用每条边恰好一次，但并没有对经过顶点的情况进行限制．
+    Although the definition uses the word "path", strictly speaking the concept here should be a "trail". An Eulerian path or circuit must use each edge exactly once, but there is no restriction on how vertices are visited.
 
-## 性质
+## Properties
 
-以下我们假设所讨论的图 $G$ 中不存在孤立顶点．该假设不失一般性，因为对于存在孤立顶点的图 $G$，以下性质对从 $G$ 中删除孤立顶点后得到的图 $G'$ 仍然成立．
+Below we assume the graph $G$ under discussion has no isolated vertices. This loses no generality: if $G$ has isolated vertices, the properties below still hold for the graph $G'$ obtained by deleting them.
 
-对于连通图 $G$，以下三个性质是互相等价的：
+For a connected graph $G$, the following three properties are equivalent:
 
-1.  $G$ 是欧拉图；
-2.  $G$ 中所有顶点的度数都是偶数（对于有向图，每个顶点的入度等于出度）；
-3.  $G$ 可被分解为若干条不共边回路的并．
+1.  $G$ is Eulerian;
+2.  Every vertex of $G$ has even degree (for directed graphs, every vertex has in-degree equal to out-degree);
+3.  $G$ can be decomposed into a union of edge-disjoint circuits.
 
-以下我们对等价性进行证明．
+Below we prove the equivalence.
 
-若一个图 $G$ 是欧拉图，那么 $G$ 中所有顶点的度数都是偶数：考虑从任意顶点开始沿着欧拉回路走一圈，则每个点 $v$ 的度数等于离开点 $v$ 的次数加到达点 $v$ 的次数．又由于行动的轨迹是一个回路，则对于每个点 $v$，离开该点的次数等于到达该点的次数．这也就是说，每个点的度数都形如 $2k$，即偶数．
-特别地，对于有向图，根据相同的证明过程，每个顶点的入度等于出度．
+If a graph $G$ is Eulerian, then every vertex of $G$ has even degree: start from any vertex and walk once around the Eulerian circuit. The degree of each vertex $v$ equals the number of times we leave $v$ plus the number of times we arrive at $v$. Since the walk is a circuit, for every vertex $v$ the number of times we leave it equals the number of times we arrive at it. In other words, every degree has the form $2k$, which is even.
+In particular, for directed graphs, the same argument shows that every vertex has in-degree equal to out-degree.
 
-若一个图 $G$ 中所有顶点的度数都是偶数（或入度与出度相等），则它可被分解为若干条不共边回路的不交并：考虑从任意顶点 $u$ 开始，选择任意出边 $(u, v)$，走向对应的相邻顶点 $v$ 并删除 $(u, v)$，直到返回最初开始的顶点 $u$．可以证明该过程必定会最终回到 $u$：每当到达一个新的顶点 $v \neq u$ 时，根据上一条性质，该顶点剩余的度数为奇数，也就是说必定存在一条出边，该过程不会在点 $v$ 终止．（换句话说，该过程会且仅会在回到点 $u$ 时停止．）又因图 $G$ 中的边数是有限的，该过程必定会在有限步内停止，则最终必然可以返回 $u$ 并得到一条回路．注意到在前述证明中我们仅使用了点度数均为偶数的性质，且在找到并删除一条回路后剩下部分的图仍然满足该性质，我们可以不断重复该过程直到剩下的图为空图，从而将 $G$ 拆分为若干条不共边的回路．
-更进一步地，每条回路都可以被从其多次经过的顶点处分解成若干简单环的不交并，所以上述性质中的简单回路亦可被替换为简单环．
+If every vertex of a graph $G$ has even degree (or equal in-degree and out-degree), then $G$ can be decomposed into a disjoint union of edge-disjoint circuits: start from any vertex $u$, pick any outgoing edge $(u, v)$, move to the neighbor $v$ and delete $(u, v)$, and repeat until we return to the starting vertex $u$. We can show that the process must eventually return to $u$: whenever we arrive at a new vertex $v \neq u$, by the previous property the remaining degree of that vertex is odd, so there must be an outgoing edge, and the process does not stop at $v$. (In other words, the process stops if and only if it returns to $u$.) Since $G$ has finitely many edges, the process must stop after finitely many steps, so it must return to $u$ and give a circuit. Note that the proof above only uses the fact that all degrees are even, and after finding and deleting one circuit the rest of the graph still has this property. So we can repeat the process until the remaining graph is empty, which splits $G$ into edge-disjoint circuits.
+Going further, each circuit can be split at the vertices it visits more than once into a disjoint union of simple cycles, so the simple circuits in the property above can also be replaced by simple cycles.
 
-若一个连通图 $G$ 可被分解为若干条不共边回路的不交并，则 $G$ 是欧拉图：对于一组不共边回路，每次从中选出两条有共同顶点的回路并将其合并为一条，重复该过程直到不存在有共同顶点的两条回路．
-可以证明该过程结束时剩下的回路唯一．对于任意两条不共边回路 $P_1, P_2$，若 $P_1$ 与 $P_2$ 共点，则可以在共点处直接进行合并；否则，任取 $P_1$ 上的点 $v_1$ 与 $P_2$ 上的点 $v_2$，根据 $G$ 的连通性，存在连接 $v_1$ 和 $v_2$ 的路径 $e_1, e_2, \ldots, e_k$，其中的每条边 $e_i$ 都被一个回路 $C_i$ 包含，且 $P_1$ 与 $C_1$，$C_i$ 与 $C_{i+1}$，$C_k$ 与 $P_2$ 均存在共点（或者 $C_i = C_{i+1}$，此情况不影响证明）．此情况下，$P_1$ 与 $P_2$ 可以通过 $C_1, \ldots, C_k$ 进行合并．也就是说，任意两条回路都可以进行合并，最后剩下的回路必定唯一，且组成该回路的边集是所有不共边回路的并即 $E(G)$，该回路为 $G$ 上的欧拉回路，$G$ 为欧拉图．
+If a connected graph $G$ can be decomposed into a disjoint union of edge-disjoint circuits, then $G$ is Eulerian: given a set of edge-disjoint circuits, repeatedly pick two circuits that share a vertex and merge them into one, until no two circuits share a vertex.
+We can show that only one circuit remains when this process ends. For any two edge-disjoint circuits $P_1, P_2$: if $P_1$ and $P_2$ share a vertex, they can be merged directly at that vertex. Otherwise, take any vertex $v_1$ on $P_1$ and any vertex $v_2$ on $P_2$. Since $G$ is connected, there is a path $e_1, e_2, \ldots, e_k$ connecting $v_1$ and $v_2$. Each edge $e_i$ is contained in some circuit $C_i$, and $P_1$ and $C_1$, $C_i$ and $C_{i+1}$, and $C_k$ and $P_2$ all share a vertex (or $C_i = C_{i+1}$, which does not affect the proof). In this case, $P_1$ and $P_2$ can be merged through $C_1, \ldots, C_k$. That is, any two circuits can be merged, so the final circuit is unique, and its edge set is the union of all the edge-disjoint circuits, namely $E(G)$. This circuit is an Eulerian circuit of $G$, so $G$ is Eulerian.
 
-以上的性质同时也构成了欧拉图的判断条件．具体地说，一个图是欧拉图当且仅当非零度顶点互相（强）连通，且顶点的度数都是偶数（或入度与出度相等）．
+These properties also give a test for Eulerian graphs. Specifically, a graph is Eulerian if and only if all vertices with nonzero degree are mutually (strongly) connected and every vertex has even degree (or equal in-degree and out-degree).
 
-对于半欧拉图，其性质与欧拉图相似：一个半欧拉图具有恰好两个奇度数的顶点，且这两个顶点就是欧拉路径的两个端点．通过将这两个点连接起来，可以将半欧拉图转化为欧拉图．通过删除欧拉图中的任意一条边，可以得到一个半欧拉图．
-由此可以导出半欧拉图的判别法：一个图是半欧拉图当且仅当非零度顶点互相（强）连通，且奇度数顶点恰好有两个．对于有向图，第二个条件为恰存在两个顶点 $u, v$，其中 $\deg^+(u) - \deg^-(u) = 1, \deg^+(v) - \deg^-(v) = -1$，且其余顶点的入度等于出度．
+Semi-Eulerian graphs have similar properties: a semi-Eulerian graph has exactly two vertices of odd degree, and these two vertices are the two ends of the Eulerian path. Connecting these two vertices turns a semi-Eulerian graph into an Eulerian graph. Deleting any one edge of an Eulerian graph gives a semi-Eulerian graph.
+This gives a test for semi-Eulerian graphs: a graph is semi-Eulerian if and only if all vertices with nonzero degree are mutually (strongly) connected and there are exactly two vertices of odd degree. For directed graphs, the second condition becomes: there are exactly two vertices $u, v$ with $\deg^+(u) - \deg^-(u) = 1, \deg^+(v) - \deg^-(v) = -1$, and every other vertex has in-degree equal to out-degree.
 
-## 欧拉回路/欧拉路径的构造
+## Constructing an Eulerian circuit/path
 
-此处我们介绍最常用的 Hierholzer 算法，该算法的核心思想为利用上述欧拉图性质中的第三点，即欧拉图可以被拆解为若干条不共边回路的并．
-可以注意到，在上述证明中其实已经提到了完整可行的将不共边回路合并为欧拉回路的操作，且在使用合适的数据结构储存时（如使用类链表的结构储存环）实现并不困难．
+Here we introduce the most commonly used algorithm, Hierholzer's algorithm. Its core idea is the third property above: an Eulerian graph can be split into a union of edge-disjoint circuits.
+Notice that the proof above already describes a complete, workable way to merge edge-disjoint circuits into an Eulerian circuit, and it is not hard to implement with a suitable data structure (for example, storing cycles in a linked-list-like structure).
 
-算法的具体流程为先从图中找到一条回路作为当前回路，每次从当前回路中选取剩余度数不为零的点，从该点出发找到一条新的简单回路，并将该简单回路与当前回路合并，重复该过程直到当前回路中的所有点均无剩余度数，此时的当前回路即为欧拉回路．
+The algorithm works as follows. First find a circuit in the graph and call it the current circuit. Each time, pick a vertex on the current circuit that still has nonzero remaining degree, find a new simple circuit starting from it, and merge that simple circuit into the current circuit. Repeat until no vertex on the current circuit has remaining degree. The current circuit is then an Eulerian circuit.
 
-该算法同样适用于有向图．对于半欧拉图，可以从图中找到一条连接两个奇度数点的路径作为当前路径，每次选取度数非零的点寻找简单回路并将其与当前路径合并，最后得到欧拉路径．
+The algorithm also works for directed graphs. For a semi-Eulerian graph, first find a path connecting the two odd-degree vertices and call it the current path. Each time, pick a vertex with nonzero degree, find a simple circuit and merge it into the current path. In the end we get an Eulerian path.
 
-### 实现
+### Implementation
 
-Hierholzer 算法的伪代码如下：
+The pseudocode of Hierholzer's algorithm is as follows:
 
 $$
 \begin{array}{ll}
@@ -67,81 +67,81 @@ $$
 \end{array}
 $$
 
-### 时间复杂度分析
+### Time complexity
 
-Hierholzer 算法的时间复杂度为 $O(|E| + |V|)$．
+The time complexity of Hierholzer's algorithm is $O(|E| + |V|)$.
 
-注意到在前述正确性分析中，在欧拉图或半欧拉图上寻找简单回路（或半欧拉图的初始路径）的过程是 **无需回溯** 的，只要沿着剩下的边一直走就必定可以发现所求的回路或路径，且 **每条边仅会被访问一次**．
-为了利用这一性质，在实现上应采取类链表的方式储存图中的边，如邻接表或链式前向星，以便每条边在被访问过后即刻删除之．如果采用朴素的邻接矩阵进行储存，则每次寻边耗时 $O(|V|)$，总复杂度为 $O(|V||E|)$．
+Note that, as in the correctness argument above, finding a simple circuit (or the initial path of a semi-Eulerian graph) in an Eulerian or semi-Eulerian graph **needs no backtracking**: just keep walking along the remaining edges and you will always find the circuit or path you need, and **each edge is visited only once**.
+To make use of this, the implementation should store the edges in a linked-list-like way, such as adjacency lists or a linked forward star (chained adjacency list), so that each edge can be deleted right after it is visited. With a plain adjacency matrix, each edge lookup costs $O(|V|)$, and the total complexity becomes $O(|V||E|)$.
 
 ???+ note "Note"
-    事实上，该算法的准确复杂度应为 $O(|E|)$ 而非 $O(|V| + |E|)$，这是因为该算法的实现方式可以采取依赖于边而不依赖于点的方法，通过维护剩余边的总链表来进行下一步回路的寻找．
+    In fact, the exact complexity of this algorithm is $O(|E|)$ rather than $O(|V| + |E|)$, because the algorithm can be implemented in a way that depends on edges instead of vertices, by keeping one global linked list of remaining edges to find the next circuit.
 
-如果需要输出字典序最小的欧拉路或欧拉回路，则需要将边排序，时间复杂度为 $\Theta(|E|\log |E|)$ 或 $\Theta(|E|)$（使用计数排序或者基数排序）．
+If you need the lexicographically smallest Eulerian path or circuit, you have to sort the edges. The time complexity is then $\Theta(|E|\log |E|)$, or $\Theta(|E|)$ with counting sort or radix sort.
 
-### 应用
+### Applications
 
-有向欧拉图可用于计算机译码．
+Directed Eulerian graphs can be used in computer decoding.
 
-设有 $m$ 个字母，希望构造一个有 $m^n$ 个扇形的圆盘，每个圆盘上放一个字母，使得圆盘上每连续 $n$ 位对应长为 $n$ 的符号串．转动一周（$m^n$ 次）后得到由 $m$ 个字母产生的长度为 $n$ 的 $m^n$ 个各不相同的符号串．
+Suppose we have $m$ letters and want to build a disk with $m^n$ sectors, each holding one letter, so that every $n$ consecutive positions on the disk form a string of length $n$. After one full turn ($m^n$ steps) we get all $m^n$ distinct strings of length $n$ over the $m$ letters.
 
 ![](images/euler1.svg)
 
-构造如下有向欧拉图：
+Build the following directed Eulerian graph:
 
-设 $S = \{a_1, a_2, \cdots, a_m\}$，构造 $D=\langle V, E\rangle$，如下：
+Let $S = \{a_1, a_2, \cdots, a_m\}$, and build $D=\langle V, E\rangle$ as follows:
 
 $V = \{a_{i_1}a_{i_2}\cdots a_{i_{n-1}} |a_i \in S, 1 \leq i \leq n - 1 \}$
 
 $E = \{a_{j_1}a_{j_2}\cdots a_{j_{n-1}}|a_j \in S, 1 \leq j \leq n\}$
 
-规定 $D$ 中顶点与边的关联关系如下：
+The incidence between the vertices and edges of $D$ is defined as follows:
 
-顶点 $a_{i_1}a_{i_2}\cdots a_{i_{n-1}}$ 引出 $m$ 条边：$a_{i_1}a_{i_2}\cdots a_{i_{n-1}}a_r, r=1, 2, \cdots, m$．
+Vertex $a_{i_1}a_{i_2}\cdots a_{i_{n-1}}$ has $m$ outgoing edges: $a_{i_1}a_{i_2}\cdots a_{i_{n-1}}a_r, r=1, 2, \cdots, m$.
 
-边 $a_{j_1}a_{j_2}\cdots a_{j_{n-1}}$ 引入顶点 $a_{j_2}a_{j_3}\cdots a_{j_{n}}$．
+Edge $a_{j_1}a_{j_2}\cdots a_{j_{n-1}}$ goes into vertex $a_{j_2}a_{j_3}\cdots a_{j_{n}}$.
 
 ![](images/euler2.svg)
 
-这样的 $D$ 是连通的，且每个顶点入度等于出度（均等于 $m$），所以 $D$ 是有向欧拉图．
+This $D$ is connected, and every vertex has in-degree equal to out-degree (both equal to $m$), so $D$ is a directed Eulerian graph.
 
-任求 $D$ 中一条欧拉回路 $C$，取 $C$ 中各边的最后一个字母，按各边在 $C$ 中的顺序排成圆形放在圆盘上即可．
+Find any Eulerian circuit $C$ in $D$, take the last letter of each edge in $C$, and place them around the disk in the order the edges appear in $C$.
 
-## 例题
+## Example problems
 
-???+ note "[洛谷 P2731 骑马修栅栏](https://www.luogu.com.cn/problem/P2731)"
-    给定一张有 500 个顶点的无向图，求这张图的一条欧拉路或欧拉回路．如果有多组解，输出最小的那一组．
+???+ note "[Luogu P2731 Riding the Fences](https://www.luogu.com.cn/problem/P2731)"
+    You are given an undirected graph with 500 vertices. Find an Eulerian path or Eulerian circuit of the graph. If there are several solutions, output the smallest one.
     
-    在本题中，欧拉路或欧拉回路不需要经过所有顶点．
+    In this problem, the Eulerian path or circuit does not need to visit every vertex.
     
-    边的数量 m 满足 $1\leq m \leq 1024$．
+    The number of edges m satisfies $1\leq m \leq 1024$.
 
-??? note "解题思路"
-    本题为 Hierholzer 算法的直接应用．
+??? note "Solution idea"
+    This problem is a direct application of Hierholzer's algorithm.
     
-    保存答案可以使用 `std::stack<int>`，因为如果找的不是回路的话必须将那一部分放在最后．
+    You can store the answer in a `std::stack<int>`, because if what we find is not a circuit, that part must be placed at the end.
     
-    注意，不能使用邻接矩阵存图，否则时间复杂度会退化为 $\Theta(nm)$．由于需要将边排序，建议使用前向星或者 `std::vector` 存图．示例代码使用 `std::vector`．
+    Note that you cannot store the graph in an adjacency matrix; otherwise the time complexity degrades to $\Theta(nm)$. Since the edges need to be sorted, we suggest storing the graph with a linked forward star or `std::vector`. The sample code uses `std::vector`.
 
-??? note "示例代码"
+??? note "Sample code"
     ```cpp
     --8<-- "docs/graph/code/euler/euler_1.cpp"
     ```
 
-## 习题
+## Exercises
 
 -   [SGU 101 Domino](https://codeforces.com/problemsets/acmsguru/problem/99999/101)
 
 -   [POJ 1780 Code](http://poj.org/problem?id=1780)
 
--   [洛谷 P1127 词链](https://www.luogu.com.cn/problem/P1127)
+-   [Luogu P1127 Word Chain](https://www.luogu.com.cn/problem/P1127)
 
--   [洛谷 P1333 瑞瑞的木棍](https://www.luogu.com.cn/problem/P1333)
+-   [Luogu P1333 Ruirui's Sticks](https://www.luogu.com.cn/problem/P1333)
 
--   [洛谷 P1341 无序字母对](https://www.luogu.com.cn/problem/P1341)
+-   [Luogu P1341 Unordered Letter Pairs](https://www.luogu.com.cn/problem/P1341)
 
--   [洛谷 P6066 \[USACO05JAN\]Watchcow S](https://www.luogu.com.cn/problem/P6066)
+-   [Luogu P6066 \[USACO05JAN\]Watchcow S](https://www.luogu.com.cn/problem/P6066)
 
--   [洛谷 P6628 \[省选联考 2020 B 卷\] 丁香之路](https://www.luogu.com.cn/problem/P6628)
+-   [Luogu P6628 \[Joint Provincial Selection 2020 Paper B\] Lilac Road](https://www.luogu.com.cn/problem/P6628)
 
--   [洛谷 P3520 \[POI 2011\] SMI-Garbage](https://www.luogu.com.cn/problem/P3520)
+-   [Luogu P3520 \[POI 2011\] SMI-Garbage](https://www.luogu.com.cn/problem/P3520)

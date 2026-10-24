@@ -1,32 +1,32 @@
-本页面主要介绍网络流相关的基本知识．
+This page covers the basics of network flow.
 
-## 概述
+## Overview
 
-网络（network）是指一个特殊的有向图 $G=(V,E)$，其与一般有向图的不同之处在于有容量和源汇点．
+A network is a special directed graph $G=(V,E)$. It differs from an ordinary directed graph in that it has capacities, a source and a sink.
 
--   $E$ 中的每条边 $(u, v)$ 都有一个被称为容量（capacity）的权值，记作 $c(u, v)$．当 $(u,v)\notin E$ 时，可以假定 $c(u,v)=0$．
+-   Each edge $(u, v)$ in $E$ has a weight called its capacity, written $c(u, v)$. When $(u,v)\notin E$, we can assume $c(u,v)=0$.
 
--   $V$ 中有两个特殊的点：源点（source）$s$ 和汇点（sink）$t$（$s \neq t$）．
+-   $V$ has two special vertices: the source $s$ and the sink $t$ ($s \neq t$).
 
-对于网络 $G=(V, E)$，流（flow）是一个从边集 $E$ 到整数集或实数集的函数，其满足以下性质．
+For a network $G=(V, E)$, a flow is a function from the edge set $E$ to the integers or the reals that satisfies the following properties.
 
-1.  容量限制：对于每条边，流经该边的流量不得超过该边的容量，即 $0 \leq f(u,v) \leq c(u,v)$；
-2.  流守恒性：除源汇点外，任意结点 $u$ 的净流量为 $0$．其中，我们定义 $u$ 的净流量为 $f(u) = \sum_{x \in V} f(u, x) - \sum_{x \in V} f(x, u)$．
+1.  Capacity constraint: the flow on each edge cannot exceed its capacity, that is, $0 \leq f(u,v) \leq c(u,v)$;
+2.  Flow conservation: every vertex $u$ other than the source and the sink has net flow $0$. Here the net flow of $u$ is defined as $f(u) = \sum_{x \in V} f(u, x) - \sum_{x \in V} f(x, u)$.
 
-对于网络 $G = (V, E)$ 和其上的流 $f$，我们定义 $f$ 的流量 $|f|$ 为 $s$ 的净流量 $f(s)$．作为流守恒性的推论，这也等于 $t$ 的净流量的相反数 $-f(t)$．
+For a network $G = (V, E)$ and a flow $f$ on it, we define the value $|f|$ of $f$ as the net flow $f(s)$ of $s$. As a consequence of flow conservation, this also equals the negated net flow of $t$, $-f(t)$.
 
-对于网络 $G = (V, E)$，如果 $\{S, T\}$ 是 $V$ 的划分（即 $S \cup T = V$ 且 $S \cap T = \varnothing$），且满足 $s \in S, t \in T$，则我们称 $\{S, T\}$ 是 $G$ 的一个 $s$-$t$ 割（cut）．我们定义 $s$-$t$ 割 $\{S, T\}$ 的容量为 $||S, T|| = \sum_{u \in S} \sum_{v \in T} c(u, v)$．
+For a network $G = (V, E)$, if $\{S, T\}$ is a partition of $V$ (that is, $S \cup T = V$ and $S \cap T = \varnothing$) with $s \in S, t \in T$, we call $\{S, T\}$ an $s$-$t$ cut of $G$. The capacity of the $s$-$t$ cut $\{S, T\}$ is defined as $||S, T|| = \sum_{u \in S} \sum_{v \in T} c(u, v)$.
 
-## 常见问题
+## Common problems
 
-常见的网络流问题包括但不限于以下类型问题．
+Common network flow problems include, but are not limited to, the following.
 
--   最大流问题：对于网络 $G = (V, E)$，给每条边指定流量，得到合适的流 $f$，使得 $f$ 的流量尽可能大．此时我们称 $f$ 是 $G$ 的最大流．
--   最小割问题：对于网络 $G = (V, E)$，找到合适的 $s$-$t$ 割 $\{S, T\}$，使得 $\{S, T\}$ 的总容量尽可能小．此时我们称 $\{S, T\}$ 的总容量是 $G$ 的最小割．
--   最小费用最大流问题：在网络 $G = (V, E)$ 上，对每条边给定一个权值 $w(u, v)$，称为费用（cost），含义是单位流量通过 $(u, v)$ 所花费的代价．对于 $G$ 所有可能的最大流，我们称其中总费用最小的一者为最小费用最大流．
+-   Maximum flow: for a network $G = (V, E)$, assign a flow to each edge to get a valid flow $f$ whose value is as large as possible. Such an $f$ is called a maximum flow of $G$.
+-   Minimum cut: for a network $G = (V, E)$, find an $s$-$t$ cut $\{S, T\}$ whose total capacity is as small as possible. The total capacity of such $\{S, T\}$ is called the minimum cut of $G$.
+-   Minimum-cost maximum flow: in a network $G = (V, E)$, each edge has a weight $w(u, v)$ called its cost, which is the cost of sending one unit of flow through $(u, v)$. Among all maximum flows of $G$, the one with the smallest total cost is called the minimum-cost maximum flow.
 
-我们将在稍后的章节中对它们进行详细介绍．
+We will cover them in detail in later sections.
 
-## 例题：网络流 24 题
+## Example problems: the 24 network flow problems
 
-网络流 24 题是中文互联网上广泛流传的一个题单（[LibreOJ](https://loj.ac/problems/tag/30)/[洛谷](https://www.luogu.com.cn/problem/list?tag=332)），至少在 2010 年前后就已经存在．该题单引入了一些经典的将其他问题建模为网络流问题的技巧．由于时代的局限性，这些问题未必是最具代表性的网络流问题，但仍值得有志于算法竞赛的读者一阅．
+The "24 network flow problems" is a problem list widely shared on the Chinese internet ([LibreOJ](https://loj.ac/problems/tag/30)/[Luogu](https://www.luogu.com.cn/problem/list?tag=332)). It has existed since at least around 2010. The list introduces some classic techniques for modeling other problems as network flow problems. Because of their age, these problems are not necessarily the most representative network flow problems, but they are still worth reading for anyone serious about competitive programming.

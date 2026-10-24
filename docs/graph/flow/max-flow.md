@@ -1,56 +1,56 @@
-本页面主要介绍最大流问题相关的算法知识．
+This page covers algorithms for the maximum flow problem.
 
-## 概述
+## Overview
 
-网络流基本概念参见 [网络流简介](../flow.md)．
+For the basic concepts of network flow, see [Introduction to network flow](../flow.md).
 
-令 $G=(V,E)$ 是一个有源汇点的网络，我们希望在 $G$ 上指定合适的流 $f$，以最大化整个网络的流量 $|f|$（即 $\sum_{x \in V} f(s, x) - \sum_{x \in V} f(x, s)$），这一问题被称作最大流问题（Maximum flow problem）．
+Let $G=(V,E)$ be a network with a source and a sink. We want to choose a suitable flow $f$ on $G$ that maximizes the value $|f|$ of the whole network (that is, $\sum_{x \in V} f(s, x) - \sum_{x \in V} f(x, s)$). This is called the maximum flow problem.
 
-## Ford–Fulkerson 增广
+## Ford–Fulkerson augmentation
 
-Ford–Fulkerson 增广是计算最大流的一类算法的总称．该方法运用贪心的思想，通过寻找增广路来更新并求解最大流．
+Ford–Fulkerson augmentation is the general name for a family of maximum flow algorithms. The method uses a greedy idea: it keeps finding augmenting paths to update the flow until it reaches the maximum flow.
 
-### 概述
+### Overview
 
-给定网络 $G$ 及 $G$ 上的流 $f$，我们做如下定义．
+Given a network $G$ and a flow $f$ on $G$, we make the following definitions.
 
-对于边 $(u, v)$，我们将其容量与流量之差称为剩余容量 $c_f(u,v)$（Residual Capacity），即 $c_f(u,v)=c(u,v)-f(u,v)$．
+For an edge $(u, v)$, the difference between its capacity and its flow is called its residual capacity $c_f(u,v)$, that is, $c_f(u,v)=c(u,v)-f(u,v)$.
 
-我们将 $G$ 中所有结点和剩余容量大于 $0$ 的边构成的子图称为残量网络 $G_f$（Residual Network），即 $G_f=(V,E_f)$，其中 $E_f=\left\{(u,v) \mid c_f(u,v)>0\right\}$．
+The subgraph of $G$ made of all vertices and all edges with residual capacity greater than $0$ is called the residual network $G_f$, that is, $G_f=(V,E_f)$, where $E_f=\left\{(u,v) \mid c_f(u,v)>0\right\}$.
 
 ???+ warning "Warning"
-    正如我们马上要提到的，流量可能是负值，因此，$E_f$ 的边有可能并不在 $E$ 中．引入增广的概念后，下文将具体解释这一点．
+    As we will see shortly, flow can be negative, so edges of $E_f$ may not be in $E$. We explain this in detail below, after introducing augmentation.
 
-我们将 $G_f$ 上一条从源点 $s$ 到汇点 $t$ 的路径称为增广路（Augmenting Path）．对于一条增广路，我们给每一条边 $(u, v)$ 都加上等量的流量，以令整个网络的流量增加，这一过程被称为增广（Augment）．由此，最大流的求解可以被视为若干次增广分别得到的流的叠加．
+A path in $G_f$ from the source $s$ to the sink $t$ is called an augmenting path. For an augmenting path, we add the same amount of flow to every edge $(u, v)$ on it, which increases the flow of the whole network. This process is called augmentation. So computing the maximum flow can be seen as adding up the flows obtained from a number of augmentations.
 
-此外，在 Ford–Fulkerson 增广的过程中，对于每条边 $(u, v)$，我们都新建一条反向边 $(v, u)$．我们约定 $f(u, v) = -f(v, u)$，这一性质可以通过在每次增广时引入退流操作来保证，即 $f(u, v)$ 增加时 $f(v, u)$ 应当减少同等的量．
+Also, during Ford–Fulkerson augmentation, for every edge $(u, v)$ we create a reverse edge $(v, u)$. We require $f(u, v) = -f(v, u)$. This can be maintained by adding a flow-cancelling step to every augmentation: when $f(u, v)$ increases, $f(v, u)$ decreases by the same amount.
 
 ???+ tip "Tip"
-    在最大流算法的代码实现中，我们往往需要支持快速访问反向边的操作．在邻接矩阵中，这一操作是 trivial 的（$g_{u, v} \leftrightarrow g_{v, u}$）．但主流的实现是更加优秀的链式前向星．其中，一个常用的技巧是，我们令边从偶数（通常为 $0$）开始编号，并在加边时总是紧接着加入其反向边使得它们的编号相邻．由此，我们可以令编号为 $i$ 的边和编号为 $i \oplus 1$ 的边始终保持互为反向边的关系．
+    In code for maximum flow algorithms, we often need quick access to the reverse edge. With an adjacency matrix this is trivial ($g_{u, v} \leftrightarrow g_{v, u}$). But the mainstream implementation is the better linked forward star (chained adjacency list). A common trick is to number edges starting from an even number (usually $0$), and always add the reverse edge right after each edge so their numbers are adjacent. Then edge $i$ and edge $i \oplus 1$ are always reverses of each other.
 
-初次接触这一方法的读者可能察觉到一个违反直觉的情形——反向边的流量 $f(v, u)$ 可能是一个负值．实际上我们可以注意到，在 Ford–Fulkerson 增广的过程中，真正有意义的是剩余容量 $c_f$，而 $f(v, u)$ 的绝对值是无关紧要的，我们可以将反向边流量的减少视为反向边剩余容量 $c_f(v, u)$ 的增加——这也与退流的意义相吻合——反向边剩余容量的增加意味着我们接下来可能通过走反向边来和原先正向的增广抵消，代表一种「反悔」的操作．
+Readers new to this method may notice something counterintuitive: the flow $f(v, u)$ on a reverse edge can be negative. In fact, during Ford–Fulkerson augmentation, what really matters is the residual capacity $c_f$; the absolute value of $f(v, u)$ does not matter. We can view a decrease of flow on the reverse edge as an increase of its residual capacity $c_f(v, u)$. This matches the meaning of cancelling flow: an increase in the reverse edge's residual capacity means we may later walk along the reverse edge to cancel an earlier forward augmentation, which acts like an "undo".
 
-以下案例有可能帮助你理解这一过程．假设 $G$ 是一个单位容量的网络，我们考虑以下过程：
+The following example may help you understand this process. Suppose $G$ is a unit-capacity network, and consider this process:
 
--   $G$ 上有多条增广路，其中，我们选择进行一次先后经过 $u, v$ 的增广（如左图所示），流量增加 $1$．
--   我们注意到，如果进行中图上的增广，这个局部的最大流量不是 $1$ 而是 $2$．但由于指向 $u$ 的边和从 $v$ 出发的边在第一次增广中耗尽了容量，此时我们无法进行中图上的增广．这意味着我们当前的流是不够优的，但局部可能已经没有其他（只经过原图中的边而不经过反向边的）增广路了．
--   现在引入退流操作．第一次增广后，退流意味着 $c_f(v, u)$ 增加了 $1$ 剩余容量，即相当于新增 $(v, u)$ 这条边，因此我们可以再进行一次先后经过 $p, v, u, q$ 的增广（如右图橙色路径所示）．无向边 $(u, v)$ 上的流量在两次增广中抵消，我们惊奇地发现两次增广叠加得到的结果实际上和中图是等价的．
+-   $G$ has several augmenting paths. We choose to augment along one that passes through $u$ and then $v$ (shown in the left figure), and the flow increases by $1$.
+-   Notice that if we augmented as in the middle figure, the maximum flow in this local area would be $2$, not $1$. But since the edge into $u$ and the edge out of $v$ used up their capacity in the first augmentation, we cannot do the augmentation in the middle figure now. This means our current flow is not optimal, yet locally there may be no other augmenting path (one using only original edges and no reverse edges).
+-   Now add flow cancelling. After the first augmentation, cancelling means $c_f(v, u)$ gains $1$ unit of residual capacity, which is like adding the edge $(v, u)$. So we can augment once more along $p, v, u, q$ (the orange path in the right figure). The flows on the undirected edge $(u, v)$ cancel out across the two augmentations, and surprisingly, the combined result of the two augmentations is equivalent to the middle figure.
 
 ![](./images/flow2.png)
 
-以上案例告诉我们，退流操作带来的「抵消」效果使得我们无需担心我们按照「错误」的顺序选择了增广路．
+This example shows that, thanks to the "cancelling" effect of flow cancelling, we do not need to worry about choosing augmenting paths in the "wrong" order.
 
-容易发现，只要 $G_f$ 上存在增广路，那么对其增广就可以令总流量增加；否则说明总流量已经达到最大可能值，求解过程完成．这就是 Ford–Fulkerson 增广的过程．
+It is easy to see that as long as $G_f$ has an augmenting path, augmenting along it increases the total flow. Otherwise, the total flow has already reached its maximum and we are done. This is Ford–Fulkerson augmentation.
 
-### 最大流最小割定理
+### Max-flow min-cut theorem
 
-我们大致了解了 Ford–Fulkerson 增广的思想，可是如何证明这一方法的正确性呢？为什么增广结束后的流 $f$ 是一个最大流？
+We now roughly understand the idea of Ford–Fulkerson augmentation, but how do we prove it is correct? Why is the flow $f$ at the end a maximum flow?
 
-实际上，Ford–Fulkerson 增广的正确性和最大流最小割定理（The Maxflow-Mincut Theorem）等价．这一定理指出，对于任意网络 $G = (V, E)$，其上的最大流 $f$ 和最小割 $\{S, T\}$ 总是满足 $|f| = ||S, T||$．
+In fact, the correctness of Ford–Fulkerson augmentation is equivalent to the max-flow min-cut theorem (The Maxflow-Mincut Theorem). The theorem says that for any network $G = (V, E)$, the maximum flow $f$ and the minimum cut $\{S, T\}$ always satisfy $|f| = ||S, T||$.
 
-为了证明最大流最小割定理，我们先从一个引理出发：对于网络 $G = (V, E)$，任取一个流 $f$ 和一个割 $\{S, T\}$，总是有 $|f| \leq ||S, T||$，其中等号成立当且仅当 $\{(u, v) | u \in S, v \in T\}$ 的所有边均满流，且 $\{(u, v) | u \in T, v \in S\}$ 的所有边均空流．
+To prove the max-flow min-cut theorem, we start from a lemma: for a network $G = (V, E)$, for any flow $f$ and any cut $\{S, T\}$, we always have $|f| \leq ||S, T||$, with equality if and only if all edges in $\{(u, v) | u \in S, v \in T\}$ are saturated and all edges in $\{(u, v) | u \in T, v \in S\}$ carry no flow.
 
-???+ note "证明"
+???+ note "Proof"
     $$
     \begin{aligned}
     |f| & = f(s) \\
@@ -65,84 +65,84 @@ Ford–Fulkerson 增广是计算最大流的一类算法的总称．该方法运
     \end{aligned}
     $$
     
-    为了取等，第一个不等号需要 $\{(u, v) \mid u \in T, v \in S\}$ 的所有边均空流，第二个不等号需要 $\{(u, v) \mid u \in S, v \in T\}$ 的所有边均满流．原引理得证．
+    For equality, the first inequality needs all edges in $\{(u, v) \mid u \in T, v \in S\}$ to carry no flow, and the second needs all edges in $\{(u, v) \mid u \in S, v \in T\}$ to be saturated. This proves the lemma.
 
-那么，对于任意网络，以上取等条件是否总是能被满足呢？如果答案是肯定的，则最大流最小割定理得证．以下我们尝试证明．
+So, can the equality condition always be met in any network? If yes, the max-flow min-cut theorem is proved. Let's try to prove it.
 
-???+ note "证明"
-    假设某一轮增广后，我们得到流 $f$ 使得 $G_f$ 上不存在增广路，即 $G_f$ 上不存在 $s$ 到 $t$ 的路径．此时我们记从 $s$ 出发可以到达的结点组成的点集为 $S$，并记 $T = V \setminus S$．
+???+ note "Proof"
+    Suppose that after some augmentation we get a flow $f$ such that $G_f$ has no augmenting path, that is, there is no path from $s$ to $t$ in $G_f$. Let $S$ be the set of vertices reachable from $s$, and let $T = V \setminus S$.
     
-    显然，$\{S, T\}$ 是 $G_f$ 的一个割，且 $||S, T|| = \sum_{u \in S} \sum_{v \in T} c_f(u, v) = 0$．由于剩余容量是非负的，这也意味着对于任意 $u \in S, v \in T, (u, v) \in E_f$，均有 $c_f(u, v) = 0$．以下我们将这些边分为存在于原图中的边和反向边两种情况讨论：
+    Clearly $\{S, T\}$ is a cut of $G_f$, and $||S, T|| = \sum_{u \in S} \sum_{v \in T} c_f(u, v) = 0$. Since residual capacities are non-negative, this means that for any $u \in S, v \in T, (u, v) \in E_f$, we have $c_f(u, v) = 0$. Below we split these edges into two cases: edges of the original graph and reverse edges.
     
-    -   $(u, v) \in E$：此时，$c_f(u, v) = c(u, v) - f(u, v) = 0$，因此有 $c(u, v) = f(u, v)$，即 $\{(u, v) \mid u \in S, v \in T\}$ 的所有边均满流；
-    -   $(v, u) \in E$：此时，$c_f(u, v) = c(u, v) - f(u, v) = 0 - f(u, v) = f(v, u) = 0$，即 $\{(v, u) \mid u \in S, v \in T\}$ 的所有边均空流．
+    -   $(u, v) \in E$: then $c_f(u, v) = c(u, v) - f(u, v) = 0$, so $c(u, v) = f(u, v)$; that is, all edges in $\{(u, v) \mid u \in S, v \in T\}$ are saturated;
+    -   $(v, u) \in E$: then $c_f(u, v) = c(u, v) - f(u, v) = 0 - f(u, v) = f(v, u) = 0$; that is, all edges in $\{(v, u) \mid u \in S, v \in T\}$ carry no flow.
     
-    因此，增广停止后，上述流 $f$ 满足取等条件．根据引理指出的大小关系，自然地，$f$ 是 $G$ 的一个最大流，$\{S, T\}$ 是 $G$ 的一个最小割．
+    So when augmentation stops, the flow $f$ above meets the equality condition. By the inequality in the lemma, $f$ is naturally a maximum flow of $G$, and $\{S, T\}$ is a minimum cut of $G$.
 
-容易看出，Kőnig 定理是最大流最小割定理的特殊情形．实际上，它们都和线性规划中的对偶有关．
+It is easy to see that Kőnig's theorem is a special case of the max-flow min-cut theorem. In fact, both are related to duality in linear programming.
 
-### 时间复杂度分析
+### Time complexity
 
-在整数流量的网络 $G = (V, E)$ 上，平凡地，我们假设每次增广的流量都是整数，则 Ford–Fulkerson 增广的时间复杂度的一个上界是 $O(|E||f|)$，其中 $f$ 是 $G$ 上的最大流．这是因为单轮增广的时间复杂度是 $O(|E|)$，而增广会导致总流量增加，故增广轮数不可能超过 $|f|$．
+On a network $G = (V, E)$ with integer capacities, assuming trivially that each augmentation adds an integer amount of flow, an upper bound on the time complexity of Ford–Fulkerson augmentation is $O(|E||f|)$, where $f$ is the maximum flow of $G$. This is because one augmentation takes $O(|E|)$ time, and each augmentation increases the total flow, so there cannot be more than $|f|$ augmentations.
 
-对于 Ford–Fulkerson 增广的不同实现，时间复杂度也各不相同．其中较主流的实现有 Edmonds–Karp, Dinic, SAP, ISAP 等算法，我们将在下文中分别介绍．
+Different implementations of Ford–Fulkerson augmentation have different time complexities. The main ones are Edmonds–Karp, Dinic, SAP, ISAP and so on, which we introduce one by one below.
 
-### Edmonds–Karp 算法
+### Edmonds–Karp algorithm
 
-#### 算法思想
+#### Idea
 
-如何在 $G_f$ 中寻找增广路呢？当我们考虑 Ford–Fulkerson 增广的具体实现时，最自然的方案就是使用 BFS．此时，Ford–Fulkerson 增广表现为 Edmonds–Karp 算法．其具体流程如下：
+How do we find an augmenting path in $G_f$? When we think about a concrete implementation of Ford–Fulkerson augmentation, the most natural choice is BFS. Ford–Fulkerson augmentation then becomes the Edmonds–Karp algorithm. It works as follows:
 
--   如果在 $G_f$ 上我们可以从 $s$ 出发 BFS 到 $t$，则我们找到了新的增广路．
+-   If we can reach $t$ from $s$ by BFS in $G_f$, we have found a new augmenting path.
 
--   对于增广路 $p$，我们计算出 $p$ 经过的边的剩余容量的最小值 $\Delta = \min_{(u, v) \in p} c_f(u, v)$．我们给 $p$ 上的每条边都加上 $\Delta$ 流量，并给它们的反向边都退掉 $\Delta$ 流量，令最大流增加了 $\Delta$．
+-   For an augmenting path $p$, compute the minimum residual capacity of the edges on $p$, $\Delta = \min_{(u, v) \in p} c_f(u, v)$. Add $\Delta$ units of flow to every edge on $p$ and cancel $\Delta$ units of flow on their reverse edges. The maximum flow increases by $\Delta$.
 
--   因为我们修改了流量，所以我们得到新的 $G_f$，我们在新的 $G_f$ 上重复上述过程，直至增广路不存在，则流量不再增加．
+-   Since we changed the flow, we get a new $G_f$. Repeat the process on the new $G_f$ until no augmenting path exists; then the flow no longer increases.
 
-以上算法即 Edmonds–Karp 算法．
+This is the Edmonds–Karp algorithm.
 
-#### 时间复杂度分析
+#### Time complexity
 
-接下来让我们尝试分析 Edmonds–Karp 算法的时间复杂度．
+Now let's analyze the time complexity of the Edmonds–Karp algorithm.
 
-显然，单轮 BFS 增广的时间复杂度是 $O(|E|)$．
+Clearly, one round of BFS augmentation takes $O(|E|)$ time.
 
-增广总轮数的上界是 $O(|V||E|)$．这一论断在网络资料中常被伪证（或被含糊其辞略过）．以下我们尝试给出一个较正式的证明[^ref_ek]．
+The total number of augmentation rounds is bounded by $O(|V||E|)$. This claim is often "proved" incorrectly online (or glossed over vaguely). Below we try to give a more formal proof[^ref_ek].
 
-???+ note "增广总轮数的上界的证明"
-    首先，我们引入一个引理——最短路非递减引理．具体地，我们记 $d_f(u)$ 为 $G_f$ 上结点 $u$ 到源点 $s$ 的距离（即最短路长度，下同）．对于某一轮增广，我们用 $f$ 和 $f'$ 分别表示增广前的流和增广后的流，我们断言，对于任意结点 $u$，增广总是使得 $d_{f'}(u) \geq d_f(u)$．我们将在稍后证明这一引理．
+???+ note "Proof of the bound on the number of augmentation rounds"
+    First we introduce a lemma, the non-decreasing shortest path lemma. Let $d_f(u)$ be the distance from vertex $u$ to the source $s$ in $G_f$ (that is, the shortest path length; the same below). For one round of augmentation, let $f$ and $f'$ be the flows before and after augmentation. We claim that for every vertex $u$, augmentation always gives $d_{f'}(u) \geq d_f(u)$. We will prove this lemma later.
     
-    不妨称增广路上剩余容量最小的边是饱和边（存在多条边同时最小则取任一）．如果一条有向边 $(u, v)$ 被选为饱和边，增广会清空其剩余容量导致饱和边的消失，并且退流导致反向边的新增（如果原先反向边不存在），即 $(u, v) \not \in E_{f'}$ 且 $(v, u) \in E_{f'}$．以上分析使我们知道，对于无向边 $(u, v)$，其被增广的两种方向总是交替出现．
+    Call the edge with the smallest residual capacity on an augmenting path a bottleneck edge (if several edges tie, pick any). If a directed edge $(u, v)$ is chosen as the bottleneck edge, augmentation empties its residual capacity so the bottleneck edge disappears, and cancelling creates the reverse edge (if it did not exist before), that is, $(u, v) \not \in E_{f'}$ and $(v, u) \in E_{f'}$. From this we know that for an undirected edge $(u, v)$, augmentations in its two directions always alternate.
     
-    在 $G_f$ 上沿 $(u, v)$ 增广时，$d_f(u) + 1 = d_f(v)$，此后残量网络变为 $G_{f'}$．在 $G_{f'}$ 上沿 $(v, u)$ 增广时，$d_{f'}(v) + 1 = d_{f'}(u)$．根据最短路非递减引理又有 $d_{f'}(v) \geq d_f(v)$，我们连接所有式子，得到 $d_{f'}(u) \geq d_{f}(u) + 2$．换言之，如果有向边 $(u, v)$ 被选为饱和边，那么与其上一次被选为饱和边时相比，$u$ 到 $s$ 的距离至少增加 $2$．
+    When augmenting along $(u, v)$ in $G_f$, $d_f(u) + 1 = d_f(v)$, and afterwards the residual network becomes $G_{f'}$. When augmenting along $(v, u)$ in $G_{f'}$, $d_{f'}(v) + 1 = d_{f'}(u)$. By the non-decreasing shortest path lemma, $d_{f'}(v) \geq d_f(v)$. Chaining all of these gives $d_{f'}(u) \geq d_{f}(u) + 2$. In other words, if a directed edge $(u, v)$ is chosen as the bottleneck edge, then compared with the previous time it was chosen, the distance from $u$ to $s$ has increased by at least $2$.
     
-    $s$ 到任意结点的距离不可能超过 $|V|$，结合上述性质，我们发现每条边被选为饱和边的次数是 $O(|V|)$ 的，与边数相乘后得到增广总轮数的上界 $O(|V||E|)$．
+    The distance from $s$ to any vertex cannot exceed $|V|$. Combined with the property above, each edge is chosen as the bottleneck edge $O(|V|)$ times. Multiplying by the number of edges gives the bound $O(|V||E|)$ on the total number of augmentation rounds.
     
-    接下来我们证明最短路非递减引理，即 $d_{f'}(u) \geq d_f(u)$．这一证明并不难，但可能稍显绕口，读者可以停下来认真思考片刻．
+    Next we prove the non-decreasing shortest path lemma, that is, $d_{f'}(u) \geq d_f(u)$. The proof is not hard, but it may be a bit twisty, so take a moment to think it through carefully.
     
-    ???+ note "最短路非递减引理的证明"
-        考虑反证．对于某一轮增广，我们假设存在若干结点，它们在该轮增广后到 $s$ 的距离较增广前减小．我们记 $v$ 为其中到 $s$ 的距离最小的一者（即 $v = \arg \min_{x \in V, d_{f'}(x) < d_f(x)} d_{f'}(x)$）．注意，根据反证假设，此时 $d_{f'}(v) < d_f(v)$ 是已知条件．
+    ???+ note "Proof of the non-decreasing shortest path lemma"
+        Suppose, for contradiction, that in some round of augmentation there are vertices whose distance to $s$ becomes smaller after the augmentation. Let $v$ be the one among them with the smallest distance to $s$ (that is, $v = \arg \min_{x \in V, d_{f'}(x) < d_f(x)} d_{f'}(x)$). Note that by this assumption, $d_{f'}(v) < d_f(v)$ is given.
         
-        在 $G_{f'}$ 中 $s$ 到 $v$ 的最短路上，我们记 $u$ 是 $v$ 的上一个结点，即 $d_{f'}(u) + 1 = d_{f'}(v)$．
+        On the shortest path from $s$ to $v$ in $G_{f'}$, let $u$ be the vertex just before $v$, that is, $d_{f'}(u) + 1 = d_{f'}(v)$.
         
-        为了不让 $u$ 破坏 $v$ 的「距离最小」这一性质，$u$ 必须满足 $d_{f'}(u) \geq d_f(u)$．
+        So that $u$ does not break the "smallest distance" property of $v$, $u$ must satisfy $d_{f'}(u) \geq d_f(u)$.
         
-        对于上式，我们令不等号两侧同加，得 $d_{f'}(v) \geq d_f(u) + 1$．根据反证假设进行放缩，我们得到 $d_f(v) > d_f(u) + 1$．
+        Adding one to both sides of this inequality gives $d_{f'}(v) \geq d_f(u) + 1$. Using the assumption to loosen the bound, we get $d_f(v) > d_f(u) + 1$.
         
-        以下我们尝试讨论 $(u, v)$ 上的增广方向．
+        Now consider the direction of augmentation on $(u, v)$.
         
-        -   假设有向边 $(u, v) \in E_f$．根据 BFS「广度优先」的性质，我们有 $d_f(u) + 1 \geq d_f(v)$．该式与放缩结果冲突，导出矛盾．
-        -   假设有向边 $(u, v) \not \in E_f$．根据 $u$ 的定义我们已知 $(u, v) \in E_{f'}$，因此这条边的存在必须是当前轮次的增广经过了 $(v, u)$ 并退流产生反向边的结果，也即 $d_f(v) + 1 = d_f(u)$．该式与放缩结果冲突，导出矛盾．
+        -   Suppose the directed edge $(u, v) \in E_f$. By the "breadth-first" property of BFS, $d_f(u) + 1 \geq d_f(v)$. This conflicts with the bound above, a contradiction.
+        -   Suppose the directed edge $(u, v) \not \in E_f$. By the definition of $u$ we know $(u, v) \in E_{f'}$, so this edge must exist because this round's augmentation went through $(v, u)$ and cancelling created the reverse edge, that is, $d_f(v) + 1 = d_f(u)$. This conflicts with the bound above, a contradiction.
         
-        由于 $(u, v)$ 沿任何方向增广都会导出矛盾，我们知道反证假设不成立，最短路非递减引理得证．
+        Since augmentation on $(u, v)$ in either direction leads to a contradiction, the assumption is false, and the non-decreasing shortest path lemma is proved.
 
-将单轮 BFS 增广的复杂度与增广轮数的上界相乘，我们得到 Edmonds–Karp 算法的时间复杂度是 $O(|V||E|^2)$．
+Multiplying the cost of one round of BFS augmentation by the bound on the number of rounds, the time complexity of the Edmonds–Karp algorithm is $O(|V||E|^2)$.
 
-#### 代码实现
+#### Implementation
 
-Edmonds–Karp 算法的可能实现如下．
+A possible implementation of the Edmonds–Karp algorithm is as follows.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     constexpr int MAXN = 250;
     constexpr int INF = 0x3f3f3f3f;
@@ -154,11 +154,11 @@ Edmonds–Karp 算法的可能实现如下．
     };
     
     struct EK {
-      int n, m;             // n：点数，m：边数
-      vector<Edge> edges;   // edges：所有边的集合
-      vector<int> G[MAXN];  // G：点 x -> x 的所有边在 edges 中的下标
-      int a[MAXN], p[MAXN];  // a：点 x -> BFS 过程中最近接近点 x 的边给它的最大流
-                             // p：点 x -> BFS 过程中最近接近点 x 的边
+      int n, m;             // n: number of vertices, m: number of edges
+      vector<Edge> edges;   // edges: the set of all edges
+      vector<int> G[MAXN];  // G: vertex x -> indices in edges of all edges from x
+      int a[MAXN], p[MAXN];  // a: vertex x -> max flow given to x by the last edge reaching x in the BFS
+                             // p: vertex x -> the last edge reaching x in the BFS
     
       void init(int n) {
         for (int i = 0; i < n; i++) G[i].clear();
@@ -183,23 +183,23 @@ Edmonds–Karp 算法的可能实现如下．
           while (!Q.empty()) {
             int x = Q.front();
             Q.pop();
-            for (int i = 0; i < G[x].size(); i++) {  // 遍历以 x 作为起点的边
+            for (int i = 0; i < G[x].size(); i++) {  // loop over edges starting at x
               Edge& e = edges[G[x][i]];
               if (!a[e.to] && e.cap > e.flow) {
-                p[e.to] = G[x][i];  // G[x][i] 是最近接近点 e.to 的边
+                p[e.to] = G[x][i];  // G[x][i] is the last edge reaching e.to
                 a[e.to] =
-                    min(a[x], e.cap - e.flow);  // 最近接近点 e.to 的边赋给它的流
+                    min(a[x], e.cap - e.flow);  // flow given to e.to by the last edge reaching it
                 Q.push(e.to);
               }
             }
-            if (a[t]) break;  // 如果汇点接受到了流，就退出 BFS
+            if (a[t]) break;  // if the sink received flow, exit the BFS
           }
           if (!a[t])
-            break;  // 如果汇点没有接受到流，说明源点和汇点不在同一个连通分量上
+            break;  // if the sink received no flow, the source and sink are not connected
           for (int u = t; u != s;
-               u = edges[p[u]].from) {  // 通过 u 追寻 BFS 过程中 s -> t 的路径
-            edges[p[u]].flow += a[t];      // 增加路径上边的 flow 值
-            edges[p[u] ^ 1].flow -= a[t];  // 减小反向路径的 flow 值
+               u = edges[p[u]].from) {  // follow u back along the s -> t path from the BFS
+            edges[p[u]].flow += a[t];      // increase flow on the path's edges
+            edges[p[u] ^ 1].flow -= a[t];  // decrease flow on the reverse edges
           }
           flow += a[t];
         }
@@ -208,134 +208,134 @@ Edmonds–Karp 算法的可能实现如下．
     };
     ```
 
-### Dinic 算法
+### Dinic's algorithm
 
-#### 算法思想
+#### Idea
 
-考虑在增广前先对 $G_f$ 做 BFS 分层，即根据结点 $u$ 到源点 $s$ 的距离 $d(u)$ 把结点分成若干层．令经过 $u$ 的流量只能流向下一层的结点 $v$，即删除 $u$ 向层数标号相等或更小的结点的出边，我们称 $G_f$ 剩下的部分为层次图（Level Graph）．形式化地，我们称 $G_L = (V, E_L)$ 是 $G_f = (V, E_f)$ 的层次图，其中 $E_L = \left\{ (u, v) \mid (u, v) \in E_f, d(u) + 1 = d(v) \right\}$．
+Before augmenting, first run a BFS on $G_f$ to split it into layers: group vertices into levels by their distance $d(u)$ to the source $s$. Flow through $u$ may only go to vertices $v$ in the next level, that is, delete the outgoing edges from $u$ to vertices with an equal or smaller level. The remaining part of $G_f$ is called the level graph. Formally, $G_L = (V, E_L)$ is the level graph of $G_f = (V, E_f)$, where $E_L = \left\{ (u, v) \mid (u, v) \in E_f, d(u) + 1 = d(v) \right\}$.
 
-如果我们在层次图 $G_L$ 上找到一个极大的增广流 $f_b$，使得仅在 $G_L$ 上是不可能进一步扩大流 $f_b$ 的，则我们称 $f_b$ 是 $G_L$ 的阻塞流（Blocking Flow）．
+If we find a maximal augmenting flow $f_b$ on the level graph $G_L$, such that $f_b$ cannot be increased any further using only $G_L$, we call $f_b$ a blocking flow of $G_L$.
 
 ??? warning "Warning"
-    尽管在上文中我们仅在单条增广路上定义了增广/增广流，广义地，「增广」一词不仅可以用于单条路径上的增广流，也可以用于若干增广流的并——后者才是我们定义阻塞流时使用的意义．
+    Although above we only defined augmentation/augmenting flow on a single augmenting path, in a broader sense the word "augment" can refer not only to the augmenting flow on a single path but also to a union of several augmenting flows. The latter is the meaning we use when defining blocking flows.
 
-定义层次图和阻塞流后，Dinic 算法的流程如下．
+With the level graph and blocking flow defined, Dinic's algorithm works as follows.
 
-1.  在 $G_f$ 上 BFS 出层次图 $G_L$．
-2.  在 $G_L$ 上 DFS 出阻塞流 $f_b$．
-3.  将 $f_b$ 并到原先的流 $f$ 中，即 $f \leftarrow f + f_b$．
-4.  重复以上过程直到不存在从 $s$ 到 $t$ 的路径．
+1.  Build the level graph $G_L$ from $G_f$ with BFS.
+2.  Find a blocking flow $f_b$ on $G_L$ with DFS.
+3.  Add $f_b$ to the current flow $f$, that is, $f \leftarrow f + f_b$.
+4.  Repeat until there is no path from $s$ to $t$.
 
-此时的 $f$ 即为最大流．
+The $f$ at this point is the maximum flow.
 
-在分析这一算法的复杂度之前，我们需要特别说明「在 $G_L$ 上 DFS 出阻塞流 $f_b$」的过程．尽管 BFS 层次图对于本页面的读者应当是 trivial 的，但 DFS 阻塞流的过程则稍需技巧——我们需要引入当前弧优化．
+Before analyzing the complexity, we need to explain the step "find a blocking flow $f_b$ on $G_L$ with DFS". Building the level graph with BFS should be trivial for readers of this page, but finding the blocking flow with DFS needs a trick: the current-arc optimization.
 
-注意到在 $G_L$ 上 DFS 的过程中，如果结点 $u$ 同时具有大量入边和出边，并且 $u$ 每次接受来自入边的流量时都遍历出边表来决定将流量传递给哪条出边，则 $u$ 这个局部的时间复杂度最坏可达 $O(|E|^2)$．为避免这一缺陷，如果某一时刻我们已经知道边 $(u, v)$ 已经增广到极限（边 $(u, v)$ 已无剩余容量或 $v$ 的后侧已增广至阻塞），则 $u$ 的流量没有必要再尝试流向出边 $(u, v)$．据此，对于每个结点 $u$，我们维护 $u$ 的出边表中第一条还有必要尝试的出边．习惯上，我们称维护的这个指针为当前弧，称这个做法为当前弧优化．
+During the DFS on $G_L$, if a vertex $u$ has many incoming and outgoing edges, and every time $u$ receives flow from an incoming edge it scans its whole list of outgoing edges to decide where to send it, then the local cost at $u$ can reach $O(|E|^2)$ in the worst case. To avoid this, if at some point we know an edge $(u, v)$ has been augmented to its limit (it has no residual capacity left, or everything after $v$ is already blocked), then there is no need for $u$ to try sending flow along $(u, v)$ again. So for each vertex $u$, we keep track of the first outgoing edge in its list that is still worth trying. By convention, this pointer is called the current arc, and the technique is called the current-arc optimization.
 
-??? note "多路增广"
-    多路增广是 Dinic 算法的一个常数优化——如果我们在层次图上找到了一条从 $s$ 到 $t$ 的增广路 $p$，则接下来我们未必需要重新从 $s$ 出发找下一条增广路，而可能从 $p$ 上最后一个仍有剩余容量的位置出发寻找一条岔路进行增广．考虑到其与回溯形式的一致性，这一优化在 DFS 的代码实现中也是自然的．
+??? note "Multi-path augmentation"
+    Multi-path augmentation is a constant-factor optimization of Dinic's algorithm. If we have found an augmenting path $p$ from $s$ to $t$ on the level graph, we do not necessarily need to start again from $s$ to find the next one; we can instead branch off from the last position on $p$ that still has residual capacity. Since this matches the shape of backtracking, the optimization comes naturally in a DFS implementation.
     
-    ??? failure "常见误区"
-        可能是由于大量网络资料的错误表述引发以讹传讹的情形，相当数量的选手喜欢将当前弧优化和多路增广并列称为 Dinic 算法的两种优化．实际上，当前弧优化是用于保证 Dinic 时间复杂度正确性的一部分，而多路增广只是一个不影响复杂度的常数优化．
+    ??? failure "Common misconception"
+        Probably because of wrong statements spread across many online resources, many contestants like to list the current-arc optimization and multi-path augmentation side by side as "the two optimizations of Dinic's algorithm". In fact, the current-arc optimization is part of what makes Dinic's time complexity correct, while multi-path augmentation is only a constant-factor optimization that does not affect the complexity.
 
-#### 时间复杂度分析
+#### Time complexity
 
-应用当前弧优化后，对 Dinic 算法的时间复杂度分析如下．
+With the current-arc optimization, the time complexity of Dinic's algorithm is analyzed as follows.
 
-首先，我们尝试证明单轮增广中 DFS 求阻塞流的时间复杂度是 $O(|V||E|)$．
+First, we prove that finding the blocking flow by DFS in one round takes $O(|V||E|)$ time.
 
-???+ note "单轮增广的时间复杂度的证明"
-    考虑阻塞流 $f_b$ 中的每条增广路，它们都是在 $G_L$ 上每次沿当前弧跳转而得到的结果，其中每条增广路经历的跳转次数不可能多于 $|V|$．
+???+ note "Proof of the time complexity of one round"
+    Every augmenting path in the blocking flow $f_b$ is obtained by repeatedly following current arcs on $G_L$, and each augmenting path takes at most $|V|$ jumps.
     
-    每找到一条增广路就有一条饱和边消失（剩余容量清零）．考虑阻塞流 $f_b$ 中的每条增广路，我们将被它们清零的饱和边形成的边集记作 $E_1$．考虑到 $G_L$ 分层的性质，饱和边消失后其反向边不可能在同一轮增广内被其他增广路经过，因此，$E_1$ 是 $E_L$ 的子集．
+    Each augmenting path found makes one bottleneck edge disappear (its residual capacity drops to zero). Let $E_1$ be the set of bottleneck edges zeroed by the augmenting paths in $f_b$. Because of the layered structure of $G_L$, after a bottleneck edge disappears, its reverse edge cannot be used by any other augmenting path in the same round. So $E_1$ is a subset of $E_L$.
     
-    此外，对于沿当前弧跳转但由于某个位置阻塞所以没有成功得到增广路的情形，我们将这些不完整的路径上的最后一条边形成的边集记作 $E_2$．$E_2$ 的成员不饱和，所以 $E_1$ 与 $E_2$ 不交，且 $E_1 \cup E_2$ 仍是 $E_L$ 的子集．
+    Also, for walks along current arcs that get blocked somewhere and fail to produce an augmenting path, let $E_2$ be the set of the last edges of these incomplete paths. The members of $E_2$ are not saturated, so $E_1$ and $E_2$ are disjoint, and $E_1 \cup E_2$ is still a subset of $E_L$.
     
-    由于 $E_1 \cup E_2$ 的每个成员都没有花费超过 $|V|$ 次跳转（且在使用多路增广优化后一些跳转将被重复计数），因此，综上所述，DFS 过程中的总跳转次数不可能多于 $|V||E_L|$．
+    Each member of $E_1 \cup E_2$ costs at most $|V|$ jumps (and with multi-path augmentation some jumps are counted more than once). So, putting it all together, the total number of jumps in the DFS is at most $|V||E_L|$.
     
-    ??? failure "常见伪证一则"
-        对于每个结点，我们维护下一条可以增广的边，而当前弧最多变化 $|E|$ 次，从而单轮增广的最坏时间复杂度为 $O(|V||E|)$．
-    
-    ??? bug "Bug"
-        「当前弧最多变化 $|E|$ 次」并不能推得「每个结点最多访问其出边 $|E|$ 次」．这是因为，访问当前弧并不一定耗尽上面的剩余容量，结点 $u$ 可能多次访问同一条当前弧．
-
-注意到层次图的层数显然不可能超过 $|V|$，如果我们可以证明层次图的层数在增广过程中严格单增，则 Dinic 算法的增广轮数是 $O(|V|)$ 的．接下来我们尝试证明这一结论[^ref_dinic]．
-
-???+ note "层次图层数单调性的证明"
-    我们需要引入预流推进类算法（另一类最大流算法）中的一个概念——高度标号．为了更方便地结合高度标号表述我们的证明，在证明过程中，我们令 $d_f(u)$ 为 $G_f$ 上结点 $u$ 到 **汇点**  $t$ 的距离，从 **汇点** 而非源点出发进行分层（这并没有本质上的区别）．对于某一轮增广，我们用 $f$ 和 $f'$ 分别表示增广前的流和增广后的流．在该轮增广中求解并加入阻塞流后，记层次图由 $G_L = (V, E_L)$ 变为 $G'_{L} = (V, E'_L)$．
-    
-    我们给高度标号一个不严格的临时定义——在网络 $G = (V, E)$ 上，令 $h$ 是点集 $V$ 到整数集 $N$ 上的函数，$h$ 是 $G$ 上合法的高度标号当且仅当 $h(u) \leq h(v) + 1$ 对于 $(u, v) \in E$ 恒成立．
-    
-    考察所有 $E_{f'}$ 的成员 $(u, v)$，我们发现 $(u, v) \in E_{f'}$ 的原因是以下二者之一．
-    
-    -   $(u, v) \in E_f$，且剩余容量在该轮增广过程中未耗尽——根据最短路的定义，此时我们有 $d_f(u) \leq d_f(v) + 1$；
-    -   $(u, v) \not \in E_f$，但在该轮增广过程中阻塞流经过 $(v, u)$ 并退流产生反向边——根据层次图和阻塞流的定义，此时我们有 $d_f(u) + 1 = d_f(v)$．
-    
-    以上观察让我们得出一个结论——$d_f$ 在 $G_{f'}$ 上是一个合法的高度标号．当然，在 $G_{f'}$ 的子图 $G'_L$ 上也是．
-    
-    现在，对于一条 $G'_L$ 上的增广路 $p = (s, \dots, u, v, \dots, t)$，按照 $p$ 上结点的反序（从 $t$ 到 $s$ 的顺序）考虑从空路径开始每次添加一个结点的过程．假设结点 $v$ 已加入，结点 $u$ 正在加入，我们发现，加入结点 $u$ 后，根据层次图的定义，$d_{f'}(u)$ 的值较 $d_{f'}(v)$ 增加 $1$；与此同时，由于 $d_f$ 是 $G'_L$ 上的高度标号，$d_f(u)$ 的值既可能较 $d_f(v)$ 增加 $1$，也可能保持不变或减少．因此，在整条路径被添加完成后，我们得到 $d_{f'}(s) \geq d_f(s)$，其中取等的充要条件是 $d_f(u) = d_f(v) + 1$ 对于 $(u, v) \in p$ 恒成立．如果该不等式不能取等，则有 $d_{f'}(s) > d_f(s)$——即我们想要的结论「层次图的层数在增广过程中严格单增」．以下我们尝试证明该不等式不能取等．
-    
-    考虑反证，我们假设 $d_{f'}(s) = d_f(s)$ 成立，并尝试导出矛盾．现在我们断言，在 $G'_L$ 上，$p$ 至少包含一条边 $(u, v)$ 满足 $(u, v)$ 在 $G_L$ 上不存在．如果没有这样的边，考虑到 $d_f(s) = d_{f'}(s)$，结合层次图和阻塞流的定义，$G_L$ 上的增广应尚未完成．为了不产生以上矛盾，我们的断言只好是正确的．
-    
-    令 $(u, v)$ 是满足断言条件的那条边，其满足断言的原因只能是以下二者之一．
-    
-    -   $(u, v) \in E_f$ 但 $d_f(u) \leq d_f(v) + 1$ 未取等，故根据层次图的定义可知 $(u, v) \not \in E_L$，并在增广后新一轮重分层中被加入到 $E'_L$ 中；
-    -   $(u, v) \not \in E_f$，这意味着 $(u, v)$ 这条边的产生是当前轮次增广中阻塞流经过 $(v, u)$ 并退流产生反向边的结果，也即 $d_f(u) = d_f(v) - 1$．
-    
-    由于我们无论以何种方式满足断言均得到 $d_f(u) \neq d_f(v) + 1$，也即 $d_{f'}(s) \geq d_f(s)$ 取等的充要条件无法被满足，这与反证假设 $d_{f'}(s) = d_f(s)$ 冲突，原命题得证．
-    
-    ??? failure "常见伪证另一则"
-        考虑反证．假设层次图的层数在一轮增广结束后较原先相等，则层次图上应仍存在至少一条从 $s$ 到 $t$ 的增广路满足相邻两点间的层数差为 $1$．这条增广路未被增广说明该轮增广尚未结束．为了不产生上述矛盾，原命题成立．
+    ??? failure "A common false proof"
+        For each vertex we keep the next edge that can be augmented, and the current arc changes at most $|E|$ times, so the worst-case time of one round is $O(|V||E|)$.
     
     ??? bug "Bug"
-        「一轮增广结束后新的层次图上 $s$-$t$ 最短路较原先相等」并不能推得「旧的层次图上该轮增广尚未结束」．这是因为，没有理由表明两张层次图的边集相同，新的层次图上的 $s$-$t$ 最短路有可能经过旧的层次图上不存在的边．
+        "The current arc changes at most $|E|$ times" does not imply "each vertex visits its outgoing edges at most $|E|$ times". This is because visiting the current arc does not necessarily use up its residual capacity, so vertex $u$ may visit the same current arc many times.
 
-将单轮增广的时间复杂度 $O(|V||E|)$ 与增广轮数 $O(|V|)$ 相乘，Dinic 算法的时间复杂度是 $O(|V|^2|E|)$．
+The number of levels in the level graph clearly cannot exceed $|V|$. If we can prove that the number of levels strictly increases during augmentation, then Dinic's algorithm runs $O(|V|)$ rounds. Let's try to prove this[^ref_dinic].
 
-如果需要令 Dinic 算法的实际运行时间接近其理论上界，我们需要构造有特殊性质的网络作为输入．由于在算法竞赛实践中，对于网络流知识相关的考察常侧重于将原问题建模为网络流问题的技巧．此时，我们的建模通常不包含令 Dinic 算法执行缓慢的特殊性质；恰恰相反，Dinic 算法在大部分图上效率非常优秀．因此，网络流问题的数据范围通常较大，「将 $|V|, |E|$ 的值代入 $|V|^2|E|$ 以估计运行时间」这一方式并不适用．实际上，进行准确的估计需要选手对 Dinic 算法的实际效率有一定的经验，读者可以多加练习．
-
-#### 特殊情形下的时间复杂度分析
-
-在一些性质良好的图上，Dinic 算法有更好的时间复杂度．
-
-对于网络 $G = (V, E)$，如果其所有边容量均为 $1$，即 $c(u, v) \in \{0, 1\}$ 对于 $(u, v) \in E$ 恒成立，则我们称 $G$ 是单位容量（Unit Capacity）的．
-
-在单位容量的网络中，Dinic 算法的单轮增广的时间复杂度为 $O(|E|)$．
-
-???+ note "证明"
-    这是因为，每次增广都会导致增广路上的所有边均饱和并消失，故单轮增广中每条边只能被增广一次．
-
-在单位容量的网络中，Dinic 算法的增广轮数是 $O(|E|^{\frac{1}{2}})$ 的．
-
-???+ note "证明"
-    以源点 $s$ 为中心分层，记 $d_f(u)$ 为 $G_f$ 上结点 $u$ 到源点 $s$ 的距离．另外，我们定义将点集 $\left\{u \mid u \in V, d_f(u) = k \right\}$ 定义为编号为 $k$ 的层次 $D_k$，并记 $S_k = \cup_{i \leq k} D_i$．
+???+ note "Proof that the number of levels is monotonic"
+    We need a concept from push-relabel algorithms (another family of maximum flow algorithms): height labels. To make the proof fit better with height labels, in this proof we let $d_f(u)$ be the distance from vertex $u$ to the **sink** $t$ in $G_f$, and build levels from the **sink** instead of the source (this makes no real difference). For one round of augmentation, let $f$ and $f'$ be the flows before and after it. After the blocking flow is found and added in this round, the level graph changes from $G_L = (V, E_L)$ to $G'_{L} = (V, E'_L)$.
     
-    假设我们已经进行了 $|E|^{\frac{1}{2}}$ 轮增广．根据鸽巢原理，至少存在一个 $k$ 满足边集 $\left\{ (u, v) \mid u \in D_k, v \in D_{k+1}, (u, v) \in E_f \right\}$ 的大小不超过 $\frac {|E|} {|E|^{\frac{1}{2}}} \approx |E|^{\frac{1}{2}}$．显然，$\{S_k, V - S_k\}$ 是 $G_f$ 上的 $s$-$t$ 割，且其割容量不超过 $|E|^{\frac{1}{2}}$．根据最大流最小割定理，$G_f$ 上的最大流不超过 $|E|^{\frac{1}{2}}$，也即 $G_f$ 上最多还能执行 $|E|^{\frac{1}{2}}$ 轮增广．因此，总增广轮数是 $O(|E|^{\frac{1}{2}})$ 的．
-
-在单位容量的网络中，Dinic 算法的增广轮数是 $O(|V|^{\frac{2}{3}})$ 的．
-
-???+ note "证明"
-    假设我们已经进行了 $2 |V|^{\frac{2}{3}}$ 轮增广．由于至多有半数的（$|V|^{\frac{2}{3}}$ 个）层次包含多于 $|V|^{\frac{1}{3}}$ 个点，故无论我们如何分配所有层次的大小，至少存在一个 $k$ 满足相邻两个层次同时包含不多于 $|V|^{\frac{1}{3}}$ 个点，即 $|D_k| \leq |V|^{\frac{1}{3}}$ 且 $|D_{k+1}| \leq |V|^{\frac{1}{3}}$．
+    We give height labels an informal temporary definition: on a network $G = (V, E)$, let $h$ be a function from the vertex set $V$ to the integers $N$. Then $h$ is a valid height labeling of $G$ if and only if $h(u) \leq h(v) + 1$ holds for every $(u, v) \in E$.
     
-    为最大化 $D_k$ 和 $D_{k+1}$ 之间的边数，我们假定这是一个完全二分图，此时边集 $\left\{ (u, v) \mid u \in D_k, v \in D_{k+1}, (u, v) \in E_f \right\}$ 的大小不超过 $|V|^{\frac{2}{3}}$．显然，$\{S_k, V - S_k\}$ 是 $G_f$ 上的 $s$-$t$ 割，且其割容量不超过 $|V|^{\frac{2}{3}}$．根据最大流最小割定理，$G_f$ 上的最大流不超过 $|V|^{\frac{2}{3}}$，也即 $G_f$ 上最多还能执行 $|V|^{\frac{2}{3}}$ 轮增广．因此，总增广轮数是 $O(|V|^{\frac{2}{3}})$ 的．
-
-在单位容量的网络中，如果除源汇点外每个结点 $u$ 都满足 $\mathit{deg}_{\mathit{in}}(u) = 1$ 或 $\mathit{deg}_{\mathit{out}}(u) = 1$，则 Dinic 算法的增广轮数是 $O(|V|^{\frac{1}{2}})$ 的．其中，$\mathit{deg}_{\mathit{in}}(u)$ 和 $\mathit{deg}_{\mathit{out}}(u)$ 分别代表结点 $u$ 的入度和出度．
-
-???+ note "证明"
-    我们引入以下引理——对于这一形式的网络，其上的任意流总是可以分解成若干条单位流量的、**点不交** 的增广路．
+    Look at every member $(u, v)$ of $E_{f'}$. We find that $(u, v) \in E_{f'}$ for one of the following two reasons.
     
-    假设我们已经进行了 $|V|^{\frac{1}{2}}$ 轮增广．根据层次图的定义，此时任意新的增广路的长度至少为 $|V|^{\frac{1}{2}}$．
+    -   $(u, v) \in E_f$, and its residual capacity was not used up in this round. By the definition of shortest paths, we have $d_f(u) \leq d_f(v) + 1$;
+    -   $(u, v) \not \in E_f$, but in this round the blocking flow went through $(v, u)$ and cancelling created the reverse edge. By the definitions of the level graph and blocking flow, we have $d_f(u) + 1 = d_f(v)$.
     
-    考虑 $G_f$ 上的最大流的增广路分解，我们得到的增广路的数量不能多于 $\frac {|V|} {|V|^{\frac{1}{2}}} \approx |V|^{\frac{1}{2}}$，这意味着 $G_f$ 上最多还能执行 $|V|^{\frac{1}{2}}$ 轮增广．因此，总增广轮数是 $O(|V|^{\frac{1}{2}})$ 的．
+    These observations give a conclusion: $d_f$ is a valid height labeling on $G_{f'}$. Of course, it is also valid on the subgraph $G'_L$ of $G_{f'}$.
+    
+    Now, for an augmenting path $p = (s, \dots, u, v, \dots, t)$ on $G'_L$, consider building it from an empty path by adding one vertex at a time, in reverse order of $p$ (from $t$ to $s$). Suppose vertex $v$ is already added and vertex $u$ is being added. After adding $u$, by the definition of the level graph, $d_{f'}(u)$ is $1$ more than $d_{f'}(v)$. Meanwhile, since $d_f$ is a height labeling on $G'_L$, $d_f(u)$ may be $1$ more than $d_f(v)$, or stay the same, or be smaller. So after the whole path is added, we get $d_{f'}(s) \geq d_f(s)$, with equality if and only if $d_f(u) = d_f(v) + 1$ holds for every $(u, v) \in p$. If equality cannot hold, then $d_{f'}(s) > d_f(s)$, which is exactly what we want: "the number of levels strictly increases during augmentation". Below we prove that equality cannot hold.
+    
+    Suppose, for contradiction, that $d_{f'}(s) = d_f(s)$, and let's derive a contradiction. We claim that on $G'_L$, $p$ contains at least one edge $(u, v)$ that does not exist in $G_L$. If there were no such edge, then since $d_f(s) = d_{f'}(s)$, by the definitions of the level graph and blocking flow, the augmentation on $G_L$ would not have been finished yet. To avoid this contradiction, our claim must be true.
+    
+    Let $(u, v)$ be such an edge. It can satisfy the claim only for one of the following two reasons.
+    
+    -   $(u, v) \in E_f$ but $d_f(u) \leq d_f(v) + 1$ is not tight, so by the definition of the level graph $(u, v) \not \in E_L$, and it was added to $E'_L$ when the levels were rebuilt in the new round after augmentation;
+    -   $(u, v) \not \in E_f$. This means the edge $(u, v)$ was created because the blocking flow in this round went through $(v, u)$ and cancelling created the reverse edge, that is, $d_f(u) = d_f(v) - 1$.
+    
+    Either way, we get $d_f(u) \neq d_f(v) + 1$, so the necessary and sufficient condition for equality in $d_{f'}(s) \geq d_f(s)$ cannot be met. This conflicts with the assumption $d_{f'}(s) = d_f(s)$, and the statement is proved.
+    
+    ??? failure "Another common false proof"
+        Suppose, for contradiction, that the number of levels in the level graph stays the same after a round of augmentation. Then there should still be at least one augmenting path from $s$ to $t$ in the level graph where adjacent vertices differ by exactly $1$ in level. This path was not augmented, which means the round of augmentation is not finished. To avoid this contradiction, the statement must hold.
+    
+    ??? bug "Bug"
+        "After a round of augmentation, the $s$-$t$ shortest path in the new level graph has the same length as before" does not imply "this round of augmentation on the old level graph is not finished". This is because there is no reason the two level graphs have the same edge set; the $s$-$t$ shortest path in the new level graph may use edges that do not exist in the old one.
 
-综上，我们得出一些推论．
+Multiplying the cost $O(|V||E|)$ of one round by the number of rounds $O(|V|)$, the time complexity of Dinic's algorithm is $O(|V|^2|E|)$.
 
--   在单位容量的网络上，Dinic 算法的总时间复杂度是 $O(|E| \min(|E|^\frac{1}{2}, |V|^{\frac{2}{3}}))$．
--   在单位容量的网络上，如果除源汇点外每个结点 $u$ 都满足 $\mathit{deg}_{\mathit{in}}(u) = 1$ 或 $\mathit{deg}_{\mathit{out}}(u) = 1$，Dinic 算法的总时间复杂度是 $O(|E||V|^{\frac{1}{2}})$．对于二分图最大匹配问题，我们常使用 Hopcroft–Karp 算法解决，而这一算法实际上是 Dinic 算法在满足上述度数限制的单位容量网络上的特例．
+To make Dinic's algorithm actually run close to its theoretical bound, the input network must be specially constructed. In competitive programming practice, network flow problems usually focus on the skill of modeling the original problem as a network flow problem. Our models usually do not have the special properties that make Dinic's algorithm slow; on the contrary, Dinic's algorithm is very efficient on most graphs. So network flow problems often have large constraints, and "plugging $|V|, |E|$ into $|V|^2|E|$ to estimate the running time" does not work. In fact, making an accurate estimate takes some experience with how fast Dinic's algorithm really is, so practice more.
 
-#### 代码实现
+#### Time complexity in special cases
 
-??? note "参考代码"
+On some well-behaved graphs, Dinic's algorithm has a better time complexity.
+
+For a network $G = (V, E)$, if all edges have capacity $1$, that is, $c(u, v) \in \{0, 1\}$ for every $(u, v) \in E$, we say $G$ has unit capacity.
+
+In a unit-capacity network, one round of augmentation in Dinic's algorithm takes $O(|E|)$ time.
+
+???+ note "Proof"
+    This is because each augmentation saturates and removes every edge on the augmenting path, so in one round each edge can be augmented only once.
+
+In a unit-capacity network, Dinic's algorithm runs $O(|E|^{\frac{1}{2}})$ rounds.
+
+???+ note "Proof"
+    Build levels around the source $s$, and let $d_f(u)$ be the distance from vertex $u$ to the source $s$ in $G_f$. Also, define the vertex set $\left\{u \mid u \in V, d_f(u) = k \right\}$ as level $k$, $D_k$, and let $S_k = \cup_{i \leq k} D_i$.
+    
+    Suppose we have already done $|E|^{\frac{1}{2}}$ rounds. By the pigeonhole principle, there is at least one $k$ for which the edge set $\left\{ (u, v) \mid u \in D_k, v \in D_{k+1}, (u, v) \in E_f \right\}$ has size at most $\frac {|E|} {|E|^{\frac{1}{2}}} \approx |E|^{\frac{1}{2}}$. Clearly $\{S_k, V - S_k\}$ is an $s$-$t$ cut of $G_f$ with capacity at most $|E|^{\frac{1}{2}}$. By the max-flow min-cut theorem, the maximum flow on $G_f$ is at most $|E|^{\frac{1}{2}}$, so at most $|E|^{\frac{1}{2}}$ more rounds can run on $G_f$. So the total number of rounds is $O(|E|^{\frac{1}{2}})$.
+
+In a unit-capacity network, Dinic's algorithm runs $O(|V|^{\frac{2}{3}})$ rounds.
+
+???+ note "Proof"
+    Suppose we have already done $2 |V|^{\frac{2}{3}}$ rounds. At most half of the levels ($|V|^{\frac{2}{3}}$ of them) can contain more than $|V|^{\frac{1}{3}}$ vertices. So no matter how the level sizes are distributed, there is at least one $k$ such that two adjacent levels both contain at most $|V|^{\frac{1}{3}}$ vertices, that is, $|D_k| \leq |V|^{\frac{1}{3}}$ and $|D_{k+1}| \leq |V|^{\frac{1}{3}}$.
+    
+    To maximize the number of edges between $D_k$ and $D_{k+1}$, assume they form a complete bipartite graph. Then the edge set $\left\{ (u, v) \mid u \in D_k, v \in D_{k+1}, (u, v) \in E_f \right\}$ has size at most $|V|^{\frac{2}{3}}$. Clearly $\{S_k, V - S_k\}$ is an $s$-$t$ cut of $G_f$ with capacity at most $|V|^{\frac{2}{3}}$. By the max-flow min-cut theorem, the maximum flow on $G_f$ is at most $|V|^{\frac{2}{3}}$, so at most $|V|^{\frac{2}{3}}$ more rounds can run on $G_f$. So the total number of rounds is $O(|V|^{\frac{2}{3}})$.
+
+In a unit-capacity network, if every vertex $u$ other than the source and sink satisfies $\mathit{deg}_{\mathit{in}}(u) = 1$ or $\mathit{deg}_{\mathit{out}}(u) = 1$, then Dinic's algorithm runs $O(|V|^{\frac{1}{2}})$ rounds. Here $\mathit{deg}_{\mathit{in}}(u)$ and $\mathit{deg}_{\mathit{out}}(u)$ are the in-degree and out-degree of vertex $u$.
+
+???+ note "Proof"
+    We use the following lemma: in a network of this form, any flow can always be decomposed into a number of unit-flow, **vertex-disjoint** augmenting paths.
+    
+    Suppose we have already done $|V|^{\frac{1}{2}}$ rounds. By the definition of the level graph, every new augmenting path now has length at least $|V|^{\frac{1}{2}}$.
+    
+    Consider decomposing the maximum flow on $G_f$ into augmenting paths. There can be at most $\frac {|V|} {|V|^{\frac{1}{2}}} \approx |V|^{\frac{1}{2}}$ of them, which means at most $|V|^{\frac{1}{2}}$ more rounds can run on $G_f$. So the total number of rounds is $O(|V|^{\frac{1}{2}})$.
+
+Putting this together, we get some corollaries.
+
+-   On a unit-capacity network, the total time complexity of Dinic's algorithm is $O(|E| \min(|E|^\frac{1}{2}, |V|^{\frac{2}{3}}))$.
+-   On a unit-capacity network, if every vertex $u$ other than the source and sink satisfies $\mathit{deg}_{\mathit{in}}(u) = 1$ or $\mathit{deg}_{\mathit{out}}(u) = 1$, the total time complexity of Dinic's algorithm is $O(|E||V|^{\frac{1}{2}})$. Maximum bipartite matching is usually solved with the Hopcroft–Karp algorithm, which is in fact a special case of Dinic's algorithm on unit-capacity networks with the degree restriction above.
+
+#### Implementation
+
+??? note "Reference code"
     ```cpp
     struct MF {
       struct edge {
@@ -406,13 +406,13 @@ Edmonds–Karp 算法的可能实现如下．
     } mf;
     ```
 
-### MPM 算法
+### MPM algorithm
 
-**MPM**(Malhotra, Pramodh-Kumar and Maheshwari) 算法得到最大流的方式有两种：使用基于堆的优先队列，时间复杂度为 $O(n^3\log n)$；常用 BFS 解法，时间复杂度为 $O(n^3)$．注意，本章节只专注于分析更优也更简洁的 $O(n^3)$ 算法．
+The **MPM** (Malhotra, Pramodh-Kumar and Maheshwari) algorithm can find the maximum flow in two ways: with a heap-based priority queue, in $O(n^3\log n)$ time; or with the common BFS approach, in $O(n^3)$ time. Note that this section only analyzes the $O(n^3)$ algorithm, which is both faster and simpler.
 
-MPM 算法的整体结构和 Dinic 算法类似，也是分阶段运行的．在每个阶段，在 $G$ 的残量网络的分层网络中找到增广路．它与 Dinic 算法的主要区别在于寻找增广路的方式不同：MPM 算法中寻找增广路的部分的只花了 $O(n^2)$, 时间复杂度要优于 Dinic 算法．
+The overall structure of the MPM algorithm is similar to Dinic's algorithm: it also runs in phases. In each phase, it finds augmenting paths in the layered network of the residual network of $G$. The main difference from Dinic's algorithm is how it finds augmenting paths: the path-finding part of MPM takes only $O(n^2)$, so its time complexity is better than Dinic's.
 
-MPM 算法需要考虑顶点而不是边的容量．在分层网络 $L$ 中，如果定义点 $v$ 的容量 $p(v)$ 为其传入残量和传出残量的最小值，则有：
+The MPM algorithm works with vertex capacities instead of edge capacities. In the layered network $L$, define the capacity $p(v)$ of vertex $v$ as the minimum of its incoming residual and outgoing residual capacities. Then:
 
 $$
 \begin{aligned}
@@ -422,26 +422,26 @@ p(v) &= \min (p_{in}(v), p_{out}(v))
 \end{aligned}
 $$
 
-我们称节点 $r$ 是参考节点当且仅当 $p(r) = \min {p(v)}$．对于一个参考节点 $r$，我们一定可以让经过 $r$ 的流量增加 $p(r)$ 以使其容量变为 $0$．这是因为 $L$ 是有向无环图且 $L$ 中节点容量至少为 $p(r)$，所以我们一定能找到一条从 $s$ 经过 $r$ 到达 $t$ 的有向路径．那么我们让这条路上的边流量都增加 $p(r)$ 即可．这条路即为这一阶段的增广路．寻找增广路可以用 BFS．增广完之后所有满流边都可以从 $L$ 中删除，因为它们不会在此阶段后被使用．同样，所有与 $s$ 和 $t$ 不同且没有出边或入边的节点都可以删除．
+A vertex $r$ is called a reference vertex if and only if $p(r) = \min {p(v)}$. For a reference vertex $r$, we can always increase the flow through $r$ by $p(r)$ so that its capacity becomes $0$. This is because $L$ is a directed acyclic graph and every vertex in $L$ has capacity at least $p(r)$, so we can always find a directed path from $s$ through $r$ to $t$. We then increase the flow on every edge of this path by $p(r)$. This path is the augmenting path of this phase. BFS can be used to find it. After augmenting, all saturated edges can be removed from $L$, since they will not be used later in this phase. Likewise, every vertex other than $s$ and $t$ with no outgoing or no incoming edges can be removed.
 
-#### 时间复杂度分析
+#### Time complexity
 
-MPM 算法的每个阶段都需要 $O(V^2)$，因为最多有 $V$ 次迭代（因为至少删除了所选的参考节点），并且在每次迭代中，我们删除除最多 $V$ 之外经过的所有边．求和，我们得到 $O(V^2+E)=O(V^2)$．由于阶段总数少于 $V$，因此 MPM 算法的总运行时间为 $O(V^3)$．
+Each phase of the MPM algorithm takes $O(V^2)$, because there are at most $V$ iterations (each iteration removes at least the chosen reference vertex), and in each iteration we delete all edges we pass through except at most $V$ of them. Summing up, we get $O(V^2+E)=O(V^2)$. Since the total number of phases is less than $V$, the total running time of the MPM algorithm is $O(V^3)$.
 
-???+ note "阶段总数小于 V 的证明"
-    MPM 算法在少于 $V$ 个阶段内结束．为了证明这一点，我们必须首先证明两个引理．
+???+ note "Proof that the number of phases is less than V"
+    The MPM algorithm finishes in fewer than $V$ phases. To prove this, we first need to prove two lemmas.
     
-    **引理 1**：每次迭代后，从 $s$ 到每个点的距离不会减少，也就是说，$level_{i+1}[v] \ge level_{i}[v]$．
+    **Lemma 1**: After each iteration, the distance from $s$ to every vertex does not decrease, that is, $level_{i+1}[v] \ge level_{i}[v]$.
     
-    **证明**：固定一个阶段 $i$ 和点 $v$．考虑 $G_{i}^R$ 中从 $s$ 到 $v$ 的任意最短路径 $P$．$P$ 的长度等于 $level_{i}[v]$．注意 $G_{i}^R$ 只能包含 $G_{i}^R$ 的后向边和前向边．如果 $P$ 没有 $G_{i}^R$ 的后边，那么 $level_{i+1}[v] \ge level_{i}[v]$．因为 $P$ 也是 $G_{i}^R$ 中的一条路径．现在，假设 $P$ 至少有一个后向边且第一个这样的边是 $(u,w)$，那么 $level_{i+1}[u] \ge level_{i}[u]$（因为第一种情况）．边 $(u,w)$ 不属于 $G_{i}^R$，因此 $(u,w)$ 受到前一次迭代的增广路的影响．这意味着 $level_{i}[u] = level_{i}[w]+1$．此外，$level_{i+1}[w] = level_{i+1}[u]+1$．从这两个方程和 $level_{i+1}[u] \ge level_{i}[u]$ 我们得到 $level_{i+1}[w] \ge level_{i}[w]+2$．路径的剩余部分也可以使用相同思想．
+    **Proof**: Fix a phase $i$ and a vertex $v$. Consider any shortest path $P$ from $s$ to $v$ in $G_{i}^R$. The length of $P$ equals $level_{i}[v]$. Note that $G_{i}^R$ can only contain back edges and forward edges of $G_{i}^R$. If $P$ has no back edge of $G_{i}^R$, then $level_{i+1}[v] \ge level_{i}[v]$, because $P$ is also a path in $G_{i}^R$. Now suppose $P$ has at least one back edge, and the first such edge is $(u,w)$. Then $level_{i+1}[u] \ge level_{i}[u]$ (by the first case). The edge $(u,w)$ does not belong to $G_{i}^R$, so $(u,w)$ was affected by the augmenting path of the previous iteration. This means $level_{i}[u] = level_{i}[w]+1$. Also, $level_{i+1}[w] = level_{i+1}[u]+1$. From these two equations and $level_{i+1}[u] \ge level_{i}[u]$, we get $level_{i+1}[w] \ge level_{i}[w]+2$. The same idea applies to the rest of the path.
     
-    **引理 2**：$level_{i+1}[t] > level_{i}[t]$．
+    **Lemma 2**: $level_{i+1}[t] > level_{i}[t]$.
     
-    **证明**：从引理一我们得出，$level_{i+1}[t] \ge level_{i}[t]$．假设 $level_{i+1}[t] = level_{i}[t]$，注意 $G_{i}^R$ 只能包含 $G_{i}^R$ 的后向边和前向边．这意味着 $G_{i}^R$ 中有一条最短路径未被增广路阻塞．这就形成了矛盾．
+    **Proof**: From Lemma 1, $level_{i+1}[t] \ge level_{i}[t]$. Suppose $level_{i+1}[t] = level_{i}[t]$. Note that $G_{i}^R$ can only contain back edges and forward edges of $G_{i}^R$. This means there is a shortest path in $G_{i}^R$ that was not blocked by the augmenting paths. This is a contradiction.
 
-#### 实现
+#### Implementation
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     struct MPM {
       struct FlowEdge {
@@ -626,31 +626,31 @@ MPM 算法的每个阶段都需要 $O(V^2)$，因为最多有 $V$ 次迭代（�
 
 ### ISAP
 
-在 Dinic 算法中，我们每次求完增广路后都要跑 BFS 来分层，有没有更高效的方法呢？
+In Dinic's algorithm, we run a BFS to rebuild the levels after every round of augmenting paths. Is there a more efficient way?
 
-答案就是下面要介绍的 ISAP 算法．
+The answer is the ISAP algorithm introduced below.
 
-#### 过程
+#### Process
 
-和 Dinic 算法一样，我们还是先跑 BFS 对图上的点进行分层，不过与 Dinic 略有不同的是，我们选择在反图上，从 $t$ 点向 $s$ 点进行 BFS．
+As in Dinic's algorithm, we first run a BFS to split the vertices into levels. The small difference from Dinic is that we run the BFS on the reverse graph, from $t$ toward $s$.
 
-执行完分层过程后，我们通过 DFS 来找增广路．
+After building the levels, we find augmenting paths with DFS.
 
-增广的过程和 Dinic 类似，我们只选择比当前点层数少 $1$ 的点来增广．
+Augmentation is similar to Dinic: we only augment to vertices whose level is $1$ less than the current vertex's.
 
-与 Dinic 不同的是，我们并不会重跑 BFS 来对图上的点重新分层，而是在增广的过程中就完成重分层过程．
+Unlike Dinic, we do not rerun BFS to rebuild the levels. Instead, relabeling is done during augmentation.
 
-具体来说，设 $i$ 号点的层为 $d_i$，当我们结束在 $i$ 号点的增广过程后，我们遍历残量网络上 $i$ 的所有出边，找到层最小的出点 $j$，随后令 $d_i \gets d_j+1$．特别地，若残量网络上 $i$ 无出边，则 $d_i \gets n$．
+Specifically, let the level of vertex $i$ be $d_i$. When we finish augmenting at vertex $i$, we go through all outgoing edges of $i$ in the residual network, find the neighbor $j$ with the smallest level, and then set $d_i \gets d_j+1$. In particular, if $i$ has no outgoing edges in the residual network, set $d_i \gets n$.
 
-容易发现，当 $d_s \geq n$ 时，图上不存在增广路，此时即可终止算法．
+It is easy to see that when $d_s \geq n$, there is no augmenting path in the graph, and the algorithm can stop.
 
-和 Dinic 类似，ISAP 中也存在 **当前弧优化**．
+As in Dinic, ISAP also has the **current-arc optimization**.
 
-而 ISAP 还存在另外一个优化，我们记录层数为 $i$ 的点的数量 $num_i$，每当将一个点的层数从 $x$ 更新到 $y$ 时，同时更新 $num$ 数组的值，若在更新后 $num_x=0$，则意味着图上出现了断层，无法再找到增广路，此时可以直接终止算法（实现时直接将 $d_s$ 标为 $n$），该优化被称为 **GAP 优化**．
+ISAP has one more optimization. We record the number $num_i$ of vertices at level $i$. Whenever we update a vertex's level from $x$ to $y$, we also update the $num$ array. If $num_x=0$ after the update, a gap has appeared in the levels, so no more augmenting paths can be found, and we can stop the algorithm right away (in code, just set $d_s$ to $n$). This is called the **GAP optimization**.
 
-#### 实现
+#### Implementation
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     struct Edge {
       int from, to, cap, flow;
@@ -765,54 +765,54 @@ MPM 算法的每个阶段都需要 $O(V^2)$，因为最多有 $V$ 次迭代（�
     };
     ```
 
-## Push-Relabel 预流推进算法
+## Push-Relabel (preflow-push) algorithms
 
-该方法在求解过程中忽略流守恒性，并每次对一个结点更新信息，以求解最大流．
+This approach ignores flow conservation while it runs, and updates the information of one vertex at a time to find the maximum flow.
 
-### 通用的预流推进算法
+### Generic push-relabel algorithm
 
-首先我们介绍预流推进算法的主要思想，以及一个可行的暴力实现算法．
+First we introduce the main idea of push-relabel and a workable brute-force implementation.
 
-预流推进算法通过对单个结点的更新操作，直到没有结点需要更新来求解最大流．
+Push-relabel finds the maximum flow by repeatedly updating single vertices until no vertex needs updating.
 
-算法过程维护的流函数不一定保持流守恒性，对于一个结点，我们允许进入结点的流超过流出结点的流，超过的部分被称为结点 $u(u\in V-\{s,t\})$ 的 **超额流**  $e(u)$：
+The flow function maintained by the algorithm does not have to satisfy flow conservation. For a vertex, we allow the flow entering it to exceed the flow leaving it. The surplus is called the **excess flow**  $e(u)$ of vertex $u(u\in V-\{s,t\})$:
 
 $$
 e(u)=\sum_{(x,u)\in E}f(x,u)-\sum_{(u,y)\in E}f(u,y)
 $$
 
-若 $e(u)>0$，称结点 $u$  **溢出**[^note1]，注意当我们提到溢出结点时，并不包括 $s$ 和 $t$．
+If $e(u)>0$, vertex $u$ is called **overflowing**[^note1]. Note that when we talk about overflowing vertices, $s$ and $t$ are not included.
 
-预流推进算法维护每个结点的高度 $h(u)$，并且规定溢出的结点 $u$ 如果要推送超额流，只能向高度小于 $u$ 的结点推送；如果 $u$ 没有相邻的高度小于 $u$ 的结点，就修改 $u$ 的高度（重贴标签）．
+Push-relabel maintains a height $h(u)$ for each vertex. An overflowing vertex $u$ may push its excess flow only to vertices lower than $u$. If $u$ has no adjacent vertex lower than it, we change the height of $u$ (relabel it).
 
-#### 高度函数[^note2]
+#### Height function[^note2]
 
-准确地说，预流推进维护以下的一个映射 $h:V\to \mathbf{N}$：
+To be precise, push-relabel maintains a mapping $h:V\to \mathbf{N}$ such that:
 
 -   $h(s)=|V|,h(t)=0$
 -   $\forall (u,v)\in E_f,h(u)\leq h(v)+1$
 
-称 $h$ 是残量网络 $G_f=(V_f,E_f)$ 的高度函数．
+$h$ is called a height function of the residual network $G_f=(V_f,E_f)$.
 
-引理 1：设 $G_f$ 上的高度函数为 $h$，对于任意两个结点 $u,v\in V$，如果 $h(u)>h(v)+1$，则 $(u,v)$ 不是 $G_f$ 中的边．
+Lemma 1: Let $h$ be a height function on $G_f$. For any two vertices $u,v\in V$, if $h(u)>h(v)+1$, then $(u,v)$ is not an edge of $G_f$.
 
-算法只会在 $h(u)=h(v)+1$ 的边执行推送．
+The algorithm only pushes along edges with $h(u)=h(v)+1$.
 
-#### 推送（Push）
+#### Push
 
-适用条件：结点 $u$ 溢出，且存在结点 $v((u,v)\in E_f,c(u,v)-f(u,v)>0,h(u)=h(v)+1)$，则 push 操作适用于 $(u,v)$．
+When it applies: vertex $u$ is overflowing, and there is a vertex $v((u,v)\in E_f,c(u,v)-f(u,v)>0,h(u)=h(v)+1)$. Then the push operation applies to $(u,v)$.
 
-于是，我们尽可能将超额流从 $u$ 推送到 $v$，推送过程中我们只关心超额流和 $c(u,v)-f(u,v)$ 的最小值，不关心 $v$ 是否溢出．
+We then push as much excess flow as possible from $u$ to $v$. During the push we only care about the minimum of the excess flow and $c(u,v)-f(u,v)$, not about whether $v$ overflows.
 
-如果 $(u,v)$ 在推送完之后满流，将其从残量网络中删除．
+If $(u,v)$ is saturated after the push, remove it from the residual network.
 
-#### 重贴标签（Relabel）
+#### Relabel
 
-适用条件：如果结点 $u$ 溢出，且 $\forall (u,v)\in E_f,h(u)\leq h(v)$，则 relabel 操作适用于 $u$．
+When it applies: if vertex $u$ is overflowing and $\forall (u,v)\in E_f,h(u)\leq h(v)$, the relabel operation applies to $u$.
 
-则将 $h(u)$ 更新为 $\min_{(u,v)\in E_f}h(v)+1$ 即可．
+Then just update $h(u)$ to $\min_{(u,v)\in E_f}h(v)+1$.
 
-#### 初始化
+#### Initialization
 
 $$
 \forall (u,v)\in E,~~f(u,v)=\begin{cases}
@@ -832,37 +832,37 @@ $$
 e(u)=\sum_{(x,u)\in E}f(x,u)-\sum_{(u,y)\in E}f(u,y)
 $$
 
-上述将 $(s,v)\in E$ 充满流，并将 $h(s)$ 抬高，使得 $(s,v)\notin E_f$，因为 $h(s)>h(v)$，而且 $(s,v)$ 毕竟满流，没必要留在残量网络中；上述还将 $e(s)$ 初始化为 $\sum_{(s,v)\in E}f(s,v)$ 的相反数．
+This fills every $(s,v)\in E$ with flow and raises $h(s)$, so that $(s,v)\notin E_f$, because $h(s)>h(v)$; and anyway $(s,v)$ is saturated, so there is no need to keep it in the residual network. It also initializes $e(s)$ to the negative of $\sum_{(s,v)\in E}f(s,v)$.
 
-#### 过程
+#### Process
 
-我们每次扫描整个图，只要存在结点 $u$ 满足 push 或 relabel 操作的条件，就执行对应的操作．
+Each time we scan the whole graph, and whenever some vertex $u$ meets the condition of push or relabel, we perform that operation.
 
-如图，每个结点中间表示编号，左下表示高度值 $h(u)$，右下表示超额流 $e(u)$，结点颜色的深度也表示结点的高度；边权表示 $c(u,v)-f(u,v)$，绿色的边表示满足 $h(u)=h(v)+1$ 的边 $(u,v)$（即残量网络的边 $E_f$）：
+In the figure, the middle of each vertex shows its index, the lower left shows its height $h(u)$, and the lower right shows its excess flow $e(u)$; the darkness of a vertex's color also shows its height. Edge weights show $c(u,v)-f(u,v)$, and green edges are edges $(u,v)$ with $h(u)=h(v)+1$ (that is, edges of the residual network $E_f$):
 
 ![p1](./images/2148.png)
 
-整个算法我们大致浏览一下过程，这里笔者使用的是一个暴力算法，即暴力扫描是否有溢出的结点，有就更新
+Let's take a quick look at the whole run. Here the author uses a brute-force algorithm: scan for overflowing vertices, and update any that are found.
 
 ![p2](./images/2149.gif)
 
-最后的结果
+The final result
 
 ![p3](./images/2150.png)
 
-可以发现，最后的超额流一部分回到了 $s$，且除了源点汇点，其他结点都没有溢出；这时的流函数 $f$ 满足流守恒性，为最大流，流量即为 $e(t)$．
+We can see that in the end part of the excess flow returned to $s$, and no vertex other than the source and sink is overflowing. Now the flow function $f$ satisfies flow conservation and is a maximum flow, and its value is $e(t)$.
 
-但是实际上论文[^ref1]指出只处理高度小于 $n$ 的溢出节点也能获得正确的最大流值，不过这样一来算法结束的时候预流还不满足流函数性质，不能知道每条边上真实的流量．
+However, the paper[^ref1] points out that processing only overflowing vertices with height less than $n$ still gives the correct maximum flow value. But then, when the algorithm ends, the preflow does not yet satisfy the properties of a flow function, so we cannot know the real flow on each edge.
 
-#### 实现
+#### Implementation
 
-???+ note "核心代码"
+???+ note "Core code"
     ```cpp
     constexpr int N = 1e4 + 4, M = 1e5 + 5, INF = 0x3f3f3f3f;
     int n, m, s, t, maxflow, tot;
     int ht[N], ex[N];
     
-    void init() {  // 初始化
+    void init() {  // initialization
       for (int i = h[s]; i; i = e[i].nex) {
         const int &v = e[i].t;
         ex[v] = e[i].v, ex[s] -= ex[v], e[i ^ 1].v = e[i].v, e[i].v = 0;
@@ -874,7 +874,7 @@ $$
       const int &u = e[ed ^ 1].t, &v = e[ed].t;
       int flow = min(ex[u], e[ed].v);
       ex[u] -= flow, ex[v] += flow, e[ed].v -= flow, e[ed ^ 1].v += flow;
-      return ex[u];  // 如果 u 仍溢出，返回 1
+      return ex[u];  // returns 1 if u is still overflowing
     }
     
     void relabel(int u) {
@@ -885,38 +885,38 @@ $$
     }
     ```
 
-### HLPP 算法
+### HLPP algorithm
 
-最高标号预流推进算法（Highest Label Preflow Push）在上述通用的预流推送算法中，在每次选择结点时，都优先选择高度最高的溢出结点，其算法复杂度为 $O(n^2\sqrt m)$．
+The Highest Label Preflow Push algorithm is the generic push-relabel algorithm above where, each time a vertex is chosen, the overflowing vertex with the greatest height is chosen first. Its complexity is $O(n^2\sqrt m)$.
 
-#### 过程
+#### Process
 
-具体地说，HLPP 算法过程如下：
+Specifically, the HLPP algorithm works as follows:
 
-1.  初始化（基于预流推进算法）；
-2.  选择溢出结点中高度最高的结点 $u$，并对它所有可以推送的边进行推送；
-3.  如果 $u$ 仍溢出，对它重贴标签，回到步骤 2；
-4.  如果没有溢出的结点，算法结束．
+1.  Initialize (as in the push-relabel algorithm);
+2.  Pick the overflowing vertex $u$ with the greatest height, and push along all of its edges that allow a push;
+3.  If $u$ is still overflowing, relabel it and go back to step 2;
+4.  If no vertex is overflowing, the algorithm ends.
 
-一篇对最大流算法实际表现进行测试的论文[^ref2]表明，实际上基于预流的算法，有相当一部分时间都花在了重贴标签这一步上．以下介绍两种来自论文[^ref3]的能显著减少重贴标签次数的优化．
+A paper[^ref2] that tested the practical performance of maximum flow algorithms showed that preflow-based algorithms actually spend a large share of their time on relabeling. Below we introduce two optimizations from a paper[^ref3] that greatly reduce the number of relabels.
 
-#### BFS 优化
+#### BFS optimization
 
-HLPP 的上界为 $O(n^2\sqrt m)$，但在使用时卡得比较紧；我们可以在初始化高度的时候进行优化．具体来说，我们初始化 $h(u)$ 为 $u$ 到 $t$ 的最短距离；特别地，$h(s)=n$．
+The upper bound of HLPP is $O(n^2\sqrt m)$, and it is fairly tight in practice; we can optimize the initialization of heights. Specifically, initialize $h(u)$ to the shortest distance from $u$ to $t$; in particular, $h(s)=n$.
 
-在 BFS 的同时我们顺便检查图的连通性，排除无解的情况．
+While running the BFS, we also check the connectivity of the graph to rule out cases with no solution.
 
-#### GAP 优化
+#### GAP optimization
 
-HLPP 推送的条件是 $h(u)=h(v)+1$，而如果在算法的某一时刻，存在某个 $k$，使得 $h(u)=k$ 的结点个数为 $0$，那么对于 $h(u)>k$ 的结点就永远无法推送超额流到 $t$，因此只能送回 $s$，那么我们就在这时直接让他们的高度变成至少 $n+1$，以尽快推送回 $s$，减少重贴标签的操作．
+HLPP pushes only when $h(u)=h(v)+1$. If at some moment there is some $k$ such that no vertex has $h(u)=k$, then vertices with $h(u)>k$ can never push excess flow to $t$ and can only send it back to $s$. So at that moment we directly raise their heights to at least $n+1$, so they push back to $s$ as soon as possible, which reduces the number of relabels.
 
-以下的实现采取论文[^ref2]中的实现方法，使用 $N*2-1$ 个桶 `B`，其中 `B[i]` 中记录所有当前高度为 $i$ 的溢出节点．加入了以上提到的两种优化，并且只处理了高度小于 $n$ 的溢出节点．
+The implementation below follows the method in the paper[^ref2]. It uses $N*2-1$ buckets `B`, where `B[i]` records all overflowing vertices whose current height is $i$. It includes the two optimizations above and only processes overflowing vertices with height less than $n$.
 
-值得注意的是论文[^ref2]中使用的桶是基于链表的栈，而 STL 中的 `stack` 默认的容器是 `deque`．经过简单的测试发现 `vector`，`deque`，`list` 在本题的实际运行过程中效率区别不大．
+Note that the buckets in the paper[^ref2] are linked-list-based stacks, while the default container of `stack` in the STL is `deque`. Simple tests show that `vector`, `deque` and `list` make little difference in efficiency for this problem in practice.
 
-#### 实现
+#### Implementation
 
-??? note "LuoguP4722【模板】最大流 加强版/预流推进"
+??? note "Luogu P4722 [Template] Maximum Flow, Enhanced Version / Push-Relabel"
     ```cpp
     #include <cstdio>
     #include <cstring>
@@ -943,36 +943,36 @@ HLPP 推送的条件是 $h(u)=h(v)+1$，而如果在算法的某一时刻，存�
       add_path(t, f, 0);
     }
     
-    int ht[N + 1];        // 高度;
-    long long ex[N + 1];  // 超额流;
-    int gap[N];           // gap 优化. gap[i] 为高度为 i 的节点的数量
-    stack<int> B[N];      // 桶 B[i] 中记录所有 ht[v]==i 的v
-    int level = 0;        // 溢出节点的最高高度
+    int ht[N + 1];        // height;
+    long long ex[N + 1];  // excess flow;
+    int gap[N];           // gap optimization. gap[i] is the number of vertices with height i
+    stack<int> B[N];      // bucket B[i] holds every v with ht[v]==i
+    int level = 0;        // greatest height among overflowing vertices
     
-    int push(int u) {      // 尽可能通过能够推送的边推送超额流
-      bool init = u == s;  // 是否在初始化
+    int push(int u) {      // push excess flow through every edge that allows it, as much as possible
+      bool init = u == s;  // whether we are initializing
       for (int i = h[u]; i; i = e[i].nex) {
         const int &v = e[i].t;
         const long long &w = e[i].v;
-        // 初始化时不考虑高度差为1
+        // during initialization, ignore the height-difference-of-1 rule
         if (!w || (init == false && ht[u] != ht[v] + 1) || ht[v] == INF) continue;
         long long k = init ? w : min(w, ex[u]);
-        // 取到剩余容量和超额流的最小值，初始化时可以使源的溢出量为负数．
+        // take the min of residual capacity and excess flow; during initialization the source's excess may become negative.
         if (v != s && v != t && !ex[v]) B[ht[v]].push(v), level = max(level, ht[v]);
         ex[u] -= k, ex[v] += k, e[i].v -= k, e[i ^ 1].v += k;  // push
-        if (!ex[u]) return 0;  // 如果已经推送完就返回
+        if (!ex[u]) return 0;  // return once everything has been pushed
       }
       return 1;
     }
     
-    void relabel(int u) {  // 重贴标签（高度）
+    void relabel(int u) {  // relabel (the height)
       ht[u] = INF;
       for (int i = h[u]; i; i = e[i].nex)
         if (e[i].v) ht[u] = min(ht[u], ht[e[i].t]);
-      if (++ht[u] < n) {  // 只处理高度小于 n 的节点
+      if (++ht[u] < n) {  // only handle vertices with height less than n
         B[ht[u]].push(u);
         level = max(level, ht[u]);
-        ++gap[ht[u]];  // 新的高度，更新 gap
+        ++gap[ht[u]];  // new height, update gap
       }
     }
     
@@ -980,7 +980,7 @@ HLPP 推送的条件是 $h(u)=h(v)+1$，而如果在算法的某一时刻，存�
       memset(ht, 0x3f, sizeof(ht));
       queue<int> q;
       q.push(t), ht[t] = 0;
-      while (q.size()) {  // 反向 BFS, 遇到没有访问过的结点就入队
+      while (q.size()) {  // reverse BFS; push unvisited vertices into the queue
         int u = q.front();
         q.pop();
         for (int i = h[u]; i; i = e[i].nex) {
@@ -988,30 +988,30 @@ HLPP 推送的条件是 $h(u)=h(v)+1$，而如果在算法的某一时刻，存�
           if (e[i ^ 1].v && ht[v] > ht[u] + 1) ht[v] = ht[u] + 1, q.push(v);
         }
       }
-      return ht[s] != INF;  // 如果图不连通，返回 0
+      return ht[s] != INF;  // return 0 if the graph is not connected
     }
     
-    // 选出当前高度最大的节点之一, 如果已经没有溢出节点返回 0
+    // pick one of the vertices with the greatest current height; return 0 if no vertex overflows
     int select() {
       while (level > -1 && B[level].size() == 0) level--;
       return level == -1 ? 0 : B[level].top();
     }
     
-    long long hlpp() {            // 返回最大流
-      if (!bfs_init()) return 0;  // 图不连通
+    long long hlpp() {            // returns the maximum flow
+      if (!bfs_init()) return 0;  // graph not connected
       memset(gap, 0, sizeof(gap));
       for (int i = 1; i <= n; i++)
-        if (ht[i] != INF) gap[ht[i]]++;  // 初始化 gap
+        if (ht[i] != INF) gap[ht[i]]++;  // initialize gap
       ht[s] = n;
-      push(s);  // 初始化预流
+      push(s);  // initialize the preflow
       int u;
       while ((u = select())) {
         B[level].pop();
-        if (push(u)) {  // 仍然溢出
+        if (push(u)) {  // still overflowing
           if (!--gap[ht[u]])
             for (int i = 1; i <= n; i++)
               if (i != s && ht[i] > ht[u] && ht[i] < n + 1)
-                ht[i] = n + 1;  // 这里重贴成 n+1 的节点都不是溢出节点
+                ht[i] = n + 1;  // vertices relabeled to n+1 here are not overflowing
           relabel(u);
         }
       }
@@ -1029,13 +1029,13 @@ HLPP 推送的条件是 $h(u)=h(v)+1$，而如果在算法的某一时刻，存�
     }
     ```
 
-感受一下运行过程
+Watch how it runs
 
 ![HLPP](./images/1152.png)
 
-其中 pic13 到 pic14 执行了 Relabel(4)，并进行了 GAP 优化．
+Here, from pic13 to pic14, Relabel(4) is performed, along with the GAP optimization.
 
-## 脚注
+## Footnotes
 
 [^ref_ek]: <http://pisces.ck.tp.edu.tw/~peng/index.php?action=showfile&file=f6cdf7ef750d7dc79c7d599b942acbaaee86a2e3e>
 
@@ -1047,6 +1047,6 @@ HLPP 推送的条件是 $h(u)=h(v)+1$，而如果在算法的某一时刻，存�
 
 [^ref3]: Derigs U, Meier W. Implementing Goldberg's max-flow-algorithm—A computational investigation\[J]. Zeitschrift für Operations Research, 1989, 33(6): 383-403.
 
-[^note1]: 英语文献中通常称为「active」．
+[^note1]: Usually called "active" in English literature.
 
-[^note2]: 在英语文献中，一个结点的高度通常被称为「distance label」．此处使用的「高度」这个术语源自算法导论中的相关章节．你可以在机械工业出版社算法导论（原书第 3 版）的 P432 脚注中找到这么做的理由．
+[^note2]: In English literature, the height of a vertex is usually called its "distance label". The term "height" used here comes from the relevant chapter of *Introduction to Algorithms*. You can find the reason for this choice in the footnote on page 432 of the Chinese edition (China Machine Press, translation of the 3rd edition) of *Introduction to Algorithms*.

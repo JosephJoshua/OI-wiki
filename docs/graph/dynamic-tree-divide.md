@@ -1,20 +1,20 @@
-## 动态点分治
+## Dynamic centroid decomposition
 
-动态点分治用来解决 **带点权/边权修改** 的树上路径信息统计问题．
+Dynamic centroid decomposition solves path-statistics problems on trees **with updates to vertex/edge weights**.
 
-### 点分树
+### Centroid tree
 
-回顾点分治的计算过程．
+Let's review how centroid decomposition computes things.
 
-对于一个结点 $x$ 来说，其子树中的简单路径包括两种：经过结点 $x$ 的，由一条或两条从 $x$ 出发的路径组成的；和不经过结点 $x$ 的，即已经包含在其所有儿子结点子树中的路径．
+For a node $x$, the simple paths in its subtree come in two kinds: those that pass through $x$, made of one or two paths starting at $x$; and those that do not pass through $x$, which are already contained in the subtrees of its children.
 
-对于一个子树中简单路径的计算，我们选择一个分治中心 $rt$，计算经过该节点的子树中路径的信息，然后对于其每个儿子结点，将删去 $rt$ 后该点所在连通块作为一个子树，递归计算．选择的分治中心点可以构成一个树形结构，称为 **点分树**．我们发现，计算点分树中同一层的结点所代表的连通块（即以该结点为分治中心的连通块）的大小总和是 $O(n)$ 的．这意味着，点分治的时间复杂度是与点分树的深度相关的，若点分树的深度为 $h$，则点分治的复杂度为 $O(nh)$．
+To compute the simple paths in a subtree, we choose a divide center $rt$, compute the information of the paths in the subtree that pass through it, and then, for each of its children, take the connected component containing that child after deleting $rt$ as a new subtree and recurse. The chosen centers form a tree structure called the **centroid tree**. Notice that for nodes on the same level of the centroid tree, the total size of the components they represent (the components in which each is the divide center) is $O(n)$. This means the time complexity of centroid decomposition depends on the depth of the centroid tree: if the depth is $h$, the complexity is $O(nh)$.
 
-可以证明，当我们每次选择连通块的重心作为分治中心的时候，点分树的深度最小，为 $O(\log n)$ 的．这样，我们就可以在 $O(n\log n)$ 的时间复杂度内统计树上 $O(n^2)$ 条路径的信息了．
+It can be shown that if we always choose the centroid of the component as the divide center, the centroid tree has the smallest depth, which is $O(\log n)$. Then we can compute the information of all $O(n^2)$ paths in the tree in $O(n\log n)$ time.
 
-由于树的形态在动态点分治的过程中不会改变，所以点分树的形态在动态点分治的过程中也不会改变．
+Since the shape of the tree does not change during dynamic centroid decomposition, the shape of the centroid tree does not change either.
 
-下面给出求点分树的参考代码：
+Reference code for building the centroid tree:
 
 ```cpp
 void calcsiz(int x, int f) {
@@ -27,22 +27,22 @@ void calcsiz(int x, int f) {
       maxx[x] = max(maxx[x], siz[p[j]]);
     }
   maxx[x] =
-      max(maxx[x], sum - siz[x]);  // maxx[x] 表示以 x 为根时的最大子树大小
+      max(maxx[x], sum - siz[x]);  // maxx[x] is the largest subtree size when x is the root
   if (maxx[x] < maxx[rt])
-    rt = x;  // 这里不能写 <= ，保证在第二次 calcsiz 时 rt 不改变
+    rt = x;  // do not use <= here, so rt stays the same in the second calcsiz
 }
 
 void pre(int x) {
-  vis[x] = true;  // 表示在之后的过程中不考虑 x 这个点
+  vis[x] = true;  // vertex x is ignored in the rest of the process
   for (int j = h[x]; j; j = nxt[j])
     if (!vis[p[j]]) {
       sum = siz[p[j]];
       rt = 0;
       maxx[rt] = inf;
       calcsiz(p[j], -1);
-      calcsiz(rt, -1);  // 计算两次，第二次求出以 rt 为根时的各子树大小
+      calcsiz(rt, -1);  // run twice; the second run gets subtree sizes with rt as the root
       fa[rt] = x;
-      pre(rt);  // 记录点分树上的父亲
+      pre(rt);  // record the parent in the centroid tree
     }
 }
 
@@ -56,53 +56,53 @@ int main() {
 }
 ```
 
-### 实现修改
+### Handling updates
 
-在查询和修改的时候，我们在点分树上暴力跳父亲修改．由于点分树的深度最多是 $O(\log n)$ 的，所以这样做复杂度能得到保证．
+For queries and updates, we walk up through the parents in the centroid tree by brute force. Since the depth of the centroid tree is at most $O(\log n)$, the complexity is guaranteed.
 
-在动态点分治的过程中，需要一个结点到其点分树上的祖先的距离等其他信息，由于一个点最多有 $O(\log n)$ 个祖先，我们可以在计算点分树时额外计算深度 $dep[x]$ 或使用 LCA，预处理出这些距离或实现实时查询．**注意**：一个结点到其点分树上的祖先的距离不一定递增，不能累加！
+In dynamic centroid decomposition, we need information such as the distance from a node to its ancestors in the centroid tree. Since a node has at most $O(\log n)$ ancestors, we can compute the depth $dep[x]$ while building the centroid tree, or use LCA, to precompute these distances or answer them on the fly. **Note**: the distance from a node to its ancestors in the centroid tree is not necessarily increasing, so you cannot just add them up!
 
-在动态点分治的过程中，一个结点在其点分树上的祖先结点的信息中可能会被重复计算，这是我们需要消去重复部分的影响．一般的方法是对于一个连通块用两种方式记录：一个是其到分治中心的距离信息，另一个是其到点分树上分治中心父亲的距离信息．这一部分内容将在例题中得到展现．
+In dynamic centroid decomposition, a node may be counted more than once in the information of its ancestors in the centroid tree, so we need to cancel out the duplicated part. The usual method is to record each component in two ways: one is the distance information to its divide center, and the other is the distance information to the parent of the divide center in the centroid tree. This will be shown in the example problems.
 
-??? note "例题 [「ZJOI2007」捉迷藏](https://www.luogu.com.cn/problem/P2056)"
-    给定一棵有 $n$ 个结点的树，初始时所有结点都是黑色的．你需要实现以下两种操作：
+??? note "Example problem [ZJOI2007 Hide and Seek](https://www.luogu.com.cn/problem/P2056)"
+    You are given a tree with $n$ nodes. Initially all nodes are black. You need to support two operations:
     
-    1.  反转一个结点的颜色（白变黑，黑变白）；
-    2.  询问树上两个最远的黑点的距离．
+    1.  Flip the color of a node (white becomes black, black becomes white);
+    2.  Query the distance between the two farthest black nodes in the tree.
     
         $n\le 10^5,m\le 5\times 10^5$
 
-求出点分树，对于每个结点 $x$ 维护两个 **可删堆**．$dist[x]$ 存储结点 $x$ 代表的连通块中的所有黑点到 $x$ 的距离信息，$ch[x]$ 表示结点 $x$ 在点分树上的所有儿子和它自己中的黑点到 $x$ 的距离信息，由于本题贪心的求答案方法，且两个来自于同一子树的路径不能成为一条完成的路径，我们只在这个堆中插入其自己的值和其每个子树中的最大值．我们发现，$ch[x]$ 中最大的两个值（如果没有两个就是所有值）的和就是分治时分支中心为 $x$ 时经过结点 $x$ 的最长黑端点路径．我们可以用可删堆 $ans$ 存储所有结点的答案，这个堆中的最大值就是我们所求的答案．
+Build the centroid tree, and for each node $x$ maintain two **deletable heaps**. $dist[x]$ stores the distances from all black nodes in the component represented by $x$ to $x$. $ch[x]$ stores the distances to $x$ of the black nodes among $x$ itself and all its children in the centroid tree. Because this problem computes the answer greedily, and two paths from the same subtree cannot form a complete path, we only insert into this heap the value of $x$ itself and the maximum of each subtree. Then the sum of the two largest values in $ch[x]$ (or all values, if there are fewer than two) is the longest path with black endpoints that passes through $x$ when $x$ is the divide center. We can use a deletable heap $ans$ to store the answers of all nodes; the maximum in this heap is the answer we want.
 
-我们可以根据上面的定义维护 $dist[x],ch[x],ans$ 这些可删堆．当 $dist[x]$ 中的值发生变化时，我们也可以在 $O(\log n)$ 的时间复杂度内维护 $ch[x],ans$．
+We can maintain the deletable heaps $dist[x],ch[x],ans$ according to these definitions. When a value in $dist[x]$ changes, we can also update $ch[x],ans$ in $O(\log n)$ time.
 
-现在我们来看一下，当我们反转一个点的颜色时，$dist[x]$ 值会发生怎样的改变．当结点原来是黑色时，我们要进行的是删除操作；当结点原来是白色时，我们要进行的是插入操作．
+Now let's see how $dist[x]$ changes when we flip the color of a node. If the node was black, we perform a deletion; if it was white, we perform an insertion.
 
-假如我们要反转结点 $x$ 的颜色．对于其所有祖先 $u$，我们在 $dist[u]$ 中插入或删除 $dist(x,u)$，并同时维护 $ch[x],ans$ 的值．特别的，我们要在 $ch[x]$ 中插入或删除值 $0$．
+Suppose we flip the color of node $x$. For every ancestor $u$ of it, we insert or delete $dist(x,u)$ in $dist[u]$, and at the same time maintain $ch[x],ans$. In particular, we insert or delete the value $0$ in $ch[x]$.
 
-参考代码：
+Reference code:
 
 ```cpp
 --8<-- "docs/graph/code/dynamic-tree-divide/dynamic-tree-divide_1.cpp"
 ```
 
-???+ note "例题 [Luogu P6329【模板】点分树 | 震波](https://www.luogu.com.cn/problem/P6329)"
-    给定一棵有 $n$ 个结点的树，树上每个结点都有一个权值 $v[x]$．实现以下两种操作：
+???+ note "Example problem [Luogu P6329 [Template] Centroid Tree | Earthquake Waves](https://www.luogu.com.cn/problem/P6329)"
+    You are given a tree with $n$ nodes, and each node has a weight $v[x]$. Support two operations:
     
-    1.  询问与结点 $x$ 距离不超过 $y$ 的结点权值和；
-    2.  修改结点 $x$ 的点权为 $y$，即 $v[x]=y$．
+    1.  Query the sum of weights of nodes at distance at most $y$ from node $x$;
+    2.  Change the weight of node $x$ to $y$, that is, $v[x]=y$.
 
-我们用动态开点权值线段树记录距离信息．
+We use a dynamically allocated value segment tree (indexed by value) to record distance information.
 
-类似于上题的思路，对于每个结点，我们维护线段树 $dist[x]$，表示分治块 $x$ 中的所有结点到结点 $x$ 的距离信息，下标为距离，权值加上点权．线段树 $ch[x]$ 表示分治块 $x$ 中所有结点到结点 $x$ 在分治树上的父亲结点的距离信息．
+Similar to the previous problem, for each node we maintain a segment tree $dist[x]$ that stores the distances from all nodes in the divide block $x$ to node $x$: the index is the distance, and the value adds up the vertex weights. The segment tree $ch[x]$ stores the distances from all nodes in the divide block $x$ to the parent of $x$ in the centroid tree.
 
-在本题中，所有查询和修改都需要在点分树上对所有祖先进行修改．
+In this problem, every query and update needs to touch all ancestors in the centroid tree.
 
-以查询操作为例，如果我们要查询距离结点 $x$ 不超过 $y$ 的结点的权值和，我们要先将答案加上线段树 $dist[x]$ 中下标从 $0$ 到 $y$ 的权值和，然后我们遍历 $x$ 的所有祖先 $u$，设其低一级祖先为 $v$，令 $d=dist(x,u)$，如果我们不进入包含 $x$ 的子树，即以 $v$ 为根的子树，那么我们要将答案加上线段树 $dist[u]$ 中下标从 $0$ 到 $y-d$ 的权值和．由于我们重复计算了以 $v$ 为根的部分，我们要将答案减去线段树 $ch[v]$ 中下标从 $0$ 到 $y-d$ 的权值和．
+Take a query as an example. To find the sum of weights of nodes at distance at most $y$ from node $x$, we first add the sum of indices $0$ to $y$ in segment tree $dist[x]$ to the answer. Then we go through every ancestor $u$ of $x$. Let $v$ be the ancestor one level below $u$, and let $d=dist(x,u)$. For the part that does not enter the subtree containing $x$ (the subtree rooted at $v$), we add the sum of indices $0$ to $y-d$ in segment tree $dist[u]$ to the answer. Since the part rooted at $v$ is counted twice, we subtract the sum of indices $0$ to $y-d$ in segment tree $ch[v]$ from the answer.
 
-在进行修改操作时，我们要同时维护 $dist[x]$ 和 $ch[x]$．
+For updates, we maintain both $dist[x]$ and $ch[x]$ at the same time.
 
-参考代码：
+Reference code:
 
 ```cpp
 --8<-- "docs/graph/code/dynamic-tree-divide/dynamic-tree-divide_2.cpp"

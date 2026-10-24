@@ -1,12 +1,12 @@
 author: abc1763613206, cesonic, Ir1d, MingqiHuang, xinchengo, xiaofu-15191, hsefz-ChenJunJie
 
-## 引入
+## Introduction
 
-启发式算法是什么呢？
+What is a heuristic algorithm?
 
-启发式算法是基于人类的经验和直观感觉，对一些算法的优化．
+A heuristic is an optimization of some algorithm based on human experience and intuition.
 
-举个例子，最常见的就是并查集的启发式合并了，代码是这样的：
+For example, the most common one is union by size in a disjoint set union. The code looks like this:
 
 ```cpp
 void merge(int x, int y) {
@@ -17,120 +17,120 @@ void merge(int x, int y) {
 }
 ```
 
-在这里，对于两个大小不一样的集合，我们将小的集合合并到大的集合中，而不是将大的集合合并到小的集合中．
+Here, for two sets of different sizes, we merge the smaller set into the larger one, not the larger one into the smaller one.
 
-为什么呢？这个集合的大小可以认为是集合的高度（在正常情况下），而我们将集合高度小的并到高度大的显然有助于我们找到父亲．
+Why? The size of a set can be seen as (in normal cases) the height of the set, and merging the shorter set into the taller one clearly helps us find the root faster.
 
-让高度小的树成为高度较大的树的子树，这个优化可以称为启发式合并算法．
+Making the shorter tree a subtree of the taller tree is an optimization called heuristic merging (small-to-large merging).
 
-## 算法内容
+## The algorithm
 
-树上启发式合并（dsu on tree）对于某些树上离线问题可以速度大于等于大部分算法且更易于理解和实现的算法．
+DSU on tree (small-to-large merging on trees) is an algorithm for some offline tree problems. It is at least as fast as most other algorithms and is easier to understand and implement.
 
-考虑下面的问题：[树上数颜色](https://www.luogu.com.cn/problem/U41492)．
+Consider the following problem: [Counting colors on a tree](https://www.luogu.com.cn/problem/U41492).
 
-???+ note "例题引入"
-    给出一棵 $n$ 个节点以 $1$ 为根的树，节点 $u$ 的颜色为 $c_u$，现在对于每个结点 $u$ 询问以 $u$ 为根的子树里一共出现了多少种不同的颜色．
+???+ note "Introductory example"
+    You are given a tree with $n$ nodes rooted at $1$. Node $u$ has color $c_u$. For every node $u$, find how many distinct colors appear in the subtree rooted at $u$.
     
-    $n\le 2\times 10^5$．
+    $n\le 2\times 10^5$.
 
 ![dsu-on-tree-1.png](./images/dsu-on-tree-1.svg)
 
-对于这种问题解决方式大多是运用大量的数据结构（树套树等），如果可以离线，是不是有更简单的方法？
+Problems like this are usually solved with heavy data structures (tree of trees and so on). If the problem can be solved offline, is there a simpler way?
 
-## 过程
+## Process
 
-既然支持离线，考虑预处理后 $O(1)$ 输出答案．
+Since offline processing is allowed, we can precompute everything and then output each answer in $O(1)$.
 
-直接暴力预处理的时间复杂度为 $O(n^2)$，即对每一个子节点进行一次遍历，每次遍历的复杂度显然与 $n$ 同阶，有 $n$ 个节点，故复杂度为 $O(n^2)$．
+Brute-force precomputation takes $O(n^2)$ time: we traverse once from each node, each traversal clearly costs $O(n)$, and there are $n$ nodes, so the complexity is $O(n^2)$.
 
-可以发现，每个节点的答案由其子树和其本身得到，考虑利用这个性质处理问题．
+Notice that the answer of each node comes from its subtrees and the node itself. Let's use this property.
 
-我们可以先预处理出每个节点子树的大小和它的重儿子，重儿子同树链剖分一样，是拥有节点最多子树的儿子，这个过程显然可以 $O(n)$ 完成．
+First precompute the subtree size and the heavy child of each node. As in heavy-light decomposition, the heavy child is the child with the largest subtree. This clearly takes $O(n)$.
 
-我们用 $cnt_i$ 表示颜色 $i$ 的出现次数，$ans_u$ 表示结点 $u$ 的答案．
+Let $cnt_i$ be the number of occurrences of color $i$, and $ans_u$ be the answer of node $u$.
 
-遍历一个节点 $u$，我们按以下的步骤进行遍历：
+To process a node $u$, we do the following steps:
 
-1.  先遍历 $u$ 的轻（非重）儿子，并计算答案，但 **不保留遍历后它对 $cnt$ 数组的影响**；
-2.  遍历它的重儿子，**保留它对 $cnt$ 数组的影响**；
-3.  再次遍历 $u$ 的轻儿子的子树结点，加入这些结点的贡献，以得到 $u$ 的答案．
+1.  First traverse the light (non-heavy) children of $u$ and compute their answers, but **do not keep their effect on the $cnt$ array** afterwards;
+2.  Traverse its heavy child and **keep its effect on the $cnt$ array**;
+3.  Traverse the subtree nodes of the light children of $u$ again and add their contributions, to get the answer of $u$.
 
 ![dsu-on-tree-2.png](./images/dsu-on-tree-2.svg)
 
-上图是一个例子．
+The figure above shows an example.
 
-这样，对于一个节点，我们遍历了一次重子树，两次非重子树，显然是最划算的．
+This way, for each node, we traverse the heavy subtree once and the light subtrees twice, which is clearly the cheapest option.
 
-通过执行这个过程，我们获得了这个节点所有子树的答案．
+By running this process, we get the answers for all subtrees of this node.
 
-为什么不合并第一步和第三步呢？因为 $cnt$ 数组不能重复使用，否则空间会太大，需要在 $O(n)$ 的空间内完成．
+Why not merge steps 1 and 3? Because the $cnt$ array cannot be duplicated; otherwise memory would be too large. We must do it in $O(n)$ space.
 
-显然若一个节点 $u$ 被遍历了 $x$ 次，则其重儿子会被遍历 $x$ 次，轻儿子（如果有的话）会被遍历 $2x$ 次．
+Clearly, if a node $u$ is traversed $x$ times, its heavy child is traversed $x$ times and its light children (if any) are traversed $2x$ times.
 
-注意除了重儿子，每次遍历完 $cnt$ 要清零．
+Note that after each traversal, except for the heavy child, $cnt$ must be cleared.
 
-## 证明
+## Proof
 
-我们像树链剖分一样定义重边和轻边（连向重儿子的为重边，其余为轻边）．关于重儿子和重边的定义，可以见下图，对于一棵有 $n$ 个节点的树：
+Define heavy edges and light edges as in heavy-light decomposition (an edge to the heavy child is heavy, all others are light). See the figure below for the definitions of heavy children and heavy edges. For a tree with $n$ nodes:
 
-根节点到树上任意节点的轻边数不超过 $\log n$ 条．我们设根到该节点有 $x$ 条轻边该节点的子树大小为 $y$，显然轻边连接的子节点的子树大小小于父亲的一半（若大于一半就不是轻边了），则 $y<n/2^x$，显然 $n>2^x$，所以 $x<\log n$．
+The number of light edges from the root to any node is at most $\log n$. Suppose there are $x$ light edges from the root to some node, and the subtree of that node has size $y$. Clearly the child at the end of a light edge has a subtree smaller than half of its parent's (otherwise the edge would not be light), so $y<n/2^x$. Clearly $n>2^x$, so $x<\log n$.
 
-又因为如果一个节点是其父亲的重儿子，则它的子树必定在它的兄弟之中最多，所以任意节点到根的路径上所有重边连接的父节点在计算答案时必定不会遍历到这个节点，所以一个节点的被遍历的次数等于它到根节点路径上的轻边数 $+1$（之所以要 $+1$ 是因为它本身要被遍历到），所以一个节点的被遍历次数 $=\log n+1$, 总时间复杂度则为 $O(n(\log n+1))=O(n\log n)$，输出答案花费 $O(m)$．
+Also, if a node is the heavy child of its parent, its subtree is the largest among its siblings. So for every heavy edge on the path from a node to the root, the parent end of that edge never traverses this node again when computing its answer. Thus the number of times a node is traversed equals the number of light edges on its path to the root $+1$ (the $+1$ is because the node itself has to be visited). So each node is traversed at most $\log n+1$ times, the total time complexity is $O(n(\log n+1))=O(n\log n)$, and outputting the answers costs $O(m)$.
 
 ![dsu-on-tree-3.png](./images/dsu-on-tree-3.svg)
 
-*图中标粗的即为重边，重边连向的子节点为重儿子*
+*Bold edges in the figure are heavy edges. The child at the end of a heavy edge is a heavy child.*
 
-## 优化
+## Optimization
 
-在证明过程中提到，dsu on tree 利用了重链剖分中的轻重儿子概念加速合并．既然如此，我们也可以直接利用重链剖分得到的 dfs 序，化递归为迭代，进一步优化 dsu on tree 的常数．
+As mentioned in the proof, dsu on tree uses the light/heavy child idea from heavy-light decomposition to speed up merging. So we can also directly use the DFS order produced by heavy-light decomposition, turn the recursion into iteration, and further reduce the constant factor of dsu on tree.
 
-dfs 序本身就有如下的性质：一个节点的子树在 dfs 序上一定连续．因此，可以倒序遍历 dfs 序数组．这样保证了在遍历到一个节点时，它的子树中的其他节点一定已经得到了处理．
+The DFS order itself has this property: the subtree of a node is always contiguous in the DFS order. So we can loop over the DFS order array backwards. This guarantees that when we reach a node, all other nodes in its subtree have already been processed.
 
-重链剖分得到的 dfs 序有着如下优良的性质：一条重链在 dfs 序上一定是连续的．因此，当按照 dfs 序倒序遍历节点时，对于一条重链顶端的节点，要遍历的下一个节点一定不是该节点的父亲，所以要清空它的影响；除此之外，对于不在重链顶端的节点，遍历的前一个节点要么是自己的重儿子，要么是已经清除了影响的其他分支的节点，所以可以直接继承其影响．在此基础上，再利用 dfs 序快速统计所有轻儿子的影响，记录答案．
+The DFS order from heavy-light decomposition has another nice property: each heavy path is contiguous in the DFS order. So when we visit nodes in reverse DFS order, for a node at the top of a heavy path, the next node to visit is never its parent, so its effect must be cleared. For a node not at the top of a heavy path, the previously visited node is either its own heavy child or a node from another branch whose effect has already been cleared, so it can directly inherit the effect. On top of that, we use the DFS order to quickly add the effect of all light children and record the answer.
 
-以上过程称为 dsu on tree 的非递归/迭代实现（也被称为 dsu on tree 的 dfs 序实现）．相较于原本递归实现，它减小了递归调用函数的时空开销，获得了不小的常数优化，**尤其在处理包含大量链状结构的树时，拥有显著的栈空间优势．**
+This is the non-recursive/iterative implementation of dsu on tree (also called the DFS-order implementation of dsu on tree). Compared with the original recursive version, it avoids the time and memory cost of recursive calls and gives a noticeable constant-factor speedup. **It has a significant stack-space advantage, especially on trees with many long chains.**
 
-## 实现
+## Implementation
 
-??? example "参考实现"
-    === "递归实现"
+??? example "Reference implementation"
+    === "Recursive implementation"
         ```cpp
         --8<-- "docs/graph/code/dsu-on-tree/dsu-on-tree_1.cpp"
         ```
     
-    === "非递归实现"
+    === "Non-recursive implementation"
         ```cpp
         --8<-- "docs/graph/code/dsu-on-tree/dsu-on-tree_2.cpp"
         ```
 
-## 运用
+## Applications
 
-1.  某些出题人设置的正解是 dsu on tree 的题
+1.  Problems whose intended solution is dsu on tree
 
-    如 [CF741D](http://codeforces.com/problemset/problem/741/D)．给一棵树，每个节点的权值是'a' 到'v' 的字母，每次询问要求在一个子树找一条路径，使该路径包含的字符排序后成为回文串．
+    For example [CF741D](http://codeforces.com/problemset/problem/741/D). Given a tree where each node's value is a letter from 'a' to 'v', for each query find a path in a subtree whose characters can be rearranged into a palindrome.
 
-    因为是排列后成为回文串，所以一个字符出现了两次相当于没出现，也就是说，这条路径满足 **最多有一个字符出现奇数次**．
+    Since the characters are rearranged into a palindrome, a character appearing twice is the same as not appearing. In other words, the path must satisfy **at most one character appears an odd number of times**.
 
-    正常做法是对每一个节点 dfs，每到一个节点就强行枚举所有字母找到和它异或后结果为 1 的个数大于 1 的路径，再取最长值，这样是 $O(n^2\log n)$ 的，可以用 dsu on tree 优化到 $O(n\log^2n)$．关于具体做法，可以参考下面的扩展阅读．
+    The straightforward approach is to run a DFS from every node, and at each node brute-force all letters to find paths whose XOR with it has at most one 1 bit, then take the longest. This is $O(n^2\log n)$, and dsu on tree optimizes it to $O(n\log^2n)$. For details, see the further reading below.
 
-2.  可以用 dsu 乱搞的题
+2.  Problems where dsu can be used as a hack
 
-    可以水一些树套树的部分分（没有修改操作），而且 dsu 的复杂度优于树上莫队的 $O(n\sqrt{m})$．
+    It can get partial points on some tree-of-trees problems (when there are no updates), and dsu has a better complexity than Mo's algorithm on trees, which is $O(n\sqrt{m})$.
 
-## 练习题
+## Exercises
 
 [CF600E Lomsat gelral](http://codeforces.com/problemset/problem/600/E)
 
-题意翻译：树的节点有颜色，一种颜色占领了一个子树，当且仅当没有其他颜色在这个子树中出现得比它多．求占领每个子树的所有颜色之和．
+Statement: Each node of a tree has a color. A color dominates a subtree if and only if no other color appears more times than it in that subtree. For each subtree, find the sum of all colors that dominate it.
 
-[UOJ284 快乐游戏鸡](https://uoj.ac/problem/284)
+[UOJ284 Happy Game Chicken](https://uoj.ac/problem/284)
 
 [CF1709E XOR Tree](https://codeforces.com/contest/1709/problem/E)
 
-## 参考资料/扩展阅读
+## References / further reading
 
-[CF741D 作者介绍的 dsu on tree](http://codeforces.com/blog/entry/44351)
+[dsu on tree as introduced by the author of CF741D](http://codeforces.com/blog/entry/44351)
 
-[这位作者的题解](http://codeforces.com/blog/entry/48871)
+[This author's editorial](http://codeforces.com/blog/entry/48871)

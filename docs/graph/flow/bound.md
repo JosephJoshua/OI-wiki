@@ -1,85 +1,85 @@
-在阅读这篇文章之前请先阅读 [最大流](./max-flow.md) 并确保自己熟练掌握最大流算法．
+Before reading this article, please read [Maximum flow](./max-flow.md) and make sure you know maximum flow algorithms well.
 
-## 概述
+## Overview
 
-上下界网络流本质是给流量网络的每一条边设置了流量上界 $c(u,v)$ 和流量下界 $b(u,v)$．也就是说，一种可行的流必须满足 $b(u,v) \leq f(u,v) \leq c(u,v)$．同时必须满足除了源点和汇点之外的其余点流量平衡．
+Network flow with lower and upper bounds means that each edge of the flow network has an upper bound $c(u,v)$ and a lower bound $b(u,v)$ on its flow. That is, a feasible flow must satisfy $b(u,v) \leq f(u,v) \leq c(u,v)$. At the same time, flow must be balanced at every vertex other than the source and the sink.
 
-根据题目要求，我们可以使用上下界网络流解决不同问题．
+Depending on what the problem asks, we can use flow with lower and upper bounds to solve different problems.
 
-## 无源汇上下界可行流
+## Feasible flow with bounds, without source and sink
 
-给定无源汇流量网络 $G$．询问是否存在一种标定每条边流量的方式，使得每条边流量满足上下界同时每一个点流量平衡．
+You are given a flow network $G$ without a source and sink. Decide whether there is a way to assign a flow to each edge so that every edge's flow is within its bounds and flow is balanced at every vertex.
 
-不妨假设每条边已经流了 $b(u,v)$ 的流量，设其为初始流．同时我们在新图中加入 $u$ 连向 $v$ 的流量为 $c(u,v) - b(u,v)$ 的边．考虑在新图上进行调整．
+Assume each edge already carries $b(u,v)$ units of flow, and call this the initial flow. In a new graph, add an edge from $u$ to $v$ with capacity $c(u,v) - b(u,v)$. Then we adjust things on the new graph.
 
-由于最大流需要满足初始流量平衡条件（最大流可以看成是下界为 $0$ 的上下界最大流），但是构造出来的初始流很有可能不满足初始流量平衡．假设一个点初始流入流量减初始流出流量为 $M$．
+Maximum flow requires the initial flow to be balanced (maximum flow can be seen as maximum flow with bounds where all lower bounds are $0$), but the initial flow we built very likely is not balanced. Suppose for some vertex, initial inflow minus initial outflow equals $M$.
 
-若 $M=0$，此时流量平衡，不需要附加边．
+If $M=0$, the flow is balanced and no extra edge is needed.
 
-若 $M>0$，此时入流量过大，需要新建附加源点 $S'$，$S'$ 向其连流量为 $M$ 的附加边．
+If $M>0$, the inflow is too large. Create an extra source $S'$, and add an extra edge with capacity $M$ from $S'$ to this vertex.
 
-若 $M<0$，此时出流量过大，需要新建附加汇点 $T'$，其向 $T'$ 连流量为 $-M$ 的附加边．
+If $M<0$, the outflow is too large. Create an extra sink $T'$, and add an extra edge with capacity $-M$ from this vertex to $T'$.
 
-如果附加边满流，说明这一个点的流量平衡条件可以满足，否则这个点的流量平衡条件不满足．（因为原图加上附加流之后才会满足原图中的流量平衡．）
+If an extra edge is saturated, the balance condition of that vertex can be satisfied; otherwise it cannot. (Because only after adding the extra flow to the original graph is the flow in the original graph balanced.)
 
-在建图完毕之后跑 $S'$ 到 $T'$ 的最大流，若 $S'$ 连出去的边全部满流，则存在可行流，否则不存在．
+After building the graph, run maximum flow from $S'$ to $T'$. If all edges going out of $S'$ are saturated, a feasible flow exists; otherwise it does not.
 
-### 例题
+### Example problem
 
-???+ note "[luogu P14578【模板】无源汇上下界可行流](https://www.luogu.com.cn/problem/P14578)"
-    一个 $n$ 个点、$m$ 条有向边的有向图 $G$，每条边有流量下界 $l_i$ 和流量上界 $r_i$．
+???+ note "[Luogu P14578 [Template] Feasible Flow with Bounds, without Source and Sink](https://www.luogu.com.cn/problem/P14578)"
+    A directed graph $G$ with $n$ vertices and $m$ directed edges. Each edge has a lower bound $l_i$ and an upper bound $r_i$ on its flow.
     
-    构造一种方案使得每条边的流量 $w_i$ 满足流量限制 $l_i\leq w_i\leq r_i$，且每个点流量平衡，即每个点流入流量等于流出流量．或报告无解．
+    Construct an assignment in which every edge's flow $w_i$ satisfies $l_i\leq w_i\leq r_i$, and flow is balanced at every vertex, that is, inflow equals outflow at every vertex. Or report that there is no solution.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/graph/code/flow/bound/bound_1.cpp"
     ```
 
-## 有源汇上下界可行流
+## Feasible flow with bounds, with source and sink
 
-给定有源汇流量网络 $G$．询问是否存在一种标定每条边流量的方式，使得每条边流量满足上下界同时除了源点和汇点每一个点流量平衡．
+You are given a flow network $G$ with a source and a sink. Decide whether there is a way to assign a flow to each edge so that every edge's flow is within its bounds and flow is balanced at every vertex other than the source and the sink.
 
-假设源点为 $S$，汇点为 $T$．
+Let the source be $S$ and the sink be $T$.
 
-则我们可以加入一条 $T$ 到 $S$ 的上界为 $\infty$，下界为 $0$ 的边转化为无源汇上下界可行流问题．
+We can add an edge from $T$ to $S$ with upper bound $\infty$ and lower bound $0$, which turns this into the feasible flow problem with bounds and without source and sink.
 
-若有解，则 $S$ 到 $T$ 的可行流流量等于 $T$ 到 $S$ 的附加边的流量．
+If a solution exists, the value of the feasible flow from $S$ to $T$ equals the flow on the extra edge from $T$ to $S$.
 
-## 有源汇上下界最大流
+## Maximum flow with bounds, with source and sink
 
-给定有源汇流量网络 $G$．询问是否存在一种标定每条边流量的方式，使得每条边流量满足上下界同时除了源点和汇点每一个点流量平衡．如果存在，询问满足标定的最大流量．
+You are given a flow network $G$ with a source and a sink. Decide whether there is a way to assign a flow to each edge so that every edge's flow is within its bounds and flow is balanced at every vertex other than the source and the sink. If there is, find the largest possible flow value.
 
-我们找到网络上的任意一个可行流．如果找不到解就可以直接结束．
+Find any feasible flow in the network. If there is none, we can stop right away.
 
-否则我们考虑删去所有附加边之后的残量网络并且在网络上进行调整．
+Otherwise, consider the residual network after deleting all the extra edges, and adjust the flow on it.
 
-我们在残量网络上再跑一次 $S$ 到 $T$ 的最大流，将可行流流量和最大流流量相加即为答案．
+Run maximum flow from $S$ to $T$ once more on the residual network. The answer is the feasible flow value plus this maximum flow value.
 
-??? warning "一个非常易错的问题"
-    $S$ 到 $T$ 的最大流直接在跑完有源汇上下界可行的残量网络上跑．
+??? warning "A very common mistake"
+    Run the maximum flow from $S$ to $T$ directly on the residual network left after computing the feasible flow with bounds and source/sink.
     
-    千万不可以在原来的流量网络上跑．
+    Never run it on the original flow network.
 
-## 有源汇上下界最小流
+## Minimum flow with bounds, with source and sink
 
-给定有源汇流量网络 $G$．询问是否存在一种标定每条边流量的方式，使得每条边流量满足上下界同时除了源点和汇点每一个点流量平衡．如果存在，询问满足标定的最小流量．
+You are given a flow network $G$ with a source and a sink. Decide whether there is a way to assign a flow to each edge so that every edge's flow is within its bounds and flow is balanced at every vertex other than the source and the sink. If there is, find the smallest possible flow value.
 
-类似的，我们考虑将残量网络中不需要的流退掉．
+Similarly, we push back the flow that is not needed in the residual network.
 
-我们找到网络上的任意一个可行流．如果找不到解就可以直接结束．
+Find any feasible flow in the network. If there is none, we can stop right away.
 
-否则我们考虑删去所有附加边之后的残量网络．
+Otherwise, consider the residual network after deleting all the extra edges.
 
-我们在残量网络上再跑一次 $T$ 到 $S$ 的最大流，将可行流流量减去最大流流量即为答案．
+Run maximum flow from $T$ to $S$ once more on the residual network. The answer is the feasible flow value minus this maximum flow value.
 
-??? note "[AHOI 2014 支线剧情](https://loj.ac/problem/2226)"
-    对于每条 $x$ 到 $y$ 花费 $v$ 的剧情边设上界为 $\infty$, 下界为 $1$．
+??? note "[AHOI 2014 Side Quests](https://loj.ac/problem/2226)"
+    For each story edge from $x$ to $y$ with cost $v$, set the upper bound to $\infty$ and the lower bound to $1$.
     
-    对于每个点，向 $T$ 连边权 $c$, 上界 $\infty$, 下界为 $1$．
+    For each vertex, add an edge to $T$ with weight $c$, upper bound $\infty$ and lower bound $1$.
     
-    $S$ 点为 $1$ 号节点．
+    Vertex $S$ is node $1$.
     
-    跑一次 上下界带源汇最小费用可行流 即可．
+    Then just run a minimum-cost feasible flow with bounds and source/sink once.
     
-    因为最小费用可行流解法与最小可行流类似，这里不再展开．
+    Since the minimum-cost feasible flow method is similar to the minimum feasible flow, we do not go into it here.
