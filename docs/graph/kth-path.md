@@ -1,96 +1,96 @@
-前置知识：[Dijkstra 算法](./shortest-path.md#dijkstra-算法)、[A\* 算法](../search/astar.md)、[可持久化可并堆](../ds/persistent-heap.md)
+Prerequisites: [Dijkstra's algorithm](./shortest-path.md#dijkstra-算法), [A\* algorithm](../search/astar.md), [persistent mergeable heaps](../ds/persistent-heap.md)
 
-## 问题描述
+## Problem statement
 
-给定一个有 $n$ 个结点，$m$ 条边的有向图，求从 $s$ 到 $t$ 的所有不同路径中的第 $k$ 短路径的长度．
+Given a directed graph with $n$ nodes and $m$ edges, find the length of the $k$-th shortest path among all distinct paths from $s$ to $t$.
 
-???+ info "「路径」"
-    本文所指的「路径」允许经过同一条边或同一个结点多次，因此严格的名称应为「[途径](./concept.md#路径)」而非「路径」．本文讨论的问题严格地说也是 **第 $k$ 短途径**（$k$ shortest walk）问题．但是，本文依据习惯仍然采用「路径」这一名称，而对于不自交的路径则称为「简单路径」．
+???+ info "On the word 'path'"
+    The "paths" on this page may use the same edge or the same node more than once, so strictly speaking they should be called "[walks](./concept.md#路径)" rather than "paths". Strictly speaking, the problem discussed here is also the **$k$ shortest walk** problem. However, following common usage, this page still uses the word "path", and calls paths that do not intersect themselves "simple paths".
 
-## A\* 算法
+## A\* algorithm
 
-A\* 算法是一个搜索算法．它为每个当前状态 $x$ 都设置了一个估价函数 $f(x)=g(x)+h(x)$，其中 $g(x)$ 为从初始状态到达当前状态的实际代价，$h(x)$ 为从当前状态到达目标状态的最佳路径的估计代价．搜索时，每次取出 $f(x)$ 最优的状态 $x$，扩展其所有后继状态．可以用 **优先队列** 来维护这个值．
+The A\* algorithm is a search algorithm. For each current state $x$ it defines an evaluation function $f(x)=g(x)+h(x)$, where $g(x)$ is the actual cost to reach the current state from the initial state, and $h(x)$ is the estimated cost of the best path from the current state to the goal state. During the search, it always takes out the state $x$ with the best $f(x)$ and expands all of its successor states. A **priority queue** can be used to maintain these values.
 
-在求解 $k$ 短路问题时，令 $h(x)$ 为从当前结点到达目标结点 $t$ 的最短路径长度．可以通过在反向图上对结点 $t$ 跑单源最短路预处理出每个结点的这个值．对于每个状态需要记录两个值，即当前到达的结点 $x$ 和已经走过的距离 $g(x)$，将这种状态记为 $(x,g(x))$．开始时，将初始状态 $(s,0)$ 加入优先队列．每次取出估价函数 $f(x)=g(x)+h(x)$ 最小的一个状态，枚举该状态所在结点 $x$ 的所有出边，将对应的后继状态加入优先队列．当某个结点第 $k$ 次出队时，对应状态的 $g(x)$ 就是从起始结点 $s$ 到该结点的第 $k$ 短路的长度．
+For the $k$ shortest paths problem, let $h(x)$ be the length of the shortest path from the current node to the target node $t$. This value can be precomputed for every node by running a single-source shortest path from $t$ on the reversed graph. Each state needs two values: the node $x$ currently reached and the distance $g(x)$ already traveled; write such a state as $(x,g(x))$. At the start, push the initial state $(s,0)$ into the priority queue. Each time, take out the state with the smallest evaluation $f(x)=g(x)+h(x)$, go through all outgoing edges of its node $x$, and push the corresponding successor states into the priority queue. When a node is taken out of the queue for the $k$-th time, the $g(x)$ of that state is the length of the $k$-th shortest path from the start node $s$ to that node.
 
-这一搜索过程可以优化．由于只需要求出从起始结点到目标结点的第 $k$ 短路，所以当某个结点已经出队 $k$ 次后，该结点后续出队的状态都可以不扩展其后继状态．这些状态不会影响到最后的答案．这是因为之前 $k$ 次取出该结点时，已经形成了到达该结点的 $k$ 条合法路径，足以构造到达目标结点的前 $k$ 条最短路．
+This search can be optimized. Since we only need the $k$-th shortest path from the start node to the target node, once a node has been taken out of the queue $k$ times, later states at that node do not need to expand their successors. These states cannot affect the final answer, because the first $k$ times this node was taken out already give $k$ valid paths to it, which are enough to build the first $k$ shortest paths to the target node.
 
-由于每个结点至多扩展 $k$ 次，每条边至多会加入优先队列 $k$ 次，所以算法的时间复杂度是 $O(km\log km)$ 的，空间复杂度是 $O(km)$ 的．相较于直接搜索，A\* 算法针对目标结点 $t$ 进行了剪枝，但这仅仅改良了常数，而非渐近复杂度．本节所述算法虽然复杂度并不优秀，但是可以在相同的复杂度内求出从起始结点 $s$ 到（以 $t$ 为根的最短路树中）每个结点的前 $k$ 短路．
+Since each node is expanded at most $k$ times, each edge is pushed into the priority queue at most $k$ times, so the time complexity is $O(km\log km)$ and the space complexity is $O(km)$. Compared with plain search, the A\* algorithm prunes toward the target node $t$, but this only improves the constant, not the asymptotic complexity. Although the complexity of the algorithm in this section is not great, within the same complexity it can find the first $k$ shortest paths from the start node $s$ to every node (in the shortest path tree rooted at $t$).
 
-### 实现
+### Implementation
 
-??? example "模板题 [Library Checker - K-Shortest Walk](https://judge.yosupo.jp/problem/k_shortest_walk) 参考实现"
+??? example "Template problem [Library Checker - K-Shortest Walk](https://judge.yosupo.jp/problem/k_shortest_walk) reference implementation"
     ```cpp
     --8<-- "docs/graph/code/k-shortest-walk/k-shortest-walk-1.cpp"
     ```
 
-## 可持久化可并堆做法
+## Approach with persistent mergeable heaps
 
-前述算法实际上求出了到达所有结点的 $k$ 短路．如果仅仅是想要求得到达给定目标结点 $t$ 的 $k$ 短路，实际上可以做得更快．本节提供了一种基于可持久化可并堆的 $O(m\log m+k\log k)$ 的做法．
+The algorithm above actually finds the $k$ shortest paths to all nodes. If we only want the $k$ shortest paths to a given target node $t$, we can do better. This section gives an $O(m\log m+k\log k)$ approach based on persistent mergeable heaps.
 
-### 最短路树与偏离边
+### Shortest path tree and sidetrack edges
 
-前述算法的瓶颈在于只有到达目标结点 $t$ 时才会更新答案．但是，不同路径之间可能相差并不大．例如，次短路区别于最短路，可能仅仅是在一条边处多绕了一个结点，而路径的其他部分都是相同的；前述算法却可能需要重复搜索一遍这些相同的边才能找到次短路．由于只有绕路部分才是关键的，所以，要得到前 $k$ 条最短的路径，只需要考虑代价最小的 $k$ 种绕路方式即可．这就引出了最短路树的概念．
+The bottleneck of the algorithm above is that the answer is only updated when the target node $t$ is reached. But different paths may differ very little. For example, the second shortest path may differ from the shortest path only by a detour through one extra node at one edge, with the rest of the path being the same; yet the algorithm above may need to search these same edges all over again to find the second shortest path. Since only the detour part matters, to get the $k$ shortest paths we only need to consider the $k$ cheapest ways of making detours. This leads to the concept of the shortest path tree.
 
-在反向图上从目标结点 $t$ 开始跑单源最短路，记录每个结点 $x$ 到 $t$ 的最短路长度 $h(x)$，并记录从结点 $x$ 开始的最短路经过的第一条边 $f_x$；如果有多个最优的选择，取 Dijkstra 算法松弛时记录的那一条即可．所有这些边 $f_x$ 及其端点就构成一棵树，且从树上的每个结点 $x$ 到根结点 $t$ 的简单路径都是 $x$ 到 $t$ 的一条最短路径．这就是 **最短路树**  $T$．
+Run a single-source shortest path from the target node $t$ on the reversed graph. Record, for each node $x$, the shortest distance $h(x)$ from $x$ to $t$, and the first edge $f_x$ on the shortest path starting from $x$; if there are several optimal choices, take the one recorded when Dijkstra's algorithm relaxed it. All these edges $f_x$ and their endpoints form a tree, and the simple path from every node $x$ in the tree to the root $t$ is a shortest path from $x$ to $t$. This is the **shortest path tree** $T$.
 
-求得最短路树 $T$ 后，就可以计算每条不在 $T$ 上的边会多绕多少路．对于边 $e=(u,v)\notin T$，边权为 $w$，可以定义一条新的边，仍然从 $u$ 指向 $v$，且代价为 $\Delta(e)=w + h(v) - h(u)$．本文形象地称这些权值为 $\Delta(e)$ 的边为 **偏离边**（sidetrack），权值 $\Delta(e)$ 则称为偏离成本．由于 $h(u)\le w+h(v)$，偏离成本总是非负的．如果一条边的端点并非全部在最短路树 $T$ 里，它就不会影响到达结点 $t$ 的 $k$ 短路的计算，可以直接将它删掉．
+Once we have the shortest path tree $T$, we can compute how much extra distance each edge not in $T$ adds. For an edge $e=(u,v)\notin T$ with weight $w$, define a new edge, still from $u$ to $v$, with cost $\Delta(e)=w + h(v) - h(u)$. This page calls these edges with weight $\Delta(e)$ **sidetrack edges**, and $\Delta(e)$ the sidetrack cost. Since $h(u)\le w+h(v)$, the sidetrack cost is always non-negative. If an edge does not have both endpoints in the shortest path tree $T$, it cannot affect the $k$ shortest paths to $t$, and can be deleted.
 
-下图左侧是有向图 $G$，右侧是它对应的最短路树 $T$（粗边）和相应的偏离边（细边）：
+The figure below shows a directed graph $G$ on the left, and on the right its shortest path tree $T$ (thick edges) and the corresponding sidetrack edges (thin edges):
 
 ![](./images/k-shortest-path-1.svg)
 
-设一条从 $s$ 到 $t$ 的路径经过的边序列为 $P$，去掉 $P$ 中与 $T$ 的交集得到 $P'$．那么，将 $P'$ 中的边顺次排列，它相邻的两条边 $e_1=(u_1,v_1)$ 和 $e_2=(u_2,v_2)$ 一定满足
+Let $P$ be the sequence of edges of a path from $s$ to $t$, and let $P'$ be $P$ with the edges of $T$ removed. Then, listing the edges of $P'$ in order, any two adjacent edges $e_1=(u_1,v_1)$ and $e_2=(u_2,v_2)$ must satisfy
 
--   条件 $(*)$：后者的起点 $u_2$ 是前者的终点 $v_1$ 在最短路树 $T$ 的祖先（包括其自身）．对于第一条边，约定「前者的终点」为 $s$．
+-   Condition $(*)$: the start $u_2$ of the latter is an ancestor (possibly itself) of the end $v_1$ of the former in the shortest path tree $T$. For the first edge, we take "the end of the former" to be $s$.
 
-这是因为对应的原始路径 $P$ 中，$v_1$ 和 $u_2$ 之间连接了若干条 $T$ 中的树边．反过来，对于一个满足条件 $(*)$ 的边序列 $P'$，一定存在唯一一条图 $G$ 中的路径 $P$ 与之对应．这是因为 $v_1$ 和 $u_2$ 在最短路树 $T$ 上的简单路径是唯一的．这样就说明，原图中的任意路径 $P$ 与满足条件 $(*)$ 的偏离边序列 $P'$ 一一对应．而且，路径 $P$ 的长度就等于最短路长度 $h(s)$ 与这些偏离成本的和：
+This is because in the original path $P$, $v_1$ and $u_2$ are connected by some tree edges of $T$. Conversely, for any edge sequence $P'$ satisfying condition $(*)$, there is exactly one path $P$ in $G$ that corresponds to it, because the simple path between $v_1$ and $u_2$ in the shortest path tree $T$ is unique. This shows that paths $P$ in the original graph correspond one-to-one with sidetrack edge sequences $P'$ satisfying condition $(*)$. Moreover, the length of $P$ equals the shortest distance $h(s)$ plus the sum of these sidetrack costs:
 
 $$
 h(s)+\sum_{e\in P'}\Delta(e).
 $$
 
-这些讨论说明，寻找 $k$ 短路的任务转化为寻找成本第 $k$ 小且满足条件 $(*)$ 的偏离边序列 $P'$ 的任务．
+This discussion shows that finding the $k$ shortest paths becomes finding the sidetrack edge sequence $P'$ with the $k$-th smallest cost that satisfies condition $(*)$.
 
-为处理条件 $(*)$，与其每次查询时在最短路树上寻找祖先，不如直接将每个结点的偏离边集合下传到最短路树上的子孙结点．这相当于建了下面这样的图 $G'$：
+To handle condition $(*)$, instead of searching for ancestors in the shortest path tree at each query, we can directly pass each node's set of sidetrack edges down to its descendants in the shortest path tree. This is the same as building the graph $G'$ below:
 
 ![](./images/k-shortest-path-2.svg)
 
-在这个图上，条件 $(*)$ 就转化为要求 $P'$ 中的边首尾相接，也就是说，$P'$ 是图 $G'$ 中的一条路径．问题进一步转化为在这个图中寻找从 $s$ 出发的长度第 $k$ 小的 **到达任意结点的** 路径．相对于原始的 $k$ 短路问题，此处不再要求路径一定要结束在目标结点 $t$．
+In this graph, condition $(*)$ becomes the requirement that the edges of $P'$ are joined end to end, that is, $P'$ is a path in $G'$. The problem further becomes finding the $k$-th shortest path in this graph that starts at $s$ and **ends at any node**. Compared with the original $k$ shortest paths problem, the path no longer has to end at the target node $t$.
 
-转化后的问题很容易解决．直接从起始结点 $s$ 处出发，用优先队列按路径长度从小到大扩展（同一结点可多次出队）．每次从优先队列中取出一个结点时，就相当于找到了一条图 $G'$ 中的路径，也就对应着图 $G$ 中一条到达目标结点 $t$ 的路径．
+The transformed problem is easy to solve. Start directly from the start node $s$ and expand paths in increasing order of length with a priority queue (the same node may be taken out several times). Each time a node is taken out of the priority queue, we have found a path in $G'$, which corresponds to a path in $G$ that reaches the target node $t$.
 
-### 可持久化可并堆优化
+### Optimization with persistent mergeable heaps
 
-算法思路已经明晰．但是，朴素实现这一算法的复杂度过高．由于图 $G'$ 中，单个结点处边的规模可能是 $\Theta(m)$ 的，所以每次扩展结点时，都可能需要将规模为 $\Theta(m)$ 的边集压入优先队列．实际上，没有必要将所有边都压入优先队列：很多情况下，压入队列的这些边，只有最短的那些可能会在后续计算中弹出队列．也就是说，完全可以将单个结点处的整个边集作为一个存储单元压入优先队列，每次只要能够快速访问边集中的最短边即可．
+The idea of the algorithm is now clear. But a naive implementation is too slow. In $G'$, a single node may have $\Theta(m)$ edges, so each expansion may need to push a set of $\Theta(m)$ edges into the priority queue. In fact, there is no need to push all edges into the priority queue: in many cases, only the shortest of the pushed edges can ever be popped later. That is, we can push the whole edge set of a node into the priority queue as one unit, as long as we can quickly access the shortest edge in the set.
 
-这启发我们使用小根堆来存储单个结点处的边集．在该优先队列中，只需要存储这些堆，它们的成本就是堆顶边对应的路径成本．每次弹出队首时，都需要一并从队首的堆中弹出堆顶边．然后，既要将弹出堆顶后的堆压回优先队列，也需要将堆顶边终点处的偏离边集合对应的堆压入优先队列．
+This suggests using a min-heap to store the edge set of each node. The priority queue then only stores these heaps, and the cost of each heap is the path cost of the edge at its top. Each time we pop the front of the queue, we also pop the top edge from that heap. Then we push the heap (with its top removed) back into the priority queue, and also push the heap of the sidetrack edge set at the end node of the popped top edge.
 
-使用堆来存储边集也解决了沿最短路树下传边集的问题．因为下传边集相当于需要将当前结点的边集合并到它的子结点，所以，堆还需要支持合并操作；合并到子结点的同时，还不能破坏当前结点处的边集，所以，堆还需要支持可持久化．这正是可持久化可并堆．
+Storing edge sets in heaps also solves the problem of passing edge sets down the shortest path tree. Passing an edge set down means merging the current node's edge set into its children, so the heap must support merging; and while merging into the children, the edge set at the current node must not be destroyed, so the heap must also be persistent. This is exactly a persistent mergeable heap.
 
-由此，就得到算法的完整过程：
+This gives the complete algorithm:
 
-1.  从目标结点 $t$ 出发，跑单源最短路，求出最短路树．
-2.  为最短路树上的每个结点都构建对应的偏离边集合，存储到可持久化可并堆里．
-3.  沿着最短路树的边，从目标结点 $t$ 开始自上而下（如按 BFS 序），将每个结点处的堆都合并到子结点的堆里．
-4.  记录最短路长度 $h(s)$ 为第一个答案，再从起始结点 $s$ 出发，将该处的堆压入优先队列．
-5.  弹出队首的堆，记录答案，再将弹出堆顶后的堆压回优先队列，并将堆顶边的终点处的堆压入优先队列．
+1.  Run a single-source shortest path from the target node $t$ to get the shortest path tree.
+2.  For each node of the shortest path tree, build its set of sidetrack edges and store it in a persistent mergeable heap.
+3.  Going along the edges of the shortest path tree from the target node $t$ downward (for example in BFS order), merge the heap at each node into the heaps of its children.
+4.  Record the shortest distance $h(s)$ as the first answer, then start from the start node $s$ and push its heap into the priority queue.
+5.  Pop the heap at the front of the queue and record an answer. Then push the heap with its top removed back into the priority queue, and push the heap at the end node of the top edge into the priority queue.
 
-一般采用左偏树或随机堆实现可持久化可并堆．此时，最后一步还可以继续优化．这些堆的内部结构都是二叉树．弹出堆顶后，原本是要合并左右两个子结点，再将合并后的堆顶压入优先队列的；但是，本算法中，可以不执行合并操作，直接将两个子结点对应的堆分别压入优先队列．这样就省去了单次合并的 $O(\log m)$ 的复杂度．由于每次弹出队首堆后，至多会将三个新的堆压入优先队列，所以，优先队列的大小是 $O(k)$ 的．这样，单次查询的时间复杂度就降低到 $O(\log k)$．总查询复杂度就是 $O(k\log k)$ 的．
+Persistent mergeable heaps are usually implemented with leftist heaps or randomized heaps. In that case, the last step can be optimized further. The internal structure of these heaps is a binary tree. After popping the top, we would normally merge the left and right children and push the merged heap into the priority queue; but in this algorithm we can skip the merge and push the heaps of the two children into the priority queue separately. This saves the $O(\log m)$ cost of one merge. Since each pop of the front heap pushes at most three new heaps into the priority queue, the size of the priority queue is $O(k)$. So the time per query drops to $O(\log k)$, and the total query complexity is $O(k\log k)$.
 
-由于构建最短路树和构建可持久化可并堆的复杂度都是 $O(m\log m)$ 的，所以，算法的总时间复杂度为 $O(m\log m+k\log k)$ 的．
+Building the shortest path tree and building the persistent mergeable heaps both take $O(m\log m)$ time, so the total time complexity of the algorithm is $O(m\log m+k\log k)$.
 
-### 实现
+### Implementation
 
-??? example "模板题 [Library Checker - K-Shortest Walk](https://judge.yosupo.jp/problem/k_shortest_walk) 参考实现"
+??? example "Template problem [Library Checker - K-Shortest Walk](https://judge.yosupo.jp/problem/k_shortest_walk) reference implementation"
     ```cpp
     --8<-- "docs/graph/code/k-shortest-walk/k-shortest-walk-2.cpp"
     ```
 
-## 习题
+## Exercises
 
--   [「SDOI2010」魔法猪学院](https://www.luogu.com.cn/problem/P2483)
+-   ["SDOI2010" Magic Pig Academy](https://www.luogu.com.cn/problem/P2483)
 
-## 参考资料与注释
+## References and notes
 
 -   [\[Tutorial\] k shortest paths and Eppstein's algorithm by meooow - Codeforces](https://codeforces.com/blog/entry/102085)

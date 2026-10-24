@@ -1,112 +1,112 @@
 author: ouuan, Backl1ght, billchenchina, CCXXXI, ChickenHu, ChungZH, cjsoft, countercurrent-time, diauweb, Early0v0, Enter-tainer, EtaoinWu, H-J-Granger, H-Shen, Henry-ZHR, HeRaNO, hsfzLZH1, huaruoji, iamtwz, imp2002, Ir1d, kenlig, Konano, Lyccrius, Marcythm, Menci, NachtgeistW, PeterlitsZo, psz2007, shuzhouliu, SkqLiao, sshwy, SukkaW, therehello, TrisolarisHD, ttzztztz, vincent-163, WAAutoMaton, Hunter19019
 
-## 定义
+## Definition
 
-最近公共祖先简称 LCA（Lowest Common Ancestor）．两个节点的最近公共祖先，就是这两个点的公共祖先里面，离根最远的那个．
-为了方便，我们记某点集 $S=\{v_1,v_2,\ldots,v_n\}$ 的最近公共祖先为 $\text{LCA}(v_1,v_2,\ldots,v_n)$ 或 $\text{LCA}(S)$．
+LCA is short for Lowest Common Ancestor. The lowest common ancestor of two nodes is, among the common ancestors of the two nodes, the one farthest from the root.
+For convenience, we write the lowest common ancestor of a node set $S=\{v_1,v_2,\ldots,v_n\}$ as $\text{LCA}(v_1,v_2,\ldots,v_n)$ or $\text{LCA}(S)$.
 
-## 性质
+## Properties
 
-> 本节 **性质** 部分内容翻译自 [wcipeg](http://wcipeg.com/wiki/Lowest_common_ancestor)，并做过修改．
+> Part of the **Properties** section is translated from [wcipeg](http://wcipeg.com/wiki/Lowest_common_ancestor), with modifications.
 
-1.  $\text{LCA}(\{u\})=u$；
-2.  $u$ 是 $v$ 的祖先，当且仅当 $\text{LCA}(u,v)=u$；
-3.  如果 $u$ 不为 $v$ 的祖先并且 $v$ 不为 $u$ 的祖先，那么 $u,v$ 分别处于 $\text{LCA}(u,v)$ 的两棵不同子树中；
-4.  前序遍历中，$\text{LCA}(S)$ 出现在所有 $S$ 中元素之前，后序遍历中 $\text{LCA}(S)$ 则出现在所有 $S$ 中元素之后；
-5.  两点集并的最近公共祖先为两点集分别的最近公共祖先的最近公共祖先，即 $\text{LCA}(A\cup B)=\text{LCA}(\text{LCA}(A), \text{LCA}(B))$；
-6.  两点的最近公共祖先必定处在树上两点间的最短路上；
-7.  $d(u,v)=h(u)+h(v)-2h(\text{LCA}(u,v))$，其中 $d$ 是树上两点间的距离，$h$ 代表某点到树根的距离．
+1.  $\text{LCA}(\{u\})=u$;
+2.  $u$ is an ancestor of $v$ if and only if $\text{LCA}(u,v)=u$;
+3.  If $u$ is not an ancestor of $v$ and $v$ is not an ancestor of $u$, then $u$ and $v$ are in two different subtrees of $\text{LCA}(u,v)$;
+4.  In a preorder traversal, $\text{LCA}(S)$ appears before all elements of $S$; in a postorder traversal, $\text{LCA}(S)$ appears after all elements of $S$;
+5.  The LCA of the union of two node sets is the LCA of the two sets' LCAs, that is, $\text{LCA}(A\cup B)=\text{LCA}(\text{LCA}(A), \text{LCA}(B))$;
+6.  The LCA of two nodes always lies on the shortest path between them in the tree;
+7.  $d(u,v)=h(u)+h(v)-2h(\text{LCA}(u,v))$, where $d$ is the distance between two nodes in the tree, and $h$ is the distance from a node to the root.
 
-## 求法
+## Methods
 
-### 朴素算法
+### Naive algorithm
 
-#### 过程
+#### Process
 
-可以每次找深度比较大的那个点，让它向上跳．显然在树上，这两个点最后一定会相遇，相遇的位置就是想要求的 LCA．
-或者先向上调整深度较大的点，令他们深度相同，然后再共同向上跳转，最后也一定会相遇．
+Each time, take the deeper of the two nodes and move it up. Clearly, in a tree the two nodes will eventually meet, and the meeting point is the LCA we want.
+Alternatively, first move the deeper node up until both nodes have the same depth, then move both up together; they will also eventually meet.
 
-#### 性质
+#### Properties
 
-朴素算法预处理时需要 dfs 整棵树，时间复杂度为 $O(n)$，单次查询时间复杂度为 $\Theta(n)$．如果树满足随机性质，则时间复杂度与这种随机树的期望高度有关．
+The naive algorithm needs a DFS over the whole tree for preprocessing, which takes $O(n)$ time, and each query takes $\Theta(n)$ time. If the tree is random, the time complexity depends on the expected height of such random trees.
 
-### 倍增算法
+### Binary lifting
 
-#### 过程
+#### Process
 
-倍增算法是最经典的 LCA 求法，他是朴素算法的改进算法．通过预处理 $\text{fa}_{x,i}$ 数组，游标可以快速移动，大幅减少了游标跳转次数．$\text{fa}_{x,i}$ 表示点 $x$ 的第 $2^i$ 个祖先．$\text{fa}_{x,i}$ 数组可以通过 dfs 预处理出来．
+Binary lifting is the most classic way to find the LCA, and it improves on the naive algorithm. By precomputing the array $\text{fa}_{x,i}$, the cursor can move quickly, which greatly reduces the number of jumps. $\text{fa}_{x,i}$ is the $2^i$-th ancestor of node $x$. The array $\text{fa}_{x,i}$ can be precomputed with a DFS.
 
-现在我们看看如何优化这些跳转：
-在调整游标的第一阶段中，我们要将 $u,v$ 两点跳转到同一深度．我们可以计算出 $u,v$ 两点的深度之差，设其为 $y$．通过将 $y$ 进行二进制拆分，我们将 $y$ 次游标跳转优化为「$y$ 的二进制表示所含 `1` 的个数」次游标跳转．
-在第二阶段中，我们从最大的 $i$ 开始循环尝试，一直尝试到 $0$（包括 $0$），如果 $\text{fa}_{u,i}\not=\text{fa}_{v,i}$，则 $u\gets\text{fa}_{u,i},v\gets\text{fa}_{v,i}$，那么最后的 LCA 为 $\text{fa}_{u,0}$．
+Now let's see how to speed up these jumps:
+In the first phase of moving the cursors, we need to bring $u$ and $v$ to the same depth. We can compute the depth difference of $u$ and $v$; call it $y$. By splitting $y$ into its binary representation, we turn $y$ single jumps into "the number of `1` bits in the binary representation of $y$" jumps.
+In the second phase, we try each $i$ from the largest down to $0$ (inclusive). If $\text{fa}_{u,i}\not=\text{fa}_{v,i}$, then set $u\gets\text{fa}_{u,i},v\gets\text{fa}_{v,i}$. In the end, the LCA is $\text{fa}_{u,0}$.
 
-#### 性质
+#### Properties
 
-倍增算法的预处理时间复杂度为 $O(n \log n)$，单次查询时间复杂度为 $O(\log n)$．
-另外倍增算法可以通过交换 `fa` 数组的两维使较小维放在前面．这样可以减少 cache miss 次数，提高程序效率．
+Binary lifting takes $O(n \log n)$ time to preprocess, and each query takes $O(\log n)$ time.
+Also, in binary lifting you can swap the two dimensions of the `fa` array so that the smaller dimension comes first. This reduces cache misses and makes the program faster.
 
-??? note "例题"
-    [HDU 2586 How far away?](https://acm.hdu.edu.cn/showproblem.php?pid=2586) 树上最短路查询．
+??? note "Example problem"
+    [HDU 2586 How far away?](https://acm.hdu.edu.cn/showproblem.php?pid=2586) Shortest path queries on a tree.
 
-可先求出 LCA，再结合性质 $7$ 进行解答．也可以直接在求 LCA 时求出结果．
+You can first find the LCA and then use property $7$. You can also compute the result directly while finding the LCA.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/graph/code/lca/lca_1.cpp"
     ```
 
-### Tarjan 算法
+### Tarjan's algorithm
 
-#### 过程
+#### Process
 
-Tarjan 算法是一种 **离线算法**，需要使用 [并查集](../ds/dsu.md) 记录某个结点的祖先结点．做法如下：
+Tarjan's algorithm is an **offline algorithm**. It uses a [disjoint set union (DSU)](../ds/dsu.md) to record the ancestor of a node. It works as follows:
 
-1.  首先接受输入边（邻接链表）、查询边（存储在另一个邻接链表内）．查询边其实是虚拟加上去的边，为了方便，每次输入查询边的时候，将这个边及其反向边都加入到 `queryEdge` 数组里．
-2.  然后对其进行一次 DFS 遍历，同时使用 `visited` 数组进行记录某个结点是否被访问过、`parent` 记录当前结点的父亲结点．
-3.  其中涉及到了 **回溯思想**，我们每次遍历到某个结点的时候，认为这个结点的根结点就是它本身．让以这个结点为根节点的 DFS 全部遍历完毕了以后，再将这个结点的根节点设置为这个结点的父一级结点．
-4.  回溯的时候，如果以该节点为起点，`queryEdge` 查询边的另一个结点也恰好访问过了，则直接更新查询边的 LCA 结果．
-5.  最后输出结果．
+1.  First, read the input edges (an adjacency list) and the query edges (stored in another adjacency list). Query edges are really virtual edges added for convenience: each time a query edge is read, add both the edge and its reverse to the `queryEdge` array.
+2.  Then do one DFS traversal, using the `visited` array to record whether a node has been visited and `parent` to record the parent of the current node.
+3.  This uses the idea of **backtracking**. Each time we reach a node, we consider the root of that node to be itself. After the DFS of the subtree rooted at this node is completely finished, we set the root of this node to its parent.
+4.  When backtracking from a node, if the other endpoint of a `queryEdge` query edge starting at this node has also already been visited, update the LCA result of that query edge directly.
+5.  Finally, output the results.
 
-#### 性质
+#### Properties
 
-Tarjan 算法需要初始化并查集，所以预处理的时间复杂度为 $O(n)$．
+Tarjan's algorithm needs to initialize the DSU, so preprocessing takes $O(n)$ time.
 
-朴素的 Tarjan 算法处理所有 $m$ 次询问的时间复杂度为 $O(m \alpha(m+n, n) + n)$，但是 Tarjan 算法的常数比倍增算法大．存在 $O(m + n)$ 的实现．
+The naive Tarjan algorithm handles all $m$ queries in $O(m \alpha(m+n, n) + n)$ time, but its constant is larger than that of binary lifting. An $O(m + n)$ implementation exists.
 
-???+ warning "注意"
-    并不存在「朴素 Tarjan LCA 算法中使用的并查集性质比较特殊，单次调用 `find()` 函数的时间复杂度为均摊 $O(1)$」这种说法．
+???+ warning "Note"
+    There is no such fact as "the DSU used in the naive Tarjan LCA algorithm is special, so a single call to `find()` takes amortized $O(1)$ time".
     
-    以下的朴素 Tarjan 实现复杂度为 $O(m \alpha(m+n, n) + n)$．如果需要追求严格线性，可以参考 [Gabow 和 Tarjan 于 1983 年的论文](https://dl.acm.org/doi/pdf/10.1145/800061.808753)．其中给出了一种复杂度为 $O(m + n)$ 的做法．
+    The naive Tarjan implementation below runs in $O(m \alpha(m+n, n) + n)$. If you need strictly linear time, see [the 1983 paper by Gabow and Tarjan](https://dl.acm.org/doi/pdf/10.1145/800061.808753), which gives an $O(m + n)$ method.
 
-#### 实现
+#### Implementation
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/graph/code/lca/lca_tarjan.cpp"
     ```
 
-### 用欧拉序列转化为 RMQ 问题
+### Reducing to RMQ with the Euler tour
 
-#### 定义
+#### Definition
 
-对一棵树进行 DFS，无论是第一次访问还是回溯，每次到达一个结点时都将编号记录下来，可以得到一个长度为 $2n-1$ 的序列，这个序列被称作这棵树的欧拉序列．
+Do a DFS on a tree, and each time you arrive at a node, whether it is the first visit or a return from backtracking, record its index. This gives a sequence of length $2n-1$, called the Euler tour (Euler sequence) of the tree.
 
-在下文中，把结点 $u$ 在欧拉序列中第一次出现的位置编号记为 $pos(u)$（也称作节点 $u$ 的欧拉序），把欧拉序列本身记作 $E[1..2n-1]$．
+Below, the position where node $u$ first appears in the Euler tour is written $pos(u)$ (also called the Euler index of node $u$), and the Euler tour itself is written $E[1..2n-1]$.
 
-#### 过程
+#### Process
 
-有了欧拉序列，LCA 问题可以在线性时间内转化为 RMQ 问题，即 $pos(LCA(u, v))=\min\{pos(k)|k\in E[pos(u)..pos(v)]\}$．
+With the Euler tour, the LCA problem can be reduced to an RMQ problem in linear time, namely $pos(LCA(u, v))=\min\{pos(k)|k\in E[pos(u)..pos(v)]\}$.
 
-这个等式不难理解：从 $u$ 走到 $v$ 的过程中一定会经过 $LCA(u,v)$，但不会经过 $LCA(u,v)$ 的祖先．因此，从 $u$ 走到 $v$ 的过程中经过的欧拉序最小的结点就是 $LCA(u, v)$．
+This equation is easy to understand: walking from $u$ to $v$ must pass through $LCA(u,v)$, but never through an ancestor of $LCA(u,v)$. So among the nodes passed on the way from $u$ to $v$, the one with the smallest Euler index is $LCA(u, v)$.
 
-用 DFS 计算欧拉序列的时间复杂度是 $O(n)$，且欧拉序列的长度也是 $O(n)$，所以 LCA 问题可以在 $O(n)$ 的时间内转化成等规模的 RMQ 问题．
+Computing the Euler tour with a DFS takes $O(n)$ time, and the Euler tour has length $O(n)$, so the LCA problem can be reduced to an RMQ problem of the same size in $O(n)$ time.
 
-#### 实现
+#### Implementation
 
-???+ note "参考代码"
+???+ note "Reference code"
     ```cpp
     int dfn[N << 1], pos[N], tot, st[30][(N << 1) + 2],
-        rev[30][(N << 1) + 2];  // rev表示最小深度对应的节点编号
+        rev[30][(N << 1) + 2];  // rev is the node with the minimum depth
     
     void dfs(int cur, int dep) {
       dfn[++tot] = cur;
@@ -123,7 +123,7 @@ Tarjan 算法需要初始化并查集，所以预处理的时间复杂度为 $O(
     
     void init() {
       for (int i = 2; i <= tot + 1; ++i)
-        lg[i] = lg[i >> 1] + 1;  // 预处理 lg 代替库函数 log2 来优化常数
+        lg[i] = lg[i >> 1] + 1;  // precompute lg instead of calling log2, to reduce the constant
       for (int i = 1; i <= tot; i++) st[0][i] = depth[i], rev[0][i] = dfn[i];
       for (int i = 1; i <= lg[tot]; i++)
         for (int j = 1; j + (1 << i) - 1 <= tot; j++)
@@ -141,60 +141,60 @@ Tarjan 算法需要初始化并查集，所以预处理的时间复杂度为 $O(
     }
     ```
 
-当我们需要查询某点对 $(u, v)$ 的 LCA 时，查询区间 $[\min\{pos[u], pos[v]\}, \max\{pos[u], pos[v]\}]$ 上最小值的所代表的节点即可．
+To query the LCA of a pair $(u, v)$, just find the node corresponding to the minimum on the interval $[\min\{pos[u], pos[v]\}, \max\{pos[u], pos[v]\}]$.
 
-若使用 ST 表来解决 RMQ 问题，那么该算法不支持在线修改，预处理的时间复杂度为 $O(n\log n)$，每次查询 LCA 的时间复杂度为 $O(1)$．
+If a sparse table is used for RMQ, this algorithm does not support online modification; preprocessing takes $O(n\log n)$ time, and each LCA query takes $O(1)$ time.
 
-### 利用 DFS 序转化为 RMQ 问题
+### Reducing to RMQ with the DFS order
 
-欧拉序列的长度是 $2n-1$，时空常数略大．实际上，可以直接利用 DFS 时间戳 $\operatorname{dfn}$ 求 LCA．
+The Euler tour has length $2n-1$, so its time and memory constants are a bit large. In fact, we can find the LCA directly with the DFS timestamps $\operatorname{dfn}$.
 
-考虑点对 $(u,v)$ 的 LCA，记 $d=\operatorname{LCA}(u,v)$．若 $u=v$，则 $d=u$，需要特判．否则不妨设 $\operatorname{dfn}(u) < \operatorname{dfn}(v)$，此时，$v$ 一定不是 $u$ 的祖先结点．和欧拉序列不同，在 DFS 序中，区间 $(\operatorname{dfn}(u), \operatorname{dfn}(v)]$ 内不会出现 $d$．但是，它一定包含位于自 $d$ 到 $v$ 的路径上 $d$ 的那个子结点．无论 $u$ 是不是 $v$ 的祖先结点，这一点总是成立的．所以，只要找到区间 $[\operatorname{dfn}(u) + 1, \operatorname{dfn}(v)]$ 中深度最小的那个结点（未必唯一），它的父结点一定是 LCA．其中，区间开始是 $\operatorname{dfn}(u) + 1$ 的原因是：若 $u$ 是 $v$ 的祖先，区间包含 $u$ 时深度最小的结点将是 $u$ 本身，而它的父结点并非 LCA．
+Consider the LCA of a pair $(u,v)$, and let $d=\operatorname{LCA}(u,v)$. If $u=v$, then $d=u$, which needs special handling. Otherwise, assume without loss of generality that $\operatorname{dfn}(u) < \operatorname{dfn}(v)$; then $v$ is not an ancestor of $u$. Unlike in the Euler tour, $d$ does not appear in the interval $(\operatorname{dfn}(u), \operatorname{dfn}(v)]$ of the DFS order. But the interval always contains the child of $d$ that lies on the path from $d$ to $v$. This holds whether or not $u$ is an ancestor of $v$. So we just need to find the node with the smallest depth in the interval $[\operatorname{dfn}(u) + 1, \operatorname{dfn}(v)]$ (it may not be unique), and its parent must be the LCA. The interval starts at $\operatorname{dfn}(u) + 1$ because if $u$ is an ancestor of $v$ and the interval included $u$, the node with the smallest depth would be $u$ itself, whose parent is not the LCA.
 
-由此，求 LCA 就又变成了一个 RMQ 问题．
+So finding the LCA becomes an RMQ problem again.
 
-如果不想存储额外的深度和父结点信息，可以直接在 DFS 序中 $\operatorname{dfn}(u)$ 位置处存储 $\operatorname{fa}(u)$．然后，在这个序列上，利用时间戳比较两个值．那么，区间 $[\operatorname{dfn}(u) + 1, \operatorname{dfn}(v)]$ 中该序列时间戳最小的就是 $\operatorname{LCA}(u,v)$．这是因为，区间 $[\operatorname{dfn}(u) + 1, \operatorname{dfn}(v)]$ 中结点一定是 $d$ 的真子孙结点，这些结点父结点的 DFS 时间戳不会小于 $\operatorname{dfn}(d)$；而在区间内 $d$ 的子结点处恰取得最小值 $\operatorname{dfn}(d)$，按照前文讨论，这样的子结点一定存在．
+If you don't want to store extra depth and parent information, you can store $\operatorname{fa}(u)$ directly at position $\operatorname{dfn}(u)$ of the DFS order, and compare values in this sequence by their timestamps. Then the element with the smallest timestamp in the interval $[\operatorname{dfn}(u) + 1, \operatorname{dfn}(v)]$ of this sequence is $\operatorname{LCA}(u,v)$. This is because the nodes in the interval $[\operatorname{dfn}(u) + 1, \operatorname{dfn}(v)]$ are all proper descendants of $d$, so the DFS timestamps of their parents are never smaller than $\operatorname{dfn}(d)$; and the minimum $\operatorname{dfn}(d)$ is reached exactly at the child of $d$ in the interval, which must exist by the discussion above.
 
-利用 DFS 序将 LCA 转化为 RMQ 问题的过程是 $O(n)$ 的，总复杂度取决于所用的 RMQ 方法．利用 ST 表 $O(n\log n)$ 预处理、$O(1)$ 查询的参考实现如下：
+Reducing LCA to RMQ with the DFS order takes $O(n)$ time, and the total complexity depends on the RMQ method used. Here is a reference implementation using a sparse table with $O(n\log n)$ preprocessing and $O(1)$ queries:
 
-??? example "参考实现"
+??? example "Reference implementation"
     ```cpp
     --8<-- "docs/graph/code/lca/lca-dfs.cpp:lca"
     ```
 
-### 树链剖分
+### Heavy-light decomposition
 
-LCA 为两个游标跳转到同一条重链上时深度较小的那个游标所指向的点．
+The LCA is the node pointed to by the shallower of the two cursors once both have jumped onto the same heavy path.
 
-树链剖分的预处理时间复杂度为 $O(n)$，单次查询的时间复杂度为 $O(\log n)$，并且常数较小．
+Heavy-light decomposition takes $O(n)$ time to preprocess, and each query takes $O(\log n)$ time with a small constant.
 
 ### Link Cut Tree
 
-在 [Link Cut Tree](../ds/lct.md) 中，设连续两次 [access](../ds/lct.md#access) 操作的点分别为 `u` 和 `v`，则第二次 [access](../ds/lct.md#access) 操作返回的点即为 `u` 和 `v` 的 LCA.
+In a [Link Cut Tree](../ds/lct.md), if two consecutive [access](../ds/lct.md#access) operations are done on nodes `u` and `v`, then the node returned by the second [access](../ds/lct.md#access) is the LCA of `u` and `v`.
 
-在无 link 和 cut 等操作的情况下，使用 Link Cut Tree 单次查询的时间复杂度为 $O(\log n)$．
+Without link, cut or similar operations, each query with a Link Cut Tree takes $O(\log n)$ time.
 
-### 标准 RMQ
+### Standard RMQ
 
-前面讲到了借助欧拉序将 LCA 问题转化为 RMQ 问题，其瓶颈在于 RMQ．如果能做到 $O(n) \sim O(1)$ 求解 RMQ，那么也就能做到 $O(n) \sim O(1)$ 求解 LCA．
+As discussed above, the Euler tour turns the LCA problem into an RMQ problem, so the bottleneck is RMQ. If RMQ can be solved in $O(n) \sim O(1)$, then LCA can also be solved in $O(n) \sim O(1)$.
 
-注意到欧拉序满足相邻两数之差为 1 或者 -1，所以可以使用 $O(n) \sim O(1)$ 的 [加减 1RMQ](../topic/rmq.md#加减-1rmq) 来做．
+Notice that adjacent values in the Euler tour differ by exactly 1 or -1, so we can use the $O(n) \sim O(1)$ [±1 RMQ](../topic/rmq.md#加减-1rmq).
 
-时间复杂度 $O(n) \sim O(1)$，空间复杂度 $O(n)$，支持在线查询，常数较大．
+The time complexity is $O(n) \sim O(1)$ and the space complexity is $O(n)$. It supports online queries, but the constant is large.
 
-#### 例题 [Luogu P3379【模板】最近公共祖先（LCA）](https://www.luogu.com.cn/problem/P3379)
+#### Example problem [Luogu P3379 [Template] Lowest Common Ancestor (LCA)](https://www.luogu.com.cn/problem/P3379)
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/graph/code/lca/lca_2.cpp"
     ```
 
-## 习题
+## Exercises
 
--   [祖孙询问](https://loj.ac/problem/10135)
--   [货车运输](https://loj.ac/problem/2610)
--   [点的距离](https://loj.ac/problem/10130)
+-   [Ancestor and Descendant Queries](https://loj.ac/problem/10135)
+-   [Truck Transport](https://loj.ac/problem/2610)
+-   [Distance Between Nodes](https://loj.ac/problem/10130)
 
-## 参考资料
+## References
 
--   [冷门科技——DFS 序求 LCA by Alex\_Wei - 洛谷](https://www.luogu.com.cn/article/pu52m9ue)
+-   [An obscure trick: finding the LCA with the DFS order, by Alex\_Wei - Luogu (Chinese)](https://www.luogu.com.cn/article/pu52m9ue)

@@ -1,47 +1,47 @@
 author: GoodCoder666, Ir1d, Marcythm, ouuan, hsfzLZH1, Xeonacid, greyqz, Chrogeek, ftxj, sshwy, LuoshuiTianyi, hyp1231, sun2snow, Desmos666-xh
 
-## 引入
+## Introduction
 
-树链剖分用于将树分割成若干条链的形式，以维护树上路径的信息．
+Tree chain decomposition splits a tree into a number of chains, so that information on paths in the tree can be maintained.
 
-具体来说，将整棵树剖分为若干条链，使它组合成线性结构，然后用其他的数据结构维护信息．
+More precisely, we split the whole tree into chains, arrange them into a linear structure, and then maintain the information with some other data structure.
 
-**树链剖分**（树剖/链剖）有多种形式，如 **重链剖分**，**长链剖分** 和用于 Link/cut Tree 的剖分（有时被称作「实链剖分」）．大多数情况下（没有特别说明时），「树链剖分」都指「重链剖分」．
+**Tree chain decomposition** comes in several forms, such as **heavy-light decomposition**, **long-path decomposition**, and the decomposition used in the Link/cut Tree (sometimes called "preferred-path decomposition"). In most cases (unless stated otherwise), "tree chain decomposition" means heavy-light decomposition.
 
-重链剖分可以将树上的任意一条路径划分成不超过 $O(\log n)$ 条连续的链，每条链上的点深度互不相同（即是自底向上的一条链，链上所有点的 LCA 为链的一个端点）．
+Heavy-light decomposition splits any path in the tree into at most $O(\log n)$ contiguous chains. On each chain, all nodes have different depths (that is, each chain goes from bottom to top, and the LCA of all nodes on the chain is one endpoint of the chain).
 
-重链剖分还能保证划分出的每条链上的结点 DFS 序连续，因此可以方便地用一些维护序列的数据结构（如线段树）来维护树上路径的信息．例如：
+Heavy-light decomposition also guarantees that the DFS order of the nodes on each chain is contiguous. So we can easily use data structures that maintain sequences (such as a segment tree) to maintain information on tree paths. For example:
 
-1.  修改 **树上两点之间的路径上** 所有点的值．
-2.  查询 **树上两点之间的路径上** 结点权值的 **和/极值/其它（在序列上可以用数据结构维护，便于合并的信息）**．
+1.  Modify the values of all nodes **on the path between two nodes of the tree**.
+2.  Query the **sum / maximum or minimum / other information (anything that can be maintained by a data structure on a sequence and is easy to merge)** of the node weights **on the path between two nodes of the tree**.
 
-除了配合数据结构来维护树上路径信息，树剖还可以用来 $O(\log n)$（且常数较小）地求 LCA．在某些题目中，还可以利用其性质来灵活地运用树剖．
+Besides maintaining path information together with a data structure, HLD can also find the LCA in $O(\log n)$ time (with a small constant). In some problems, its properties can also be used in more flexible ways.
 
-## 重链剖分
+## Heavy-light decomposition
 
-我们给出一些定义：
+Here are some definitions:
 
-定义 **重子结点** 表示其子结点中子树最大的子结点．如果有多个子树最大的子结点，取其一．如果没有子结点，就无重子结点．
+The **heavy child** of a node is its child with the largest subtree. If several children have the largest subtree, pick any one of them. If a node has no children, it has no heavy child.
 
-定义 **轻子结点** 表示剩余的所有子结点．
+The **light children** are all the remaining children.
 
-从这个结点到重子结点的边为 **重边**．
+The edge from a node to its heavy child is a **heavy edge**.
 
-到其他轻子结点的边为 **轻边**．
+The edges to its other, light children are **light edges**.
 
-若干条首尾衔接的重边构成 **重链**．
+A sequence of heavy edges joined end to end forms a **heavy path** (heavy chain).
 
-把落单的结点也当作重链，那么整棵树就被剖分成若干条重链．
+If we also treat each leftover single node as a heavy path, then the whole tree is split into a number of heavy paths.
 
-如图：
+As shown in the figure:
 
 ![HLD](./images/hld.png)
 
-## 实现
+## Implementation
 
-树剖的实现分两个 DFS 的过程．伪代码如下：
+HLD is implemented with two DFS passes. The pseudocode is as follows:
 
-第一个 DFS 记录每个结点的父结点（$\textit{father}$）、深度（$\textit{depth}$）、子树大小（$\textit{size}$）、重子结点（$\textit{hson}$）．
+The first DFS records each node's parent ($\textit{father}$), depth ($\textit{depth}$), subtree size ($\textit{size}$) and heavy child ($\textit{hson}$).
 
 $$
 \begin{array}{l}
@@ -61,7 +61,7 @@ $$
 \end{array}
 $$
 
-第二个 DFS 记录所在链的链顶（$\textit{top}$，应初始化为结点本身）、重边优先遍历时的 DFS 序（$\textit{dfn}$）、DFS 序对应的结点编号（$\textit{rank}$）．
+The second DFS records the top of the chain the node lies on ($\textit{top}$, which should be initialized to the node itself), the DFS order when heavy edges are visited first ($\textit{dfn}$), and the node corresponding to each DFS order ($\textit{rank}$).
 
 $$
 \begin{array}{l}
@@ -80,19 +80,19 @@ $$
 \end{array}
 $$
 
-以下为代码实现．
+Below is the code implementation.
 
-我们先给出一些定义：
+First we give some definitions:
 
--   $\operatorname{fa}(x)$ 表示结点 $x$ 在树上的父亲．
--   $\operatorname{dep}(x)$ 表示结点 $x$ 在树上的深度．
--   $\operatorname{siz}(x)$ 表示结点 $x$ 的子树的结点个数．
--   $\operatorname{son}(x)$ 表示结点 $x$ 的 **重儿子**．
--   $\operatorname{top}(x)$ 表示结点 $x$ 所在 **重链** 的顶部结点（深度最小）．
--   $\operatorname{dfn}(x)$ 表示结点 $x$ 的 **DFS 序**，也是其在线段树中的编号．
--   $\operatorname{rnk}(x)$ 表示 DFS 序所对应的结点编号，有 $\operatorname{rnk}(\operatorname{dfn}(x))=x$．
+-   $\operatorname{fa}(x)$ is the parent of node $x$ in the tree.
+-   $\operatorname{dep}(x)$ is the depth of node $x$ in the tree.
+-   $\operatorname{siz}(x)$ is the number of nodes in the subtree of $x$.
+-   $\operatorname{son}(x)$ is the **heavy child** of node $x$.
+-   $\operatorname{top}(x)$ is the top node (the one with smallest depth) of the **heavy path** containing $x$.
+-   $\operatorname{dfn}(x)$ is the **DFS order** of node $x$, which is also its index in the segment tree.
+-   $\operatorname{rnk}(x)$ is the node corresponding to a DFS order, so $\operatorname{rnk}(\operatorname{dfn}(x))=x$.
 
-我们进行两遍 DFS 预处理出这些值，其中第一次 DFS 求出 $\operatorname{fa}(x)$，$\operatorname{dep}(x)$，$\operatorname{siz}(x)$，$\operatorname{son}(x)$，第二次 DFS 求出 $\operatorname{top}(x)$，$\operatorname{dfn}(x)$，$\operatorname{rnk}(x)$．
+We compute these values with two DFS passes. The first DFS computes $\operatorname{fa}(x)$, $\operatorname{dep}(x)$, $\operatorname{siz}(x)$, $\operatorname{son}(x)$, and the second DFS computes $\operatorname{top}(x)$, $\operatorname{dfn}(x)$, $\operatorname{rnk}(x)$.
 
 ```cpp
 void dfs1(int u, int f) {
@@ -113,38 +113,38 @@ void dfs2(int u, int ftop) {
 }
 ```
 
-## 重链剖分的性质
+## Properties of heavy-light decomposition
 
-**树上每个结点都属于且仅属于一条重链**．
+**Every node of the tree belongs to exactly one heavy path**.
 
-重链开头的结点一定不是重子结点（因为重链开头的结点要么是根，要么是其父亲结点的轻子结点）．
+The first node of a heavy path is never a heavy child (because the first node of a heavy path is either the root or a light child of its parent).
 
-所有的重链将整棵树 **完全剖分**．
+The heavy paths **completely partition** the whole tree.
 
-在剖分时 **重边优先遍历**，最后树的 DFS 序上，重链内的 DFS 序是连续的．按 DFN 排序后的序列即为剖分后的链．
+During the decomposition, **heavy edges are visited first**, so in the final DFS order of the tree, the DFS order within each heavy path is contiguous. Sorting the nodes by DFN gives the decomposed chains.
 
-一棵子树内的 DFS 序是连续的．
+The DFS order within a subtree is contiguous.
 
-可以发现，当我们向下经过一条 **轻边** 时，所在子树的大小至少会除以二．
+Notice that whenever we go down along a **light edge**, the size of the current subtree is at least halved.
 
-因此，对于树上的任意一条路径，把它拆分成从 [LCA](./lca.md) 分别向两边往下走，分别最多走 $O(\log n)$ 次，因此，树上的每条路径都可以被拆分成不超过 $O(\log n)$ 条重链．
+So for any path in the tree, split it into two parts going down from the [LCA](./lca.md) on each side. Each part goes through at most $O(\log n)$ light edges, so every path in the tree can be split into at most $O(\log n)$ heavy paths.
 
-??? info "怎么有理有据地卡树剖"
-    一般情况下树剖的 $O(\log n)$ 常数不满很难卡，如果要卡只能建立二叉树深度低．
+??? info "How to build tests that actually slow down HLD"
+    In general, the $O(\log n)$ bound of HLD is rarely tight, so it is hard to make it slow. To make it slow, you would need a binary tree, but then the depth is small.
     
-    于是我们可以考虑折中方案．
+    So we can consider a compromise.
     
-    我们建立一棵 $\sqrt{n}$ 个结点的二叉树．对于每个结点到其儿子的边，我们将其替换成一条长度为 $\sqrt{n}$ 的链．
+    Build a binary tree with $\sqrt{n}$ nodes. Replace each edge from a node to its child with a chain of length $\sqrt{n}$.
     
-    这样子我们可以将随机询问轻重链切换次数卡到平均 $\frac{\log n}{2}$ 次，同时有 $O(\sqrt{n} \log n)$ 的深度．
+    This way, a random query switches between light and heavy paths $\frac{\log n}{2}$ times on average, while the depth is $O(\sqrt{n} \log n)$.
     
-    加上若干随机叶子看上去可以卡树剖．但是树剖常数小有可能卡不掉．
+    Adding some random leaves seems to make HLD slow. But because HLD has a small constant, it may still not be slow enough.
 
-## 常见应用
+## Common applications
 
-### 路径上维护
+### Maintaining paths
 
-用树链剖分求树上两点路径权值和，伪代码如下：
+Here is the pseudocode for using HLD to compute the sum of weights on the path between two nodes:
 
 $$
 \begin{array}{l}
@@ -162,29 +162,29 @@ $$
 \end{array}
 $$
 
-链上的 DFS 序是连续的，可以使用线段树、树状数组维护．
+The DFS order on a chain is contiguous, so it can be maintained with a segment tree or a Fenwick tree.
 
-每次选择深度较大的链往上跳，直到两点在同一条链上．
+Each time, jump up from the chain whose top is deeper, until the two nodes are on the same chain.
 
-同样的跳链结构适用于维护、统计路径上的其他信息．
+The same chain-jumping structure works for maintaining and computing other information on paths.
 
-### 子树维护
+### Maintaining subtrees
 
-有时会要求，维护子树上的信息，譬如将以 $x$ 为根的子树的所有结点的权值增加 $v$．
+Sometimes we need to maintain information on subtrees, for example adding $v$ to the weights of all nodes in the subtree rooted at $x$.
 
-在 DFS 搜索的时候，子树中的结点的 DFS 序是连续的．
+During the DFS, the DFS orders of the nodes in a subtree are contiguous.
 
-每一个结点记录 bottom 表示所在子树连续区间末端的结点．
+Each node records bottom, the node at the end of the contiguous interval of its subtree.
 
-这样就把子树信息转化为连续的一段区间信息．
+This turns subtree information into information on one contiguous interval.
 
-### 求最近公共祖先
+### Finding the lowest common ancestor
 
-不断向上跳重链，当跳到同一条重链上时，深度较小的结点即为 LCA．
+Keep jumping up along heavy paths. Once both nodes are on the same heavy path, the one with smaller depth is the LCA.
 
-向上跳重链时需要先跳所在重链顶端深度较大的那个．
+When jumping up, first move the node whose heavy path top is deeper.
 
-参考代码：
+Reference code:
 
 ```cpp
 int lca(int u, int v) {
@@ -198,126 +198,126 @@ int lca(int u, int v) {
 }
 ```
 
-### 换根操作
+### Changing the root
 
-考虑一类新的问题：除了树链剖分支持的基本操作外，加上了换根操作．
+Consider a new type of problem: besides the basic operations HLD supports, there is also a root-change operation.
 
-由于树链剖分维护的信息是静态的，不支持动态修改．同时，不可能每次换根后重新预处理信息，复杂度过高．那么，需要充分利用之前得到的信息来帮助解决换根操作．
+The information HLD maintains is static and does not support dynamic changes. Also, re-preprocessing everything after each root change is too slow. So we need to make full use of the information we already have to handle root changes.
 
-对于路径修改和查询操作，由于树上两点之间的简单路径唯一，所以不会发生变化，与正常的处理方式相同．
+For path modifications and queries, the simple path between two nodes in a tree is unique, so nothing changes, and we handle them as usual.
 
-对于子树修改和查询操作，一般的思路就是将换根后的子树映射到原来的子树．这需要分类讨论操作子树的根结点、换根后的整个树的根结点，以及原来树的根结点的相对位置关系．具体细节详见 [后文例题「LOJ 139. 树链剖分」](#例题)．
+For subtree modifications and queries, the usual idea is to map the subtree after the root change back to subtrees of the original tree. This needs case analysis on the relative positions of the root of the subtree being operated on, the root of the whole tree after the change, and the root of the original tree. For details, see the [example problem "LOJ 139. Tree Chain Decomposition" below](#example-problems).
 
-## 例题
+## Example problems
 
-本文通过例题展示如何应用重链剖分．首先是一道模板题．
+This section uses example problems to show how to apply heavy-light decomposition. First, a template problem.
 
-???+ example "[「ZJOI2008」树的统计](https://loj.ac/problem/10138)"
-    对一棵有 $n$ 个结点，结点带权值的静态树，进行三种操作共 $q$ 次：
+???+ example "['ZJOI2008' Tree Statistics](https://loj.ac/problem/10138)"
+    Given a static tree with $n$ weighted nodes, perform $q$ operations of three kinds:
     
-    1.  修改单个结点的权值；
-    2.  查询 $u$ 到 $v$ 的路径上的最大权值；
-    3.  查询 $u$ 到 $v$ 的路径上的权值之和．
+    1.  Change the weight of a single node;
+    2.  Query the maximum weight on the path from $u$ to $v$;
+    3.  Query the sum of weights on the path from $u$ to $v$.
     
-    保证 $1\le n\le 30000$，$0\le q\le 200000$．
+    It is guaranteed that $1\le n\le 30000$ and $0\le q\le 200000$.
 
-??? note "解答"
-    根据题面以及前文所述性质，线段树需要维护三种操作：
+??? note "Solution"
+    From the statement and the properties above, the segment tree needs to support three operations:
     
-    1.  单点修改；
-    2.  区间查询最大值；
-    3.  区间查询和．
+    1.  Point update;
+    2.  Range maximum query;
+    3.  Range sum query.
     
-    单点修改很容易实现．
+    Point update is easy to implement.
     
-    由于子树的 DFS 序连续（无论是否树剖都是如此），修改一个结点的子树只用修改这一段连续的 DFS 序区间．
+    Since the DFS order of a subtree is contiguous (this is true with or without HLD), modifying the subtree of a node only requires modifying one contiguous interval of DFS orders.
     
-    问题是如何修改/查询两个结点之间的路径．
+    The question is how to modify/query the path between two nodes.
     
-    考虑我们是如何用 **倍增法求解 LCA** 的．首先我们 **将两个结点提到同一高度，然后将两个结点一起向上跳**．对于树链剖分也可以使用这样的思想．
+    Recall how we **find the LCA with binary lifting**. First we **lift the two nodes to the same depth, then jump both nodes up together**. The same idea works for HLD.
     
-    在向上跳的过程中，如果当前结点在重链上，向上跳到重链顶端，如果当前结点不在重链上，向上跳一个结点．如此直到两结点相同．沿途更新/查询区间信息．
+    While jumping up, if the current node is on a heavy path, jump to the top of that heavy path; if it is not on a heavy path, jump up one node. Repeat until the two nodes are the same. Update/query interval information along the way.
     
-    对于每个询问，最多经过 $O(\log n)$ 条重链，每条重链上线段树的复杂度为 $O(\log n)$，因此总时间复杂度为 $O(n\log n+q\log^2 n)$．实际上重链个数很难达到 $O(\log n)$（可以用完全二叉树卡满），所以树剖在一般情况下常数较小．
+    Each query passes through at most $O(\log n)$ heavy paths, and the segment tree costs $O(\log n)$ on each one, so the total time complexity is $O(n\log n+q\log^2 n)$. In practice, the number of heavy paths rarely reaches $O(\log n)$ (a complete binary tree can make it tight), so HLD usually has a small constant.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/graph/code/hld/hld_1.cpp"
     ```
 
-然后是一道带换根操作的重链剖分模板题．
+Next is a heavy-light decomposition template problem with root changes.
 
-???+ example "[LOJ 139. 树链剖分](https://loj.ac/p/139)"
-    给定一棵 $n$ 个结点的树（初始根结点为 $1$），要求支持如下的 $m$ 次操作：
+???+ example "[LOJ 139. Tree Chain Decomposition](https://loj.ac/p/139)"
+    Given a tree with $n$ nodes (the initial root is $1$), support the following $m$ operations:
     
-    -   换根，将结点 $u$ 设为新的树根．
-    -   修改路径上结点权值，将结点 $u$ 和结点 $v$ 之间路径上的所有结点（包括这两个结点）的权值增加 $w$．
-    -   修改子树上结点权值，将以结点 $u$ 为根的子树上的所有结点的权值增加 $w$．
-    -   询问路径，询问结点 $u$ 和结点 $v$ 之间路径上的所有结点（包括这两个结点）的权值和．
-    -   询问子树，询问以结点 $u$ 为根的子树上的所有结点的权值和．
+    -   Change root: make node $u$ the new root.
+    -   Modify path: add $w$ to the weights of all nodes on the path between $u$ and $v$ (including both nodes).
+    -   Modify subtree: add $w$ to the weights of all nodes in the subtree rooted at $u$.
+    -   Query path: find the sum of weights of all nodes on the path between $u$ and $v$ (including both nodes).
+    -   Query subtree: find the sum of weights of all nodes in the subtree rooted at $u$.
     
-    $1 \le n,m \le 10^5$．
+    $1 \le n,m \le 10^5$.
 
-??? note "解法"
-    先以 $1$ 作为根结点跑 DFS，预处理出树链剖分所必需的信息．为方便表述，称以 $1$ 为根结点的树为「原始树」，而称经历了若干次换根操作之后的树为「当前树」．在操作过程中，需要维护 $\textit{root}$ 为当前树的根结点．由于线段树中存储的是原始树的 DFS 序的信息，所以每次查询和修改时，都需要将当前树的查询和修改操作转换到原始树上．
+??? note "Solution"
+    First run a DFS with $1$ as the root to precompute the information HLD needs. For convenience, call the tree rooted at $1$ the "original tree", and the tree after some root changes the "current tree". During the operations, we maintain $\textit{root}$, the root of the current tree. Since the segment tree stores information in the DFS order of the original tree, every query and modification on the current tree must be converted to the original tree.
     
-    对于换根操作，我们直接令 $\textit{root}\gets u$．对于路径操作，由于换根不影响路径，所以直接在原始树上做对应操作即可．
+    For a root change, we just set $\textit{root}\gets u$. For path operations, changing the root does not affect paths, so we just perform the operation on the original tree.
     
-    重点考虑操作子树的问题．我们根据 $u$ 和 $\textit{root}$ 的相对位置关系做分类讨论：
+    The main issue is subtree operations. We split into cases by the relative position of $u$ and $\textit{root}$:
     
-    -   $u = \textit{root}$：这是最特殊的情况，相当于对整棵树做操作．为此，直接对线段树的根结点打上标记或查询答案即可．
-    -   $u$ 是 $\textit{root}$ 在原始树上的祖先，即 $u$ 位于 $1$ 到 $\textit{root}$ 的简单路径上．
+    -   $u = \textit{root}$: this is the most special case, and it means operating on the whole tree. So we just put a tag on, or read the answer from, the root of the segment tree.
+    -   $u$ is an ancestor of $\textit{root}$ in the original tree, that is, $u$ lies on the simple path from $1$ to $\textit{root}$.
     
-        这是最值得注意的情况．定义 $v$ 为原始树上 $u$ 到 $\textit{root}$ 的简单路径上除 $u$ 以外的深度最小的点，可以发现原始树上 $v$ 及其子树以外的部分恰好是当前树上 $u$ 及其子树．
+        This is the case that needs the most care. Let $v$ be the vertex with the smallest depth, other than $u$, on the simple path from $u$ to $\textit{root}$ in the original tree. Notice that the part of the original tree outside $v$ and its subtree is exactly $u$ and its subtree in the current tree.
     
-        考虑如何高效找到 $v$．我们先令 $v\gets\textit{root}$，然后沿着重链往上跳直到 $\operatorname{dep}(\operatorname{top}(v))\le\operatorname{dep}(u)+1$．
+        How do we find $v$ efficiently? First set $v\gets\textit{root}$, then jump up along heavy paths until $\operatorname{dep}(\operatorname{top}(v))\le\operatorname{dep}(u)+1$.
     
-        -   若 $\operatorname{dep}(\operatorname{top}(v))=\operatorname{dep}(u)+1$，令 $v\gets\operatorname{top}(v)$．此时，$v$ 是 $u$ 的一个轻儿子．
-        -   若 $\operatorname{dep}(\operatorname{top}(v))<\operatorname{dep}(u)+1$，亦即 $\operatorname{dep}(\operatorname{top}(v))\le \operatorname{dep}(u)$，这说明 $u,v$ 处在同一条重链上．根据同一条重链上 DFS 序连续的性质，所求的 $v$ 必然满足 $\operatorname{dfn}(v)=\operatorname{dfn}(u)+1$．所以，可以令 $v\gets\operatorname{rnk}(\operatorname{dfn}(u)+1)$．
+        -   If $\operatorname{dep}(\operatorname{top}(v))=\operatorname{dep}(u)+1$, set $v\gets\operatorname{top}(v)$. Then $v$ is a light child of $u$.
+        -   If $\operatorname{dep}(\operatorname{top}(v))<\operatorname{dep}(u)+1$, that is, $\operatorname{dep}(\operatorname{top}(v))\le \operatorname{dep}(u)$, then $u,v$ are on the same heavy path. Since the DFS order is contiguous on one heavy path, the $v$ we want must satisfy $\operatorname{dfn}(v)=\operatorname{dfn}(u)+1$. So we can set $v\gets\operatorname{rnk}(\operatorname{dfn}(u)+1)$.
     
-        注意，这两种情形中可以合并：在跳完之后可以直接令
+        Note that the two cases can be merged: after jumping, we can directly set
     
         $$
         v\gets\operatorname{rnk}(\operatorname{dfn}(\operatorname{top}(v))+\operatorname{dep}(u)+1-\operatorname{dep}(\operatorname{top}(v))).
         $$
     
-        容易验证，利用这一表达式找到的 $v$，和分类讨论找到的 $v$ 是等价的．参考实现中就用到了这一表达式．
+        It is easy to check that the $v$ found by this expression is the same as the one found by the case analysis. The reference implementation uses this expression.
     
-        由于 $v$ 子树覆盖的区间为 $[\operatorname{dfn}(v),\operatorname{dfn}(v)+\operatorname{siz}(v))$，所以只需要对 $[1,\operatorname{dfn}(v))\cup[\operatorname{dfn}(v)+\operatorname{siz}(v),n]$ 操作即可．
-    -   其它情况．可以发现换根操作不会影响 $u$ 的子树，用正常的方式维护即可．
+        Since the subtree of $v$ covers the interval $[\operatorname{dfn}(v),\operatorname{dfn}(v)+\operatorname{siz}(v))$, we only need to operate on $[1,\operatorname{dfn}(v))\cup[\operatorname{dfn}(v)+\operatorname{siz}(v),n]$.
+    -   Other cases. Notice that the root change does not affect the subtree of $u$, so we handle it in the normal way.
     
-    这样做的复杂度与不带换根的做法相同，均为 $O(n\log^2 n)$．
+    The complexity of this approach is the same as without root changes: $O(n\log^2 n)$.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/graph/code/hld/hld_4.cpp"
     ```
 
-最后是一道交互题，也是树剖的非传统应用．
+Finally, an interactive problem, which is also a non-traditional application of HLD.
 
 ???+ example "[Nauuo and Binary Tree](https://loj.ac/problem/6669)"
-    有一棵以 $1$ 为根的二叉树，你可以询问任意两点之间的距离，求出每个点的父亲．
+    There is a binary tree rooted at $1$. You can ask for the distance between any two nodes. Find the parent of every node.
     
-    结点数不超过 $3000$，你最多可以进行 $30000$ 次询问．
+    There are at most $3000$ nodes, and you can make at most $30000$ queries.
 
-??? note "解法"
-    首先可以通过 $n-1$ 次询问确定每个结点的深度．
+??? note "Solution"
+    First, we can find the depth of every node with $n-1$ queries.
     
-    然后考虑按深度从小到大确定每个结点的父亲，这样的话确定一个结点的父亲时其所有祖先一定都是已知的．
+    Then we determine the parents of the nodes in increasing order of depth. This way, when we determine a node's parent, all of its ancestors are already known.
     
-    确定一个结点的父亲之前，先对树已知的部分进行重链剖分．
+    Before determining a node's parent, run heavy-light decomposition on the known part of the tree.
     
-    假设我们需要在子树 $u$ 中找结点 $k$ 所在的位置，我们可以询问 $k$ 与 $u$ 所在重链的尾端的距离，就可以进一步确定 $k$ 的位置，具体见图：
+    Suppose we need to locate node $k$ within the subtree of $u$. We can ask for the distance between $k$ and the bottom end of the heavy path containing $u$, which narrows down the position of $k$. See the figure:
     
     ![](./images/hld2.png)
     
-    其中红色虚线是一条重链，$d$ 是询问的结果即 $\textit{dis}(k, \textit{bot}(u))$，$v$ 的深度为 $(\textit{dep}(k)+\textit{dep}(\textit{bot}(u))-d)/2$．
+    The red dashed line is a heavy path, $d$ is the query result, that is, $\textit{dis}(k, \textit{bot}(u))$, and the depth of $v$ is $(\textit{dep}(k)+\textit{dep}(\textit{bot}(u))-d)/2$.
     
-    这样的话，如果 $v$ 只有一个儿子，$k$ 的父亲就是 $v$，否则可以递归地在 $w$ 的子树中找 $k$ 的父亲．
+    So if $v$ has only one child, the parent of $k$ is $v$; otherwise we recursively look for the parent of $k$ in the subtree of $w$.
     
-    时间复杂度 $O(n^2)$，询问复杂度 $O(n\log n)$．
+    The time complexity is $O(n^2)$, and the number of queries is $O(n\log n)$.
     
-    具体地，设 $T(n)$ 为最坏情况下在一棵大小为 $n$ 的树中找到一个新结点的位置所需的询问次数，可以得到：
+    More precisely, let $T(n)$ be the number of queries needed in the worst case to locate a new node in a tree of size $n$. Then:
     
     $$
     T(n)\le
@@ -327,131 +327,131 @@ int lca(int u, int v) {
     \end{cases}
     $$
     
-    $2999+\sum_{i=1}^{2999}T(i)\le 29940$，事实上这个上界是可以通过构造数据达到的，然而只要进行一些随机扰动（如对深度进行排序时使用不稳定的排序算法），询问次数很难超过 $21000$ 次．
+    $2999+\sum_{i=1}^{2999}T(i)\le 29940$. In fact, this upper bound can be reached by carefully constructed data, but with a little random perturbation (for example, using an unstable sorting algorithm when sorting by depth), the number of queries rarely exceeds $21000$.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/graph/code/hld/hld_2.cpp"
     ```
 
-## 长链剖分
+## Long-path decomposition
 
-长链剖分本质上就是另外一种链剖分方式．
+Long-path decomposition is essentially just another way of decomposing a tree into chains.
 
-定义 **重子结点** 表示其子结点中子树深度最大的子结点．如果有多个子树深度最大的子结点，取其一．如果没有子结点，就无重子结点．
+The **heavy child** of a node is now its child whose subtree has the greatest depth. If several children have the greatest subtree depth, pick any one of them. If a node has no children, it has no heavy child.
 
-定义 **轻子结点** 表示剩余的子结点．
+The **light children** are the remaining children.
 
-从这个结点到重子结点的边为 **重边**．
+The edge from a node to its heavy child is a **heavy edge**.
 
-到其他轻子结点的边为 **轻边**．
+The edges to its other, light children are **light edges**.
 
-若干条首尾衔接的重边构成 **重链**．
+A sequence of heavy edges joined end to end forms a **heavy path** (here also called a long path).
 
-把落单的结点也当作重链，那么整棵树就被剖分成若干条重链．
+If we also treat each leftover single node as a heavy path, then the whole tree is split into a number of heavy paths.
 
-如图（这种剖分方式既可以看成重链剖分也可以看成长链剖分）：
+As shown in the figure (this decomposition can be seen either as a heavy-light decomposition or as a long-path decomposition):
 
 ![HLD](./images/hld.png)
 
-长链剖分实现方式和重链剖分类似，这里就不再展开．
+Long-path decomposition is implemented in a similar way to heavy-light decomposition, so we won't go into details here.
 
-### 常见应用
+### Common applications
 
-首先，我们发现长链剖分从一个结点到根的路径的轻边切换条数是 $\sqrt{n}$ 级别的．
+First, notice that with long-path decomposition, the number of light edges on the path from a node to the root is on the order of $\sqrt{n}$.
 
-??? info "如何构造数据将轻重边切换次数卡满"
-    我们可以构造这么一棵二叉树 T：
+??? info "How to build data that makes the number of light/heavy switches as large as possible"
+    We can build a binary tree T like this:
     
-    假设构造的二叉树参数为 $D$．
+    Suppose the parameter of the binary tree being built is $D$.
     
-    若 $D \neq 0$, 则在左儿子构造一棵参数为 $D-1$ 的二叉树，在右儿子构造一个长度为 $2D-1$ 的链．
+    If $D \neq 0$, build a binary tree with parameter $D-1$ as the left child, and a chain of length $2D-1$ as the right child.
     
-    若 $D = 0$, 则我们可以直接构造一个单独叶结点，并且结束调用．
+    If $D = 0$, just build a single leaf node and stop.
     
-    这样子构造一定可以将单独叶结点到根的路径全部为轻边且需要 $D^2$ 级别的结点数．
+    With this construction, the path from that single leaf to the root consists entirely of light edges, and the tree needs on the order of $D^2$ nodes.
     
-    取 $D=\sqrt{n}$ 即可．
+    Just take $D=\sqrt{n}$.
 
-#### 长链剖分优化 DP
+#### Optimizing DP with long-path decomposition
 
-一般情况下可以使用长链剖分来优化的 DP 会有一维状态为深度维．
+DP that can be optimized with long-path decomposition usually has one dimension of the state that is depth.
 
-我们可以考虑使用长链剖分优化树上 DP．
+We can use long-path decomposition to optimize tree DP.
 
-具体的，我们每个结点的状态直接继承其重儿子的结点状态，同时将轻儿子的 DP 状态暴力合并．
+Specifically, each node directly inherits the DP state of its heavy child, and merges the DP states of its light children by brute force.
 
 ???+ example "[Codeforces 1009 F. Dominant Indices](http://codeforces.com/contest/1009/problem/F)"
-    给定一棵有 $n$ 个顶点的有根树，以顶点 $1$ 作为根．
+    Given a rooted tree with $n$ vertices, rooted at vertex $1$.
     
-    定义顶点 $x$ 的深度数组为一个无限序列 $[d_{x, 0}, d_{x, 1}, d_{x, 2}, \dots]$，其中 $d_{x, i}$ 表示满足以下两个条件的顶点 $y$ 的数量：
+    The depth array of vertex $x$ is an infinite sequence $[d_{x, 0}, d_{x, 1}, d_{x, 2}, \dots]$, where $d_{x, i}$ is the number of vertices $y$ that satisfy both conditions below:
     
-    -   $x$ 是 $y$ 的祖先；
-    -   从 $x$ 到 $y$ 的简单路径恰好经过 $i$ 条边．
+    -   $x$ is an ancestor of $y$;
+    -   the simple path from $x$ to $y$ has exactly $i$ edges.
     
-    顶点 $x$ 的深度数组的主导下标（dominant index）（简称顶点 $x$ 的主导下标）定义为一个下标 $j$，满足：
+    The dominant index of the depth array of vertex $x$ (the dominant index of vertex $x$ for short) is the index $j$ such that:
     
-    -   对于所有 $k < j$，都有 $d_{x, k} < d_{x, j}$；
-    -   对于所有 $k > j$，都有 $d_{x, k} \le d_{x, j}$．
+    -   for all $k < j$, $d_{x, k} < d_{x, j}$;
+    -   for all $k > j$, $d_{x, k} \le d_{x, j}$.
     
-    请计算树中每个顶点的主导下标．
+    Compute the dominant index of every vertex in the tree.
 
-??? note "解答"
-    我们设 $f_{i,j}$ 表示在子树 i 内，和 i 距离为 j 的点数．
+??? note "Solution"
+    Let $f_{i,j}$ be the number of vertices in the subtree of i at distance j from i.
     
-    直接暴力转移时间复杂度为 $O(n^2)$
+    Doing the transitions directly by brute force takes $O(n^2)$ time.
     
-    我们考虑每次转移我们直接继承重儿子的 DP 数组和答案，并且考虑在此基础上进行更新．
+    Instead, at each transition we directly inherit the DP array and answer of the heavy child, and update on top of that.
     
-    首先我们需要将重儿子的 DP 数组前面插入一个元素 1, 这代表着当前结点．
+    First, we insert an element 1 at the front of the heavy child's DP array; it represents the current node.
     
-    然后我们将所有轻儿子的 DP 数组暴力和当前结点的 DP 数组合并．
+    Then we merge the DP arrays of all light children into the current node's DP array by brute force.
     
-    注意到因为轻儿子的 DP 数组长度为轻儿子所在重链长度，而所有重链长度和为 $n$．
+    Notice that the length of a light child's DP array is the length of the long path containing that light child, and the total length of all long paths is $n$.
     
-    也就是说，我们直接暴力合并轻儿子的总时间复杂度为 $O(n)$．
+    That is, the total time for merging all light children by brute force is $O(n)$.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/graph/code/hld/hld_3.cpp"
     ```
 
-注意，一般情况下 DP 数组的内存分配为一条重链整体分配内存，链上不同的结点有不同的首位置指针．
+Note that in general, memory for the DP arrays is allocated once for each whole long path, and different nodes on the path get different starting pointers into it.
 
-DP 数组的长度我们可以根据子树最深结点算出．
+The length of a DP array can be computed from the deepest node in the subtree.
 
-当然长链剖分优化 DP 技巧非常多，包括但是不仅限于打标记等等．这里不再展开．
+Of course, there are many tricks for optimizing DP with long-path decomposition, including but not limited to lazy tags. We won't go into them here.
 
-参考 [租酥雨的博客](https://www.cnblogs.com/zhoushuyu/p/9468669.html)．
+See [Zu Suyu's blog (Chinese)](https://www.cnblogs.com/zhoushuyu/p/9468669.html).
 
-#### 长链剖分求 k 级祖先
+#### Finding the k-th ancestor with long-path decomposition
 
-即询问一个点向父亲跳 $k$ 次跳到的结点．
+That is, a query asks which node you reach after jumping from a node to its parent $k$ times.
 
-首先我们假设我们已经预处理了每一个结点的 $2^i$ 级祖先．
+First, assume we have precomputed the $2^i$-th ancestor of every node.
 
-现在我们假设我们找到了询问结点的 $2^i$ 级祖先满足 $2^i \le k < 2^{i+1}$．
+Now suppose we have found the $2^i$-th ancestor of the queried node, where $2^i \le k < 2^{i+1}$.
 
-我们考虑求出其所在重链的结点并且按照深度列入表格．假设重链长度为 $d$．
+Take the nodes of the long path that this ancestor lies on, and list them in a table by depth. Suppose the path has length $d$.
 
-同时我们在预处理的时候找到每条重链的根结点的 $1$ 到 $d$ 级祖先，同样放入表格．
+Also, during preprocessing, find the $1$st to $d$-th ancestors of the top node of each long path, and put them in the table as well.
 
-根据长链剖分的性质，$k-2^i \le 2^i \leq d$, 也就是说，我们可以 $O(1)$ 在这条重链的表格上求出的这个结点的 $k$ 级祖先．
+By the properties of long-path decomposition, $k-2^i \le 2^i \leq d$. That is, we can find the $k$-th ancestor of the queried node in $O(1)$ from the table of this path.
 
-预处理需要倍增出 $2^i$ 次级祖先，同时需要预处理每条重链对应的表格．
+Preprocessing needs binary lifting for the $2^i$-th ancestors, and also the table for each long path.
 
-预处理复杂度 $O(n\log n)$, 询问复杂度 $O(1)$．
+Preprocessing takes $O(n\log n)$ time, and each query takes $O(1)$.
 
-## 习题
+## Exercises
 
--   [「洛谷 P3379」【模板】最近公共祖先（LCA）](https://www.luogu.com.cn/problem/P3379)（树剖求 LCA 无需数据结构，可以用作练习）
--   [「JLOI2014」松鼠的新家](https://loj.ac/problem/2236)（当然也可以用树上差分）
--   [「HAOI2015」树上操作](https://loj.ac/problem/2125)
--   [「洛谷 P3384」【模板】重链剖分/树链剖分](https://www.luogu.com.cn/problem/P3384)
--   [「洛谷 P1505」\[国家集训队\] 旅游](https://www.luogu.com.cn/problem/P1505)
--   [「NOI2015」软件包管理器](https://uoj.ac/problem/128)
--   [「SDOI2011」染色](https://www.luogu.com.cn/problem/P2486)
--   [「SDOI2014」旅行](https://hydro.ac/p/bzoj-P3531)
--   [「洛谷 P3979」遥远的国度](https://www.luogu.com.cn/problem/P3979)
--   [「POI2014」Hotel 加强版](https://hydro.ac/p/bzoj-P4543)（长链剖分优化 DP）
--   [攻略](https://hydro.ac/p/bzoj-P3252)（长链剖分优化贪心）
+-   ["Luogu P3379" [Template] Lowest Common Ancestor (LCA)](https://www.luogu.com.cn/problem/P3379) (finding the LCA with HLD needs no data structure, so this is good practice)
+-   ["JLOI2014" The Squirrel's New Home](https://loj.ac/problem/2236) (it can also be solved with difference arrays on trees)
+-   ["HAOI2015" Tree Operations](https://loj.ac/problem/2125)
+-   ["Luogu P3384" [Template] Heavy-Light Decomposition](https://www.luogu.com.cn/problem/P3384)
+-   ["Luogu P1505" \[National Training Team\] Travel](https://www.luogu.com.cn/problem/P1505)
+-   ["NOI2015" Package Manager](https://uoj.ac/problem/128)
+-   ["SDOI2011" Coloring](https://www.luogu.com.cn/problem/P2486)
+-   ["SDOI2014" Journey](https://hydro.ac/p/bzoj-P3531)
+-   ["Luogu P3979" The Distant Country](https://www.luogu.com.cn/problem/P3979)
+-   ["POI2014" Hotel (Enhanced Version)](https://hydro.ac/p/bzoj-P4543) (long-path decomposition optimizing DP)
+-   [Walkthrough](https://hydro.ac/p/bzoj-P3252) (long-path decomposition optimizing a greedy)

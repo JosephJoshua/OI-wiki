@@ -1,207 +1,207 @@
 author: 310552025atNYCU, accelsao, Chrogeek, Enter-tainer, iamtwz, mcendu, Shen-Linwood, shuzhouliu, StudyingFather, t4rf9, Tiphereth-A, TrickEye, wlbksy, Xeonacid, yuhuoji, c-forrest, aaron20100919
 
-## 引入
+## Introduction
 
-**匹配** 或是 **独立边集** 是一张图中不具有公共端点的边的集合．图匹配算法是信息学竞赛中常用的算法，大致可以分为最大匹配以及最大权匹配两类．因为 [二分图](../bi-graph.md) 中的匹配等价于网络流问题，性质良好，相对容易处理，所以，此处将先从二分图开始介绍两类算法，再讨论一般图的算法．
+A **matching**, or **independent edge set**, is a set of edges in a graph where no two edges share an endpoint. Graph matching algorithms are common in informatics olympiads. They fall roughly into two groups: maximum matching and maximum weight matching. Matching in a [bipartite graph](../bi-graph.md) is equivalent to a network flow problem; it has nice properties and is relatively easy to handle. So this page first introduces both kinds of algorithms on bipartite graphs, and then discusses algorithms for general graphs.
 
-## 图的匹配
+## Matchings in graphs
 
-设 $G=(V,E)$ 是一张无向图，其中，$V$ 是顶点集，$E$ 是边集．如果一组边 $M\subseteq E$ 不包含自环，且两两之间没有公共顶点，那么，边集 $M$ 就称为图 $G$ 的一个 **匹配**（matching）或 **独立边集**（independent edge set）．一条边 $e\in E$，如果出现在匹配 $M$ 中，就称为 **匹配边**，否则称为 **非匹配边**．相应地，一个顶点 $v\in V$，如果它是一条匹配边的一个端点，就称为 **匹配点**，否则称为 **未匹配点**．
+Let $G=(V,E)$ be an undirected graph, where $V$ is the vertex set and $E$ is the edge set. If a set of edges $M\subseteq E$ contains no self-loops and no two of its edges share a vertex, then $M$ is called a **matching** or **independent edge set** of $G$. An edge $e\in E$ is called a **matched edge** if it is in the matching $M$, and an **unmatched edge** otherwise. Similarly, a vertex $v\in V$ is called a **matched vertex** if it is an endpoint of a matched edge, and an **unmatched vertex** (or free vertex) otherwise.
 
-匹配 $M$ 的大小，就是它包含的边的数量．对于（加权）无向图中的匹配，常常会考虑如下概念：
+The size of a matching $M$ is the number of edges it contains. For matchings in (weighted) undirected graphs, the following concepts often come up:
 
--   **极大匹配**（maximal matching）：无法继续增加匹配边的匹配．极大匹配不一定是最大匹配．
+-   **Maximal matching**: a matching to which no more edges can be added. A maximal matching is not necessarily a maximum matching.
 
     ![maximal matching](images/graph-match-1.svg)
 
--   **最大匹配**（maximum matching or maximum cardinality matching）：匹配边数最多的匹配．最大匹配可能有不止一个，但最大匹配的边数是确定的，而且不可能超过图中顶点数的一半．
+-   **Maximum matching** (maximum cardinality matching): a matching with the largest number of edges. There may be more than one maximum matching, but the number of edges in a maximum matching is fixed, and it can never exceed half the number of vertices.
 
     ![maximum cardinality matching](images/graph-match-2.svg)
 
--   **最大权匹配**（maximum weight matching）：加权图中，边权和最大的匹配．
+-   **Maximum weight matching**: in a weighted graph, a matching with the largest total edge weight.
 
     ![maximum weight matching](images/graph-match-3.svg)
 
--   **最大权最大匹配**（maximum weight maximum cardinality matching）：匹配数最多的前提下，边权和最大的匹配．即所有最大匹配中，边权和最大的匹配．
+-   **Maximum weight maximum cardinality matching**: among all matchings with the largest number of edges, the one with the largest total edge weight. In other words, it is the maximum matching with the largest total weight.
 
     ![maximum weight maximum cardinality matching](images/graph-match-4.svg)
 
--   **完美匹配**（perfect matching）：每个顶点都是匹配点的匹配．完美匹配一定是最大匹配．顶点数为偶数的完全图，必然存在完美匹配．
+-   **Perfect matching**: a matching in which every vertex is matched. A perfect matching is always a maximum matching. A complete graph with an even number of vertices always has a perfect matching.
 
--   **近完美匹配**（near-perfect matching）：有且只有一个未匹配点的匹配．这只能发生在图的顶点数是奇数时．近完美匹配也一定是最大匹配．顶点数为奇数的完全图，必然存在近完美匹配．
+-   **Near-perfect matching**: a matching with exactly one unmatched vertex. This can only happen when the graph has an odd number of vertices. A near-perfect matching is also always a maximum matching. A complete graph with an odd number of vertices always has a near-perfect matching.
 
-算法竞赛中涉及的图的匹配问题，主要指的是图的最大匹配或最大权匹配．
+In competitive programming, graph matching problems are mostly about maximum matching or maximum weight matching.
 
-## 增广路
+## Augmenting paths
 
-图匹配算法中，增广路是用于改进匹配的核心结构．
+In graph matching algorithms, the augmenting path is the key structure used to improve a matching.
 
-### 定义
+### Definition
 
-对于图 $G=(V,E)$ 和它的一个匹配 $M$，可以定义如下两种（简单）路径：
+For a graph $G=(V,E)$ and a matching $M$ of it, we define two kinds of (simple) paths:
 
--   **交错路**（alternating path）是由匹配边与非匹配边交错而成的路径；
--   **增广路**（augmenting path）是始于未匹配点且终于未匹配点的交错路．
+-   An **alternating path** is a path whose edges alternate between matched and unmatched edges;
+-   An **augmenting path** is an alternating path that starts at an unmatched vertex and ends at an unmatched vertex.
 
-因为增广路上非匹配边比匹配边数量多 $1$，所以增广路中边的数量一定是奇数．如果将增广路上的匹配边和非匹配边反转，那么它依然是交错路，而且匹配数量会增加 $1$．寻找增广路并反转它以增加匹配大小的过程，就称为 **增广**（augmentation）．用数学语言说，增广相当于将匹配 $M$ 与增广路 $P$ 取对称差，得到新的匹配 $M\oplus P$．
+An augmenting path has one more unmatched edge than matched edges, so the number of edges on it is always odd. If we flip the matched and unmatched edges along an augmenting path, it is still an alternating path, and the size of the matching increases by $1$. The process of finding an augmenting path and flipping it to enlarge the matching is called **augmentation**. In mathematical terms, augmentation takes the symmetric difference of the matching $M$ and the augmenting path $P$, giving a new matching $M\oplus P$.
 
-下图展示了在一次增广操作后，匹配数量由 $2$ 增加为 $3$ 的过程．
+The figure below shows one augmentation, which increases the matching size from $2$ to $3$.
 
 ![augment-1](./images/augment-1.png)
 
-### Berge 引理
+### Berge's lemma
 
-Berge 引理说明，利用增广路改进匹配的方法是充分的．也就是说，当找不到增广路时，就说明已经得到了最大匹配．
+Berge's lemma says that improving a matching with augmenting paths is enough. In other words, once no augmenting path can be found, we already have a maximum matching.
 
-???+ note "Berge 引理"
-    对于图 $G=(V,E)$ 和它的一个匹配 $M$，匹配 $M$ 是最大匹配，当且仅当不存在相对于匹配 $M$ 的增广路．
+???+ note "Berge's lemma"
+    For a graph $G=(V,E)$ and a matching $M$ of it, $M$ is a maximum matching if and only if there is no augmenting path with respect to $M$.
 
-??? note "证明"
-    前文已经说明，存在增广路 $P$ 时，匹配 $M\oplus P$ 是比 $M$ 更大的匹配，因此 $M$ 一定不是最大匹配．
+??? note "Proof"
+    We have already shown that if an augmenting path $P$ exists, then $M\oplus P$ is a larger matching than $M$, so $M$ cannot be a maximum matching.
     
-    反过来，需要说明，如果存在比匹配 $M$ 更大的匹配 $M'$，那么，一定存在相对于 $M$ 的增广路 $P$．为此，考察对称差 $M\oplus M'$．图 $(V,M\oplus M')$ 中顶点的度数只能是 $0$、$1$ 或 $2$；这样的图的连通分量必然是路径、环路、孤立点之一．而且，与度数为 $2$ 的顶点相邻的两条边必定来自不同的匹配，所以，这些环路中来自 $M$ 和 $M'$ 的边的数量是一样的．因为 $M'$ 比 $M$ 大，所以存在至少一条路径中来自 $M'$ 的边的数量多于 $M$；记该路径为 $P$．那么，$P$ 的起点和终点都是 $M$ 的未匹配点，且 $P$ 是相对于 $M$ 的交错路，所以 $P$ 一定是相对于 $M$ 的增广路．这就完成了证明．
+    Conversely, we need to show that if there is a matching $M'$ larger than $M$, then there must be an augmenting path $P$ with respect to $M$. To do this, look at the symmetric difference $M\oplus M'$. In the graph $(V,M\oplus M')$, every vertex has degree $0$, $1$ or $2$, so each connected component of this graph is a path, a cycle, or an isolated vertex. Moreover, the two edges at a vertex of degree $2$ must come from different matchings, so each such cycle has the same number of edges from $M$ and from $M'$. Since $M'$ is larger than $M$, at least one path has more edges from $M'$ than from $M$; call this path $P$. Then both endpoints of $P$ are unmatched vertices with respect to $M$, and $P$ is an alternating path with respect to $M$, so $P$ must be an augmenting path with respect to $M$. This completes the proof.
 
-由此定理可知我们求最大匹配的核心思路：
+This theorem gives the core idea for finding a maximum matching:
 
--   枚举所有未匹配点，找增广路径，直到找不到增广路径．
+-   Go through all unmatched vertices and look for augmenting paths, until no augmenting path can be found.
 
-事实上，每次增广操作结束后，不需要重新遍历一次所有未匹配点．在整个求最大匹配的过程中，每个顶点只需要遍历一次就好．
+In fact, after each augmentation, we do not need to go through all unmatched vertices again. During the whole process of finding a maximum matching, each vertex only needs to be visited once.
 
-??? note "证明"
-    只需要说明，如果在枚举进行到顶点 $v$ 时，不存在以 $v$ 为起点的增广路，那么在若干轮增广之后，也不存在以 $v$ 为起点的增广路．这就说明，即使增广引起了匹配的改变，也不需要再次检查之前已经枚举过的未匹配点．
+??? note "Proof"
+    We only need to show this: if, when the enumeration reaches vertex $v$, there is no augmenting path starting at $v$, then after any number of later augmentations there is still no augmenting path starting at $v$. This means that even though augmentations change the matching, we never need to recheck unmatched vertices that have already been enumerated.
     
-    假设不然．也就是说，假设 $v$ 是已经枚举过的未匹配点，在某一轮沿着自 $u$ 至 $w$ 的增广路 $P$ 增广后，新增了之前不存在的以 $v$ 为起点的增广路 $P'$．那么，路径 $P'$ 必然与 $P$ 有公共边；否则，沿着 $P$ 增广不会引起 $P'$ 中的边的匹配状态改变，$P'$ 也就不是因为此次增广而新增的增广路．
+    Suppose this is false. That is, suppose $v$ is an unmatched vertex that has already been enumerated, and after some augmentation along an augmenting path $P$ from $u$ to $w$, a new augmenting path $P'$ starting at $v$ appears that did not exist before. Then $P'$ must share an edge with $P$. Otherwise, augmenting along $P$ would not change the matching status of any edge of $P'$, and $P'$ would not be a new augmenting path created by this augmentation.
     
     ![augment-2](./images/augment-2.svg)
     
-    （图中黑色表示非匹配边，红色和蓝色表示不同的匹配状态）
+    (In the figure, black means unmatched edges, and red and blue mean different matching states.)
     
-    设 $x$ 是自 $v$ 出发，沿着路径 $P'$ 最先到达的 $P$ 中的顶点．因为在本次增广前，就存在自 $v$ 到 $x$ 的交错路，而此时并不存在以 $v$ 为起点的增广路，所以 $x$ 必然是匹配点，也就不能是顶点 $u$ 或顶点 $w$ 中的一个．因此，在增广路 $P$ 上，与 $x$ 相邻的边有两条，且它们的匹配状态相反．这说明，无论沿着以 $v$ 为起点的交错路到达顶点 $x$ 时，边的匹配状态如何，都可以沿着路径 $P$ 将交错路延长至 $u$ 或 $w$ 中的一个．这说明，增广之前就已经存在以 $v$ 为起点的增广路，与假设矛盾．
+    Let $x$ be the first vertex of $P$ reached when walking along $P'$ from $v$. Before this augmentation, there was already an alternating path from $v$ to $x$, while there was no augmenting path starting at $v$. So $x$ must be a matched vertex, which means it cannot be $u$ or $w$. Therefore, on the augmenting path $P$, $x$ has two incident edges, and their matching states are opposite. This means that no matter what the matching state of the last edge is when the alternating path from $v$ reaches $x$, we can extend the alternating path along $P$ to either $u$ or $w$. So an augmenting path starting at $v$ already existed before the augmentation, which contradicts the assumption.
 
-### 交错树
+### Alternating trees
 
-另一个与增广路紧密相关的概念是交错树．它是自未匹配点 $r$ 出发进行 DFS 或 BFS 寻找增广路的过程中产生的树．
+Another concept closely related to augmenting paths is the alternating tree. It is the tree produced when we run a DFS or BFS from an unmatched vertex $r$ to search for an augmenting path.
 
-对于图 $G=(V,E)$ 和它的一个匹配 $M$，如果子图 $H\subseteq G$ 是以未匹配点 $r$ 为根的树，且连接 $r$ 和任意 $v\in V(H)$ 的路径都是交错路，那么，就称 $H$ 是一个 **交错树**（alternating tree）．其中，树上深度为偶数的点称为偶点，树上深度为奇数的点称为奇点．
+For a graph $G=(V,E)$ and a matching $M$ of it, if a subgraph $H\subseteq G$ is a tree rooted at an unmatched vertex $r$, and the path connecting $r$ to any $v\in V(H)$ is an alternating path, then $H$ is called an **alternating tree**. Vertices at even depth in the tree are called even vertices, and vertices at odd depth are called odd vertices.
 
-下图展示了自未匹配点 $1$ 开始进行 BFS 可能得到的一个交错树．（图中，红边为匹配边，黑边为非匹配边；深色顶点为匹配点，浅色顶点为未匹配点．）
+The figure below shows one possible alternating tree obtained by a BFS starting from the unmatched vertex $1$. (In the figure, red edges are matched edges and black edges are unmatched edges; dark vertices are matched vertices and light vertices are unmatched vertices.)
 
 ![](images/alternating-tree.svg)
 
-## 完美匹配的存在性
+## Existence of perfect matchings
 
-图匹配理论中，有两个重要的存在性定理，可以用于判定二分图或一般图中完美匹配是否存在．
+Graph matching theory has two important existence theorems. They can be used to decide whether a perfect matching exists in a bipartite graph or in a general graph.
 
-### Hall 定理
+### Hall's theorem
 
-假设 $G=(X,Y,E)$ 是二分图，且 $|X|\le |Y|$．对于图 $G$ 的一个匹配 $M$，如果 $X$ 中的所有顶点都是匹配点，那么就称 $M$ 是一个 **$X$‑完美匹配**，有时也简称作（二分图 $G$ 的）完美匹配．这是二分图中可能达成的最大的匹配．Hall 定理提供了判断这种匹配是否存在的充要条件．
+Suppose $G=(X,Y,E)$ is a bipartite graph with $|X|\le |Y|$. For a matching $M$ of $G$, if every vertex in $X$ is matched, then $M$ is called an **$X$‑perfect matching**, sometimes simply called a perfect matching (of the bipartite graph $G$). This is the largest matching that can possibly exist in a bipartite graph. Hall's theorem gives a necessary and sufficient condition for such a matching to exist.
 
-Hall 定理说明，只要保证对于 $X$ 的任何子集，$Y$ 中都有足够多的顶点可以与它匹配，就一定存在 $X$‑完美匹配．
+Hall's theorem says that as long as every subset of $X$ has enough vertices in $Y$ that it could be matched with, an $X$‑perfect matching must exist.
 
-???+ note "Hall 定理"
-    假设 $G=(X,Y,E)$ 是二分图，且 $|X|\le |Y|$．对于任何 $W\subseteq X$，记 $N_G(W)$ 为图 $G$ 中所有与 $W$ 中的顶点相邻的顶点集合．那么，$X$‑完美匹配存在，当且仅当 $|W|\le |N_G(W)|$ 对于所有 $W\subseteq X$ 都成立．
+???+ note "Hall's theorem"
+    Suppose $G=(X,Y,E)$ is a bipartite graph with $|X|\le |Y|$. For any $W\subseteq X$, let $N_G(W)$ be the set of vertices in $G$ that are adjacent to some vertex in $W$. Then an $X$‑perfect matching exists if and only if $|W|\le |N_G(W)|$ holds for all $W\subseteq X$.
 
-??? note "证明"
-    条件显然是必要的．假设 $X$‑完美匹配 $M$ 存在，那么 $X$ 中的每个顶点都匹配到了 $Y$ 中的不同顶点．集合 $N_G(W)$ 至少包括了与 $W$ 中顶点匹配的那些顶点，所以它的大小至少为 $|W|$．
+??? note "Proof"
+    The condition is clearly necessary. Suppose an $X$‑perfect matching $M$ exists. Then each vertex in $X$ is matched to a different vertex in $Y$. The set $N_G(W)$ contains at least the vertices matched to the vertices of $W$, so its size is at least $|W|$.
     
-    条件也是充分的．假设 $X$‑完美匹配不存在，那么一定有最大匹配 $M$ 使得顶点 $v\in X$ 仍然是未匹配点．设 $Z$ 是所有可以通过由 $v$ 出发的交错路到达的顶点集合，并设 $S=Z\cap X$，$T=Z\cap Y$．集合 $S\setminus\{v\}$ 一定全部是匹配点，因为 $G$ 是二分图，自 $v$ 出发到达 $X$ 中顶点的交错路长度必然是偶数，其最后一条边必然是匹配边；集合 $T$ 也一定全部是匹配点，否则就存在增广路，根据 Berge 引理，这与 $M$ 是最大匹配矛盾．因为全部是匹配点，且匹配只能发生在 $X$ 和 $Y$ 之间，所以集合 $S\setminus\{v\}$ 和集合 $T$ 中的顶点一一对应，也就是说，$|T|=|S|-1$．同时，因为 $T$ 中的顶点已经和 $S$ 中顶点匹配，所以至少有 $T\subseteq N_G(S)$；但是，对于任意 $u\in N_G(S)$，设它与 $S$ 中的 $v'$ 相邻，那么，必然可以通过延长到达 $v'$ 的交错路得到到达 $u$ 的交错路，因而 $u\in T$：这说明 $T=N_G(S)$．这些论证说明 $|N_G(S)|<|S|$，这与 Hall 定理所设条件矛盾．这就说明了 $X$‑完美匹配存在．
+    The condition is also sufficient. Suppose no $X$‑perfect matching exists. Then there is a maximum matching $M$ in which some vertex $v\in X$ is still unmatched. Let $Z$ be the set of all vertices reachable from $v$ by alternating paths, and let $S=Z\cap X$ and $T=Z\cap Y$. Every vertex in $S\setminus\{v\}$ must be matched: since $G$ is bipartite, an alternating path from $v$ to a vertex of $X$ has even length, so its last edge must be a matched edge. Every vertex in $T$ must also be matched; otherwise there would be an augmenting path, which by Berge's lemma contradicts $M$ being a maximum matching. Since all of them are matched, and matching edges only go between $X$ and $Y$, the vertices in $S\setminus\{v\}$ and in $T$ are in one-to-one correspondence. That is, $|T|=|S|-1$. Also, since the vertices of $T$ are matched with vertices of $S$, we have at least $T\subseteq N_G(S)$. On the other hand, for any $u\in N_G(S)$, say $u$ is adjacent to $v'$ in $S$; then we can extend the alternating path that reaches $v'$ to get an alternating path that reaches $u$, so $u\in T$. This shows $T=N_G(S)$. Together these arguments show $|N_G(S)|<|S|$, which contradicts the condition in Hall's theorem. So an $X$‑perfect matching exists.
 
-???+ note "推论"
-    所有 $k$‑正则（$k\ge 1$）的二分图都有完美匹配．
+???+ note "Corollary"
+    Every $k$‑regular ($k\ge 1$) bipartite graph has a perfect matching.
 
-??? note "证明"
-    正则二分图中，所有顶点的度数都相同，设为 $k\ge 1$．首先验证 Hall 条件成立，即对于任何 $W\subseteq X$，都有 $|N_G(W)|\ge |W|$．因为与 $W$ 中顶点相邻的边的数量是 $k|W|$，而集合 $N_G(W)$ 中每个顶点至多只能与其中 $k$ 条边相邻，所以必然有 $k|W|\le k|N_G(W)|$，也就是 $|W|\le |N_G(W)|$．特别地，有 $|X|\le |Y|$；因为 $X$ 和 $Y$ 是对称的，所以有 $|X|=|Y|$．这说明，正则二分图中，$X$‑完美匹配也一定是完美匹配．由于 Hall 定理保证了 $X$‑完美匹配存在，那么完美匹配也一定存在．
+??? note "Proof"
+    In a regular bipartite graph, every vertex has the same degree; call it $k\ge 1$. First we check Hall's condition: for every $W\subseteq X$, $|N_G(W)|\ge |W|$. The number of edges incident to vertices of $W$ is $k|W|$, and each vertex in $N_G(W)$ can be incident to at most $k$ of these edges, so $k|W|\le k|N_G(W)|$, that is, $|W|\le |N_G(W)|$. In particular, $|X|\le |Y|$; since $X$ and $Y$ play symmetric roles, $|X|=|Y|$. This means that in a regular bipartite graph, an $X$‑perfect matching is also a perfect matching. Since Hall's theorem guarantees that an $X$‑perfect matching exists, a perfect matching must exist too.
 
-### Tutte 定理
+### Tutte's theorem
 
-Tutte 定理提供了判断一般图中是否存在完美匹配的充要条件．这个条件源于一个直接的观察：顶点数量为奇数的图中一定不存在完美匹配．
+Tutte's theorem gives a necessary and sufficient condition for a general graph to have a perfect matching. The condition comes from a simple observation: a graph with an odd number of vertices can never have a perfect matching.
 
-???+ note "Tutte 定理"
-    图 $G=(V,E)$ 存在完美匹配，当且仅当对于任何 $U\subseteq V$，都有 $\operatorname{odd}(G-U)\le |U|$，其中，$G-U$ 表示从图 $G$ 中删去 $U$ 中的顶点以及与之相邻的边得到的子图，而 $\operatorname{odd}(G-U)$ 表示子图 $G-U$ 中顶点数量为奇数的连通分量的数量．
+???+ note "Tutte's theorem"
+    A graph $G=(V,E)$ has a perfect matching if and only if for every $U\subseteq V$, $\operatorname{odd}(G-U)\le |U|$. Here $G-U$ is the subgraph obtained from $G$ by deleting the vertices in $U$ and their incident edges, and $\operatorname{odd}(G-U)$ is the number of connected components of $G-U$ with an odd number of vertices.
 
-??? note "证明"
-    只需要考虑简单图即可，因为重边和自环不影响 Tutte 条件和完美匹配的存在性．
+??? note "Proof"
+    It is enough to consider simple graphs, because multiple edges and self-loops do not affect the Tutte condition or whether a perfect matching exists.
     
-    条件的必要性相对容易．假设存在完美匹配 $M$．对于任意 $U\subseteq V$，从图 $G$ 中删去 $U$ 中的顶点之后，每一个顶点数量为奇数的连通分量都至少有一个无法与同一个连通分量顶点匹配的顶点，这些顶点只能寻求与 $U$ 中的顶点匹配．这样的匹配存在，至少要求 $\operatorname{odd}(G-U)\le |U|$．这就是 Tutte 条件．
+    Necessity is relatively easy. Suppose a perfect matching $M$ exists. For any $U\subseteq V$, after deleting the vertices of $U$ from $G$, each connected component with an odd number of vertices has at least one vertex that cannot be matched with a vertex in the same component, and such vertices can only be matched with vertices in $U$. For such a matching to exist, we need at least $\operatorname{odd}(G-U)\le |U|$. This is the Tutte condition.
     
-    条件的充分性较为复杂．假设 $G$ 满足 Tutte 条件，但是没有完美匹配．因为向 $G$ 中添加任何边都会使得 Tutte 条件依然成立，所以不妨设 $G$ 是一个极大的这样的图，也就是说，$G$ 不存在完美匹配，但是，向 $G$ 中添加任何尚不存在的边 $e$，都会使得 $G+e$ 存在完美匹配．设 $U\subseteq V$ 是所有度数为 $|V|-1$ 的顶点的集合．可以证明，$G-U$ 的每一个连通分量都是一个完全图．由此，可以构造出一个 $G$ 的完美匹配：首先取每个 $G-U$ 的连通分量的最大匹配，这样只有连通分量顶点数量为奇数时，才会出现一个未匹配点；将这些未匹配点匹配到 $U$ 中顶点；因为 $G$ 的顶点数量为偶数（在 Tutte 条件中取 $U=\varnothing$），所以，$U$ 中剩余的尚未匹配的顶点数量也是偶数，将它们两两配对即可．这一矛盾就说明，不存在满足 Tutte 条件但是没有完美匹配的 $G$．
+    Sufficiency is more involved. Suppose $G$ satisfies the Tutte condition but has no perfect matching. Adding any edge to $G$ keeps the Tutte condition true, so we may assume $G$ is a maximal such graph. That is, $G$ has no perfect matching, but adding any edge $e$ not yet in $G$ makes $G+e$ have a perfect matching. Let $U\subseteq V$ be the set of all vertices of degree $|V|-1$. We can show that every connected component of $G-U$ is a complete graph. From this we can build a perfect matching of $G$: first take a maximum matching in each connected component of $G-U$; a component then has one unmatched vertex only when its number of vertices is odd. Match these unmatched vertices with vertices in $U$. Since $G$ has an even number of vertices (take $U=\varnothing$ in the Tutte condition), the number of vertices left unmatched in $U$ is also even, and we just pair them up. This contradiction shows that there is no $G$ that satisfies the Tutte condition but has no perfect matching.
     
-    关键是要证明 $G-U$ 的每一个连通分量都是一个完全图．假设不然．不妨设顶点 $x,y,z$ 属于这样的一个连通分量，且 $(x,y)\in E$，$(y,z)\in E$，$(x,z)\notin E$．而且，因为 $y\notin U$，必然存在 $w\in V\setminus U$ 使得 $(y,w)\notin E$．由于 $G$ 的极大性，图 $G+(x,z)$ 和图 $G+(y,w)$ 中分别存在完美匹配 $M_1$ 和 $M_2$．考察它们的对称差 $M_1\oplus M_2$．因为图 $(V,M_1\oplus M_2)$ 中所有顶点的度数要么是 $0$ 要么是 $2$，所以 $M_1\oplus M_2$ 实际上是若干个偶环的不交并，且每个偶环都是 $M_1$ 和 $M_2$ 中的匹配边交错组成的．不妨设 $(x,z)\in M_1$ 且 $(y,w)\in M_2$，否则 $M_1$ 或 $M_2$ 已经是 $G$ 的完美匹配；因此，这两条边都出现在 $M_1\oplus M_2$ 中．
+    The key is to prove that every connected component of $G-U$ is a complete graph. Suppose not. Then we may assume vertices $x,y,z$ belong to such a component, with $(x,y)\in E$, $(y,z)\in E$ and $(x,z)\notin E$. Moreover, since $y\notin U$, there must be some $w\in V\setminus U$ with $(y,w)\notin E$. By the maximality of $G$, the graphs $G+(x,z)$ and $G+(y,w)$ have perfect matchings $M_1$ and $M_2$ respectively. Look at their symmetric difference $M_1\oplus M_2$. Every vertex of the graph $(V,M_1\oplus M_2)$ has degree $0$ or $2$, so $M_1\oplus M_2$ is actually a disjoint union of even cycles, and each even cycle alternates between edges of $M_1$ and edges of $M_2$. We may assume $(x,z)\in M_1$ and $(y,w)\in M_2$; otherwise $M_1$ or $M_2$ would already be a perfect matching of $G$. So both edges appear in $M_1\oplus M_2$.
     
     ![](images/tutte-proof.svg)
     
-    如图所示，可以分两种情形：
+    As shown in the figure, there are two cases:
     
-    -   $(x,z)$ 和 $(y,w)$ 位于不同的环路（如图左所示）：设 $(y,w)$ 所在环路为 $C$，那么，边集 $M_2\oplus C$ 就是图 $G$ 的完美匹配；
-    -   $(x,z)$ 和 $(y,w)$ 位于相同的环路（如图右所示）：由对称性，不妨设环路依次经过 $x,y,w,z$，因此可以取环路上从 $y$ 经过 $w$ 到达 $z$ 的路径 $P$，记 $\{(y,z)\}\cup P$ 为环路 $C$，那么，边集 $M_2\oplus C$ 同样是图 $G$ 的完美匹配．
+    -   $(x,z)$ and $(y,w)$ lie on different cycles (left of the figure): let $C$ be the cycle containing $(y,w)$. Then the edge set $M_2\oplus C$ is a perfect matching of $G$;
+    -   $(x,z)$ and $(y,w)$ lie on the same cycle (right of the figure): by symmetry we may assume the cycle passes through $x,y,w,z$ in this order. Take the path $P$ on the cycle from $y$ through $w$ to $z$, and let $C$ be the cycle $\{(y,z)\}\cup P$. Then the edge set $M_2\oplus C$ is also a perfect matching of $G$.
     
-    无论是哪种情形，都与 $G$ 的选取矛盾．这个矛盾说明了 $G-U$ 的每一个连通分量都是一个完全图．
+    In either case we contradict the choice of $G$. This contradiction shows that every connected component of $G-U$ is a complete graph.
 
-???+ note "推论"
-    无桥 3‑正则图都有完美匹配．
+???+ note "Corollary"
+    Every bridgeless 3‑regular graph has a perfect matching.
 
-??? note "证明"
-    为了验证 Tutte 条件成立，任取 $U\subseteq V$，需要证明 $\operatorname{odd}(G-U)\le |U|$．设 $G_1,\cdots,G_n$ 是 $G-U$ 的顶点数为奇数的所有连通分量．设 $m_i$ 是连接 $G_i$ 中顶点和 $U$ 中顶点的边的数量．简单的计数可知
+??? note "Proof"
+    To check the Tutte condition, take any $U\subseteq V$; we need to show $\operatorname{odd}(G-U)\le |U|$. Let $G_1,\cdots,G_n$ be all the connected components of $G-U$ with an odd number of vertices. Let $m_i$ be the number of edges connecting vertices of $G_i$ to vertices of $U$. Simple counting gives
     
     $$
     3|V(G_i)| = \sum_{v\in V(G_i)} d(v) = 2|E(G_i)| + m_i.
     $$
     
-    因此，$m_i$ 必然是奇数．因为 $G$ 中没有桥（即割边），所以 $m_i\ge 3$．这就说明
+    So $m_i$ must be odd. Since $G$ has no bridges (cut edges), $m_i\ge 3$. This shows
     
     $$
     \operatorname{odd}(G-U) = n \le \dfrac{1}{3}\sum_{i=1}^n m_i \le \dfrac{1}{3}\sum_{v\in U} d(v) = |U|.
     $$
     
-    因此，Tutte 条件成立，图 $G$ 必然有完美匹配．
+    So the Tutte condition holds, and $G$ must have a perfect matching.
 
-## 常见算法
+## Common algorithms
 
-组合优化中的一个基本问题是求图的最大匹配和最大权匹配．
+A basic problem in combinatorial optimization is finding a maximum matching and a maximum weight matching of a graph.
 
-### 二分图最大匹配
+### Maximum matching in bipartite graphs
 
-详见 [二分图最大匹配](./bigraph-match.md) 页面．
+See the [Maximum matching in bipartite graphs](./bigraph-match.md) page for details.
 
-在无权二分图中，可以使用 Kuhn 算法在 $O(|V||E|)$ 时间内解决，也可以使用 Hopcroft–Karp 算法在 $O(|V|^{1/2}|E|)$ 时间内解决．
+In an unweighted bipartite graph, the problem can be solved in $O(|V||E|)$ time with Kuhn's algorithm, or in $O(|V|^{1/2}|E|)$ time with the Hopcroft–Karp algorithm.
 
-### 二分图最大权匹配
+### Maximum weight matching in bipartite graphs
 
-详见 [二分图最大权匹配](./bigraph-weight-match.md) 页面．
+See the [Maximum weight matching in bipartite graphs](./bigraph-weight-match.md) page for details.
 
-在加权二分图中，可用 Hungarian 算法解决．如果在寻找最短路时使用 Bellman–Ford 算法，时间复杂度为 $O(|V|^2|E|)$；如果使用 Dijkstra 算法配合 Fibonacci 堆，可在 $O(|V|^{2}\log {|V|}+|V||E|)$ 时间内解决．
+In a weighted bipartite graph, the problem can be solved with the Hungarian algorithm. If the Bellman–Ford algorithm is used to find shortest paths, the time complexity is $O(|V|^2|E|)$; if Dijkstra's algorithm with a Fibonacci heap is used, it can be solved in $O(|V|^{2}\log {|V|}+|V||E|)$ time.
 
-### 一般图最大匹配
+### Maximum matching in general graphs
 
-详见 [一般图最大匹配](./general-match.md) 页面．
+See the [Maximum matching in general graphs](./general-match.md) page for details.
 
-无权一般图中，可以使用 Edmonds' blossom 算法在 $O(|V|^2|E|)$ 时间内解决．
+In an unweighted general graph, the problem can be solved in $O(|V|^2|E|)$ time with Edmonds' blossom algorithm.
 
-### 一般图最大权匹配
+### Maximum weight matching in general graphs
 
-详见 [一般图最大权匹配](./general-weight-match.md) 页面．
+See the [Maximum weight matching in general graphs](./general-weight-match.md) page for details.
 
-加权一般图中，可以使用 Edmonds' blossom 算法在 $O(|V|^2|E|)$ 时间内解决．
+In a weighted general graph, the problem can be solved in $O(|V|^2|E|)$ time with Edmonds' blossom algorithm.
 
-## 相关问题
+## Related problems
 
-最大（权）匹配与其它图论问题有着紧密的联系．本节仅讨论一般图，关于二分图的结论可以参考 [二分图最大匹配](./bigraph-match.md#相关问题) 页面．
+Maximum (weight) matching is closely connected to other graph problems. This section only discusses general graphs; for the results on bipartite graphs, see the [Maximum matching in bipartite graphs](./bigraph-match.md#相关问题) page.
 
-### 最大权最大匹配
+### Maximum weight maximum cardinality matching
 
-最大权最大匹配问题和最大权匹配问题可以相互归约．它们之间一个很显著的区别是，最大权最大匹配中可能存在负权边，但是最大权匹配中不会存在负权边．
+The maximum weight maximum cardinality matching problem and the maximum weight matching problem can be reduced to each other. One clear difference between them is that negative-weight edges may appear in a maximum weight maximum cardinality matching, but never in a maximum weight matching.
 
-首先，最大权匹配问题可以归约为最大权最大匹配问题．为此，先将图 $G$ 的所有负权边的权重设为 $0$；然后，通过连接若干权重为 $0$ 的边，将图扩充为完全图 $G'$．注意到，边权非负的完全图中，最大权最大匹配和最大权匹配是一致的．所以，只需要计算 $G'$ 的最大权最大匹配 $M'$，再删去 $M'$ 中的所有零权边，得到的边集 $M$ 就是图 $G$ 的最大权匹配．[^other-approach]
+First, the maximum weight matching problem can be reduced to the maximum weight maximum cardinality matching problem. To do this, first set the weight of every negative-weight edge of $G$ to $0$. Then add edges of weight $0$ to extend the graph into a complete graph $G'$. Note that in a complete graph with non-negative edge weights, a maximum weight maximum cardinality matching is the same as a maximum weight matching. So we only need to compute a maximum weight maximum cardinality matching $M'$ of $G'$ and delete all zero-weight edges from $M'$; the resulting edge set $M$ is a maximum weight matching of $G$.[^other-approach]
 
 ![graph-match](images/graph-match-5.svg)
 
-反过来，最大权最大匹配问题也可以归约为最大权匹配问题．只需要对图 $G$ 所有边的边权都加一个足够大的正数 $K$，就可以保证得到的图 $G'$ 的最大权匹配也一定是最大匹配，故而必然是最大权最大匹配．这是因为计算图 $G'$ 的最大权匹配相当于在图 $G$ 的所有匹配中最大化
+Conversely, the maximum weight maximum cardinality matching problem can be reduced to the maximum weight matching problem. Just add a large enough positive number $K$ to the weight of every edge of $G$. This guarantees that a maximum weight matching of the resulting graph $G'$ is also a maximum matching, and hence a maximum weight maximum cardinality matching. The reason is that computing a maximum weight matching of $G'$ is the same as maximizing, over all matchings of $G$,
 
 $$
 K|M| + \sum_{e\in M}w(e).
 $$
 
-当 $K$ 充分大时，多匹配一条边带来的增益 $K$，会超过后面一项的权值和的变化．因此，算法会首先尽可能地多匹配边，然后才会最大化匹配边的边权和．常数 $K$ 的选择，只要保证它严格大于任意两个匹配的权值和之差即可．一个显然的选择是
+When $K$ is large enough, the gain $K$ from matching one more edge outweighs any change in the second term, the sum of weights. So the algorithm first matches as many edges as possible, and only then maximizes the total weight of the matched edges. The constant $K$ just needs to be strictly larger than the difference between the total weights of any two matchings. An obvious choice is
 
 $$
 K = \sum_{e\in E}|w(e)| + 1.
@@ -209,30 +209,30 @@ $$
 
 ![graph-match](images/graph-match-6.svg)
 
-### 最小（权）边覆盖
+### Minimum (weight) edge cover
 
-另一个与最大（权）匹配紧密相关的问题是最小（权）边覆盖．边覆盖与匹配（又称边独立集）的关系，和点覆盖与独立集的关系相似．
+Another problem closely related to maximum (weight) matching is minimum (weight) edge cover. The relationship between edge covers and matchings (also called independent edge sets) is similar to the relationship between vertex covers and independent sets.
 
-图 $G=(V,E)$ 中的一组边 $C\subseteq E$，如果任意顶点 $v\in V$ 都是 $C$ 中某条边的端点，那么，就称 $C$ 是图 $G$ 的一组 **边覆盖**（edge cover）．讨论边覆盖时，总是假设图 $G$ 没有孤立点．
+A set of edges $C\subseteq E$ of a graph $G=(V,E)$ is called an **edge cover** of $G$ if every vertex $v\in V$ is an endpoint of some edge in $C$. When discussing edge covers, we always assume $G$ has no isolated vertices.
 
-对于无权图，最小边覆盖问题几乎就是最大匹配问题．对于图 $G$ 的任何最大匹配 $M$，只要为每个未匹配点都加入一条相连的边，就可以得到一个最小边覆盖 $C$．它们的大小满足简单的数量关系：$|M|+|C|=|V|$．下图是一些最小边覆盖的例子：
+For unweighted graphs, the minimum edge cover problem is almost the same as the maximum matching problem. For any maximum matching $M$ of $G$, adding one incident edge for each unmatched vertex gives a minimum edge cover $C$. Their sizes satisfy a simple relation: $|M|+|C|=|V|$. The figure below shows some examples of minimum edge covers:
 
 ![graph-match](images/graph-match-7.svg)
 
-对于加权图，最小权边覆盖问题可以归约为一个 **最小权完美匹配** 问题．首先，将图 $G=(V,E)$ 拷贝一份得到 $\tilde G=(\tilde V,\tilde E)$，边权与原图一致；然后，将每个顶点 $v\in V$ 都与它的拷贝 $\tilde v\in\tilde V$ 连接起来，边权为图 $G$ 中与 $v$ 关联的边的权值最小值．这样得到的图记作 $G'=(V',E')$．如果图 $G$ 是二分图或稀疏图，那么图 $G'$ 同样分别是二分图或稀疏图．而且，图 $G$ 的最小权边覆盖问题，就归约为图 $G'$ 的最小权完美匹配问题[^edge-cover]：对于图 $G'$ 的最小权完美匹配 $M'$，只要保留 $E$ 中的边，再将所有匹配到的 $(v,\tilde v)$ 替换成图 $G$ 中与 $v$ 关联的权值最小的边，就得到图 $G$ 的最小权边覆盖．
+For weighted graphs, the minimum weight edge cover problem can be reduced to a **minimum weight perfect matching** problem. First, make a copy $\tilde G=(\tilde V,\tilde E)$ of the graph $G=(V,E)$, with the same edge weights. Then connect each vertex $v\in V$ to its copy $\tilde v\in\tilde V$, with weight equal to the minimum weight among the edges of $G$ incident to $v$. Call the resulting graph $G'=(V',E')$. If $G$ is bipartite or sparse, then $G'$ is also bipartite or sparse, respectively. The minimum weight edge cover problem on $G$ then reduces to the minimum weight perfect matching problem on $G'$[^edge-cover]: for a minimum weight perfect matching $M'$ of $G'$, keep the edges that are in $E$, and replace every matched pair $(v,\tilde v)$ with the minimum-weight edge of $G$ incident to $v$. This gives a minimum weight edge cover of $G$.
 
-## 参考资料
+## References
 
 1.  [Wikiwand - Matching (graph theory)](https://www.wikiwand.com/en/Matching_%28graph_theory%29)
 2.  [Wikiwand - Blossom algorithm](https://www.wikiwand.com/en/Blossom_algorithm)
-3.  2015 年《浅谈图的匹配算法及其应用》- 陈胤伯
-4.  [演算法笔记 - Matching](http://web.ntnu.edu.tw/~algo/Matching.html)
+3.  Chen Yinbo, *A Brief Discussion of Graph Matching Algorithms and Their Applications* (2015, in Chinese)
+4.  [Algorithm Notes - Matching (Chinese)](http://web.ntnu.edu.tw/~algo/Matching.html)
 5.  [the-tourist/algo](https://github.com/the-tourist/algo)
-6.  [Bill Yang's Blog - 带花树学习笔记](https://blog.bill.moe/blossom-algorithm-notes/)
-7.  [二分图的最大匹配、完美匹配和匈牙利算法](https://www.renfei.org/blog/bipartite-matching.html)
+6.  [Bill Yang's Blog - Notes on the blossom algorithm (Chinese)](https://blog.bill.moe/blossom-algorithm-notes/)
+7.  [Maximum matching, perfect matching and the Hungarian algorithm in bipartite graphs (Chinese)](https://www.renfei.org/blog/bipartite-matching.html)
 8.  [Wikiwand - Hopcroft–Karp algorithm](https://www.wikiwand.com/en/Hopcroft%E2%80%93Karp_algorithm)
 9.  Bondy, John Adrian, and Uppaluri Siva Ramachandra Murty. Graph theory with applications. Vol. 290. London: Macmillan, 1976.
 
-[^other-approach]: 当然，这并不是唯一的归约方式．对于图 $G=(V,E)$，还可以将它的一份拷贝 $\tilde G=(\tilde V,\tilde E)$ 逐点地连接到原来的图上，并将所有相对于原图 $G$ 新加的边（包括拷贝中的边）的权重设为 $0$，得到图 $G'=(V',E')$．换句话说，新图 $G'$ 的顶点集是 $V\cup\tilde V$，而它的边集除了图 $G$ 中的边之外，还将所有顶点 $v\in V$ 都与它的拷贝 $\tilde v\in\tilde V$ 用零权边连接，且对于所有边 $(u,v)\in E$，都将 $\tilde u$ 与 $\tilde v$ 用零权边连接．图 $G$ 中的所有匹配 $M$ 都对应着图 $G'$ 中的一个权值和相同的完美匹配：只需要将 $G$ 中所有未匹配点 $v$ 都与它的拷贝 $\tilde v$ 匹配，而对于所有匹配边 $(u,v)$，都将 $\tilde u$ 与 $\tilde v$ 匹配．因此，图 $G'$ 中的最大权最大匹配，也就是最大权完美匹配，限制到 $E$ 上，就得到图 $G$ 的最大权匹配．这样归约的好处是，如果图 $G$ 是二分图或稀疏图，那么扩充得到的图 $G'$ 也分别是二分图或稀疏图．
+[^other-approach]: Of course, this is not the only way to do the reduction. For a graph $G=(V,E)$, we can also attach a copy $\tilde G=(\tilde V,\tilde E)$ to the original graph vertex by vertex, and set the weight of every edge that is new relative to $G$ (including the edges in the copy) to $0$, giving a graph $G'=(V',E')$. In other words, the vertex set of $G'$ is $V\cup\tilde V$. Besides the edges of $G$, its edge set connects every vertex $v\in V$ to its copy $\tilde v\in\tilde V$ with a zero-weight edge, and for every edge $(u,v)\in E$, it connects $\tilde u$ and $\tilde v$ with a zero-weight edge. Every matching $M$ of $G$ corresponds to a perfect matching of $G'$ with the same total weight: match every unmatched vertex $v$ of $G$ with its copy $\tilde v$, and for every matched edge $(u,v)$, match $\tilde u$ with $\tilde v$. So a maximum weight maximum cardinality matching of $G'$, which is a maximum weight perfect matching, restricted to $E$, gives a maximum weight matching of $G$. The advantage of this reduction is that if $G$ is bipartite or sparse, then the extended graph $G'$ is also bipartite or sparse, respectively.
 
-[^edge-cover]: 对于图 $G'$ 的每个完美匹配 $M'$，都可以按照此处描述的方式得到一个图 $G$ 的边覆盖 $C$，且后者的权值和为前者的一半；将这个构造过程反过来，对于图 $G$ 的每个边覆盖 $C$，都可以构造出一个图 $G'$ 的完美匹配 $M'$，且后者的权值和不超过前者的二倍．这就说明归约是成立的．
+[^edge-cover]: Every perfect matching $M'$ of $G'$ gives an edge cover $C$ of $G$ in the way described here, and the total weight of $C$ is half that of $M'$; reversing this construction, every edge cover $C$ of $G$ gives a perfect matching $M'$ of $G'$ whose total weight is at most twice that of $C$. This shows the reduction is correct.
