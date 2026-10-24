@@ -11,17 +11,17 @@ int n;
 
 namespace AC {
 struct Node {
-  int son[26];  // 子结点
-  int cnt;      // 尾为该结点的串的个数
-  int fail;     // fail 指针
+  int son[26];  // children
+  int cnt;      // number of strings ending at this node
+  int fail;     // fail pointer
 
-  void init() {  // 结点初始化
+  void init() {  // initialize node
     memset(son, 0, sizeof(son));
     cnt = fail = 0;
   }
 } tr[SIZE];
 
-int tot;  // 结点总数
+int tot;  // total number of nodes
 
 void init() {
   tot = 0;
@@ -31,9 +31,9 @@ void init() {
 void insert(char s[]) {
   int u = 0;
   for (int i = 1; s[i]; i++) {
-    int &son = tr[u].son[s[i] - 'a'];  // 下一个子结点的引用
-    if (!son) son = ++tot, tr[son].init();  // 如果没有则插入新结点，并初始化
-    u = son;                                // 从下一个结点继续
+    int &son = tr[u].son[s[i] - 'a'];  // reference to the next child
+    if (!son) son = ++tot, tr[son].init();  // if missing, insert a new node and initialize it
+    u = son;                                // continue from the next node
   }
   tr[u].cnt++;
 }
@@ -46,13 +46,13 @@ void build() {
     int u = q.front();
     q.pop();
     for (int i = 0; i < 26; i++) {
-      if (tr[u].son[i]) {                               // 存在对应子结点
-        tr[tr[u].son[i]].fail = tr[tr[u].fail].son[i];  // 只用跳一次 fail 指针
-        q.push(tr[u].son[i]);                           // 并加入队列
+      if (tr[u].son[i]) {                               // child exists
+        tr[tr[u].son[i]].fail = tr[tr[u].fail].son[i];  // only one fail jump needed
+        q.push(tr[u].son[i]);                           // and push it into the queue
       } else
         tr[u].son[i] =
             tr[tr[u].fail]
-                .son[i];  // 将不存在的字典树的状态链接到了失配指针的对应状态
+                .son[i];  // link a missing trie state to the matching state of the fail pointer
     }
   }
 }
@@ -60,7 +60,7 @@ void build() {
 int query(char t[]) {
   int u = 0, res = 0;
   for (int i = 1; t[i]; i++) {
-    u = tr[u].son[t[i] - 'a'];  // 转移
+    u = tr[u].son[t[i] - 'a'];  // transition
     for (int j = u; j && tr[j].cnt != -1; j = tr[j].fail) {
       res += tr[j].cnt, tr[j].cnt = -1;
     }

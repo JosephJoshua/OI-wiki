@@ -1,91 +1,91 @@
 author: Ir1d, Tiphereth-A, sshwy, ksyx, Marcythm, orzAtalod, Xeonacid, Enter-tainer, GavinZhengOI, Henry-ZHR, iamtwz, 383494, abc1763613206, aofall, Chrogeek, CoelacanthusHex, Dafenghh, DanJoshua, Gesrua, kenlig, lyccrius, Menci, opsiff, ouuan, partychicken, Persdre, Ruakker, shuzhouliu, StudyingFather, szdytom, XuYueming520, ZXyaang, alphagocc, c-forrest, Early0v0, GoodCoder666, HeRaNO, liangbob2023, qq2964, r-value, rickyxrc, Rickyxrc, shawlleyw, Unnamed2964, zica87, ZnPdCo, sun2snow
 
-## 概述
+## Overview
 
-AC（Aho–Corasick）自动机是 **以 Trie 的结构为基础**，结合 **KMP 的思想** 建立的自动机，用于解决多模式匹配等任务．
+The AC (Aho–Corasick) automaton is an automaton **built on the structure of a trie** combined with **the idea of KMP**. It is used for tasks such as matching many patterns at once.
 
-AC 自动机本质上是 Trie 上的自动机．
+In essence, the Aho–Corasick automaton is an automaton on a trie.
 
-在阅读本文之前，请先阅读 [KMP](./kmp.md) 和 [Trie](./trie.md)．
+Before reading this article, please read [KMP](./kmp.md) and [Trie](./trie.md) first.
 
-## 解释
+## Explanation
 
-简单来说，建立一个 AC 自动机有两个步骤：
+Simply put, building an Aho–Corasick automaton takes two steps:
 
-1.  基础的 Trie 结构：将所有的模式串构成一棵 Trie；
-2.  KMP 的思想：对 Trie 树上所有的结点构造失配指针．
+1.  The basic trie structure: build a trie from all the patterns;
+2.  The idea of KMP: build failure pointers for every node of the trie.
 
-建立完毕后，就可以利用它进行多模式匹配．
+Once it is built, you can use it to match many patterns at once.
 
-## 字典树构建
+## Building the trie
 
-AC 自动机在初始时会将若干个模式串插入到一个 Trie 里，然后在 Trie 上建立 AC 自动机．这个 Trie 就是普通的 Trie，按照 Trie 原本的建树方法建树即可．
+The Aho–Corasick automaton starts by inserting all the patterns into a trie, and then builds the automaton on that trie. This trie is just an ordinary trie, built in the usual way.
 
-需要注意的是，Trie 中的结点表示的是某个模式串的前缀．我们在后文也将其称作状态．一个结点表示一个状态，Trie 的边就是状态的转移．
+Note that each node of the trie represents a prefix of some pattern. Later in this article we also call these nodes states. One node is one state, and the edges of the trie are the transitions between states.
 
-形式化地说，对于若干个模式串 $s_1,s_2,\cdots,s_n$，将它们构建一棵字典树后的所有状态的集合记作 $Q$．
+Formally, for patterns $s_1,s_2,\cdots,s_n$, let $Q$ be the set of all states of the trie built from them.
 
-## 失配指针
+## Failure pointers
 
-AC 自动机利用一个 fail 指针来辅助多模式串的匹配．
+The Aho–Corasick automaton uses a fail pointer to help match multiple patterns.
 
-状态 $u$ 的 fail 指针指向另一个状态 $v$，其中 $v\in Q$，且 $v$ 是 $u$ 的最长后缀（即在若干个后缀状态中取最长的一个作为 fail 指针）．
+The fail pointer of state $u$ points to another state $v$, where $v\in Q$ and $v$ is the longest suffix of $u$ (that is, among all states that are suffixes, take the longest one as the fail pointer).
 
-fail 指针与 [KMP](./kmp.md) 中的 next 指针相比：
+Comparing the fail pointer with the next pointer in [KMP](./kmp.md):
 
-1.  共同点：两者同样是在失配的时候用于跳转的指针．
-2.  不同点：next 指针求的是最长 Border（即最长的相同前后缀），而 fail 指针指向所有模式串的前缀中匹配当前状态的最长后缀．
+1.  What they share: both are pointers used to jump when a mismatch happens.
+2.  How they differ: the next pointer gives the longest border (the longest string that is both a proper prefix and a suffix), while the fail pointer points to the longest suffix of the current state that is a prefix of some pattern.
 
-因为 KMP 只对一个模式串做匹配，而 AC 自动机要对多个模式串做匹配．有可能 fail 指针指向的结点对应着另一个模式串，两者前缀不同．
+This is because KMP matches only one pattern, while the Aho–Corasick automaton matches many. The node the fail pointer points to may belong to a different pattern, with a different prefix.
 
-总结下来，AC 自动机的失配指针指向当前状态的最长后缀状态．
+To sum up, the failure pointer of the Aho–Corasick automaton points to the longest suffix state of the current state.
 
-注意：AC 自动机在做匹配时，同一位上可匹配多个模式串．
+Note: when the Aho–Corasick automaton matches, several patterns can match at the same position.
 
-### 构建指针
+### Building the pointers
 
-下面介绍构建 fail 指针的 **基础思想**：
+Here is the **basic idea** of building fail pointers:
 
-构建 fail 指针，可以参考 KMP 中构造 next 指针的思想．
+To build fail pointers, we can borrow the idea of building the next pointers in KMP.
 
-考虑字典树中当前的结点 $u$，$u$ 的父结点是 $p$，$p$ 通过字符 $c$ 的边指向 $u$，即 $\operatorname{trie}(p, c)=u$．假设深度小于 $u$ 的所有结点的 fail 指针都已求得．
+Consider the current node $u$ in the trie. Its parent is $p$, and $p$ points to $u$ through an edge labeled with character $c$, that is, $\operatorname{trie}(p, c)=u$. Assume the fail pointers of all nodes shallower than $u$ are already known.
 
-1.  如果 $\operatorname{trie}(\operatorname{fail}(p), c)$ 存在：则让 $u$ 的 fail 指针指向 $\operatorname{trie}(\operatorname{fail}(p), c)$．相当于在 $p$ 和 $\operatorname{fail}(p)$ 后面加一个字符 $c$，分别对应 $u$ 和 $\operatorname{fail}(u)$；
-2.  如果 $\operatorname{trie}(\operatorname{fail}(p), c)$ 不存在：那么我们继续找到 $\operatorname{trie}(\operatorname{fail}(\operatorname{fail}(p)), c)$．重复判断过程，一直跳 fail 指针直到根结点；
-3.  如果依然不存在，就让 fail 指针指向根结点．
+1.  If $\operatorname{trie}(\operatorname{fail}(p), c)$ exists: let the fail pointer of $u$ point to $\operatorname{trie}(\operatorname{fail}(p), c)$. This is like appending a character $c$ to both $p$ and $\operatorname{fail}(p)$, giving $u$ and $\operatorname{fail}(u)$ respectively;
+2.  If $\operatorname{trie}(\operatorname{fail}(p), c)$ does not exist: then we go on to look at $\operatorname{trie}(\operatorname{fail}(\operatorname{fail}(p)), c)$. Repeat this check, following fail pointers all the way up to the root;
+3.  If it still does not exist, let the fail pointer point to the root.
 
-如此即完成了 $\operatorname{fail}(u)$ 的构建．
+This completes the construction of $\operatorname{fail}(u)$.
 
-### 例子
+### Example
 
-下面将使用若干张 GIF 动图来演示对字符串 $\mathtt{i}$、$\mathtt{he}$、$\mathtt{his}$、$\mathtt{she}$、$\mathtt{hers}$ 组成的字典树构建 fail 指针的过程：
+The GIF animations below show how fail pointers are built for the trie made from the strings $\mathtt{i}$, $\mathtt{he}$, $\mathtt{his}$, $\mathtt{she}$, $\mathtt{hers}$:
 
-1.  黄色结点：当前的结点 $u$．
-2.  绿色结点：表示已经 BFS 遍历完毕的结点．
-3.  橙色的边：fail 指针．
-4.  红色的边：当前求出的 fail 指针．
+1.  Yellow node: the current node $u$.
+2.  Green nodes: nodes already visited by BFS.
+3.  Orange edges: fail pointers.
+4.  Red edge: the fail pointer just computed.
 
 ![AC\_automation\_gif\_b\_3.gif](./images/ac-automaton1.gif)
 
-我们重点分析结点 $6$ 的 fail 指针构建：
+Let us look closely at how the fail pointer of node $6$ is built:
 
 ![AC\_automation\_6\_9.png](./images/ac-automaton1.png)
 
-找到 $6$ 的父结点 $5$，$\operatorname{fail}(5)=10$．然而结点 $10$ 没有字母 $\mathtt{s}$ 连出的边；继续跳到 $10$ 的 fail 指针，$\operatorname{fail}(10)=0$．发现 $0$ 结点有字母 $\mathtt{s}$ 连出的边，指向 $7$ 结点；所以 $\operatorname{fail}(6)=7$．
+Find the parent of $6$, which is $5$, with $\operatorname{fail}(5)=10$. But node $10$ has no outgoing edge labeled $\mathtt{s}$. So we jump on to the fail pointer of $10$: $\operatorname{fail}(10)=0$. Node $0$ does have an outgoing edge labeled $\mathtt{s}$, pointing to node $7$. So $\operatorname{fail}(6)=7$.
 
-下图展示了构建完毕的状态：
+The figure below shows the finished state:
 
 ![finish](./images/ac-automaton4.png)
 
-## 字典树与字典图
+## Trie and trie graph
 
-关注构建函数 `build`，该函数的目标有两个，一个是构建 fail 指针，一个是构建自动机．相关变量定义如下：
+Look at the construction function `build`. It has two goals: build the fail pointers, and build the automaton. The variables are defined as follows:
 
-1.  `tr[u].son[c]`：有两种理解方式．我们可以简单理解为字典树上的一条边，即 $\operatorname{trie}(u, c)$；也可以理解为从状态（结点）$u$ 后加一个字符 $c$ 到达的状态（结点），即一个状态转移函数 $\operatorname{trans}(u, c)$．为了方便，下文中我们将用第二种理解方式．
-2.  队列 `q`：用于 BFS 遍历字典树．
-3.  `tr[u].fail`：结点 $u$ 的 fail 指针．
+1.  `tr[u].son[c]`: this can be read in two ways. We can simply see it as an edge of the trie, that is, $\operatorname{trie}(u, c)$. Or we can see it as the state (node) reached by appending a character $c$ to state (node) $u$, that is, a state transition function $\operatorname{trans}(u, c)$. For convenience, we use the second reading below.
+2.  Queue `q`: used to traverse the trie with BFS.
+3.  `tr[u].fail`: the fail pointer of node $u$.
 
-???+ note "实现"
+???+ note "Implementation"
     === "C++"
         ```cpp
         void build() {
@@ -122,51 +122,51 @@ fail 指针与 [KMP](./kmp.md) 中的 next 指针相比：
                         tr[u][i] = tr[fail[u]][i]
         ```
 
-### 解释
+### Explanation
 
-`build` 函数将结点按 BFS 顺序入队，依次求 fail 指针．这里的字典树根结点为 $0$，我们将根结点的子结点一一入队．若将根结点入队，则在第一次 BFS 的时候，会将根结点儿子的 fail 指针标记为本身．因此我们将根结点的儿子一一入队，而不是将根结点入队．
+The `build` function pushes nodes into the queue in BFS order and computes their fail pointers one by one. Here the root of the trie is $0$, and we push the root's children into the queue one by one. If we pushed the root itself, then in the first BFS step the fail pointers of the root's children would be set to themselves. That is why we push the root's children instead of the root.
 
-然后开始 BFS：每次取出队首的结点 $u$（$\operatorname{fail}(u)$ 在之前的 BFS 过程中已求得），然后遍历字符集（这里是 $0 \sim 25$，对应 $\mathtt{a} \sim \mathtt{z}$，即 $u$ 的各个子结点）：
+Then BFS starts. Each time, take the node $u$ at the front of the queue ($\operatorname{fail}(u)$ was already computed earlier in the BFS), and go over the alphabet (here $0 \sim 25$, standing for $\mathtt{a} \sim \mathtt{z}$, that is, each child of $u$):
 
-1.  如果 $\operatorname{trans}(u, c)$ 存在，我们就将 $\operatorname{trans}(u, c)$ 的 fail 指针赋值为 $\operatorname{trans}(\operatorname{fail}(u), c)$．根据之前的描述，我们应该用 `while` 循环，不停地跳 fail 指针，判断是否存在字符 $c$ 对应的结点，然后赋值，但此处通过特殊处理简化了这些代码，将在下文说明；
-2.  否则，令 $\operatorname{trans}(u, c)$ 指向 $\operatorname{trans}(\operatorname{fail}(u), c)$ 的状态．
+1.  If $\operatorname{trans}(u, c)$ exists, set the fail pointer of $\operatorname{trans}(u, c)$ to $\operatorname{trans}(\operatorname{fail}(u), c)$. By the description above, we should use a `while` loop that keeps following fail pointers, checks whether a node for character $c$ exists, and then assigns it. But a special trick here simplifies that code; it is explained below;
+2.  Otherwise, let $\operatorname{trans}(u, c)$ point to the state $\operatorname{trans}(\operatorname{fail}(u), c)$.
 
-这里的处理是，通过 `else` 语句的代码修改字典树的结构，将不存在的字典树的状态链接到了失配指针的对应状态．在原字典树中，每一个结点代表一个字符串 $S$，是某个模式串的前缀．而在修改字典树结构后，尽管增加了许多转移关系，但结点（状态）所代表的字符串是不变的．
+The trick is that the code in the `else` branch changes the structure of the trie: a missing trie state is linked to the matching state of the failure pointer. In the original trie, each node represents a string $S$ that is a prefix of some pattern. After the structure is changed, many transitions are added, but the string each node (state) represents stays the same.
 
-而 $\operatorname{trans}(S, c)$ 相当于是在 $S$ 后添加一个字符 $c$ 变成另一个状态 $S'$．如果 $S'$ 存在，说明存在一个模式串的前缀是 $S'$，否则我们让 $\operatorname{trans}(S, c)$ 指向 $\operatorname{trans}(\operatorname{fail}(S), c)$．由于 $\operatorname{fail}(S)$ 对应的字符串是 $S$ 的后缀，因此 $\operatorname{trans}(\operatorname{fail}(S), c)$ 对应的字符串也是 $S'$ 的后缀．
+$\operatorname{trans}(S, c)$ means appending a character $c$ to $S$ to get another state $S'$. If $S'$ exists, some pattern has $S'$ as a prefix. Otherwise, we let $\operatorname{trans}(S, c)$ point to $\operatorname{trans}(\operatorname{fail}(S), c)$. Since the string of $\operatorname{fail}(S)$ is a suffix of $S$, the string of $\operatorname{trans}(\operatorname{fail}(S), c)$ is also a suffix of $S'$.
 
-换言之在 Trie 上跳转的时候，我们只会从 $S$ 跳转到 $S'$，相当于匹配了一个 $S'$；但在 AC 自动机上跳转的时候，我们会从 $S$ 跳转到 $S'$ 的后缀，也就是说我们匹配一个字符 $c$，然后舍弃 $S$ 的部分前缀．舍弃前缀显然是能匹配的．同时如果文本串能匹配 $S$，显然它也能匹配 $S$ 的后缀，所以 fail 指针同样在舍弃前缀．所谓的 fail 指针其实就是 $S$ 的一个后缀集合．
+In other words, when moving on a trie, we only move from $S$ to $S'$, which matches $S'$. But when moving on the Aho–Corasick automaton, we move from $S$ to a suffix of $S'$: we match one character $c$ and drop part of the prefix of $S$. Dropping a prefix clearly still gives a match. Also, if the text matches $S$, it clearly matches every suffix of $S$, so the fail pointer is also dropping a prefix. The fail pointers really just describe a set of suffixes of $S$.
 
-Trie 的结点的孩子数组 `son` 还有另一种比较简单的理解方式：如果在位置 $u$ 失配，我们会跳转到 $\operatorname{fail}(u)$ 的位置．注意这会导致我们可能沿着 fail 数组跳转多次才能来到下一个能匹配的位置．所以我们可以用 `son` 直接记录下一个能匹配的位置，这样保证了程序的时间复杂度．
+There is another, simpler way to understand the child array `son` of a trie node. If a mismatch happens at position $u$, we jump to $\operatorname{fail}(u)$. This may force us to follow the fail array many times before reaching the next position that can match. So we use `son` to directly record the next position that can match, which keeps the time complexity under control.
 
-此处对字典树结构的修改，可以使得匹配转移更加完善．同时它将 fail 指针跳转的路径做了压缩，使得本来需要跳很多次 fail 指针变成跳一次．
+Changing the trie structure here makes the matching transitions complete. It also compresses the paths of fail pointer jumps, so what would have taken many fail jumps now takes just one.
 
-### 过程
+### Process
 
-这里依然用若干张 GIF 动图展示构建过程：
+Again, GIF animations show the construction:
 
 ![AC\_automation\_gif\_b\_pro3.gif](./images/ac-automaton2.gif)
 
-1.  蓝色结点：BFS 遍历到的结点 $u$．
-2.  蓝色的边：当前结点下，AC 自动机修改字典树结构连出的边．
-3.  黑色的边：AC 自动机修改字典树结构连出的边．
-4.  红色的边：当前结点求出的 fail 指针．
-5.  黄色的边：fail 指针．
-6.  灰色的边：字典树的边．
+1.  Blue node: the node $u$ visited by BFS.
+2.  Blue edges: edges added at the current node when the automaton changes the trie structure.
+3.  Black edges: edges added when the automaton changes the trie structure.
+4.  Red edge: the fail pointer computed for the current node.
+5.  Yellow edges: fail pointers.
+6.  Gray edges: trie edges.
 
-可以发现，众多交错的黑色边将字典树变成了 **字典图**．图中省略了连向根结点的黑边（否则会更乱）．我们重点分析一下结点 $5$ 遍历时的情况．我们求 $\operatorname{trans}(5, \mathtt{s})=6$ 的 fail 指针：
+You can see that the many crossing black edges turn the trie into a **trie graph**. Black edges pointing to the root are left out of the figure (otherwise it would be even messier). Let us look closely at what happens when node $5$ is visited. We compute the fail pointer of $\operatorname{trans}(5, \mathtt{s})=6$:
 
 ![AC\_automation\_b\_7.png](./images/ac-automaton2.png)
 
-本来的策略是找 fail 指针，于是我们跳到 $\operatorname{fail}(5)=10$ 发现没有 $\mathtt{s}$ 连出的字典树的边，于是跳到 $\operatorname{fail}(10)=0$，发现有 $\operatorname{trie}(0, \mathtt{s})=7$，于是 $\operatorname{fail}(6)=7$；但是有了黑边、蓝边，我们跳到 $\operatorname{fail}(5)=10$ 之后直接走 $\operatorname{trans}(10, \mathtt{s})=7$ 就走到 $7$ 号结点了．
+The original strategy is to follow fail pointers: we jump to $\operatorname{fail}(5)=10$ and find no trie edge labeled $\mathtt{s}$, so we jump to $\operatorname{fail}(10)=0$ and find $\operatorname{trie}(0, \mathtt{s})=7$, so $\operatorname{fail}(6)=7$. But with the black and blue edges, after jumping to $\operatorname{fail}(5)=10$ we can directly follow $\operatorname{trans}(10, \mathtt{s})=7$ and arrive at node $7$.
 
-这就是 `build` 完成的两件事：构建 fail 指针和建立字典图．这个字典图也会在查询的时候起到关键作用．
+These are the two things `build` does: build the fail pointers and build the trie graph. The trie graph also plays a key role during queries.
 
-## 多模式匹配
+## Multi-pattern matching
 
-接下来分析匹配函数 `query`：
+Next, let us look at the matching function `query`:
 
-???+ note "实现"
+???+ note "Implementation"
     === "C++"
         ```cpp
         int query(const char t[]) {
@@ -195,44 +195,44 @@ Trie 的结点的孩子数组 `son` 还有另一种比较简单的理解方式�
             return res
         ```
 
-### 解释
+### Explanation
 
-这里 $u$ 作为字典树上当前匹配到的结点，`res` 即返回的答案．循环遍历匹配串，$u$ 在字典树上跟踪当前字符．利用 fail 指针找出所有匹配的模式串，并累加到答案中．然后将匹配到的串的出现次数清零，这样就不会重复统计同一个串．在上文中我们分析过，字典树的结构其实就是一个 trans 函数，而构建好这个函数后，在匹配字符串的过程中，我们会舍弃部分前缀达到最低限度的匹配．fail 指针则指向了更多的匹配状态．最后上一份图．对于刚才的自动机：
+Here $u$ is the trie node matched so far, and `res` is the answer to return. We loop over the text, and $u$ follows the current character on the trie. Using the fail pointers, we find all matching patterns and add them to the answer. Then we set the occurrence count of each matched pattern to zero, so the same pattern is not counted twice. As analyzed above, the trie structure is really a trans function. Once this function is built, while matching we drop part of the prefix to keep the smallest necessary match, and the fail pointers point to further matching states. Here is one last figure. For the automaton above:
 
 ![AC\_automation\_b\_13.png](./images/ac-automaton3.png)
 
-我们从根结点开始尝试匹配 $\mathtt{ushersheishis}$，那么 $p$ 的变化将是：
+Starting from the root, we try to match $\mathtt{ushersheishis}$. Then $p$ changes as follows:
 
 ![AC\_automation\_gif\_c.gif](./images/ac-automaton3.gif)
 
-1.  红色结点：$p$ 结点．
-2.  粉色箭头：$p$ 在自动机上的跳转．
-3.  蓝色的边：成功匹配的模式串．
-4.  蓝色结点：示跳 fail 指针时的结点（状态）．
+1.  Red node: node $p$.
+2.  Pink arrows: the moves of $p$ on the automaton.
+3.  Blue edges: successfully matched patterns.
+4.  Blue nodes: nodes (states) visited while following fail pointers.
 
-## 效率优化
+## Efficiency optimization
 
-题目请参考洛谷 [P5357【模板】AC 自动机](https://www.luogu.com.cn/problem/P5357)．
+For a problem, see Luogu [P5357 \[Template\] AC Automaton](https://www.luogu.com.cn/problem/P5357).
 
-因为我们的 AC 自动机中，每次匹配，会一直向 fail 边跳来找到所有的匹配，但是这样的效率较低，在某些题目中会超时．
+In our Aho–Corasick automaton, each match keeps following fail edges to find all matches. This is slow and will exceed the time limit on some problems.
 
-那么需要如何优化呢？首先需要了解到 fail 指针的一个性质：一个 AC 自动机中，如果只保留 fail 边，那么剩余的图一定是一棵树．
+So how do we optimize it? First, we need a property of fail pointers: in an Aho–Corasick automaton, if we keep only the fail edges, the remaining graph is always a tree.
 
-这是显然的，因为 fail 不会成环，且深度一定比现在低，所以得证．
+This is clear: fail pointers never form a cycle, and each one points to a shallower node, which proves it.
 
-这样 AC 自动机的匹配就可以转化为在 fail 树上的链求和问题，只需要优化一下该部分就可以了．
+So matching on the Aho–Corasick automaton becomes a problem of summing along paths in the fail tree, and we only need to optimize that part.
 
-这里提供两种思路．
+Here are two approaches.
 
-### 拓扑排序优化
+### Topological sort optimization
 
-观察到时间主要浪费在每次都要跳 fail．如果我们可以预先记录，最后一并求和，那么效率就会优化．
+Notice that most of the time is wasted on following fail pointers every time. If we record the values first and sum them all at the end, it becomes faster.
 
-于是我们按照 fail 树，做一次内向树上的拓扑排序，就能一次性求出所有模式串的出现次数．
+So we do one topological sort on the fail tree (an in-tree, with edges pointing toward the root), and get the number of occurrences of all patterns at once.
 
-`build` 函数在原先的基础上，增加了入度统计一部分，为拓扑排序做准备．
+The `build` function adds in-degree counting on top of the original version, to prepare for the topological sort.
 
-???+ note "构建"
+???+ note "Build"
     ```cpp
     void build() {
       queue<int> q;
@@ -244,7 +244,7 @@ Trie 的结点的孩子数组 `son` 还有另一种比较简单的理解方式�
         for (int i = 0; i < 26; i++) {
           if (tr[u].son[i]) {
             tr[tr[u].son[i]].fail = tr[tr[u].fail].son[i];
-            tr[tr[tr[u].fail].son[i]].du++;  // 入度计数
+            tr[tr[tr[u].fail].son[i]].du++;  // count in-degree
             q.push(tr[u].son[i]);
           } else
             tr[u].son[i] = tr[tr[u].fail].son[i];
@@ -253,9 +253,9 @@ Trie 的结点的孩子数组 `son` 还有另一种比较简单的理解方式�
     }
     ```
 
-然后我们在查询的时候就可以只为找到结点的 `ans` 打上标记，在最后再用拓扑排序求出答案．
+Then during a query we only mark `ans` on the nodes we reach, and compute the answers with a topological sort at the end.
 
-???+ note "查询"
+???+ note "Query"
     ```cpp
     void query(const char t[]) {
       int u = 0;
@@ -280,9 +280,9 @@ Trie 的结点的孩子数组 `son` 还有另一种比较简单的理解方式�
     }
     ```
 
-最后是主函数：
+Finally, the main function:
 
-???+ note "主函数"
+???+ note "Main function"
     ```cpp
     int main() {
       // do_something();
@@ -295,26 +295,26 @@ Trie 的结点的孩子数组 `son` 还有另一种比较简单的理解方式�
     }
     ```
 
-??? note "模板题 [Luogu P5357「模板」AC 自动机](https://www.luogu.com.cn/problem/P5357) 拓扑排序优化参考代码"
+??? note "Reference code with topological sort optimization for the template problem [Luogu P5357 \[Template\] AC Automaton](https://www.luogu.com.cn/problem/P5357)"
     ```cpp
     --8<-- "docs/string/code/ac-automaton/ac-automaton_topu.cpp"
     ```
 
-### DFS 优化
+### DFS optimization
 
-和拓扑排序的思路接近，不过我们使用 DFS 来代替拓扑排序．其实这两种方法本质上是相同的，都是将 fail 树的子树求和．
+This is close to the topological sort idea, but we use DFS instead. The two methods are essentially the same: both compute subtree sums on the fail tree.
 
-完整代码请见总结模板 3．
+See template 3 in the summary for the full code.
 
-## AC 自动机上 DP
+## DP on the Aho–Corasick automaton
 
-这部分将以 [P2292 \[HNOI2004\] L 语言](https://www.luogu.com.cn/problem/P2292) 为例题讲解．
+This part uses [P2292 \[HNOI2004\] L Language](https://www.luogu.com.cn/problem/P2292) as the example problem.
 
-不难想到一个朴素的思路：建立 AC 自动机，在 AC 自动机上对于所有 fail 指针的子串转移，最后取最大值得到答案．
+A naive idea comes easily: build the Aho–Corasick automaton, do transitions over the substrings along all fail pointers, and take the maximum as the answer.
 
-主要代码如下．若不熟悉代码中的类型定义，可以先看末尾的完整代码：
+The main code is below. If you are not familiar with the type definitions in it, look at the full code at the end first:
 
-???+ note "查询部分主要代码"
+???+ note "Main code of the query"
     ```cpp
     int query(const char t[]) {
       int u = 0, len = strlen(t + 1);
@@ -333,17 +333,17 @@ Trie 的结点的孩子数组 `son` 还有另一种比较简单的理解方式�
     }
     ```
 
-但是这样的思路复杂度不是线性（因为要跳每个结点的 fail），会在第二个子任务中超时，所以我们需要进行优化．
+But this idea is not linear (it follows the fail pointers of every node), and it exceeds the time limit on the second subtask. So we need to optimize.
 
-我们再看看题目的特殊性质，我们发现所有单词的长度只有 $20$，所以可以想到状态压缩优化．
+Look at a special property of the problem: every word has length at most $20$. This suggests a bitmask optimization.
 
-我们发现，目前的时间瓶颈主要在跳 fail 这一步，如果我们可以将这一步优化到 $O(1)$，就可以保证整个问题在严格线性的时间内被解出．
+The current bottleneck is following fail pointers. If we can make this step $O(1)$, the whole problem can be solved in strictly linear time.
 
-我们可以将前 $20$ 位字母中，可能的子串长度存下来，并压缩到状态中，存在每个子结点中．
+We can record the possible substring lengths among the last $20$ letters, pack them into a bitmask, and store it in each node.
 
-那么我们在 `build` 的时候就可以这么写：
+Then `build` can be written like this:
 
-???+ note "构建 fail 指针"
+???+ note "Building fail pointers"
     ```cpp
     void build() {
       queue<int> q;
@@ -356,13 +356,13 @@ Trie 的结点的孩子数组 `son` 还有另一种比较简单的理解方式�
         int u = q.front();
         q.pop();
         int v = tr[u].fail;
-        // 对状态的更新在这里
+        // state updates happen here
         tr[u].stat = tr[v].stat;
         if (tr[u].idx) tr[u].stat |= 1 << tr[u].depth;
         for (int i = 0; i < 26; i++) {
           if (tr[u].son[i]) {
             tr[tr[u].son[i]].fail = tr[tr[u].fail].son[i];
-            tr[tr[u].son[i]].depth = tr[u].depth + 1;  // 记录深度
+            tr[tr[u].son[i]].depth = tr[u].depth + 1;  // record the depth
             q.push(tr[u].son[i]);
           } else
             tr[u].son[i] = tr[tr[u].fail].son[i];
@@ -371,46 +371,46 @@ Trie 的结点的孩子数组 `son` 还有另一种比较简单的理解方式�
     }
     ```
 
-然后查询时就可以去掉跳 fail 的循环，将代码简化如下：
+Then the query no longer needs the loop that follows fail pointers, and the code becomes:
 
-???+ note "查询"
+???+ note "Query"
     ```cpp
     int query(const char t[]) {
       int u = 0, mx = 0;
       unsigned st = 1;
       for (int i = 1; t[i]; i++) {
         u = tr[u].son[t[i] - 'a'];
-        st <<= 1;  // 往下跳了一位每一位的长度都+1
+        st <<= 1;  // moved down one step, so every length grows by 1
         if (tr[u].stat & st) st |= 1, mx = i;
       }
       return mx;
     }
     ```
 
-我们的 `tr[u].stat` 维护的是从结点 $u$ 开始，整条 fail 链上的长度集（因为长度集小于 $32$ 所以不影响），而 `st` 则维护的是查询字符串走到现在，前 $32$ 位（因为状态压缩自然溢出）的长度集．
+`tr[u].stat` stores the set of lengths along the whole fail chain starting at node $u$ (the lengths are less than $32$, so this fits). `st` stores the set of lengths for the query string so far, limited to the last $32$ positions (the bitmask overflows naturally).
 
-`&` 运算后结果不为 $0$，则代表两个长度集的交集非空，我们此时就找到了一个匹配．
+If the result of `&` is not $0$, the two length sets intersect, and we have found a match.
 
-??? note "[P2292 \[HNOI2004\] L 语言](https://www.luogu.com.cn/problem/P2292) 完整代码"
+??? note "Full code for [P2292 \[HNOI2004\] L Language](https://www.luogu.com.cn/problem/P2292)"
     ```cpp
     --8<-- "docs/string/code/ac-automaton/ac_automaton_luoguP2292.cpp"
     ```
 
-## 总结
+## Summary
 
-时间复杂度：定义 $|s_i|$ 是模板串的长度，$|S|$ 是文本串的长度，$|\Sigma|$ 是字符集的大小（常数，一般为 $26$）．如果连了 trie 图，时间复杂度就是 $O(\sum|s_i|+n|\Sigma|+|S|)$，其中 $n$ 是 AC 自动机中结点的数目，并且最大可以达到 $O(\sum|s_i|)$．如果不连 trie 图，并且在构建 fail 指针的时候避免遍历到空儿子，时间复杂度就是 $O(\sum|s_i|+|S|)$．
+Time complexity: let $|s_i|$ be the length of each pattern, $|S|$ the length of the text, and $|\Sigma|$ the alphabet size (a constant, usually $26$). If the trie graph is built, the time complexity is $O(\sum|s_i|+n|\Sigma|+|S|)$, where $n$ is the number of nodes in the automaton and can be as large as $O(\sum|s_i|)$. If the trie graph is not built, and empty children are skipped while building fail pointers, the time complexity is $O(\sum|s_i|+|S|)$.
 
-??? note "模板题 [Luogu P3808 AC 自动机（简单版）](https://www.luogu.com.cn/problem/P3808) 参考代码"
+??? note "Reference code for the template problem [Luogu P3808 AC Automaton (Easy Version)](https://www.luogu.com.cn/problem/P3808)"
     ```cpp
     --8<-- "docs/string/code/ac-automaton/ac-automaton_1.cpp"
     ```
 
-??? note "模板题 [Luogu P3796 AC 自动机（简单版 II）](https://www.luogu.com.cn/problem/P3796) 参考代码"
+??? note "Reference code for the template problem [Luogu P3796 AC Automaton (Easy Version II)](https://www.luogu.com.cn/problem/P3796)"
     ```cpp
     --8<-- "docs/string/code/ac-automaton/ac-automaton_2.cpp"
     ```
 
-??? note "模板题 [Luogu P5357「模板」AC 自动机](https://www.luogu.com.cn/problem/P5357) DFS 优化参考代码"
+??? note "Reference code with DFS optimization for the template problem [Luogu P5357 \[Template\] AC Automaton](https://www.luogu.com.cn/problem/P5357)"
     ```cpp
     --8<-- "docs/string/code/ac-automaton/ac-automaton_3.cpp"
     ```

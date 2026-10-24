@@ -1,14 +1,14 @@
 author: minghu6
 
-前置知识：[前缀函数与 KMP 算法](./kmp.md)．
+Prerequisites: [Prefix function and the KMP algorithm](./kmp.md).
 
-KMP 算法将前缀匹配的信息用到了极致，
+The KMP algorithm squeezes everything it can out of prefix matching.
 
-而 BM 算法背后的基本思想是通过后缀匹配获得比前缀匹配更多的信息来实现更快的字符跳转．
+The basic idea behind the BM algorithm is to match suffixes instead, which gives more information than prefix matching and allows faster jumps over characters.
 
-## 引入
+## Introduction
 
-想象一下，如果我们的模式字符串 $pat$，被放在文本字符串 $string$ 的左手起头部，使它们的第一个字符对齐．
+Imagine placing our pattern string $pat$ at the left end of the text string $string$, so that their first characters line up.
 
 $$
 \begin{aligned}
@@ -18,82 +18,82 @@ $$
 \end{aligned}
 $$
 
-在这里做定义，往后不赘述：
+We define the following here and use them throughout:
 
-$pat$ 的长度为 $patlen$，特别地对于从 0 开始的串来说，规定 $patlastpos=patlen-1$ 为 $pat$ 串最后一个字符的位置；
+The length of $pat$ is $patlen$. In particular, for 0-indexed strings, $patlastpos=patlen-1$ is the position of the last character of $pat$;
 
-$string$ 的长度 $stringlen$，$stringlastpos = stringlen-1$．
+the length of $string$ is $stringlen$, and $stringlastpos = stringlen-1$.
 
-假如我们知道了 $string$ 的第 $patlen$ 个字符 $char$（与 $pat$ 的最后一个字符对齐）考虑我们能得到什么信息：
+Suppose we know the $patlen$-th character $char$ of $string$ (the one lined up with the last character of $pat$). Let us see what information it gives us:
 
-### 观察 1
+### Observation 1
 
-如果我们知道 $char$ 这个字符不在 $pat$ 中，我们就不用考虑 $pat$ 从 $string$ 的第 $1$ 个、第 $2$ 个……第 $patlen$ 个字符起出现的情况，而可以直接将 $pat$ 向下滑动 $patlen$ 个字符．
+If we know that the character $char$ does not appear in $pat$, we do not need to consider $pat$ occurring at the 1st, 2nd, ..., $patlen$-th character of $string$. We can slide $pat$ down by $patlen$ characters right away.
 
-### 观察 2
+### Observation 2
 
-更一般地，**如果出现在 $pat$ 最末尾（也就是最右边）的那一个 $char$ 字符的位置是离末尾端差了 $delta_1$ 个字符**，
+More generally, **if the last (rightmost) occurrence of the character $char$ in $pat$ is $delta_1$ characters away from the end**,
 
-那么就可以不用匹配，直接将 $pat$ 向后滑动 $delta_1$ 个字符：如果滑动距离少于 $delta_1$，那么仅就 $char$ 这个字符就无法被匹配，当然模式字符串 $pat$ 也就不会被匹配．
+then we can slide $pat$ forward by $delta_1$ characters without matching anything: if we slide by less than $delta_1$, the character $char$ alone cannot match, so of course the pattern $pat$ cannot match either.
 
-因此除非 $char$ 字符可以和 $pat$ 末尾的那个字符匹配，否则 $string$ 要跳过 $delta_1$ 个字符（相当于 $pat$ 向后滑动了 $delta_1$ 个字符）．并且我们可以得到一个计算 $delta_1$ 的函数 $delta_1(char)$：
+So unless $char$ matches the last character of $pat$, $string$ should skip $delta_1$ characters (the same as sliding $pat$ forward by $delta_1$ characters). This gives a function $delta_1(char)$ that computes $delta_1$:
 
 $$
 \begin{array}{ll}
 \textbf{int}\ delta1(\textbf{char}\ char) \\
-\qquad \textbf{if}\ \text{char不在pat中 || char是pat上最后一个字符} \\
+\qquad \textbf{if}\ \text{char is not in pat || char is the last character of pat} \\
 \qquad\qquad\textbf{return}\ patlen \\
 \qquad \textbf{else} \\
-\qquad\qquad\textbf{return}\ patlastpos-i\quad\textbf{//}\ \text{i为出现在pat最末尾的那一个char出现的位置，即pat[i]=char}
+\qquad\qquad\textbf{return}\ patlastpos-i\quad\textbf{//}\ \text{i is the position of the last occurrence of char in pat, i.e. pat[i]=char}
 \end{array}
 $$
 
-需要注意，显然这个表只需计算到 $patlastpos-1$ 的位置．
+Note that this table clearly only needs to be computed up to position $patlastpos-1$.
 
-现在假设 $char$ 和 $pat$ 最后一个字符匹配到了，那我们就看看 $char$ 前一个字符和 $pat$ 的倒数第二个字符是否匹配：
+Now suppose $char$ matches the last character of $pat$. Then we check whether the character before $char$ matches the second-to-last character of $pat$:
 
-如果是，就继续回退直到整个模式串 $pat$ 完成匹配（这时我们就在 $string$ 上成功得到了一个 $pat$ 的匹配）；
+If it does, we keep moving back until the whole pattern $pat$ matches (then we have found a match of $pat$ in $string$);
 
-或者，我们也可能会在匹配完 $pat$ 的倒数第 $m$ 个字符后，在倒数第 $m+1$ 个字符上失配，这时我们就希望把 $pat$ 向后滑动到下一个可能会实现匹配的位置，当然我们希望滑动得越远越好．
+or, after matching the last $m$ characters of $pat$, we may get a mismatch at the $(m+1)$-th character from the end. Then we want to slide $pat$ forward to the next position where a match is possible, and of course we want to slide as far as we can.
 
-### 观察 3(a)
+### Observation 3(a)
 
-在 **观察 2** 中提到，当匹配完 $pat$ 的倒数 $m$ 个字符后，如果在倒数第 $m+1$ 个字符失配，为了使得 $string$ 中的失配字符与 $pat$ 上对应字符对齐，
+As mentioned in **Observation 2**, after matching the last $m$ characters of $pat$, if there is a mismatch at the $(m+1)$-th character from the end, then to line up the mismatched character in $string$ with the corresponding character of $pat$,
 
-需要把 $pat$ 向后滑动 $k$ 个字符，也就是说我们应该把注意力看向之后的 $k+m$ 个字符（也就是看向 $pat$ 滑动 k 之后，末段与 $string$ 对齐的那个字符）．
+we need to slide $pat$ forward by $k$ characters. That means we should move our attention $k+m$ characters ahead (to the character of $string$ lined up with the end of $pat$ after sliding by $k$).
 
-而 $k=delta_1-m$，
+Since $k=delta_1-m$,
 
-所以我们的注意力应该沿着 $string$ 向后跳 $delta_1-m+m = delta_1$ 个字符．
+our attention should jump $delta_1-m+m = delta_1$ characters ahead along $string$.
 
-然而，我们有机会跳过更多的字符，请继续看下去．
+However, we may be able to skip even more characters. Read on.
 
-### 观察 3(b)
+### Observation 3(b)
 
-如果我们知道 $string$ 接下来的 $m$ 个字符和 $pat$ 的最后 $m$ 个字符匹配，假设这个子串为 $subpat$，
+Suppose we know that the next $m$ characters of $string$ match the last $m$ characters of $pat$. Call this substring $subpat$.
 
-我们还知道在 $string$ 失配字符 $char$ 后面是与 $subpat$ 相匹配的子串，而假如 $pat$ 对应失配字符前面存在 $subpat$，我们可以将 $pat$ 向下滑动一段距离，
+We also know that the mismatched character $char$ in $string$ is followed by a substring matching $subpat$. If $subpat$ also appears in $pat$ before the position corresponding to the mismatched character, we can slide $pat$ down some distance,
 
-使得失配字符 $char$ 在 $pat$ 上对应的字符前面出现的 $subpat$（合理重现，plausible reoccurrence，以下也简称 pr）与 $string$ 的 $subpat$ 对齐．如果 $pat$ 上有多个 $subpat$，按照从右到左的后缀匹配顺序，取第一个（rightmost plausible reoccurrence，以下也简称 rpr）．
+so that this earlier $subpat$ in $pat$ (a plausible reoccurrence, abbreviated pr below) lines up with the $subpat$ in $string$. If $pat$ contains several such $subpat$, following the right-to-left order of suffix matching, take the first one (the rightmost plausible reoccurrence, abbreviated rpr below).
 
-假设此时 $pat$ 向下滑动的 $k$ 个字符（也即 $pat$ 末尾端的 $subpat$ 与其最右边的合理重现的距离），这样我们的注意力应该沿着 $string$ 向后滑动 $k+m$ 个字符，这段距离我们称之为 $delta_2(j)$：
+Suppose $pat$ now slides down by $k$ characters (the distance between the $subpat$ at the end of $pat$ and its rightmost plausible reoccurrence). Then our attention should move $k+m$ characters ahead along $string$. We call this distance $delta_2(j)$:
 
-假定 $rpr(j)$ 为 $subpat=pat[j+1\dots patlastpos]$ 在 $pat[j]$ 上失配时的最右边合理重现的位置，$rpr(j) < j$（这里只给出简单定义，在下文的算法设计章节里会有更精确的讨论），那么显然 $k=j-rpr(j),\ m=patlastpos-j$．
+Let $rpr(j)$ be the position of the rightmost plausible reoccurrence of $subpat=pat[j+1\dots patlastpos]$ when the mismatch happens at $pat[j]$, with $rpr(j) < j$ (this is only a simple definition; the algorithm design section below discusses it more precisely). Then clearly $k=j-rpr(j),\ m=patlastpos-j$.
 
-所以有：
+So we have:
 
 $$
 \begin{array}{ll}
-\textbf{int}\ delta2(\textbf{int}\ j) \quad\textbf{//}\ \text{j为失配字符在pat上对应字符的位置} \\
+\textbf{int}\ delta2(\textbf{int}\ j) \quad\textbf{//}\ \text{j is the position in pat matched against the mismatched character} \\
 \qquad\qquad\textbf{return}\ patlastpos-rpr(j) \\
 \end{array}
 $$
 
-于是我们在失配时，可以把 $string$ 上的注意力往后跳过 $\max(delta_1,delta_2)$ 个字符
+So on a mismatch, we can move our attention on $string$ forward by $\max(delta_1,delta_2)$ characters.
 
-## 过程
+## Process
 
-箭头指向失配字符 $char$：
+The arrow points to the mismatched character $char$:
 
 $$
 \begin{aligned}
@@ -103,7 +103,7 @@ $$
 \end{aligned}
 $$
 
-$\texttt{F}$ 没有出现 $pat$ 中，根据 **观察 1**，$pat$ 直接向下移动 $patlen$ 个字符，也就是 7 个字符：
+$\texttt{F}$ does not appear in $pat$. By **Observation 1**, $pat$ moves down by $patlen$ characters, that is, 7 characters:
 
 $$
 \begin{aligned}
@@ -113,7 +113,7 @@ $$
 \end{aligned}
 $$
 
-根据 **观察 2**，我们需要将 $pat$ 向下移动 4 个字符使得短横线字符对齐：
+By **Observation 2**, we need to move $pat$ down by 4 characters to line up the hyphens:
 
 $$
 \begin{aligned}
@@ -123,7 +123,7 @@ $$
 \end{aligned}
 $$
 
-现在*char*:$\texttt{T}$ 匹配了，把 $string$ 上的指针左移一步继续匹配：
+Now *char*: $\texttt{T}$ matches, so we move the pointer on $string$ one step left and keep matching:
 
 $$
 \begin{aligned}
@@ -133,7 +133,7 @@ $$
 \end{aligned}
 $$
 
-根据 **观察 3(a)**，$\texttt{L}$ 失配，因为 $\texttt{L}$ 不在 $pat$ 中，所以 $pat$ 向下移动 $k=delta_1-m=7-1=6$ 个字符，而 $string$ 上指针向下移动 $delta_1=7$ 个字符：
+By **Observation 3(a)**, $\texttt{L}$ is a mismatch. Since $\texttt{L}$ is not in $pat$, $pat$ moves down by $k=delta_1-m=7-1=6$ characters, and the pointer on $string$ moves down by $delta_1=7$ characters:
 
 $$
 \begin{aligned}
@@ -143,7 +143,7 @@ $$
 \end{aligned}
 $$
 
-这时 $char$ 又一次匹配到了 $pat$ 的最后一个字符 $\texttt{T}$，$string$ 上的指针向左匹配，匹配到了 $\texttt{A}$，继续向左匹配，发现在字符 $\texttt{-}$ 失配：
+Now $char$ again matches the last character $\texttt{T}$ of $pat$. The pointer on $string$ moves left and matches $\texttt{A}$, then moves left again and finds a mismatch at the character $\texttt{-}$:
 
 $$
 \begin{aligned}
@@ -153,10 +153,10 @@ $$
 \end{aligned}
 $$
 
-显然直观上看，此时根据 **观察 3(b)**，将 $pat$ 向下移动 $k=5$ 个字符，使得后缀 $\texttt{AT}$ 对齐，这种滑动可以获得 $string$ 指针最大的滑动距离，此时 $delta_2=k+patlastpos-j=5+6-4=7$，即 $string$ 上指针向下滑动 7 个字符．
+Intuitively, by **Observation 3(b)**, we move $pat$ down by $k=5$ characters so that the suffix $\texttt{AT}$ lines up. This slide gives the largest move of the pointer on $string$: $delta_2=k+patlastpos-j=5+6-4=7$, so the pointer on $string$ slides down by 7 characters.
 
-而从形式化逻辑看，此时，$delta_1=7-1-2=4,\ delta_2=7, \max(delta_1,delta_2)= 7$，
-这样从形式逻辑上支持了进行 **观察 3(b)** 的跳转：
+Formally, at this point $delta_1=7-1-2=4,\ delta_2=7, \max(delta_1,delta_2)= 7$,
+which formally supports the jump from **Observation 3(b)**:
 
 $$
 \begin{aligned}
@@ -166,15 +166,15 @@ $$
 \end{aligned}
 $$
 
-现在我们发现了 $pat$ 上每一个字符都和 $string$ 上对应的字符相等，我们在 $string$ 上找到了一个 $pat$ 的匹配．而只花费了 14 次对 $string$ 的引用，其中 7 次是完成一个成功的匹配所必需的比较次数（$patlen=7$），另外 7 次让我们跳过了 22 个字符．
+Now every character of $pat$ equals the corresponding character of $string$, so we have found a match of $pat$ in $string$. It took only 14 accesses to $string$: 7 of them are the comparisons needed for any successful match ($patlen=7$), and the other 7 let us skip 22 characters.
 
-## 算法设计
+## Algorithm design
 
-### 最初的匹配算法
+### The original matching algorithm
 
-#### 解释
+#### Explanation
 
-现在看这样一个利用 $delta_1$ 和 $delta_2$ 进行字符串匹配的算法：
+Here is a string matching algorithm that uses $delta_1$ and $delta_2$:
 
 $$
 \begin{array}{ll}
@@ -197,26 +197,26 @@ j \gets patlastpos. \\
 \end{array}
 $$
 
-如果上面的算法 $\textbf{return}\ false$，表明 $pat$ 不在 $string$ 中；如果返回一个数字，表示 $pat$ 在 $string$ 左起第一次出现的位置．
+If the algorithm above returns $\textbf{return}\ false$, $pat$ is not in $string$. If it returns a number, that is the position of the first (leftmost) occurrence of $pat$ in $string$.
 
-然后让我们更精细地描述下计算 $delta_2$，所依靠的 $rpr(j)$ 函数．
+Now let us describe more carefully the function $rpr(j)$ that $delta_2$ relies on.
 
-根据前文定义，$rpr(j)$ 表示在 $pat(j)$ 失配时，子串 $subpat=pat[j+1\dots patlastpos]$ 在 $pat[j]$ 最右边合理重现的位置．
+By the definition above, $rpr(j)$ is the position of the rightmost plausible reoccurrence of the substring $subpat=pat[j+1\dots patlastpos]$ before $pat[j]$, when the mismatch happens at $pat(j)$.
 
-也就是说需要找到一个最好的 $k$, 使得 $pat[k\dots k+patlastpos-j-1]=pat[j+1\dots patlastpos]$，另外要考虑两种特殊情况：
+That is, we need to find the best $k$ such that $pat[k\dots k+patlastpos-j-1]=pat[j+1\dots patlastpos]$. There are also two special cases to consider:
 
-1.  当 $k<0$ 时，相当于在 $pat$ 前面补充了一段虚拟的前缀，实际上也符合 $delta_2$ 跳转的原理．
-2.  当 $k>0$ 时，如果 $pat[k-1]=pat[j]$，则这个 $pat[k\dots k+patlastpos-j-1]$ 不能作为 $subpat$ 的合理重现．
-    原因是 $pat[j]$ 本身是失配字符，所以 $pat$ 向下滑动 $k$ 个字符后，在后缀匹配过程中仍然会在 $pat[k-1]$ 处失配．
+1.  When $k<0$, it is as if a virtual prefix were added in front of $pat$. This is still consistent with the principle of the $delta_2$ jump.
+2.  When $k>0$, if $pat[k-1]=pat[j]$, then this $pat[k\dots k+patlastpos-j-1]$ cannot be a plausible reoccurrence of $subpat$.
+    The reason is that $pat[j]$ is the mismatched character, so after sliding $pat$ down by $k$ characters, suffix matching would still fail at $pat[k-1]$.
 
-还要注意两个限制条件：
+There are also two constraints to note:
 
-1.  $k < j$．因为当 $k=j$ 时，有 $pat[k]=pat[j]$，在 $pat[j]$ 上失配的字符也会在 $pat[k]$ 上失配．
-2.  考虑到 $delta_2(patlastpos)= 0$，所以规定 $rpr(patlastpos) = patlastpos$．
+1.  $k < j$. When $k=j$, we have $pat[k]=pat[j]$, and a character that mismatches $pat[j]$ also mismatches $pat[k]$.
+2.  Since $delta_2(patlastpos)= 0$, we define $rpr(patlastpos) = patlastpos$.
 
-#### 过程
+#### Process
 
-由于理解 $rpr(j)$ 是实现 BoyerMoore 算法的核心，所以我们使用如下两个例子进行详细说明：
+Understanding $rpr(j)$ is the core of implementing the Boyer–Moore algorithm, so we go through two examples in detail:
 
 $$
 \begin{aligned}
@@ -227,25 +227,25 @@ $$
 \end{aligned}
 $$
 
-对于 $rpr(0)$，$subpat$ 为 $\texttt{BCXXXABC}$，在 $pat[0]$ 之前的最右边合理重现只能是 $\texttt{[(BCXXX)ABC]XXXABC}$，也就是最右边合理重现位置为 -5，即 $rpr(j)=-5$；
+For $rpr(0)$, $subpat$ is $\texttt{BCXXXABC}$. The rightmost plausible reoccurrence before $pat[0]$ can only be $\texttt{[(BCXXX)ABC]XXXABC}$, so the position of the rightmost plausible reoccurrence is -5, that is, $rpr(j)=-5$;
 
-对于 $rpr(1)$，$subpat$ 为 $\texttt{CXXXABC}$，在 $pat[1]$ 之前的最右边的合理重现是 $\texttt{[(CXXX)ABC]XXXABC}$，所以 $rpr(j)=-4$；
+For $rpr(1)$, $subpat$ is $\texttt{CXXXABC}$. The rightmost plausible reoccurrence before $pat[1]$ is $\texttt{[(CXXX)ABC]XXXABC}$, so $rpr(j)=-4$;
 
-对于 $rpr(2)$，$subpat$ 为 $\texttt{XXXABC}$，在 $pat[2]$ 之前的最右边的合理重现是 $\texttt{[(XXX)ABC]XXXABC}$，所以 $rpr(j)=-3$；
+For $rpr(2)$, $subpat$ is $\texttt{XXXABC}$. The rightmost plausible reoccurrence before $pat[2]$ is $\texttt{[(XXX)ABC]XXXABC}$, so $rpr(j)=-3$;
 
-对于 $rpr(3)$，$subpat$ 为 $\texttt{XXABC}$，在 $pat[3]$ 之前的最右边的合理重现是 $\texttt{[(XX)ABC]XXXABC}$，所以 $rpr(j)=-2$；
+For $rpr(3)$, $subpat$ is $\texttt{XXABC}$. The rightmost plausible reoccurrence before $pat[3]$ is $\texttt{[(XX)ABC]XXXABC}$, so $rpr(j)=-2$;
 
-对于 $rpr(4)$，$subpat$ 为 $\texttt{XABC}$，在 $pat[4]$ 之前的最右边的合理重现是 $\texttt{[(X)ABC]XXXABC}$，所以 $rpr(j)=-1$；
+For $rpr(4)$, $subpat$ is $\texttt{XABC}$. The rightmost plausible reoccurrence before $pat[4]$ is $\texttt{[(X)ABC]XXXABC}$, so $rpr(j)=-1$;
 
-对于 $rpr(5)$，$subpat$ 为 $\texttt{ABC}$，在 $pat[5]$ 之前的最右边的合理重现是 $\texttt{[ABC]XXXABC}$，所以 $rpr(j)=0$；
+For $rpr(5)$, $subpat$ is $\texttt{ABC}$. The rightmost plausible reoccurrence before $pat[5]$ is $\texttt{[ABC]XXXABC}$, so $rpr(j)=0$;
 
-对于 $rpr(6)$，$subpat$ 为 $\texttt{BC}$，又因为 $string[0]=string[6]$，即 $string[0]$ 等于失配字符 $string[6]$，所以 $string[0\dots 2]$ 并不是符合条件的 $subpat$ 的合理重现，所以在最右边的合理重现是 $\texttt{[(BC)]ABCXXXABC}$，所以 $rpr(j)=-2$；
+For $rpr(6)$, $subpat$ is $\texttt{BC}$. Since $string[0]=string[6]$, that is, $string[0]$ equals the mismatched character $string[6]$, $string[0\dots 2]$ is not a valid plausible reoccurrence of $subpat$. So the rightmost plausible reoccurrence is $\texttt{[(BC)]ABCXXXABC}$, and $rpr(j)=-2$;
 
-对于 $rpr(7)$，$subpat$ 为 $\texttt{C}$，同理又因为 $string[7]=string[1]$，所以 $string[1\dots 2]$ 并不是符合条件的 $subpat$ 的合理重现，在最右边的合理重现是 $\texttt{[(C)]ABCXXXABC}$，所以 $rpr(j)=-1$；
+For $rpr(7)$, $subpat$ is $\texttt{C}$. In the same way, since $string[7]=string[1]$, $string[1\dots 2]$ is not a valid plausible reoccurrence of $subpat$. The rightmost plausible reoccurrence is $\texttt{[(C)]ABCXXXABC}$, so $rpr(j)=-1$;
 
-对于 $rpr(8)$，根据 $delta_2$ 定义，$rpr(patlastpos)=patlastpos$，得到 $rpr(8)=8$．
+For $rpr(8)$, by the definition of $delta_2$, $rpr(patlastpos)=patlastpos$, so $rpr(8)=8$.
 
-现在再看一下另一个例子：
+Now look at another example:
 
 $$
 \begin{aligned}
@@ -256,42 +256,42 @@ $$
 \end{aligned}
 $$
 
-对于 $rpr(0)$，$subpat$ 为 $\texttt{BYXCDEYX}$，在 $pat[0]$ 之前的最右边合理重现只能是 $\texttt{[(BYXCDEYX)]ABYXCDEYX}$，也就是最右边合理重现位置为 -8，即 $rpr(j)=-8$；
+For $rpr(0)$, $subpat$ is $\texttt{BYXCDEYX}$. The rightmost plausible reoccurrence before $pat[0]$ can only be $\texttt{[(BYXCDEYX)]ABYXCDEYX}$, so the position of the rightmost plausible reoccurrence is -8, that is, $rpr(j)=-8$;
 
-对于 $rpr(1)$，$subpat$ 为 $\texttt{YXCDEYX}$，在 $pat[1]$ 之前的最右边合理重现只能是 $\texttt{[(YXCDEYX)]ABYXCDEYX}$，$rpr(j)=-7$；
+For $rpr(1)$, $subpat$ is $\texttt{YXCDEYX}$. The rightmost plausible reoccurrence before $pat[1]$ can only be $\texttt{[(YXCDEYX)]ABYXCDEYX}$, so $rpr(j)=-7$;
 
-对于 $rpr(2)$，$subpat$ 为 $\texttt{XCDEYX}$，在 $pat[2]$ 之前的最右边合理重现只能是 $\texttt{[(XCDEYX)]ABYXCDEYX}$，$rpr(j)=-6$；
+For $rpr(2)$, $subpat$ is $\texttt{XCDEYX}$. The rightmost plausible reoccurrence before $pat[2]$ can only be $\texttt{[(XCDEYX)]ABYXCDEYX}$, so $rpr(j)=-6$;
 
-对于 $rpr(3)$，$subpat$ 为 $\texttt{CDEYX}$，在 $pat[3]$ 之前的最右边合理重现只能是 $\texttt{[(CDEYX)]ABYXCDEYX}$，$rpr(j)=-5$；
+For $rpr(3)$, $subpat$ is $\texttt{CDEYX}$. The rightmost plausible reoccurrence before $pat[3]$ can only be $\texttt{[(CDEYX)]ABYXCDEYX}$, so $rpr(j)=-5$;
 
-对于 $rpr(4)$，$subpat$ 为 $\texttt{DEYX}$，在 $pat[4]$ 之前的最右边合理重现只能是 $\texttt{[(DEYX)]ABYXCDEYX}$，$rpr(j)=-4$；
+For $rpr(4)$, $subpat$ is $\texttt{DEYX}$. The rightmost plausible reoccurrence before $pat[4]$ can only be $\texttt{[(DEYX)]ABYXCDEYX}$, so $rpr(j)=-4$;
 
-对于 $rpr(5)$，$subpat$ 为 $\texttt{EYX}$，在 $pat[5]$ 之前的最右边合理重现只能是 $\texttt{[(EYX)]ABYXCDEYX}$，$rpr(j)=-3$；
+For $rpr(5)$, $subpat$ is $\texttt{EYX}$. The rightmost plausible reoccurrence before $pat[5]$ can only be $\texttt{[(EYX)]ABYXCDEYX}$, so $rpr(j)=-3$;
 
-对于 $rpr(6)$，$subpat$ 为 $\texttt{YX}$，因为 $string[2\dots 3]=string[7\dots 8]$ 并且有 $string[6]\neq string[1]$，所以在 $pat[6]$ 之前的最右边的合理重现是 $\texttt{AB[YX]CDEYX}$，$rpr(j)=2$；
+For $rpr(6)$, $subpat$ is $\texttt{YX}$. Since $string[2\dots 3]=string[7\dots 8]$ and $string[6]\neq string[1]$, the rightmost plausible reoccurrence before $pat[6]$ is $\texttt{AB[YX]CDEYX}$, so $rpr(j)=2$;
 
-对于 $rpr(7)$，$subpat$ 为 $\texttt{X}$，虽然 $string[3]=string[8]$ 但是因为 $string[2] = string[7]$，所以在 $pat[7]$ 之前的最右边的合理重现是 $\texttt{[X]ABYXCDEYX}$，$rpr(j)=-1$;
+For $rpr(7)$, $subpat$ is $\texttt{X}$. Although $string[3]=string[8]$, we also have $string[2] = string[7]$, so the rightmost plausible reoccurrence before $pat[7]$ is $\texttt{[X]ABYXCDEYX}$, and $rpr(j)=-1$;
 
-对于 $rpr(8)$，根据 $delta_2$ 定义，$rpr(patlastpos)=patlastpos$，得到 $rpr(8)=8$．
+For $rpr(8)$, by the definition of $delta_2$, $rpr(patlastpos)=patlastpos$, so $rpr(8)=8$.
 
-### 对匹配算法的一个改进
+### An improvement to the matching algorithm
 
-最后，实践过程中考虑到搜索过程中估计有 80% 的时间用在了 **观察 1** 的跳转上，也就是 $string[i]$ 和 $pat[patlastpos]$ 不匹配，然后跳跃整个 $patlen$ 进行下一次匹配的过程．
+Finally, in practice, an estimated 80% of the search time is spent on the jumps from **Observation 1**: $string[i]$ does not match $pat[patlastpos]$, and we jump a whole $patlen$ to the next attempt.
 
-于是，可以为此进行特别的优化：
+So we can optimize this case specially:
 
-我们定义一个 $delta0$：
+We define $delta0$:
 
 $$
 \begin{array}{ll}
 \textbf{int}\ delta0(\textbf{char}\ char) \\
 \qquad \textbf{if}\ char=pat[patlastpos] \\
-\qquad\qquad \textbf{return}\ large\ \ \text{// large为一个整数，需要满足large>stringlastpos+patlen} \\
+\qquad\qquad \textbf{return}\ large\ \ \text{// large is an integer with large>stringlastpos+patlen} \\
 \qquad \textbf{return}\ delta1(char)
 \end{array}
 $$
 
-用 $delta0$ 代替 $delta_1$，得到改进后的匹配算法：
+Replacing $delta_1$ with $delta0$ gives the improved matching algorithm:
 
 $$
 \begin{array}{ll}
@@ -301,8 +301,8 @@ i \gets patlastpos \\
 \qquad\qquad\textbf{return}\ false\\
 \\
 \qquad\textbf{while}\ i < stringlen \\
-\qquad\qquad i \gets i+delta0(string(i)) \ \ \text{// 除非string[i]和pat末尾字符匹配，否则至多向下滑动patlen }\\\
-\qquad\textbf{if}\ i \leqslant\ large \qquad\qquad\qquad\qquad \text{//此时表示string上没有一个字符和pat末尾字符匹配}\ \\
+\qquad\qquad i \gets i+delta0(string(i)) \ \ \text{// unless string[i] matches the last character of pat, slide by at most patlen }\\\
+\qquad\textbf{if}\ i \leqslant\ large \qquad\qquad\qquad\qquad \text{// no character of string matched the last character of pat}\ \\
 \qquad\qquad\textbf{return}\ false\\
 \\
 \qquad i \gets i-large \\
@@ -318,27 +318,27 @@ i \gets patlastpos \\
 \end{array}
 $$
 
-其中 $large$ 起到多重作用，一是类似后面介绍的 Horspool 算法进行快速的坏字符跳转，二是辅助检测字符串搜索是否完成．
+Here $large$ plays several roles. First, like the Horspool algorithm introduced later, it allows fast bad-character jumps. Second, it helps detect whether the search is finished.
 
-经过改进，比起原算法，在做 **观察 1** 跳转时不必每次进行 $delta_2$ 的多余计算，使得在通常字符集下搜索字符串的性能有了明显的提升．
+With this improvement, the jumps from **Observation 1** no longer need the extra computation of $delta_2$ each time, which noticeably speeds up string search over ordinary alphabets.
 
-## delta2 构建细节
+## Building delta2 in detail
 
-### 引入
+### Introduction
 
-在 1977 年 10 月的*Communications of the ACM*上，Boyer、Moor 的论文[^bm]中只描述了 $delta_2$ 静态表，
+In the October 1977 issue of *Communications of the ACM*, the paper by Boyer and Moore[^bm] only described the static table for $delta_2$,
 
-构造 $delta_2$ 的具体实现的讨论出现在 1977 年 6 月 Knuth、Morris、Pratt 在*SIAM Journal on Computing*上正式联合发表的 KMP 算法的论文[^kmp]．
+and the details of how to build $delta_2$ were discussed in the KMP paper[^kmp] that Knuth, Morris and Pratt jointly published in *SIAM Journal on Computing* in June 1977.
 
-### 朴素算法
+### Naive algorithm
 
-在介绍 Knuth 的 $delta_2$ 构建算法之前，根据定义，我们会有一个适用于小规模问题的朴素算法：
+Before introducing Knuth's algorithm for building $delta_2$, here is a naive algorithm that follows directly from the definition and works for small inputs:
 
-1.  对于 `[0, patlen)` 区间的每一个位置 `i`，根据 `subpat` 的长度确定其重现位置的区间，也就是 `[-subpatlen, i]`；
-2.  可能的重现位置按照从右到左进行逐字符比较，寻找符合 $delta_2$ 要求的最右边 $subpat$ 的重现位置；
-3.  最后别忘了令 $delta_2(lastpos)= 0$．
+1.  For each position `i` in the range `[0, patlen)`, determine the range of possible reoccurrence positions from the length of `subpat`, namely `[-subpatlen, i]`;
+2.  Compare the possible reoccurrence positions character by character from right to left, and find the rightmost reoccurrence of $subpat$ that meets the requirements of $delta_2$;
+3.  Finally, do not forget to set $delta_2(lastpos)= 0$.
 
-???+ note "实现"
+???+ note "Implementation"
     ```Rust
     use std::cmp::PartialEq;
     
@@ -356,7 +356,7 @@ $$
             }
             
             for j in (-subpatlen..(i + 1) as isize).rev() {
-                // subpat 匹配
+                // subpat matches
                 if (j..j + subpatlen)
                 .zip(i + 1..patlen)
                 .all(|(rpr_index, subpat_index)| {
@@ -382,44 +382,44 @@ $$
     }
     ```
 
-特别地，对 Rust 语言特性进行必要地解释，下不赘述：
+Here are some necessary notes on Rust language features, which also apply to later code:
 
--   `usize` 和 `isize` 是和内存指针同字节数的无符号整数和有符号整数，在 32 位机上相当于 `u32` 和 `i32`，64 位机上相当于 `u64` 和 `i64`．
--   索引数组、向量、分片时使用 `usize` 类型的数字（因为在做内存上的随机访问并且下标不能为负值），所以如果需要处理负值要用 `isize`，而进行索引时又要用 `usize`，这就看到使用 `as` 关键字进行二者之间的显式转换．
--   `impl PartialEq` 只是用作泛型，可以同时支持 `Unicode` 编码的 `char` 和二进制的 `u8`．
+-   `usize` and `isize` are unsigned and signed integers with the same number of bytes as a memory pointer. On a 32-bit machine they are `u32` and `i32`; on a 64-bit machine they are `u64` and `i64`.
+-   Arrays, vectors and slices are indexed with `usize` values (since this is random memory access and indices cannot be negative). So when we need negative values we use `isize`, but when indexing we must use `usize`. That is why you see the `as` keyword used for explicit conversion between the two.
+-   `impl PartialEq` is just used for generics, so the code supports both `Unicode` `char` and binary `u8`.
 
-显然，该暴力算法的时间复杂度为 $O(n^3)$．
+Clearly, the time complexity of this brute-force algorithm is $O(n^3)$.
 
-### 高效算法
+### Efficient algorithm
 
-下面我们要介绍的是时间复杂度为 $O(n)$，但是需要额外 $O(n)$ 空间复杂度的高效算法．
+Next we introduce an efficient algorithm with $O(n)$ time complexity, which needs $O(n)$ extra space.
 
-虽然 1977 年 Knuth 提出了这个构建方法，然而他的原始版本的构建算法存在一个缺陷，实际上对于某些 $pat$ 产生不出符合定义的 $delta_2$．
+Knuth proposed this construction in 1977, but his original version had a flaw: for some $pat$ it does not produce a $delta_2$ that matches the definition.
 
-Rytter 在 1980 年*SIAM Journal on Computing*上发表的文章[^rytter]对此提出了修正，以下是 $delta_2$ 的构建算法：
+Rytter fixed this in a paper[^rytter] published in *SIAM Journal on Computing* in 1980. Here is the algorithm for building $delta_2$:
 
-首先考虑到 $delta_2$ 的定义比较复杂，我们按照 $subpat$ 的重现位置进行分类，每一类进行单独处理，这是高效实现的关键思路．
+First, since the definition of $delta_2$ is fairly complicated, we classify by where $subpat$ reoccurs and handle each class separately. This is the key idea behind an efficient implementation.
 
-按照重现位置由远到近，也就是偏移量由大到小，分成如下几类：
+From the farthest reoccurrence to the nearest, that is, from the largest offset to the smallest, the classes are:
 
-1.  整个 $subpat$ 重现位置完全在 $pat$ 左边的，比如 $\texttt{[(EYX)]ABYXCDEYX}$，此时 $delta_2(j) = patlastpos\times 2 - j$；
+1.  The whole reoccurrence of $subpat$ lies completely to the left of $pat$, for example $\texttt{[(EYX)]ABYXCDEYX}$. Here $delta_2(j) = patlastpos\times 2 - j$;
 
-2.  $subpat$ 的重现有一部分在 $pat$ 左边，有一部分是 $pat$ 头部，比如 $\texttt{[(XX)ABC]XXXABC}$，此时 $patlastpos < delta_2(j) < patlastpos\times 2 - j$；
-    我们把 $subpat$ 完全在 $pat$ 头部的边际情况也归类在这里（当然根据实现也可以归类在下边），比如 $\texttt{[ABC]XXXABC}$，此时 $patlastpos = delta_2(j)$；
+2.  Part of the reoccurrence of $subpat$ lies to the left of $pat$, and part of it is the head of $pat$, for example $\texttt{[(XX)ABC]XXXABC}$. Here $patlastpos < delta_2(j) < patlastpos\times 2 - j$;
+    We also put the boundary case where $subpat$ lies entirely at the head of $pat$ in this class (depending on the implementation, it could also go in the next class), for example $\texttt{[ABC]XXXABC}$. Here $patlastpos = delta_2(j)$;
 
-3.  $subpat$ 的重现完全在 $pat$ 中，比如 $\texttt{AB[YX]CDEYX}$，此时 $delta_2(j) < patlastpos$．
+3.  The reoccurrence of $subpat$ lies completely inside $pat$, for example $\texttt{AB[YX]CDEYX}$. Here $delta_2(j) < patlastpos$.
 
-现在来讨论如何高效地计算这三种情况：
+Now let us discuss how to compute these three cases efficiently:
 
-#### 第一种情况
+#### Case 1
 
-这是最简单的情况，只需一次遍历并且可以顺便将 $delta_2$ 初始化．
+This is the simplest case. It takes only one pass, and we can initialize $delta_2$ at the same time.
 
-#### 第二种情况
+#### Case 2
 
-我们观察什么时候会出现 $subpat$ 的重现一部分在 $pat$ 左边，一部分是 $pat$ 的头部的情况呢？应该是 $subpat$ 的某个后缀和 $pat$ 的某个前缀相等，
+When does the reoccurrence of $subpat$ lie partly to the left of $pat$ and partly at the head of $pat$? It happens when some suffix of $subpat$ equals some prefix of $pat$.
 
-比如之前的例子：
+Take the earlier example:
 
 $$
 \begin{aligned}
@@ -428,21 +428,21 @@ $$
 \end{aligned}
 $$
 
-$delta_2(3)$ 的重现 $\texttt{[(XX)ABC]XXXABC}$，$subpat$ $\texttt{XXABC}$ 的后缀与 pat 前缀中，有相等的，是 $\texttt{ABC}$．
+For the reoccurrence $\texttt{[(XX)ABC]XXXABC}$ of $delta_2(3)$, a suffix of $subpat$ $\texttt{XXABC}$ equals a prefix of pat, namely $\texttt{ABC}$.
 
-实际上，对第二种和第三种情况的计算的关键都需要前缀函数的计算和应用．
+In fact, the key to computing both case 2 and case 3 is computing and using the prefix function.
 
-那么只要 $j$ 取值使得 $subpat$ 包含这个相等的后缀，那么就可以得到第二种情况的 $subpat$ 的重现，对于例子，我们只需要使得 $j \leqslant 5$，
+As long as $j$ is chosen so that $subpat$ contains this equal suffix, we get a case-2 reoccurrence of $subpat$. In the example, we just need $j \leqslant 5$,
 
-而当 $j = 5$ 时，就是 $subpat$ 完全在 $pat$ 头部的边际情况．
+and when $j = 5$, it is the boundary case where $subpat$ lies entirely at the head of $pat$.
 
-可以计算此时的 $delta_2(j)$：
+We can compute $delta_2(j)$ in this case:
 
-设此时这对相等的前后缀长度为 $\textit{prefixlen}$，可知 $subpatlen = patlastpos - j$，那么在 $pat$ 左边的部分长度是 $subpatlen-\textit{prefixlen}$，
+Let the length of this pair of equal prefix and suffix be $\textit{prefixlen}$. We know $subpatlen = patlastpos - j$, so the part to the left of $pat$ has length $subpatlen-\textit{prefixlen}$,
 
-而 $rpr(j) = -(subpatlen-\textit{prefixlen})$，所以得到 $delta_2(j) = patlastpos - rpr(j) = patlastpos \times 2 - j - \textit{prefixlen}$．
+and $rpr(j) = -(subpatlen-\textit{prefixlen})$. So $delta_2(j) = patlastpos - rpr(j) = patlastpos \times 2 - j - \textit{prefixlen}$.
 
-其后面可能会有多对相等的前缀和后缀，比如：
+There may be several pairs of equal prefixes and suffixes after it, for example:
 
 $$
 \begin{aligned}
@@ -451,32 +451,32 @@ $$
 \end{aligned}
 $$
 
-在 $j\leq2$ 处有 $\texttt{ABAABAA}$，$2< j \leq 5$ 处有 $\texttt{ABAA}$，在 $5<j\leq8$ 处有 $\texttt{A}$
+For $j\leq2$ there is $\texttt{ABAABAA}$, for $2< j \leq 5$ there is $\texttt{ABAA}$, and for $5<j\leq8$ there is $\texttt{A}$.
 
-Knuth 算法的缺陷是只考虑了最长的那一对的情况，但实际上我们要考虑所有 $subpat$ 后缀与 $pat$ 前缀相等的情况，等同于计算 $pat$ 所有真后缀和真前缀相等的情况，并按照长度从大到小，$j$ 分区间计算不同的 $delta_2(j)$．
+The flaw in Knuth's algorithm is that it only considered the longest pair. In fact we must consider every case where a suffix of $subpat$ equals a prefix of $pat$. This is the same as finding every proper suffix of $pat$ that equals a proper prefix, and then, in decreasing order of length, computing different values of $delta_2(j)$ for each range of $j$.
 
-利用前缀函数和逆向运用计算前缀函数的状态转移方程：$j^{(n)} = \pi[j^{(n-1)}-1]$，以得到 $pat$ 所有相等的真前缀和真后缀长度．从 $\pi[patlastpos]$ 开始作为最长一对的长度，然后通过逆向运行状态转移方程，得到下一个次长相等真前缀和真后缀的长度．
+We use the prefix function and apply its transition equation backwards, $j^{(n)} = \pi[j^{(n-1)}-1]$, to get the lengths of all equal proper prefixes and suffixes of $pat$. Start from $\pi[patlastpos]$ as the length of the longest pair, then apply the transition equation to get the length of the next longest equal proper prefix and suffix.
 
-如此就完成了第二种情况的 $delta_2$ 的计算．
+This completes the computation of $delta_2$ for case 2.
 
-#### 第三种情况
+#### Case 3
 
-$subpat$ 的重现恰好就在 $pat$ 中（不包括 $pat$ 的头部），也就是按照从右到左的顺序，在 $pat[0\dots patlastpos-1]$ 中寻找 $subpat$．
+The reoccurrence of $subpat$ lies inside $pat$ (not including the head of $pat$). That is, we search for $subpat$ in $pat[0\dots patlastpos-1]$ from right to left.
 
-如果用 BM 算法解决，我们就得到了一个 BM 的递归实现的第三种情况，结束条件是 $patlen \leqslant  2$．
+If we solved this with the BM algorithm itself, we would get a recursive BM implementation for case 3, with the stopping condition $patlen \leqslant  2$.
 
-而且根据 $delta_2$ 的定义，找到的 $subpat$ 的重现的下一个（也就是左边一个）字符和作为 $pat$ 后缀的 $subpat$ 的下一个字符不能一样．
+Also, by the definition of $delta_2$, the character just before (to the left of) the found reoccurrence of $subpat$ must differ from the character just before the $subpat$ that is the suffix of $pat$.
 
-这就很好地启发了我们，可以使用类似于计算前缀函数的过程计算第三种情况，只不过是左右反过来的前缀函数：
+This suggests computing case 3 with a process similar to computing the prefix function, just with left and right swapped:
 
--   两个指针分别指向子串的左端点和子串最长公共前后缀的「前缀」位置，从右向左移动，在发现指向的两个字符相等时继续移动，此时相当于「前缀」变大；
--   当两个字符不相等时，之前相等的部分就满足了 $delta_2$ 对重现的要求，并且回退指向「前缀」位置的指针直到构成新的字符相等或者出界．
+-   Two pointers point to the left end of the substring and to the position of the "prefix" of the substring's longest common prefix-suffix. They move from right to left. While the two characters they point to are equal, they keep moving, which means the "prefix" grows;
+-   When the two characters differ, the part that was equal so far meets the requirement of $delta_2$ for a reoccurrence. Then we move the pointer at the "prefix" position back until the characters are equal again or it goes out of bounds.
 
-同前缀函数一样，需要一个辅助数组，用于回退，可以使用之前计算第二种情况所生成的前缀数组的空间．
+Like the prefix function, this needs a helper array for moving back. We can reuse the space of the prefix array generated while computing case 2.
 
-### 实现
+### Implementation
 
-??? note "上述实现"
+??? note "Implementation of the above"
     ```rust
     use std::cmp::PartialEq;
     use std::cmp::min;
@@ -486,17 +486,17 @@ $subpat$ 的重现恰好就在 $pat$ 中（不包括 $pat$ 的头部），也就
         let lastpos = patlen - 1;
         let mut delta_2 = Vec::with_capacity(patlen);
         
-        // 第一种情况
+        // case 1
         // delta_2[j] = lastpos * 2 - j
         for i in 0..patlen {
             delta_2.push(lastpos * 2 - i);
         }
         
-        // 第二种情况
+        // case 2
         // lastpos <= delata2[j] = lastpos * 2 - j
-        let pi = compute_pi(p);  // 计算前缀函数
+        let pi = compute_pi(p);  // compute the prefix function
         let mut i = lastpos;
-        let mut last_i = lastpos; // 只是为了初始化
+        let mut last_i = lastpos; // only for initialization
         while pi[i] > 0 {
             let start;
             let end;
@@ -517,7 +517,7 @@ $subpat$ 的重现恰好就在 $pat$ 中（不包括 $pat$ 的头部），也就
             i = pi[i] - 1;
         }
         
-        // 第三种情况
+        // case 3
         // delata2[j] < lastpos
         let mut j = lastpos;
         let mut t = patlen;
@@ -525,7 +525,7 @@ $subpat$ 的重现恰好就在 $pat$ 中（不包括 $pat$ 的头部），也就
         loop {
             f[j] = t;
             while t < patlen && p[j] != p[t] {
-                // 使用min函数保证后面可能的回退不会覆盖前面的数据
+                // use min so that later backtracking cannot overwrite earlier data
                 delta_2[t] = min(delta_2[t], lastpos - 1 - j);
                 t = f[t];
             }
@@ -537,44 +537,44 @@ $subpat$ 的重现恰好就在 $pat$ 中（不包括 $pat$ 的头部），也就
             j -= 1;
         }
         
-        // 没有实际意义，只是为了完整定义
+        // no real meaning, only for a complete definition
         delta_2[lastpos] = 0;
         
         delta_2
     }
     ```
 
-## Galil 规则对多次匹配时最坏情况的改善
+## The Galil rule: improving the worst case for multiple matches
 
-### 关于后缀匹配算法的多次匹配问题
+### Finding multiple matches with suffix-matching algorithms
 
-之前的搜索算法只涉及到在 $string$ 中寻找第一次 $pat$ 匹配的情况，而对于在 $string$ 中寻找全部 $pat$ 的匹配的情况有很多不同的算法思路，这个问题的核心关注点是：如何利用之前匹配成功的字符的信息，将最坏情况下的时间复杂度降为线性．
+The search algorithms so far only find the first match of $pat$ in $string$. There are many different approaches for finding all matches of $pat$ in $string$. The core question is: how can we use the information from characters already matched successfully to bring the worst-case time complexity down to linear?
 
-在原始的成功匹配后，简单的 $string$ 的指针向后滑动 $patlen$ 距离后重新开始后缀匹配，这会导致最坏情况下回到 $O(mn)$ 的时间复杂度（按照惯例，$m$ 为 $patlen$，$n$ 为 $stringlen$，下同）．
+In the original approach, after a successful match, the pointer on $string$ simply slides forward by $patlen$ and suffix matching starts again. In the worst case this goes back to $O(mn)$ time (by convention, $m$ is $patlen$ and $n$ is $stringlen$; the same below).
 
-比如一个极端的例子：$pat$：$\texttt{AAA}$，$string$：$\texttt{AAAAA}\dots$．
+An extreme example: $pat$: $\texttt{AAA}$, $string$: $\texttt{AAAAA}\dots$.
 
-对此 Knuth 提出来的一个方法是用一个「数量有限」的状态的集合来记录 $patlen$ 长度的字符，这种算法保证 $string$ 上每一个字符最多比较一次，但代价是这个「数量有限」的状态可能规模并不小，对于一个字符彼此不相等的 $pat$，需要 $\dfrac{1}{2}m^{2}+m$ 个状态．
+One method Knuth proposed for this is to use a "finite" set of states to remember $patlen$ characters. This algorithm guarantees that each character of $string$ is compared at most once. The cost is that this "finite" number of states may be quite large: for a $pat$ whose characters are all different, it needs $\dfrac{1}{2}m^{2}+m$ states.
 
-下面介绍的思路简单且不需要额外预处理开销的 Galil 算法[^galil-rule]．
+Below we introduce the Galil algorithm[^galil-rule], which is simple and needs no extra preprocessing.
 
-### Galil 规则
+### The Galil rule
 
-假定一个 $pat$，它是某个子串 $U$ 重复 n 次构成的字符串 $UUUU\dots$ 的前缀，那么我们称 $U$ 为 $pat$ 的一个周期．
+Suppose $pat$ is a prefix of the string $UUUU\dots$ formed by repeating some substring $U$ n times. Then we call $U$ a period of $pat$.
 
-比如，$pat: \texttt{ABCABCAB}$，是 $\texttt{ABC}$ 的重复 $\texttt{ABCABCABC}$ 的前缀，所以 $\texttt{ABC}$ 的长度 $3$ 就是这个 $pat$ 的周期长度，也即 $pat$ 满足 $pat[i] = pat[i+3]$．
+For example, $pat: \texttt{ABCABCAB}$ is a prefix of $\texttt{ABCABCABC}$, which repeats $\texttt{ABC}$. So the length $3$ of $\texttt{ABC}$ is a period length of this $pat$, that is, $pat$ satisfies $pat[i] = pat[i+3]$.
 
-$pat$ 至少拥有一个长度为它自身的周期，我们规定最短的周期为 $k$，$k\leq patlen$．
+$pat$ always has at least one period, of length equal to its own length. Let $k$ be the length of the shortest period, $k\leq patlen$.
 
-在搜索过程中，假如我们的 $pat$ 成功地完成了一次匹配，那么依照周期的特点，实际上只需将 $string$ 向后滑动 $k$ 个字符，比较这 $k$ 个字符是否对应相等就可以直接判断是否存在 $pat$ 的又一个匹配．
+During the search, if $pat$ has just matched successfully, then by the property of periods we only need to slide forward by $k$ characters on $string$ and check whether these $k$ characters match. That directly tells us whether there is another match of $pat$.
 
-为计算这个最短周期的长度，我们假设已知 $pat$ 的相等的一对前缀 - 后缀，设它们的长度为 $\textit{prefixlen}$，那么有 $pat[i] = pat[i+(patlen-\textit{prefixlen})]$．从而得到长度为 $patlen-\textit{prefixlen}$ 的周期，
+To compute the length of this shortest period, suppose we know a pair of equal prefix and suffix of $pat$ with length $\textit{prefixlen}$. Then $pat[i] = pat[i+(patlen-\textit{prefixlen})]$, which gives a period of length $patlen-\textit{prefixlen}$.
 
-当我们知道 $pat$ 最长的那一对相等的前缀 - 后缀，我们就得到了 $pat$ 最短的周期．
+When we know the longest pair of equal prefix and suffix of $pat$, we get the shortest period of $pat$.
 
-而最长相等的前后缀长度，$\pi[patlastpos]$，已经在我们在计算 $delta_2$ 的过程中，所以实际不需要额外的预处理时间和空间，就能将后缀匹配算法最坏情况的时间复杂度改善成线性．
+The length of the longest equal prefix and suffix, $\pi[patlastpos]$, is already computed while building $delta_2$. So without any extra preprocessing time or space, we can improve the worst-case time complexity of the suffix-matching algorithm to linear.
 
-??? note "结合上述优化的 BM 的搜索算法最终实现"
+??? note "Final implementation of the BM search algorithm with the optimizations above"
     ```rust
     #[cfg(target_pointer_width = "64")]
     const LARGE: usize = 10_000_000_000_000_000_000;
@@ -586,7 +586,7 @@ $pat$ 至少拥有一个长度为它自身的周期，我们规定最短的周�
         pat_bytes: &'a [u8],
         delta_1: [usize; 256],
         delta_2: Vec<usize>,
-        k: usize  // pat的最短周期长度
+        k: usize  // length of the shortest period of pat
     }
     
     impl<'a> BMPattern<'a> {
@@ -615,8 +615,8 @@ $pat$ 至少拥有一个长度为它自身的周期，我们规定最短的周�
                 
                 string_index -= LARGE;
                 
-                // 如果string_index发生移动，意味着自从上次成功匹配后发生了至少一次的失败匹配．
-                // 此时需要将Galil规则的二次匹配的偏移量归零．
+                // if string_index moved, at least one failed match happened since the last successful match.
+                // in that case, reset the offset for the Galil rule's second match to zero.
                 if old_string_index < string_index {
                     l = 0;
                 }
@@ -647,23 +647,23 @@ $pat$ 至少拥有一个长度为它自身的周期，我们规定最短的周�
     }
     ```
 
-### 最坏情况在实践中性能影响
+### How the worst case affects performance in practice
 
-从实践的角度上说，理论上的最坏情况并不容易影响性能表现，哪怕是很小的只有 4 的字符集的随机文本测试下这种最坏情况的影响也小到难以观察．
+In practice, the theoretical worst case rarely hurts performance. Even in tests on random text over a tiny alphabet of size 4, the effect of this worst case is too small to observe.
 
-也因此如果没有很好地设计，使用 Galil 法则会拖累一点平均的性能表现，但对于一些极端特殊的 $pat$ 和 $string$ 比如例子中的：$pat$：$\texttt{AAA}$，$string$：$\texttt{AAAAA}\dots$，Galil 规则的应用确实会使得性能表现提高数倍．
+So unless it is designed well, using the Galil rule can slightly slow down average performance. But for some extreme $pat$ and $string$, such as the example $pat$: $\texttt{AAA}$, $string$: $\texttt{AAAAA}\dots$, applying the Galil rule really does make it several times faster.
 
-## 改进算法
+## Improved algorithms
 
-### Simplified Boyer–Moore 算法
+### Simplified Boyer–Moore algorithm
 
-BM 算法最复杂的地方就在于 $delta_2$ 表（也就是好后缀表）的构建，而实践中发现，在一般的字符集上的匹配性能主要依靠 $delta_1$ 表（也就是坏字符表），于是出现了仅仅使用 $delta_1$ 表的简化版 BM 算法，通常性能和原版差距很小．
+The most complicated part of the BM algorithm is building the $delta_2$ table (the good-suffix table). In practice, though, matching performance over ordinary alphabets depends mainly on the $delta_1$ table (the bad-character table). So a simplified BM algorithm appeared that uses only the $delta_1$ table. Its performance is usually very close to the original.
 
-### Boyer–Moore–Horspol 算法
+### Boyer–Moore–Horspool algorithm
 
-Horspol 算法同样是基于坏字符的规则，在与 $pat$ 尾部对齐的字符上应用 $delta_1$．效果类似于对原版匹配算法的改进，通常性能优于原版本．
+The Horspool algorithm is also based on the bad-character rule. It applies $delta_1$ to the character lined up with the end of $pat$. The effect is similar to the improvement to the original matching algorithm above, and it usually performs better than the original version.
 
-???+ note "实现"
+???+ note "Implementation"
     ```rust
     pub struct HorspoolPattern<'a> {
         pat_bytes: &'a [u8],
@@ -692,15 +692,15 @@ Horspol 算法同样是基于坏字符的规则，在与 $pat$ 尾部对齐的�
     }
     ```
 
-### Boyer–Moore–Sunday 算法
+### Boyer–Moore–Sunday algorithm
 
-Sunday 算法同样是利用坏字符规则，只不过相比 Horspool 它更进一步，直接关注 $pat$ 尾部对齐的那个字符的下一个字符．
+The Sunday algorithm also uses the bad-character rule, but goes one step further than Horspool: it looks directly at the character right after the one lined up with the end of $pat$.
 
-实现它只需要稍微修改 $delta_1$ 表，相当于在 $patlen+1$ 长度的 $pat$ 上进行构建．
+Implementing it only needs a small change to the $delta_1$ table, as if it were built on a $pat$ of length $patlen+1$.
 
-Sunday 算法通常用作一般情况下实现最简单而且平均表现最好之一的实用算法，通常性能比 Horspool 和 BM 要好一点．
+The Sunday algorithm is a practical choice in general: it is among the simplest to implement and has some of the best average performance, usually a bit better than Horspool and BM.
 
-???+ note "实现"
+???+ note "Implementation"
     ```rust
     pub struct SundayPattern<'a> {
         pat_bytes: &'a [u8],
@@ -743,25 +743,25 @@ Sunday 算法通常用作一般情况下实现最简单而且平均表现最好�
     }
     ```
 
-### BMHBNFS 算法
+### BMHBNFS algorithm
 
-该算法结合了 Horspool 和 Sunday，是 CPython 实现 `stringlib` 模块时用到的 `find` 的算法[^b5s]，以下简称 B5S．
+This algorithm combines Horspool and Sunday. It is the `find` algorithm used in CPython's implementation of the `stringlib` module[^b5s]. Below we call it B5S for short.
 
-B5S 基本思路是：
+The basic idea of B5S is:
 
-1.  按照后缀匹配的思路，首先比较 $patlastpos$ 位置对应的字符是否相等，如果相等就比较 $0\dots patlastpos-1$ 对应位置的字符是否相等，如果仍然相等，那么就发现一个匹配；
+1.  Following suffix matching, first check whether the characters at position $patlastpos$ are equal. If they are, check whether the characters at positions $0\dots patlastpos-1$ are equal. If they are still equal, we have found a match;
 
-2.  如果任何一个阶段发生不匹配，就进入跳转阶段；
+2.  If a mismatch happens at either stage, go to the jump stage;
 
-3.  在跳转阶段，首先观察 $patlastpos$ 位置的下一个字符是否在 $pat$ 中，如果不在，直接向右滑动 $patlen+1$，这是 Sunday 算法的最大利用；
+3.  In the jump stage, first check whether the character right after position $patlastpos$ is in $pat$. If it is not, slide right by $patlen+1$ directly. This makes the most of the Sunday algorithm;
 
-    如果这个字符在 $pat$ 中，对 $patlastpos$ 处的字符利用 $delta_1$ 进行 Horspool 跳转．
+    If this character is in $pat$, do a Horspool jump using $delta_1$ on the character at $patlastpos$.
 
-而根据时间节省还是空间节省为第一目标，算法会有差别巨大的不同实现．
+Depending on whether saving time or saving space is the main goal, the algorithm has very different implementations.
 
-#### 时间节省版本
+#### Time-saving version
 
-???+ note "实现"
+???+ note "Implementation"
     ```rust
     pub struct B5STimePattern<'a> {
         pat_bytes: &'a [u8],
@@ -836,15 +836,15 @@ B5S 基本思路是：
     }
     ```
 
-该版本的 B5S 性能表现非常理想，在目前介绍的后缀匹配系列算法中是通常情况下是最快的．
+This version of B5S performs very well. Among the suffix-matching algorithms introduced so far, it is usually the fastest.
 
-#### 空间节省版本
+#### Space-saving version
 
-同样在 CPython `stringlib` 中实现，使用了两个整数近似取代了字符表和 $delta_1$ 的作用，极大地节省了空间：
+This is also implemented in CPython's `stringlib`. It uses two integers to approximately replace the character table and $delta_1$, which saves a lot of space:
 
-1.  用一个简单的 Bloom 过滤器取代字符表（alphabet）
+1.  Replace the character table (alphabet) with a simple Bloom filter
 
-    ???+ note "实现"
+    ???+ note "Implementation"
         ```rust
         pub struct BytesBloomFilter {
             mask: u64,
@@ -867,23 +867,23 @@ B5S 基本思路是：
         }
         ```
 
-    Bloom 过滤器设设计通过牺牲准确率（实际还有运行时间）来极大地节省存储空间的 `Set` 类型的数据结构，它的特点是会将集合中不存在的项误判为存在（False Positives，简称 FP），但不会把集合中存在的项判断为不存在（False Negatives，简称 FN），因此使用它可能会因为 FP 而没有得到最大的字符跳转，但不会因为 FN 而跳过本应匹配的字符．
+    A Bloom filter is a `Set`-like data structure designed to save a great deal of storage by giving up some accuracy (and, in practice, some running time). It may report an item that is not in the set as present (false positives, FP), but it never reports an item that is in the set as absent (false negatives, FN). So using it may lose the largest possible jump because of FP, but it never skips characters that should have matched because of FN.
 
-    理论上分析，上述「Bloom 过滤器」的实现在 $pat$ 长度在 50 个 Bytes 时，FP 概率约为 0.5，而 $pat$ 长度在 10 个 Bytes 时，FP 概率约为 0.15．
+    In theory, the "Bloom filter" above has an FP probability of about 0.5 when $pat$ is 50 bytes long, and about 0.15 when $pat$ is 10 bytes long.
 
-    虽然这不是一个标准的 Bloom 过滤器，首先它实际上没有使用一个真正的哈希函数，实际上它只是一个字符映射，将 0-255 的字节映射为它的前六位构成的数．
+    This is not a standard Bloom filter, though. First, it does not use a real hash function; it is just a character mapping that maps a byte 0-255 to the number formed by its low six bits.
 
-    但考虑到我们在内存上的进行字符搜索，这种简化就非常重要，即使用目前已知最快的非加密哈希算法 [xxHash](https://cyan4973.github.io/xxHash/)，计算所需要的时间仍比它高一个数量级．
+    But since we are searching characters in memory, this simplification matters a lot. Even with [xxHash](https://cyan4973.github.io/xxHash/), the fastest known non-cryptographic hash algorithm, the computation would take an order of magnitude longer.
 
-    另外当 pat 在 30 字节以下时，为了达到最佳的 FP 概率，需要不止一个哈希函数．但这么做意义不大，因为用装有两个 `u128` 数字的数组就已经可以构建字符表的全字符集．
+    Also, when pat is under 30 bytes, getting the best FP probability would need more than one hash function. But that is not worth it, because an array of two `u128` numbers is already enough to build a character table for the full character set.
 
-2.  使用 $delta_1(pat[patlastpos])$ 代替整个 $delta_1$
+2.  Use $delta_1(pat[patlastpos])$ instead of the whole $delta_1$
 
-    观察 $delta_1$，最常使用处就是后缀匹配时第一个字符就不匹配是最常见的不匹配的情况，于是令 `skip = delta1(pat[patlastpos])`，
+    Looking at $delta_1$, the most common mismatch is when the very first character compared in suffix matching does not match, and that is where $delta_1$ is used most. So let `skip = delta1(pat[patlastpos])`.
 
-    在第一阶段不匹配时，直接向下滑动 `skip` 个字符；但当第二阶段不配时，因为缺乏整个 $delta_1$ 的信息，只能向下滑动一个字符．
+    On a mismatch in the first stage, slide down by `skip` characters directly. On a mismatch in the second stage, since we do not have the full $delta_1$, we can only slide down by one character.
 
-    ???+ note "实现"
+    ???+ note "Implementation"
         ```rust
         pub struct B5SSpacePattern<'a> {
             pat_bytes: &'a [u8],
@@ -961,32 +961,32 @@ B5S 基本思路是：
         }
         ```
 
-    这个版本的算法相较于前面的后缀匹配算法不够快，但差距不大，性能仍然优于 KMP，得益于它至多两个 `u64` 的整数的优秀空间复杂度．
+    This version is not as fast as the earlier suffix-matching algorithms, but the gap is small, and it still beats KMP. It owes this to its excellent space usage of at most two `u64` integers.
 
-## 理论分析
+## Theoretical analysis
 
-以下是一般字符集下各算法的表现，纵坐标类似于执行开销（cost 指匹配成功 m 个字符后失配时的代价，skip 指发生失配时向下滑动 k 个字符的概率），越小性能越好．横坐标为模式字符串 pat 的长度：
+Below is how the algorithms perform over a general alphabet. The vertical axis is roughly the execution cost (cost is the cost of a mismatch after successfully matching m characters; skip is the probability of sliding down by k characters on a mismatch); smaller is better. The horizontal axis is the length of the pattern pat:
 
-![字符串搜索算法性能对比图](./images/BM/plot256.svg)
+![Performance comparison of string search algorithms](./images/BM/plot256.svg)
 
-在较小字符集（DNA {A, C, T, G} 碱基对序列）中的表现：
+Performance over a small alphabet (DNA base sequences {A, C, T, G}):
 
-![小字符集下字符串搜索算法性能对比图](./images/BM/plot4.svg)
+![Performance comparison of string search algorithms over a small alphabet](./images/BM/plot4.svg)
 
-综上，在较大的字符集，比如日常搜索的过程中，BoyerMoore 系列算法的优越表现，其中主要依赖 $delta_1$ 表实现字符跳转；
+In summary, over larger alphabets, such as in everyday search, the Boyer–Moore family performs very well, mainly thanks to the character jumps from the $delta_1$ table;
 
-另一方面，在较小的字符集里，$delta_1$ 的作用下降，而 $delta_2$ 的作用得到了体现．
+on the other hand, over smaller alphabets, $delta_1$ helps less, and the value of $delta_2$ shows.
 
-如果有一定富裕空间的情况下，完整的空间复杂度为 $O(m)$ 的 BoyerMoore 算法更加通用，综合表现最优．
+If some extra space is available, the full Boyer–Moore algorithm with $O(m)$ space complexity is more general and gives the best overall performance.
 
-## 参考资料与注释
+## References and notes
 
-[^bm]: [1977 年 Boyer–Moore 算法论文](https://dl.acm.org/doi/10.1145/359842.359859)
+[^bm]: [The 1977 Boyer–Moore algorithm paper](https://dl.acm.org/doi/10.1145/359842.359859)
 
-[^kmp]: [1977 年 KMP 算法论文](https://epubs.siam.org/doi/abs/10.1137/0206024)
+[^kmp]: [The 1977 KMP algorithm paper](https://epubs.siam.org/doi/abs/10.1137/0206024)
 
-[^rytter]: [1980 年 Rytter 纠正 Knuth 的论文](https://epubs.siam.org/doi/10.1137/0209037)
+[^rytter]: [Rytter's 1980 paper correcting Knuth](https://epubs.siam.org/doi/10.1137/0209037)
 
-[^galil-rule]: [1979 年介绍 Galil 算法的论文](https://doi.org/10.1145%2F359146.359148)
+[^galil-rule]: [The 1979 paper introducing the Galil algorithm](https://doi.org/10.1145%2F359146.359148)
 
-[^b5s]: [B5S 算法的介绍](http://effbot.org/zone/stringlib.htm#BMHBNFS)
+[^b5s]: [Introduction to the B5S algorithm](http://effbot.org/zone/stringlib.htm#BMHBNFS)

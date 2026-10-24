@@ -1,3 +1,3 @@
-字符串，就是由字符连接而成的序列．
+A string is a sequence made by joining characters together.
 
-常见的字符串问题包括字符串匹配问题、子串相关问题、前缀/后缀相关问题、回文串相关问题、子序列相关问题等．
+Common string problems include string matching, problems about substrings, problems about prefixes and suffixes, problems about palindromes, problems about subsequences, and so on.
