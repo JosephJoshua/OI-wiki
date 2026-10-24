@@ -1,28 +1,28 @@
-## 定义
+## Definition
 
-最小表示法是用于解决字符串最小表示问题的方法．
+The minimum representation algorithm solves the problem of finding the minimum representation of a string.
 
-## 字符串的最小表示
+## Minimum representation of a string
 
-### 循环同构
+### Cyclic isomorphism
 
-当字符串 $S$ 中可以选定一个位置 $i$ 满足
+If we can choose a position $i$ in the string $S$ such that
 
 $$
 S[i\cdots n]+S[1\cdots i-1]=T
 $$
 
-则称 $S$ 与 $T$ 循环同构
+then $S$ and $T$ are called cyclically isomorphic (cyclic shifts of each other)
 
-### 最小表示
+### Minimum representation
 
-字符串 $S$ 的最小表示为与 $S$ 循环同构的所有字符串中字典序最小的字符串
+The minimum representation of a string $S$ is the lexicographically smallest string among all strings cyclically isomorphic to $S$
 
-## simple 的暴力
+## A simple brute force
 
-我们每次比较 $i$ 和 $j$ 开始的循环同构，把当前比较到的位置记作 $k$，每次遇到不一样的字符时便把大的跳过，最后剩下的就是最优解．
+Each time we compare the cyclic shifts starting at $i$ and at $j$. Let $k$ be the position currently being compared. Whenever we meet two different characters, we skip the larger one. What remains at the end is the optimal answer.
 
-### 实现
+### Implementation
 
 === "C++"
     ```cpp
@@ -59,42 +59,42 @@ $$
     i = min(i, j)
     ```
 
-### 解释
+### Explanation
 
-该实现方法随机数据下表现良好，但是可以构造特殊数据卡掉．
+This implementation works well on random data, but special test data can be constructed to make it slow.
 
-例如：对于 $\texttt{aaa}\cdots\texttt{aab}$, 不难发现这个算法的复杂度退化为 $O(n^2)$．
+For example, for $\texttt{aaa}\cdots\texttt{aab}$, it is easy to see that the complexity of this algorithm degrades to $O(n^2)$.
 
-我们发现，当字符串中出现多个连续重复子串时，此算法效率降低，我们考虑优化这个过程．
+We notice that the algorithm becomes slow when the string contains many consecutive repeated substrings, so let us optimize this process.
 
-## 最小表示法
+## The minimum representation algorithm
 
-### 算法核心
+### Core idea
 
-考虑对于一对字符串 $A,B$, 它们在原字符串 $S$ 中的起始位置分别为 $i,j$, 且它们的前 $k$ 个字符均相同，即
+Consider a pair of strings $A,B$ whose starting positions in the original string $S$ are $i,j$, and whose first $k$ characters are the same, that is,
 
 $$
 S[i \cdots i+k-1]=S[j \cdots j+k-1]
 $$
 
-不妨先考虑 $S[i+k]>S[j+k]$ 的情况，我们发现起始位置下标 $l$ 满足 $i\le l\le i+k$ 的字符串均不能成为答案．因为对于任意一个字符串 $S_{i+p}$（表示以 $i+p$ 为起始位置的字符串，$p \in [0, k]$）一定存在字符串 $S_{j+p}$ 比它更优．
+First consider the case $S[i+k]>S[j+k]$. We find that no string whose starting index $l$ satisfies $i\le l\le i+k$ can be the answer. This is because for any string $S_{i+p}$ (the string starting at position $i+p$, $p \in [0, k]$), the string $S_{j+p}$ is always better.
 
-所以我们比较时可以跳过下标 $l\in [i,i+k]$, 直接比较 $S_{i+k+1}$
+So when comparing, we can skip the indices $l\in [i,i+k]$ and go straight to comparing $S_{i+k+1}$
 
-这样，我们就完成了对于上文暴力的优化．
+This completes the optimization of the brute force above.
 
-### 时间复杂度
+### Time complexity
 
 $O(n)$
 
-### 过程
+### How it works
 
-1.  初始化指针 $i$ 为 $0$，$j$ 为 $1$；初始化匹配长度 $k$ 为 $0$
-2.  比较第 $k$ 位的大小，根据比较结果跳转相应指针．若跳转后两个指针相同，则随意选一个加一以保证比较的两个字符串不同
-3.  重复上述过程，直到比较结束
-4.  答案为 $i,j$ 中较小的一个
+1.  Initialize the pointer $i$ to $0$ and $j$ to $1$; initialize the match length $k$ to $0$
+2.  Compare the characters at offset $k$, and move the corresponding pointer based on the result. If the two pointers become equal after moving, increase either one by one so that the two strings being compared are different
+3.  Repeat the process above until the comparison ends
+4.  The answer is the smaller of $i,j$
 
-### 实现
+### Implementation
 
 === "C++"
     ```cpp
