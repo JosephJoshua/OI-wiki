@@ -1,44 +1,44 @@
-前置知识：[阶乘取模](./factorial.md)
+Prerequisites: [Factorials modulo a number](./factorial.md)
 
-## 引入
+## Introduction
 
-本文讨论大组合数取模的求解．组合数，又称二项式系数，指表达式：
+This article discusses computing large binomial coefficients modulo a number. A binomial coefficient is the expression:
 
 $$
 \binom{n}{k} = \dfrac{n!}{k!(n-k)!}.
 $$
 
-规模不大时，组合数可以通过 [递推公式](../combinatorics/combination.md#组合数性质--二项式推论) 求解，时间复杂度为 $O(nk)$；也可以在较大的素数模数 $p>n$ 下，通过计算分子和分母的阶乘在 $O(n)$ 时间内求解．但当问题规模很大（$n\sim 10^{18}$）时，这些方法不再适用．
+When the input is small, binomial coefficients can be computed with the [recurrence](../combinatorics/combination.md#组合数性质--二项式推论) in $O(nk)$ time; or, under a large prime modulus $p>n$, by computing the factorials in the numerator and denominator in $O(n)$ time. But when the input is very large ($n\sim 10^{18}$), these methods no longer work.
 
-基于 Lucas 定理及其推广，本文讨论一种可以在模数不太大（$m \sim 10^6$）时求解组合数的方法．更准确地说，只要模数的唯一分解 $m=\prod p_i^{e_i}$ 中所有素数幂的和（即 $\sum p_i^{e_i}$）在 $10^6$ 规模时就可以使用该方法，因为算法的预处理大致相当于这一规模．
+Based on Lucas's theorem and its generalization, this article discusses a method that computes binomial coefficients when the modulus is not too large ($m \sim 10^6$). More precisely, the method works as long as the sum of all prime powers in the factorization $m=\prod p_i^{e_i}$ (i.e., $\sum p_i^{e_i}$) is on the order of $10^6$, since the algorithm's preprocessing is roughly of that size.
 
-## Lucas 定理
+## Lucas's theorem
 
-首先讨论模数为素数 $p$ 的情形．此时，有 Lucas 定理：
+First, consider the case where the modulus is a prime $p$. Here we have Lucas's theorem:
 
-???+ note "Lucas 定理"
-    对于素数 $p$，有
+???+ note "Lucas's theorem"
+    For a prime $p$,
     
     $$
     \binom{n}{k}\equiv \binom{\lfloor n/p\rfloor}{\lfloor k/p\rfloor}\binom{n\bmod p}{k\bmod p}\pmod p.
     $$
     
-    其中，当 $n<k$ 时，二项式系数 $\dbinom{n}{k}$ 规定为 $0$．
+    Here, when $n<k$, the binomial coefficient $\dbinom{n}{k}$ is defined to be $0$.
 
-??? note "利用生成函数证明"
-    考虑 $\displaystyle\binom{p}{n} \bmod p$ 的取值．因为
+??? note "Proof with generating functions"
+    Consider the value of $\displaystyle\binom{p}{n} \bmod p$. Since
     
     $$
     \binom{p}{n} = \frac{p!}{n!(p-n)!},
     $$
     
-    所以，当 $n\neq 0,p$ 时，分母中都没有因子 $p$，但分子中有因子 $p$，所以分式一定是 $p$ 的倍数，模 $p$ 的余数是 $0$；当 $n=0,p$ 时，分式就是 $1$．因此，
+    when $n\neq 0,p$, the denominator has no factor $p$ but the numerator does, so the fraction must be a multiple of $p$ and its remainder modulo $p$ is $0$. When $n=0,p$, the fraction is just $1$. Therefore,
     
     $$
     \binom{p}{n} \equiv [n=0\lor n=p] \pmod p.
     $$
     
-    记 $f(x) = ax^n + bx^m$．一般地，由 [二项式展开](../combinatorics/combination.md#二项式定理) 和 [费马小定理](./fermat.md#费马小定理) 有
+    Let $f(x) = ax^n + bx^m$. In general, by the [binomial expansion](../combinatorics/combination.md#二项式定理) and [Fermat's little theorem](./fermat.md#费马小定理),
     
     $$
     \begin{aligned}
@@ -51,9 +51,9 @@ $$
     \end{aligned}
     $$
     
-    其中，第三行的同余利用了前文说明的结论，即只有 $k=0,p$ 时，组合数才不是 $p$ 的倍数．
+    The congruence on the third line uses the result above: the binomial coefficient is not a multiple of $p$ only when $k=0,p$.
     
-    利用这一结论，考察二项式展开：
+    Using this result, consider the binomial expansion:
     
     $$
     \begin{aligned}
@@ -62,40 +62,40 @@ $$
     \end{aligned}
     $$
     
-    等式左侧中，项 $x^k$ 的系数为
+    On the left-hand side, the coefficient of $x^k$ is
     
     $$
     \binom{n}{k}\bmod p.
     $$
     
-    转而计算等式右侧中项 $x^k$ 的系数．第一个因子中各项的次数必然是 $p$ 的倍数，第二个因子中各项的次数必然小于 $p$，而 $k$ 分解成这样两部分的和的方式是唯一的，即带余除法：$k=p\lfloor k/p\rfloor +(k\bmod p)$．因此，第一个因子只能贡献其 $p\lfloor k/p\rfloor$ 次项，第二个因子只能贡献其 $k\bmod p$ 次项．所以，等式右侧中 $x^k$ 的系数为两个因子各自贡献的项的系数的乘积：
+    Now compute the coefficient of $x^k$ on the right-hand side. Every term in the first factor has degree a multiple of $p$, and every term in the second factor has degree less than $p$. There is exactly one way to split $k$ into such a sum, namely division with remainder: $k=p\lfloor k/p\rfloor +(k\bmod p)$. So the first factor can only contribute its term of degree $p\lfloor k/p\rfloor$, and the second factor can only contribute its term of degree $k\bmod p$. Therefore, the coefficient of $x^k$ on the right-hand side is the product of the coefficients contributed by the two factors:
     
     $$
     \binom{\lfloor n/p\rfloor}{\lfloor k/p\rfloor}\binom{n\bmod p}{k\bmod p}\bmod p.
     $$
     
-    令两侧系数相等，就得到 Lucas 定理．
+    Setting the coefficients on both sides equal gives Lucas's theorem.
 
-??? note "利用阶乘取模的结论证明"
-    此处提供一种基于 [阶乘取模](./factorial.md#素数模的情形) 相关结论的证明方法，以方便和后文 exLucas 部分的方法建立联系．已知二项式系数
+??? note "Proof using results on factorials modulo a number"
+    Here is a proof based on results about [factorials modulo a number](./factorial.md#素数模的情形), which makes it easier to connect with the exLucas method later. Recall that the binomial coefficient is
     
     $$
     \binom{n}{k} = \dfrac{n!}{k!(n-k)!}.
     $$
     
-    将阶乘 $n!$ 中 $p$ 的幂次和其他因子分离，得到分解：
+    Separating the power of $p$ in the factorial $n!$ from its other factors gives the decomposition:
     
     $$
     n! = p^{\nu_p(n!)}(n!)_p.
     $$
     
-    就得到二项式系数的表达式：
+    This gives an expression for the binomial coefficient:
     
     $$
     \binom{n}{k} = p^{\nu_p(n!)-\nu_p(k!)-\nu_p((n-k)!)}\dfrac{(n!)_p}{(k!)_p((n-k)!)_p}.
     $$
     
-    幂次 $\nu_p(n!)$ 和阶乘余数 $(n!)_p\bmod p$ 都有递推公式：
+    Both the exponent $\nu_p(n!)$ and the factorial remainder $(n!)_p\bmod p$ satisfy recurrences:
     
     $$
     \begin{aligned}
@@ -104,9 +104,9 @@ $$
     \end{aligned}
     $$
     
-    前者是 Legendre 公式的推论，后者是 Wilson 定理的推论．
+    The first is a corollary of Legendre's formula, and the second is a corollary of Wilson's theorem.
     
-    将递推公式代入二项式系数的表达式并整理，就得到：
+    Substituting the recurrences into the expression for the binomial coefficient and simplifying gives:
     
     $$
     \begin{aligned}
@@ -115,7 +115,7 @@ $$
     \end{aligned}
     $$
     
-    现在考察 $\lfloor n/p\rfloor-\lfloor k/p\rfloor-\lfloor(n-k)/p\rfloor$ 的取值．因为有
+    Now look at the value of $\lfloor n/p\rfloor-\lfloor k/p\rfloor-\lfloor(n-k)/p\rfloor$. Since
     
     $$
     \begin{aligned}
@@ -125,28 +125,28 @@ $$
     \end{aligned}
     $$
     
-    所以，利用第一式减去后两式，就得到
+    subtracting the last two equations from the first gives
     
     $$
     (\lfloor n/p\rfloor-\lfloor k/p\rfloor-\lfloor(n-k)/p\rfloor)p = (k\bmod p)+((n-k)\bmod p)-(n\bmod p).
     $$
     
-    等式右侧，前两项的和严格小于 $2p$，而第三项 $n\bmod p$ 正是前两项的和的余数，所以右侧必然非负，但小于 $2p$，又需要是 $p$ 的倍数，就只能是 $0$ 或 $p$．这说明 $\lfloor n/p\rfloor-\lfloor k/p\rfloor-\lfloor(n-k)/p\rfloor$ 只能是 $0$ 或 $1$：
+    On the right-hand side, the sum of the first two terms is strictly less than $2p$, and the third term $n\bmod p$ is exactly the remainder of that sum. So the right-hand side is non-negative and less than $2p$, and it must also be a multiple of $p$, so it can only be $0$ or $p$. This means $\lfloor n/p\rfloor-\lfloor k/p\rfloor-\lfloor(n-k)/p\rfloor$ can only be $0$ or $1$:
     
-    -   如果它是 $0$，那么此时也成立 $(n\bmod p) = (k\bmod p)+((n-k)\bmod p)$．因此，上式中的第一个因子的指数为 $0$，该因子就等于一；第二个因子就是 $\dbinom{n\bmod p}{k\bmod p}$；第三个因子则由前文的展开式（注意此时 $\lfloor(n-k)/p\rfloor=\lfloor n/p\rfloor-\lfloor k/p\rfloor$）可知，就等于 $\dbinom{\lfloor n/p\rfloor}{\lfloor k/p\rfloor}$．此时，Lucas 定理成立；
-    -   如果它是 $1$，那么第一个因子的指数为 $1$，该因子就等于零，所以二项式系数的余数为零．同时，Lucas 定理所要证明的等式右侧的 $\dbinom{n\bmod p}{k\bmod p}$ 也必然是零，因为此时必然有 $(n\bmod p)<(k\bmod p)$；否则，将有
+    -   If it is $0$, then $(n\bmod p) = (k\bmod p)+((n-k)\bmod p)$ also holds. So the exponent of the first factor above is $0$, and that factor equals one; the second factor is $\dbinom{n\bmod p}{k\bmod p}$; and by the expansion above (note that here $\lfloor(n-k)/p\rfloor=\lfloor n/p\rfloor-\lfloor k/p\rfloor$), the third factor equals $\dbinom{\lfloor n/p\rfloor}{\lfloor k/p\rfloor}$. So Lucas's theorem holds;
+    -   If it is $1$, then the exponent of the first factor is $1$, so that factor equals zero, and the binomial coefficient has remainder zero. At the same time, the term $\dbinom{n\bmod p}{k\bmod p}$ on the right-hand side of Lucas's theorem must also be zero, because in this case we must have $(n\bmod p)<(k\bmod p)$; otherwise, we would have
     
         $$
         ((n-k)\bmod p) = p + (n\bmod p) - (k\bmod p) \ge p.
         $$
     
-        这显然与余数的定义矛盾．
+        This clearly contradicts the definition of a remainder.
     
-    综合两种情形，就得到了所要求证的 Lucas 定理．这一证明说明，在求解素数模下组合数时，利用 Lucas 定理和利用 exLucas 算法得到的结果是等价的．
+    Combining the two cases proves Lucas's theorem. This proof shows that, for binomial coefficients modulo a prime, Lucas's theorem and the exLucas algorithm give equivalent results.
 
-Lucas 定理指出，模数为素数 $p$ 时，大组合数的计算可以转化为规模更小的组合数的计算．在右式中，第一个组合数可以继续递归，直到 $k=0$ 为止；第二个组合数则可以直接计算，或者提前预处理出来．写成代码的形式就是：
+Lucas's theorem says that when the modulus is a prime $p$, computing a large binomial coefficient can be reduced to computing smaller ones. On the right-hand side, the first binomial coefficient can be handled recursively until $k=0$; the second can be computed directly or precomputed. In code:
 
-???+ example "示意"
+???+ example "Sketch"
     ```cpp
     long long Lucas(long long n, long long k, long long p) {
       if (k == 0) return 1;
@@ -154,52 +154,52 @@ Lucas 定理指出，模数为素数 $p$ 时，大组合数的计算可以转化
     }
     ```
 
-其中，`C(n, k, p)` 用于计算小规模的组合数．
+Here `C(n, k, p)` computes small binomial coefficients.
 
-递归至多进行 $O(\log_p n)$ 次，因而算法的复杂度为 $O(f(p)+g(p)\log_p n)$，其中，$f(p)$ 为预处理组合数的复杂度，$g(p)$ 为单次计算组合数的复杂度．
+The recursion runs at most $O(\log_p n)$ times, so the complexity of the algorithm is $O(f(p)+g(p)\log_p n)$, where $f(p)$ is the cost of preprocessing binomial coefficients and $g(p)$ is the cost of computing one binomial coefficient.
 
-### 参考实现
+### Reference implementation
 
-此处给出的参考实现在 $O(p)$ 时间内预处理 $p$ 以内的阶乘及其逆元后，可以在 $O(1)$ 时间内计算单个组合数：
+The reference implementation below precomputes the factorials up to $p$ and their inverses in $O(p)$ time, after which each binomial coefficient can be computed in $O(1)$ time:
 
-??? example "参考实现"
+??? example "Reference implementation"
     ```cpp
     --8<-- "docs/math/code/lucas/lucas.cpp"
     ```
 
-该实现的时间复杂度为 $O(p+T\log_p n)$，其中，$T$ 为询问次数．
+The time complexity of this implementation is $O(p+T\log_p n)$, where $T$ is the number of queries.
 
-## exLucas 算法
+## exLucas algorithm
 
-Lucas 定理中对于模数 $p$ 要求必须为素数，那么对于模数不是素数的情况，就需要用到 exLucas 算法．虽然名字如此，该算法实际操作时并没有用到 Lucas 定理．它的关键步骤是 [计算素数幂模下的阶乘](./factorial.md)．上文的第二个证明指出了它与 Lucas 定理的联系．
+Lucas's theorem requires the modulus $p$ to be prime. When the modulus is not prime, we need the exLucas algorithm. Despite its name, the algorithm does not actually use Lucas's theorem. Its key step is [computing factorials modulo a prime power](./factorial.md). The second proof above shows how it is connected to Lucas's theorem.
 
-### 素数幂模的情形
+### Prime power modulus
 
-首先考虑模数为素数幂 $p^\alpha$ 的情形．将阶乘 $n!$ 中的 $p$ 的幂次和其他因子分开，可以得到分解：
+First, consider the case where the modulus is a prime power $p^\alpha$. Separating the power of $p$ in the factorial $n!$ from its other factors gives the decomposition:
 
 $$
 n! = p^{\nu_p(n!)}(n!)_p.
 $$
 
-其中，$\nu_p(n!)$ 为 $n!$ 的素因数分解中 $p$ 的幂次，而 $(n!)_p$ 显然与 $p$ 互素．因此，组合数可以写作：
+Here $\nu_p(n!)$ is the exponent of $p$ in the prime factorization of $n!$, and $(n!)_p$ is clearly coprime to $p$. So the binomial coefficient can be written as:
 
 $$
 \binom{n}{k} = p^{\nu_p(n!)-\nu_p(k!)-\nu_p((n-k)!)}\dfrac{(n!)_p}{(k!)_p((n-k)!)_p}.
 $$
 
-式子中的 $\nu_p(n!)$ 等可以通过 [Legendre 公式](./factorial.md#legendre-公式) 计算，$(n!)_p$ 等则可以通过 [递推关系](./factorial.md#素数幂模的情形) 计算．因为后者与 $p^\alpha$ 互素，所以分母上的乘积的逆元可以通过 [扩展欧几里得算法](./inverse.md#扩展欧几里得算法) 计算．问题就得以解决．
+Terms like $\nu_p(n!)$ can be computed with [Legendre's formula](./factorial.md#legendre-公式), and terms like $(n!)_p$ can be computed with a [recurrence](./factorial.md#素数幂模的情形). Since the latter are coprime to $p^\alpha$, the inverse of the product in the denominator can be computed with the [extended Euclidean algorithm](./inverse.md#扩展欧几里得算法). This solves the problem.
 
-注意，如果幂次 $\nu_p(n!)-\nu_p(k!)-\nu_p((n-k)!)\ge\alpha$，余数一定为零，不必再做更多计算．
+Note that if the exponent $\nu_p(n!)-\nu_p(k!)-\nu_p((n-k)!)\ge\alpha$, the remainder must be zero, and no further computation is needed.
 
-### 一般模数的情形
+### General modulus
 
-对于 $m$ 是一般的合数的情形，只需要首先对它做 [素因数分解](./pollard-rho.md)：
+When $m$ is a general composite number, first find its [prime factorization](./pollard-rho.md):
 
 $$
 m = p_1^{\alpha_1}p_2^{\alpha_2}\cdots p_s^{\alpha_s}.
 $$
 
-然后，分别计算出模 $p_i^{\alpha_i}$ 下组合数 $\dbinom{n}{k}$ 的余数，就得到 $s$ 个同余方程：
+Then compute the remainder of the binomial coefficient $\dbinom{n}{k}$ modulo each $p_i^{\alpha_i}$, which gives $s$ congruences:
 
 $$
 \begin{cases}
@@ -210,22 +210,22 @@ $$
 \end{cases}
 $$
 
-最后，利用 [中国剩余定理](./crt.md) 求出模 $m$ 的余数．
+Finally, use the [Chinese remainder theorem](./crt.md) to find the remainder modulo $m$.
 
-### 参考实现
+### Reference implementation
 
-最后，给出模板题目 [二项式系数](https://loj.ac/p/181) 的参考实现．
+Finally, here is a reference implementation for the template problem [Binomial Coefficients](https://loj.ac/p/181).
 
-??? example "参考实现"
+??? example "Reference implementation"
     ```cpp
     --8<-- "docs/math/code/lucas/exlucas.cpp"
     ```
 
-该算法在预处理时将模数 $m$ 分解为素数幂，然后对所有 $p^\alpha$ 预处理了自 $1$ 至 $p^\alpha$ 所有非 $p$ 倍数的自然数的乘积，以及它在中国剩余定理合并答案时对应的系数．预处理的时间复杂度为 $O(\sqrt{m}+\sum_ip_i^{\alpha_i})$．每次询问时，复杂度为 $O(\log m+\sum_i\log_{p_i}n)$，复杂度中的两项分别是计算逆元和计算幂次、阶乘余数的复杂度．
+During preprocessing, the algorithm factors the modulus $m$ into prime powers. Then, for every $p^\alpha$, it precomputes the product of all natural numbers from $1$ to $p^\alpha$ that are not multiples of $p$, as well as the coefficient used for that modulus when combining answers with the Chinese remainder theorem. Preprocessing takes $O(\sqrt{m}+\sum_ip_i^{\alpha_i})$ time. Each query takes $O(\log m+\sum_i\log_{p_i}n)$ time; the two terms are the costs of computing inverses and of computing the exponents and factorial remainders, respectively.
 
-## 习题
+## Exercises
 
--   [Luogu3807【模板】卢卡斯定理](https://www.luogu.com.cn/problem/P3807)
--   [SDOI2010 古代猪文 卢卡斯定理](https://loj.ac/problem/10229)
--   [Luogu4720【模板】扩展卢卡斯](https://www.luogu.com.cn/problem/P4720)
--   [Ceizenpok’s formula](http://codeforces.com/gym/100633/problem/J)
+-   [Luogu P3807 [Template] Lucas's Theorem](https://www.luogu.com.cn/problem/P3807)
+-   [SDOI2010 Ancient Pig Script (Lucas's theorem)](https://loj.ac/problem/10229)
+-   [Luogu P4720 [Template] Extended Lucas](https://www.luogu.com.cn/problem/P4720)
+-   [Ceizenpok's formula](http://codeforces.com/gym/100633/problem/J)

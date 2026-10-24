@@ -1,32 +1,32 @@
 author: Marcythm, Xeonacid, CSPNOIP
 
-## 定义
+## Definition
 
-从此种筛法的思想方法来说，其又被称为「Extended Eratosthenes Sieve」．
+Based on the idea behind it, this sieve is also called the "Extended Eratosthenes Sieve".
 
-由于其由 [Min\_25](https://web.archive.org/web/20211104125457/http://min-25.hatenablog.com/) 发明并最早开始使用，故称「Min\_25 筛」．
+Since it was invented and first used by [Min\_25](https://web.archive.org/web/20211104125457/http://min-25.hatenablog.com/), it is called the "Min\_25 sieve".
 
-## 性质
+## Properties
 
-其可以在 $O\left(\frac{n^{\frac{3}{4}}}{\log{n}}\right)$ 或 $\Theta\left(n^{1 - \epsilon}\right)$ 的时间复杂度下解决一类 **积性函数** 的前缀和问题．
+It solves the prefix-sum problem for a class of **multiplicative functions** in $O\left(\frac{n^{\frac{3}{4}}}{\log{n}}\right)$ or $\Theta\left(n^{1 - \epsilon}\right)$ time.
 
-要求：$f(p)$ 是一个关于 $p$ 可以快速求值的完全积性函数之和（例如多项式）；$f(p^{c})$ 可以快速求值．
+Requirements: $f(p)$ is a sum of completely multiplicative functions of $p$ that can be evaluated quickly (e.g., a polynomial); $f(p^{c})$ can be evaluated quickly.
 
-## 记号
+## Notation
 
--   **如无特别说明，本节中所有记为 $p$ 的变量的取值集合均为全体质数．**
+-   **Unless stated otherwise, every variable named $p$ in this section ranges over all primes.**
 -   $x / y := \left\lfloor\frac{x}{y}\right\rfloor$
--   $\operatorname{isprime}(n) := [ |\{d : d \mid n\}| = 2 ]$，即 $n$ 为质数时其值为 $1$，否则为 $0$．
--   $p_{k}$：全体质数中第 $k$ 小的质数（如：$p_{1} = 2, p_{2} = 3$）．特别地，令 $p_{0} = 1$．
--   $\operatorname{lpf}(n) := [1 < n] \min\{p : p \mid n\} + [1 = n]$，即 $n$ 的最小质因数．特别地，$n=1$ 时，其值为 $1$．
+-   $\operatorname{isprime}(n) := [ |\{d : d \mid n\}| = 2 ]$, i.e., its value is $1$ when $n$ is prime and $0$ otherwise.
+-   $p_{k}$: the $k$-th smallest prime (e.g., $p_{1} = 2, p_{2} = 3$). In particular, let $p_{0} = 1$.
+-   $\operatorname{lpf}(n) := [1 < n] \min\{p : p \mid n\} + [1 = n]$, i.e., the least prime factor of $n$. In particular, its value is $1$ when $n=1$.
 -   $F_{\mathrm{prime}}(n) := \sum_{2 \le p \le n} f(p)$
 -   $F_{k}(n) := \sum_{i = 2}^{n} [p_{k} \le \operatorname{lpf}(i)] f(i)$
 
-## 解释
+## Explanation
 
-观察 $F_{k}(n)$ 的定义，可以发现答案即为 $F_{1}(n) + f(1) = F_{1}(n) + 1$．
+From the definition of $F_{k}(n)$, the answer is $F_{1}(n) + f(1) = F_{1}(n) + 1$.
 
-考虑如何求出 $F_{k}(n)$．通过枚举每个 $i$ 的最小质因子及其次数可以得到递推式：
+Now consider how to compute $F_{k}(n)$. Enumerating the least prime factor of each $i$ and its exponent gives the recurrence:
 
 $$
 \begin{aligned}
@@ -38,45 +38,45 @@ $$
 \end{aligned}
 $$
 
-最后一步推导基于这样一个事实：对于满足 $p_{i}^{c} \le n < p_{i}^{c + 1}$ 的 $c$，有 $p_{i}^{c + 1} > n \iff n / p_{i}^{c} < p_{i} < p_{i + 1}$，故 $F_{i + 1}\left(n / p_{i}^{c}\right) = 0$．  
-其边界值即为 $F_{k}(n) = 0 (p_{k} > n)$．
+The last step relies on this fact: for $c$ with $p_{i}^{c} \le n < p_{i}^{c + 1}$, we have $p_{i}^{c + 1} > n \iff n / p_{i}^{c} < p_{i} < p_{i + 1}$, so $F_{i + 1}\left(n / p_{i}^{c}\right) = 0$.  
+The boundary condition is $F_{k}(n) = 0 (p_{k} > n)$.
 
-假设现在已经求出了所有的 $F_{\mathrm{prime}}(n)$，那么有两种方式可以求出所有的 $F_{k}(n)$：
+Suppose we have already computed all $F_{\mathrm{prime}}(n)$. Then there are two ways to compute all $F_{k}(n)$:
 
-1.  直接按照递推式计算．
-2.  从大到小枚举 $p$ 转移，仅当 $p^{2} < n$ 时转移增加值不为零，故按照递推式后缀和优化即可．
+1.  Compute directly from the recurrence.
+2.  Enumerate $p$ from large to small and do the transitions. The added value is nonzero only when $p^{2} < n$, so we can optimize the recurrence with suffix sums.
 
-现在考虑如何计算 $F_{\mathrm{prime}}{(n)}$．  
-观察求 $F_{k}(n)$ 的过程，容易发现 $F_{\mathrm{prime}}$ 有且仅有 $1, 2, \dots, \left\lfloor\sqrt{n}\right\rfloor, n / \sqrt{n}, \dots, n / 2, n$ 这 $O(\sqrt{n})$ 处的点值是有用的．  
-一般情况下，$f(p)$ 是一个关于 $p$ 的低次多项式，可以表示为 $f(p) = \sum a_{i} p^{c_{i}}$．  
-那么对于每个 $p^{c_{i}}$，其对 $F_{\mathrm{prime}}(n)$ 的贡献即为 $a_{i} \sum_{2 \le p \le n} p^{c_{i}}$．  
-分开考虑每个 $p^{c_{i}}$ 的贡献，问题就转变为了：给定 $n, s, g(p) = p^{s}$，对所有的 $m = n / i$，求 $\sum_{p \le m} g(p)$．
+Now consider how to compute $F_{\mathrm{prime}}{(n)}$.  
+Looking at how $F_{k}(n)$ is computed, it is easy to see that only the $O(\sqrt{n})$ values of $F_{\mathrm{prime}}$ at $1, 2, \dots, \left\lfloor\sqrt{n}\right\rfloor, n / \sqrt{n}, \dots, n / 2, n$ are ever used.  
+Usually, $f(p)$ is a low-degree polynomial in $p$ and can be written as $f(p) = \sum a_{i} p^{c_{i}}$.  
+Then each $p^{c_{i}}$ contributes $a_{i} \sum_{2 \le p \le n} p^{c_{i}}$ to $F_{\mathrm{prime}}(n)$.  
+Treating the contribution of each $p^{c_{i}}$ separately, the problem becomes: given $n, s, g(p) = p^{s}$, compute $\sum_{p \le m} g(p)$ for all $m = n / i$.
 
-???+ tip "注意"
-    $g(p) = p^{s}$ 是完全积性函数！
+???+ tip "Note"
+    $g(p) = p^{s}$ is a completely multiplicative function!
 
-于是设 $G_{k}(n) := \sum_{i = 2}^{n} \left[p_{k} < \operatorname{lpf}(i) \lor \operatorname{isprime}(i)\right] g(i)$，即埃筛第 $k$ 轮筛完后剩下的数的 $g$ 值之和．  
-对于一个合数 $x \le n$，必定有 $\operatorname{lpf}(x) \le \sqrt{x} \le \sqrt{n}$．设 $p_{\ell(n)}$ 为不大于 $\sqrt{n}$ 的最大质数，则 $\sum_{2\le p\le n}g(p) = G_{\ell(n)}(n)$，即在埃筛进行 $\ell$ 轮之后剩下的均为质数．
-考虑 $G$ 的边界值，显然为 $G_{0}(n) = \sum_{i = 2}^{n} g(i)$．（还记得吗？特别约定了 $p_{0} = 1$）  
-对于转移，考虑埃筛的过程，分开讨论每部分的贡献，有：
+So let $G_{k}(n) := \sum_{i = 2}^{n} \left[p_{k} < \operatorname{lpf}(i) \lor \operatorname{isprime}(i)\right] g(i)$, i.e., the sum of $g$ over the numbers that remain after the $k$-th round of the sieve of Eratosthenes.  
+For a composite $x \le n$, we must have $\operatorname{lpf}(x) \le \sqrt{x} \le \sqrt{n}$. Let $p_{\ell(n)}$ be the largest prime not greater than $\sqrt{n}$. Then $\sum_{2\le p\le n}g(p) = G_{\ell(n)}(n)$, i.e., after $\ell$ rounds of the sieve of Eratosthenes, only primes remain.
+The boundary value of $G$ is clearly $G_{0}(n) = \sum_{i = 2}^{n} g(i)$. (Remember? We specially defined $p_{0} = 1$.)  
+For the transition, consider the sieving process and look at each part's contribution separately:
 
-1.  对于 $n < p_{k}^{2}$ 的部分，$G$ 值不变，即 $G_{k}(n) = G_{k - 1}(n)$．
-2.  对于 $p_{k}^{2} \le n$ 的部分，被筛掉的数必有质因子 $p_{k}$，即 $-g(p_{k}) G_{k - 1}(n / p_{k})$．
-3.  对于第二部分，由于 $p_{k}^{2} \le n \iff p_{k} \le n / p_{k}$，满足 $\operatorname{lpf}(i) < p_{k}$ 的 $i$ 会被额外减去．这部分应当加回来，即 $g(p_{k}) G_{k - 1}(p_{k - 1})$．
+1.  For $n < p_{k}^{2}$, the value of $G$ does not change, i.e., $G_{k}(n) = G_{k - 1}(n)$.
+2.  For $p_{k}^{2} \le n$, every number sieved out must have the prime factor $p_{k}$, giving $-g(p_{k}) G_{k - 1}(n / p_{k})$.
+3.  In the second part, since $p_{k}^{2} \le n \iff p_{k} \le n / p_{k}$, the values $i$ with $\operatorname{lpf}(i) < p_{k}$ are subtracted by mistake. We need to add them back, i.e., $g(p_{k}) G_{k - 1}(p_{k - 1})$.
 
-则有：
+So we have:
 
 $$
 G_{k}(n) = G_{k - 1}(n) - \left[p_{k}^{2} \le n\right] g(p_{k}) (G_{k - 1}(n / p_{k}) - G_{k - 1}(p_{k - 1}))
 $$
 
-## 复杂度分析
+## Complexity analysis
 
-对于 $F_{k}(n)$ 的计算，其第一种方法的时间复杂度被证明为 $O\left(n^{1 - \epsilon}\right)$（见朱震霆集训队论文 [《一些特殊的数论函数求和问题》](https://github.com/OI-wiki/libs/blob/master/%E9%9B%86%E8%AE%AD%E9%98%9F%E5%8E%86%E5%B9%B4%E8%AE%BA%E6%96%87/%E5%9B%BD%E5%AE%B6%E9%9B%86%E8%AE%AD%E9%98%9F2018%E8%AE%BA%E6%96%87%E9%9B%86.pdf) 2.3）；  
-对于第二种方法，其本质即为洲阁筛的第二部分，在任之洲论文 [《积性函数求和的几种方法》](https://github.com/OI-wiki/libs/blob/master/%E9%9B%86%E8%AE%AD%E9%98%9F%E5%8E%86%E5%B9%B4%E8%AE%BA%E6%96%87/%E5%9B%BD%E5%AE%B6%E9%9B%86%E8%AE%AD%E9%98%9F2016%E8%AE%BA%E6%96%87%E9%9B%86.pdf) 中也有提及（6.5.4），其时间复杂度被证明为 $O\left(\frac{n^{\frac{3}{4}}}{\log{n}}\right)$．
+For computing $F_{k}(n)$, the first method has been proved to run in $O\left(n^{1 - \epsilon}\right)$ time (see Section 2.3 of Zhu Zhenting's national training team paper [*Some Special Summation Problems of Arithmetic Functions*](https://github.com/OI-wiki/libs/blob/master/%E9%9B%86%E8%AE%AD%E9%98%9F%E5%8E%86%E5%B9%B4%E8%AE%BA%E6%96%87/%E5%9B%BD%E5%AE%B6%E9%9B%86%E8%AE%AD%E9%98%9F2018%E8%AE%BA%E6%96%87%E9%9B%86.pdf), in Chinese);  
+the second method is essentially the second part of the Zhouge sieve, which is also discussed in Ren Zhizhou's paper [*Several Methods for Summing Multiplicative Functions*](https://github.com/OI-wiki/libs/blob/master/%E9%9B%86%E8%AE%AD%E9%98%9F%E5%8E%86%E5%B9%B4%E8%AE%BA%E6%96%87/%E5%9B%BD%E5%AE%B6%E9%9B%86%E8%AE%AD%E9%98%9F2016%E8%AE%BA%E6%96%87%E9%9B%86.pdf) (in Chinese, Section 6.5.4), and its time complexity has been proved to be $O\left(\frac{n^{\frac{3}{4}}}{\log{n}}\right)$.
 
-对于 $F_{\mathrm{prime}}(n)$ 的计算，事实上，其实现与洲阁筛第一部分是相同的．  
-考虑对于每个 $m = n / i$，只有在枚举满足 $p_{k}^{2} \le m$ 的 $p_{k}$ 转移时会对时间复杂度产生贡献，则时间复杂度可估计为：
+For computing $F_{\mathrm{prime}}(n)$, the implementation is in fact the same as the first part of the Zhouge sieve.  
+For each $m = n / i$, only the transitions over $p_{k}$ with $p_{k}^{2} \le m$ contribute to the running time, so the time complexity can be estimated as:
 
 $$
 \begin{aligned}
@@ -88,47 +88,47 @@ $$
 \end{aligned}
 $$
 
-对于空间复杂度，可以发现不论是 $F_{k}$ 还是 $F_{\mathrm{prime}}$，其均只在 $n / i$ 处取有效点值，共 $O(\sqrt{n})$ 个，仅记录有效值即可将空间复杂度优化至 $O(\sqrt{n})$．
+For the space complexity, note that both $F_{k}$ and $F_{\mathrm{prime}}$ are only needed at the points $n / i$, of which there are $O(\sqrt{n})$. Storing only these useful values reduces the space complexity to $O(\sqrt{n})$.
 
-首先，通过一次数论分块可以得到所有的有效值，用一个大小为 $O(\sqrt{n})$ 的数组 $\text{lis}$ 记录．对于有效值 $v$，记 $\text{id}(v)$ 为 $v$ 在 $\text{lis}$ 中的下标，易得：对于所有有效值 $v$，$\text{id}(v) \le \sqrt{n}$．
+First, one pass of number-theoretic blocking gives all the useful values, which we store in an array $\text{lis}$ of size $O(\sqrt{n})$. For a useful value $v$, let $\text{id}(v)$ be the index of $v$ in $\text{lis}$. It is easy to see that $\text{id}(v) \le \sqrt{n}$ for every useful value $v$.
 
-然后分开考虑小于等于 $\sqrt{n}$ 的有效值和大于 $\sqrt{n}$ 的有效值：对于小于等于 $\sqrt{n}$ 的有效值 $v$，用一个数组 $\text{le}$ 记录其 $\text{id}(v)$，即 $\text{le}_v = \text{id}(v)$；对于大于 $\sqrt{n}$ 的有效值 $v$，用一个数组 $\text{ge}$ 记录 $\text{id}(v)$，由于 $v$ 过大所以借助 $v' = n / v < \sqrt{n}$ 记录 $\text{id}(v)$，即 $\text{ge}_{v'} = \text{id}(v)$．
+Then handle useful values at most $\sqrt{n}$ and those greater than $\sqrt{n}$ separately: for a useful value $v \le \sqrt{n}$, store $\text{id}(v)$ in an array $\text{le}$, i.e., $\text{le}_v = \text{id}(v)$; for a useful value $v > \sqrt{n}$, store $\text{id}(v)$ in an array $\text{ge}$. Since $v$ is too large, we use $v' = n / v < \sqrt{n}$ as the index, i.e., $\text{ge}_{v'} = \text{id}(v)$.
 
-这样，就可以使用两个大小为 $O(\sqrt{n})$ 的数组记录所有有效值的 $\text{id}$ 并 $O(1)$ 查询．在计算 $F_{k}$ 或 $F_{\mathrm{prime}}$ 时，使用有效值的 $\text{id}$ 代替有效值作为下标，即可将空间复杂度优化至 $O(\sqrt{n})$．
+This way, two arrays of size $O(\sqrt{n})$ store the $\text{id}$ of every useful value with $O(1)$ lookup. When computing $F_{k}$ or $F_{\mathrm{prime}}$, use the $\text{id}$ of a useful value instead of the value itself as the index, which reduces the space complexity to $O(\sqrt{n})$.
 
-## 过程
+## How it works
 
-对于 $F_{k}(n)$ 的计算，我们实现时一般选择实现难度较低的第一种方法，其在数据规模较小时往往比第二种方法的表现要好；
+For computing $F_{k}(n)$, we usually implement the first method, which is easier to write and often performs better than the second method when the input is not very large;
 
-对于 $F_{\mathrm{prime}}(n)$ 的计算，直接按递推式实现即可．
+For computing $F_{\mathrm{prime}}(n)$, just implement the recurrence directly.
 
-对于 $p_{k}^{2} \le n$，可以用线性筛预处理出 $s_{k} := F_{\mathrm{prime}}(p_{k})$ 来替代 $F_{k}$ 递推式中的 $F_{\mathrm{prime}}(p_{k - 1})$．  
-相应地，$G$ 递推式中的 $G_{k - 1}(p_{k - 1}) = \sum_{i = 1}^{k - 1} g(p_{i})$ 也可以用此方法预处理．
+For $p_{k}^{2} \le n$, we can precompute $s_{k} := F_{\mathrm{prime}}(p_{k})$ with a linear sieve and use it in place of $F_{\mathrm{prime}}(p_{k - 1})$ in the recurrence for $F_{k}$.  
+Similarly, $G_{k - 1}(p_{k - 1}) = \sum_{i = 1}^{k - 1} g(p_{i})$ in the recurrence for $G$ can be precomputed the same way.
 
-用 Extended Eratosthenes Sieve 求 **积性函数**  $f$ 的前缀和时，应当明确以下几点：
+When using the Extended Eratosthenes Sieve to compute the prefix sums of a **multiplicative function** $f$, you should be clear about the following:
 
--   如何快速（一般是线性时间复杂度）筛出前 $\sqrt{n}$ 个 $f$ 值；
--   $f(p)$ 的多项式表示；
--   如何快速求出 $f(p^{c})$．
+-   How to quickly (usually in linear time) sieve the first $\sqrt{n}$ values of $f$;
+-   The polynomial form of $f(p)$;
+-   How to quickly compute $f(p^{c})$.
 
-明确上述几点之后按顺序实现以下几部分即可：
+Once these are clear, implement the following parts in order:
 
-1.  筛出 $[1, \sqrt{n}]$ 内的质数与前 $\sqrt{n}$ 个 $f$ 值；
-2.  对 $f(p)$ 多项式表示中的每一项筛出对应的 $G$，合并得到 $F_{\mathrm{prime}}$ 的所有 $O(\sqrt{n})$ 个有用点值；
-3.  按照 $F_{k}$ 的递推式实现递归，求出 $F_{1}(n)$．
+1.  Sieve the primes in $[1, \sqrt{n}]$ and the first $\sqrt{n}$ values of $f$;
+2.  For each term in the polynomial form of $f(p)$, sieve the corresponding $G$, and combine them to get all $O(\sqrt{n})$ useful values of $F_{\mathrm{prime}}$;
+3.  Implement the recursion following the recurrence for $F_{k}$, and compute $F_{1}(n)$.
 
-## 例题
+## Example problems
 
-???+ example "[Luogu P4213【模板】杜教筛](https://www.luogu.com.cn/problem/P4213)"
-    求 $\displaystyle \sum_{i = 1}^{n} \varphi(i)$ 和 $\displaystyle \sum_{i = 1}^{n} \mu(i)$．
+???+ example "[Luogu P4213 [Template] Du's Sieve](https://www.luogu.com.cn/problem/P4213)"
+    Compute $\displaystyle \sum_{i = 1}^{n} \varphi(i)$ and $\displaystyle \sum_{i = 1}^{n} \mu(i)$.
 
-??? note "解答"
-    对于求 $\varphi(i)$ 的前缀和，首先易知 $f(p) = p - 1$．对于 $f(p)$ 的一次项 $(p)$，有 $g(p) = p, G_{0}(n) = \sum_{i = 2}^{n} g(i) = \frac{(n + 2) (n - 1)}{2}$；对于 $f(p)$ 的常数项 $(-1)$，有 $g(p) = -1, G_{0}(n) = \sum_{i = 2}^{n} g(i) = -n + 1$．筛两次加起来即可得到 $F_{\mathrm{prime}}$ 的所有 $O(\sqrt{n})$ 个所需点值．
+??? note "Solution"
+    For the prefix sums of $\varphi(i)$, first note that $f(p) = p - 1$. For the linear term $(p)$ of $f(p)$, we have $g(p) = p, G_{0}(n) = \sum_{i = 2}^{n} g(i) = \frac{(n + 2) (n - 1)}{2}$; for the constant term $(-1)$ of $f(p)$, we have $g(p) = -1, G_{0}(n) = \sum_{i = 2}^{n} g(i) = -n + 1$. Sieve twice and add the results to get all $O(\sqrt{n})$ needed values of $F_{\mathrm{prime}}$.
     
-    对于求 $\mu(i)$ 的前缀和，易知 $f(p) = -1$．则 $g(p) = -1, G_{0}(n) = \sum_{i = 2}^{n} g(i) = -n + 1$．直接筛即可得到 $F_{\mathrm{prime}}$ 的所有 $O(\sqrt{n})$ 个所需点值．
+    For the prefix sums of $\mu(i)$, clearly $f(p) = -1$. Then $g(p) = -1, G_{0}(n) = \sum_{i = 2}^{n} g(i) = -n + 1$. Sieving directly gives all $O(\sqrt{n})$ needed values of $F_{\mathrm{prime}}$.
 
-???+ example "[LOJ 6053 简单的函数](https://loj.ac/p/6053)"
-    给定 $f(n)$：
+???+ example "[LOJ 6053 A Simple Function](https://loj.ac/p/6053)"
+    Given $f(n)$:
     
     $$
     f(n) = \begin{cases}
@@ -138,12 +138,12 @@ $$
     \end{cases}
     $$
     
-    求 $\displaystyle \sum_{i = 1}^{n} f(i)$．
+    compute $\displaystyle \sum_{i = 1}^{n} f(i)$.
 
-??? note "解答"
-    易知 $f(p) = p - 1 + 2[p = 2]$．则按照筛 $\varphi$ 的方法筛，对 $2$ 讨论一下即可．
+??? note "Solution"
+    Clearly $f(p) = p - 1 + 2[p = 2]$. So sieve the same way as for $\varphi$, and handle $2$ as a special case.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/math/code/min-25/min-25_1.cpp"
     ```

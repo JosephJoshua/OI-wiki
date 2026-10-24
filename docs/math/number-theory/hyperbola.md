@@ -1,67 +1,67 @@
 author: Backl1ght, c-forrest, Enter-tainer, Great-designer, Henry-ZHR, huayucaiji, hsfzLZH1, Ir1d, kenlig, ksyx, Marcythm, MegaOwIer, Menci, Nanarikom, nanmenyangde, ouuan, purple-vine, shawlleyw, sshwy, StudyingFather, Tiphereth-A, Xeonacid
 
-前置知识：[Dirichlet 卷积](./dirichlet.md)、[数论分块](./sqrt-decomposition.md)
+Prerequisites: [Dirichlet convolution](./dirichlet.md), [number-theoretic blocking](./sqrt-decomposition.md)
 
-本文介绍 Dirichlet 双曲线法，它可用于在亚线性时间复杂度内计算两个数论函数的 Dirichlet 卷积的前缀和．通过对该算法的分析，可以引申出块筛的概念；据此，本文将进一步介绍块筛卷积的快速计算方法．最后，本文将介绍杜教筛，它可以用于计算两个数论函数在 Dirichlet 卷积意义下的商的前缀和．
+This article introduces the Dirichlet hyperbola method, which computes the prefix sums of the Dirichlet convolution of two arithmetic functions in sublinear time. Analyzing this algorithm leads to the idea of a block sieve, and based on it, this article then shows how to quickly compute the convolution of block sieves. Finally, this article introduces Du's sieve, which computes the prefix sums of the quotient of two arithmetic functions under Dirichlet convolution.
 
-## Dirichlet 双曲线法
+## Dirichlet hyperbola method
 
-Dirichlet 双曲线法可以用于计算两个数论函数的 Dirichlet 卷积的前缀和．
+The Dirichlet hyperbola method computes the prefix sums of the Dirichlet convolution of two arithmetic functions.
 
-设 $f,g,h$ 是数论函数，且 $h = f\ast g$．那么，利用 Dirichlet 卷积的定义，$h$ 的前缀和
+Let $f,g,h$ be arithmetic functions with $h = f\ast g$. Then, by the definition of Dirichlet convolution, the prefix sum of $h$ is
 
 $$
 H(n) = \sum_{k=1}^nh(k) = \sum_{k=1}^n\sum_{xy=k}f(x)g(y).
 $$
 
-求和式遍历的点集恰为第一象限（不含坐标轴）中双曲线 $xy=n$ 下方的整点集合．设整点 $(x,y)$ 的权值为 $f(x)g(y)$，那么 $H(n)$ 就是这一权值的和．
+The set of points this sum runs over is exactly the set of lattice points in the first quadrant (excluding the axes) on or below the hyperbola $xy=n$. Give the lattice point $(x,y)$ the weight $f(x)g(y)$; then $H(n)$ is the total weight.
 
 ![](./images/dirichlet-hyperbola.svg)
 
-如图所示，这一权值和可以通过容斥原理计算：
+As shown in the figure, this total weight can be computed with the inclusion–exclusion principle:
 
 $$
 H(n) = \sum_{x=1}^{\lfloor x_0\rfloor}f(x)G\left(\left\lfloor\dfrac{n}{x}\right\rfloor\right) + \sum_{y=1}^{\lfloor y_0\rfloor}F\left(\left\lfloor\dfrac{n}{y}\right\rfloor\right)g(y) - F(\lfloor x_0\rfloor)G(\lfloor y_0\rfloor).
 $$
 
-其中，$F,G$ 分别是 $f,g$ 的前缀和函数，$(x_0,y_0)$ 是双曲线 $xy=n$ 上任意一个点．表达式中，第一项表示图中绿色区域的权值和，第二项表示图中橙色区域的权值和，第三项则表示两个区域重叠部分的权值和．这个表达式仅含有 $\lfloor x_0\rfloor + \lfloor y_0\rfloor + 1$ 项．对于合理选择的 $(x_0,y_0)$，它的计算复杂度显著优于暴力计算 $h(n)$ 的前缀和．这就是 **Dirichlet 双曲线法**（Dirichlet hyperbola method）．
+Here $F,G$ are the prefix-sum functions of $f,g$, and $(x_0,y_0)$ is any point on the hyperbola $xy=n$. In this expression, the first term is the total weight of the green region in the figure, the second term is the total weight of the orange region, and the third term is the total weight of the overlap of the two regions. The expression has only $\lfloor x_0\rfloor + \lfloor y_0\rfloor + 1$ terms. With a sensible choice of $(x_0,y_0)$, it is much faster than computing the prefix sums of $h(n)$ by brute force. This is the **Dirichlet hyperbola method**.
 
-### 卷积前缀和点值的计算
+### Computing a single value of the convolution's prefix sum
 
-Dirichlet 双曲线法最基本的应用就是计算前缀和函数的点值 $H(n)$．
+The most basic use of the Dirichlet hyperbola method is to compute a single value $H(n)$ of the prefix-sum function.
 
-如果 $F,G$ 的点值已知（或可以在 $O(1)$ 时间内计算），进而 $f,g$ 的点值也已知，那么 Dirichlet 双曲线法的表达式中每一项都可以在 $O(1)$ 时间内计算，总时间复杂度就等于 $O(x_0+y_0)$．因为 $x_0y_0=n$，所以由均值不等式可知，当 $x_0=y_0=\sqrt{n}$ 时，就得到最低时间复杂度 $O(\sqrt{n})$．
+If the values of $F,G$ are known (or can be computed in $O(1)$ time), then so are the values of $f,g$, and every term in the Dirichlet hyperbola expression can be computed in $O(1)$ time. The total time complexity is then $O(x_0+y_0)$. Since $x_0y_0=n$, the AM–GM inequality shows that the lowest time complexity, $O(\sqrt{n})$, is reached when $x_0=y_0=\sqrt{n}$.
 
-这并非新的结果．在 Dirichlet 双曲线法的表达式中，令 $x_0 > n$，就得到
+This is not a new result. Setting $x_0 > n$ in the Dirichlet hyperbola expression gives
 
 $$
 H(n) = \sum_{x=1}^nf(x)G\left(\left\lfloor\dfrac{n}{x}\right\rfloor\right).
 $$
 
-利用 [数论分块](./sqrt-decomposition.md) 的技巧，当 $F,G$ 的点值已知时，该式可以在 $O(\sqrt{n})$ 时间内计算．这实际上和本节得到的算法是几乎等价的：这两种方法需要的已知信息基本类似，计算的表达式也大致相同．
+Using [number-theoretic blocking](./sqrt-decomposition.md), when the values of $F,G$ are known, this sum can be computed in $O(\sqrt{n})$ time. This is in fact almost equivalent to the algorithm in this section: the two methods need basically the same known information, and the expressions they compute are roughly the same.
 
-??? note "等价性的说明"
-    细究数论分块的计算过程可以发现，实际计算的表达式为
+??? note "Why they are equivalent"
+    Looking closely at how number-theoretic blocking computes the sum, the expression it actually evaluates is
     
     $$
     H(n) = \sum_{y\in D(n)}\left(F\left(\left\lfloor\dfrac{n}{y}\right\rfloor\right)-F\left(\left\lfloor\dfrac{n}{y+1}\right\rfloor\right)\right)G(y).
     $$
     
-    其中，$D(n) = \left\{\left\lfloor\dfrac{n}{x}\right\rfloor : 1 \le x \le n,~x\in\mathbf N_+\right\}$ 是数论分块中的关键点集合．
+    Here $D(n) = \left\{\left\lfloor\dfrac{n}{x}\right\rfloor : 1 \le x \le n,~x\in\mathbf N_+\right\}$ is the set of key points in number-theoretic blocking.
     
-    根据数论分块的性质可知，对于 $x\le\sqrt{n}$，对应分块的高度 $y = \lfloor n/x\rfloor$ 各不相同，于是这些分块的长度都是 $1$，亦即
+    By the properties of number-theoretic blocking, for $x\le\sqrt{n}$ the corresponding block heights $y = \lfloor n/x\rfloor$ are all distinct, so these blocks all have length $1$, that is,
     
     $$
     \left\lfloor\dfrac{n}{y+1}\right\rfloor + 1 = x = \left\lfloor\dfrac{n}{y}\right\rfloor.
     $$
     
-    因此，这些分块对应的求和为
+    Therefore, the sum over these blocks is
     
     $$
     I_1 = \sum_{x=1}^{\lfloor\sqrt{n}\rfloor}\left(F(x)-F(x-1)\right)G\left(\left\lfloor\dfrac{n}{x}\right\rfloor\right) = \sum_{x=1}^{\lfloor\sqrt{n}\rfloor}f(x)G\left(\left\lfloor\dfrac{n}{x}\right\rfloor\right).
     $$
     
-    剩下的分块，高度 $y$ 遍历 $1,2,\cdots,y^*= \left\lfloor\dfrac{n}{\lfloor\sqrt{n}\rfloor + 1}\right\rfloor$．对剩余的和式应用 [Abel 变换](https://en.wikipedia.org/wiki/Summation_by_parts)（即分部积分法的求和形式），就得到
+    For the remaining blocks, the height $y$ runs over $1,2,\cdots,y^*= \left\lfloor\dfrac{n}{\lfloor\sqrt{n}\rfloor + 1}\right\rfloor$. Applying [Abel's transformation](https://en.wikipedia.org/wiki/Summation_by_parts) (the summation form of integration by parts) to the remaining sum gives
     
     $$
     \begin{aligned}
@@ -70,9 +70,9 @@ $$
     \end{aligned}
     $$
     
-    数论分块的性质说明，$\lfloor n/\lfloor \sqrt{n}\rfloor\rfloor \ge \lfloor \sqrt{n}\rfloor$．由此，分两种情形：
+    The properties of number-theoretic blocking show that $\lfloor n/\lfloor \sqrt{n}\rfloor\rfloor \ge \lfloor \sqrt{n}\rfloor$. So there are two cases:
     
-    -   当 $\lfloor n/\lfloor \sqrt{n}\rfloor\rfloor = \lfloor \sqrt{n}\rfloor$ 时，必然有 $y^* < \lfloor \sqrt{n}\rfloor$．由于它与 $x = \lfloor \sqrt{n}\rfloor$ 所在块相邻，块高只能恰好相差一，即 $y^* = \lfloor \sqrt{n}\rfloor - 1$．此时，有
+    -   When $\lfloor n/\lfloor \sqrt{n}\rfloor\rfloor = \lfloor \sqrt{n}\rfloor$, we must have $y^* < \lfloor \sqrt{n}\rfloor$. Since this block is adjacent to the block containing $x = \lfloor \sqrt{n}\rfloor$, their heights can differ by exactly one, i.e., $y^* = \lfloor \sqrt{n}\rfloor - 1$. In this case,
     
         $$
         \begin{aligned}
@@ -82,41 +82,41 @@ $$
         \end{aligned}
         $$
     
-    -   当 $\lfloor n/\lfloor \sqrt{n}\rfloor\rfloor > \lfloor \sqrt{n}\rfloor$ 时，必然有 $y^* = \lfloor \sqrt{n}\rfloor$．直接代入求和式，就得到
+    -   When $\lfloor n/\lfloor \sqrt{n}\rfloor\rfloor > \lfloor \sqrt{n}\rfloor$, we must have $y^* = \lfloor \sqrt{n}\rfloor$. Substituting directly into the sum gives
     
         $$
         I_2 = \sum_{y=1}^{\lfloor\sqrt{n}\rfloor}F\left(\left\lfloor\dfrac{n}{y}\right\rfloor\right)g(y) - F(\lfloor\sqrt{n}\rfloor)G(\lfloor\sqrt{n}\rfloor).
         $$
     
-    综上，除了一个 Abel 变换，数论分块的计算过程实际上就是在计算如下算式：
+    In summary, apart from one Abel transformation, number-theoretic blocking is really computing the following expression:
     
     $$
     H(n) = \sum_{x=1}^{\lfloor\sqrt{n}\rfloor}f(x)G\left(\left\lfloor\dfrac{n}{x}\right\rfloor\right) + \sum_{y=1}^{\lfloor\sqrt{n}\rfloor}F\left(\left\lfloor\dfrac{n}{y}\right\rfloor\right)g(y) - F(\lfloor\sqrt{n}\rfloor)G(\lfloor\sqrt{n}\rfloor).
     $$
     
-    这就是 $(x_0,y_0)=(\sqrt{n},\sqrt{n})$ 时 Dirichlet 双曲线法的表达式．因此可以说，两种算法的计算过程几乎等价．而且，由于 Dirichlet 双曲线法利用了更多数论分块的性质，避免了朴素数论分块中的不必要计算，常数更小一些．
+    This is exactly the Dirichlet hyperbola expression with $(x_0,y_0)=(\sqrt{n},\sqrt{n})$. So we can say the two algorithms compute almost the same thing. Moreover, since the Dirichlet hyperbola method uses more properties of number-theoretic blocking, it avoids some unnecessary work done by naive blocking and has a slightly smaller constant factor.
 
-在处理实际问题时，已知 $F,G$ 点值这一条件可能过强．但是，Dirichlet 双曲线法（或对应的数论分块）其实并不需要 $F,G$ 的全部点值信息．观察求和表达式可知，其实只需要 $F$ 和 $G$ 在数论分块关键点集合
+In real problems, requiring the values of $F,G$ to be known may be too strong. However, the Dirichlet hyperbola method (or the corresponding number-theoretic blocking) does not actually need all values of $F,G$. Looking at the sum, we see that we only need the values of $F$ and $G$ at the set of key points of number-theoretic blocking
 
 $$
 D(n) = \left\{\left\lfloor\dfrac{n}{x}\right\rfloor : 1 \le x \le n,~x\in\mathbf N_+\right\}
 $$
 
-处的取值．它既是全体块高的集合，也是全体块的右端点集合．注意，根据数论分块的 [性质](./sqrt-decomposition.md#性质) 可知，这一集合包含所有 $1\le x\le\sqrt{n}$ 的整数值，因此，已知 $F,G$ 在 $D(n)$ 处的取值就相当于已知 $f,g$ 在所有 $1\le x\le\sqrt{n}$ 处的取值．这一集合的大小是 $\Theta(\sqrt{n})$ 的，所以，计算 $H(n)$ 时，只需要知道 $F,G$ 在一个稀疏集合处的点值信息．这个观察是优化数论函数前缀和计算的关键．
+This set is both the set of all block heights and the set of all right endpoints of blocks. Note that by the [properties](./sqrt-decomposition.md#性质) of number-theoretic blocking, this set contains every integer $1\le x\le\sqrt{n}$, so knowing $F,G$ on $D(n)$ is the same as knowing $f,g$ at every $1\le x\le\sqrt{n}$. This set has size $\Theta(\sqrt{n})$, so to compute $H(n)$ we only need the values of $F,G$ on a sparse set. This observation is the key to speeding up prefix sums of arithmetic functions.
 
-## 块筛及其卷积
+## Block sieves and their convolution
 
-有些时候，$h=f\ast g$ 并非最终需要计算前缀和的函数，而只是中间步骤之一．根据前文分析，为了后续计算，需要求出前缀和函数 $H$ 在集合 $D(n)$ 处的取值．这就称为数论函数 $h$ 的 **块筛**：
+Sometimes $h=f\ast g$ is not the final function whose prefix sums we need, but only an intermediate step. From the analysis above, for later computations we need the values of the prefix-sum function $H$ on the set $D(n)$. This is called the **block sieve** of the arithmetic function $h$:
 
 $$
 \mathcal S_h(n) = \left\{H(x) : x \in D(n)\right\}.
 $$
 
-本节讨论 **块筛卷积** 问题的计算方法：已知 $f,g$ 的块筛时，求它们的 Dirichlet 卷积 $h = f\ast g$ 的块筛．
+This section discusses how to solve the **block sieve convolution** problem: given the block sieves of $f,g$, find the block sieve of their Dirichlet convolution $h = f\ast g$.
 
-### 朴素算法
+### Naive algorithm
 
-朴素算法就是将块筛的计算看作是 $|D(n)|$ 次前缀和点值的计算．这样做的总时间复杂度为
+The naive algorithm treats computing the block sieve as computing $|D(n)|$ single prefix-sum values. The total time complexity is
 
 $$
 \begin{aligned}
@@ -126,26 +126,26 @@ O\left(\sum_{d\in D(n)}\sqrt{d}\right) &= O\left(\sum_{x=1}^{\lfloor\sqrt{n}\rfl
 \end{aligned}
 $$
 
-正是因为块筛是稀疏的，所以整个块筛可以在亚线性时间内求出．
+It is precisely because the block sieve is sparse that the whole block sieve can be computed in sublinear time.
 
-但是，这一算法显然过于暴力．集合 $D(n)$ 中较小的那些元素取值相对稠密，所以块筛中相邻两个前缀和相差并不大，完全可以直接计算卷积 $h$ 的点值，再求它的前缀和．这比起对每个点都单独求一遍前缀和点值要更快．例如，对 $x = 1,2,\cdots,\lfloor\sqrt{n}\rfloor$ 分别计算前缀和点值需要
+However, this algorithm is clearly too brute-force. The smaller elements of $D(n)$ are relatively dense, so adjacent prefix sums in the block sieve differ only a little. We can simply compute the values of the convolution $h$ directly and then take prefix sums. This is faster than computing each prefix-sum value separately. For example, computing the prefix-sum values separately for $x = 1,2,\cdots,\lfloor\sqrt{n}\rfloor$ takes
 
 $$
 O\left(\sum_{x=1}^{\lfloor\sqrt{n}\rfloor}\sqrt{x}\right) = O(n^{3/4})
 $$
 
-的时间；但是，直接计算 $h$ 在这些点处的点值再累和，却只需要 $O(n^{1/2}\log n)$ 的时间．尽管如此，如果只知道 $f,g$ 的块筛而不知道更多信息，那么这一思路是无法继续优化该算法复杂度的．这是因为块筛中只包含 $x \le \sqrt{n}$ 处的点值信息，至多只能计算 $h$ 在 $1\le x\le\sqrt{n}$ 处的点值，而剩余前缀和点值的计算仍然需要 $O(n^{3/4})$ 的时间．
+time, while computing the values of $h$ at these points directly and summing them up takes only $O(n^{1/2}\log n)$ time. Even so, if we only know the block sieves of $f,g$ and nothing more, this idea cannot improve the complexity further. The reason is that the block sieve only contains values at $x \le \sqrt{n}$, so we can compute the values of $h$ only at $1\le x\le\sqrt{n}$, and computing the remaining prefix-sum values still takes $O(n^{3/4})$ time.
 
-### 利用点值信息优化
+### Optimizing with known values
 
-如果已知信息除了 $f,g$ 的块筛外，还包含它们的更多点值，那么，确实可以改进这一算法的复杂度．实践中，这一算法通常应用于 $f,g$ 的点值可以快速预处理时．
+If, besides the block sieves of $f,g$, we also know more of their values, then we can indeed improve the complexity. In practice, this algorithm is usually used when the values of $f,g$ can be preprocessed quickly.
 
-选择 $z \ge \sqrt{n}$．卷积 $h$ 的块筛分为两部分：
+Choose $z \ge \sqrt{n}$. The block sieve of the convolution $h$ is computed in two parts:
 
--   计算 $f\ast g$ 的卷积 $h$ 在 $1\le x \le z$ 处的点值，再直接累加求和得到 $H$ 在 $1\le x\le z$ 处的点值．
--   对于 $x\in D(n)$ 且 $x > z$，通过 Dirichlet 双曲线法计算 $H$ 在 $x$ 处的点值．
+-   Compute the values of the convolution $h$ of $f\ast g$ at $1\le x \le z$, then add them up directly to get the values of $H$ at $1\le x\le z$.
+-   For $x\in D(n)$ with $x > z$, compute the value of $H$ at $x$ with the Dirichlet hyperbola method.
 
-对于一般情形，这样做的时间复杂度为
+In the general case, the time complexity is
 
 $$
 \begin{aligned}
@@ -155,115 +155,115 @@ O\left(z\log z + \sum_{d\in D(n),~d\ge z}\sqrt{d}\right) &= O\left(z\log z + \su
 \end{aligned}
 $$
 
-当 $z=\left(\dfrac{n}{\log n}\right)^{2/3}$ 时，总时间复杂度最小为 $O\left(n^{2/3}(\log n)^{1/3}\right)$．
+When $z=\left(\dfrac{n}{\log n}\right)^{2/3}$, the total time complexity reaches its minimum $O\left(n^{2/3}(\log n)^{1/3}\right)$.
 
-当然，Dirichlet 卷积 [点值计算](./dirichlet.md#dirichlet-卷积的计算) 的复杂度与 $f,g,h$ 的性质有关．对于 $f,g,h$ 有特殊性质的情形，最优分点和复杂度均略有不同：
+Of course, the complexity of [computing values](./dirichlet.md#dirichlet-卷积的计算) of a Dirichlet convolution depends on the properties of $f,g,h$. When $f,g,h$ have special properties, the best split point and the complexity are slightly different:
 
--   如果 $f$ 或 $g$ 是积性的，那么当 $z=\left(\dfrac{n}{\log\log n}\right)^{2/3}$ 时，总时间复杂度最小为 $O\left(n^{2/3}(\log\log n)^{1/3}\right)$．
--   如果 $h$ 是积性的，那么当 $z=n^{2/3}$ 时，总时间复杂度最小为 $O(n^{2/3})$．
+-   If $f$ or $g$ is multiplicative, then with $z=\left(\dfrac{n}{\log\log n}\right)^{2/3}$, the total time complexity reaches its minimum $O\left(n^{2/3}(\log\log n)^{1/3}\right)$.
+-   If $h$ is multiplicative, then with $z=n^{2/3}$, the total time complexity reaches its minimum $O(n^{2/3})$.
 
-应用这一优化并不需要 $f,g$ 的全部点值，而只需要它们在 $1\le x\le z$ 处的点值．因为这一算法也得到了 $h$ 在 $1\le x\le z$ 处的点值，所以当 $h$ 作为中间变量时，同样可以利用 $h$ 的点值优化后续计算过程．数论函数的块筛，再加上它这些点值，就构成了一个增强版的块筛：它们是在 $O(n^{2/3+\varepsilon})$ 时间内计算卷积前缀和的全部必要信息．
+This optimization does not need all values of $f,g$, only their values at $1\le x\le z$. Since the algorithm also produces the values of $h$ at $1\le x\le z$, when $h$ is an intermediate result, its values can also be used to speed up later steps. The block sieve of an arithmetic function, together with these values, forms an enhanced block sieve: it is all the information needed to compute convolution prefix sums in $O(n^{2/3+\varepsilon})$ time.
 
-### 快速块筛卷积
+### Fast block sieve convolution
 
-前置知识：[快速傅里叶变换](../poly/fft.md)
+Prerequisites: [Fast Fourier transform](../poly/fft.md)
 
-???+ warning "注意"
-    初学者可以跳过本节内容．
+???+ warning "Note"
+    Beginners can skip this section.
 
-本节讨论周康阳在 2024 年集训队论文提出的快速块筛卷积算法．它可以在 $O(\sqrt{n}\log^2n)$ 时间内根据块筛 $\mathcal S_f$ 和 $\mathcal S_g$ 计算出它们卷积 $\mathcal S_h$ 的取值．这一算法不依赖于额外的点值信息和数论函数的积性，但实现较为复杂．
+This section discusses the fast block sieve convolution algorithm proposed by Zhou Kangyang in his 2024 national training team paper. Given the block sieves $\mathcal S_f$ and $\mathcal S_g$, it computes their convolution $\mathcal S_h$ in $O(\sqrt{n}\log^2n)$ time. The algorithm does not rely on extra known values or on multiplicativity, but it is fairly complex to implement.
 
-块筛卷积问题希望计算
+The block sieve convolution problem asks for the prefix sums of
 
 $$
 h(z) = \sum_{xy=z} f(x)g(y)
 $$
 
-在块筛 $D(n) = \{\left\lfloor n / t\right\rfloor : 1\le t \le n\}$ 处的前缀和．对于这一问题，单一贡献可以由 $(x,y,t)$ 标记，即将项 $f(x)g(y)$ 累加到 $\left\lfloor n / t\right\rfloor$ 处前缀和的过程．算法将这些贡献分成若干组处理．
+at the points $D(n) = \{\left\lfloor n / t\right\rfloor : 1\le t \le n\}$. For this problem, a single contribution can be labeled by $(x,y,t)$, meaning that the term $f(x)g(y)$ is added to the prefix sum at $\left\lfloor n / t\right\rfloor$. The algorithm handles these contributions in several groups.
 
-首先，考虑 $x > \sqrt{n}$ 的所有点对于这一系列前缀和的贡献，那些 $y > \sqrt{n}$ 的贡献类似．因为所有贡献必须满足 $xy \le \lfloor n / t\rfloor$，即 $xyt \le n$，所以只需要枚举所有可能的 $t,y$，利用前缀和技巧以及块筛 $\mathcal S_f$ 中的信息，就可以在 $O(\sum_{t,y: ty\le\sqrt{n}} 1) = O(\sqrt{n}\log n)$ 时间内计算出这部分贡献．
+First, consider the contributions of all points with $x > \sqrt{n}$ to these prefix sums; contributions with $y > \sqrt{n}$ are handled the same way. Since every contribution must satisfy $xy \le \lfloor n / t\rfloor$, i.e., $xyt \le n$, we only need to enumerate all possible $t,y$. Using prefix-sum tricks and the information in the block sieve $\mathcal S_f$, this part can be computed in $O(\sum_{t,y: ty\le\sqrt{n}} 1) = O(\sqrt{n}\log n)$ time.
 
-然后，考虑 $\left\lfloor n / t\right\rfloor\le\sqrt{n}$ 的这部分贡献．这一部分同样可以暴力枚举所有可能的 $x,y$ 完成，时间复杂度仍然是 $O(\sum_{x,y:xy\le\sqrt{n}}1) = O(\sqrt{n}\log n)$．这一部分实际上得到了函数 $h$ 在 $D(n)$ 的前 $\lfloor\sqrt{n}\rfloor$ 个点值．
+Next, consider the contributions with $\left\lfloor n / t\right\rfloor\le\sqrt{n}$. This part can also be done by brute-force enumeration of all possible $x,y$, still in $O(\sum_{x,y:xy\le\sqrt{n}}1) = O(\sqrt{n}\log n)$ time. This part actually gives the first $\lfloor\sqrt{n}\rfloor$ values of $h$ on $D(n)$.
 
-考虑剩下的贡献，即满足 $x,y\le\sqrt{n}$ 且 $\left\lfloor n / t\right\rfloor > \sqrt{n}$ 的贡献．所有贡献必须满足 $xyt\le n$，亦即 $\ln x + \ln y \le \ln(n/t)$．取正数 $S$，可以利用 $\lceil S\ln x\rceil + \lceil S\ln y\rceil \le S\ln(n/t)$ 近似估计这一条件．定义多项式 $\sigma_f(u)$ 和 $\sigma_g(u)$，使得它们的系数 $[u^k]\sigma_f$ 和 $[u^k]\sigma_g$ 分别等于满足 $\lceil S\ln x\rceil = k$ 时 $f(x)$ 的和以及满足 $\lceil S\ln y\rceil = k$ 时 $g(y)$ 的和（只考虑 $x,y\le\sqrt{n}$ 的这一部分）．利用快速傅里叶变换（FFT）可以得到它们的乘积 $\sigma_f\sigma_g$，它的系数 $[u^k](\sigma_f\sigma_g)$ 就表示 $\lceil S\ln x\rceil + \lceil S\ln y\rceil = k$ 时 $f(x)g(y)$ 的和．由此，只需要对于每个 $D(n)$ 中剩下的每个 $\lfloor n/t\rfloor$ 都找到满足 $k \le S\ln(n/t)$ 的最大 $k$ 值，就可以得到这一部分贡献的估计值．
+Now consider the remaining contributions, namely those with $x,y\le\sqrt{n}$ and $\left\lfloor n / t\right\rfloor > \sqrt{n}$. Every contribution must satisfy $xyt\le n$, i.e., $\ln x + \ln y \le \ln(n/t)$. Choose a positive number $S$; we can approximate this condition by $\lceil S\ln x\rceil + \lceil S\ln y\rceil \le S\ln(n/t)$. Define polynomials $\sigma_f(u)$ and $\sigma_g(u)$ whose coefficients $[u^k]\sigma_f$ and $[u^k]\sigma_g$ are the sum of $f(x)$ over $x$ with $\lceil S\ln x\rceil = k$ and the sum of $g(y)$ over $y$ with $\lceil S\ln y\rceil = k$, respectively (only for $x,y\le\sqrt{n}$). Using the fast Fourier transform (FFT), we get their product $\sigma_f\sigma_g$, whose coefficient $[u^k](\sigma_f\sigma_g)$ is the sum of $f(x)g(y)$ over pairs with $\lceil S\ln x\rceil + \lceil S\ln y\rceil = k$. Then, for each remaining $\lfloor n/t\rfloor$ in $D(n)$, we just find the largest $k$ with $k \le S\ln(n/t)$, and we get an estimate of this part of the contribution.
 
-最后，对于这一部分贡献进行误差修正．前文试图利用更强的条件 $\lceil S\ln x\rceil + \lceil S\ln y\rceil \le S\ln(n/t)$ 去近似 $\ln x + \ln y \le \ln(n/t)$，可能会遗漏部分贡献．这只会发生在 $\lceil S\ln x\rceil + \lceil S\ln y\rceil > S\ln(n/t)$ 时，所以有
+Finally, we correct the error in this part. Above, we used the stronger condition $\lceil S\ln x\rceil + \lceil S\ln y\rceil \le S\ln(n/t)$ to approximate $\ln x + \ln y \le \ln(n/t)$, which may miss some contributions. This only happens when $\lceil S\ln x\rceil + \lceil S\ln y\rceil > S\ln(n/t)$, so
 
 $$
 S\ln x + 1 +  S\ln y + 1 \ge \lceil S\ln x\rceil + \lceil S\ln y\rceil >  S\ln(n/t) \ge S\ln x + S\ln y.
 $$
 
-这相当于
+This is equivalent to
 
 $$
 xyt \in (n\mathrm{e}^{-2/S},n].
 $$
 
-这是一个长度为 $O(n/S)$ 的区间．枚举区间内所有可能的贡献 $(x,y,t)$，逐个检验是否遗漏，就可以完成误差的修正．为了快速枚举区间内所有贡献，可以首先筛出不超过 $\sqrt{n}$ 的全部素数，再利用这些素数去除区间中的整数，剩下的因子必然是大于 $\sqrt{n}$ 的素数，由此就可以得到区间内所有整数的素因数分解，进而可以快速枚举所有可能的 $(x,y,t)$．
+This is an interval of length $O(n/S)$. We enumerate every possible contribution $(x,y,t)$ in the interval and check one by one whether it was missed, which corrects the error. To enumerate all contributions in the interval quickly, first sieve all primes up to $\sqrt{n}$, then divide the integers in the interval by these primes. Whatever factor remains must be a prime greater than $\sqrt{n}$. This gives the prime factorization of every integer in the interval, so we can quickly enumerate all possible $(x,y,t)$.
 
-考察最后这一部分贡献计算的时间复杂度．估计贡献时，需要对长度为 $S\log n$ 的多项式做乘法，时间复杂度为 $O(S\log n\log(S\log n))$．误差修正时，预处理素因数分解的时间复杂度为 $O(\sqrt{n}+(n/S)\log\log n)$，枚举区间内所有贡献的时间复杂度为 $O(\sum_{k\in(n\mathrm{e}^{-2/S},n]}d_3(k))$，此处，$d_3(n)$ 表示将 $n$ 分解成三个有序整数乘积的方法数．解析数论的结果[^piltz]指出：
+Let's look at the time complexity of this last part. For the estimate, we multiply polynomials of length $S\log n$, which takes $O(S\log n\log(S\log n))$ time. For the error correction, preprocessing the prime factorizations takes $O(\sqrt{n}+(n/S)\log\log n)$ time, and enumerating all contributions in the interval takes $O(\sum_{k\in(n\mathrm{e}^{-2/S},n]}d_3(k))$ time, where $d_3(n)$ is the number of ways to write $n$ as an ordered product of three integers. A result from analytic number theory[^piltz] states:
 
 $$
 \sum_{k\le n}d_3(k) = nP(\log n) + O(n^{43/96+\varepsilon}),
 $$
 
-其中，$P(\cdot)$ 是二次多项式．因为前两步时间复杂度已经是 $O(\sqrt{n}\log n)$，忽略所有 $o(\sqrt{n}\log n)$ 的项，最后这一部分贡献计算的时间复杂度为
+where $P(\cdot)$ is a quadratic polynomial. Since the first two steps already take $O(\sqrt{n}\log n)$ time, ignoring all $o(\sqrt{n}\log n)$ terms, the time complexity of this last part is
 
 $$
 O\left(S\log n\log(S\log n) + \dfrac{n}{S} \log^2n\right).
 $$
 
-取 $S = \sqrt{n}$，就得到时间复杂度为 $O(\sqrt{n}\log^2n)$．这也是该算法的总时间复杂度．
+Taking $S = \sqrt{n}$ gives a time complexity of $O(\sqrt{n}\log^2n)$. This is also the total time complexity of the algorithm.
 
-??? example "参考实现"
+??? example "Reference implementation"
     ```cpp
     --8<-- "docs/math/code/hyperbola/fast_bs_conv.cpp:core"
     ```
 
-## 杜教筛
+## Du's sieve
 
-前文讨论了如何计算数论函数 Dirichlet 卷积的前缀和．本节考虑它的逆过程：设 $f \ast g = h$，且 $f,h$ 已知，计算 $g$ 的前缀和
+The sections above discussed how to compute prefix sums of the Dirichlet convolution of arithmetic functions. This section considers the reverse: let $f \ast g = h$, where $f,h$ are known, and compute the prefix sum of $g$
 
 $$
 G(n) = \sum_{x=1}^ng(x).
 $$
 
-换句话说，本节考虑两个数论函数 Dirichlet 卷积意义的商的前缀和计算．本节总是假设 $f(1)\neq 0$，以保证 $f$ 可逆．
+In other words, this section considers computing prefix sums of the quotient of two arithmetic functions under Dirichlet convolution. Throughout this section we assume $f(1)\neq 0$, so that $f$ is invertible.
 
-为此，在 Dirichlet 双曲线法表达式中令 $x_0 > n$，就得到
+To do this, set $x_0 > n$ in the Dirichlet hyperbola expression to get
 
 $$
 H(n) = \sum_{x=1}^{n}f(x)G\left(\left\lfloor\dfrac{n}{x}\right\rfloor\right).
 $$
 
-直接解出 $G(n)$，就得到
+Solving for $G(n)$ gives
 
 $$
 G(n) = \dfrac{1}{f(1)}\left(H(n)-\sum_{x=2}^nf(x)G\left(\left\lfloor\dfrac{n}{x}\right\rfloor\right)\right).
 $$
 
-这就是杜教筛的表达式．实际上对于 $x_0 \ge 1$，总有
+This is the formula of Du's sieve. In fact, for any $x_0 \ge 1$, we always have
 
 $$
 G(n) = \dfrac{1}{f(1)}\left(H(n)-\sum_{x=2}^{\lfloor x_0\rfloor}f(x)G\left(\left\lfloor\dfrac{n}{x}\right\rfloor\right) - \sum_{y=1}^{\lfloor y_0\rfloor}F\left(\left\lfloor\dfrac{n}{y}\right\rfloor\right)g(y) + F(\lfloor x_0\rfloor)G(\lfloor y_0\rfloor)\right).
 $$
 
-无论是哪种形式，它都是一个关于 $G(n)$ 的递推关系式．为计算 $G(n)$ 的取值，需要计算 $G$ 在 $D(n)\setminus\{n\}$ 处的取值．因为 $D(n)$ 具有 [递归结构](./sqrt-decomposition.md#性质)，即对于 $m\in D(n)$，总是有 $D(m)\subseteq D(n)$，所以在整个递归计算过程中，只需要计算 $G$ 在 $D(n)$ 中元素处的取值各一次．换句话说，计算 $G(n)$ 时，实际上得到了 $g$ 的块筛 $\mathcal S_g(n)$．
+Either way, this is a recurrence for $G(n)$. To compute $G(n)$, we need the values of $G$ on $D(n)\setminus\{n\}$. Since $D(n)$ has a [recursive structure](./sqrt-decomposition.md#性质), namely $D(m)\subseteq D(n)$ for every $m\in D(n)$, the whole recursive computation only needs to compute $G$ once at each element of $D(n)$. In other words, computing $G(n)$ actually gives us the block sieve $\mathcal S_g(n)$ of $g$.
 
-具体实现时，可以采用递归的方法，并采用记忆化避免重复计算．当然，也可以采用迭代的方法，从小到大依次计算 $D(n)$ 中每个点处 $G$ 的取值．此时，表达式中的求和式既可以采用数论分块计算，也可以采用 Dirichlet 双曲线法计算．
+In practice, we can use recursion with memoization to avoid repeated work. Alternatively, we can iterate and compute the value of $G$ at each point of $D(n)$ from small to large. In this case, the sums in the expression can be computed with either number-theoretic blocking or the Dirichlet hyperbola method.
 
-这些实现的复杂度是相同的．由于杜教筛总是得到块筛，所以杜教筛的复杂度其实相当于计算块筛的复杂度．如果已知信息只有 $F,H$ 的块筛，那么杜教筛的复杂度就是 $O(n^{3/4})$；如果对于某个 $z\ge\sqrt{n}$，可以在 $T_0(z)$ 时间内预处理出 $g$ 在 $1\le x \le z$ 处的点值，那么杜教筛的复杂度就是
+These implementations have the same complexity. Since Du's sieve always produces a block sieve, its complexity is really the complexity of computing a block sieve. If the only known information is the block sieves of $F,H$, then Du's sieve runs in $O(n^{3/4})$; if, for some $z\ge\sqrt{n}$, the values of $g$ at $1\le x \le z$ can be preprocessed in $T_0(z)$ time, then Du's sieve runs in
 
 $$
 O\left(T_0(z) + \dfrac{n}{\sqrt{z}}\right).
 $$
 
-当 $g$ 是积性函数时，可以应用线性筛，即 $T_0(z)=\Theta(z)$，所以最优需要预处理到 $z = n^{2/3}$ 处，总时间复杂度为 $O(n^{2/3})$；对于更一般的情形，总时间复杂度则为 $O(n^{2/3}(\log n)^{1/3})$．这些都和块筛部分的分析完全一致．
+When $g$ is multiplicative, we can use the linear sieve, i.e., $T_0(z)=\Theta(z)$, so the best choice is to preprocess up to $z = n^{2/3}$, giving a total time complexity of $O(n^{2/3})$. In the more general case, the total time complexity is $O(n^{2/3}(\log n)^{1/3})$. All of this matches the analysis in the block sieve section exactly.
 
-??? warning "递归实现时，不使用记忆化将导致复杂度错误"
-    杜教筛的表达式中，计算 $G(n)$ 的值，需要依赖于 $D(n)\setminus\{n\}$ 中 $G$ 的取值．此处保证复杂度的关键在于注意到集合 $D(n)$ 的递归结构：当 $m\in D(n)$ 时，$D(m)\subseteq D(n)$．利用这一性质，可以通过记忆化加速计算．利用记忆化后，如前文所示，算法的复杂度是 $O(n^{3/4})$ 的．此处要说明的是，如果不使用记忆化，算法复杂度是错误的．
+??? warning "A recursive implementation without memoization has the wrong complexity"
+    In the formula of Du's sieve, computing $G(n)$ depends on the values of $G$ on $D(n)\setminus\{n\}$. The key to the complexity bound is the recursive structure of $D(n)$: when $m\in D(n)$, $D(m)\subseteq D(n)$. This property allows memoization to speed things up. With memoization, as shown above, the algorithm runs in $O(n^{3/4})$. Here we show that without memoization, the complexity is wrong.
     
-    设不使用记忆化时，应用递归方法计算 $G(n)$ 的复杂度是 $T(n)$．那么，有
+    Let $T(n)$ be the cost of computing $G(n)$ recursively without memoization. Then
     
     $$
     \begin{aligned}
@@ -272,44 +272,44 @@ $$
     \end{aligned}
     $$
     
-    利用类似 [主定理](../../basic/complexity.md#master-theorem) 的证明思路，可以说明，最后一项主导了该式的增长，且 $T(n)\in\Theta(n^\alpha)$，其中，$\alpha\approx 1.73$ 是 $\zeta(\alpha)=2$ 的根．
+    Using an argument similar to the proof of the [master theorem](../../basic/complexity.md#master-theorem), one can show that the last term dominates the growth, and $T(n)\in\Theta(n^\alpha)$, where $\alpha\approx 1.73$ is the root of $\zeta(\alpha)=2$.
 
-应用杜教筛计算数论函数 $g$ 前缀和时，关键在于找到合适的 $f,h$ 使得 $h=f\ast g$ 且 $f,h$ 的块筛都容易计算．在有些时候，这样的 $f,h$ 是显然的；在另一些时候，需要利用 Dirichlet 卷积的性质推导，也可以通过计算相应的 Dirichlet 生成函数或 Bell 级数（当满足积性时）来找到相应的分解．后文的例题展示了这些情形．
+When using Du's sieve to compute prefix sums of an arithmetic function $g$, the key is to find suitable $f,h$ with $h=f\ast g$ such that the block sieves of $f,h$ are both easy to compute. Sometimes such $f,h$ are obvious; at other times they have to be derived from properties of Dirichlet convolution, or found by computing the corresponding Dirichlet generating function or Bell series (for multiplicative functions). The example problems below show these situations.
 
-## 例题
+## Example problems
 
-本节介绍几道计算数论函数前缀和的题目．
+This section presents several problems about computing prefix sums of arithmetic functions.
 
 ???+ example "[AtCoder Regular Contest 116 C - Multiple Sequences](https://atcoder.jp/contests/arc116/tasks/arc116_c)"
-    给定正整数 $N$ 和 $M$．需要计算有多少长度为 $N$ 的序列 $A$ 满足 $1 \le A_i \le M$ 且 $A_i$ 整除 $A_{i+1}$．答案对 $998244353$ 取模．数据范围：$1 \le N, M \le 2\times 10^5$．
+    Given positive integers $N$ and $M$, count the sequences $A$ of length $N$ such that $1 \le A_i \le M$ and $A_i$ divides $A_{i+1}$. Output the answer modulo $998244353$. Constraints: $1 \le N, M \le 2\times 10^5$.
 
-??? note "解答"
-    设长度为 $n$ 且 $A_n=m$ 的序列数目为 $f_n(m)$．那么，最终的答案就是 $\sum_{m=1}^M f_N(m)$．要计算 $f_n(m)$，考虑应用动态规划的方法．动态转移方程为：
+??? note "Solution"
+    Let $f_n(m)$ be the number of such sequences of length $n$ with $A_n=m$. Then the final answer is $\sum_{m=1}^M f_N(m)$. To compute $f_n(m)$, we use dynamic programming. The transition is:
     
     $$
     f_n(m) = \sum_{k\mid m}f_{n-1}(k).
     $$
     
-    利用 Dirichlet 卷积的记号，它可以记作 $f_n = f_{n-1}\ast 1$，其中，$1$ 是常值数论函数．注意到 $f_1 = 1$，归纳可知，$f_n = 1 ^{\ast n}$．也就是说，$f_n$ 是 $n$ 个常值函数的卷积．最后的答案就是 $f_N$ 的前缀和．由于过程中只涉及积性函数，利用前文介绍的 Dirichlet 卷积前缀和的计算方法，单次卷积前缀和的计算只需要 $O(M^{2/3})$ 的时间；再利用 [快速幂](../binary-exponentiation.md) 的方法，只需要计算 $O(\log N)$ 次卷积前缀和即可得到 $f_N$ 的卷积前缀和的值．整体时间复杂度为 $O(M^{2/3}\log N)$．
+    In Dirichlet convolution notation, this is $f_n = f_{n-1}\ast 1$, where $1$ is the constant arithmetic function. Since $f_1 = 1$, by induction $f_n = 1 ^{\ast n}$. That is, $f_n$ is the convolution of $n$ constant functions. The final answer is the prefix sum of $f_N$. Since only multiplicative functions are involved, using the method above for prefix sums of Dirichlet convolutions, each convolution prefix sum takes only $O(M^{2/3})$ time. Then, with [fast exponentiation](../binary-exponentiation.md), we only need $O(\log N)$ convolution prefix sums to get the prefix sum of $f_N$. The overall time complexity is $O(M^{2/3}\log N)$.
 
-??? note "参考实现"
+??? note "Reference implementation"
     ```cpp
     --8<-- "docs/math/code/hyperbola/hyperbola.cpp"
     ```
 
-???+ example "[P4213【模板】杜教筛（Sum）](https://www.luogu.com.cn/problem/P4213)"
-    设 $\mu$ 和 $\varphi$ 分别是莫比乌斯函数和欧拉函数．求 $S_1(n)= \sum_{i=1}^{n} \mu(i)$ 和 $S_2(n)= \sum_{i=1}^{n} \varphi(i)$ 的值．数据范围：$1\leq n<2^{31}$.
+???+ example "[Luogu P4213 [Template] Du's Sieve (Sum)](https://www.luogu.com.cn/problem/P4213)"
+    Let $\mu$ and $\varphi$ be the Möbius function and Euler's totient function. Compute $S_1(n)= \sum_{i=1}^{n} \mu(i)$ and $S_2(n)= \sum_{i=1}^{n} \varphi(i)$. Constraints: $1\leq n<2^{31}$.
 
-??? note "解答"
-    注意到 Dirichlet 卷积关系式：
+??? note "Solution"
+    Note the Dirichlet convolution identities:
     
     $$
     \varepsilon = \mu \ast 1,~ \operatorname{id} = \varphi \ast 1.
     $$
     
-    其中，$\varepsilon(n) = [n=1]$ 是 Dirichlet 卷积的单位元函数，$\operatorname{id}(n) = n$ 是恒等函数，$1(n) = 1$ 是常值函数．因为这三个函数的前缀和都可以在 $O(1)$ 时间内计算且都是积性函数，所以，利用前文介绍的杜教筛方法就可以在 $O(n^{2/3})$ 时间内计算．
+    Here $\varepsilon(n) = [n=1]$ is the identity element of Dirichlet convolution, $\operatorname{id}(n) = n$ is the identity function, and $1(n) = 1$ is the constant function. Since the prefix sums of these three functions can all be computed in $O(1)$ time and they are all multiplicative, Du's sieve as described above computes the answer in $O(n^{2/3})$ time.
     
-    对于欧拉函数的前缀和的计算，另一种方法是利用 [莫比乌斯反演](./mobius.md)．注意到
+    For the prefix sums of Euler's totient function, another method uses [Möbius inversion](./mobius.md). Note that
     
     $$
     \begin{aligned}
@@ -319,24 +319,24 @@ $$
     \end{aligned}
     $$
     
-    在数论分块的过程中，需要 $\mu(d)$ 的前缀和，而这可以通过杜教筛预处理出来．时间复杂度仍然是 $O(n^{2/3})$．
+    The number-theoretic blocking needs prefix sums of $\mu(d)$, which can be precomputed with Du's sieve. The time complexity is still $O(n^{2/3})$.
 
-??? note "参考实现"
+??? note "Reference implementation"
     ```cpp
     --8<-- "docs/math/code/du/du_1.cpp"
     ```
 
-???+ example "[「LuoguP3768」简单的数学题](https://www.luogu.com.cn/problem/P3768)"
-    给定 $p,n$，计算
+???+ example "[Luogu P3768 A Simple Math Problem](https://www.luogu.com.cn/problem/P3768)"
+    Given $p,n$, compute
     
     $$
     \sum_{i=1}^n\sum_{j=1}^nij\cdot\gcd(i,j)\pmod p.
     $$
     
-    数据范围：$n\leq 10^{10}$，$5\times 10^8\leq p\leq 1.1\times 10^9$ 且 $p$ 是质数．
+    Constraints: $n\leq 10^{10}$, $5\times 10^8\leq p\leq 1.1\times 10^9$, and $p$ is prime.
 
-??? note "解答"
-    利用 [欧拉函数](./euler-totient.md) 的性质，做如下反演：
+??? note "Solution"
+    Using a property of [Euler's totient function](./euler-totient.md), we do the following inversion:
     
     $$
     \begin{aligned}
@@ -347,35 +347,35 @@ $$
     \end{aligned}
     $$
     
-    其中，$F(n) = \dfrac{1}{2}n(n+1)$．该式可以通过数论分块计算，但需要预处理出 $d^2\varphi(d)$ 的前缀和．
+    Here $F(n) = \dfrac{1}{2}n(n+1)$. This sum can be computed with number-theoretic blocking, but we need the prefix sums of $d^2\varphi(d)$.
     
-    为此，可以利用杜教筛．记 $f(n)=(\operatorname{id}^2\varphi)(n)$ 和 $S(n)=\sum_{i=1}^n f(i)$．应用杜教筛的关键是构造出函数 $g$，使得 $f\ast g$ 和 $g$ 都可以快速求和．前文已经讨论了用杜教筛预处理 $\varphi$ 前缀和的方法，这只需要利用关系：$\operatorname{id} = \varphi\ast 1$．相较于 $\varphi$，这里的 $f$ 多了一个 $\operatorname{id}^2$．由于 $\operatorname{id}$ 是完全积性函数，利用 Dirichlet 卷积的 [性质](./dirichlet.md#性质)，只需要类似地将每一项都乘以 $\operatorname{id}^2$，就得到
+    For this, we can use Du's sieve. Let $f(n)=(\operatorname{id}^2\varphi)(n)$ and $S(n)=\sum_{i=1}^n f(i)$. The key to Du's sieve is to construct a function $g$ such that both $f\ast g$ and $g$ have easy prefix sums. Above, we already discussed using Du's sieve to precompute prefix sums of $\varphi$, which only uses the identity $\operatorname{id} = \varphi\ast 1$. Compared with $\varphi$, the $f$ here has an extra factor $\operatorname{id}^2$. Since $\operatorname{id}$ is completely multiplicative, by a [property](./dirichlet.md#性质) of Dirichlet convolution, we just multiply every term by $\operatorname{id}^2$ in the same way and get
     
     $$
     \operatorname{id}^3 = f \ast \operatorname{id}^2.
     $$
     
-    因为 $\operatorname{id}^2(n)=n^2$ 和 $\operatorname{id}^3(n)=n^3$ 的前缀和都可以在 $O(1)$ 时间内计算，$f$ 的前缀和就可以在 $O(n^{2/3})$ 时间内预处理得到．再加上数论分块，整体时间复杂度仍然是 $O(n^{2/3})$．
+    Since the prefix sums of $\operatorname{id}^2(n)=n^2$ and $\operatorname{id}^3(n)=n^3$ can both be computed in $O(1)$ time, the prefix sums of $f$ can be precomputed in $O(n^{2/3})$ time. Adding number-theoretic blocking, the overall time complexity is still $O(n^{2/3})$.
     
-    另一种将类似积性函数表示为两函数之（在 Dirichlet 卷积意义下的）商的方法是利用 [Dirichlet 生成函数](./dirichlet.md#dirichlet-生成函数)．
+    Another way to express a similar multiplicative function as the quotient (under Dirichlet convolution) of two functions is to use the [Dirichlet generating function](./dirichlet.md#dirichlet-生成函数).
 
-??? note "参考实现"
+??? note "Reference implementation"
     ```cpp
     --8<-- "docs/math/code/du/du_2.cpp"
     ```
 
-## 习题
+## Exercises
 
 -   [AtCoder Xmas Contest 2019 D - Sum of (-1)^f(n)](https://atcoder.jp/contests/xmascon19/tasks/xmascon19_d)
 
-## 参考资料与注释
+## References and notes
 
--   任之洲．2016．《积性函数求和的几种方法》．2016 年信息学奥林匹克中国国家队候选队员论文．
--   周康阳．2024．《关于积性函数求和问题的一些进展》．2024 年信息学奥林匹克中国国家队候选队员论文．
+-   Ren Zhizhou. 2016. *Several Methods for Summing Multiplicative Functions*. Paper of the 2016 Chinese National Team Candidates for the Olympiad in Informatics (in Chinese).
+-   Zhou Kangyang. 2024. *Some Progress on Summing Multiplicative Functions*. Paper of the 2024 Chinese National Team Candidates for the Olympiad in Informatics (in Chinese).
 -   [Dirichlet hyperbola method - Wikipedia](https://en.wikipedia.org/wiki/Dirichlet_hyperbola_method)
--   [杜教筛的时空复杂度分析 - riteme.site](https://riteme.site/blog/2018-9-11/time-space-complexity-dyh-algo.html)
--   [OI 中常用数论函数求和法的简化陈述 by negiizhao - UOJ](https://negiizhao.blog.uoj.ac/blog/7165)
--   [Dirichlet 積と、数論関数の累積和 by maspy](https://maspypy.com/dirichlet-%e7%a9%8d%e3%81%a8%e3%80%81%e6%95%b0%e8%ab%96%e9%96%a2%e6%95%b0%e3%81%ae%e7%b4%af%e7%a9%8d%e5%92%8c)
+-   [Time and space complexity analysis of Du's sieve - riteme.site](https://riteme.site/blog/2018-9-11/time-space-complexity-dyh-algo.html) (in Chinese)
+-   [A simplified account of common methods for summing arithmetic functions in OI, by negiizhao - UOJ](https://negiizhao.blog.uoj.ac/blog/7165) (in Chinese)
+-   [Dirichlet products and cumulative sums of arithmetic functions, by maspy](https://maspypy.com/dirichlet-%e7%a9%8d%e3%81%a8%e3%80%81%e6%95%b0%e8%ab%96%e9%96%a2%e6%95%b0%e3%81%ae%e7%b4%af%e7%a9%8d%e5%92%8c) (in Japanese)
 -   [Dirichlet convolution. Part 1: Fast prefix sum computations by adamant - Codeforces](https://codeforces.com/blog/entry/117635)
 
 [^piltz]: [Piltz divisor problem - Divisor summatory function - Wikipedia](https://en.wikipedia.org/wiki/Divisor_summatory_function#Piltz_divisor_problem)

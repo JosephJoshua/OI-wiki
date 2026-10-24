@@ -1,60 +1,60 @@
-## 内容
+## Statement
 
-升幂（Lift the Exponent，LTE）引理是初等数论中比较常用的一个定理．
+The Lifting the Exponent (LTE) lemma is a fairly common theorem in elementary number theory.
 
-定义 $\nu_p(n)$ 为整数 $n$ 的标准分解中素因子 $p$ 的幂次，即 $\nu_p(n)$ 满足 $p^{\nu_p(n)}\mid n$ 且 $p^{\nu_p(n)+1}\nmid n$.
+Define $\nu_p(n)$ as the exponent of the prime factor $p$ in the prime factorization of the integer $n$, i.e., $\nu_p(n)$ satisfies $p^{\nu_p(n)}\mid n$ and $p^{\nu_p(n)+1}\nmid n$.
 
-由于升幂引理内容较长，我们将其分为三部分介绍：
+Since the LTE lemma is fairly long, we present it in three parts.
 
-以下内容设 $p$ 为素数，$x,y$ 为满足 $p\nmid x$ 且 $p\nmid y$ 的整数，$n$ 为正整数．
+Throughout, let $p$ be a prime, let $x,y$ be integers with $p\nmid x$ and $p\nmid y$, and let $n$ be a positive integer.
 
-### 第一部分
+### Part 1
 
-对所有的素数 $p$ 和满足 $(n,p)=1$ 的整数 $n$，
+For every prime $p$ and every integer $n$ with $(n,p)=1$,
 
-1.  若 $p\mid x-y$，则：
+1.  If $p\mid x-y$, then:
 
     $$
     \nu_p\left(x^n-y^n\right)=\nu_p(x-y)
     $$
 
-2.  若 $p\mid x+y$，则对奇数 $n$ 有：
+2.  If $p\mid x+y$, then for odd $n$:
 
     $$
     \nu_p\left(x^n+y^n\right)=\nu_p(x+y)
     $$
 
-???+ note "证明"
-    若 $p\mid x-y$，则不难发现 $p\mid x-y\iff x\equiv y\pmod p$，则显然有：
+???+ note "Proof"
+    If $p\mid x-y$, it is easy to see that $p\mid x-y\iff x\equiv y\pmod p$, so clearly:
     
     $$
     \sum_{i=0}^{n-1}x^iy^{n-1-i}\equiv nx^{n-1}\not\equiv 0\pmod p
     $$
     
-    进而由 $x^n-y^n=(x-y)\sum_{i=0}^{n-1}x^iy^{n-1-i}$ 可知命题得证．
+    Then, from $x^n-y^n=(x-y)\sum_{i=0}^{n-1}x^iy^{n-1-i}$, the claim follows.
     
-    对 $p\mid x+y$ 的情况证明方法类似．
+    The case $p\mid x+y$ is proved in the same way.
 
-### 第二部分
+### Part 2
 
-若 $p$ 是奇素数，
+If $p$ is an odd prime,
 
-1.  若 $p\mid x-y$，则：
+1.  If $p\mid x-y$, then:
 
     $$
     \nu_p\left(x^n-y^n\right)=\nu_p(x-y)+\nu_p(n)
     $$
 
-2.  若 $p\mid x+y$，则对奇数 $n$ 有：
+2.  If $p\mid x+y$, then for odd $n$:
 
     $$
     \nu_p\left(x^n+y^n\right)=\nu_p(x+y)+\nu_p(n)
     $$
 
-???+ note "证明"
-    若 $p\mid x-y$，令 $y=x+kp$，我们只需证明 $p\mid n$ 的情况．
+???+ note "Proof"
+    If $p\mid x-y$, let $y=x+kp$. We only need to prove the case $p\mid n$.
     
-    -   若 $n=p$，则由二项式定理：
+    -   If $n=p$, then by the binomial theorem:
     
         $$
         \begin{aligned}
@@ -63,48 +63,48 @@
         \end{aligned}
         $$
     
-        从而
+        so
     
         $$
         \nu_p\left(x^n-y^n\right)=\nu_p(x-y)+1
         $$
-    -   若 $n=p^a$，则由数学归纳法可得
+    -   If $n=p^a$, then by induction
     
         $$
         \nu_p\left(x^n-y^n\right)=\nu_p(x-y)+a
         $$
     
-    因此命题得证．
+    This proves the claim.
     
-    对 $p\mid x+y$ 的情况证明方法类似．
+    The case $p\mid x+y$ is proved in the same way.
 
-### 第三部分
+### Part 3
 
-若 $p=2$ 且 $p\mid x-y$，
+If $p=2$ and $p\mid x-y$,
 
-1.  对奇数 $n$ 有（与第一部分的 1 相同）：
+1.  For odd $n$ (same as item 1 of Part 1):
 
     $$
     \nu_p\left(x^n-y^n\right)=\nu_p(x-y)
     $$
 
-2.  对偶数 $n$ 有：
+2.  For even $n$:
 
     $$
     \nu_p\left(x^n-y^n\right)=\nu_p(x-y)+\nu_p(x+y)+\nu_p(n)-1
     $$
 
-另外对上述的 $x,y,n$，我们有：
+Also, for $x,y,n$ as above:
 
-若 $4\mid x-y$，则：
+If $4\mid x-y$, then:
 
 -   $\nu_2(x+y)=1$
 -   $\nu_2\left(x^n-y^n\right)=\nu_2(x-y)+\nu_2(n)$
 
-???+ note "证明"
-    我们只需证明 $n$ 为偶数的情况．由于此时 $p\nmid \dbinom{p}{2}$，故我们不能用第二部分的方法证明．
+???+ note "Proof"
+    We only need to prove the case where $n$ is even. Since here $p\nmid \dbinom{p}{2}$, we cannot use the method from Part 2.
     
-    令 $n=2^a b$，其中 $a=\nu_p(n)$，$2\nmid b$，从而
+    Let $n=2^a b$, where $a=\nu_p(n)$ and $2\nmid b$. Then
     
     $$
     \begin{aligned}
@@ -113,14 +113,14 @@
     \end{aligned}
     $$
     
-    注意到 $2\mid x-y\implies 4\mid x^2-y^2$，从而 $(\forall i\geq 1),~~x^{2^i}+y^{2^i}\equiv 2\pmod 4$，进而上式可变为：
+    Note that $2\mid x-y\implies 4\mid x^2-y^2$, so $(\forall i\geq 1),~~x^{2^i}+y^{2^i}\equiv 2\pmod 4$, and the expression above becomes:
     
     $$
     \nu_p\left(x^n-y^n\right)=\nu_p(x-y)+\nu_p(x+y)+\nu_p(n)-1
     $$
     
-    因此命题得证．
+    This proves the claim.
 
-## 参考资料
+## References
 
 1.  [Lifting-the-exponent lemma - Wikipedia](https://en.wikipedia.org/wiki/Lifting-the-exponent_lemma)
