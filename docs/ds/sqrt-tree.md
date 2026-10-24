@@ -1,24 +1,24 @@
-## 引入
+## Introduction
 
-给你一个长度为 n 的序列 ${\left\langle a_i\right\rangle}_{i=1}^n$，再给你一个满足结合律的运算 $\circ$（比如 $\gcd,\min,\max,+,\operatorname{and},\operatorname{or},\operatorname{xor}$ 均满足结合律），然后对于每一次区间询问 $[l,r]$，我们需要计算 $a_l\circ a_{l+1}\circ\dotsb\circ a_{r}$．
+You are given a sequence ${\left\langle a_i\right\rangle}_{i=1}^n$ of length n and an associative operation $\circ$ (for example, $\gcd,\min,\max,+,\operatorname{and},\operatorname{or},\operatorname{xor}$ are all associative). For each range query $[l,r]$, we need to compute $a_l\circ a_{l+1}\circ\dotsb\circ a_{r}$.
 
-Sqrt Tree 可以在 $O(n\log\log n)$ 的时间内预处理，并在 $O(1)$ 的时间内回答询问．
+A Sqrt Tree can be preprocessed in $O(n\log\log n)$ time and answers each query in $O(1)$ time.
 
-## 解释
+## Explanation
 
-### 序列分块
+### Splitting the sequence into blocks
 
-首先我们把整个序列分成 $O(\sqrt{n})$ 个块，每一块的大小为 $O(\sqrt{n})$．对于每个块，我们计算：
+First, we split the whole sequence into $O(\sqrt{n})$ blocks, each of size $O(\sqrt{n})$. For each block, we compute:
 
-1.  $P_i$ 块内的前缀区间询问
-2.  $S_i$ 块内的后缀区间询问
-3.  维护一个额外的数组 $\left\langle B_{i,j}\right\rangle$ 表示第 $i$ 个块到第 $j$ 个块的区间答案．
+1.  $P_i$: the answers for prefixes within the block
+2.  $S_i$: the answers for suffixes within the block
+3.  An extra array $\left\langle B_{i,j}\right\rangle$, the answer for the range from block $i$ to block $j$.
 
-举个例子，假设 $\circ$ 代表加法运算 $+$，序列为 $\{1,2,3,4,5,6,7,8,9\}$．
+For example, let $\circ$ be addition $+$, and let the sequence be $\{1,2,3,4,5,6,7,8,9\}$.
 
-首先我们将序列分成三块，变成了 $\{1,2,3\},\{4,5,6\},\{7,8,9\}$．
+First we split the sequence into three blocks: $\{1,2,3\},\{4,5,6\},\{7,8,9\}$.
 
-那么每一块的前缀区间答案和后缀区间答案分别为
+Then the prefix answers and suffix answers of each block are
 
 $$
 \begin{aligned}
@@ -28,7 +28,7 @@ $$
 \end{aligned}
 $$
 
-$B$ 数组为：
+The $B$ array is:
 
 $$
 B=\begin{bmatrix}
@@ -38,131 +38,131 @@ B=\begin{bmatrix}
 \end{bmatrix}
 $$
 
-（对于 $i>j$ 的不合法的情况我们假设答案为 0）
+(For the invalid cases with $i>j$, we take the answer to be 0.)
 
-显然我们可以在 $O(n)$ 的时间内预处理这些值，空间复杂度同样是 $O(n)$ 的．处理好之后，我们可以利用它们在 $O(1)$ 的时间内回答一些跨块的询问．但对于那些整个区间都在一个块内的询问我们仍不能处理，因此我们还需要处理一些东西．
+Clearly we can precompute these values in $O(n)$ time, and the space complexity is also $O(n)$. Once they are ready, we can use them to answer queries that span several blocks in $O(1)$ time. But we still cannot handle queries whose whole range lies inside a single block, so we need something more.
 
-### 构建一棵树
+### Building a tree
 
-容易想到我们在每个块内递归地构造上述结构以支持块内的查询．对于大小为 $1$ 的块我们可以 $O(1)$ 地回答询问．这样我们就建出了一棵树，每一个结点代表序列的一个区间．叶子结点的区间长度为 $1$ 或 $2$．一个大小为 $k$ 的结点有 $O(\sqrt{k})$ 个子节点，于是整棵树的高度是 $O(\log\log n)$ 的，每一层的区间总长是 $O(n)$ 的，因此我们构建这棵树的复杂度是 $O(n\log\log n)$ 的．
+A natural idea is to build the same structure recursively inside each block, to support queries within a block. For a block of size $1$, we can answer queries in $O(1)$. This builds a tree in which each node represents a range of the sequence. Leaf nodes have ranges of length $1$ or $2$. A node of size $k$ has $O(\sqrt{k})$ children, so the height of the whole tree is $O(\log\log n)$, and the total length of the ranges on each level is $O(n)$. Therefore building the tree takes $O(n\log\log n)$ time.
 
-??? note "树高度的证明"
-    根据定义，设「控制」$n$ 个元素的结点的子树高度为 $T(n)$，可以写出递归式：
+??? note "Proof of the tree height"
+    By definition, let $T(n)$ be the height of the subtree of a node that "controls" $n$ elements. We can write the recurrence:
     
     $$
     T(n)=T(\sqrt n)+1
     $$
     
-    作换元 $n=2^m$ 得
+    Substituting $n=2^m$ gives
     
     $$
     T(2^m)=T(2^{\frac m2})+1
     $$
     
-    再定义 $S(m)=T(2^m)$，代入有
+    Then define $S(m)=T(2^m)$ and substitute:
     
     $$
     S(m)=S(\dfrac m2)+1
     $$
     
-    根据主定理，可知 $S(m)=O(\log m)$，因此 $T(n)=S(\log n)=O(\log\log n)$.
+    By the master theorem, $S(m)=O(\log m)$, so $T(n)=S(\log n)=O(\log\log n)$.
 
-现在我们可以在 $O(\log\log n)$ 的时间内回答询问．对于询问 $[l,r]$，我们只需要快速找到一个区间长度最小的结点 $u$ 使得 $u$ 能包含 $[l,r]$，这样 $[l,r]$ 在 $u$ 的分块区间中一定是跨块的，就可以 $O(1)$ 地计算答案了．查询一次的总体复杂度是 $O(\log\log n)$，因为树高是 $O(\log\log n)$ 的．不过我们仍可以优化这个过程．
+Now we can answer queries in $O(\log\log n)$ time. For a query $[l,r]$, we just need to quickly find the node $u$ with the shortest range that contains $[l,r]$. Then $[l,r]$ must span several blocks of $u$, and we can compute the answer in $O(1)$. The total cost of one query is $O(\log\log n)$, because the tree height is $O(\log\log n)$. But we can still speed this up.
 
-### 优化询问复杂度
+### Optimizing query time
 
-容易想到二分高度，然后可以 $O(1)$ 判断是否合法．这样复杂度就变成了 $O(\log\log\log n)$．不过我们仍可以进一步加速这一过程．
+A natural idea is to binary search on the height, since we can check whether a height works in $O(1)$. That makes the complexity $O(\log\log\log n)$. But we can speed it up even further.
 
-我们假设
+We assume that
 
-1.  每一块的大小都是 $2$ 的整数幂次；
-2.  每一层上的块大小是相同的．
+1.  the size of every block is a power of $2$;
+2.  all blocks on the same level have the same size.
 
-为此我们需要在序列的末位补充一些 $0$ 元素，使得它的长度变成 $2$ 的整数次幂．尽管有些块可能会变成原来的两倍大小，但这样仍是 $O(\sqrt{k})$ 的，于是预处理分块的复杂度仍是 $O(n)$ 的．
+To achieve this, we pad the end of the sequence with some $0$ elements so that its length becomes a power of $2$. Some blocks may become twice as large as before, but they are still $O(\sqrt{k})$, so preprocessing the blocks still takes $O(n)$ time.
 
-现在我们可以轻松地确定一个询问区间是否被整个地包含在一个块中．对于区间 $[l,r]$（以 0 为起点），我们把端点写为二进制形式．举一个例子，对于 $k=4, l=39, r=46$，二进制表示为
+Now we can easily tell whether a query range lies entirely inside one block. For a range $[l,r]$ (0-indexed), write the endpoints in binary. For example, with $k=4, l=39, r=46$, the binary forms are
 
 $$
 l = 39_{10} = 100111_2,
 r = 46_{10} = 101110_2
 $$
 
-我们知道每一层的区间长度是相同的，而分块的大小也是相同的（在上述示例中 $2^k=2^4=16$）．这些块完全覆盖了整个序列，因此第一块代表的元素为 $[0,15]$（二进制表示为 $[000000_2,001111_2]$），第二个块代表的元素区间为 $[16,31]$（二进制表示为 $[010000_2,011111_2]$），以此类推．我们发现这些在同一个块内的元素的位置在二进制上只有后 $k$ 位不同（上述示例中 $k=4$）．而示例的 $l,r$ 也只有后 $k$ 位不同，因此他们在同一个块中．
+We know that all ranges on a level have the same length, and the blocks also have the same size ($2^k=2^4=16$ in the example above). These blocks cover the whole sequence, so the first block covers elements $[0,15]$ (in binary $[000000_2,001111_2]$), the second block covers $[16,31]$ (in binary $[010000_2,011111_2]$), and so on. We can see that positions of elements in the same block differ only in their last $k$ bits ($k=4$ in the example). In the example, $l$ and $r$ also differ only in their last $k$ bits, so they are in the same block.
 
-因此我们需要检查区间两个端点是否只有后 $k$ 位不同，即 $l\oplus r\le 2^k-1$．因此我们可以快速找到答案区间所在的层：
+So we need to check whether the two endpoints of the range differ only in their last $k$ bits, i.e. $l\oplus r\le 2^k-1$. This lets us quickly find the level that holds the answer range:
 
-1.  对于每个 $i\in [1,n]$，我们找到 $i$ 最高位上的 $1$；
-2.  现在对于一个询问 $[l,r]$，我们计算 $l\oplus r$ 的最高位，这样就可以快速确定答案区间所在的层．
+1.  For each $i\in [1,n]$, find the highest set bit of $i$;
+2.  Now for a query $[l,r]$, compute the highest bit of $l\oplus r$. This quickly tells us which level holds the answer range.
 
-这样我们就可以在 $O(1)$ 的时间内回答询问啦．
+And so we can answer queries in $O(1)$ time.
 
-## 更新元素的过程
+## Updating elements
 
-我们可以在 Sqrt Tree 上更新元素，单点修改和区间修改都是支持的．
+We can update elements in a Sqrt Tree. Both point updates and range updates are supported.
 
-### 单点修改
+### Point update
 
-考虑一次单点赋值操作 $a_x=val$，我们希望高效更新这个操作的信息．
+Consider a point assignment $a_x=val$. We want to update the stored information for this operation efficiently.
 
-#### 朴素实现
+#### Naive implementation
 
-首先我们来看看在做了一次单点修改后 Sqrt Tree 会变成什么样子．
+First, let us see what happens to the Sqrt Tree after one point update.
 
-考虑一个长度为 $l$ 的结点以及对应的序列：$\left\langle P_i\right\rangle,\left\langle S_i\right\rangle,\left\langle B_{i,j}\right\rangle$．容易发现在 $\left\langle P_i\right\rangle$ 和 $\left\langle S_i \right\rangle$ 中都只有 $O(\sqrt{l})$ 个元素改变．而在 $\left\langle B_{i,j}\right\rangle$ 中则有 $O(l)$ 个元素被改变．因此有 $O(l)$ 个元素在树上被更新．因此在 Sqrt Tree 上单点修改的复杂度是 $O(n+\sqrt{n}+\sqrt{\sqrt{n}}+\dotsb)=O(n)$．
+Consider a node of length $l$ and its arrays $\left\langle P_i\right\rangle,\left\langle S_i\right\rangle,\left\langle B_{i,j}\right\rangle$. It is easy to see that only $O(\sqrt{l})$ elements change in $\left\langle P_i\right\rangle$ and in $\left\langle S_i \right\rangle$, while $O(l)$ elements change in $\left\langle B_{i,j}\right\rangle$. So $O(l)$ elements are updated in this node of the tree. Therefore a point update on a Sqrt Tree costs $O(n+\sqrt{n}+\sqrt{\sqrt{n}}+\dotsb)=O(n)$.
 
-#### 使用 Sqrt Tree 替代 B 数组
+#### Replacing the B array with a Sqrt Tree
 
-注意到单点更新的瓶颈在于更新根结点的 $\left\langle B_{i,j}\right\rangle$．因此我们尝试用另一个 Sqrt Tree 代替根结点的 $\left\langle B_{i,j}\right\rangle$，称其为 $index$．它的作用和原来的二维数组一样，维护整段询问的答案．其他非根结点仍然使用 $\left\langle B_{i,j}\right\rangle$ 维护．注意，如果一个 Sqrt Tree 根结点有 $index$ 结构，称其 Sqrt Tree 是 **含有索引** 的；如果一个 Sqrt Tree 的根结点有 $\left\langle B_{i,j}\right\rangle$ 结构，称其是 **没有索引** 的．而 $index$ 这棵树本身是没有索引的．
+Notice that the bottleneck of a point update is updating the root's $\left\langle B_{i,j}\right\rangle$. So we try to replace the root's $\left\langle B_{i,j}\right\rangle$ with another Sqrt Tree, called $index$. It plays the same role as the original 2D array: it stores answers for runs of whole blocks. All other non-root nodes still use $\left\langle B_{i,j}\right\rangle$. Note: if the root of a Sqrt Tree has an $index$ structure, we call the Sqrt Tree **indexed**; if the root of a Sqrt Tree has a $\left\langle B_{i,j}\right\rangle$ structure, we call it **unindexed**. The $index$ tree itself is unindexed.
 
-因此我们可以这样更新 $index$ 树：
+So we can update the $index$ tree like this:
 
-1.  在 $O(\sqrt{n})$ 的时间内更新 $\left\langle P_i\right\rangle$ 和 $\left\langle S_i\right\rangle$．
-2.  更新 $index$，它的长度是 $O(n)$ 的，但我们只需要更新其中的一个元素（这个元素代表了被改变的块），这一步的时间复杂度是 $O(\sqrt{n})$ 的（使用朴素实现的算法）．
-3.  进入产生变化的子节点并使用朴素实现的算法在 $O(\sqrt{n})$ 的时间内更新信息．
+1.  Update $\left\langle P_i\right\rangle$ and $\left\langle S_i\right\rangle$ in $O(\sqrt{n})$ time.
+2.  Update $index$. Its length is $O(n)$, but we only need to update one element of it (the element that represents the changed block). This step takes $O(\sqrt{n})$ time (using the naive algorithm).
+3.  Go into the child node that changed and use the naive algorithm to update its information in $O(\sqrt{n})$ time.
 
-注意，查询的复杂度仍是 $O(1)$ 的，因为我们最多使用 $index$ 树一次．于是单点修改的复杂度就是 $O(\sqrt{n})$ 的．
+Note that queries still take $O(1)$ time, because we use the $index$ tree at most once. So a point update takes $O(\sqrt{n})$ time.
 
-### 更新一个区间
+### Updating a range
 
-Sqrt Tree 也支持区间覆盖操作 $\operatorname{Update}(l,r,x)$，即把区间 $[l,r]$ 的数全部变成 $x$．对此我们有两种实现方式，其中一种会花费 $O(\sqrt{n}\log\log n)$ 的复杂度更新信息，$O(1)$ 的时间查询；另一种则是 $O(\sqrt{n})$ 更新信息，但查询的时间会增加到 $O(\log\log n)$．
+A Sqrt Tree also supports range assignment $\operatorname{Update}(l,r,x)$, which sets every number in the range $[l,r]$ to $x$. There are two ways to implement this. One spends $O(\sqrt{n}\log\log n)$ on updates and $O(1)$ on queries; the other spends $O(\sqrt{n})$ on updates, but queries go up to $O(\log\log n)$.
 
-我们可以像线段树一样在 Sqrt Tree 上打懒标记．但是在 Sqrt Tree 上有一点不同．因为下传一个结点的懒标记，复杂度可能达到 $O(\sqrt{n})$，因此我们不是在询问的时候下传标记，而是看父节点是否有标记，如果有标记就把它下传．
+We can put lazy tags on a Sqrt Tree just like on a segment tree. But there is one difference on a Sqrt Tree. Pushing down the lazy tag of a node may cost up to $O(\sqrt{n})$, so instead of pushing tags down during queries, we check whether the parent has a tag, and if it does, we push it down.
 
-#### 第一种实现
+#### First implementation
 
-在第一种实现中，我们只会给第 $1$ 层的结点（结点区间长度为 $O(\sqrt{n})$）打懒标记，在下传标记的时候直接更新整个子树，复杂度为 $O(\sqrt{n}\log\log n)$．操作过程如下：
+In the first implementation, we only put lazy tags on nodes on level $1$ (nodes whose range length is $O(\sqrt{n})$). When pushing down a tag, we update the whole subtree directly, which costs $O(\sqrt{n}\log\log n)$. The process is:
 
-1.  考虑第 $1$ 层上的结点，对于那些被修改区间完全包含的结点，给他们打一个懒标记；
+1.  Look at the nodes on level $1$. Put a lazy tag on each node whose range is fully contained in the updated range;
 
-2.  有两个块只有部分区间被覆盖，我们直接在 $O(\sqrt{n}\log\log n)$ 的时间内 **重建** 这两个块．如果它本身带有之前修改的懒标记，就在重建的时候顺便下传标记；
+2.  Two blocks are only partly covered. We **rebuild** these two blocks directly in $O(\sqrt{n}\log\log n)$ time. If such a block already has a lazy tag from an earlier update, push that tag down during the rebuild;
 
-3.  更新根结点的 $\left\langle P_i\right\rangle$ 和 $\left\langle S_i\right\rangle$，时间复杂度 $O(\sqrt{n})$；
+3.  Update the root's $\left\langle P_i\right\rangle$ and $\left\langle S_i\right\rangle$, in $O(\sqrt{n})$ time;
 
-4.  重建 $index$ 树，时间复杂度 $O(\sqrt{n}\log\log n)$．
+4.  Rebuild the $index$ tree, in $O(\sqrt{n}\log\log n)$ time.
 
-现在我们可以高效完成区间修改了．那么如何利用懒标记回答询问？操作如下：
+Now range updates are efficient. How do we answer queries with the lazy tags? Like this:
 
-1.  如果我们的询问被包含在一个有懒标记的块内，可以利用懒标记计算答案；
+1.  If the query lies inside one block that has a lazy tag, we can compute the answer from the lazy tag;
 
-2.  如果我们的询问包含多个块，那么我们只需要关心最左边和最右边不完整块的答案．中间的块的答案可以在 $index$ 树中查询（因为 $index$ 树在每次修改完后会重建），复杂度是 $O(1)$．
+2.  If the query covers several blocks, we only need to care about the answers for the incomplete leftmost and rightmost blocks. The answer for the blocks in the middle can be queried from the $index$ tree (since the $index$ tree is rebuilt after every update), in $O(1)$.
 
-因此询问的复杂度仍为 $O(1)$．
+So queries still take $O(1)$ time.
 
-#### 第二种实现
+#### Second implementation
 
-在这种实现中，每一个结点都可以被打上懒标记．因此在处理一个询问的时候，我们需要考虑祖先中的懒标记，那么查询的复杂度将变成 $O(\log\log n)$．不过更新信息的复杂度就会变得更快．操作如下：
+In this implementation, every node can have a lazy tag. So when handling a query, we must take the lazy tags of the ancestors into account, and the query cost becomes $O(\log\log n)$. In exchange, updates become faster. The process is:
 
-1.  被修改区间完全包含的块，我们把懒标记添加到这些块上，复杂度 $O(\sqrt{n})$；
-2.  被修改区间部分覆盖的块，更新 $\left\langle P_i\right\rangle$ 和 $\left\langle S_i\right\rangle$，复杂度 $O(\sqrt{n})$（因为只有两个被修改的块）；
-3.  更新 $index$ 树，复杂度 $O(\sqrt{n})$（使用同样的更新算法）；
-4.  对于没有索引的子树更新他们的 $\left\langle B_{i,j}\right\rangle$；
-5.  递归地更新两个没有被完全覆盖的区间．
+1.  For blocks fully contained in the updated range, add a lazy tag to those blocks, in $O(\sqrt{n})$;
+2.  For blocks partly covered by the updated range, update $\left\langle P_i\right\rangle$ and $\left\langle S_i\right\rangle$, in $O(\sqrt{n})$ (since only two blocks are partly covered);
+3.  Update the $index$ tree, in $O(\sqrt{n})$ (using the same update algorithm);
+4.  For unindexed subtrees, update their $\left\langle B_{i,j}\right\rangle$;
+5.  Recursively update the two ranges that are not fully covered.
 
-时间复杂度是 $O(\sqrt{n}+\sqrt{\sqrt{n}}+\dotsb)=O(\sqrt{n})$．
+The time complexity is $O(\sqrt{n}+\sqrt{\sqrt{n}}+\dotsb)=O(\sqrt{n})$.
 
-## 实现
+## Implementation
 
-下面的实现在 $O(n\log\log n)$ 的时间内建树，在 $O(1)$ 的时间内回答询问，在 $O(\sqrt{n})$ 的时间内单点修改．
+The implementation below builds the tree in $O(n\log\log n)$ time, answers queries in $O(1)$ time, and does point updates in $O(\sqrt{n})$ time.
 
 ```cpp
 SqrtTreeItem op(const SqrtTreeItem &a, const SqrtTreeItem &b);
@@ -318,8 +318,8 @@ class SqrtTree {
 };
 ```
 
-## 习题
+## Exercises
 
 [CodeChef - SEGPROD](https://www.codechef.com/NOV17/problems/SEGPROD)
 
-**本页面主要译自 [Sqrt Tree - Algorithms for Competitive Programming](https://cp-algorithms.com/data_structures/sqrt-tree.html)，版权协议为 CC-BY-SA 4.0．**
+**This page is mainly translated from [Sqrt Tree - Algorithms for Competitive Programming](https://cp-algorithms.com/data_structures/sqrt-tree.html), licensed under CC-BY-SA 4.0.**
