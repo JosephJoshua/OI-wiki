@@ -1,19 +1,19 @@
 author: tsagaanbar, Enter-tainer, Xeonacid
 
-## 变量的地址、指针
+## Addresses of variables and pointers
 
-在程序中，我们的数据都有其存储的地址．在程序每次的实际运行过程中，变量在物理内存中的存储位置不尽相同．不过，我们仍能够在编程时，通过一定的语句，来取得数据在内存中的地址．
+In a program, every piece of data is stored at some address. Each time the program actually runs, a variable may be stored at a different place in physical memory. Still, when writing code we can use certain statements to get the address of data in memory.
 
-地址也是数据．存放地址所用的变量类型有一个特殊的名字，叫做「指针变量」，有时也简称做「指针」．
+An address is also data. The variable type used to hold an address has a special name: a "pointer variable", sometimes just called a "pointer".
 
-???+ note "指针变量的大小"
-    指针变量的大小在不同环境下有差异．在 32 位机上，地址用 32 位二进制整数表示，因此一个指针的大小为 4 字节．而 64 位机上，地址用 64 位二进制整数表示，因此一个指针的大小就变成了 8 字节．
+???+ note "Size of a pointer variable"
+    The size of a pointer variable depends on the environment. On a 32-bit machine, an address is a 32-bit binary integer, so a pointer takes 4 bytes. On a 64-bit machine, an address is a 64-bit binary integer, so a pointer takes 8 bytes.
 
-地址只是一个刻度一般的数据，为了针对不同类型的数据，「指针变量」也有不同的类型，比如，可以有 `int` 类型的指针变量，其中存储的地址（即指针变量存储的数值）对应一块大小为 32 位的空间的起始地址；有 `char` 类型的指针变量，其中存储的地址对应一块 8 位的空间的起始地址．
+An address is just a number, like a mark on a ruler. To deal with different types of data, "pointer variables" also come in different types. For example, there are `int` pointer variables, whose stored address (that is, the value stored in the pointer variable) is the start of a 32-bit block of memory; and there are `char` pointer variables, whose stored address is the start of an 8-bit block of memory.
 
-事实上，用户也可以声明指向指针变量的指针变量．
+In fact, you can also declare pointer variables that point to pointer variables.
 
-假如用户自定义了一个结构体：
+Suppose you define a struct:
 
 ```cpp
 struct ThreeInt {
@@ -23,15 +23,15 @@ struct ThreeInt {
 };
 ```
 
-则 `ThreeInt` 类型的指针变量，对应着一块 3 × 32 = 96 bit 的空间．
+Then a pointer variable of type `ThreeInt` corresponds to a block of 3 × 32 = 96 bits.
 
-## 指针的声明与使用
+## Declaring and using pointers
 
-C/C++ 中，指针变量的类型为类型名后加上一个星号 `*`．比如，`int` 类型的指针变量的类型名即为 `int*`．
+In C/C++, the type of a pointer variable is the type name followed by an asterisk `*`. For example, the type of an `int` pointer variable is `int*`.
 
-我们可以使用 `&` 符号取得一个变量的地址．
+We can get the address of a variable with the `&` operator.
 
-要想访问指针变量地址所对应的空间（又称指针所 **指向** 的空间），需要对指针变量进行 **解引用**（dereference），使用 `*` 符号．
+To access the memory at the address stored in a pointer variable (also called the memory the pointer **points to**), you **dereference** the pointer variable with the `*` operator.
 
 ```cpp
 int main() {
@@ -41,7 +41,7 @@ int main() {
 }
 ```
 
-对结构体变量也是类似．如果要访问指针指向的结构中的成员，需要先对指针进行解引用，再使用 `.` 成员关系运算符．不过，更推荐使用「箭头」运算符 `->` 这一更简便的写法．
+Struct variables work the same way. To access a member of the struct a pointer points to, you can first dereference the pointer and then use the `.` member access operator. However, the simpler "arrow" operator `->` is recommended.
 
 ```cpp
 struct ThreeInt {
@@ -59,59 +59,59 @@ int main() {
 }
 ```
 
-## 指针的偏移
+## Pointer offsets
 
-指针变量也可以 **和整数** 进行加减操作．对于 `int` 型指针，每加 1（递增 1），其指向的地址偏移 32 位（即 4 个字节）；若加 2，则指向的地址偏移 2 × 32 = 64 位．同理，对于 `char` 型指针，每次递增，其指向的地址偏移 8 位（即 1 个字节）．
+You can also add an **integer** to a pointer variable or subtract one from it. For an `int` pointer, each time you add 1 (increment by 1), the address it points to moves by 32 bits (4 bytes); if you add 2, the address moves by 2 × 32 = 64 bits. Likewise, for a `char` pointer, each increment moves the address by 8 bits (1 byte).
 
-### 使用指针偏移访问数组
+### Accessing arrays with pointer offsets
 
-我们前面说过，数组是一块连续的存储空间．而在 C/C++ 中，直接使用数组名，得到的是数组的起始地址．
+As we said before, an array is a contiguous block of memory. In C/C++, using the array name by itself gives the starting address of the array.
 
 ```cpp
 int main() {
   int a[3] = {1, 2, 3};
-  int* p = a;  // p 指向 a[0]
+  int* p = a;  // p points to a[0]
   *p = 4;      // a: [4, 2, 3]
-  p = p + 1;   // p 指向 a[1]
+  p = p + 1;   // p points to a[1]
   *p = 5;      // a: [4, 5, 3]
-  p++;         // p 指向 a[2]
+  p++;         // p points to a[2]
   *p = 6;      // a: [4, 5, 6]
 }
 ```
 
-当通过指针访问数组中的元素时，往往需要用到「指针的偏移」，换句话说，即通过一个基地址（数组起始的地址）加上偏移量来访问．
+When you access array elements through a pointer, you usually use "pointer offsets". In other words, you access an element by adding an offset to a base address (the starting address of the array).
 
-我们常用 `[]` 运算符来访问数组中某一指定偏移量处的元素．比如 `a[3]` 或者 `p[4]`．这种写法和对指针进行运算后再引用是等价的，即 `p[4]` 和 `*(p + 4)` 是等价的两种写法．
+We often use the `[]` operator to access the element at a given offset in an array, such as `a[3]` or `p[4]`. This is the same as doing pointer arithmetic and then dereferencing: `p[4]` and `*(p + 4)` are two equivalent ways of writing it.
 
-## 空指针
+## Null pointers
 
-在 C++11 之前，C++ 和 C 一样使用 `NULL` 宏表示空指针常量，C++ 中 `NULL` 的实现一般如下：
+Before C++11, C++, like C, used the `NULL` macro for the null pointer constant. In C++, `NULL` is usually implemented like this:
 
 ```cpp
-// C++11 前
+// before C++11
 #define NULL 0
 ```
 
-???+ note "C 语言对 `NULL` 的定义"
-    C 语言在 C23 前有两个 `NULL` 的定义，只有类型不同：一个是整型常量表达式，一个是转换为 `void *` 类型的常量表达式，但其值都为 0，编译器可任选一个实现．
+???+ note "How C defines `NULL`"
+    Before C23, C had two definitions of `NULL` that differ only in type: one is an integer constant expression, and the other is a constant expression cast to `void *`. Both have the value 0, and the compiler may choose either one.
 
-空指针和整数 `0` 的混用在 C++ 中会导致许多问题，比如：
+Mixing up the null pointer and the integer `0` causes many problems in C++. For example:
 
 ```cpp
 int f(int x);
 int f(int* p);
 ```
 
-在调用 `f(NULL)` 时，实际调用的函数的类型是 `int(int)` 而不是 `int(int *)`.
+When you call `f(NULL)`, the function actually called has type `int(int)`, not `int(int *)`.
 
-???+ note "`NULL` 在 C 语言中造成的问题"
-    比起在 C++ 中，因为有两个定义，在 C 语言中 `NULL` 造成的问题更为严重：如果在一个传递可变参数的函数中，函数编写者想要接受一个指针，但是函数调用者传递了一个定义为整型的 `NULL`，则会造成未定义行为，因在函数内使用传入的可变参数时，要进行类型转换，而从整型到指针类型的转换是未定义行为．[^note1]
+???+ note "Problems `NULL` causes in C"
+    Because there are two definitions, `NULL` causes even worse problems in C than in C++. Suppose a function takes variadic arguments, and its author expects a pointer, but the caller passes a `NULL` that is defined as an integer. This is undefined behavior, because when the function uses the variadic argument it has to convert its type, and converting from an integer type to a pointer type is undefined behavior.[^note1]
 
-为了解决这些问题，C++11 引入了 `nullptr` 关键字作为空指针常量．
+To solve these problems, C++11 introduced the `nullptr` keyword as the null pointer constant.
 
-C++ 规定 `nullptr` 可以隐式转换为任何指针类型，这种转换结果是该类型的空指针值．
+C++ specifies that `nullptr` can be implicitly converted to any pointer type, and the result of the conversion is the null pointer value of that type.
 
-`nullptr` 的类型为 `std::nullptr_t`, 称作空指针类型，可能的实现如下：
+The type of `nullptr` is `std::nullptr_t`, called the null pointer type. A possible implementation is:
 
 ```cpp
 namespace std {
@@ -119,25 +119,25 @@ typedef decltype(nullptr) nullptr_t;
 }
 ```
 
-另外，C++11 起 `NULL` 宏的实现也被修改为了：
+Also, since C++11, the `NULL` macro has been changed to:
 
 ```cpp
-// C++11 起
+// since C++11
 #define NULL nullptr
 ```
 
-???+ note "C 语言对空指针常量的改进"
-    基于类似的原因，C23 也引入了 `nullptr` 作为空指针常量，同时引入了 `nullptr_t` 作为其类型[^note1]．
+???+ note "C's improvement to the null pointer constant"
+    For similar reasons, C23 also introduced `nullptr` as the null pointer constant, along with `nullptr_t` as its type[^note1].
 
-## 指针的进阶使用
+## Advanced use of pointers
 
-使用指针，使得程序编写者可以操作程序运行时中各处的数据，而不必局限于作用域．
+Pointers let programmers work with data anywhere in the running program, without being limited by scope.
 
-### 指针类型参数的使用
+### Using pointer parameters
 
-在 C/C++ 中，调用函数（过程）时使用的参数，均以拷贝的形式传入子过程中（引用除外，会在后续介绍）．默认情况下，函数仅能通过返回值，将结果返回到调用处．但是，如果某个函数希望修改其外部的数据，或者某个结构体/类的数据量较为庞大、不宜进行拷贝，这时，则可以通过向其传入外部数据的地址，便得以在其中访问甚至修改外部数据．
+In C/C++, arguments passed to a function (procedure) are all copied into it (except references, which are covered later). By default, a function can only send its result back to the caller through its return value. But if a function wants to modify data outside it, or a struct/class holds a lot of data and should not be copied, you can pass the address of the outside data. Then the function can access and even modify that data.
 
-下面的 `my_swap` 方法，通过接收两个 `int` 型的指针，在函数中使用中间变量，完成对两个 `int` 型变量值的交换．
+The `my_swap` function below takes two `int` pointers and uses a temporary variable to swap the values of two `int` variables.
 
 ```cpp
 void my_swap(int *a, int *b) {
@@ -150,17 +150,17 @@ void my_swap(int *a, int *b) {
 int main() {
   int a = 6, b = 10;
   my_swap(&a, &b);
-  // 调用后，main 函数中 a 变量的值变为 10，b 变量的值变为 6
+  // after the call, a in main becomes 10 and b becomes 6
 }
 ```
 
-C++ 中引入了引用的概念，相对于指针来说，更易用，也更安全．详情可以参见 [C++：引用](./reference.md) 以及 [C 与 C++ 的区别：指针与引用](./cpp-other-langs.md#指针与引用)．
+C++ introduced references, which are easier and safer to use than pointers. For details, see [C++: References](./reference.md) and [Differences between C and C++: pointers and references](./cpp-other-langs.md#指针与引用).
 
-### 动态实例化
+### Dynamic allocation
 
-除此之外，程序编写时往往会涉及到动态内存分配，即，程序会在运行时，向操作系统动态地申请或归还存放数据所需的内存．当程序通过调用操作系统接口申请内存时，操作系统将返回程序所申请空间的地址．要使用这块空间，我们需要将这块空间的地址存储在指针变量中．
+Besides this, programs often need dynamic memory allocation: while running, the program asks the operating system for memory to store data, or gives it back. When the program requests memory through an operating system interface, the operating system returns the address of the requested memory. To use that memory, we store its address in a pointer variable.
 
-在 C++ 中，我们使用 `new` 运算符来获取一块内存，使用 `delete` 运算符释放某指针所指向的空间．
+In C++, we use the `new` operator to get a block of memory and the `delete` operator to free the memory a pointer points to.
 
 ```cpp
 int* p = new int(1234);
@@ -168,9 +168,9 @@ int* p = new int(1234);
 delete p;
 ```
 
-上面的语句使用 `new` 运算符向操作系统申请了一块 `int` 大小的空间，将其中的值初始化为 1234，并声明了一个 `int` 型的指针 `p` 指向这块空间．
+The statement above uses the `new` operator to request an `int`-sized block of memory from the operating system, initializes its value to 1234, and declares an `int` pointer `p` that points to that memory.
 
-同理，也可以使用 `new` 开辟新的对象：
+Similarly, you can use `new` to create new objects:
 
 ```cpp
 class A {
@@ -187,7 +187,7 @@ int main() {
 }
 ```
 
-如上，「`new` 表达式」将尝试开辟一块对应大小的空间，并尝试在这块空间上构造这一对象，并返回这一空间的地址．
+As shown above, a "`new` expression" tries to allocate a block of memory of the right size, tries to construct the object in that memory, and returns the address of that memory.
 
 ```cpp
 struct ThreeInt {
@@ -203,14 +203,14 @@ int main() {
 }
 ```
 
-???+ note "列表初始化"
-    `{}` 运算符可以用来初始化没有构造函数的结构．除此之外，使用 `{}` 运算符可以使得变量的初始化形式变得统一．详见「[list initialization (since C++11)](https://en.cppreference.com/w/cpp/language/list_initialization)」．
+???+ note "List initialization"
+    The `{}` syntax can initialize structs that have no constructor. It also lets you initialize variables in a uniform way. See "[list initialization (since C++11)](https://en.cppreference.com/w/cpp/language/list_initialization)".
 
-需要注意，当使用 `new` 申请的内存不再使用时，需要使用 `delete` 释放这块空间．不能对一块内存释放两次或以上．而对空指针 `nullptr` 使用 `delete` 操作是合法的．
+Note that when memory obtained with `new` is no longer needed, you must free it with `delete`. You must not free the same memory twice or more. Using `delete` on the null pointer `nullptr` is legal, though.
 
-### 动态创建数组
+### Creating arrays dynamically
 
-也可以使用 `new[]` 运算符创建数组，这时 `new[]` 运算符会返回数组的首地址，也就是数组第一个元素的地址，我们可以用对应类型的指针存储这个地址．释放时，则需要使用 `delete[]` 运算符．
+You can also create an array with the `new[]` operator. In that case `new[]` returns the starting address of the array, that is, the address of its first element, and we can store this address in a pointer of the matching type. To free it, use the `delete[]` operator.
 
 ```cpp
 size_t element_cnt = 5;
@@ -218,56 +218,56 @@ int *p = new int[element_cnt];
 delete[] p;
 ```
 
-数组中元素的存储是连续的，即 `p + 1` 指向的是 `p` 的后继元素．
+Array elements are stored contiguously, so `p + 1` points to the element right after `p`.
 
-### 二维数组
+### Two-dimensional arrays
 
-在存放矩阵形式的数据时，可能会用到「二维数组」这样的数据类型．从语义上来讲，二维数组是一个数组的数组．而计算机内存可以视作一个很长的一维数组．要在计算机内存中存放一个二维数组，便有「连续」与否的说法．
+When storing data in matrix form, you may use a "two-dimensional array". Semantically, a 2D array is an array of arrays. Computer memory, on the other hand, can be seen as one very long 1D array. So when a 2D array is stored in memory, there is the question of whether it is "contiguous".
 
-所谓「连续」，即二维数组的任意一行（row）的末尾与下一行的起始，在物理地址上是毗邻的，换言之，整个二维数组可以视作一个一维数组；反之，则二者在物理上不一定相邻．
+"Contiguous" means that the end of any row of the 2D array is physically right next to the start of the next row. In other words, the whole 2D array can be seen as one 1D array. Otherwise, the rows are not necessarily next to each other in memory.
 
-对于「连续」的二维数组，可以仅使用一个循环，借由一个不断递增的指针即可遍历数组中的所有数据．而对于非连续的二维数组，由于每一行不连续，则需要先取得某一行首的地址，再访问这一行中的元素．
+For a "contiguous" 2D array, you can visit all its data with a single loop, using one pointer that keeps incrementing. For a non-contiguous 2D array, since the rows are not contiguous, you first need to get the starting address of a row and then access the elements in that row.
 
-???+ note "二维数组的存储方式"
-    这种按照「行（row）」存储数据的方式，称为行优先存储；相对的，也可以按照列（column）存储数据．由于计算机内存访问的特性，一般来说，访问连续的数据会得到更高的效率．因此，需要按照数据可能的使用方式，选择「行优先」或「列优先」的存储方式．
+???+ note "How 2D arrays are stored"
+    Storing data row by row like this is called row-major order. You can also store data column by column. Because of how computer memory access works, accessing contiguous data is usually faster. So you should choose "row-major" or "column-major" storage based on how the data is likely to be used.
 
-### 动态创建二维数组
+### Creating 2D arrays dynamically
 
-在 C/C++ 中，我们可以使用类似下面这样的语句声明一个 N 行（row）M 列（column）的二维数组，其空间在物理上是连续的．
+In C/C++, we can declare a 2D array with N rows and M columns using a statement like the one below. Its memory is physically contiguous.
 
-???+ note "描述数组的维度"
-    更通用的方式是使用第 n 维（dimension）的说法．对于「行优先」的存储形式，数组的第一维长度为 N，第二维长度为 M．
+???+ note "Describing array dimensions"
+    A more general way is to talk about the n-th dimension. For "row-major" storage, the first dimension of the array has length N and the second has length M.
 
 ```cpp
 int a[N][M];
 ```
 
-这种声明方式要求 N 和 M 为在编译期即可确定的常量表达式．
+This kind of declaration requires N and M to be constant expressions known at compile time.
 
-在 C/C++ 中，数组的第一个元素下标为 0，因此 `a[r][c]` 这样的式子代表二维数组 a 中第 r + 1 行的第 c + 1 个元素，我们也称这个元素的下标为 `(r,c)`．
+In C/C++, the first element of an array has index 0, so `a[r][c]` is the (c + 1)-th element of row r + 1 of the 2D array a. We also say this element has index `(r,c)`.
 
-不过，实际使用中，（二维）数组的大小可能不是固定的，需要动态内存分配．
+In practice, however, the size of a (2D) array may not be fixed, so you need dynamic memory allocation.
 
-常见的方式是声明一个长度为 N × M 的 **一维数组**，并通过下标 `r * M + c` 访问二维数组中下标为 `(r, c)` 的元素．
+A common approach is to declare a **1D array** of length N × M and access the element at index `(r, c)` of the 2D array through the index `r * M + c`.
 
 ```cpp
 int* a = new int[N * M];
 ```
 
-这种方法可以保证二维数组是 **连续的**．
+This guarantees that the 2D array is **contiguous**.
 
-???+ note "数组在物理层面上的线性存储"
-    实际上，数据在内存中都可以视作线性存放的，因此在一定的规则下，通过动态开辟一维数组的空间，即可在其上存储 n 维的数组．
+???+ note "Arrays are stored linearly at the physical level"
+    In fact, all data in memory can be seen as stored linearly. So by following certain rules, you can store an n-dimensional array in a dynamically allocated 1D array.
 
-此外，亦可以根据「数组的数组」这一概念来进行内存的获取与使用．对于一个存放的若干数组的数组，实际上为一个存放的若干数组的首地址的数组，也就是一个存放若干指针变量的数组．
+You can also allocate and use memory based on the idea of an "array of arrays". An array that stores several arrays is really an array that stores the starting addresses of those arrays, that is, an array of pointer variables.
 
-我们需要一个变量来存放这个「数组的数组」的首地址——也就是一个指针的地址．这个变量便是一个「指向指针的指针」，有时也称作「二重指针」，如：
+We need a variable to hold the starting address of this "array of arrays", that is, the address of a pointer. This variable is a "pointer to a pointer", sometimes called a "double pointer", for example:
 
 ```cpp
 int** a = new int*[5];
 ```
 
-接着，我们需要为每一个数组申请空间：
+Next, we allocate memory for each array:
 
 ```cpp
 for (int i = 0; i < 5; i++) {
@@ -275,7 +275,7 @@ for (int i = 0; i < 5; i++) {
 }
 ```
 
-至此，我们便完成了内存的获取．而对于这样获得的内存的释放，则需要进行一个逆向的操作：即先释放每一个数组，再释放存储这些数组首地址的数组，如：
+Now the memory has been allocated. To free memory obtained this way, do the reverse: first free each array, then free the array that stores their starting addresses, for example:
 
 ```cpp
 for (int i = 0; i < 5; i++) {
@@ -284,18 +284,18 @@ for (int i = 0; i < 5; i++) {
 delete[] a;
 ```
 
-需要注意，这样获得的二维数组，不能保证其空间是连续的．
+Note that a 2D array obtained this way is not guaranteed to be contiguous in memory.
 
-还有一种方式，需要使用到「指向数组的指针」．
+There is one more approach, which uses a "pointer to an array".
 
-???+ note "数组名和数组首元素地址的区别"
-    我们之前说到，在 C/C++ 中，直接使用数组名，值等于数组首元素的地址．但是数组名表示的这一变量的类型实际上是整个数组，而非单个元素．
+???+ note "The difference between an array name and the address of its first element"
+    We said earlier that in C/C++, using the array name by itself gives a value equal to the address of the array's first element. But the type of the variable the array name denotes is actually the whole array, not a single element.
     
     ```cpp
     int main() { int a[5] = {1, 2, 3, 4, 5}; }
     ```
     
-    从概念上说，代码中标识符 `a` 的类型是 `int[5]`；从实际上来说，`a + 1` 所指向的地址相较于 `a` 指向的地址的偏移量为 5 个 `int` 型变量的长度．
+    Conceptually, the type of the identifier `a` in this code is `int[5]`. In practice, the address `a + 1` points to is offset from the address `a` points to by the size of 5 `int` variables.
 
 ```cpp
 int main() {
@@ -306,19 +306,19 @@ int main() {
 }
 ```
 
-这种方式获得到的也是连续的内存，但是可以直接使用 `a[n]` 的形式获得到数组的第 n + 1 行（row）的首地址，因此，使用 `a[r][c]` 的形式即可访问到下标为 `(r, c)` 的元素．
+This approach also gives contiguous memory, and `a[n]` directly gives the starting address of row n + 1 of the array. So `a[r][c]` accesses the element at index `(r, c)`.
 
-由于指向数组的指针也是一种确定的数据类型，因此除数组的第一维外，其他维度的长度均须为一个能在编译器确定的常量．不然，编译器将无法翻译如 `a[n]` 这样的表达式（`a` 为指向数组的指针）．
+Since a pointer to an array is a specific data type, every dimension except the first must have a length that is a constant known at compile time. Otherwise, the compiler cannot translate an expression like `a[n]` (where `a` is a pointer to an array).
 
-## 指向函数的指针
+## Pointers to functions
 
-关于函数的介绍请参见 [C++ 函数](./func.md) 章节．
+For an introduction to functions, see the [C++ functions](./func.md) section.
 
-简单地说，要调用一个函数，需要知晓该函数的参数类型、个数以及返回值类型，这些也统一称作接口类型．
+Put simply, to call a function you need to know the types and number of its parameters and its return type. Together these are called its interface type.
 
-可以通过函数指针调用函数．有时候，若干个函数的接口类型是相同的，使用函数指针可以根据程序的运行 **动态地** 选择需要调用的函数．换句话说，可以在不修改一个函数的情况下，仅通过修改向其传入的参数（函数指针），使得该函数的行为发生变化．
+You can call a function through a function pointer. Sometimes several functions have the same interface type, and a function pointer lets the program choose which one to call **dynamically** at run time. In other words, you can change how a function behaves without modifying it, just by changing the argument (a function pointer) passed to it.
 
-假设我们有若干针对 `int` 类型的二元运算函数，则函数的参数为 2 个 `int`，返回值亦为 `int`．下边是一个使用了函数指针的例子：
+Suppose we have several binary operations on `int`. Each takes 2 `int` parameters and returns an `int`. Here is an example that uses a function pointer:
 
 ```cpp
 #include <iostream>
@@ -344,31 +344,31 @@ int main() {
 }
 ```
 
-???+ note "`&`、`*` 和函数指针"
-    在 C 语言中，诸如 `void (*p)() = foo;`、`void (*p)() = &foo;`、`void (*p)() = *foo;`、`void (*p)() = ***foo` 等写法的结果是一样的．
+???+ note "`&`, `*` and function pointers"
+    In C, writing `void (*p)() = foo;`, `void (*p)() = &foo;`, `void (*p)() = *foo;`, `void (*p)() = ***foo` and so on all give the same result.
     
-    因为函数（如 `foo`）是能够被隐式转换为指向函数的指针的，因此 `void (*p)() = foo;` 的写法能够成立．
+    A function (such as `foo`) can be implicitly converted to a pointer to the function, so `void (*p)() = foo;` works.
     
-    使用 `&` 运算符可以取得到对象的地址，这对函数也是成立的，因此 `void (*p)() = &foo;` 的写法仍然成立．
+    The `&` operator takes the address of an object, and this also works for functions, so `void (*p)() = &foo;` works too.
     
-    对函数指针使用 `*` 运算符可以取得指针指向的函数，而对于 `**foo` 这样的写法来说，`*foo` 得到的是 `foo` 这个函数，紧接着又被隐式转换为指向 `foo` 的指针．如此类推，`**foo` 得到的最终还是指向 `foo` 的函数指针；用户尽可以使用任意多的 `*`，结果也是一样的．
+    Applying the `*` operator to a function pointer gives the function it points to. For something like `**foo`, `*foo` gives the function `foo`, which is then implicitly converted back to a pointer to `foo`. And so on: `**foo` still ends up as a function pointer to `foo`. You can use as many `*` as you like, and the result is the same.
     
-    同理，在调用时使用类似 `(*p)()` 和 `p()` 的语句是一样的，可以省去 `*` 运算符．
+    Likewise, when calling, `(*p)()` and `p()` are the same; you can leave out the `*` operator.
     
-    参考资料：[Why do function pointer definitions work with any number of ampersands '&' or asterisks '\*'? - stackoverflow.com](https://stackoverflow.com/questions/6893285/why-do-function-pointer-definitions-work-with-any-number-of-ampersands-or-as)
+    Reference: [Why do function pointer definitions work with any number of ampersands '&' or asterisks '\*'? - stackoverflow.com](https://stackoverflow.com/questions/6893285/why-do-function-pointer-definitions-work-with-any-number-of-ampersands-or-as)
 
-可以使用 `typedef` 关键字声明函数指针的类型．
+You can declare a function pointer type with the `typedef` keyword.
 
 ```cpp
 typedef int (*p_bi_int_op)(int, int);
 ```
 
-这样我们就可以在之后使用 `p_bi_int_op` 这种类型，即指向「参数为 2 个 `int`，返回值亦为 `int`」的函数的指针．
+Then we can use the type `p_bi_int_op` later, meaning a pointer to a function that "takes 2 `int` parameters and returns an `int`".
 
-可以通过使用 `std::function` 来更方便的引用函数．（未完待续）
+You can use `std::function` to refer to functions more conveniently. (To be continued)
 
-使用函数指针，可以实现「回调函数」．（未完待续）
+With function pointers, you can implement "callback functions". (To be continued)
 
-## 参考资料与注释
+## References and notes
 
-[^note1]: 参见 [Introduce the nullptr constant](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3042.htm)
+[^note1]: See [Introduce the nullptr constant](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3042.htm)

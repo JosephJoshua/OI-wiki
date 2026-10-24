@@ -1,10 +1,10 @@
-值类别是 C++ 中一个非常重要的概念，虽然在算法竞赛中可能用处不大，但了解它可以帮助我们发现并避免不必要的复制，从而提高代码的效率和性能．
+Value categories are a very important concept in C++. They may not be very useful in competitive programming, but understanding them helps us spot and avoid unnecessary copies, which makes code faster and more efficient.
 
-值类别的概念在 C 语言、C++98、C++11 和 C++17 中经历了多次发展，逐渐成为一个较为复杂的概念．
+The idea of value categories evolved several times through C, C++98, C++11 and C++17, and gradually became a fairly complicated concept.
 
-## 不必要的复制
+## Unnecessary copies
 
-我们考虑将字符串塞入 vector 这一过程：
+Consider putting strings into a vector:
 
 ```cpp
 int main() {
@@ -19,9 +19,9 @@ int main() {
 }
 ```
 
-可以发现字符串在转移的过程中，在 `str` 和 `vec` 中各保存了一份，内存占用加倍．
+You can see that while the string is being transferred, one copy is kept in `str` and another in `vec`, so the memory use doubles.
 
-如果非要省下这一部分的内存，我们可以实现一个简陋的移动操作：自定义 `MyString` 结构体，内有一指针指向我们的字符串，即我们只需要把指针复制过去，并小心地清理原对象的指针，防止被错误析构．
+If we really want to save this memory, we can implement a crude move operation: define a custom `MyString` struct that holds a pointer to our string. Then we only need to copy the pointer over, and carefully clear the original object's pointer so the data is not wrongly destroyed.
 
 ```cpp
 struct MyString {
@@ -36,40 +36,40 @@ void move_to(MyString &src, MyString &dst) {
 }
 ```
 
-由于这种高效转移对象的需求较为常见，且与 C++ 的构造、析构等操作交互困难，C++11 将移动语义引入了语言核心．
+Because this need to transfer objects efficiently is quite common, and because it is hard to make it work together with C++ construction, destruction and so on, C++11 brought move semantics into the core language.
 
-## C 语言中的值类别
+## Value categories in C
 
-在 C 语言标准中，对象是一个比变量更为一般化的概念，它指代一块内存区域，具有内存地址．对象的主要属性包括：大小、有效类型、值和标识符．标识符即变量名，值是该内存以其类型解释时的含义．例如，`int` 和 `float` 类型虽然都占用 4 字节，但对于同一块内存，我们会解释出不同的含义．
+In the C standard, an object is a more general concept than a variable. It refers to a region of memory that has a memory address. The main attributes of an object are: size, effective type, value and identifier. The identifier is the variable name, and the value is what that memory means when interpreted as its type. For example, `int` and `float` both take 4 bytes, but the same piece of memory means different things depending on which type we interpret it as.
 
-C 语言中每个表达式都具有类型和值类别．值类别主要分为三类：
+In C, every expression has a type and a value category. There are three main value categories:
 
--   左值（lvalue）：隐含指代一个对象的表达式．即我们可以对该表达式取地址．
--   右值（rvalue）：不指代对象的表达式，即指代没有存储位置的值，我们无法取该值的地址．
--   函数指代符：函数类型的表达式．
+-   Lvalue: an expression that implicitly designates an object. That is, we can take the address of the expression.
+-   Rvalue: an expression that does not designate an object, that is, a value with no storage location. We cannot take its address.
+-   Function designator: an expression of function type.
 
-因此，只有可修改的左值（没有 `const` 修饰且非数组的左值）可以位于赋值表达式左侧．
+So only modifiable lvalues (lvalues that are not `const`-qualified and are not arrays) can appear on the left side of an assignment.
 
-对于某个要求右值作为它的操作数的运算符，每当左值被用作操作数，都会对该表达式应用左值到右值，数组到指针，或者函数到指针标准转换以将它转换成右值．
+For an operator that requires an rvalue as its operand, whenever an lvalue is used as the operand, the lvalue-to-rvalue, array-to-pointer or function-to-pointer standard conversion is applied to turn it into an rvalue.
 
-常见误区：
+Common misconceptions:
 
--   右值表达式继续运算可能是左值．例如 `int *a`，表达式 `a + 1` 是右值，但 `*(a + 1)` 是左值．
--   表达式才有值类别，变量没有．例如 `int *a`，不能说变量 `a` 是左值，可以说其在表达式 `a` 中做左值．
+-   Further operations on an rvalue expression can produce an lvalue. For example, with `int *a`, the expression `a + 1` is an rvalue, but `*(a + 1)` is an lvalue.
+-   Only expressions have value categories; variables do not. For example, with `int *a`, you cannot say the variable `a` is an lvalue. You can say it acts as an lvalue in the expression `a`.
 
-## C++98 中的值类别
+## Value categories in C++98
 
-C++98 在值类别方面与 C 语言几乎一致，但增加了一些新的规则：
+C++98 is almost the same as C when it comes to value categories, but it adds a few new rules:
 
--   函数为左值，因为可以取地址．
--   左值引用（T&）是左值，因为可以取地址．
--   仅有 `const T&` 可绑定到右值．
+-   Functions are lvalues, because you can take their address.
+-   Lvalue references (T&) are lvalues, because you can take their address.
+-   Only `const T&` can bind to an rvalue.
 
-### 复制消除
+### Copy elision
 
-C++ 允许编译器执行复制消除（Copy Elision），可以减少临时对象的创建和销毁．
+C++ allows the compiler to perform copy elision, which reduces the number of temporary objects created and destroyed.
 
-例如下面的代码，就触发了复制消除中的返回值优化（Return Value Optimization，RVO），你只会看到一次构造和一次复制构造，即便构造与析构有副作用．
+For example, the code below triggers return value optimization (RVO), a form of copy elision. You will see only one construction and one copy construction, even though construction and destruction have side effects.
 
 ```cpp
 struct X {
@@ -92,11 +92,11 @@ int main() {
 }
 ```
 
-## C++11 中的值类别
+## Value categories in C++11
 
-C++11 引入了移动语义和右值引用（`T&&`），包括移动构造、移动赋值函数．这给了我们利用临时对象的方法．
+C++11 introduced move semantics and rvalue references (`T&&`), including move constructors and move assignment functions. This gives us a way to make use of temporary objects.
 
-我们上面的 `move_to` 可以改写如下：
+Our `move_to` from above can be rewritten as:
 
 ```cpp
 struct MyString {
@@ -109,26 +109,26 @@ struct MyString {
 };
 ```
 
-我们现在关注的表达式特性增加了一点：
+We now care about one more property of expressions:
 
--   是否具有身份：是否指代一个对象，即是否有地址．
--   是否可被移动：是否具有移动构造、移动赋值等函数，让我们有办法利用这些临时对象．
+-   Whether it has identity: whether it designates an object, that is, whether it has an address.
+-   Whether it can be moved from: whether it has move constructors, move assignment and similar functions, which give us a way to make use of these temporary objects.
 
-因此我们有三种值类别：
+So we have three value categories:
 
--   有身份，不可移动：左值（lvalue）．
--   有身份，可被移动：亡值（xvalue）．
--   无身份，可被移动：纯右值（prvalue）．
--   无身份，不可移动：此类表达式无法使用．
+-   Has identity, cannot be moved from: lvalue.
+-   Has identity, can be moved from: xvalue (expiring value).
+-   No identity, can be moved from: prvalue (pure rvalue).
+-   No identity, cannot be moved from: expressions like this are unusable.
 
-另外 C++11 还引入了两个复合类别：
+C++11 also introduced two mixed categories:
 
--   具有身份：泛左值（glvalue），即左值和亡值．
--   可被移动：右值（rvalue），即纯右值和亡值．
+-   Has identity: glvalue (generalized lvalue), that is, lvalues and xvalues.
+-   Can be moved from: rvalue, that is, prvalues and xvalues.
 
 ### std::move
 
-为了配合移动语义，C++11 还引入了一个工具函数 `std::move`，其作用是将左值强制转换为右值，以便触发移动语义．
+To go with move semantics, C++11 also introduced the utility function `std::move`. It casts an lvalue to an rvalue so that move semantics kick in.
 
 ```cpp
 int main() {
@@ -141,7 +141,7 @@ int main() {
 }
 ```
 
-因此我们只需将 `push_back(str)` 改为 `push_back(std::move(str))` 即可避免复制．
+So we only need to change `push_back(str)` to `push_back(std::move(str))` to avoid the copy.
 
 ```cpp
 int main() {
@@ -151,26 +151,26 @@ int main() {
     std::string str;
     std::cin >> str;
     vec.push_back(std::move(str));
-    // 另一种巧妙的写法，需要 C++17
+    // another neat way to write it, requires C++17
     // std::cin >> vec.emplace_back();
   }
   return 0;
 }
 ```
 
-> 由于 `std::string` 有小对象优化（Small String Optimization，SSO），短字符串直接存储于结构体内，你可能得输入较长的字符串才能观察到 `data` 指针的不变性．
+> Because `std::string` has small string optimization (SSO), short strings are stored directly inside the object. You may need to enter a fairly long string to see that the `data` pointer stays the same.
 
-## C++17 中的值类别
+## Value categories in C++17
 
-C++17 进一步简化了值类别：
+C++17 further simplified value categories:
 
--   左值（lvalue）：有身份，不可移动．
--   亡值（xvalue）：有身份，可以移动．
--   纯右值（prvalue）：对象的初始化．
+-   Lvalue: has identity, cannot be moved from.
+-   Xvalue: has identity, can be moved from.
+-   Prvalue: the initialization of an object.
 
-C++11 将复制消除扩展到了移动上，下面的代码中 `urvo` 在编译器启用 RVO 的情况下是没有移动的．
+C++11 extended copy elision to moves. In the code below, `urvo` involves no move when the compiler has RVO enabled.
 
-C++17 要求纯右值非必须不实质化，直接构造到其最终目标的存储中，在构造之前对象尚不存在．因此在 C++17 中我们就没有返回这一步，也就不必依赖 RVO．也可以理解为强制了 URVO（Unnamed RVO），但对于 NRVO（Named RVO）还是非强制的．
+C++17 requires that a prvalue is not materialized unless necessary; it is constructed directly into the storage of its final destination, and the object does not exist before it is constructed. So in C++17 there is no "return" step at all, and we don't need to rely on RVO. You can also think of it as making URVO (Unnamed RVO) mandatory, while NRVO (Named RVO) is still not mandatory.
 
 ```cpp
 std::string urvo() { return std::string("123"); }
@@ -183,24 +183,24 @@ std::string nrvo() {
 }
 
 int main() {
-  std::string str = urvo();  // 直接构造
-  std::string str = nrvo();  // 不一定直接构造，依赖于优化
+  std::string str = urvo();  // constructed directly
+  std::string str = nrvo();  // not necessarily constructed directly; depends on optimization
 }
 ```
 
-同时 C++17 引入了临时量实质化的机制，当我们需要访问成员变量、调用成员函数等需要泛左值的情形时，可以隐式转换为亡值．
+C++17 also introduced temporary materialization. When a glvalue is needed, such as when accessing a member variable or calling a member function, a prvalue can be implicitly converted to an xvalue.
 
-### 常见误区
+### Common pitfalls
 
-下面的例子中：
+In the example below:
 
--   在 `f1` 中返回 `std::move(x)` 是多余的，并不会带来性能上的提升，反而会干扰编译器进行 NRVO 优化．
--   在 `f2` 中返回 `std::move(x)` 是危险的，函数返回右值引用指向了已被销毁的局部变量 `s`，出现了悬空引用问题．
+-   In `f1`, returning `std::move(x)` is redundant. It brings no performance gain and actually gets in the way of the compiler's NRVO.
+-   In `f2`, returning `std::move(x)` is dangerous. The function returns an rvalue reference to the local variable `s`, which has already been destroyed, so you get a dangling reference.
 
 ```cpp
 std::string f1() {
   std::string s = "123";
-  // 等价于 return std::string(std::move(s))
+  // equivalent to return std::string(std::move(s))
   return std::move(s);
 }
 
@@ -210,10 +210,10 @@ std::string&& f2() {
 }
 ```
 
-## 参考文献与推荐阅读
+## References and further reading
 
 1.  [Value categories](https://en.cppreference.com/w/cpp/language/value_category)
 2.  [Wording for guaranteed copy elision through simplified value categories](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0135r1.html)
-3.  [C++ 中的值类别](https://paul.pub/cpp-value-category/)
-4.  [C++ 的右值引用、移动和值类别系统，你所需要的一切](https://zclll.com/index.php/cpp/value_category.html)
+3.  [Value categories in C++](https://paul.pub/cpp-value-category/)
+4.  [C++ rvalue references, moves and the value category system: everything you need](https://zclll.com/index.php/cpp/value_category.html)
 5.  [Copy elision](https://en.cppreference.com/w/cpp/language/copy_elision)

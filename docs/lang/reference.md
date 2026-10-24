@@ -1,20 +1,20 @@
-> 声明具名变量为引用，即既存对象或函数的别名．
+> Declares a named variable as a reference, that is, an alias to an already-existing object or function.
 
-引用可以看成是 C++ 封装的非空指针，可以用来传递它所指向的对象，在声明时必须指向对象．
+You can think of a reference as a non-null pointer wrapped up by C++. It can be used to pass around the object it refers to, and it must refer to an object when it is declared.
 
-引用不是对象，因此不存在引用的数组、无法获取引用的指针，也不存在引用的引用．
+A reference is not an object. So there are no arrays of references, you cannot take a pointer to a reference, and there are no references to references.
 
-??? note "引用类型不属于对象类型"
-    如果想让引用能完成一般的复制、赋值等操作，比如作为容器元素，则需要 [`reference_wrapper`](https://zh.cppreference.com/w/cpp/utility/functional/reference_wrapper)，通常维护一个非空指针实现．
+??? note "Reference types are not object types"
+    If you want references that support ordinary copying, assignment and so on, for example to use them as container elements, you need [`reference_wrapper`](https://zh.cppreference.com/w/cpp/utility/functional/reference_wrapper), which is usually implemented by storing a non-null pointer.
 
-引用主要分为两种，左值引用和右值引用．
+There are two main kinds of references: lvalue references and rvalue references.
 
-??? note "左值和右值"
-    对左值和右值的讲解，请参考 [值类别](./value-category.md) 页面．
+??? note "Lvalues and rvalues"
+    For an explanation of lvalues and rvalues, see the [Value categories](./value-category.md) page.
 
-## 左值引用 T&
+## Lvalue references T&
 
-通常我们会接触到的引用为左值引用，即绑定到左值的引用，同时 `const` 限定的左值引用可以绑定右值．以下是来自 [参考手册](https://zh.cppreference.com/w/cpp/language/reference) 的一段示例代码．
+The references we usually deal with are lvalue references, that is, references bound to lvalues. A `const`-qualified lvalue reference can also bind to an rvalue. Here is some example code from the [reference manual](https://zh.cppreference.com/w/cpp/language/reference).
 
 ```cpp
 #include <iostream>
@@ -25,35 +25,35 @@ int main() {
   std::string& r1 = s;
   const std::string& r2 = s;
 
-  r1 += "ample";  // 修改 r1，即修改了 s
-  // r2 += "!"; // 错误：不能通过到 const 的引用修改
-  std::cout << r2 << '\n';  // 打印 r2，访问了s，输出 "Example"
+  r1 += "ample";  // modifying r1 modifies s
+  // r2 += "!"; // error: cannot modify through a reference to const
+  std::cout << r2 << '\n';  // printing r2 accesses s, prints "Example"
 }
 ```
 
-左值引用最常用的地方是函数参数，用于避免不需要的拷贝．
+The most common use of lvalue references is as function parameters, to avoid unnecessary copies.
 
 ```cpp
 #include <iostream>
 #include <string>
 
-// 参数中的 s 是引用，在调用函数时不会发生拷贝
+// s in the parameter list is a reference, so no copy happens when the function is called
 char& char_number(std::string& s, std::size_t n) {
-  s += s;  // 's' 与 main() 的 'str'
-           // 是同一对象，此处还说明左值也是可以放在等号右侧的
-  return s.at(n);  // string::at() 返回 char 的引用
+  s += s;  // 's' is the same object as 'str' in main();
+           // this also shows that an lvalue can appear on the right of =
+  return s.at(n);  // string::at() returns a reference to char
 }
 
 int main() {
   std::string str = "Test";
-  char_number(str, 1) = 'a';  // 函数返回是左值，可被赋值
-  std::cout << str << '\n';   // 此处输出 "TastTest"
+  char_number(str, 1) = 'a';  // the function returns an lvalue, which can be assigned to
+  std::cout << str << '\n';   // prints "TastTest" here
 }
 ```
 
-## 右值引用 T&&（C++ 11）
+## Rvalue references T&& (C++ 11)
 
-右值引用是绑定到右值的引用，用于移动对象，也可以用于 **延长临时对象生存期**．
+An rvalue reference is a reference bound to an rvalue. It is used to move objects, and it can also **extend the lifetime of a temporary object**.
 
 ```cpp
 #include <iostream>
@@ -63,31 +63,31 @@ using namespace std;
 
 int main() {
   string s1 = "Test";
-  // string&& r1 = s1; // 错误：不能绑定到左值，需要 std::move 或者 static_cast
+  // string&& r1 = s1; // error: cannot bind to an lvalue; needs std::move or static_cast
 
-  const string& r2 = s1 + s1;  // 可行：到常量的左值引用延长生存期
-  // r2 += "Test"; // 错误：不能通过到常量的引用修改
+  const string& r2 = s1 + s1;  // OK: an lvalue reference to const extends the lifetime
+  // r2 += "Test"; // error: cannot modify through a reference to const
   cout << r2 << '\n';
 
-  string&& r3 = s1 + s1;  // 可行：右值引用延长生存期
+  string&& r3 = s1 + s1;  // OK: an rvalue reference extends the lifetime
   r3 += "Test";
   cout << r3 << '\n';
 
-  const string& r4 = r3;  // 右值引用可以转换到 const 限定的左值
+  const string& r4 = r3;  // an rvalue reference can be converted to a const-qualified lvalue
   cout << r4 << '\n';
 
-  string& r5 = r3;  // 右值引用可以转换到左值
+  string& r5 = r3;  // an rvalue reference can be converted to an lvalue
   cout << r5 << '\n';
 }
 ```
 
-## 悬垂引用
+## Dangling references
 
-当引用指代的对象已经销毁，引用就会变成悬垂引用，访问悬垂引用这是一种未定义行为，可能会导致程序崩溃．
+When the object a reference refers to has been destroyed, the reference becomes a dangling reference. Accessing a dangling reference is undefined behavior and may crash the program.
 
-以下为常见的悬垂引用的例子：
+Here are some common examples of dangling references:
 
--   引用局部变量
+-   Referring to a local variable
 
     ```cpp
     #include <iostream>
@@ -99,11 +99,11 @@ int main() {
 
     int main() {
       int& b = foo();
-      std::cout << b << std::endl;  // 未定义行为
+      std::cout << b << std::endl;  // undefined behavior
     }
     ```
 
--   解分配导致的悬垂引用
+-   Dangling reference caused by deallocation
 
     ```cpp
     #include <iostream>
@@ -113,11 +113,11 @@ int main() {
       int& ref = *ptr;
       delete ptr;
 
-      std::cout << ref << std::endl;  // 未定义行为
+      std::cout << ref << std::endl;  // undefined behavior
     }
     ```
 
--   内存重分配导致的悬垂引用
+-   Dangling reference caused by memory reallocation
 
     ```cpp
     #include <iostream>
@@ -127,41 +127,41 @@ int main() {
 
       const char& ref = str.front();
 
-      str.append("world");  // 可能会重新分配内存，导致 ref 指向的内存被释放
+      str.append("world");  // may reallocate memory, freeing the memory ref points to
 
-      std::cout << ref << std::endl;  // 未定义行为
+      std::cout << ref << std::endl;  // undefined behavior
     }
     ```
 
-    类似 `std::vector`，`std::unordered_map` 等容器的插入操作，均有可能导致内存重新分配．
+    Insertions into containers such as `std::vector` and `std::unordered_map` may all cause memory to be reallocated.
 
-使用引用时，应时刻关注引用指向的对象的生命周期，避免造成悬垂引用．
+When you use references, always keep track of the lifetime of the object a reference refers to, so you don't end up with dangling references.
 
-通常静态检查工具和良好的代码习惯能让我们避免悬垂引用的问题．
+Static analysis tools and good coding habits usually help us avoid dangling references.
 
-## 引用相关的优化技巧
+## Optimization tricks with references
 
-### 消除非轻量对象入参的拷贝开销
+### Avoiding the cost of copying heavyweight parameters
 
-常见的 **非轻量对象** 有：
+Common **heavyweight objects** include:
 
--   容器 `vector`，`array`，`map` 等
+-   containers such as `vector`, `array` and `map`
 -   `string`
--   其他实现了或继承了自定义拷贝构造、移动构造等特殊函数的类型
+-   other types that define or inherit custom special functions such as copy constructors and move constructors
 
-而对 **轻量对象** 使用引用不能带来任何好处，引用类型作为参数的空间占用大小，甚至可能会比类型本身还大．
+Using references for **lightweight objects** brings no benefit. A reference parameter may even take up more space than the type itself.
 
-这可能会带来些的性能负担，同时可能会阻止编译器优化．
+This can add some performance overhead, and it may also prevent compiler optimizations.
 
-以下属于 **轻量对象**
+The following are **lightweight objects**:
 
--   基本类型 `int`，`float` 等
--   较小的 [聚合体类型](https://zh.cppreference.com/w/cpp/language/aggregate_initialization)
--   标准库容器的迭代器
+-   basic types such as `int` and `float`
+-   small [aggregate types](https://zh.cppreference.com/w/cpp/language/aggregate_initialization)
+-   iterators of standard library containers
 
-### 将左值转换为右值
+### Converting lvalues into rvalues
 
-使用 `std::move` [转移](./value-category.md#stdmove) 对象的所有权．这通常见于局部变量之间，或参数与局部变量之间：
+Use `std::move` to [transfer](./value-category.md#stdmove) ownership of an object. This is common between local variables, or between a parameter and a local variable:
 
 ```cpp
 #include <iostream>
@@ -191,14 +191,14 @@ int main() {
 }
 ```
 
-但不是所有时候都需要这么做，比如 [函数返回值优化](./value-category.md#常见误区)．
+But you don't always need to do this; see for example [return value optimization](./value-category.md#常见误区).
 
-### 右值延长临时量生命期
+### Extending the lifetime of temporaries with rvalue references
 
-从语义上，临时量可能会带来的额外的复制或移动，尽管多数情况下编译器能通过 [复制消除](./value-category.md#复制消除) 进行优化，但引用能强制编译器不进行这些多余操作，避免不确定性．
+Semantically, temporaries may cause extra copies or moves. In most cases the compiler can optimize them away with [copy elision](./value-category.md#复制消除), but a reference forces the compiler not to do these extra operations, which removes the uncertainty.
 
-## 参考内容
+## References
 
-1.  [C++ 语言文档——引用声明](https://zh.cppreference.com/w/cpp/language/reference)
-2.  [C++ 语言文档——值类别](https://zh.cppreference.com/w/cpp/language/value_category)
+1.  [C++ language documentation: Reference declaration](https://zh.cppreference.com/w/cpp/language/reference)
+2.  [C++ language documentation: Value categories](https://zh.cppreference.com/w/cpp/language/value_category)
 3.  [Does const ref lvalue to non-const func return value specifically reduce copies?](https://stackoverflow.com/questions/38909228/does-const-ref-lvalue-to-non-const-func-return-value-specifically-reduce-copies)
