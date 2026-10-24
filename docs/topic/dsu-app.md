@@ -1,110 +1,110 @@
 author: sshwy
 
-并查集、Kruskal 重构树的思维方式是很类似的，它们都能用于处理与连通性有关的问题．本文通过例题讲解的方式给大家介绍并查集思想的应用．
+The way of thinking behind the disjoint set union (DSU) and the Kruskal reconstruction tree is very similar; both can be used to handle problems about connectivity. This article uses example problems to show how the DSU idea can be applied.
 
 ## A
 
 ???+ note "A"
-    有 $n$ 个点，初始时均为孤立点．
+    There are $n$ vertices, all initially isolated.
     
-    接下来有 $m$ 次加边操作，第 $i$ 次操作在 $a_i$ 和 $b_i$ 之间加一条无向边．设 $L(i,j)$ 表示结点 $i$ 和 $j$ 最早在第 $L(i,j)$ 次操作后连通．
+    Then there are $m$ edge-adding operations; the $i$-th operation adds an undirected edge between $a_i$ and $b_i$. Let $L(i,j)$ mean that vertices $i$ and $j$ first become connected after the $L(i,j)$-th operation.
     
-    在 $m$ 次操作完后，你要求出 $\sum_{i=1}^n\sum_{j=i+1}^nL(i,j)$ 的值．
+    After all $m$ operations, you need to compute $\sum_{i=1}^n\sum_{j=i+1}^nL(i,j)$.
 
-这是基础并查集的应用，并查集记录一下子树的大小．考虑统计每次操作的贡献．如果第 $i$ 次操作 $a_i$ 和 $b_i$ 分属于两个不同子树，就将这两个子树合并，并将两者子树大小的乘积乘上 $i$ 累加到答案里．时间复杂度 $O(n\alpha(n))$．
+This is a basic application of DSU, where the DSU also keeps the size of each subtree. Count the contribution of each operation. If in the $i$-th operation $a_i$ and $b_i$ belong to two different subtrees, merge the two subtrees, and add the product of their sizes times $i$ to the answer. The time complexity is $O(n\alpha(n))$.
 
 ## B
 
 ???+ note "B"
-    有 $n$ 个点，初始时均为孤立点．
+    There are $n$ vertices, all initially isolated.
     
-    接下来有 $m$ 次加边操作，第 $i$ 次操作在 $a_i$ 和 $b_i$ 之间加一条无向边．
+    Then there are $m$ edge-adding operations; the $i$-th operation adds an undirected edge between $a_i$ and $b_i$.
     
-    接下来有 $q$ 次询问，第 $i$ 次询问 $u_i$ 和 $v_i$ 最早在第几次操作后连通．
+    Then there are $q$ queries; the $i$-th query asks after which operation $u_i$ and $v_i$ first become connected.
 
-考虑在并查集合并的时候记录「并查集生成树」，也就是说如果第 $i$ 次操作 $a_i$ 和 $b_i$ 分属于两个不同子树，那么把 $(a_i,b_i)$ 这条边纳入生成树中．边权是 $i$．那么查询就是询问 $u$ 到 $v$ 路径上边权的最大值，可以使用树上倍增或者树链剖分的方法维护．时间复杂度 $O(n\log n)$．
+While merging in the DSU, record a "DSU spanning tree": if in the $i$-th operation $a_i$ and $b_i$ belong to two different subtrees, add the edge $(a_i,b_i)$ to the spanning tree with weight $i$. Then a query asks for the maximum edge weight on the path from $u$ to $v$, which can be maintained with binary lifting on the tree or heavy-light decomposition. The time complexity is $O(n\log n)$.
 
-另外一个方法是维护 Kruskal 重构树，其本质与并查集生成树是相同的．复杂度亦相同．
+Another method is to maintain a Kruskal reconstruction tree, which is essentially the same as the DSU spanning tree. The complexity is also the same.
 
 ## C
 
 ???+ note "C"
-    有 $n$ 个点，初始时均为孤立点．
+    There are $n$ vertices, all initially isolated.
     
-    接下来有 $m$ 次加边操作，第 $i$ 次操作在 $a_i$ 和 $b_i$ 之间加一条无向边．
+    Then there are $m$ edge-adding operations; the $i$-th operation adds an undirected edge between $a_i$ and $b_i$.
     
-    接下来有 $q$ 次询问，第 $i$ 次询问第 $x_i$ 个点在第 $t_i$ 次操作后所在连通块的大小．
+    Then there are $q$ queries; the $i$-th query asks for the size of the connected component containing vertex $x_i$ after the $t_i$-th operation.
 
-离线算法：考虑将询问按 $t_i$ 从小到大排序．在加边的过程中使用并查集顺便处理询问即可．时间复杂度 $O(q\log q+(n+q)\alpha(n))$．
+Offline algorithm: sort the queries by $t_i$ in increasing order. While adding edges, use the DSU to answer the queries along the way. The time complexity is $O(q\log q+(n+q)\alpha(n))$.
 
-在线算法：本题的在线算法只能使用 Kruskal 重构树．Kruskal 重构树与并查集的区别是：第 $i$ 次操作 $a_i$ 和 $b_i$ 分属于两个不同子树，那么 Kruskal 会新建一个结点 $u$，然后让 $a_i$ 所在子树的根和 $b_i$ 所在子树的根分别连向 $u$，作为 $u$ 的两个儿子．不妨设 $u$ 的点权是 $i$．对于初始的 $n$ 个点，点权为 $0$．
+Online algorithm: for this problem, the online algorithm can only use the Kruskal reconstruction tree. The difference between the Kruskal reconstruction tree and the DSU is this: when $a_i$ and $b_i$ belong to two different subtrees in the $i$-th operation, Kruskal creates a new node $u$, and connects the root of $a_i$'s subtree and the root of $b_i$'s subtree to $u$ as its two children. Let the weight of $u$ be $i$. The original $n$ vertices have weight $0$.
 
-对于询问，我们只需要求出 $x_i$ 在重构树中最大的一个连通块使得连通中的点权最大值不超过 $t_i$，询问的答案就是这个连通块中点权为 $0$ 的结点个数，即叶子结点个数．
+For a query, we only need to find the largest connected part containing $x_i$ in the reconstruction tree such that the maximum node weight in it does not exceed $t_i$. The answer to the query is the number of nodes with weight $0$ in this part, that is, the number of leaves.
 
-由于我们操作的编号是递增的，因此重构树上父结点的点权总是大于子结点的点权．这意味着我们可以在重构树上从 $x_i$ 到根结点的路径上倍增找到点权最大的不超过 $t_i$ 的结点．这样我们就求出了答案．时间复杂度 $O(n\log n)$．
+Since the operation indices increase, a parent's weight in the reconstruction tree is always greater than its child's weight. This means we can use binary lifting on the path from $x_i$ to the root of the reconstruction tree to find the node with the largest weight not exceeding $t_i$. This gives the answer. The time complexity is $O(n\log n)$.
 
 ## D
 
 ???+ note "D"
-    给一个长度为 $n$ 的 01 序列 $a_1,\ldots,a_n$，一开始全是 $0$，接下来进行 $m$ 次操作：
+    You are given a 01 sequence $a_1,\ldots,a_n$ of length $n$, initially all $0$. Then $m$ operations are performed:
     
-    -   令 $a_x=1$；
-    -   求 $a_x,a_{x+1},\ldots,a_n$ 中左数第一个为 $0$ 的位置．
+    -   Set $a_x=1$;
+    -   Find the first position from the left among $a_x,a_{x+1},\ldots,a_n$ whose value is $0$.
 
-建立一个并查集，$f_i$ 表示 $a_i,a_{i+1},\ldots,a_n$ 中第一个 $0$ 的位置．初始时 $f_i=i$．
+Build a DSU where $f_i$ is the position of the first $0$ among $a_i,a_{i+1},\ldots,a_n$. Initially $f_i=i$.
 
-对于一次 $a_x=1$ 的操作，如果 $a_x$ 原本就等于 $1$，就不管．否则我们令 $f_x=f_{x+1}$．
+For an operation $a_x=1$, if $a_x$ already equals $1$, do nothing. Otherwise, set $f_x=f_{x+1}$.
 
-时间复杂度 $O(n\log n)$，如果要使用按秩合并的话实现会较为麻烦，不过仍然可行．也就是说时间复杂度或为 $O(n\alpha(n))$．
+The time complexity is $O(n\log n)$. Using union by rank makes the implementation more troublesome, but it is still possible; then the time complexity can become $O(n\alpha(n))$.
 
 ## E
 
 ???+ note "E"
-    给出三个长度为 $n$ 的正整数序列 $a$，$b$，$c$．枚举 $1\le i\le j\le n$，求 $a_i\cdot b_j\cdot \min_{i\le k\le j}c_k$ 的最大值．
+    You are given three sequences $a$, $b$, $c$ of positive integers, each of length $n$. Over all $1\le i\le j\le n$, find the maximum of $a_i\cdot b_j\cdot \min_{i\le k\le j}c_k$.
 
-本题同样有许多做法，这里我们重点讲解并查集思路．按权值从大到小考虑 $c_k$．相当于我们在 $k$ 上加入一个点，然后将 $k-1$ 和 $k+1$ 位置上的点所在的连通块与之合并（如果这两个位置上有点的话）．连通块上记录 $a$ 的最大值和 $b$ 的最大值，即可在合并的时候更新答案．时间复杂度 $O(n\log n)$．
+This problem also has many solutions; here we focus on the DSU approach. Consider the $c_k$ in decreasing order of value. This is like adding a point at $k$, then merging it with the connected components containing the points at positions $k-1$ and $k+1$ (if those positions have points). Each connected component records the maximum of $a$ and the maximum of $b$, so the answer can be updated during merging. The time complexity is $O(n\log n)$.
 
 ## F
 
 ???+ note "F"
-    给出一棵 $n$ 个点的树，接下来有 $m$ 次操作：
+    You are given a tree with $n$ vertices. Then there are $m$ operations:
     
-    -   加一条从 $a_i$ 到 $b_i$ 的边．
-    -   询问两个点 $u_i$ 和 $v_i$ 之间是否有至少两条边不相交的路径．
+    -   Add an edge from $a_i$ to $b_i$.
+    -   Ask whether there are at least two edge-disjoint paths between vertices $u_i$ and $v_i$.
 
-询问可以转化为：求 $u_i$ 和 $v_i$ 是否在同一个简单环上．按照双连通分量缩点的想法，每次我们在 $a_i$ 和 $b_i$ 间加一条边，就可以把 $a_i$ 到 $b_i$ 树上路径的点缩到一起．如果两条边 $(a_i,b_i)$ 和 $(a_j,b_j)$ 对应的树上路径有交，那么这两条边就会被缩到一起．
+A query can be rephrased as: are $u_i$ and $v_i$ on the same simple cycle? Following the idea of contracting biconnected components, each time we add an edge between $a_i$ and $b_i$, we can contract the vertices on the tree path from $a_i$ to $b_i$ into one. If the tree paths of two edges $(a_i,b_i)$ and $(a_j,b_j)$ intersect, the two edges get contracted together.
 
-换言之，加边操作可以理解为，将 $a_i$ 到 $b_i$ 树上路径的边覆盖一次．而询问就转化为了：判断 $u_i$ 到 $v_i$ 路径上是否存在未被覆盖的边．如果不存在，那么 $u_i$ 和 $v_i$ 就属于同一个双连通分量，也就属于同一个简单环．
+In other words, adding an edge can be seen as covering the edges on the tree path from $a_i$ to $b_i$ once. A query then becomes: is there any uncovered edge on the path from $u_i$ to $v_i$? If not, then $u_i$ and $v_i$ belong to the same biconnected component, and therefore to the same simple cycle.
 
-考虑使用并查集维护．给树定根，设 $f_i$ 表示 $i$ 到根的路径中第一个未被覆盖的边．那么每次加边操作，我们就暴力跳并查集．覆盖了一条边后，将这条边对应结点的 $f$ 与父节点合并．这样，每条边至多被覆盖一次，总复杂度 $O(n\log n)$．使用按秩合并的并查集同样可以做到 $O(n\alpha(n))$．
+We maintain this with a DSU. Root the tree, and let $f_i$ be the first uncovered edge on the path from $i$ to the root. Then for each edge-adding operation, we jump through the DSU by brute force. After covering an edge, merge the $f$ of the node corresponding to that edge with its parent. This way, each edge is covered at most once, and the total complexity is $O(n\log n)$. With a DSU using union by rank, we can also reach $O(n\alpha(n))$.
 
-本题的维护方式类似于 D 的树上版本．
+The way this problem is maintained is like a tree version of D.
 
 ## G
 
 ???+ note "G"
-    无向图 $G$ 有 $n$ 个点，初始时均为孤立点（即没有边）．
+    An undirected graph $G$ has $n$ vertices, all initially isolated (that is, there are no edges).
     
-    接下来有 $m$ 次加边操作，第 $i$ 次操作在 $a_i$ 和 $b_i$ 之间加一条无向边．
+    Then there are $m$ edge-adding operations; the $i$-th operation adds an undirected edge between $a_i$ and $b_i$.
     
-    每次操作后，你均需要求出图中桥的个数．
+    After each operation, you need to find the number of bridges in the graph.
     
-    桥的定义为：对于一条 $G$ 中的边 $(x,y)$，如果删掉它会使得连通块数量增加，则 $(x,y)$ 被称作桥．
+    A bridge is defined as follows: an edge $(x,y)$ in $G$ is called a bridge if deleting it increases the number of connected components.
     
-    强制在线．
+    The problem must be solved online.
 
-本题考察对并查集性质的理解．考虑用并查集维护连通情况．对于边双树，考虑维护有根树，设 $p_i$ 表示结点 $i$ 的父亲．也就是不带路径压缩的并查集．
+This problem tests your understanding of the properties of DSU. Use a DSU to maintain connectivity. For the bridge tree (the tree of 2-edge-connected components), maintain a rooted tree, where $p_i$ is the parent of node $i$. This is just a DSU without path compression.
 
-如果第 $i$ 次操作 $a_i$ 和 $b_i$ 属于同一个连通块，那么我们就需要将边双树上 $a_i$ 到 $b_i$ 路径上的点缩起来．这可以用并查集维护．每次缩点，边双连通分量的个数减少 $1$，最多减少 $n-1$ 次，因此缩点部分的并查集复杂度是 $O(n\alpha(n))$．
+If in the $i$-th operation $a_i$ and $b_i$ are in the same connected component, we need to contract the nodes on the path from $a_i$ to $b_i$ in the bridge tree. This can be maintained with a DSU. Each contraction decreases the number of 2-edge-connected components by $1$, and this can happen at most $n-1$ times, so the DSU cost of the contraction part is $O(n\alpha(n))$.
 
-为了缩点，我们要先求出 $a_i$ 和 $b_i$ 在边双树上的 LCA．对此我们可以维护一个标记数组．然后从 $a_i$ 和 $b_i$ 开始轮流沿着祖先一个一个往上跳，并标记沿途经过的点．一旦跳到了某个之前就被标记过的点，那么这个点就是 $a_i$ 和 $b_i$ 的 LCA．这个算法的复杂度与 $a_i$ 到 $b_i$ 的路径长度是线性相关的，可以接受．
+To contract, we first need the LCA of $a_i$ and $b_i$ in the bridge tree. For this we can maintain a mark array. Starting from $a_i$ and $b_i$, take turns jumping up one ancestor at a time, marking every node along the way. As soon as we reach a node that has already been marked, that node is the LCA of $a_i$ and $b_i$. The cost of this algorithm is linear in the length of the path from $a_i$ to $b_i$, which is acceptable.
 
-如果 $a_i$ 和 $b_i$ 分属于两个不同连通块，那么我们将这两个连通块合并，并且桥的数量加 $1$．此时我们需要将两个点所在的边双树连起来，也就是加一条 $a_i$ 到 $b_i$ 的边．因此我们需要将其中一棵树重新定根，然后接到另一棵树上．这里运用启发式合并的思想：我们把结点数更小的重新定根．这样的总复杂度是 $O(n\log n)$ 的．
+If $a_i$ and $b_i$ are in two different connected components, we merge the two components, and the number of bridges increases by $1$. We then need to join the bridge trees of the two vertices, that is, add an edge from $a_i$ to $b_i$. So we need to re-root one of the trees and attach it to the other. Here we use the idea of small-to-large merging: we re-root the tree with fewer nodes. The total complexity is then $O(n\log n)$.
 
-综上，该算法的总复杂度是 $O(n\log n+m\log n)$ 的．
+In summary, the total complexity of this algorithm is $O(n\log n+m\log n)$.
 
-## 小结
+## Summary
 
-并查集与 Kruskal 重构树有许多共通点，而并查集的优化（按秩合并）正是启发式合并思想的应用．因此灵活运用并查集可以方便地处理许多与连通性有关的图论问题．
+DSU and the Kruskal reconstruction tree have a lot in common, and the DSU optimization (union by rank) is exactly an application of small-to-large merging. So by using DSU flexibly, you can easily handle many graph theory problems about connectivity.
 
-**本页面部分内容译自博文 [Поиск мостов в режиме онлайн](http://e-maxx.ru/algo/bridge_searching_online) 与其英文翻译版 [Finding Bridges Online](https://cp-algorithms.com/graph/bridge-searching-online.html)．其中俄文版版权协议为 Public Domain + Leave a Link；英文版版权协议为 CC-BY-SA 4.0．**
+**Parts of this page are translated from the blog post [Поиск мостов в режиме онлайн](http://e-maxx.ru/algo/bridge_searching_online) and its English translation [Finding Bridges Online](https://cp-algorithms.com/graph/bridge-searching-online.html). The Russian version is licensed under Public Domain + Leave a Link; the English version is licensed under CC-BY-SA 4.0.**

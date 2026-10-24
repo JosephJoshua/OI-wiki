@@ -1,136 +1,136 @@
-## 简介
+## Introduction
 
-RMQ 是英文 Range Maximum/Minimum Query 的缩写，表示区间最大（最小）值．
+RMQ is short for Range Maximum/Minimum Query, which means finding the maximum (or minimum) value in a range.
 
-在接下来的描述中，默认初始数组大小为 $n$，询问次数为 $m$．
+In the descriptions below, the initial array has size $n$ and there are $m$ queries.
 
-在接下来的描述中，默认时间复杂度标记方式为 $O(A) \sim O(B)$，其中 $O(A)$ 表示预处理时间复杂度，而 $O(B)$ 表示单次询问的时间复杂度．
+In the descriptions below, time complexity is written as $O(A) \sim O(B)$, where $O(A)$ is the preprocessing time and $O(B)$ is the time for a single query.
 
-## 单调栈
+## Monotonic stack
 
-由于 **OI Wiki** 中已有此部分的描述，本文仅给出 [链接](../ds/monotonic-stack.md)．这部分不再展开．
+Since **OI Wiki** already describes this part, this article only gives a [link](../ds/monotonic-stack.md). We will not go into it here.
 
-时间复杂度 $O(m\log m) \sim O(\log n)$，空间复杂度 $O(n)$．
+Time complexity $O(m\log m) \sim O(\log n)$, space complexity $O(n)$.
 
-## ST 表
+## Sparse table
 
-由于 **OI Wiki** 中已有此部分的描述，本文仅给出 [链接](../ds/sparse-table.md)．这部分不再展开．
+Since **OI Wiki** already describes this part, this article only gives a [link](../ds/sparse-table.md). We will not go into it here.
 
-时间复杂度 $O(n\log n) \sim O(1)$，空间复杂度 $O(n\log n)$．
+Time complexity $O(n\log n) \sim O(1)$, space complexity $O(n\log n)$.
 
-## 线段树
+## Segment tree
 
-由于 **OI Wiki** 中已有此部分的描述，本文仅给出 [链接](../ds/seg.md)．这部分不再展开．
+Since **OI Wiki** already describes this part, this article only gives a [link](../ds/seg.md). We will not go into it here.
 
-时间复杂度 $O(n) \sim O(\log n)$，空间复杂度 $O(n)$．
+Time complexity $O(n) \sim O(\log n)$, space complexity $O(n)$.
 
 ## Four Russian
 
-Four russian 是一个由四位俄罗斯籍的计算机科学家提出来的基于 ST 表的算法．
+Four Russian is an algorithm based on the sparse table, proposed by four Russian computer scientists.
 
-在 ST 表的基础上 Four russian 算法对其做出的改进是序列分块．
+The improvement that the Four Russian algorithm makes over the sparse table is to split the sequence into blocks.
 
-具体来说，我们将原数组——我们将其称之为数组 A——每 $S$ 个分成一块，总共 $n/S$ 块．
+Specifically, we split the original array (call it array A) into blocks of $S$ elements each, for $n/S$ blocks in total.
 
-对于每一块我们预处理出来块内元素的最小值，建立一个长度为 $n/S$ 的数组 B，并对数组 B 采用 ST 表的方式预处理．
+For each block, we precompute the minimum of the elements in it, build an array B of length $n/S$ from these values, and preprocess array B with a sparse table.
 
-同时，我们对于数组 A 的每一个零散块也建立一个 ST 表．
+At the same time, we also build a sparse table for each individual block of array A.
 
-询问的时候，我们可以将询问区间划分为不超过 1 个数组 B 上的连续块区间和不超过 2 个数组 A 上的整块内的连续区间．显然这些问题我们通过 ST 表上的区间查询解决．
+When answering a query, we can split the query range into at most 1 range of consecutive blocks in array B, plus at most 2 ranges that each lie inside a single block of array A. Clearly each of these can be answered with a range query on a sparse table.
 
-在 $S=\log n$ 时候，预处理复杂度达到最优，为 $O((n / \log n)\log n+(n / \log n)\times\log n\times\log \log n)=O(n\log \log n)$．
+When $S=\log n$, the preprocessing cost is optimal: $O((n / \log n)\log n+(n / \log n)\times\log n\times\log \log n)=O(n\log \log n)$.
 
-时间复杂度 $O(n\log \log n) \sim O(1)$，空间复杂度 $O(n\log \log n)$．
+Time complexity $O(n\log \log n) \sim O(1)$, space complexity $O(n\log \log n)$.
 
-当然询问由于要跑三个 ST 表，该实现方法的常数较大．
+Of course, since a query has to use three sparse tables, this implementation has a large constant factor.
 
-??? note "一些小小的算法改进"
-    我们发现，在询问的两个端点在数组 A 中属于不同的块的时候，数组 A 中块内的询问是关于每一块前缀或者后缀的询问．
+??? note "Some small improvements"
+    Notice that when the two endpoints of a query fall in different blocks of array A, the queries inside the blocks of array A are always about a prefix or a suffix of a block.
     
-    显然这些询问可以通过预处理答案在 $O(n)$ 的时间复杂度内被解决．
+    Clearly these queries can be answered by precomputing the answers in $O(n)$ time.
     
-    这样子我们只需要在询问的时候进行至多一次 ST 表上的查询操作了．
+    This way, each query only needs at most one query on a sparse table.
 
-??? note "一些玄学的算法改进"
-    由于 Four russian 算法以 ST 表为基础，而算法竞赛一般没有非常高的时间复杂度要求，所以 Four russian 算法一般都可以被 ST 表代替，在算法竞赛中并不实用．这里提供一种在算法竞赛中更加实用的 Four russian 改进算法．
+??? note "Some unusual improvements"
+    Since the Four Russian algorithm is built on the sparse table, and competitive programming usually does not demand extremely tight time complexity, the Four Russian algorithm can usually be replaced by a sparse table and is not very practical in contests. Here is an improved version of Four Russian that is more practical in contests.
     
-    我们将块大小设为 $\sqrt n$，然后预处理出每一块内前缀和后缀的 RMQ，再暴力预处理出任意连续的整块之间的 RMQ，时间复杂度为 $O(n)$．
+    Set the block size to $\sqrt n$. Precompute the prefix and suffix RMQ inside each block, then precompute by brute force the RMQ over every range of consecutive whole blocks. The time complexity is $O(n)$.
     
-    查询时，对于左右端点不在同一块内的询问，我们可以直接 $O(1)$ 得到左端点所在块的后缀 RMQ，左端点和右端点之间的连续整块 RMQ，和右端点所在块的前缀 RMQ，答案即为三者之间的最值．
+    For a query whose left and right endpoints are in different blocks, we can directly get in $O(1)$ the suffix RMQ of the left endpoint's block, the RMQ of the consecutive whole blocks between the endpoints, and the prefix RMQ of the right endpoint's block. The answer is the best of these three.
     
-    而对于左右端点在同一块内的询问，我们可以暴力求出两点之间的 RMQ，时间复杂度为 $O(\sqrt n)$，但是单个询问的左右端点在同一块内的期望为 $O(\frac{\sqrt n}{n})$，所以这种方法的时间复杂度为期望 $O(n)$．
+    For a query whose left and right endpoints are in the same block, we can compute the RMQ between the two points by brute force in $O(\sqrt n)$ time. But the expected chance that a single query has both endpoints in the same block is $O(\frac{\sqrt n}{n})$, so this method takes expected $O(n)$ time.
     
-    而在算法竞赛中，我们并不用非常担心出题人卡掉这种算法，因为我们可以通过在 $\sqrt n$ 的基础上随机微调块大小，很大程度上避免算法在根据特定块大小构造的数据中出现最坏情况．并且如果出题人想要卡掉这种方法，则暴力有可能可以通过．
+    In contests, we don't need to worry much about the problem setter breaking this algorithm: by randomly adjusting the block size slightly around $\sqrt n$, we can largely avoid worst cases in test data built for a specific block size. Also, if the problem setter wants to break this method, brute force might pass instead.
     
-    这是一种期望时间复杂度达到下界，并且代码实现难度和算法常数均较小的算法，因此在算法竞赛中比较实用．
+    This algorithm reaches the lower bound in expected time complexity, and it is easy to code with a small constant factor, so it is quite practical in contests.
     
-    以上做法参考了 [P3793 由乃救爷爷](https://www.luogu.com.cn/problem/P3793) 中的题解．
+    The method above is based on an editorial for [P3793 Yuno Saves Grandpa](https://www.luogu.com.cn/problem/P3793).
 
-## 加减 1RMQ
+## ±1 RMQ
 
-若序列满足相邻两元素相差为 1，在这个序列上做 RMQ 可以成为加减 1RMQ，根究这个特性可以改进 Four Russian 算法，做到 $O(n) \sim O(1)$ 的时间复杂度，$O(n)$ 的空间复杂度．
+If adjacent elements of a sequence differ by exactly 1, RMQ on this sequence is called ±1 RMQ. Using this property, we can improve the Four Russian algorithm to reach $O(n) \sim O(1)$ time complexity and $O(n)$ space complexity.
 
-由于 Four russian 算法的瓶颈在于块内 RMQ 问题，我们重点去讨论块内 RMQ 问题的优化．
+Since the bottleneck of the Four Russian algorithm is the RMQ inside each block, we focus on optimizing the in-block RMQ.
 
-由于相邻两个数字的差值为 $\pm 1$，所以在固定左端点数字时 长度不超过 $\log n$ 的右侧序列种类数为 $\sum_{i=1}^{\log n} 2^{i-1}$，而这个式子显然不超过 $n$．
+Since adjacent numbers differ by $\pm 1$, once the leftmost number is fixed, the number of possible sequences to its right of length at most $\log n$ is $\sum_{i=1}^{\log n} 2^{i-1}$, which clearly does not exceed $n$.
 
-这启示我们可以预处理所有不超过 $n$ 种情况的 最小值 - 第一个元素 的值．
+This suggests that we can precompute the value of (minimum minus first element) for all of these at most $n$ cases.
 
-在预处理的时候我们需要去预处理同一块内相邻两个数字之间的差，并且使用二进制将其表示出来．
+During preprocessing, we compute the differences between adjacent numbers in the same block and encode them in binary.
 
-在询问的时候我们找到询问区间对应的二进制表示，查表得出答案．
+When answering a query, we find the binary encoding for the query range and look up the answer in the table.
 
-这样子 Four russian 预处理的时间复杂度就被优化到了 $O(n)$．
+This way, the preprocessing time of Four Russian is reduced to $O(n)$.
 
-## 笛卡尔树在 RMQ 上的应用
+## Using the Cartesian tree for RMQ
 
-不了解笛卡尔树的朋友请移步 [笛卡尔树](../ds/cartesian-tree.md)．
+If you are not familiar with Cartesian trees, please see [Cartesian tree](../ds/cartesian-tree.md).
 
-不难发现，原序列上两个点之间的 min/max，等于笛卡尔树上两个点的 LCA 的权值．根据这一点就可以借助 $O(n) \sim O(1)$ 求解树上两个点之间的 LCA 进而求解 RMQ．$O(n) \sim O(1)$ 树上 LCA 在 [LCA - 标准 RMQ](../graph/lca.md#标准-rmq) 已经有描述，这里不再展开．
+It is easy to see that the min/max between two positions in the original sequence equals the value of the LCA of those two nodes in the Cartesian tree. Based on this, we can solve RMQ by computing the LCA of two tree nodes in $O(n) \sim O(1)$. The $O(n) \sim O(1)$ tree LCA is already described in [LCA - Standard RMQ](../graph/lca.md#标准-rmq), so we will not go into it here.
 
-总结一下，笛卡尔树在 RMQ 上的应用，就是通过将普通 RMQ 问题转化为 LCA 问题，进而转化为加减 1 RMQ 问题进行求解，时间复杂度为 $O(n) \sim O(1)$．当然由于转化步数较多，$O(n) \sim O(1)$ RMQ 常数较大．
+To sum up, using the Cartesian tree for RMQ means turning a general RMQ problem into an LCA problem, and then into a ±1 RMQ problem. The time complexity is $O(n) \sim O(1)$. Of course, because of the many conversion steps, this $O(n) \sim O(1)$ RMQ has a large constant factor.
 
-如果数据随机，还可以暴力在笛卡尔树上查找．此时的时间复杂度为期望 $O(n) \sim O(\log n)$，并且实际使用时这种算法的常数往往很小．
+If the data is random, you can also search the Cartesian tree directly by brute force. Then the time complexity is expected $O(n) \sim O(\log n)$, and in practice this algorithm usually has a very small constant factor.
 
-### 例题 [Luogu P3865【模板】ST 表](https://www.luogu.com.cn/problem/P3865)
+### Example problem [Luogu P3865 [Template] Sparse Table](https://www.luogu.com.cn/problem/P3865)
 
-## 基于状压的线性 RMQ 算法
+## A linear RMQ algorithm based on bitmasks
 
-### 隐性要求
+### Implicit requirement
 
--   序列的长度 $n$ 满足 $\log_2{n} \leq 64$．
+-   The length $n$ of the sequence satisfies $\log_2{n} \leq 64$.
 
-### 前置知识
+### Prerequisites
 
 -   [Sparse Table](../ds/sparse-table.md)
 
--   基本位操作
+-   Basic bit operations
 
--   前后缀极值
+-   Prefix and suffix maximums
 
-### 算法原理
+### How it works
 
-将原序列 $A[1\cdots n]$ 分成每块长度为 $O(\log_2{n})$ 的 $O(\frac{n}{\log_2{n}})$ 块．
+Split the original sequence $A[1\cdots n]$ into $O(\frac{n}{\log_2{n}})$ blocks, each of length $O(\log_2{n})$.
 
-> 听说令块长为 $1.5\times \log_2{n}$ 时常数较小．
+> It is said that the constant factor is smaller when the block length is $1.5\times \log_2{n}$.
 
-记录每块的最大值，并用 ST 表维护块间最大值，复杂度 $O(n)$．
+Record the maximum of each block and maintain the maximum between blocks with a sparse table, in $O(n)$.
 
-记录块中每个位置的前、后缀最大值 $Pre[1\cdots n], Sub[1\cdots n]$（$Pre[i]$ 即 $A[i]$ 到其所在块的块首的最大值），复杂度 $O(n)$．
+For each position, record the prefix and suffix maximums within its block, $Pre[1\cdots n], Sub[1\cdots n]$ ($Pre[i]$ is the maximum from the start of $A[i]$'s block to $A[i]$), in $O(n)$.
 
-若查询的 $l,r$ 在两个不同块上，分别记为第 $bl,br$ 块，则最大值为 $[bl+1,br-1]$ 块间的最大值，以及 $Sub[l]$ 和 $Pre[r]$ 这三个数的较大值．
+If the queried $l,r$ are in two different blocks, numbered $bl,br$, then the maximum is the largest of three values: the maximum over blocks $[bl+1,br-1]$, $Sub[l]$, and $Pre[r]$.
 
-现在的问题在于若 $l,r$ 在同一块中怎么办．
+The remaining question is what to do when $l,r$ are in the same block.
 
-将 $A[1\cdots r]$ 依次插入单调栈中，记录下标和值，满足值从栈底到栈顶递减，则 $A[l,r]$ 中的最大值为从栈底往上，单调栈中第一个满足其下标 $p \geq l$ 的值．
+Insert $A[1\cdots r]$ into a monotonic stack one by one, recording both indices and values, so that values decrease from the bottom of the stack to the top. Then the maximum of $A[l,r]$ is the first value in the monotonic stack, going up from the bottom, whose index $p$ satisfies $p \geq l$.
 
-由于 $A[p]$ 是 $A[l,r]$ 中的最大值，因而在插入 $A[p]$ 时，$A[l\cdots p-1]$ 都被弹出，且在插入 $A[p+1\cdots r]$ 时不可能将 $A[p]$ 弹出．
+Since $A[p]$ is the maximum of $A[l,r]$, all of $A[l\cdots p-1]$ were popped when $A[p]$ was inserted, and inserting $A[p+1\cdots r]$ can never pop $A[p]$.
 
-而如果用 $0/1$ 表示每个数是否在栈中，就可以用整数状压，则 $p$ 为第 $l$ 位后的第一个 $1$ 的位置．
+If we use $0/1$ to mark whether each number is in the stack, we can store this state as an integer bitmask. Then $p$ is the position of the first $1$ at or after bit $l$.
 
-由于块大小为 $O(\log_2{n})$，因而最多不超过 $64$ 位，可以用一个整数存下（即隐性条件的原因）．
+Since the block size is $O(\log_2{n})$, it never exceeds $64$ bits, so it fits in one integer (this is the reason for the implicit requirement).
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     #include <algorithm>
     #include <cmath>
@@ -238,6 +238,6 @@ Four russian 是一个由四位俄罗斯籍的计算机科学家提出来的基�
     }
     ```
 
-### 习题
+### Exercises
 
-[\[BJOI 2020\] 封印](https://loj.ac/problem/3298)：SAM+RMQ
+[\[BJOI 2020\] Seal](https://loj.ac/problem/3298): SAM+RMQ
