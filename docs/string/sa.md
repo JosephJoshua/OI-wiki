@@ -1,64 +1,64 @@
-## 一些约定
+## Conventions
 
-字符串相关的定义请参考 [字符串基础](./basic.md)．
+For definitions related to strings, see [String basics](./basic.md).
 
-字符串下标从 $1$ 开始．
+String indices start from $1$.
 
-字符串 $s$ 的长度为 $n$．
+The length of the string $s$ is $n$.
 
-" 后缀 $i$" 代指以第 $i$ 个字符开头的后缀，存储时用 $i$ 代表字符串 $s$ 的后缀 $s[i\dots n]$．
+"Suffix $i$" means the suffix that starts at the $i$-th character. We store it as $i$, which stands for the suffix $s[i\dots n]$ of the string $s$.
 
-## 后缀数组是什么？
+## What is a suffix array?
 
-后缀数组（Suffix Array）主要关系到两个数组：$sa$ 和 $rk$．
+A suffix array mainly involves two arrays: $sa$ and $rk$.
 
-其中，$sa[i]$ 表示将所有后缀排序后第 $i$ 小的后缀的编号，也是所说的后缀数组，后文也称编号数组 $sa$；
+Here, $sa[i]$ is the index of the $i$-th smallest suffix after all suffixes are sorted. This is what we call the suffix array; below we also call it the index array $sa$.
 
-$rk[i]$ 表示后缀 $i$ 的排名，是重要的辅助数组，后文也称排名数组 $rk$．
+$rk[i]$ is the rank of suffix $i$. It is an important helper array; below we also call it the rank array $rk$.
 
-这两个数组满足性质：$sa[rk[i]]=rk[sa[i]]=i$．
+The two arrays satisfy: $sa[rk[i]]=rk[sa[i]]=i$.
 
-### 解释
+### Explanation
 
-后缀数组示例：
+An example of a suffix array:
 
 [![](./images/sa1.png)][2]
 
-## 后缀数组怎么求？
+## How do we compute a suffix array?
 
-### O(n^2logn) 做法
+### O(n^2logn) approach
 
-相信这个做法大家还是能自己想到的：将盛有全部后缀字符串的数组进行 `sort` 排序，由于排序进行 $O(n\log n)$ 次字符串比较，每次字符串比较要 $O(n)$ 次字符比较，所以这个排序是 $O(n^2\log n)$ 的时间复杂度．
+You can probably come up with this approach yourself: put all the suffixes into an array and `sort` it. Sorting does $O(n\log n)$ string comparisons, and each string comparison takes $O(n)$ character comparisons, so this sort runs in $O(n^2\log n)$ time.
 
-### O(nlog^2n) 做法
+### O(nlog^2n) approach
 
-这个做法要用到倍增的思想．
+This approach uses the idea of doubling (binary lifting).
 
-首先对字符串 $s$ 的所有长度为 $1$ 的子串，即每个字符进行排序，得到排序后的编号数组 $sa_1$ 和排名数组 $rk_1$．
+First, sort all substrings of $s$ of length $1$, that is, the individual characters. This gives the index array $sa_1$ and the rank array $rk_1$.
 
-倍增过程：
+The doubling process:
 
-1.  用两个长度为 $1$ 的子串的排名，即 $rk_1[i]$ 和 $rk_1[i+1]$，作为排序的第一第二关键字，就可以对字符串 $s$ 的每个长度为 $2$ 的子串：$\{s[i\dots \min(i+1, n)]\ |\ i \in [1,\ n]\}$ 进行排序，得到 $sa_2$ 和 $rk_2$；
+1.  Use the ranks of two substrings of length $1$, namely $rk_1[i]$ and $rk_1[i+1]$, as the first and second sort keys. Then we can sort every substring of $s$ of length $2$: $\{s[i\dots \min(i+1, n)]\ |\ i \in [1,\ n]\}$, and get $sa_2$ and $rk_2$;
 
-2.  之后用两个长度为 $2$ 的子串的排名，即 $rk_2[i]$ 和 $rk_2[i+2]$，作为排序的第一第二关键字，就可以对字符串 $s$ 的每个长度为 $4$ 的子串：$\{s[i\dots \min(i+3, n)]\ |\ i \in [1,\ n]\}$ 进行排序，得到 $sa_4$ 和 $rk_4$；
+2.  Next, use the ranks of two substrings of length $2$, namely $rk_2[i]$ and $rk_2[i+2]$, as the first and second sort keys. Then we can sort every substring of $s$ of length $4$: $\{s[i\dots \min(i+3, n)]\ |\ i \in [1,\ n]\}$, and get $sa_4$ and $rk_4$;
 
-3.  以此倍增，用长度为 $w/2$ 的子串的排名，即 $rk_{w/2}[i]$ 和 $rk_{w/2}[i+w/2]$，作为排序的第一第二关键字，就可以对字符串 $s$ 的每个长度为 $w$ 的子串 $s[i\dots \min(i+w-1,\ n)]$ 进行排序，得到 $sa_w$ 和 $rk_w$．其中，类似字母序排序规则，当 $i+w>n$ 时，$rk_w[i+w]$ 视为无穷小；
+3.  Keep doubling in this way: use the ranks of substrings of length $w/2$, namely $rk_{w/2}[i]$ and $rk_{w/2}[i+w/2]$, as the first and second sort keys. Then we can sort every substring of $s$ of length $w$, $s[i\dots \min(i+w-1,\ n)]$, and get $sa_w$ and $rk_w$. As in alphabetical ordering, when $i+w>n$, $rk_w[i+w]$ is treated as negative infinity;
 
-4.  $rk_w[i]$ 即是子串 $s[i\dots i + w - 1]$ 的排名，这样当 $w \geqslant n$ 时，得到的编号数组 $sa_w$，也就是我们需要的后缀数组．
+4.  $rk_w[i]$ is the rank of the substring $s[i\dots i + w - 1]$. So once $w \geqslant n$, the index array $sa_w$ we get is exactly the suffix array we need.
 
-#### 过程
+#### Process
 
-倍增排序示意图：
+Illustration of the doubling sort:
 
 [![](./images/sa2.png)][2]
 
-显然倍增的过程是 $O(\log n)$，而每次倍增用 `sort` 对子串进行排序是 $O(n\log n)$，而每次子串的比较花费 $2$ 次字符比较；
+Clearly there are $O(\log n)$ doubling rounds. In each round, sorting the substrings with `sort` takes $O(n\log n)$, and each substring comparison costs $2$ comparisons;
 
-除此之外，每次倍增在 `sort` 排序完后，还有额外的 $O(n)$ 时间复杂度的，更新 $rk$ 的操作，但是相对于 $O(n\log n)$ 被忽略不计；
+Besides that, after each round's `sort`, there is an extra $O(n)$ step to update $rk$, but it is negligible compared with $O(n\log n)$;
 
-所以这个算法的时间复杂度就是 $O(n\log^2n)$．
+So the time complexity of this algorithm is $O(n\log^2n)$.
 
-??? note "实现"
+??? note "Implementation"
     ```cpp
     #include <algorithm>
     #include <cstdio>
@@ -72,8 +72,8 @@ $rk[i]$ 表示后缀 $i$ 的排名，是重要的辅助数组，后文也称排�
     char s[N];
     int n, w, sa[N], rk[N << 1], oldrk[N << 1];
     
-    // 为了防止访问 rk[i+w] 导致数组越界，开两倍数组．
-    // 当然也可以在访问前判断是否越界，但直接开两倍数组方便一些．
+    // The arrays are twice as large so that accessing rk[i+w] never goes out of bounds.
+    // You could also check the bounds before each access, but doubling the size is simpler.
     
     int main() {
       int i, p;
@@ -85,10 +85,10 @@ $rk[i]$ 表示后缀 $i$ 的排名，是重要的辅助数组，后文也称排�
       for (w = 1; w < n; w <<= 1) {
         sort(sa + 1, sa + n + 1, [](int x, int y) {
           return rk[x] == rk[y] ? rk[x + w] < rk[y + w] : rk[x] < rk[y];
-        });  // 这里用到了 lambda
+        });  // a lambda is used here
         memcpy(oldrk, rk, sizeof(rk));
-        // 由于计算 rk 的时候原来的 rk 会被覆盖，要先复制一份
-        // 若两个子串相同，它们对应的 rk 也需要相同，所以要去重
+        // computing rk overwrites the old rk, so make a copy first
+        // equal substrings must get equal rk, so remove duplicates
         for (p = 0, i = 1; i <= n; ++i) {
           if (oldrk[sa[i]] == oldrk[sa[i - 1]] &&
               oldrk[sa[i] + w] == oldrk[sa[i - 1] + w]) {
@@ -105,15 +105,15 @@ $rk[i]$ 表示后缀 $i$ 的排名，是重要的辅助数组，后文也称排�
     }
     ```
 
-### O(nlogn) 做法
+### O(nlogn) approach
 
-在刚刚的 $O(n\log^2n)$ 做法中，单次排序是 $O(n\log n)$ 的，如果能 $O(n)$ 排序，就能 $O(n\log n)$ 计算后缀数组了．
+In the $O(n\log^2n)$ approach above, a single sort takes $O(n\log n)$. If we can sort in $O(n)$, we can compute the suffix array in $O(n\log n)$.
 
-前置知识：[计数排序](../basic/counting-sort.md)，[基数排序](../basic/radix-sort.md)．
+Prerequisites: [counting sort](../basic/counting-sort.md), [radix sort](../basic/radix-sort.md).
 
-由于计算后缀数组的过程中排序的关键字是排名，值域为 $O(n)$，并且是一个双关键字的排序，可以使用基数排序优化至 $O(n)$．
+When computing the suffix array, the sort keys are ranks, whose values are in a range of size $O(n)$, and the sort uses two keys. So we can use radix sort to bring each sort down to $O(n)$.
 
-??? note "实现"
+??? note "Implementation"
     ```cpp
     #include <algorithm>
     #include <cstdio>
@@ -146,15 +146,15 @@ $rk[i]$ 表示后缀 $i$ 的排名，是重要的辅助数组，后文也称排�
       }
     
       for (w = 1; w < n; w <<= 1, m = n) {
-        // 对第二关键字：id[i] + w进行计数排序
+        // counting sort by the second key: id[i] + w
         memset(cnt, 0, sizeof(cnt));
         memcpy(id + 1, sa + 1,
-               n * sizeof(int));  // id保存一份儿sa的拷贝，实质上就相当于oldsa
+               n * sizeof(int));  // id keeps a copy of sa; it is essentially oldsa
         for (i = 1; i <= n; ++i) ++cnt[rk[id[i] + w]];
         for (i = 1; i <= m; ++i) cnt[i] += cnt[i - 1];
         for (i = n; i >= 1; --i) sa[cnt[rk[id[i] + w]]--] = id[i];
     
-        // 对第一关键字：id[i]进行计数排序
+        // counting sort by the first key: id[i]
         memset(cnt, 0, sizeof(cnt));
         memcpy(id + 1, sa + 1, n * sizeof(int));
         for (i = 1; i <= n; ++i) ++cnt[rk[id[i]]];
@@ -178,17 +178,17 @@ $rk[i]$ 表示后缀 $i$ 的排名，是重要的辅助数组，后文也称排�
     }
     ```
 
-### 一些常数优化
+### Some constant-factor optimizations
 
-如果你把上面那份代码交到 [LOJ #111: 后缀排序](https://loj.ac/problem/111) 上：
+If you submit the code above to [LOJ #111: Suffix Sorting](https://loj.ac/problem/111):
 
 ![](./images/sa3.png)
 
-这是因为，上面那份代码的常数的确很大．
+This is because the code above really does have a large constant factor.
 
-#### 第二关键字无需计数排序
+#### The second key does not need a counting sort
 
-思考一下第二关键字排序的实质，其实就是把超出字符串范围（即 $sa[i] + w > n$）的 $sa[i]$ 放到 $sa$ 数组头部，然后把剩下的依原顺序放入：
+Think about what sorting by the second key actually does: it moves the $sa[i]$ that go past the end of the string (that is, $sa[i] + w > n$) to the front of the $sa$ array, and then puts the rest in their original order:
 
 ```cpp
 int cur = 0;
@@ -197,15 +197,15 @@ for (int i = 1; i <= n; i++)
   if (sa[i] > w) id[++cur] = sa[i] - w;
 ```
 
-#### 优化计数排序的值域
+#### Shrink the value range of the counting sort
 
-每次对 $rk$ 进行更新之后，我们都计算了一个 $p$，这个 $p$ 即是 $rk$ 的值域，将值域改成它即可．
+Each time we update $rk$, we compute a value $p$. This $p$ is the value range of $rk$, so just use it as the range.
 
-#### 若排名都不相同可直接生成后缀数组
+#### If all ranks are distinct, the suffix array is ready
 
-考虑新的 $rk$ 数组，若其值域为 $[1,n]$ 那么每个排名都不同，此时无需再排序．
+Look at the new $rk$ array. If its values cover $[1,n]$, then every rank is distinct, and no more sorting is needed.
 
-??? note "实现"
+??? note "Implementation"
     ```cpp
     #include <algorithm>
     #include <cstdio>
@@ -229,7 +229,7 @@ for (int i = 1; i <= n; i++)
       for (int i = 1; i <= m; i++) cnt[i] += cnt[i - 1];
       for (int i = n; i >= 1; i--) sa[cnt[rk[i]]--] = i;
     
-      for (int w = 1;; w <<= 1, m = p) {  // m = p 即为值域优化
+      for (int w = 1;; w <<= 1, m = p) {  // m = p is the value-range optimization
         int cur = 0;
         for (int i = n - w + 1; i <= n; i++) id[++cur] = i;
         for (int i = 1; i <= n; i++)
@@ -250,7 +250,7 @@ for (int i = 1; i <= n; i++)
             rk[sa[i]] = ++p;
         }
     
-        if (p == n) break;  // p = n 时无需再排序
+        if (p == n) break;  // no more sorting needed once p = n
       }
     
       for (int i = 1; i <= n; i++) printf("%d ", sa[i]);
@@ -259,90 +259,90 @@ for (int i = 1; i <= n; i++)
     }
     ```
 
-### O(n) 做法
+### O(n) approach
 
-在一般的题目中，常数较小的倍增求后缀数组是完全够用的，求后缀数组以外的部分也经常有 $O(n\log n)$ 的复杂度，倍增求解后缀数组不会成为瓶颈．
+In typical problems, the doubling method with a small constant factor is fast enough. The parts of the solution other than building the suffix array often take $O(n\log n)$ anyway, so the doubling construction will not be the bottleneck.
 
-但如果遇到特殊题目、时限较紧的题目，或者是你想追求更短的用时，就需要学习 $O(n)$ 求后缀数组的方法．
+But for special problems, problems with tight time limits, or if you just want a faster running time, you need to learn how to build a suffix array in $O(n)$.
 
 #### SA-IS
 
-可以参考 [诱导排序与 SA-IS 算法](https://riteme.site/blog/2016-6-19/sais.html)，另外它的 [评论页面](https://github.com/riteme/riteme.github.io/issues/28) 也有参考价值．
+See [Induced sorting and the SA-IS algorithm](https://riteme.site/blog/2016-6-19/sais.html). Its [comments page](https://github.com/riteme/riteme.github.io/issues/28) is also worth reading.
 
 #### DC3
 
-可以参考[\[2009\] 后缀数组——处理字符串的有力工具 by. 罗穗骞][2]．
+See [\[2009\] Suffix Arrays: A Powerful Tool for Processing Strings, by Luo Suiqian][2].
 
-## 后缀数组的应用
+## Applications of suffix arrays
 
-### 寻找最小的循环移动位置
+### Finding the smallest cyclic shift
 
-将字符串 $S$ 复制一份变成 $SS$ 就转化成了后缀排序问题．
+Duplicate the string $S$ into $SS$, and the problem becomes a suffix sorting problem.
 
-例题：[「JSOI2007」字符加密](https://www.luogu.com.cn/problem/P4051)．
+Example problem: [JSOI 2007 — Character Encryption](https://www.luogu.com.cn/problem/P4051).
 
-### 在字符串中找子串
+### Finding a substring in a string
 
-任务是在线地在主串 $T$ 中寻找模式串 $S$．在线的意思是，我们已经预先知道主串 $T$，但是当且仅当询问时才知道模式串 $S$．我们可以先构造出 $T$ 的后缀数组，然后查找子串 $S$．若子串 $S$ 在 $T$ 中出现，它必定是 $T$ 的一些后缀的前缀．因为我们已经将所有后缀排序了，我们可以通过在 $p$ 数组中二分 $S$ 来实现．比较子串 $S$ 和当前后缀的时间复杂度为 $O(|S|)$，因此找子串的时间复杂度为 $O(|S|\log |T|)$．注意，如果该子串在 $T$ 中出现了多次，每次出现都是在 $p$ 数组中相邻的．因此出现次数可以通过再次二分找到，输出每次出现的位置也很轻松．
+The task is to find a pattern $S$ in a text $T$ online. Online means that we know the text $T$ in advance, but we only learn the pattern $S$ when a query arrives. We can first build the suffix array of $T$, and then search for the substring $S$. If $S$ occurs in $T$, it must be a prefix of some suffixes of $T$. Since all the suffixes are already sorted, we can binary search for $S$ in the $p$ array. Comparing $S$ with the current suffix takes $O(|S|)$ time, so finding the substring takes $O(|S|\log |T|)$ time. Note that if the substring occurs in $T$ multiple times, all its occurrences are adjacent in the $p$ array. So the number of occurrences can be found with another binary search, and listing the positions of all occurrences is also easy.
 
-### 从字符串首尾取字符最小化字典序
+### Taking characters from both ends to minimize the lexicographic order
 
-例题：[「USACO07DEC」Best Cow Line](https://www.luogu.com.cn/problem/P2870)．
+Example problem: [USACO 2007 December — Best Cow Line](https://www.luogu.com.cn/problem/P2870).
 
-题意：给你一个字符串，每次从首或尾取一个字符组成字符串，问所有能够组成的字符串中字典序最小的一个．
+Problem: you are given a string. Each time, take one character from its front or its back and append it to a new string. Among all strings that can be formed this way, find the lexicographically smallest one.
 
-??? note "题解"
-    暴力做法就是每次最坏 $O(n)$ 地判断当前应该取首还是尾（即比较取首得到的字符串与取尾得到的反串的大小），只需优化这一判断过程即可．
+??? note "Solution"
+    The brute-force approach decides, in $O(n)$ worst case each time, whether to take the front or the back (that is, it compares the string you get by taking from the front with the reversed string you get by taking from the back). We only need to speed up this decision.
     
-    由于需要在原串后缀与反串后缀构成的集合内比较大小，可以将反串拼接在原串后，并在中间加上一个没出现过的字符（如 `#`，代码中可以直接使用空字符），求后缀数组，即可 $O(1)$ 完成这一判断．
+    We need to compare elements of the set made of suffixes of the original string and suffixes of the reversed string. So append the reversed string to the original string, put a character that does not appear anywhere between them (such as `#`; in code you can simply use the null character), and build the suffix array. Then each decision takes $O(1)$.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/string/code/sa/sa_1.cpp"
     ```
 
-## height 数组
+## The height array
 
-### LCP（最长公共前缀）
+### LCP (longest common prefix)
 
-两个字符串 $S$ 和 $T$ 的 LCP 就是最大的 $x$($x\le \min(|S|, |T|)$) 使得 $S_i=T_i\ (\forall\ 1\le i\le x)$．
+The LCP of two strings $S$ and $T$ is the largest $x$ ($x\le \min(|S|, |T|)$) such that $S_i=T_i\ (\forall\ 1\le i\le x)$.
 
-下文中以 $lcp(i,j)$ 表示后缀 $i$ 和后缀 $j$ 的最长公共前缀（的长度）．
+Below, $lcp(i,j)$ denotes (the length of) the longest common prefix of suffix $i$ and suffix $j$.
 
-### height 数组的定义
+### Definition of the height array
 
-$height[i]=lcp(sa[i],sa[i-1])$，即第 $i$ 名的后缀与它前一名的后缀的最长公共前缀．
+$height[i]=lcp(sa[i],sa[i-1])$, that is, the longest common prefix of the suffix ranked $i$ and the suffix ranked just before it.
 
-$height[1]$ 可以视作 $0$．
+$height[1]$ can be treated as $0$.
 
-### O(n) 求 height 数组需要的一个引理
+### A lemma needed to compute the height array in O(n)
 
 $height[rk[i]]\ge height[rk[i-1]]-1$
 
-???+ note "证明"
-    当 $height[rk[i-1]]\le1$ 时，上式显然成立（右边小于等于 $0$）．
+???+ note "Proof"
+    When $height[rk[i-1]]\le1$, the inequality clearly holds (the right side is at most $0$).
     
-    当 $height[rk[i-1]]>1$ 时：
+    When $height[rk[i-1]]>1$:
     
-    根据 $height$ 定义，有 $lcp(sa[rk[i-1]], sa[rk[i-1]-1]) = height[rk[i-1]] > 1$．
+    By the definition of $height$, $lcp(sa[rk[i-1]], sa[rk[i-1]-1]) = height[rk[i-1]] > 1$.
     
-    既然后缀 $i-1$ 和后缀 $sa[rk[i-1]-1]$ 有长度为 $height[rk[i-1]]$ 的最长公共前缀，
+    Since suffix $i-1$ and suffix $sa[rk[i-1]-1]$ have a longest common prefix of length $height[rk[i-1]]$,
     
-    那么不妨用 $aA$ 来表示这个最长公共前缀．（其中 $a$ 是一个字符，$A$ 是长度为 $height[rk[i-1]]-1$ 的字符串，非空）
+    let us write this longest common prefix as $aA$. (Here $a$ is a single character and $A$ is a non-empty string of length $height[rk[i-1]]-1$.)
     
-    那么后缀 $i-1$ 可以表示为 $aAD$，后缀 $sa[rk[i-1]-1]$ 可以表示为 $aAB$．（$B < D$，$B$ 可能为空串，$D$ 非空）
+    Then suffix $i-1$ can be written as $aAD$, and suffix $sa[rk[i-1]-1]$ can be written as $aAB$. ($B < D$; $B$ may be the empty string; $D$ is non-empty.)
     
-    进一步地，后缀 $i$ 可以表示为 $AD$，存在后缀（$sa[rk[i-1]-1]+1$）$AB$．
+    Going one step further, suffix $i$ can be written as $AD$, and there exists a suffix (suffix $sa[rk[i-1]-1]+1$) equal to $AB$.
     
-    因为后缀 $sa[rk[i]-1]$ 在大小关系的排名上仅比后缀 $sa[rk[i]]$ 也就是后缀 $i$，小一位，而 $AB < AD$．
+    Suffix $sa[rk[i]-1]$ is ranked exactly one place below suffix $sa[rk[i]]$, which is suffix $i$, and $AB < AD$.
     
-    所以 $AB \leqslant$ 后缀 $sa[rk[i]-1] < AD$，显然后缀 $i$ 和后缀 $sa[rk[i]-1]$ 有公共前缀 $A$．
+    So $AB \leqslant$ suffix $sa[rk[i]-1] < AD$. Clearly suffix $i$ and suffix $sa[rk[i]-1]$ share the common prefix $A$.
     
-    于是就可以得出 $lcp(i,sa[rk[i]-1])$ 至少是 $height[rk[i-1]]-1$，也即 $height[rk[i]]\ge height[rk[i-1]]-1$．
+    Therefore $lcp(i,sa[rk[i]-1])$ is at least $height[rk[i-1]]-1$, that is, $height[rk[i]]\ge height[rk[i-1]]-1$.
 
-### O(n) 求 height 数组的代码实现
+### Code for computing the height array in O(n)
 
-利用上面这个引理暴力求即可：
+Using the lemma above, just compute it by brute force:
 
 ```cpp
 for (i = 1, k = 0; i <= n; ++i) {
@@ -353,97 +353,97 @@ for (i = 1, k = 0; i <= n; ++i) {
 }
 ```
 
-$k$ 不会超过 $n$，最多减 $n$ 次，所以最多加 $2n$ 次，总复杂度就是 $O(n)$．
+$k$ never exceeds $n$ and is decreased at most $n$ times, so it is increased at most $2n$ times. The total complexity is $O(n)$.
 
-## height 数组的应用
+## Applications of the height array
 
-### 两子串最长公共前缀
+### LCP of two substrings
 
 $lcp(sa[i],sa[j])=\min\{height[i+1..j]\}$
 
-感性理解：如果 $height$ 一直大于某个数，前这么多位就一直没变过；反之，由于后缀已经排好序了，不可能变了之后变回来．
+Intuition: as long as $height$ stays above some value, that many leading characters never change. Conversely, since the suffixes are sorted, once they change they cannot change back.
 
-严格证明可以参考[\[2004\] 后缀数组 by. 许智磊][1]．
+For a rigorous proof, see [\[2004\] Suffix Arrays, by Xu Zhilei][1].
 
-有了这个定理，求两子串最长公共前缀就转化为了 [RMQ 问题](../topic/rmq.md)．
+With this theorem, finding the LCP of two substrings becomes an [RMQ problem](../topic/rmq.md).
 
-### 比较一个字符串的两个子串的大小关系
+### Comparing two substrings of a string
 
-假设需要比较的是 $A=S[a..b]$ 和 $B=S[c..d]$ 的大小关系．
+Suppose we want to compare $A=S[a..b]$ and $B=S[c..d]$.
 
-若 $lcp(a, c)\ge\min(|A|, |B|)$，$A<B\iff |A|<|B|$．
+If $lcp(a, c)\ge\min(|A|, |B|)$, then $A<B\iff |A|<|B|$.
 
-否则，$A<B\iff rk[a]< rk[c]$．
+Otherwise, $A<B\iff rk[a]< rk[c]$.
 
-### 不同子串的数目
+### Number of distinct substrings
 
-子串就是后缀的前缀，所以可以枚举每个后缀，计算前缀总数，再减掉重复．
+A substring is a prefix of a suffix. So we can go through every suffix, count its prefixes, and subtract the duplicates.
 
-「前缀总数」其实就是子串个数，为 $n(n+1)/2$．
+The "total number of prefixes" is just the number of substrings, $n(n+1)/2$.
 
-如果按后缀排序的顺序枚举后缀，每次新增的子串就是除了与上一个后缀的 LCP 剩下的前缀．这些前缀一定是新增的，否则会破坏 $lcp(sa[i],sa[j])=\min\{height[i+1..j]\}$ 的性质．只有这些前缀是新增的，因为 LCP 部分在枚举上一个前缀时计算过了．
+If we go through the suffixes in sorted order, the new substrings added by each suffix are exactly its prefixes longer than the LCP with the previous suffix. These prefixes must be new, or else the property $lcp(sa[i],sa[j])=\min\{height[i+1..j]\}$ would be violated. And only these prefixes are new, because the LCP part was already counted with the previous suffix.
 
-所以答案为：
+So the answer is:
 
 $\frac{n(n+1)}{2}-\sum\limits_{i=2}^nheight[i]$
 
-### 出现至少 k 次的子串的最大长度
+### Maximum length of a substring that occurs at least k times
 
-例题：[「USACO06DEC」Milk Patterns](https://www.luogu.com.cn/problem/P2852)．
+Example problem: [USACO 2006 December — Milk Patterns](https://www.luogu.com.cn/problem/P2852).
 
-??? note "题解"
-    出现至少 $k$ 次意味着后缀排序后有至少连续 $k$ 个后缀以这个子串作为公共前缀．
+??? note "Solution"
+    Occurring at least $k$ times means that, after sorting the suffixes, there are at least $k$ consecutive suffixes that have this substring as a common prefix.
     
-    所以，求出每相邻 $k-1$ 个 $height$ 的最小值，再求这些最小值的最大值就是答案．
+    So compute the minimum of every $k-1$ consecutive $height$ values; the maximum of these minimums is the answer.
     
-    可以使用单调队列 $O(n)$ 解决，但使用其它方式也足以 AC．
+    This can be done in $O(n)$ with a monotonic queue, but other methods are also good enough to get AC.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/string/code/sa/sa_2.cpp"
     ```
 
-### 是否有某字符串在文本串中至少不重叠地出现了两次
+### Does some string occur at least twice in the text without overlapping?
 
-可以二分目标串的长度 $|s|$，将 $h$ 数组划分成若干个连续 LCP 大于等于 $|s|$ 的段，利用 RMQ 对每个段求其中出现的数中最大和最小的下标，若这两个下标的距离满足条件，则一定有长度为 $|s|$ 的字符串不重叠地出现了两次．
+Binary search on the length $|s|$ of the target string. Split the $h$ array into segments in which consecutive LCPs are all at least $|s|$. For each segment, use RMQ to find the largest and smallest index among the suffixes in it. If the distance between these two indices meets the condition, then some string of length $|s|$ occurs twice without overlapping.
 
-### 连续的若干个相同子串
+### Several consecutive copies of the same substring
 
-我们可以枚举连续串的长度 $|s|$，按照 $|s|$ 对整个串进行分块，对相邻两块的块首进行 LCP 与 LCS 查询，具体可见[\[2009\] 后缀数组——处理字符串的有力工具][2]．
+We can enumerate the length $|s|$ of the repeated unit, split the whole string into blocks of length $|s|$, and run LCP and LCS queries on the starting positions of adjacent blocks. For details, see [\[2009\] Suffix Arrays: A Powerful Tool for Processing Strings][2].
 
-例题：[「NOI2016」优秀的拆分](https://loj.ac/p/2083)．
+Example problem: [NOI 2016 — Excellent Split](https://loj.ac/p/2083).
 
-### 结合并查集
+### Combining with DSU
 
-某些题目求解时要求你将后缀数组划分成若干个连续 LCP 长度大于等于某一值的段，亦即将 $h$ 数组划分成若干个连续最小值大于等于某一值的段并统计每一段的答案．如果有多次询问，我们可以将询问离线．观察到当给定值单调递减的时候，满足条件的区间个数总是越来越少，而新区间都是两个或多个原区间相连所得，且新区间中不包含在原区间内的部分的 $h$ 值都为减少到的这个值．我们只需要维护一个并查集，每次合并相邻的两个区间，并维护统计信息即可．
+In some problems, you need to split the suffix array into segments in which consecutive LCPs are all at least some value; that is, split the $h$ array into segments whose minimum is at least some value, and compute an answer for each segment. If there are many queries, we can process them offline. Notice that as the given value decreases, the number of valid intervals only goes down; each new interval is formed by joining two or more old intervals, and the $h$ values in the new interval that are not inside an old interval all equal the value we have decreased to. So we only need to maintain a disjoint set union, merge two adjacent intervals each time, and maintain the statistics.
 
-经典题目：[「NOI2015」品酒大会](https://uoj.ac/problem/131)
+Classic problem: [NOI 2015 — Wine Tasting Party](https://uoj.ac/problem/131)
 
-### 结合线段树
+### Combining with a segment tree
 
-某些题目让你求满足条件的前若干个数，而这些数又在后缀排序中的一个区间内．这时我们可以用归并排序的性质来合并两个结点的信息，利用线段树维护和查询区间答案．
+Some problems ask for the first few numbers that satisfy a condition, and these numbers lie in a range of the sorted suffixes. In that case, we can merge the information of two nodes using the idea of merge sort, and use a segment tree to maintain and query the answer for a range.
 
-### 结合单调栈
+### Combining with a monotonic stack
 
-例题：[「AHOI2013」差异](https://loj.ac/problem/2377)
+Example problem: [AHOI 2013 — Difference](https://loj.ac/problem/2377)
 
-??? note "题解"
-    被加数的前两项很好处理，为 $n(n-1)(n+1)/2$（每个后缀都出现了 $n-1$ 次，后缀总长是 $n(n+1)/2$），关键是最后一项，即后缀的两两 LCP．
+??? note "Solution"
+    The first two terms of the sum are easy: they give $n(n-1)(n+1)/2$ (each suffix appears $n-1$ times, and the total length of all suffixes is $n(n+1)/2$). The key is the last term, the pairwise LCPs of the suffixes.
     
-    我们知道 $lcp(i,j)=k$ 等价于 $\min\{height[i+1..j]\}=k$．所以，可以把 $lcp(i,j)$ 记作 $\min\{x|i+1\le x\le j, height[x]=lcp(i,j)\}$ 对答案的贡献．
+    We know that $lcp(i,j)=k$ is equivalent to $\min\{height[i+1..j]\}=k$. So we can count $lcp(i,j)$ as the contribution of $\min\{x|i+1\le x\le j, height[x]=lcp(i,j)\}$ to the answer.
     
-    考虑每个位置对答案的贡献是哪些后缀的 LCP，其实就是从它开始向左若干个连续的 $height$ 大于它的后缀中选一个，再从向右若干个连续的 $height$ 不小于它的后缀中选一个．这个东西可以用 [单调栈](../ds/monotonic-stack.md) 计算．
+    For each position, consider which pairs of suffixes it contributes the LCP of. It is exactly the pairs formed by picking one suffix from the run of consecutive positions to its left whose $height$ is greater than its own, and one suffix from the run of consecutive positions to its right whose $height$ is not smaller than its own. This can be computed with a [monotonic stack](../ds/monotonic-stack.md).
     
-    单调栈部分类似于 [Luogu P2659 美丽的序列](https://www.luogu.com.cn/problem/P2659) 以及 [悬线法](../misc/hoverline.md)．
+    The monotonic stack part is similar to [Luogu P2659 Beautiful Sequence](https://www.luogu.com.cn/problem/P2659) and the [hanging line method](../misc/hoverline.md).
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/string/code/sa/sa_3.cpp"
     ```
 
-类似的题目：[「HAOI2016」找相同字符](https://loj.ac/problem/2064)．
+A similar problem: [HAOI 2016 — Finding Identical Characters](https://loj.ac/problem/2064).
 
-## 习题
+## Exercises
 
 -   [UVa 760 - DNA Sequencing](http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=24&page=show_problem&problem=701)
 -   [UVa 1223 - Editor](http://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=24&page=show_problem&problem=3664)
@@ -463,7 +463,7 @@ $\frac{n(n+1)}{2}-\sum\limits_{i=2}^nheight[i]$
 -   [UVa 12191 - File Recover](https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=3343)
 -   [UVa 12206 - Stammering Aliens](https://uva.onlinejudge.org/index.php?option=onlinejudge&page=show_problem&problem=3358)
 -   [Codechef - Jarvis and LCP](https://www.codechef.com/problems/INSQ16F)
--   [洛谷 P8617 - 重复模式](https://www.luogu.com.cn/problem/P8617)
+-   [Luogu P8617 - Repeated Pattern](https://www.luogu.com.cn/problem/P8617)
 -   [UVa 11107 - Life Forms](https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=2048)
 -   [UVa 12974 - Exquisite Strings](https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=862&page=show_problem&problem=4853)
 -   [UVa 10526 - Intellectual Property](https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=1467)
@@ -480,16 +480,16 @@ $\frac{n(n+1)}{2}-\sum\limits_{i=2}^nheight[i]$
 -   [Codeforces - Tricky and Clever Password](http://codeforces.com/contest/30/problem/E)
 -   [Gym 101470B - Circle of digits](https://codeforces.com/gym/101470/problem/B)
 
-## 参考资料
+## References
 
-本页面中（[4070a9b](https://github.com/OI-wiki/OI-wiki/pull/950/commits/4070a9b3db8576db16c74d3ec33806ad10476eef) 引入的部分）主要译自博文 [Суффиксный массив](http://e-maxx.ru/algo/suffix_array) 与其英文翻译版 [Suffix Array](https://cp-algorithms.com/string/suffix-array.html)．其中俄文版版权协议为 Public Domain + Leave a Link；英文版版权协议为 CC-BY-SA 4.0．
+Parts of this page (those introduced in [4070a9b](https://github.com/OI-wiki/OI-wiki/pull/950/commits/4070a9b3db8576db16c74d3ec33806ad10476eef)) are mainly translated from the article [Суффиксный массив](http://e-maxx.ru/algo/suffix_array) and its English translation [Suffix Array](https://cp-algorithms.com/string/suffix-array.html). The Russian version is licensed under Public Domain + Leave a Link; the English version is licensed under CC-BY-SA 4.0.
 
-论文：
+Papers:
 
-1.  [\[2004\] 后缀数组 by. 许智磊][1]
+1.  [\[2004\] Suffix Arrays, by Xu Zhilei][1]
 
-2.  [\[2009\] 后缀数组——处理字符串的有力工具 by. 罗穗骞][2]
+2.  [\[2009\] Suffix Arrays: A Powerful Tool for Processing Strings, by Luo Suiqian][2]
 
-[1]: https://github.com/OI-wiki/libs/blob/master/%E9%9B%86%E8%AE%AD%E9%98%9F%E5%8E%86%E5%B9%B4%E8%AE%BA%E6%96%87/%E5%9B%BD%E5%AE%B6%E9%9B%86%E8%AE%AD%E9%98%9F2004%E8%AE%BA%E6%96%87%E9%9B%86/%E8%AE%B8%E6%99%BA%E7%A3%8A--%E5%90%8E%E7%BC%80%E6%95%B0%E7%BB%84.pdf "[2004] 后缀数组 by. 许智磊"
+[1]: https://github.com/OI-wiki/libs/blob/master/%E9%9B%86%E8%AE%AD%E9%98%9F%E5%8E%86%E5%B9%B4%E8%AE%BA%E6%96%87/%E5%9B%BD%E5%AE%B6%E9%9B%86%E8%AE%AD%E9%98%9F2004%E8%AE%BA%E6%96%87%E9%9B%86/%E8%AE%B8%E6%99%BA%E7%A3%8A--%E5%90%8E%E7%BC%80%E6%95%B0%E7%BB%84.pdf "[2004] Suffix Arrays, by Xu Zhilei"
 
-[2]: https://github.com/OI-wiki/libs/blob/master/%E9%9B%86%E8%AE%AD%E9%98%9F%E5%8E%86%E5%B9%B4%E8%AE%BA%E6%96%87/%E5%9B%BD%E5%AE%B6%E9%9B%86%E8%AE%AD%E9%98%9F2009%E8%AE%BA%E6%96%87%E9%9B%86/11.%E7%BD%97%E7%A9%97%E9%AA%9E%E3%80%8A%E5%90%8E%E7%BC%80%E6%95%B0%E7%BB%84%E2%80%94%E2%80%94%E5%A4%84%E7%90%86%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E6%9C%89%E5%8A%9B%E5%B7%A5%E5%85%B7%E3%80%8B/%E5%90%8E%E7%BC%80%E6%95%B0%E7%BB%84%E2%80%94%E2%80%94%E5%A4%84%E7%90%86%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E6%9C%89%E5%8A%9B%E5%B7%A5%E5%85%B7.pdf "[2009] 后缀数组——处理字符串的有力工具 by. 罗穗骞"
+[2]: https://github.com/OI-wiki/libs/blob/master/%E9%9B%86%E8%AE%AD%E9%98%9F%E5%8E%86%E5%B9%B4%E8%AE%BA%E6%96%87/%E5%9B%BD%E5%AE%B6%E9%9B%86%E8%AE%AD%E9%98%9F2009%E8%AE%BA%E6%96%87%E9%9B%86/11.%E7%BD%97%E7%A9%97%E9%AA%9E%E3%80%8A%E5%90%8E%E7%BC%80%E6%95%B0%E7%BB%84%E2%80%94%E2%80%94%E5%A4%84%E7%90%86%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E6%9C%89%E5%8A%9B%E5%B7%A5%E5%85%B7%E3%80%8B/%E5%90%8E%E7%BC%80%E6%95%B0%E7%BB%84%E2%80%94%E2%80%94%E5%A4%84%E7%90%86%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E6%9C%89%E5%8A%9B%E5%B7%A5%E5%85%B7.pdf "[2009] Suffix Arrays: A Powerful Tool for Processing Strings, by Luo Suiqian"
