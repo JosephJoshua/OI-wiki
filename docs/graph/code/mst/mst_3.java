@@ -14,8 +14,8 @@ class Edge {
 }
 
 public class Main {
-    static int[] parent = new int[1010];  // 定义父亲
-    static int m, n, k;  // n 表示点的数量， m 表示边的数量，k 表示需要的棉花糖个数
+    static int[] parent = new int[1010];  // define parent
+    static int m, n, k;  // n is the number of vertices, m is the number of edges, k is the number of marshmallows needed
 
     static Edge[] edges = new Edge[10010];
     static int l;
@@ -24,7 +24,7 @@ public class Main {
         edges[++l] = new Edge(u, v, w);
     }
 
-    // 标准并查集
+    // standard DSU
     static int findroot(int x) {
         if (parent[x] != x) {
             parent[x] = findroot(parent[x]);
@@ -42,25 +42,25 @@ public class Main {
         return A.w < B.w;
     }
 
-    // Kruskal 算法
+    // Kruskal's algorithm
     static void kruskal() {
-        int tot = 0;  // 存已选了的边数
-        int ans = 0;  // 存总的代价
+        int tot = 0;  // number of edges chosen
+        int ans = 0;  // total cost
 
         for (int i = 1; i <= m; i++) {
             int xr = findroot(edges[i].u);
             int yr = findroot(edges[i].v);
-            if (xr != yr) {   // 如果父亲不一样
-                Merge(xr, yr); // 合并
-                tot++; // 边数增加
-                ans += edges[i].w; // 代价增加
-                if (tot == n - k) {  // 检查选的边数是否满足 k 个棉花糖
+            if (xr != yr) {   // if the roots differ
+                Merge(xr, yr); // merge
+                tot++; // one more edge
+                ans += edges[i].w; // add the cost
+                if (tot == n - k) {  // check whether the edge count gives k marshmallows
                     System.out.println(ans);
                     return;
                 }
             }
         }
-        System.out.println("No Answer");  // 无法连成
+        System.out.println("No Answer");  // cannot be connected
     }
 
     public static void main(String[] args) {
@@ -69,12 +69,12 @@ public class Main {
         m = scanner.nextInt();
         k = scanner.nextInt();
 
-        if (n == k) { // 特判边界情况
+        if (n == k) { // handle the edge case
             System.out.println("0");
             return;
         }
 
-        // 初始化
+        // initialize
         for (int i = 1; i <= n; i++) {
             parent[i] = i;
         }
@@ -82,9 +82,9 @@ public class Main {
             int u = scanner.nextInt();
             int v = scanner.nextInt();
             int w = scanner.nextInt();
-            addEdge(u, v, w);  // 添加边
+            addEdge(u, v, w);  // add edge
         }
-        Arrays.sort(edges, 1, m + 1, (a, b) -> Integer.compare(a.w, b.w));  // 先按边权排序
+        Arrays.sort(edges, 1, m + 1, (a, b) -> Integer.compare(a.w, b.w));  // sort by edge weight first
         kruskal();
         scanner.close();
     }

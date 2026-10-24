@@ -1,50 +1,50 @@
-在学习最小直径生成树（Minimum Diameter Spanning Tree）前建议先阅读 [树的直径](./tree-diameter.md) 的内容．
+Before learning about the minimum diameter spanning tree, it is recommended to read [Tree diameter](./tree-diameter.md) first.
 
-## 定义
+## Definition
 
-在无向图的所有生成树中，直径最小的那一棵生成树就是最小直径生成树．
+Among all spanning trees of an undirected graph, the one with the smallest diameter is the minimum diameter spanning tree.
 
-## 图的绝对中心
+## Absolute center of a graph
 
-求解直径最小生成树，首先需要找到 **图的绝对中心**，**图的绝对中心** 可以存在于一条边上或某个结点上，该中心到所有点的最短距离的最大值最小．
+To find a minimum diameter spanning tree, we first need the **absolute center of the graph**. The **absolute center of the graph** may lie on an edge or at a vertex. It is the point whose maximum shortest distance to all vertices is as small as possible.
 
-根据 **图的绝对中心** 的定义可以知道，到绝对中心距离最远的结点至少有两个．
+From the definition of the **absolute center of the graph**, there are at least two vertices that are farthest from the absolute center.
 
-令 $d(i,j)$ 为顶点 $i,j$ 间的最短路径长，通过多源最短路算法求出所有结点的最短路．
+Let $d(i,j)$ be the shortest path length between vertices $i,j$. We compute the shortest paths between all vertices with an all-pairs shortest path algorithm.
 
-$\textit{rk}(i,j)$ 记录点 $i$ 到其他所有结点中第 $j$ 小的那个结点．
+$\textit{rk}(i,j)$ records the vertex that is the $j$-th closest to vertex $i$ among all vertices.
 
-图的绝对中心可能在某条边上，枚举每一条边 $w=(u,v)$，并且假设图的绝对中心 $c$ 就在这条边上．那么距离 $u$ 的长度为 $x$（$x \leq w$），距离 $v$ 的长度就是 $w - x$．
+The absolute center may lie on some edge. Enumerate each edge $w=(u,v)$ and assume the absolute center $c$ is on this edge. If its distance to $u$ is $x$ ($x \leq w$), then its distance to $v$ is $w - x$.
 
-对于图中的任意一点 $i$，图的绝对中心 $c$ 到 $i$ 的距离为 $d(c,i)=\min(d(u,i) + x, d(v,i) + (w - x))$．
+For any vertex $i$ in the graph, the distance from the absolute center $c$ to $i$ is $d(c,i)=\min(d(u,i) + x, d(v,i) + (w - x))$.
 
-举例一个结点 $i$，该结点与图的绝对中心的位置关系如下图．
+Take a vertex $i$ as an example. Its position relative to the absolute center is shown below.
 
 ![mdst1](./images/mdst-graph.svg)
 
-随着图的绝对中心 $c$ 在边上的改变会生成一个距离与 $c$ 位置的函数图像．显然的，当前的 $d(c,i)$ 的函数图像是一个两条斜率相同的线段构成的折线段．
+As the absolute center $c$ moves along the edge, we get a graph of the distance as a function of the position of $c$. Clearly, the graph of $d(c,i)$ is a polyline made of two line segments with slopes of equal magnitude.
 
 ![mdst2](./images/mdst-plot1.svg)
 
-对于图上的任意一结点，图的绝对中心到最远距离结点的函数就写作 $f = \max\{ d(c,i)\},i \in[1,n]$，其函数图像如下．
+For all vertices of the graph, the distance from the absolute center to the farthest vertex is $f = \max\{ d(c,i)\},i \in[1,n]$. Its graph looks like this:
 
 ![mdst3](./images/mdst-plot2.svg)
 
-并且这些折线交点中的最低点，横坐标就是图的绝对中心的位置．
+The lowest point among the intersection points of these polylines gives, by its x-coordinate, the position of the absolute center.
 
-图的绝对中心可能在某个结点上，用距离预选结点最远的那个结点来更新，即 $\textit{ans}\leftarrow \min(\textit{ans},d(i,\textit{rk}(i,n))\times 2)$．
+The absolute center may lie at a vertex. In that case, update the answer with the vertex farthest from the candidate vertex, that is, $\textit{ans}\leftarrow \min(\textit{ans},d(i,\textit{rk}(i,n))\times 2)$.
 
-### 过程
+### Process
 
-1.  使用多源最短路算法（[Floyd](./shortest-path.md#floyd-算法)，[Johnson](./shortest-path.md#johnson-全源最短路径算法) 等），求出 $d$ 数组；
+1.  Use an all-pairs shortest path algorithm ([Floyd](./shortest-path.md#floyd-算法), [Johnson](./shortest-path.md#johnson-全源最短路径算法), etc.) to compute the array $d$;
 
-2.  求出 $\textit{rk}(i,j)$，并将其升序排序；
+2.  Compute $\textit{rk}(i,j)$ and sort it in ascending order;
 
-3.  图的绝对中心可能在某个结点上，用距离预选结点最远的那个结点来更新，遍历所有结点并用 $\textit{ans}\leftarrow \min(\textit{ans},d(i,\textit{rk}(i,n)) \times 2)$ 更新最小值．
+3.  The absolute center may lie at a vertex. Update with the vertex farthest from the candidate vertex: go through all vertices and update the minimum with $\textit{ans}\leftarrow \min(\textit{ans},d(i,\textit{rk}(i,n)) \times 2)$.
 
-4.  图的绝对中心可能在某条边上，枚举所有的边．对于一条边 $w(u,v)$ 从距离 $u$ 最远的结点开始更新．当出现 $d(v,\textit{rk}(u,i)) > \max_{j=i+1}^n d(v,\textit{rk}(u,j))$ 的情况时，用 $\textit{ans}\leftarrow  \min(\textit{ans}, d(u,\textit{rk}(u,i))+\max_{j=i+1}^n d(v,\textit{rk}(u,j))+w(u,v))$ 来更新．因为这种情况会使图的绝对中心改变．
+4.  The absolute center may lie on an edge, so enumerate all edges. For an edge $w(u,v)$, start updating from the vertex farthest from $u$. Whenever $d(v,\textit{rk}(u,i)) > \max_{j=i+1}^n d(v,\textit{rk}(u,j))$, update with $\textit{ans}\leftarrow  \min(\textit{ans}, d(u,\textit{rk}(u,i))+\max_{j=i+1}^n d(v,\textit{rk}(u,j))+w(u,v))$, because this case changes the absolute center.
 
-??? note "实现"
+??? note "Implementation"
     ```cpp
     bool cmp(int a, int b) { return val[a] < val[b]; }
     
@@ -64,9 +64,9 @@ $\textit{rk}(i,j)$ 记录点 $i$ 到其他所有结点中第 $j$ 小的那个结
         sort(rk[i] + 1, rk[i] + 1 + n, cmp);
       }
       int ans = INF;
-      // 图的绝对中心可能在结点上
+      // the absolute center may be at a vertex
       for (int i = 1; i <= n; i++) ans = min(ans, d[i][rk[i][n]] * 2);
-      // 图的绝对中心可能在边上
+      // the absolute center may be on an edge
       for (int i = 1; i <= m; i++) {
         int u = a[i].u, v = a[i].v, w = a[i].w;
         for (int p = n, i = n - 1; i >= 1; i--) {
@@ -79,17 +79,17 @@ $\textit{rk}(i,j)$ 记录点 $i$ 到其他所有结点中第 $j$ 小的那个结
     }
     ```
 
-### 例题
+### Example problems
 
 -   [CodeForce 266D BerDonalds](https://codeforces.com/contest/266/problem/D)
 
-## 最小直径生成树
+## Minimum diameter spanning tree
 
-根据图的绝对中心的定义，容易得知图的绝对中心是最小直径生成树的直径的中点．
+From the definition of the absolute center, it is easy to see that the absolute center is the midpoint of the diameter of the minimum diameter spanning tree.
 
-求解最小直径生成树首先需要找到图的绝对中心．以图的绝对中心为起点，生成一个最短路径树，那么就可以得到最小直径生成树了．
+To find the minimum diameter spanning tree, first find the absolute center of the graph. Then build a shortest path tree rooted at the absolute center, and that is the minimum diameter spanning tree.
 
-??? note "实现"
+??? note "Implementation"
     ```cpp
     #include <algorithm>
     #include <climits>
@@ -116,7 +116,7 @@ $\textit{rk}(i,j)$ 记录点 $i$ 到其他所有结点中第 $j$ 小的那个结
     } a[MAXN * (MAXN - 1) / 2];
     
     void solve() {
-      // 求图的绝对中心
+      // find the absolute center of the graph
       floyd();
       for (int i = 1; i <= n; i++) {
         for (int j = 1; j <= n; j++) {
@@ -126,14 +126,14 @@ $\textit{rk}(i,j)$ 记录点 $i$ 到其他所有结点中第 $j$ 小的那个结
         sort(rk[i] + 1, rk[i] + 1 + n, cmp);
       }
       ll P = 0, ansP = INF;
-      // 在点上
+      // at a vertex
       for (int i = 1; i <= n; i++) {
         if (d[i][rk[i][n]] * 2 < ansP) {
           ansP = d[i][rk[i][n]] * 2;
           P = i;
         }
       }
-      // 在边上
+      // on an edge
       int f1 = 0, f2 = 0;
       ll disu = INT_MIN, disv = INT_MIN, ansL = INF;
       for (int i = 1; i <= m; i++) {
@@ -151,7 +151,7 @@ $\textit{rk}(i,j)$ 记录点 $i$ 到其他所有结点中第 $j$ 小的那个结
         }
       }
       cout << min(ansP, ansL) / 2 << '\n';
-      // 最小路径生成树
+      // minimum path spanning tree
       vector<pii> pp;
       for (int i = 1; i <= 501; ++i)
         for (int j = 1; j <= 501; ++j) dd[i][j] = INF;
@@ -224,7 +224,7 @@ $\textit{rk}(i,j)$ 记录点 $i$ 到其他所有结点中第 $j$ 小的那个结
     }
     ```
 
-### 例题
+### Example problems
 
 [SPOJ MDST](https://www.spoj.com/problems/MDST/)
 
@@ -232,6 +232,6 @@ $\textit{rk}(i,j)$ 记录点 $i$ 到其他所有结点中第 $j$ 小的那个结
 
 [SPOJ PT07C - The GbAaY Kingdom](https://www.spoj.com/problems/PT07C)
 
-## 参考文献
+## References
 
 [Play with Trees Solutions The GbAaY Kingdom](https://adn.botao.hu/adn-backup/blog/attachments/month_0705/32007531153238.pdf)
