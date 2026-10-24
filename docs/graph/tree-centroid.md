@@ -1,155 +1,155 @@
 author: Ir1d, Marcythm, LucienShui, Anguei, H-J-Granger, CornWorld, ttzc
 
-本文介绍树的重心的概念和基本性质．
+This article introduces the concept and basic properties of the centroid of a tree.
 
-## 定义
+## Definition
 
-如果在树 $T$ 中删去某个结点 $v$ 后，得到的图 $T\setminus\{v\}$ 中每个连通分量的大小均不超过原树结点数的一半，就称这个结点 $v$ 为整棵树的 **重心**（centroid）．删去某一结点后得到的最大连通分量的大小也称为该结点的 **重量**（weight）．利用这一概念，重心的定义可以叙述为重量不超过树结点数的一半的结点．
+If deleting a node $v$ from a tree $T$ leaves a graph $T\setminus\{v\}$ in which every connected component has size at most half the number of nodes in the original tree, then $v$ is called a **centroid** of the tree. The size of the largest connected component left after deleting a node is also called the **weight** of that node. Using this idea, a centroid can be defined as a node whose weight is at most half the number of nodes in the tree.
 
-???+ info "「子树」"
-    本文可能同时涉及无根树、有根树，以及将有根树换根到非根结点得到的树．为了避免混淆，本文将用 $T$ 表示无根树，用 $T^{(v)}$ 表示以结点 $v$ 为根的有根树．本文中提到的「子树」均是指 **有根树** 中，一个结点及其所有子孙结点构成的树．有根树 $T^{(v)}$ 中，结点 $u$ 对应子树记为 $T^{(v)}_u$．这样定义的子树当然包括整棵树本身．如果要明确不包括整棵树本身，将称呼它为「真子树」．
+???+ info "\"Subtree\""
+    This article may deal with unrooted trees, rooted trees, and trees obtained by rerooting a rooted tree at a non-root node. To avoid confusion, we write $T$ for an unrooted tree and $T^{(v)}$ for the rooted tree with root $v$. Every "subtree" mentioned here means, in a **rooted tree**, the tree made of a node and all of its descendants. In the rooted tree $T^{(v)}$, the subtree of node $u$ is written $T^{(v)}_u$. Subtrees defined this way of course include the whole tree itself. When we want to explicitly exclude the whole tree, we call it a "proper subtree".
     
-    无根树中的「子树」通常指它的一个连通子图．在讨论重心时，部分作者会用「子树」一词特指不包含某结点的极大连通子图，或者特指将某条边删去后得到的两个连通分量之一．容易验证，这两种方式定义得到的「子树」集合是一致的，且不包括整棵树自身．由于它和有根树的子树集合并不一致，本文将避免对无根树使用「子树」概念．
+    In an unrooted tree, a "subtree" usually means a connected subgraph. When discussing centroids, some authors use "subtree" to mean specifically a maximal connected subgraph that does not contain some node, or one of the two connected components left after deleting an edge. It is easy to check that these two definitions give the same set of "subtrees", and that this set does not include the whole tree. Since this set differs from the set of subtrees of a rooted tree, this article avoids using the word "subtree" for unrooted trees.
     
-    在实际求解重心或处理某些问题时，通常存在一个默认的树根．此时，将非根结点 $v$ 删掉得到的连通分量中，除了该结点的子结点对应子树外，还有一棵「向上」的子树．设结点 $v$ 的父结点为 $u$，这棵「向上」的子树就是 $T_u^{(v)}$．本文在提及这类子图时，会显式地称呼它为「向上」的子树．若无特殊说明，本文提及的子树均不包括这类「向上」的子树．
+    When actually finding a centroid or solving related problems, there is usually a default root. In that case, the connected components left after deleting a non-root node $v$ include, besides the subtrees of its children, one "upward" subtree. If the parent of $v$ is $u$, this "upward" subtree is $T_u^{(v)}$. When this article mentions such a subgraph, it explicitly calls it the "upward" subtree. Unless stated otherwise, subtrees in this article do not include this "upward" subtree.
 
-注意到，得到的这些连通分量同样是无根树．通过删去树的重心，一棵树将变为若干棵至多原树一半大小的树．重心的这一特性使得在树上应用分治思想解决问题成为可能．这就是 [点分治](./tree-divide.md#点分治)，也称为树的重心分解．
+Note that the resulting connected components are also unrooted trees. By deleting the centroid, a tree becomes several trees, each at most half the size of the original. This property makes it possible to apply divide and conquer on trees. This is [centroid decomposition](./tree-divide.md#点分治).
 
-## 性质
+## Properties
 
-本节讨论重心的性质．首先，树的重心有如下等价定义：
+This section discusses properties of centroids. First, there are the following equivalent definitions of a centroid:
 
-???+ note "等价定义"
-    树 $T$ 中的结点 $v$ 是它的重心，当且仅当以下任意一条成立：
+???+ note "Equivalent definitions"
+    A node $v$ in tree $T$ is a centroid if and only if any one of the following holds:
     
-    === "无根树版本"
-        1.  在树中删去结点 $v$ 后，得到的图 $T\setminus\{v\}$ 中每个连通分量的大小均不超过原树结点数的一半．
-        2.  在所有删去某个结点后得到的最大连通分量大小中，删去结点 $v$ 时所得到的值最小．
-        3.  树中所有结点到某个结点的距离和中，到结点 $v$ 的距离和最小．
+    === "Unrooted version"
+        1.  After deleting node $v$ from the tree, every connected component of the graph $T\setminus\{v\}$ has size at most half the number of nodes in the original tree.
+        2.  Among the sizes of the largest connected component obtained by deleting each node, the value obtained by deleting $v$ is the smallest.
+        3.  Among the sums of distances from all nodes to a given node, the sum of distances to $v$ is the smallest.
     
-    === "有根树版本"
-        1.  当树以结点 $v$ 为根时，任一真子树的大小均不超过原树结点数的一半．
-        2.  在所有以某个结点为根时的最大真子树大小中，以结点 $v$ 为根时所得到的值最小．
-        3.  在所有以某个结点为根时所有结点的深度和中，以结点 $v$ 为根时深度和最小．
+    === "Rooted version"
+        1.  When the tree is rooted at $v$, every proper subtree has size at most half the number of nodes in the original tree.
+        2.  Among the sizes of the largest proper subtree when rooting at each node, the value when rooting at $v$ is the smallest.
+        3.  Among the sums of depths of all nodes when rooting at each node, the sum when rooting at $v$ is the smallest.
 
-??? note "证明"
-    首先，引入一些记号．有根树和无根树两个版本的表述显然是等价的．定义 $W(x)=\max_{u\sim x}|T_u^{(x)}|$，其中，$u\sim x$ 表示 $u$ 和 $x$ 相邻．定义 $S(x)=\sum_{u\in T}d(u,x)$，其中，$d(u,x)$ 表示结点 $u$ 和 $x$ 之间的距离．那么，定义 1 相当于要求 $W(v)\le |T|/2$，定义 2 相当于要求 $v\in\arg\min_{x\in T}W(x)$，定义 3 相当于要求 $v\in\arg\min_{x\in T}S(x)$．需要证明的是，这三个条件是等价的．
+??? note "Proof"
+    First, some notation. The rooted and unrooted versions are clearly equivalent. Define $W(x)=\max_{u\sim x}|T_u^{(x)}|$, where $u\sim x$ means $u$ and $x$ are adjacent. Define $S(x)=\sum_{u\in T}d(u,x)$, where $d(u,x)$ is the distance between nodes $u$ and $x$. Then definition 1 requires $W(v)\le |T|/2$, definition 2 requires $v\in\arg\min_{x\in T}W(x)$, and definition 3 requires $v\in\arg\min_{x\in T}S(x)$. We need to prove that these three conditions are equivalent.
     
-    将 $S(x)$ 理解为以 $x$ 为根时的结点深度和，考虑它在树根从结点 $v$ 换为相邻结点 $u$ 时发生的变化．注意到，在树中删去边 $(v,u)$ 后，得到的两个连通分量分别是子树 $T_v^{(u)}$ 和 $T_u^{(v)}$．在换根前后，子树 $T_v^{(u)}$ 中每个结点深度都增加 $1$，子树 $T_u^{(v)}$ 中每个结点深度都减少 $1$，所以，深度和的变化为
+    Think of $S(x)$ as the sum of node depths when rooted at $x$, and look at how it changes when the root moves from node $v$ to an adjacent node $u$. Deleting edge $(v,u)$ from the tree leaves two connected components, the subtrees $T_v^{(u)}$ and $T_u^{(v)}$. When the root moves, every node in $T_v^{(u)}$ gets $1$ deeper, and every node in $T_u^{(v)}$ gets $1$ shallower. So the change in the depth sum is
     
     $$
     \Delta S_{v\to u} = S(u) - S(v) = |T_v^{(u)}| - |T_u^{(v)}| = |T| - 2|T_u^{(v)}|.
     $$
     
-    所以，定义 1 的条件相当于要求 $\Delta S_{v\to u}\ge 0$ 对 $v$ 的所有相邻结点 $u$ 都成立，也就是说，$v$ 是 $S(\cdot)$ 的极小值点．
+    So the condition of definition 1 is equivalent to requiring $\Delta S_{v\to u}\ge 0$ for every neighbor $u$ of $v$. In other words, $v$ is a local minimum of $S(\cdot)$.
     
-    转而设 $v$ 是 $S(\cdot)$ 的（一个）最小值点（即定义 3），它必然存在，且一定是极小值点．考虑以 $v$ 为根的有根树 $T^{(v)}$．设 $u\neq v$ 是一个非根结点，且从 $v$ 到 $u$ 的有向路径上，结点 $v$ 的后一个结点为 $y$（可能就是 $u$），结点 $u$ 的前一个结点为 $x$（可能就是 $v$）．那么，因为 $T_u^{(x)}\subseteq T_y^{(v)}$，所以有
+    Now let $v$ be a (global) minimum of $S(\cdot)$ (definition 3). Such a $v$ must exist, and it must be a local minimum. Consider the tree $T^{(v)}$ rooted at $v$. Let $u\neq v$ be a non-root node. On the directed path from $v$ to $u$, let $y$ be the node right after $v$ (possibly $u$ itself), and let $x$ be the node right before $u$ (possibly $v$ itself). Since $T_u^{(x)}\subseteq T_y^{(v)}$, we have
     
     $$
     2|T_x^{(u)}| = 2|T| - 2|T_u^{(x)}| \ge 2|T| - 2|T_y^{(v)}| \ge |T|.
     $$
     
-    其中，最后一步用到 $v$ 是 $S(\cdot)$ 的极小值点这一事实．此时，有两种情形：
+    The last step uses the fact that $v$ is a local minimum of $S(\cdot)$. There are now two cases:
     
-    -   存在结点 $u$ 使得 $2|T_x^{(u)}|=|T|$ 成立．此时，根据上述不等式，必然有 $(x,u)=(v,y)$，且 $|T_v^{(u)}|=|T_{u}^{(v)}| = |T|/2$．也就是说，使得等式成立的结点 $u$ 必然与 $v$ 相邻；又因为 $v$ 的所有相邻结点对应子树的大小之和为 $|T|-1<|T|$，这样的结点 $u$ 只能有一个．此时，对于所有其他结点 $u'\neq u,v$，必然存在 $x'\sim u'$ 使得 $|T_{x'}^{(u')}| > |T|/2$ 成立．满足条件 1 的结点集合为 $\{v,u\}$．
+    -   There is a node $u$ with $2|T_x^{(u)}|=|T|$. By the inequality above, we must have $(x,u)=(v,y)$ and $|T_v^{(u)}|=|T_{u}^{(v)}| = |T|/2$. That is, any node $u$ that makes the equality hold must be adjacent to $v$. Also, the subtrees of the neighbors of $v$ have total size $|T|-1<|T|$, so there can be only one such $u$. Then for every other node $u'\neq u,v$, there must be some $x'\sim u'$ with $|T_{x'}^{(u')}| > |T|/2$. The set of nodes satisfying condition 1 is $\{v,u\}$.
     
-        注意到，删去任何结点时，得到的连通分量大小之和总是 $|T|-1$，所以，只要有一个连通分量大小不小于 $|T|/2$，它就必然是最大连通分量．因此，对于这种情形，$W(v)=W(u)=|T|/2$，且对于所有 $u'\neq u,v$ 都有 $W(u') > |T|/2$．因此，满足条件 2 的结点集合为 $\arg\min W(\cdot) = \{v,u\}$．
+        Note that when any node is deleted, the sizes of the resulting components always add up to $|T|-1$. So as soon as one component has size at least $|T|/2$, it must be the largest component. Therefore in this case $W(v)=W(u)=|T|/2$, and $W(u') > |T|/2$ for every $u'\neq u,v$. So the set of nodes satisfying condition 2 is $\arg\min W(\cdot) = \{v,u\}$.
     
-        又因为 $\Delta S_{v\to u} = 0$，所以 $S(v)=S(u)$．因为 $v$ 是最小值点，$u$ 也一定是最小值点．而对于 $u'\neq u,v$ 都存在 $x'\sim u'$ 使得 $|T_{x'}^{(u')}| > |T|/2$，这违反了极小值点需要满足的条件，所以，$u'$ 一定也不是最小值点．因此，满足条件 3 的结点集合为 $\arg\min S(\cdot) = \{v,u\}$．
-    -   不存在结点 $u$ 使得 $2|T_x^{(u)}|=|T|$ 成立．此时，对于所有结点 $u\neq v$，都存在结点 $x\sim u$ 使得 $|T_x^{(u)}| > |T|/2$．重复前文分析可知，对于所有结点 $u\neq v$，都有 $W(u) > |T|/2$，且 $u$ 不是 $S(\cdot)$ 的极小值点．因此，满足条件 1 的结点只有 $v$，且 $\arg\min W(\cdot)=\arg\min S(\cdot) = \{v\}$．
+        Also, since $\Delta S_{v\to u} = 0$, we have $S(v)=S(u)$. Since $v$ is a minimum, $u$ must be a minimum too. For each $u'\neq u,v$ there is some $x'\sim u'$ with $|T_{x'}^{(u')}| > |T|/2$, which violates the condition for a local minimum, so $u'$ is not a minimum either. Therefore the set of nodes satisfying condition 3 is $\arg\min S(\cdot) = \{v,u\}$.
+    -   There is no node $u$ with $2|T_x^{(u)}|=|T|$. Then for every node $u\neq v$, there is a node $x\sim u$ with $|T_x^{(u)}| > |T|/2$. Repeating the analysis above, every node $u\neq v$ has $W(u) > |T|/2$ and is not a local minimum of $S(\cdot)$. So the only node satisfying condition 1 is $v$, and $\arg\min W(\cdot)=\arg\min S(\cdot) = \{v\}$.
     
-    无论在哪一情形中，满足三个条件的集合都是相同的．这就证明了三个定义是等价的．
+    In both cases, the three conditions give the same set. This proves that the three definitions are equivalent.
 
-除了这些等价定义外，树的重心还有如下常见性质：
+Besides these equivalent definitions, centroids have the following common properties:
 
-???+ note "性质"
-    1.  树的重心如果不唯一，则恰有两个．这两个重心相邻．而且，删去它们的连边后，树将变为两个大小相同的连通分量．
-    2.  在一棵树上添加或删除一个叶子，那么它的重心最多只移动一条边的距离．
-    3.  把两棵树通过一条边相连得到一棵新的树，那么新树的重心在连接原来两棵树的重心的路径上．
-    4.  一棵有根树的重心一定在根结点所在的重链上．一棵树的重心一定是该树根结点重子结点对应子树的重心的祖先．
+???+ note "Properties"
+    1.  If the centroid of a tree is not unique, there are exactly two. These two centroids are adjacent. Moreover, after deleting the edge between them, the tree splits into two connected components of the same size.
+    2.  If we add or remove one leaf, the centroid moves by at most one edge.
+    3.  If we join two trees with one edge to form a new tree, the centroid of the new tree lies on the path between the centroids of the two original trees.
+    4.  The centroid of a rooted tree always lies on the heavy path containing the root. The centroid of a tree is always an ancestor of the centroid of the subtree of the root's heavy child.
 
-??? note "证明"
-    性质 1 可以从对重心等价定义的证明中得到．
+??? note "Proof"
+    Property 1 follows from the proof of the equivalent definitions.
     
-    性质 2 只需要考虑添加一个叶子结点的情形．这进一步分为两种情形：
+    For property 2, we only need to consider adding a leaf. There are two cases:
     
-    -   树 $T$ 只有一个重心 $v$．设 $x$ 为新添加的叶子结点，且在新树中删去结点 $v$ 得到的图 $T\cup\{x\}\setminus\{v\}$ 中，$x$ 所在连通分量为 $B\cup\{x\}$．因为 $v$ 是树 $T$ 的唯一重心，所以 $2|B| < |T|$，也就是 $2|B|+1\le |T|$．进而，有
+    -   Tree $T$ has only one centroid $v$. Let $x$ be the new leaf, and in the new tree, let $B\cup\{x\}$ be the component containing $x$ in the graph $T\cup\{x\}\setminus\{v\}$ obtained by deleting $v$. Since $v$ is the only centroid of $T$, we have $2|B| < |T|$, that is, $2|B|+1\le |T|$. So
     
         $$
         2|B\cup\{x\}| = 2(|B|+1) \le |T| + 1 = |T\cup\{x\}|.
         $$
     
-        因此，$v$ 仍然是新树 $T\cup\{x\}$ 的重心．即使新树的重心不唯一，它也必然是 $v$ 的相邻结点．因此，重心至多移动一条边．
-    -   树 $T$ 有两个重心 $u,v$．此时，删去 $(u,v)$ 得到的两个连通分量 $T_u^{(v)}$ 和 $T_v^{(u)}$ 大小相等，均为 $|T|/2$．不妨设新添加的叶子结点 $x$ 连接在 $v$ 所在的连通分量 $T_v^{(u)}$ 上．那么，因为
+        Therefore $v$ is still a centroid of the new tree $T\cup\{x\}$. Even if the new tree's centroid is not unique, the other one must be a neighbor of $v$. So the centroid moves by at most one edge.
+    -   Tree $T$ has two centroids $u,v$. Deleting $(u,v)$ leaves two components $T_u^{(v)}$ and $T_v^{(u)}$ of equal size $|T|/2$. Without loss of generality, assume the new leaf $x$ is attached to the component $T_v^{(u)}$ containing $v$. Then, since
     
         $$
         |T_v^{(u)}\cup\{x\}| = |T|/2 + 1 > (|T|+1)/2 = |T\cup\{x\}|/2,
         $$
     
-        所以 $u$ 不再是新树的重心．反过来，因为删去 $v$ 后，仍然有大小为 $|T|/2$ 的连通分量 $T_u^{(v)}$，而其他连通分量的大小之和为
+        $u$ is no longer a centroid of the new tree. On the other hand, after deleting $v$ there is still a component $T_u^{(v)}$ of size $|T|/2$, and the other components have total size
     
         $$
         |T\cup\{x\}| - 1 - |T_u^{(v)}| = |T|/2 \le |T_u^{(v)}|,
         $$
     
-        所以，$v$ 仍然是新树的重心．因为新树的结点数是奇数，重心必然唯一．所以，重心也至多移动一条边．
+        so $v$ is still a centroid of the new tree. Since the new tree has an odd number of nodes, its centroid must be unique. So again the centroid moves by at most one edge.
     
-    总结两种情形的分析可以发现，新树的重心一定在旧树的重心与新添加的叶子结点的路径上．
+    Putting the two cases together, the centroid of the new tree always lies on the path between the old centroid and the newly added leaf.
     
-    性质 3 可以通过归纳法说明．设 $T$ 和 $T'$ 连接时，新添加的边为 $(x,y)$，且 $x\in T,y\in T'$．不妨设新树的（一个）重心在 $T$ 中．考虑从树 $T$ 开始，将树 $T'$ 中结点逐一添加为其叶子结点的过程．取定树 $T$ 的一个重心 $c$．可以归纳地证明，树的（一个）重心始终在连接 $c$ 与结点 $x$ 的路径上．归纳起点显然．假设直到某一时刻为止，命题仍然成立．设此时重心为 $v$．由性质 2 的分析可知，新树的重心必然在连接新添加结点和当前重心 $v$ 的路径上，又因为它不会移动到树 $T$ 外，所以，只需要考虑路径与树 $T$ 的公共部分，即连接当前重心 $v$ 和结点 $x$ 的路径上．根据归纳假设，$v$ 就在连接 $c$ 和结点 $x$ 的路径上，所以，新树重心也必然在连接 $c$ 和结点 $x$ 的路径上．由归纳法可知，命题成立．
+    Property 3 can be shown by induction. When $T$ and $T'$ are joined, let the new edge be $(x,y)$ with $x\in T,y\in T'$. Without loss of generality, assume (a) centroid of the new tree is in $T$. Start from tree $T$ and add the nodes of $T'$ one by one as leaves. Fix a centroid $c$ of $T$. We show by induction that (a) centroid of the tree always lies on the path between $c$ and node $x$. The base case is obvious. Suppose the claim holds up to some moment, and let the centroid at that time be $v$. By the analysis of property 2, the new centroid must lie on the path between the newly added node and the current centroid $v$. Since it never moves outside $T$, we only need the part of this path inside $T$, which is the path between the current centroid $v$ and node $x$. By the induction hypothesis, $v$ is on the path between $c$ and $x$, so the new centroid is also on the path between $c$ and $x$. By induction, the claim holds.
     
-    性质 4 只需要结合 [重链剖分性质](./hld.md#重链剖分的性质) 即可说明．设树 $T$ 的（一个）重心为 $v$．结点 $v$ 是根结点时，命题显然成立．下面设 $v$ 是非根结点，$u$ 是它的父结点．因为 $|T_u^{(v)}| \le |T|/2$，所以，$v$ 所在子树大小至少是 $|T|/2$．但是，只要它到根结点的路径上经过一次轻边，它所在子树大小将严格小于 $|T|/2$，矛盾．所以，它必然在根结点所在重链上．进而，根据重链的定义，根结点重子结点对应子树中根结点所在重链就是原树中根结点所在重链的一部分；而且，根据性质 3，在重子结点对应子树上添加根结点及其所有轻子结点对应子树后，重心位置将沿着当前重心和根结点路径移动，所以新重心必然是旧重心的祖先（包括其自身）．
+    Property 4 follows from the [properties of heavy-light decomposition](./hld.md#重链剖分的性质). Let $v$ be (a) centroid of tree $T$. If $v$ is the root, the claim is obvious. Otherwise let $v$ be a non-root node and $u$ its parent. Since $|T_u^{(v)}| \le |T|/2$, the subtree of $v$ has size at least $|T|/2$. But if the path from it to the root passes through even one light edge, its subtree size would be strictly less than $|T|/2$, a contradiction. So it must lie on the heavy path containing the root. Further, by the definition of heavy paths, the heavy path containing the root within the subtree of the root's heavy child is part of the heavy path containing the root in the original tree. And by property 3, when we add the root and the subtrees of all its light children to the heavy child's subtree, the centroid moves along the path between the current centroid and the root. So the new centroid must be an ancestor of the old one (possibly the old one itself).
 
-## 求法
+## How to find it
 
-根据重心的等价定义，有两种方法可以在 $O(n)$ 时间内求出树的所有重心，其中，$n$ 为树的大小．
+Based on the equivalent definitions, there are two ways to find all centroids of a tree in $O(n)$ time, where $n$ is the size of the tree.
 
-### DFS 统计子树大小
+### Counting subtree sizes with DFS
 
-通过 DFS 计算每个子树的大小．对每个结点，记录它的所有子结点对应子树的大小，并利用总结点数减去当前子树大小得到「向上」的子树的大小，然后就可以依据定义找到重心了．
+Compute the size of every subtree with DFS. For each node, record the sizes of its children's subtrees, and get the size of the "upward" subtree by subtracting the current subtree size from the total number of nodes. Then we can find the centroids directly from the definition.
 
-??? example "参考实现"
+??? example "Reference implementation"
     ```cpp
     --8<-- "docs/graph/code/tree-centroid/tree-centroid-2.cpp:core"
     ```
 
-### 换根 DP 统计深度和
+### Computing depth sums with rerooting DP
 
-还可以通过换根 DP 计算出以不同结点为根时，所有结点的深度和（即到当前根结点的距离和）．根据定义，只需要找到使得这一深度和最小的结点即可．
+We can also use rerooting DP to compute, for each choice of root, the sum of depths of all nodes (that is, the sum of distances to the current root). By the definition, we just need the node that minimizes this sum.
 
-??? example "参考实现"
+??? example "Reference implementation"
     ```cpp
     --8<-- "docs/graph/code/tree-centroid/tree-centroid-3.cpp:core"
     ```
 
-## 例题
+## Example problem
 
 ???+ example "[Codeforces Round 359 (Div. 1) B. Kay and Snowflake](https://codeforces.com/problemset/problem/685/B)"
-    给定一棵有根树，求出每一棵子树的重心．
+    Given a rooted tree, find the centroid of every subtree.
 
-??? note "解题思路"
-    根据性质 4，对于一棵以点 $u$ 为根的子树，其重心一定在以 $u$ 的重子结点为根的子树的重心到点 $u$ 的路径上．
+??? note "Solution idea"
+    By property 4, for the subtree rooted at node $u$, its centroid lies on the path from the centroid of the subtree rooted at $u$'s heavy child up to $u$.
     
-    类似于上文提到的 DFS 求重心方法，对于每棵以结点 $u$ 为根的子树，先求出其重子结点对应子树的重心（叶子结点的重心是其本身），然后从该重心出发向上判断路径上的结点是不是重心即可；若路径上的结点都不是重心，则 $u$ 本身就是重心．
+    As in the DFS method above, for each subtree rooted at $u$, first find the centroid of its heavy child's subtree (a leaf's centroid is the leaf itself). Then walk up from that centroid and check whether each node on the path is a centroid. If none of them is, then $u$ itself is the centroid.
     
-    由于同一条重链上各子树的重心只会沿重链向上移动，每条重链上向上判断的总次数与重链长度同阶，所以在 $O(n)$ 时间内可以求出所有子树的重心．
+    Since the centroids of subtrees along the same heavy path only move upward along that path, the total number of upward checks on each heavy path is of the same order as its length. So we can find the centroids of all subtrees in $O(n)$ time.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/graph/code/tree-centroid/tree-centroid-1.cpp"
     ```
 
-## 习题
+## Exercises
 
 -   [Gym 101649G Godfather](https://codeforces.com/gym/101649/problem/G)
 -   [POJ 1655 Balancing Act](http://poj.org/problem?id=1655)
--   [洛谷 P1364 医院设置](https://www.luogu.com.cn/problem/P1364)
+-   [Luogu P1364 Hospital Placement](https://www.luogu.com.cn/problem/P1364)
 -   [Codeforces 1406C Link Cut Centroids](https://codeforces.com/contest/1406/problem/C)
 -   [Codeforces 708C Centroids](https://codeforces.com/problemset/problem/708/C)
 
-## 参考资料
+## References
 
--   [树的 "重心" 的一些性质及动态维护 - fanhq666](https://web.archive.org/web/20181122041458/http://fanhq666.blog.163.com/blog/static/81943426201172472943638)（[博客园转载](https://www.cnblogs.com/qlky/p/5781081.html)）
--   [树的直径、树的重心与树的点分治 - cyendra](https://www.cnblogs.com/zinthos/p/3899075.html)
--   [树的重心的性质及其证明 - suxxsfe](https://www.cnblogs.com/suxxsfe/p/13543253.html)
--   《信息学奥林匹克辞典》2.4.7.11 章 1. 树的重心
+-   [Some properties and dynamic maintenance of the tree "centroid" - fanhq666](https://web.archive.org/web/20181122041458/http://fanhq666.blog.163.com/blog/static/81943426201172472943638) ([repost on cnblogs](https://www.cnblogs.com/qlky/p/5781081.html))
+-   [Tree diameter, tree centroid and centroid decomposition - cyendra](https://www.cnblogs.com/zinthos/p/3899075.html)
+-   [Properties of the tree centroid and their proofs - suxxsfe](https://www.cnblogs.com/suxxsfe/p/13543253.html)
+-   *Dictionary of the Olympiad in Informatics*, Section 2.4.7.11, Part 1: Centroid of a tree

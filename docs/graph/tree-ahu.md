@@ -1,72 +1,72 @@
 author: Backl1ght
 
-AHU 算法用于判断两棵有根树是否同构．
+The AHU algorithm checks whether two rooted trees are isomorphic.
 
-判断树同构外还有一种常见的做法是 [树哈希](tree-hash.md)．
+Besides this, another common way to check tree isomorphism is [tree hashing](tree-hash.md).
 
-前置知识：[树基础](tree-basic.md)，[树的重心](tree-centroid.md)
+Prerequisites: [Tree basics](tree-basic.md), [Centroid of a tree](tree-centroid.md)
 
-建议配合参考资料里给的例子观看．
+It is a good idea to read this together with the examples given in the references.
 
-## 树同构的定义
+## Definition of tree isomorphism
 
-### 有根树同构
+### Isomorphism of rooted trees
 
-对于两棵有根树 $T_1(V_1,E_1,r_1)$ 和 $T_2(V_2,E_2,r_2)$，如果存在一个双射 $\varphi: V_1 \rightarrow V_2$，使得
-
-$$
-\forall u,v \in V_1,(u,v) \in E_1 \iff (\varphi(u),\varphi(v))  \in E_2
-$$
-
-**且** $\varphi(r_1)=r_2$ 成立，那么称有根树 $T_1(V_1,E_1,r_1)$ 和 $T_2(V_2,E_2,r_2)$ 同构．
-
-### 无根树同构
-
-对于两棵无根树 $T_1(V_1,E_1)$ 和 $T_2(V_2,E_2)$，如果存在一个双射 $\varphi: V_1 \rightarrow V_2$，使得
+For two rooted trees $T_1(V_1,E_1,r_1)$ and $T_2(V_2,E_2,r_2)$, if there is a bijection $\varphi: V_1 \rightarrow V_2$ such that
 
 $$
 \forall u,v \in V_1,(u,v) \in E_1 \iff (\varphi(u),\varphi(v))  \in E_2
 $$
 
-成立，那么称无根树 $T_1(V_1,E_1)$ 和 $T_2(V_2,E_2)$ 同构．
+**and** $\varphi(r_1)=r_2$, then the rooted trees $T_1(V_1,E_1,r_1)$ and $T_2(V_2,E_2,r_2)$ are called isomorphic.
 
-简单的说就是，如果能够通过把树 $T_1$ 的所有节点重新标号，使得树 $T_1$ 和树 $T_2$  **完全相同**，那么称这两棵树同构．
+### Isomorphism of unrooted trees
 
-## 问题的转化
+For two unrooted trees $T_1(V_1,E_1)$ and $T_2(V_2,E_2)$, if there is a bijection $\varphi: V_1 \rightarrow V_2$ such that
 
-无根树同构问题可以转化为有根树同构问题．具体方法如下：
+$$
+\forall u,v \in V_1,(u,v) \in E_1 \iff (\varphi(u),\varphi(v))  \in E_2
+$$
 
-对于无根树 $T_1(V_1, E_1)$ 和 $T_2(V_2,E_2)$，先分别找出它们的 **所有** 重心．
+holds, then the unrooted trees $T_1(V_1,E_1)$ and $T_2(V_2,E_2)$ are called isomorphic.
 
--   如果这两棵无根树重心数量不同，那么这两棵树不同构．
--   如果这两棵无根树重心数量都为 $1$，分别记为 $c_1$ 和 $c_2$，那么如果有根树 $T_1(V_1,E_1,c_1)$ 和有根树 $T_2(V_2,E_2,c_2)$ 同构，那么无根树 $T_1(V_1, E_1)$ 和 $T_2(V_2,E_2)$ 同构，反之则不同构．
--   如果这两棵无根树重心数量都为 $2$，分别记为 $c_1,c'_1$ 和 $c_2,c'_2$，那么如果有根树 $T_1(V_1,E_1,c_1)$ 和有根树 $T_2(V_2,E_2,c_2)$ 同构 **或者** 有根树 $T_1(V_1,E_1,c'_1)$ 和 $T_2(V_2,E_2,c_2)$ 同构，那么无根树 $T_1(V_1, E_1)$ 和 $T_2(V_2,E_2)$ 同构，反之则不同构．
+Put simply: if we can relabel all nodes of tree $T_1$ so that $T_1$ and $T_2$ become **exactly the same**, then the two trees are isomorphic.
 
-所以，只要解决了有根树同构问题，我们就可以把无根树同构问题根据上述方法转化成有根树同构的问题，进而解决无根树同构的问题．
+## Reducing the problem
 
-假设有一个可以 $O(\left|V\right|)$ 解决有根树同构问题的算法，那么根据上述方法我们也可以在 $O(\left|V\right|)$ 的时间内解决无根树同构问题．
+The unrooted tree isomorphism problem can be reduced to the rooted one. Here is how:
 
-## 朴素的 AHU 算法
+For unrooted trees $T_1(V_1, E_1)$ and $T_2(V_2,E_2)$, first find **all** centroids of each tree.
 
-朴素的 AHU 算法是基于括号序的．
+-   If the two trees have different numbers of centroids, they are not isomorphic.
+-   If both trees have exactly $1$ centroid, call them $c_1$ and $c_2$. Then the unrooted trees $T_1(V_1, E_1)$ and $T_2(V_2,E_2)$ are isomorphic if the rooted trees $T_1(V_1,E_1,c_1)$ and $T_2(V_2,E_2,c_2)$ are isomorphic, and not isomorphic otherwise.
+-   If both trees have $2$ centroids, call them $c_1,c'_1$ and $c_2,c'_2$. Then the unrooted trees $T_1(V_1, E_1)$ and $T_2(V_2,E_2)$ are isomorphic if the rooted trees $T_1(V_1,E_1,c_1)$ and $T_2(V_2,E_2,c_2)$ are isomorphic **or** the rooted trees $T_1(V_1,E_1,c'_1)$ and $T_2(V_2,E_2,c_2)$ are isomorphic, and not isomorphic otherwise.
 
-### 原理 1
+So once we can solve rooted tree isomorphism, we can use the method above to turn unrooted tree isomorphism into rooted tree isomorphism, and solve it that way.
 
-我们知道一段合法的括号序和一棵有根树唯一对应，而且一棵树的括号序是由它的子树的括号序拼接而成的．如果我们通过改变子树括号序拼接的顺序，从而获得了一段新的括号序，那么新括号序对应的树和原括号序对应的树同构．
+If some algorithm solves rooted tree isomorphism in $O(\left|V\right|)$, then by the method above we can also solve unrooted tree isomorphism in $O(\left|V\right|)$ time.
 
-### 原理 2
+## The naive AHU algorithm
 
-树的同构关系是传递的．既如果 $T_1$ 和 $T_2$ 同构，$T_2$ 和 $T_3$ 同构，那么 $T_1$ 和 $T_3$ 同构．
+The naive AHU algorithm is based on bracket sequences.
 
-### 推论
+### Principle 1
 
-考虑求树括号序的递归算法，我们在回溯时拼接子树的括号序．如果在拼接的时候将字典序小的序列先拼接，并将最后的结果记为 $NAME$．
+A valid bracket sequence corresponds to exactly one rooted tree, and the bracket sequence of a tree is the concatenation of the bracket sequences of its subtrees. If we get a new bracket sequence by changing the order in which the subtrees' sequences are concatenated, then the tree of the new sequence is isomorphic to the tree of the original one.
 
-将以节点 $r$ 为根的子树的 $NAME$ 作为节点 $r$ 的 $NAME$，记为 $NAME(r)$，那么对于有根树 $T_1(V_1,E_1,r_1)$ 和 $T_2(V_2,E_2,r_2)$，如果 $NAME(r_1)=NAME(r_2)$，那么 $T_1$ 和 $T_2$ 同构．
+### Principle 2
 
-### 命名算法
+Tree isomorphism is transitive. That is, if $T_1$ is isomorphic to $T_2$ and $T_2$ is isomorphic to $T_3$, then $T_1$ is isomorphic to $T_3$.
 
-???+ note "实现"
+### Corollary
+
+Consider the recursive algorithm that computes a tree's bracket sequence: we concatenate the subtrees' sequences when backtracking. Suppose that when concatenating we always put the lexicographically smaller sequences first, and call the final result $NAME$.
+
+Let the $NAME$ of the subtree rooted at node $r$ be the $NAME$ of node $r$, written $NAME(r)$. Then for rooted trees $T_1(V_1,E_1,r_1)$ and $T_2(V_2,E_2,r_2)$, if $NAME(r_1)=NAME(r_2)$, then $T_1$ and $T_2$ are isomorphic.
+
+### Naming algorithm
+
+???+ note "Implementation"
     $$
     \begin{array}{ll}
     1 & \textbf{Input. } \text{A rooted tree }T\\
@@ -83,9 +83,9 @@ $$
     \end{array}
     $$
 
-### AHU 算法
+### The AHU algorithm
 
-???+ note "实现"
+???+ note "Implementation"
     $$
     \begin{array}{ll}
     1 & \textbf{Input. } \text{Two rooted trees }T_1(V_1,E_1,r_1)\text{ and }T_2(V_2,E_2,r_2) \\
@@ -100,52 +100,52 @@ $$
     \end{array}
     $$
 
-### 复杂度证明
+### Complexity proof
 
-对于一棵有 $n$ 个节点的有根树，假设他是链状的，那么节点名字长度最长可以是 $n$，那么 ASSIGN-NAME 算法的复杂度是 $1+2+\cdots+n$ 的常数倍，即 $\Theta(n^2)$．由此，朴素 AHU 算法的复杂度为 $O(n^2)$．
+For a rooted tree with $n$ nodes, if it is a chain, a node's name can be up to $n$ long. Then the cost of ASSIGN-NAME is a constant times $1+2+\cdots+n$, which is $\Theta(n^2)$. So the naive AHU algorithm runs in $O(n^2)$.
 
-## 优化的 AHU 算法
+## The optimized AHU algorithm
 
-朴素的 AHU 算法的缺点是树的 $NAME$ 的长度可能会过长，我们可以针对这一点做一些优化．
+The weakness of the naive AHU algorithm is that a tree's $NAME$ can get very long. We can optimize exactly this.
 
-### 原理 1
+### Principle 1
 
-对树进行层次划分，第 $i$ 层的节点到根的最短距离为 $i$．位于第 $i$ 层的节点的 $NAME$ 可以 **只** 由位于第 $i+1$ 层的节点的 $NAME$ 拼接得到．
+Split the tree into levels: nodes on level $i$ are at shortest distance $i$ from the root. The $NAME$ of a node on level $i$ can be built **only** by concatenating the $NAME$s of nodes on level $i+1$.
 
-### 原理 2
+### Principle 2
 
-在同一层内，节点的 $NAME$ 可以由其在层内的排名唯一标识．
+Within one level, a node's $NAME$ can be uniquely identified by its rank within that level.
 
-**注意**，这里的排名是对两棵树而言的，假设节点 $u$ 位于第 $i$ 层，那么节点 $u$ 的排名等于所有 $T_1$ 和 $T_2$ 第 $i$ 层的节点中 $NAME$ 比 $NAME(u)$ 小的节点的个数．
+**Note**: here the rank is taken over both trees. If node $u$ is on level $i$, then the rank of $u$ equals the number of nodes on level $i$ of $T_1$ and $T_2$ whose $NAME$ is smaller than $NAME(u)$.
 
-### 推论
+### Corollary
 
-我们可以将节点原来的 $NAME$ 用其在层内的排名代替，然后把原来拼接节点 $NAME$ 用向数组加入元素代替．
+We can replace each node's original $NAME$ with its rank within its level, and replace string concatenation of $NAME$s with appending elements to an array.
 
-这样用整数和数组来代替字符串，既不会影响算法的正确性，又很大的降低了算法的复杂度．
+Using integers and arrays instead of strings does not affect correctness, and it greatly lowers the complexity.
 
-### 复杂度证明
+### Complexity proof
 
-首先注意到第 $i$ 层由拼接得到的 $NAME$ 的总长度为第 $i$ 层点的度数之和，即第 $i+1$ 层的总点数，以下用 $L_i$ 表示．算法的下一步会将这些 $NAME$ 看成字符串（数组）并排序，然后将它们替换为其在层内的排名（即重新映射为一个数）．以下引理表明了对总长为 $L$ 的 $m$ 个字符串排序的复杂度：
+First note that the total length of the concatenated $NAME$s on level $i$ is the sum of the degrees of the nodes on level $i$, which is the total number of nodes on level $i+1$. Call it $L_i$. The next step of the algorithm treats these $NAME$s as strings (arrays), sorts them, and replaces each with its rank in the level (that is, remaps it to a single number). The following lemma gives the cost of sorting $m$ strings with total length $L$:
 
-1.  我们可以使用基数排序在 $O(L+|\Sigma|)$ 的时间内完成排序，其中 $|\Sigma|$ 为字符集的大小．（有一些实现细节，参见参考资料）
-2.  我们可以使用快速排序在 $O(L \log m)$ 的时间内完成排序．证明的大致思路为快排递归树的高度为 $O(\log m)$，且暴力比较长度为 $\ell_1$ 和 $\ell_2$ 的两个字符串的复杂度为 $O(\min\{\ell_1,\ell_2\})$．
+1.  We can sort them with radix sort in $O(L+|\Sigma|)$ time, where $|\Sigma|$ is the alphabet size. (There are some implementation details; see the references.)
+2.  We can sort them with quicksort in $O(L \log m)$ time. The rough idea of the proof: the recursion tree of quicksort has height $O(\log m)$, and comparing two strings of lengths $\ell_1$ and $\ell_2$ directly costs $O(\min\{\ell_1,\ell_2\})$.
 
-在 AHU 算法中，第 $i$ 层字符串的字符集大小最多为第 $i+1$ 层的点数，即 $L_i$，所以基数排序的复杂度是线性的．根据 $\sum_i L_i=O(n)$，并将每层的复杂度相加后可以看出，若使用字符串的基数排序，则算法的总复杂度为 $T(n)=O(n)$．同理，如果使用快排排序字符串，那么 $T(n)=O(n \log n)$．
+In the AHU algorithm, the alphabet for the strings on level $i$ has size at most the number of nodes on level $i+1$, which is $L_i$, so radix sort runs in linear time. Since $\sum_i L_i=O(n)$, adding up the cost over all levels shows that with radix sort on strings, the total complexity is $T(n)=O(n)$. Likewise, if we sort the strings with quicksort, then $T(n)=O(n \log n)$.
 
-## 例题
+## Example problem
 
 [SPOJ-TREEISO](https://www.spoj.com/problems/TREEISO/en/)
 
-题意翻译：给你两棵无根树，判断两棵树是否同构．
+Problem summary: given two unrooted trees, decide whether they are isomorphic.
 
-???+ note "参考代码"
+???+ note "Reference code"
     ```cpp
     --8<-- "docs/graph/code/tree-ahu/tree-ahu_1.cpp"
     ```
 
-## 参考资料
+## References
 
-本文大部分内容译自 [Paper](http://wwwmayr.in.tum.de/konferenzen/Jass08/courses/1/smal/Smal_Paper.pdf) 和 [Slide](https://logic.pdmi.ras.ru/~smal/files/smal_jass08_slides.pdf)．参考资料里的证明会更加全面和严谨，本文做了一定的简化．
+Most of this article is translated from the [Paper](http://wwwmayr.in.tum.de/konferenzen/Jass08/courses/1/smal/Smal_Paper.pdf) and the [Slide](https://logic.pdmi.ras.ru/~smal/files/smal_jass08_slides.pdf). The proofs in the references are more complete and rigorous; this article simplifies them somewhat.
 
-对 AHU 算法的复杂度分析，以及字符串的线性时间基数排序算法可以参见 The Design and Analysis of Computer Algorithms 的 3.2 节 Radix sorting，以及其中的 Example 3.2．
+For the complexity analysis of the AHU algorithm and a linear-time radix sort for strings, see Section 3.2, Radix sorting, of The Design and Analysis of Computer Algorithms, and Example 3.2 there.

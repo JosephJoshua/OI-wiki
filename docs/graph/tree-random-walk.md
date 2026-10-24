@@ -1,26 +1,26 @@
-给定一棵有根树，树的某个结点上有一个硬币，在某一时刻硬币会等概率地移动到邻接结点上，问硬币移动到邻接结点上的期望距离．
+Given a rooted tree, a coin sits on some node. At each moment the coin moves to one of the adjacent nodes, each with equal probability. We want the expected distance the coin travels to reach an adjacent node.
 
-## 需要用到的定义
+## Definitions used
 
--   $T=(V,E)$: 所讨论的树
--   $d(u)$: 结点 $u$ 的度数
--   $w(u,v)$: 结点 $u$ 与结点 $v$ 之间的边的边权
--   $p_u$: 结点 $u$ 的父结点
--   $\textit{root}$: 树的根结点
--   $\textit{son}_u$: 结点 $u$ 的子结点集合
--   $\textit{sibling}_u$: 结点 $u$ 的兄弟结点集合
+-   $T=(V,E)$: the tree under discussion
+-   $d(u)$: the degree of node $u$
+-   $w(u,v)$: the weight of the edge between nodes $u$ and $v$
+-   $p_u$: the parent of node $u$
+-   $\textit{root}$: the root of the tree
+-   $\textit{son}_u$: the set of children of node $u$
+-   $\textit{sibling}_u$: the set of siblings of node $u$
 
-## 向父结点走的期望距离
+## Expected distance to walk to the parent
 
-设 $f(u)$ 代表 $u$ 结点走到其父结点 $p_u$ 的期望距离，则有：
+Let $f(u)$ be the expected distance for node $u$ to walk to its parent $p_u$. Then:
 
 $$
 f(u) = \cfrac{w(u,p_u) + \sum\limits_{v \in \textit{son}_u}(w(u,v) + f(v) + f(u))}{d(u)}
 $$
 
-分子中的前半部分代表直接走向了父结点，后半部分代表先走向了子结点再由子结点走回来然后再向父结点走；分母 $d(u)$ 代表从 $u$ 结点走向其任何邻接点的概率相同．
+The first part of the numerator is walking straight to the parent. The second part is walking to a child first, coming back from that child, and then walking to the parent. The denominator $d(u)$ reflects that node $u$ moves to each of its neighbors with equal probability.
 
-化简如下：
+Simplifying:
 
 $$
 \begin{aligned}
@@ -31,27 +31,27 @@ $$
 \end{aligned}
 $$
 
-对于叶子结点 $l$，初始状态为 $f(l) = w(p_l, l)$．
+For a leaf $l$, the initial value is $f(l) = w(p_l, l)$.
 
-当树上所有边的边权都为 $1$ 时，上式可化为：
+When every edge in the tree has weight $1$, the formula becomes:
 
 $$
 f(u) = d(u) + \sum\limits_{v \in \textit{son}_u}f(v)
 $$
 
-即 $u$ 子树的所有结点的度数和，也即 $u$ 子树大小的两倍 $-1$（每个结点连向其父亲的边都有且只有一条，除 $u$ 与 $p_u$ 之间的边只有 $1$ 点度数的贡献外，每条边会产生 $2$ 点度数的贡献）．
+That is, the sum of the degrees of all nodes in $u$'s subtree, which is twice the size of $u$'s subtree, $-1$ (each node has exactly one edge to its parent; every edge contributes $2$ to the degree sum, except the edge between $u$ and $p_u$, which contributes only $1$).
 
-## 向子结点走的期望距离
+## Expected distance to walk to a child
 
-设 $g(u)$ 代表 $p_u$ 结点走到其子结点 $u$ 的期望距离，则有：
+Let $g(u)$ be the expected distance for node $p_u$ to walk to its child $u$. Then:
 
 $$
 g(u) = \cfrac{w(p_u,u) + \left(w(p_u,p_{p_u})+g(p_u)+g(u)\right) + \sum\limits_{s \in \textit{sibling}_u}(w(p_u,s)+f(s)+g(u))}{d(p_u)}
 $$
 
-分子中的第一部分代表直接走向了子结点 $u$，第二部分代表先走向了父结点再由父结点走回来然后再向 $u$ 结点走，第三部分代表先走向 $u$ 结点的兄弟结点再由其走回来然后再向 $u$ 结点走；分母 $d(p_u)$ 代表从 $p_u$ 结点走向其任何邻接点的概率相同．
+The first part of the numerator is walking straight to the child $u$. The second part is walking to the parent first, coming back from it, and then walking to $u$. The third part is walking to a sibling of $u$ first, coming back from it, and then walking to $u$. The denominator $d(p_u)$ reflects that node $p_u$ moves to each of its neighbors with equal probability.
 
-化简如下：
+Simplifying:
 
 $$
 \begin{aligned}
@@ -64,9 +64,9 @@ $$
 \end{aligned}
 $$
 
-初始状态为 $g(\text{root}) = 0$．
+The initial value is $g(\text{root}) = 0$.
 
-## 代码实现（以无权树为例）
+## Implementation (for an unweighted tree)
 
 ```cpp
 vector<int> G[MAXN];

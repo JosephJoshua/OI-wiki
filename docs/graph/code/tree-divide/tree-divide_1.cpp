@@ -1,10 +1,10 @@
-/* size 处理子树 d[], 连通块大小 cnt
-   dp 最大子树 f[], 树的重心 rot
-   get 计算出点到重心的距离 t[], top
-   calc 点分治 bu[] 长度桶
-   hd to nx wg 链式前向星存图
-   ak[] as[] 离线处理询问
-   ok[] 点分治中已成为重心的点
+/* size computes subtree sizes d[] and component size cnt
+   dp computes the largest subtree f[] and the centroid rot
+   get computes distances from nodes to the centroid t[], top
+   calc does centroid decomposition; bu[] is a bucket of lengths
+   hd to nx wg store the graph as a linked-list adjacency (chained forward star)
+   ak[] as[] handle the queries offline
+   ok[] marks nodes that have already been chosen as centroids
  */
 #include <iostream>
 const int N = 1e4 + 4, M = 105, Q = 1e7 + 7;

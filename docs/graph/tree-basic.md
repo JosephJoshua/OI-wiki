@@ -1,146 +1,146 @@
-## 引入
+## Introduction
 
-图论中的树和现实生活中的树长得一样，只不过我们习惯于处理问题的时候把树根放到上方来考虑．这种数据结构看起来像是一个倒挂的树，因此得名．
+A tree in graph theory looks just like a real tree, except that when solving problems we usually draw the root at the top. The data structure looks like an upside-down tree, which is where the name comes from.
 
-## 定义
+## Definition
 
-一个没有固定根结点的树称为 **无根树**（unrooted tree）．无根树有几种等价的形式化定义：
+A tree without a fixed root node is called an **unrooted tree**. There are several equivalent formal definitions of an unrooted tree:
 
--   有 $n$ 个结点，$n-1$ 条边的连通无向图
+-   A connected undirected graph with $n$ nodes and $n-1$ edges
 
--   无向无环的连通图
+-   A connected undirected graph with no cycles
 
--   任意两个结点之间有且仅有一条简单路径的无向图
+-   An undirected graph in which there is exactly one simple path between any two nodes
 
--   任何边均为桥的连通图
+-   A connected graph in which every edge is a bridge
 
--   没有圈，且在任意不同两点间添加一条边之后所得图含唯一的一个圈的图
+-   A graph with no cycles, such that adding an edge between any two distinct vertices creates exactly one cycle
 
-在无根树的基础上，指定一个结点称为 **根**，则形成一棵 **有根树**（rooted tree）．有根树在很多时候仍以无向图表示，只是规定了结点之间的上下级关系，详见下文．
+If we pick one node of an unrooted tree and call it the **root**, we get a **rooted tree**. A rooted tree is still often represented as an undirected graph; we just fix the parent-child relationship between nodes, as described below.
 
-## 有关树的定义
+## Tree-related definitions
 
-### 适用于无根树和有根树
+### For both unrooted and rooted trees
 
--   **森林（forest）**：每个连通分量（连通块）都是树的图．按照定义，一棵树也是森林．
+-   **Forest**: a graph in which every connected component is a tree. By this definition, a single tree is also a forest.
 
--   **生成树（spanning tree）**：一个连通无向图的生成子图，同时要求是树．也即在图的边集中选择 $n - 1$ 条，将所有顶点连通．
+-   **Spanning tree**: a spanning subgraph of a connected undirected graph that is also a tree. In other words, pick $n - 1$ edges from the graph's edge set so that all vertices are connected.
 
--   **无根树的叶结点（leaf node）**：度数不超过 $1$ 的结点．
+-   **Leaf node of an unrooted tree**: a node with degree at most $1$.
 
-    ???+ question "为什么不是度数恰为 $1$？"
-        考虑 $n = 1$．
+    ???+ question "Why not degree exactly $1$?"
+        Consider $n = 1$.
 
--   **有根树的叶结点（leaf node）**：没有子结点的结点．
+-   **Leaf node of a rooted tree**: a node with no children.
 
-### 只适用于有根树
+### Only for rooted trees
 
--   **父亲（parent node）**：对于除根以外的每个结点，定义为从该结点到根路径上的第二个结点．  
-    根结点没有父结点．
--   **祖先（ancestor）**：一个结点到根结点的路径上，除了它本身外的结点．  
-    根结点的祖先集合为空．
--   **子结点（child node）**：如果 $u$ 是 $v$ 的父亲，那么 $v$ 是 $u$ 的子结点．  
-    子结点的顺序一般不加以区分，二叉树是一个例外．
--   **结点的深度（depth）**：到根结点的路径上的边数．
--   **树的高度（height）**：所有结点的深度的最大值．
--   **兄弟（sibling）**：同一个父亲的多个子结点互为兄弟．
--   **后代（descendant）**：子结点和子结点的后代．  
-    或者理解成：如果 $u$ 是 $v$ 的祖先，那么 $v$ 是 $u$ 的后代．
+-   **Parent node**: for every node other than the root, the second node on the path from that node to the root.  
+    The root has no parent.
+-   **Ancestor**: any node on the path from a node to the root, other than the node itself.  
+    The root's set of ancestors is empty.
+-   **Child node**: if $u$ is the parent of $v$, then $v$ is a child of $u$.  
+    The order of children usually does not matter; binary trees are an exception.
+-   **Depth of a node**: the number of edges on the path to the root.
+-   **Height of a tree**: the maximum depth over all nodes.
+-   **Sibling**: children of the same parent are siblings of each other.
+-   **Descendant**: a child, or a descendant of a child.  
+    Equivalently: if $u$ is an ancestor of $v$, then $v$ is a descendant of $u$.
 
 ![tree-definition.svg](images/tree-definition.svg)
 
--   **子树（subtree）**：删掉与父亲相连的边后，该结点所在的子图．
+-   **Subtree**: the part of the graph containing a node after deleting the edge between it and its parent.
 
     ![tree-definition-subtree.svg](images/tree-definition-subtree.svg)
 
-## 特殊的树
+## Special trees
 
--   **链（chain/path graph）**：满足与任一结点相连的边不超过 $2$ 条的树称为链．
+-   **Chain (path graph)**: a tree in which every node has at most $2$ incident edges.
 
--   **菊花/星星（star）**：满足存在 $u$ 使得所有除 $u$ 以外结点均与 $u$ 相连的树称为菊花．
+-   **Star**: a tree with a node $u$ such that every node other than $u$ is connected to $u$.
 
--   **有根二叉树（rooted binary tree）**：每个结点最多只有两个儿子（子结点）的有根树称为二叉树．常常对两个子结点的顺序加以区分，分别称之为左子结点和右子结点．  
-    大多数情况下，**二叉树** 一词均指有根二叉树．
+-   **Rooted binary tree**: a rooted tree where every node has at most two children. Usually the two children are ordered and called the left child and the right child.  
+    In most cases, the term **binary tree** means a rooted binary tree.
 
--   **完整二叉树（full/proper binary tree）**：每个结点的子结点数量均为 0 或者 2 的二叉树．换言之，每个结点或者是树叶，或者左右子树均非空．
+-   **Full (proper) binary tree**: a binary tree where every node has either 0 or 2 children. In other words, every node is either a leaf or has both left and right subtrees non-empty.
 
     ![](images/tree-binary-proper.svg)
 
--   **完全二叉树（complete binary tree）**：只有最下面两层结点的度数可以小于 2，且最下面一层的结点都集中在该层最左边的连续位置上．
+-   **Complete binary tree**: only nodes in the bottom two levels may have degree less than 2, and the nodes in the bottom level are packed together in consecutive positions on the far left.
 
     ![](images/tree-binary-complete.svg)
 
--   **完美二叉树（perfect binary tree）**：所有叶结点的深度均相同，且所有非叶节点的子节点数量均为 2 的二叉树称为完美二叉树．
+-   **Perfect binary tree**: a binary tree where all leaves have the same depth and every non-leaf node has exactly 2 children.
 
     ![](images/tree-binary-perfect.svg)
 
 ???+ warning "Warning"
-    Proper binary tree 的汉译名称不固定，且完全二叉树和满二叉树的定义在不同教材中定义不同，遇到的时候需根据上下文加以判断．
+    The Chinese name for "proper binary tree" is not fixed, and the definitions of complete binary tree and full binary tree differ between textbooks. When you meet these terms, decide what they mean from context.
 
-OIers 所说的「满二叉树」多指完美二叉树．
+When OIers say "full binary tree", they usually mean a perfect binary tree.
 
-## 存储
+## Storage
 
-### 只记录父结点
+### Storing only the parent
 
-用一个数组 `parent[N]` 记录每个结点的父亲结点．
+Use an array `parent[N]` to record the parent of each node.
 
-这种方式可以获得的信息较少，不便于进行自顶向下的遍历．常用于自底向上的递推问题中．
+This gives relatively little information and makes top-down traversal inconvenient. It is often used for bottom-up recurrences.
 
-### 邻接表
+### Adjacency list
 
--   对于无根树：为每个结点开辟一个线性列表，记录所有与之相连的结点．
+-   For an unrooted tree: give each node a linear list that records all nodes adjacent to it.
     ```cpp
     std::vector<int> adj[N];
     ```
--   对于有根树：
-    -   方法一：若给定的是无向图，则仍可以上述形式存储．下文将介绍如何区分结点的上下关系．
-    -   方法二：若输入数据能够确保结点的上下关系，则可以利用这个信息．为每个结点开辟一个线性列表，记录其所有子结点；若有需要，还可在另一个数组中记录其父结点．
+-   For a rooted tree:
+    -   Method 1: if the input is an undirected graph, you can still store it in the form above. Below we explain how to tell parents from children.
+    -   Method 2: if the input guarantees the parent-child relationship, you can use that. Give each node a linear list recording all its children; if needed, also record its parent in another array.
         ```cpp
         std::vector<int> children[N];
         int parent[N];
         ```
-        当然也可以用其他方式（如链表）替代 `std::vector`．
+        Of course, you can also use something else (such as a linked list) instead of `std::vector`.
 
-### 左孩子右兄弟表示法
+### Left-child right-sibling representation
 
-#### 过程
+#### Process
 
-对于有根树，存在一种简单的表示方法．
+For rooted trees there is a simple representation.
 
-首先，给每个结点的所有子结点任意确定一个顺序．
+First, choose an arbitrary order for the children of each node.
 
-此后为每个结点记录两个值：其 **第一个子结点**  `child[u]` 和其 **下一个兄弟结点**  `sib[u]`．若没有子结点，则 `child[u]` 为空；若该结点是其父结点的最后一个子结点，则 `sib[u]` 为空．
+Then record two values for each node: its **first child**  `child[u]` and its **next sibling**  `sib[u]`. If the node has no children, `child[u]` is empty; if the node is the last child of its parent, `sib[u]` is empty.
 
-#### 实现
+#### Implementation
 
-遍历一个结点的所有子结点可由如下方式实现．
+You can iterate over all children of a node like this.
 
 ```cpp
-int v = child[u];  // 从第一个子结点开始
+int v = child[u];  // start from the first child
 while (v != EMPTY_NODE) {
   // ...
-  // 处理子结点 v
+  // process child v
   // ...
-  v = sib[v];  // 转至下一个子结点，即 v 的一个兄弟
+  v = sib[v];  // move to the next child, i.e. a sibling of v
 }
 ```
 
-也可简写为以下形式．
+It can also be written more briefly as follows.
 
 ```cpp
 for (int v = child[u]; v != EMPTY_NODE; v = sib[v]) {
   // ...
-  // 处理子结点 v
+  // process child v
   // ...
 }
 ```
 
-### 二叉树
+### Binary tree
 
-需要记录每个结点的左右子结点．
+We need to record the left and right child of each node.
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     int parent[N];
     int lch[N], rch[N];
@@ -148,23 +148,23 @@ for (int v = child[u]; v != EMPTY_NODE; v = sib[v]) {
     int child[N][2];
     ```
 
-## 树的遍历
+## Tree traversal
 
-### 树上 DFS
+### DFS on a tree
 
-在树上 DFS 是这样的一个过程：先访问根节点，然后分别访问根节点每个儿子的子树．
+DFS on a tree works like this: first visit the root, then visit the subtree of each of the root's children in turn.
 
-可以用来求出每个节点的深度、父亲等信息．
+It can be used to find information such as the depth and parent of each node.
 
-### 二叉树 DFS 遍历
+### DFS traversals of a binary tree
 
-#### 先序遍历
+#### Preorder traversal
 
 ![preorder](images/tree-basic-preorder.svg)
 
-按照 **根，左，右** 的顺序遍历二叉树．
+Traverse the binary tree in the order **root, left, right**.
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     void preorder(BiTree* root) {
       if (root) {
@@ -175,13 +175,13 @@ for (int v = child[u]; v != EMPTY_NODE; v = sib[v]) {
     }
     ```
 
-#### 中序遍历
+#### Inorder traversal
 
 ![inorder](images/tree-basic-inorder.svg)
 
-按照 **左，根，右** 的顺序遍历二叉树．
+Traverse the binary tree in the order **left, root, right**.
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     void inorder(BiTree* root) {
       if (root) {
@@ -192,13 +192,13 @@ for (int v = child[u]; v != EMPTY_NODE; v = sib[v]) {
     }
     ```
 
-#### 后序遍历
+#### Postorder traversal
 
 ![postorder](images/tree-basic-postorder.svg)
 
-按照 **左，右，根** 的顺序遍历二叉树．
+Traverse the binary tree in the order **left, right, root**.
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     void postorder(BiTree* root) {
       if (root) {
@@ -209,31 +209,31 @@ for (int v = child[u]; v != EMPTY_NODE; v = sib[v]) {
     }
     ```
 
-#### 反推
+#### Reconstructing traversals
 
-已知中序遍历序列和另外一个序列可以求第三个序列．
+Given the inorder sequence and one other traversal sequence, you can work out the third.
 
 ![reverse](images/tree-basic-reverse.svg)
 
-1.  前序的第一个是 `root`，后序的最后一个是 `root`．
-2.  先确定根节点，然后根据中序遍历，在根左边的为左子树，根右边的为右子树．
-3.  对于每一个子树可以看成一个全新的树，仍然遵循上面的规律．
+1.  The first element of the preorder sequence is `root`, and the last element of the postorder sequence is `root`.
+2.  Find the root first. Then, in the inorder sequence, everything left of the root is the left subtree and everything right of it is the right subtree.
+3.  Treat each subtree as a brand-new tree and apply the same rules again.
 
-### 树上 BFS
+### BFS on a tree
 
-从树根开始，严格按照层次来访问节点．
+Start from the root and visit nodes strictly level by level.
 
-BFS 过程中也可以顺便求出各个节点的深度和父亲节点．
+During BFS you can also find the depth and parent of each node along the way.
 
-#### 树的层序遍历
+#### Level-order traversal
 
-树层序遍历是指按照从根节点到叶子节点的层次关系，一层一层的横向遍历各个节点．根据 BFS 的定义可以知道，BFS 所得到的遍历顺序就是一种层序遍历．但层序遍历要求将不同的层次区分开来，所以其结果通常以二维数组的形式表示．
+Level-order traversal visits nodes one level at a time, going across each level, from the root down to the leaves. By the definition of BFS, the order BFS produces is a level-order traversal. But level-order traversal requires different levels to be kept apart, so the result is usually given as a 2D array.
 
-例如，下图的树的层序遍历的结果是 `[[1], [2, 3, 4], [5, 6]]`（每一层从左向右）．
+For example, the level-order traversal of the tree below is `[[1], [2, 3, 4], [5, 6]]` (each level from left to right).
 
 ![tree-basic-levelOrder](images/tree-basic-levelOrder.svg)
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     vector<vector<int>> levelOrder(Node* root) {
       if (!root) {
@@ -243,13 +243,13 @@ BFS 过程中也可以顺便求出各个节点的深度和父亲节点．
       queue<Node*> q;
       q.push(root);
       while (!q.empty()) {
-        int currentLevelSize = q.size();  // 当前层的节点个数
+        int currentLevelSize = q.size();  // number of nodes on the current level
         res.push_back(vector<int>());
         for (int i = 0; i < currentLevelSize; ++i) {
           Node* cur = q.front();
           q.pop();
           res.back().push_back(cur->val);
-          for (Node* child : cur->children) {  // 把子节点都加入
+          for (Node* child : cur->children) {  // push all children
             q.push(child);
           }
         }
@@ -258,58 +258,58 @@ BFS 过程中也可以顺便求出各个节点的深度和父亲节点．
     }
     ```
 
-### 二叉树 Morris 遍历
+### Morris traversal of a binary tree
 
-二叉树遍历的核心问题是，当遍历当前节点的子节点后，如何返回当前节点并继续遍历．遍历二叉树的递归方法和非递归方法都使用了栈结构，记录返回路径，来实现从下层到上层的移动．其空间复杂度最好时为 $O(\log n)$，最坏时为 $O(n)$（二叉树呈线性）．
+The core problem in traversing a binary tree is: after visiting a node's children, how do we get back to that node and continue? Both the recursive and non-recursive methods use a stack to record the way back, which lets us move from a lower level to an upper level. The space complexity is $O(\log n)$ at best and $O(n)$ at worst (when the tree is a chain).
 
-Morris 遍历的实质是避免使用栈，利用底层节点空闲的 `right` 指针指回上层的某个节点，从而完成下层到上层的移动．
+The idea of Morris traversal is to avoid the stack. It uses the unused `right` pointers of lower nodes to point back to some upper node, and that is how it moves from a lower level back up.
 
-#### Morris 遍历的过程
+#### How Morris traversal works
 
-假设来到当前节点 `cur`，开始时来到根节点位置．
+Let `cur` be the current node. At the start, it is the root.
 
-1.  如果 `cur` 为空时遍历停止，否则进行以下过程．
-2.  如果 `cur` 没有左子树，`cur` 向右移动（`cur = cur->right`）．
-3.  如果 `cur` 有左子树，找到左子树上最右的节点，记为 `mostRight`．
-    -   如果 `mostRight` 的 `right` 指针指向空，让其指向 `cur`，然后 `cur` 向左移动（`cur = cur->left`）．
-    -   如果 `mostRight` 的 `right` 指针指向 `cur`，将其修改为 `null`，然后 `cur` 向右移动（`cur = cur->right`）．
+1.  If `cur` is empty, stop. Otherwise do the following.
+2.  If `cur` has no left subtree, move `cur` right (`cur = cur->right`).
+3.  If `cur` has a left subtree, find the rightmost node of the left subtree and call it `mostRight`.
+    -   If the `right` pointer of `mostRight` is null, point it to `cur`, then move `cur` left (`cur = cur->left`).
+    -   If the `right` pointer of `mostRight` points to `cur`, set it back to `null`, then move `cur` right (`cur = cur->right`).
 
-例如，`cur` 从节点 1 开始访问．
+For example, `cur` starts at node 1.
 
 ![tree-basic-morris-1](images/tree-basic-morris-1.svg)
 
-`cur` 第一次访问节点 2 时，找到左子树上最右的节点 4，将 4 的 `right` 指针指向 `cur`（节点 2)．
+The first time `cur` visits node 2, it finds the rightmost node of the left subtree, node 4, and points 4's `right` pointer at `cur` (node 2).
 
 ![tree-basic-morris-2](images/tree-basic-morris-2.svg)
 
-`cur` 通过 4 的 `right` 指针返回上层，第二次访问节点 2 时，找到左子树上最右节点 4，将 4 的 `right` 指针修改为 `null`，然后继续访问右子树．之后的过程省略．
+`cur` goes back up through 4's `right` pointer. On the second visit to node 2, it again finds the rightmost node of the left subtree, node 4, sets 4's `right` pointer back to `null`, and continues into the right subtree. The rest of the process is omitted.
 
 ![tree-basic-morris-1](images/tree-basic-morris-1.svg)
 
-整棵树的访问顺序是 `1242513637`．可以发现有左子树的节点访问两次，没有左子树的节点只访问一次．
+The visiting order for the whole tree is `1242513637`. Notice that nodes with a left subtree are visited twice, and nodes without one are visited only once.
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     void morris(TreeNode* root) {
       TreeNode* cur = root;
       while (cur) {
         if (!cur->left) {
-          // 如果当前节点没有左子节点，则输出当前节点的值并进入右子树
+          // If the current node has no left child, output its value and go into the right subtree
           std::cout << cur->val << " ";
           cur = cur->right;
           continue;
         }
-        // 找到当前节点的左子树的最右节点
+        // Find the rightmost node of the current node's left subtree
         TreeNode* mostRight = cur->left;
         while (mostRight->right && mostRight->right != cur) {
           mostRight = mostRight->right;
         }
         if (!mostRight->right) {
-          // 如果最右节点的right指针为空，将其指向当前节点，并进入左子树
+          // If the rightmost node's right pointer is null, point it to the current node and go into the left subtree
           mostRight->right = cur;
           cur = cur->left;
         } else {
-          // 如果最右节点的right指针指向当前节点，说明左子树已经遍历完毕，输出当前节点的值并进入右子树
+          // If the rightmost node's right pointer points to the current node, the left subtree is done; output the current node's value and go into the right subtree
           mostRight->right = nullptr;
           std::cout << cur->val << " ";
           cur = cur->right;
@@ -318,37 +318,37 @@ Morris 遍历的实质是避免使用栈，利用底层节点空闲的 `right` �
     }
     ```
 
-### 无根树
+### Unrooted trees
 
-#### 过程
+#### Process
 
-树的遍历一般为深度优先遍历，这个过程中最需要注意的是避免重复访问结点．
+Trees are usually traversed depth-first. The main thing to watch out for is not visiting a node twice.
 
-由于树是无环图，因此只需记录当前结点是由哪个结点访问而来，此后进入除该结点外的所有相邻结点，即可避免重复访问．
+Since a tree has no cycles, we only need to remember which node we came from, and then go into every adjacent node except that one. This avoids repeated visits.
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     void dfs(int u, int from) {
-      // 递归进入除了 from 之外的所有子结点
-      // 对于出发结点，from 为空，故会访问所有相邻结点，这与期望一致
+      // Recurse into all children except from
+      // For the starting node, from is empty, so all adjacent nodes are visited, as expected
       for (int v : adj[u])
         if (v != from) {
           dfs(v, u);
         }
     }
     
-    // 开始遍历时
-    int EMPTY_NODE = -1;  // 一个不存在的编号
-    int root = 0;         // 任取一个结点作为出发点
+    // To start the traversal
+    int EMPTY_NODE = -1;  // an index that does not exist
+    int root = 0;         // pick any node as the starting point
     dfs(root, EMPTY_NODE);
     ```
 
-### 有根树
+### Rooted trees
 
-对于有根树，需要区分结点的上下关系．
+For a rooted tree we need to tell parents from children.
 
-考察上面的遍历过程，若从根开始遍历，则访问到一个结点时 `from` 的值，就是其父结点的编号．
+Look at the traversal above: if we start from the root, the value of `from` when we reach a node is exactly the index of its parent.
 
-通过这个方式，可以对于无向的输入求出所有结点的父结点，以及子结点列表．
+This way, from an undirected input we can find the parent of every node, as well as each node's list of children.
 
-**本页面部分内容引用自博文 [二叉树：前序遍历、中序遍历、后续遍历](https://blog.csdn.net/weixin_43357638/article/details/99730284)，遵循 CC 4.0 BY-SA 版权协议．**
+**Part of this page is quoted from the blog post [Binary trees: preorder, inorder and postorder traversal](https://blog.csdn.net/weixin_43357638/article/details/99730284), under the CC 4.0 BY-SA license.**

@@ -1,69 +1,69 @@
-判断一些树是否同构的时，我们常常把这些树转成哈希值储存起来，以降低复杂度．
+When checking whether some trees are isomorphic, we often turn the trees into hash values and store those, to lower the complexity.
 
-树哈希是很灵活的，可以设计出各种各样的哈希方式；但是如果随意设计，很有可能是错误的，可能被卡．以下介绍一类容易实现且不易被卡的方法．
+Tree hashing is very flexible: you can design all kinds of hash schemes. But a carelessly designed one is quite likely to be wrong, and may be broken by anti-hash tests. Below we present a family of methods that is easy to implement and hard to break.
 
-## 方法
+## Method
 
-这类方法需要一个多重集的哈希函数．以某个结点为根的子树的哈希值，就是以它的所有儿子为根的子树的哈希值构成的多重集的哈希值，即：
+This method needs a hash function for multisets. The hash of the subtree rooted at a node is the hash of the multiset formed by the hashes of the subtrees rooted at all of its children, that is:
 
 $$
 h_x = f(\{ h_i \mid i \in son(x) \})
 $$
 
-其中 $h_x$ 表示以 $x$ 为根的子树的哈希值，$f$ 是多重集的哈希函数．
+Here $h_x$ is the hash of the subtree rooted at $x$, and $f$ is a hash function for multisets.
 
-以代码中使用的哈希函数为例：
+Take the hash function used in the code as an example:
 
 $$
 f(S) = \left( c + \sum_{x \in S} g(x) \right) \bmod m
 $$
 
-其中 $c$ 为常数，一般使用 $1$ 即可．$m$ 为模数，一般使用 $2^{32}$ 或 $2^{64}$ 进行自然溢出，也可使用大素数．$g$ 为整数到整数的映射，代码中使用 xor shift，也可以选用其他的函数，但是不建议使用多项式．为了预防出题人对着 xor hash 卡，还可以在映射前后异或一个随机常数．
+Here $c$ is a constant; $1$ is usually fine. $m$ is the modulus; usually $2^{32}$ or $2^{64}$ with natural overflow, though a large prime also works. $g$ is a mapping from integers to integers. The code uses xor shift; other functions also work, but polynomials are not recommended. To guard against problem setters who build tests against xor hashing, you can also XOR a random constant before and after the mapping.
 
-这种哈希十分好写．如果需要换根，第二次 DP 时只需把子树哈希减掉即可．
+This hash is very easy to write. If you need rerooting, in the second DP pass you just subtract the subtree's hash.
 
-## 例题
+## Example problems
 
-### [UOJ #763. 树哈希](https://uoj.ac/problem/763)
+### [UOJ #763. Tree Hashing](https://uoj.ac/problem/763)
 
-这是一道模板题．不用多说，以 $1$ 为根跑一遍 DFS 就好了．
+This is a template problem. Nothing more to say: just run one DFS with $1$ as the root.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/graph/code/tree-hash/tree-hash_1.cpp"
     ```
 
-### [\[BJOI2015\] 树的同构](https://www.luogu.com.cn/problem/P5043)
+### [\[BJOI2015\] Tree Isomorphism](https://www.luogu.com.cn/problem/P5043)
 
-这道题所说的同构是指无根树的，而上面所介绍的方法是针对有根树的．因此只有当根一样时，同构的两棵无根树哈希值才相同．由于数据范围较小，我们可以暴力求出以每个点为根时的哈希值，排序后比较．
+The isomorphism in this problem is for unrooted trees, while the method above is for rooted trees. So two isomorphic unrooted trees get the same hash only when they are rooted at matching nodes. Since the constraints are small, we can compute the hash with each node as the root by brute force, sort the hashes and compare.
 
-如果数据范围较大，我们也可以使用换根 DP，遍历树两遍，求出以每个点为根时的哈希值．我们还可以利用上面的多重集哈希函数：把以每个结点为根时的哈希值都存进多重集，再把多重集的哈希值算出来，进行比较（做法一）．
+If the constraints were larger, we could use rerooting DP, traversing the tree twice, to get the hash with each node as the root. We can also reuse the multiset hash function above: put the hashes for every choice of root into a multiset, compute the hash of that multiset, and compare (Approach 1).
 
-还可以通过找重心的方式来优化复杂度．一棵树的重心最多只有两个，只需把以它（们）为根时的哈希值求出来即可．接下来，既可以分别比较这些哈希值（做法二），也可以在有一个重心时取它的哈希值作为整棵树的哈希值，有两个时则取其中较小（大）的．
+We can also lower the complexity by finding centroids. A tree has at most two centroids, so we only need the hashes with it (or them) as the root. Then we can either compare these hashes separately (Approach 2), or, when there is one centroid, use its hash as the hash of the whole tree, and when there are two, take the smaller (or larger) of the two.
 
-??? note "做法一"
+??? note "Approach 1"
     ```cpp
     --8<-- "docs/graph/code/tree-hash/tree-hash_2.cpp"
     ```
 
-??? note "做法二"
+??? note "Approach 2"
     ```cpp
     --8<-- "docs/graph/code/tree-hash/tree-hash_3.cpp"
     ```
 
 ### [HDU 6647 Bracket Sequences on Tree](https://acm.hdu.edu.cn/showproblem.php?pid=6647)
 
-题目要求遍历一棵无根树产生的本质不同括号序列方案数．
+The problem asks for the number of essentially different bracket sequences produced by traversing an unrooted tree.
 
-首先可以注意到，两棵不同构的有根树一定不会生成相同的括号序列．我们先考虑遍历有根树能够产生的本质不同括号序列方案数，假设我们当前考虑的子树根节点为 $u$，记 $f(u)$ 表示这棵子树的方案数，从 $u$ 开始往下遍历，顺序可以随意选择，产生 $|son(u)|!$ 种排列，遍历每个儿子节点 $v$，$v$ 的子树内有 $f(v)$ 种方案，因此有 $f(u)=|son(u)|! \cdot \prod_{v \in son(u)} f(v)$．但是，同构的子树之间会产生重复，$f(u)$ 需要除掉每种本质不同子树出现次数阶乘的乘积，类似于多重集合的排列．
+First, note that two non-isomorphic rooted trees can never produce the same bracket sequence. Let us first count the essentially different bracket sequences from traversing a rooted tree. Suppose the root of the current subtree is $u$, and let $f(u)$ be the number of ways for this subtree. Going down from $u$, we can visit the children in any order, giving $|son(u)|!$ permutations, and the subtree of each child $v$ has $f(v)$ ways. So $f(u)=|son(u)|! \cdot \prod_{v \in son(u)} f(v)$. However, isomorphic subtrees cause duplicates, so $f(u)$ must be divided by the product of the factorials of how many times each distinct subtree appears, similar to permutations of a multiset.
 
-通过上述 DP，可以求出根节点的方案数．再通过换根 DP，将父亲节点的哈希值和方案信息转移给儿子，可以求出以每个节点为根时的哈希值和方案数．每种不同的子树只需要计数一次即可．
+With the DP above, we get the count for the root. Then with rerooting DP, passing the parent's hash and count information down to the children, we get the hash and count with each node as the root. Each distinct tree only needs to be counted once.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/graph/code/tree-hash/tree-hash_4.cpp"
     ```
 
-## 参考资料
+## References
 
-文中的哈希方法参考并拓展自博客 [一种好写且卡不掉的树哈希](https://peehs-moorhsum.blog.uoj.ac/blog/7891)．
+The hashing method in this article is based on and extends the blog post [A tree hash that is easy to write and cannot be broken](https://peehs-moorhsum.blog.uoj.ac/blog/7891).
