@@ -1,36 +1,36 @@
-## 第二类斯特林数（Stirling Number）
+## Stirling numbers of the second kind (Stirling Number)
 
-??? note "为什么先介绍第二类斯特林数"
-    虽然被称作「第二类」，第二类斯特林数却在斯特林的相关著作和具体数学中被首先描述，同时也比第一类斯特林数常用得多．
+??? note "Why introduce the Stirling numbers of the second kind first"
+    Although they are called "of the second kind", the Stirling numbers of the second kind were described first in Stirling's own work and in Concrete Mathematics, and they are also used much more often than the Stirling numbers of the first kind.
 
-**第二类斯特林数**（斯特林子集数）$\begin{Bmatrix}n\\ k\end{Bmatrix}$，也可记做 $S(n,k)$，表示将 $n$ 个两两不同的元素，划分为 $k$ 个互不区分的非空子集的方案数．
+The **Stirling number of the second kind** (Stirling subset number) $\begin{Bmatrix}n\\ k\end{Bmatrix}$, also written $S(n,k)$, is the number of ways to partition $n$ distinct elements into $k$ indistinguishable non-empty subsets.
 
-### 递推式
+### Recurrence
 
 $$
 \begin{Bmatrix}n\\ k\end{Bmatrix}=\begin{Bmatrix}n-1\\ k-1\end{Bmatrix}+k\begin{Bmatrix}n-1\\ k\end{Bmatrix}
 $$
 
-边界是 $\begin{Bmatrix}n\\ 0\end{Bmatrix}=[n=0]$．
+The boundary condition is $\begin{Bmatrix}n\\ 0\end{Bmatrix}=[n=0]$.
 
-考虑用组合意义来证明．
+We prove it using its combinatorial meaning.
 
-我们插入一个新元素时，有两种方案：
+When we insert a new element, there are two options:
 
--   将新元素单独放入一个子集，有 $\begin{Bmatrix}n-1\\ k-1\end{Bmatrix}$ 种方案；
--   将新元素放入一个现有的非空子集，有 $k\begin{Bmatrix}n-1\\ k\end{Bmatrix}$ 种方案．
+-   Put the new element into a subset of its own: $\begin{Bmatrix}n-1\\ k-1\end{Bmatrix}$ ways;
+-   Put the new element into one of the existing non-empty subsets: $k\begin{Bmatrix}n-1\\ k\end{Bmatrix}$ ways.
 
-根据加法原理，将两式相加即可得到递推式．
+By the addition principle, adding the two gives the recurrence.
 
-### 通项公式
+### Explicit formula
 
 $$
 \begin{Bmatrix}n\\m\end{Bmatrix}=\sum\limits_{i=0}^m\dfrac{(-1)^{m-i}i^n}{i!(m-i)!}
 $$
 
-使用容斥原理证明该公式．设将 $n$ 个两两不同的元素，划分到 $i$ 个两两不同的集合（允许空集）的方案数为 $G_i$，将 $n$ 个两两不同的元素，划分到 $i$ 个两两不同的非空集合（不允许空集）的方案数为 $F_i$．
+We prove this formula with inclusion–exclusion. Let $G_i$ be the number of ways to distribute $n$ distinct elements into $i$ distinct sets (empty sets allowed), and let $F_i$ be the number of ways to distribute $n$ distinct elements into $i$ distinct non-empty sets (empty sets not allowed).
 
-显然
+Clearly
 
 $$
 \begin{aligned}
@@ -39,7 +39,7 @@ G_i&=\sum\limits_{j=0}^i\binom{i}{j}F_j
 \end{aligned}
 $$
 
-根据二项式反演
+By binomial inversion,
 
 $$
 \begin{aligned}
@@ -49,21 +49,21 @@ F_i&=\sum\limits_{j=0}^{i}(-1)^{i-j}\binom{i}{j}G_j\\
 \end{aligned}
 $$
 
-考虑 $F_i$ 与 $\begin{Bmatrix}n\\i\end{Bmatrix}$ 的关系．第二类斯特林数要求集合之间互不区分，因此 $F_i$ 正好就是 $\begin{Bmatrix}n\\i\end{Bmatrix}$ 的 $i!$ 倍．于是
+Now consider the relation between $F_i$ and $\begin{Bmatrix}n\\i\end{Bmatrix}$. Stirling numbers of the second kind require the sets to be indistinguishable, so $F_i$ is exactly $i!$ times $\begin{Bmatrix}n\\i\end{Bmatrix}$. So
 
 $$
 \begin{Bmatrix}n\\m\end{Bmatrix}=\dfrac{F_m}{m!}=\sum\limits_{i=0}^m\dfrac{(-1)^{m-i}i^n}{i!(m-i)!}
 $$
 
-### 同一行第二类斯特林数的计算
+### Computing one row of Stirling numbers of the second kind
 
-「同一行」的第二类斯特林数指的是，有着不同的 $i$，相同的 $n$ 的一系列 $\begin{Bmatrix}n\\i\end{Bmatrix}$．求出同一行的所有第二类斯特林数，就是对 $i=0..n$ 求出了将 $n$ 个不同元素划分为 $i$ 个非空集的方案数．
+A "row" of Stirling numbers of the second kind means the sequence $\begin{Bmatrix}n\\i\end{Bmatrix}$ with the same $n$ and different $i$. Computing a whole row means computing, for $i=0..n$, the number of ways to partition $n$ distinct elements into $i$ non-empty sets.
 
-根据上面给出的通项公式，卷积计算即可．该做法的时间复杂度为 $O(n \log n)$．
+By the explicit formula above, this is just a convolution. This method takes $O(n \log n)$ time.
 
-下面的代码使用了名为 `poly` 的多项式类，仅供参考．
+The code below uses a polynomial class named `poly`, for reference only.
 
-??? note "实现"
+??? note "Implementation"
     ```cpp
     #ifndef _FEISTDLIB_POLY_
     #define _FEISTDLIB_POLY_
@@ -643,7 +643,7 @@ $$
     #endif
     ```
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     int main() {
       scanf("%d", &n);
@@ -662,21 +662,21 @@ $$
     }
     ```
 
-### 同一列第二类斯特林数的计算
+### Computing one column of Stirling numbers of the second kind
 
-「同一列」的第二类斯特林数指的是，有着不同的 $i$，相同的 $k$ 的一系列 $\begin{Bmatrix}i\\k\end{Bmatrix}$．求出同一列的所有第二类斯特林数，就是对 $i=0..n$ 求出了将 $i$ 个不同元素划分为 $k$ 个非空集的方案数．
+A "column" of Stirling numbers of the second kind means the sequence $\begin{Bmatrix}i\\k\end{Bmatrix}$ with the same $k$ and different $i$. Computing a whole column means computing, for $i=0..n$, the number of ways to partition $i$ distinct elements into $k$ non-empty sets.
 
-利用指数型生成函数计算．
+We use exponential generating functions.
 
-一个盒子装 $i$ 个物品且盒子非空的方案数是 $[i>0]$．我们可以写出它的指数型生成函数为 $F(x)=\sum\limits_{i=1}^{+\infty}\dfrac{x^i}{i!} = \mathrm{e}^x-1$．经过之前的学习，我们明白 $F^k(x)$ 就是 $i$ 个有标号物品放到 $k$ 个有标号盒子里的指数型生成函数，那么除掉 $k!$ 就是 $i$ 个有标号物品放到 $k$ 个无标号盒子里的指数型生成函数．
+The number of ways to put $i$ items into one box so that the box is non-empty is $[i>0]$. Its exponential generating function is $F(x)=\sum\limits_{i=1}^{+\infty}\dfrac{x^i}{i!} = \mathrm{e}^x-1$. From what we learned before, $F^k(x)$ is the exponential generating function for putting $i$ labeled items into $k$ labeled boxes. Dividing by $k!$ gives the exponential generating function for putting $i$ labeled items into $k$ unlabeled boxes.
 
-$\begin{Bmatrix}i\\k\end{Bmatrix}=\dfrac{\left[\dfrac{x^i}{i!}\right]F^k(x)}{k!}$，$O(n\log n)$ 计算多项式幂即可．
+$\begin{Bmatrix}i\\k\end{Bmatrix}=\dfrac{\left[\dfrac{x^i}{i!}\right]F^k(x)}{k!}$, so we just compute a polynomial power in $O(n\log n)$.
 
-另外，$\exp F(x)=\sum\limits_{i=0}^{+\infty}\dfrac{F^i(x)}{i!}$ 就是 $i$ 个有标号物品放到任意多个无标号盒子里的指数型生成函数（EXP 通过每项除以一个 $i!$ 去掉了盒子的标号）．这其实就是贝尔数的生成函数．
+Also, $\exp F(x)=\sum\limits_{i=0}^{+\infty}\dfrac{F^i(x)}{i!}$ is the exponential generating function for putting $i$ labeled items into any number of unlabeled boxes (EXP removes the box labels by dividing each term by $i!$). This is in fact the generating function of the Bell numbers.
 
-这里涉及到很多「有标号」「无标号」的内容，注意辨析．
+This involves a lot of "labeled" versus "unlabeled"; be careful to tell them apart.
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     int main() {
       scanf("%d%d", &n, &k);
@@ -692,60 +692,60 @@ $\begin{Bmatrix}i\\k\end{Bmatrix}=\dfrac{\left[\dfrac{x^i}{i!}\right]F^k(x)}{k!}
     }
     ```
 
-## 第一类斯特林数（Stirling Number）
+## Stirling numbers of the first kind (Stirling Number)
 
-**第一类斯特林数**（斯特林轮换数）$\begin{bmatrix}n\\ k\end{bmatrix}$，也可记做 $s(n,k)$，表示将 $n$ 个两两不同的元素，划分为 $k$ 个互不区分的非空轮换的方案数．
+The **Stirling number of the first kind** (Stirling cycle number) $\begin{bmatrix}n\\ k\end{bmatrix}$, also written $s(n,k)$, is the number of ways to partition $n$ distinct elements into $k$ indistinguishable non-empty cycles.
 
-一个轮换就是一个首尾相接的环形排列．我们可以写出一个轮换 $[A,B,C,D]$，并且我们认为 $[A,B,C,D]=[B,C,D,A]=[C,D,A,B]=[D,A,B,C]$，即，两个可以通过旋转而互相得到的轮换是等价的．注意，我们不认为两个可以通过翻转而相互得到的轮换等价，即 $[A,B,C,D]\neq[D,C,B,A]$．
+A cycle is a circular arrangement whose end connects back to its start. We can write a cycle as $[A,B,C,D]$, and we consider $[A,B,C,D]=[B,C,D,A]=[C,D,A,B]=[D,A,B,C]$; that is, two cycles that can be obtained from each other by rotation are equivalent. Note that two cycles that can be obtained from each other by reversal are not considered equivalent, i.e. $[A,B,C,D]\neq[D,C,B,A]$.
 
-### 递推式
+### Recurrence
 
 $$
 \begin{bmatrix}n\\ k\end{bmatrix}=\begin{bmatrix}n-1\\ k-1\end{bmatrix}+(n-1)\begin{bmatrix}n-1\\ k\end{bmatrix}
 $$
 
-边界是 $\begin{bmatrix}n\\ 0\end{bmatrix}=[n=0]$．
+The boundary condition is $\begin{bmatrix}n\\ 0\end{bmatrix}=[n=0]$.
 
-该递推式的证明可以考虑其组合意义．
+We can prove this recurrence using its combinatorial meaning.
 
-我们插入一个新元素时，有两种方案：
+When we insert a new element, there are two options:
 
--   将该新元素置于一个单独的轮换中，共有 $\begin{bmatrix}n-1\\ k-1\end{bmatrix}$ 种方案；
--   将该元素插入到任何一个现有的轮换中，共有 $(n-1)\begin{bmatrix}n-1\\ k\end{bmatrix}$ 种方案．
+-   Put the new element into a cycle of its own: $\begin{bmatrix}n-1\\ k-1\end{bmatrix}$ ways;
+-   Insert the element into any of the existing cycles: $(n-1)\begin{bmatrix}n-1\\ k\end{bmatrix}$ ways.
 
-根据加法原理，将两式相加即可得到递推式．
+By the addition principle, adding the two gives the recurrence.
 
-### 通项公式
+### Explicit formula
 
-第一类斯特林数没有实用的通项公式．
+There is no practical explicit formula for Stirling numbers of the first kind.
 
-### 同一行第一类斯特林数的计算
+### Computing one row of Stirling numbers of the first kind
 
-类似第二类斯特林数，我们构造同行第一类斯特林数的生成函数，即
+As with the second kind, we build the generating function for a row of Stirling numbers of the first kind:
 
 $F_n(x)=\sum\limits_{i=0}^n\begin{bmatrix}n\\i\end{bmatrix}x^i$
 
-根据递推公式，不难写出
+From the recurrence, it is easy to get
 
 $F_n(x)=(n-1)F_{n-1}(x)+xF_{n-1}(x)$
 
-于是
+So
 
 $F_n(x)=\prod\limits_{i=0}^{n-1}(x+i)=\dfrac{(x+n-1)!}{(x-1)!}$
 
-这其实是 $x$ 的 $n$ 次上升阶乘幂，记做 $x^{\overline n}$．这个东西自然是可以暴力分治乘 $O(n\log^2n)$ 求出的，但用上升幂相关做法可以 $O(n\log n)$ 求出，详情见 [多项式平移 | 连续点值平移](../poly/shift.md#同一行第一类无符号-stirling-数)．
+This is the $n$-th rising factorial power of $x$, written $x^{\overline n}$. It can of course be computed by brute-force divide-and-conquer multiplication in $O(n\log^2n)$, but methods based on rising powers compute it in $O(n\log n)$. For details see [Polynomial Shifting | Shifting Consecutive Point Values](../poly/shift.md#同一行第一类无符号-stirling-数).
 
-### 同一列第一类斯特林数的计算
+### Computing one column of Stirling numbers of the first kind
 
-仿照第二类斯特林数的计算，我们可以用指数型生成函数解决该问题．注意，由于递推公式和行有关，我们不能利用递推公式计算同列的第一类斯特林数．
+Following the method for the second kind, we can solve this with exponential generating functions. Note that since the recurrence depends on the row, we cannot use the recurrence to compute a column of Stirling numbers of the first kind.
 
-显然，单个轮换的指数型生成函数为
+Clearly, the exponential generating function for a single cycle is
 
 $F(x)=\sum\limits_{i=1}^n\dfrac{(i-1)!x^i}{i!}=\sum\limits_{i=1}^n\dfrac{x^i}{i}$
 
-它的 $k$ 次幂就是 $\begin{bmatrix}i\\k\end{bmatrix}$ 的指数型生成函数，$O(n\log n)$ 计算即可．
+Its $k$-th power is the exponential generating function of $\begin{bmatrix}i\\k\end{bmatrix}$, which can be computed in $O(n\log n)$.
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     int main() {
       scanf("%d%d", &n, &k);
@@ -762,63 +762,63 @@ $F(x)=\sum\limits_{i=1}^n\dfrac{(i-1)!x^i}{i!}=\sum\limits_{i=1}^n\dfrac{x^i}{i}
     }
     ```
 
-## 应用
+## Applications
 
-### 上升幂与普通幂的相互转化
+### Converting between rising powers and ordinary powers
 
-我们记上升阶乘幂 $x^{\overline{n}}=\prod_{k=0}^{n-1} (x+k)$．
+Write the rising factorial power as $x^{\overline{n}}=\prod_{k=0}^{n-1} (x+k)$.
 
-则可以利用下面的恒等式将上升幂转化为普通幂：
+Then the following identity converts rising powers to ordinary powers:
 
 $$
 x^{\overline{n}}=\sum_{k} \begin{bmatrix}n\\ k\end{bmatrix} x^k
 $$
 
-如果将普通幂转化为上升幂，则有下面的恒等式：
+To convert ordinary powers to rising powers, use the following identity:
 
 $$
 x^n=\sum_{k} \begin{Bmatrix}n\\ k\end{Bmatrix} (-1)^{n-k} x^{\overline{k}}
 $$
 
-### 下降幂与普通幂的相互转化
+### Converting between falling powers and ordinary powers
 
-我们记下降阶乘幂 $x^{\underline{n}}=\dfrac{x!}{(x-n)!}=\prod_{k=0}^{n-1} (x-k)$．
+Write the falling factorial power as $x^{\underline{n}}=\dfrac{x!}{(x-n)!}=\prod_{k=0}^{n-1} (x-k)$.
 
-则可以利用下面的恒等式将普通幂转化为下降幂：
+Then the following identity converts ordinary powers to falling powers:
 
 $$
 x^n=\sum_{k} \begin{Bmatrix}n\\ k\end{Bmatrix} x^{\underline{k}}
 $$
 
-如果将下降幂转化为普通幂，则有下面的恒等式：
+To convert falling powers to ordinary powers, use the following identity:
 
 $$
 x^{\underline{n}}=\sum_{k} \begin{bmatrix}n\\ k\end{bmatrix} (-1)^{n-k} x^k
 $$
 
-### 多项式下降阶乘幂表示与多项式点值表示的关系
+### Relation between the falling factorial representation and the point-value representation of a polynomial
 
-在这里，多项式的下降阶乘幂表示就是用
+Here, the falling factorial representation of a polynomial means writing it in the form
 
 $$
 f(x)=\sum\limits_{i=0}^nb_i{x^{\underline{i}}}
 $$
 
-的形式表示一个多项式，而点值表示就是用 $n+1$ 个点
+and the point-value representation means using $n+1$ points
 
 $$
 (i,a_i),i=0..n
 $$
 
-来表示一个多项式．
+to represent the polynomial.
 
-显然，下降阶乘幂 $b$ 和点值 $a$ 间满足这样的关系：
+Clearly, the falling factorial coefficients $b$ and the point values $a$ satisfy:
 
 $$
 a_k=\sum\limits_{i=0}^{n}b_ik^{\underline{i}}
 $$
 
-即
+That is,
 
 $$
 \begin{aligned}
@@ -826,15 +826,15 @@ a_k&=\sum\limits_{i=0}^{n}\dfrac{b_ik!}{(k-i)!}\\\dfrac{a_k}{k!}&=\sum\limits_{i
 \end{aligned}
 $$
 
-这是一个卷积形式的式子，我们可以在 $O(n\log n)$ 的时间复杂度内完成点值和下降阶乘幂的互相转化．
+This is a convolution, so we can convert between point values and falling factorial coefficients in $O(n\log n)$ time.
 
-## 习题
+## Exercises
 
 -   [HDU3625 Examining the Rooms](https://acm.hdu.edu.cn/showproblem.php?pid=3625)
--   [UOJ540 联合省选 2020 组合数问题](https://uoj.ac/problem/540)
--   [UOJ269 清华集训 2016 如何优雅地求和](https://uoj.ac/problem/269)
+-   [UOJ540 Joint Provincial Selection 2020: Binomial Coefficient Problem](https://uoj.ac/problem/540)
+-   [UOJ269 Tsinghua Training Camp 2016: How to Sum Elegantly](https://uoj.ac/problem/269)
 
-## 参考资料与注释
+## References and notes
 
 1.  [Stirling Number of the First Kind - Wolfram MathWorld](http://mathworld.wolfram.com/StirlingNumberoftheFirstKind.html)
 2.  [Stirling Number of the Second Kind - Wolfram MathWorld](http://mathworld.wolfram.com/StirlingNumberoftheSecondKind.html)

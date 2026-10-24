@@ -1,42 +1,42 @@
-分拆：将自然数 $n$ 写成递降正整数和的表示．
+Partition: a way of writing a natural number $n$ as a sum of positive integers in non-increasing order.
 
 $$
 n=r_1+r_2+\ldots+r_k \quad r_1 \ge r_2 \ge \ldots \ge r_k \ge 1
 $$
 
-和式中每个正整数称为一个部分．
+Each positive integer in the sum is called a part.
 
-分拆数：$p_n$．自然数 $n$ 的分拆方法数．
+Partition number: $p_n$, the number of partitions of the natural number $n$.
 
-自 $0$ 开始的分拆数：
+Partition numbers starting from $0$:
 
 | n     | 0 | 1 | 2 | 3 | 4 | 5 | 6  | 7  | 8  |
 | ----- | - | - | - | - | - | - | -- | -- | -- |
 | $p_n$ | 1 | 1 | 2 | 3 | 5 | 7 | 11 | 15 | 22 |
 
-## k 部分拆数
+## Partitions into k parts
 
-将 $n$ 分成恰有 $k$ 个部分的分拆，称为 $k$ 部分拆数，记作 $p(n,k)$．
+The number of partitions of $n$ into exactly $k$ parts is called the number of partitions into $k$ parts, written $p(n,k)$.
 
-显然，$k$ 部分拆数 $p(n,k)$ 同时也是下面方程的解数：
+Clearly, $p(n,k)$ is also the number of solutions of the following equation:
 
 $$
 n-k=y_1+y_2+\ldots+y_k\quad y_1\ge y_2\ge\ldots\ge y_k\ge 0
 $$
 
-如果这个方程里面恰有 $j$ 个部分非 0，则恰有 $p(n-k,j)$ 个解．因此有和式：
+If exactly $j$ of the parts in this equation are non-zero, there are exactly $p(n-k,j)$ solutions. So we have the sum:
 
 $$
 p(n,k)=\sum_{j=0}^k p(n-k,j)
 $$
 
-相邻两个和式作差，得：
+Taking the difference of two adjacent sums gives:
 
 $$
 p(n,k)=p(n-1,k-1)+p(n-k,k)
 $$
 
-如果列出表格，每个格里的数，等于左上方的数，加上该格向上方数，所在列数个格子中的数．
+If we write these in a table, each cell equals the number diagonally up-left of it plus the number that lies, in the same column, as many rows above it as its column index.
 
 | k        | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
 | -------- | - | - | - | - | - | - | - | - | - |
@@ -50,18 +50,18 @@ $$
 | $p(7,k)$ | 0 | 1 | 3 | 4 | 3 | 2 | 1 | 1 | 0 |
 | $p(8,k)$ | 0 | 1 | 4 | 5 | 5 | 3 | 2 | 1 | 1 |
 
-### 例题
+### Example problem
 
-???+ note "计算 k 部分拆数"
-    计算 $k$ 部分拆数 $p(n,k)$．多组输入，其中 $n$ 上界为 $10000$，$k$ 上界为 $1000$，对 $1000007$ 取模．
+???+ note "Computing the number of partitions into k parts"
+    Compute the number of partitions into $k$ parts, $p(n,k)$. There are multiple test cases, with $n$ up to $10000$ and $k$ up to $1000$. Output the answer modulo $1000007$.
     
-    观察表格与递推式，按列更新对于存储更有利．不难写出程序：
+    Looking at the table and the recurrence, updating column by column is better for storage. The program is easy to write:
     
     ```cpp
     #include <cstdio>
     #include <cstring>
     
-    int p[10005][1005]; /*将自然数n分拆为k个部分的方法数*/
+    int p[10005][1005]; /*number of ways to partition n into k parts*/
     
     int main() {
       int n, k;
@@ -72,10 +72,10 @@ $$
         for (i = 1; i <= n; ++i) {
           int j;
           for (j = 1; j <= k; ++j) {
-            if (i - j >= 0) /*p[i-j][j]所有部分大于1*/
+            if (i - j >= 0) /*p[i-j][j]: all parts greater than 1*/
             {
               p[i][j] = (p[i - j][j] + p[i - 1][j - 1]) %
-                        1000007; /*p[i-1][j-1]至少有一个部分为1．*/
+                        1000007; /*p[i-1][j-1]: at least one part equals 1.*/
             }
           }
         }
@@ -84,9 +84,9 @@ $$
     }
     ```
 
-### 生成函数
+### Generating function
 
-由等比数列求和公式，有：
+By the formula for the sum of a geometric series:
 
 $$
 \frac{1}{1-x^k}=1+x^k+x^{2k}+x^{3k}+\ldots
@@ -96,59 +96,59 @@ $$
 1+p_1 x+p_2 x^2+p_3 x^3+\ldots=\frac{1}{1-x}  \frac{1}{1-x^2}  \frac{1}{1-x^3}\ldots
 $$
 
-对于 $k$ 部分拆数，生成函数稍微复杂．具体写出如下：
+For partitions into $k$ parts, the generating function is a bit more complicated. It is:
 
 $$
 \sum_{n,k=0}^\infty {p(n,k) x^n y^k }=\frac{1}{1-xy}  \frac{1}{1-x^2 y}  \frac{1}{1-x^3 y}\ldots
 $$
 
-### Ferrers 图
+### Ferrers diagram
 
-Ferrers 图：将分拆的每个部分用点组成的行表示．每行点的个数为这个部分的大小．
+Ferrers diagram: each part of a partition is drawn as a row of dots. The number of dots in a row is the size of that part.
 
-根据分拆的定义，Ferrers 图中不同的行按照递减的次序排放．最长行在最上面．
+By the definition of a partition, the rows of a Ferrers diagram are arranged in decreasing order, with the longest row on top.
 
-例如：分拆 $12=5+4+2+1$ 的 Ferrers 图．
+For example, the Ferrers diagram of the partition $12=5+4+2+1$:
 
 ![](./images/ferrers.jpg)
 
-将一个 Ferrers 图沿着对角线翻转，得到的新 Ferrers 图称为原图的共轭，新分拆称为原分拆的共轭．显然，共轭是对称的关系．
+Flipping a Ferrers diagram along its diagonal gives a new Ferrers diagram, called the conjugate of the original diagram. The new partition is called the conjugate of the original partition. Clearly, conjugation is a symmetric relation.
 
-例如上述分拆 $12=5+4+2+1$ 的共轭是分拆 $12=4+3+2+2+1$．
+For example, the conjugate of the partition $12=5+4+2+1$ above is $12=4+3+2+2+1$.
 
-最大 $k$ 分拆数：自然数 $n$ 的最大部分为 $k$ 的分拆个数．
+Number of partitions with largest part $k$: the number of partitions of the natural number $n$ whose largest part is $k$.
 
-根据共轭的定义，有显然结论：
+From the definition of conjugate, we get an obvious result:
 
-最大 $k$ 分拆数与 $k$ 部分拆数相同，均为 $p(n,k)$．
+The number of partitions with largest part $k$ equals the number of partitions into $k$ parts; both are $p(n,k)$.
 
-## 互异分拆数
+## Partitions into distinct parts
 
-互异分拆数：$pd_n$．自然数 $n$ 的各部分互不相同的分拆方法数．（Different）
+Number of partitions into distinct parts: $pd_n$, the number of partitions of the natural number $n$ in which all parts are different. (d for Different)
 
 | n      | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
 | ------ | - | - | - | - | - | - | - | - | - |
 | $pd_n$ | 1 | 1 | 1 | 2 | 2 | 3 | 4 | 5 | 6 |
 
-同样地，定义互异 $k$ 部分拆数 $pd(n,k)$，表示最大拆出 $k$ 个部分的互异分拆，是这个方程的解数：
+Similarly, define $pd(n,k)$ as the number of partitions into $k$ distinct parts. It is the number of solutions of this equation:
 
 $$
 n=r_1+r_2+\ldots+r_k\quad r_1>r_2>\ldots>r_k\ge 1
 $$
 
-完全同上，也是这个方程的解数：
+Exactly as before, it is also the number of solutions of this equation:
 
 $$
 n-k=y_1+y_2+\ldots+y_k\quad y_1>y_2>\ldots>y_k\ge 0
 $$
 
-这里与上面不同的是，由于互异，新方程中至多只有一个部分为零．有不变的结论：恰有 $j$ 个部分非 $0$，则恰有 $pd(n-k,j)$ 个解，这里 $j$ 只取 $k$ 或 $k-1$．因此直接得到递推：
+The difference from before is that, since the parts are distinct, at most one part in the new equation can be zero. The same conclusion holds: if exactly $j$ parts are non-zero, there are exactly $pd(n-k,j)$ solutions, but here $j$ can only be $k$ or $k-1$. This directly gives the recurrence:
 
 $$
 pd(n,k)=pd(n-k,k-1)+pd(n-k,k)
 $$
 
-同样像组合数一样列出表格，每个格里的数，等于该格前一列上数，所在列数个格子中的数，加上该格向上方数，所在列数个格子中的数．
+Again we can list a table, as for binomial coefficients. Each cell equals the number in the previous column that lies as many rows above it as its column index, plus the number in the same column that lies as many rows above it as its column index.
 
 | k         | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
 | --------- | - | - | - | - | - | - | - | - | - |
@@ -162,18 +162,18 @@ $$
 | $pd(7,k)$ | 0 | 1 | 3 | 1 | 0 | 0 | 0 | 0 | 0 |
 | $pd(8,k)$ | 0 | 1 | 3 | 2 | 0 | 0 | 0 | 0 | 0 |
 
-### 例题
+### Example problem
 
-???+ note "计算互异分拆数"
-    计算互异分拆数 $pd_n$．多组输入，其中 $n$ 上界为 $50000$，对 $1000007$ 取模．
+???+ note "Computing the number of partitions into distinct parts"
+    Compute the number of partitions into distinct parts $pd_n$. There are multiple test cases, with $n$ up to $50000$. Output the answer modulo $1000007$.
     
-    观察表格与递推式，按列更新对于存储更有利．代码中将后一位缩减了空间，仅保留相邻两项．
+    Looking at the table and the recurrence, updating column by column is better for storage. The code saves space in the second dimension by keeping only two adjacent columns.
     
     ```cpp
     #include <cstdio>
     #include <cstring>
     
-    int pd[50005][2]; /*将自然数n分拆为k个部分的互异方法数*/
+    int pd[50005][2]; /*number of ways to partition n into k distinct parts*/
     
     int main() {
       int n;
@@ -185,13 +185,13 @@ $$
         for (j = 1; j < 350; ++j) {
           int i;
           for (i = 0; i < 350; ++i) {
-            pd[i][j & 1] = 0; /*pd[i][j]只与pd[][j]和pd[][j-1]有关*/
+            pd[i][j & 1] = 0; /*pd[i][j] depends only on pd[][j] and pd[][j-1]*/
           }
           for (i = 0; i <= n; ++i) {
-            if (i - j >= 0) /*pd[i-j][j]所有部分大于1*/
+            if (i - j >= 0) /*pd[i-j][j]: all parts greater than 1*/
             {
               pd[i][j & 1] = (pd[i - j][j & 1] + pd[i - j][(j - 1) & 1]) %
-                             1000007; /*pd[i-j][j-1]至少有一个部分为1．*/
+                             1000007; /*pd[i-j][j-1]: at least one part equals 1.*/
             }
           }
           ans = (ans + pd[n][j & 1]) % 1000007;
@@ -201,103 +201,103 @@ $$
     }
     ```
 
-### 奇分拆数
+### Partitions into odd parts
 
-奇分拆数：$po_n$．自然数 $n$ 的各部分都是奇数的分拆方法数．（Odd）
+Number of partitions into odd parts: $po_n$, the number of partitions of the natural number $n$ in which every part is odd. (o for Odd)
 
-有一个显然的等式：
+There is an obvious identity:
 
 $$
 \prod_{i=1}^\infty (1+x^i ) =\frac{\prod_{i=1}^\infty (1-x^{2i} ) }{\prod_{i=1}^\infty (1-x^i ) }=\prod_{i=1}^\infty \frac{1}{1-x^{2i-1} }
 $$
 
-最左边是互异分拆数的生成函数，最右边是奇分拆数的生成函数．两者对应系数相同，因此，奇分拆数和互异分拆数相同：
+The far left is the generating function for partitions into distinct parts, and the far right is the generating function for partitions into odd parts. Their coefficients are equal, so the number of partitions into odd parts equals the number of partitions into distinct parts:
 
 $$
 po_n=pd_n
 $$
 
-但显然 $k$ 部奇分拆数和互异 $k$ 部分拆数不是一个概念，这里就不列出了．
+But clearly partitions into $k$ odd parts and partitions into $k$ distinct parts are different concepts, so we do not list them here.
 
-再引入两个概念：
+We introduce two more concepts:
 
-互异偶分拆数：$pde_n$．自然数 $n$ 的部分数为偶数的互异分拆方法数．（Even）
+Number of even distinct partitions: $pde_n$, the number of partitions of the natural number $n$ into an even number of distinct parts. (e for Even)
 
-互异奇分拆数：$pdo_n$．自然数 $n$ 的部分数为奇数的互异分拆方法数．（Odd）
+Number of odd distinct partitions: $pdo_n$, the number of partitions of the natural number $n$ into an odd number of distinct parts. (o for Odd)
 
-因此有：
+So we have:
 
 $$
 pd_n=pde_n+pdo_n
 $$
 
-同样也有相应的 $k$ 部概念．由于过于复杂，不再列出．
+There are also corresponding $k$-part versions. They are too complicated, so we do not list them.
 
-## 五边形数定理
+## Pentagonal number theorem
 
-单独观察分拆数的生成函数的分母部分：
+Look at the denominator of the generating function for partition numbers on its own:
 
 $$
 \prod_{i=1}^\infty (1-x^i ) 
 $$
 
-将这部分展开，可以想到互异分拆，与互异分拆拆出的部分数奇偶性有关．
+When we expand it, partitions into distinct parts come to mind, and the sign depends on whether the number of parts is odd or even.
 
-具体地，互异偶部分拆在展开式中被正向计数，互异奇部分拆在展开式中被负向计数．因此展开式中各项系数为两方法数之差．即：
+Specifically, partitions into an even number of distinct parts are counted positively in the expansion, and partitions into an odd number of distinct parts are counted negatively. So each coefficient of the expansion is the difference of the two counts. That is:
 
 $$
 \sum_{i=0}^\infty ({pde}_n-{pdo}_n ) x^n =\prod_{i=1}^\infty (1-x^i ) 
 $$
 
-接下来说明，多数情况下，上述两方法数相等，在展开式中系数为 $0$；仅在少数位置，两方法数相差 $1$ 或 $-1$．
+Next we show that in most cases the two counts are equal, so the coefficient in the expansion is $0$. Only at a few positions do the two counts differ by $1$ or $-1$.
 
-这里可以借助构造对应的办法．
+We can do this by constructing a correspondence.
 
-画出每个互异分拆的 Ferrers 图．最后一行称为这个图的底，底上点的个数记为 $b$（Bottom）；连接最上面一行的最后一个点与图中某点的最长 $45$ 度角线段，称为这个图的坡，坡上点的个数记为 $s$（Slide）．
+Draw the Ferrers diagram of each partition into distinct parts. The last row is called the bottom of the diagram, and the number of dots on it is $b$ (Bottom). The longest $45$-degree line segment starting from the last dot of the top row and going through dots of the diagram is called the slope of the diagram, and the number of dots on it is $s$ (Slide).
 
 ![](./images/bottom_slide.jpg)
 
-要想在互异偶部分拆与互异奇部分拆之间构造对应，就要定义变换，在保证互异条件不变的前提下，使得行数改变 $1$：
+To build a correspondence between partitions into an even number of distinct parts and partitions into an odd number of distinct parts, we define transformations that change the number of rows by $1$ while keeping the parts distinct:
 
-变换 A：当 $b$ 小于等于 $s$ 的时候，就将底移到右边，成为一个新坡．
+Transformation A: when $b$ is at most $s$, move the bottom to the right side, where it becomes a new slope.
 
-变换 B：当 $b$ 大于 $s$ 的时候，就将坡移到下边，成为一个新底．
+Transformation B: when $b$ is greater than $s$, move the slope to the bottom, where it becomes a new bottom.
 
-这两个变换对于大多数 $n$ 的任意互异分拆，恰有一个变换可以进行，就在互异偶部分拆与互异奇部分拆之间构造了一个一一对应．已经构造了一一对应的两部分分拆个数相等，因此这时展开式中第 $n$ 项系数为 $0$．
+For most $n$, exactly one of these two transformations can be applied to any partition of $n$ into distinct parts. This gives a one-to-one correspondence between partitions into an even number and an odd number of distinct parts. Two sets in one-to-one correspondence have the same size, so in this case the $n$-th coefficient of the expansion is $0$.
 
-但是对于某些 $n$，其存在恰一个互异分拆无法进行上述变换．
+But for some $n$, there is exactly one partition into distinct parts to which neither transformation can be applied.
 
--   情况一：$b=s$ 且底与坡有一个公共点时，变换 A 不能进行．此时
+-   Case 1: when $b=s$ and the bottom and the slope share a dot, transformation A cannot be applied. In this case
 
 $$
 n=s+(s+1)+\ldots+(s+s-1)=\frac{s(3s-1)}{2}
 $$
 
-展开式的第 $n$ 项与分拆部分数的奇偶性有关，为 $(-1)^s x^n$．
+The $n$-th term of the expansion depends on whether the number of parts is odd or even, and equals $(-1)^s x^n$.
 
--   情况二：$b=s+1$ 且底与坡有一个公共点时，变换 B 不能进行．此时
+-   Case 2: when $b=s+1$ and the bottom and the slope share a dot, transformation B cannot be applied. In this case
 
 $$
 n=(s+1)+(s+2)+\ldots+(s+s)=\frac{s(3s+1)}{2}
 $$
 
-展开式的第 $n$ 项为 $(-1)^s x^n$．
+The $n$-th term of the expansion is $(-1)^s x^n$.
 
-用 $-s$ 替换上式的 $s$，得到 $n=\frac{s(3s-1)}{2}$，其中 $s$ 为负整数，展开式的第 $n$ 项仍为 $(-1)^s x^n$．．
+Replacing $s$ with $-s$ in the formula above gives $n=\frac{s(3s-1)}{2}$, where $s$ is a negative integer, and the $n$-th term of the expansion is still $(-1)^s x^n$.
 
-由于两种情况不会在同一个 $n$ 同时出现，我们可以把两个条件合起来，得到 $n$ 需要满足的条件是
+Since the two cases never happen for the same $n$, we can combine the two conditions. The condition on $n$ is
 
 $$
 \exists k\in\mathbb{Z},n=\frac{k(3k-1)}{2}
 $$
 
-至此，我们就证明了：
+So we have proved:
 
 $$
 (1-x)(1-x^2 )(1-x^3 )\ldots=\sum_{k=-\infty}^{+\infty} (-1)^k x^{\frac{k(3k-1)}{2}} =\ldots+x^{26}-x^{15}+x^7-x^2+1-x+x^5-x^{12}+x^{22}-\ldots
 $$
 
-回忆一下：这个式子是分拆数的生成函数的倒数，因此其与分拆数的生成函数相乘的结果是 $1$．整理并对比两边各项系数，就得到分拆数数列的递推式．
+Recall that this is the reciprocal of the generating function for partition numbers, so its product with that generating function is $1$. Rearranging and comparing coefficients on both sides gives a recurrence for the partition numbers.
 
 $$
 (1+p_1 x+p_2 x^2+p_3 x^3+\ldots)(1-x-x^2+x^5+x^7-x^{12}-x^{15}+x^{22}+x^{26}-\ldots)=1
@@ -307,14 +307,14 @@ $$
 p_n=p_{n-1}+p_{n-2}-p_{n-5}-p_{n-7}+\ldots
 $$
 
-这个递推式有无限项，但是如果规定负数的分拆数是 $0$（$0$ 的分拆数已经定义为 $1$），那么就简化为了有限项．
+This recurrence has infinitely many terms. But if we define the partition number of a negative number to be $0$ (the partition number of $0$ is already defined as $1$), it reduces to finitely many terms.
 
-### 例题
+### Example problem
 
-???+ note "计算分拆数"
-    计算分拆数 $p_n$．多组输入，其中 $n$ 上界为 $50000$，对 $1000007$ 取模．
+???+ note "Computing partition numbers"
+    Compute the partition number $p_n$. There are multiple test cases, with $n$ up to $50000$. Output the answer modulo $1000007$.
     
-    采用五边形数定理的方法．有代码：
+    We use the pentagonal number theorem. The code:
     
     ```cpp
     #include <cstdio>
@@ -328,9 +328,9 @@ $$
       p[2] = 2;
       int i;
       for (i = 1; i < 50005;
-           i++) /*递推式系数1,2,5,7,12,15,22,26...i*(3*i-1)/2,i*(3*i+1)/2*/
+           i++) /*coefficients of the recurrence: 1,2,5,7,12,15,22,26...i*(3*i-1)/2,i*(3*i+1)/2*/
       {
-        a[2 * i] = i * (i * 3 - 1) / 2; /*五边形数为1,5,12,22...i*(3*i-1)/2*/
+        a[2 * i] = i * (i * 3 - 1) / 2; /*pentagonal numbers are 1,5,12,22...i*(3*i-1)/2*/
         a[2 * i + 1] = i * (i * 3 + 1) / 2;
       }
       for (
@@ -339,7 +339,7 @@ $$
       {
         p[i] = 0;
         int j;
-        for (j = 2; a[j] <= i; j++) /*有可能为负数,式中加1000007*/
+        for (j = 2; a[j] <= i; j++) /*the value may be negative, so add 1000007*/
         {
           if (j & 2) {
             p[i] = (p[i] + p[i - a[j]] + 1000007) % 1000007;
