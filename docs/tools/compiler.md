@@ -1,69 +1,69 @@
-本页面主要介绍了各系统下各类编译器/解释器的安装步骤．
+This page explains how to install various compilers and interpreters on different systems.
 
 ## GCC
 
 ### Windows
 
-#### 手动下载安装
+#### Manual download and install
 
-访问 [MinGW-w64](https://www.mingw-w64.org/downloads) 的下载页面，有多个构建版本．方便起见，我们使用由 WinLibs 提供的构建版本．
+Visit the [MinGW-w64](https://www.mingw-w64.org/downloads) download page, which lists several builds. For convenience, we use the build provided by WinLibs.
 
-首先前往 [WinLibs](https://winlibs.com) 下载最新的安装包，选择合适的版本，本文选择了 GCC 12.3.0 + LLVM/Clang/LLD/LLDB 16.0.4 + MinGW-w64 11.0.0 (UCRT)：
+First go to [WinLibs](https://winlibs.com) and download the latest package, choosing a suitable version. This guide uses GCC 12.3.0 + LLVM/Clang/LLD/LLDB 16.0.4 + MinGW-w64 11.0.0 (UCRT):
 
-默认会附带安装 LLVM Clang，如果不想安装，你也可以选择右边的 without LLVM/Clang/LLD/LLDB．
+LLVM Clang is included by default. If you don't want it, you can pick the "without LLVM/Clang/LLD/LLDB" option on the right instead.
 
 ![](./images/compiler1.png)
 
-下载好后将其解压到电脑中的某个位置，教程中将其解压到了 C 盘的根目录．目录名中最好不要包含非英文字符和空格，否则可能会在后期导致一些问题．
+After downloading, extract it somewhere on your computer. This guide extracts it to the root of the C drive. The directory name should preferably contain no non-English characters or spaces; otherwise it may cause problems later.
 
 ![](./images/compiler2.png)
 
-接下来我们需要将编译器的可执行文件目录添加到系统环境变量中，这样在编译时就不需要指定编译器的路径了，方便使用．上方我们将 MinGW 解压到了 `C:\mingw64` 目录中，那么可执行文件所在的目录就是 `C:\mingw64\bin`．
+Next, add the compiler's executable directory to the system environment variables, so you don't need to give the compiler's path every time you compile. Above we extracted MinGW to `C:\mingw64`, so the executables are in `C:\mingw64\bin`.
 
-按下 Windows 徽标 + R 组合键，输入 `rundll32.exe sysdm.cpl,EditEnvironmentVariables`，打开系统环境变量设置窗口，并在「系统变量」一节中选中名为「Path」的变量，然后点击「编辑」按钮：
+Press Windows logo + R, type `rundll32.exe sysdm.cpl,EditEnvironmentVariables` to open the system environment variables window. In the "System variables" section, select the variable named "Path" and click the "Edit" button:
 
 ![](./images/compiler3.png)
 
-在编辑窗口中点击右侧的「新建」按钮，为「Path」变量新建一个条目，并填入上文中记录下的可执行文件所在的目录（教程中为 `C:\mingw64\bin`）．
+In the edit window, click the "New" button on the right to add an entry to "Path", and fill in the executable directory noted above (`C:\mingw64\bin` in this guide).
 
 ![](./images/compiler4.png)
 
-??? note "对部分老版本系统的提示"
-    部分老版本系统只能手动修改变量的文本值，那么需要在变量的值的末尾插入一个 **半角分号**，再将可执行文件所在的目录粘贴到这个半角分号的后面，如图所示：
+??? note "Tip for some older versions of Windows"
+    Some older versions only let you edit the variable's value as text. In that case, add a **half-width semicolon** at the end of the value, then paste the executable directory after the semicolon, as shown:
     
     ![](./images/compiler5.png)
 
-完成后一路点击「确定」按钮退出即可．
+When done, click "OK" on each window to close them.
 
-接下来打开终端，输入 `g++ --version` 并按下回车，如果出现如图所示的提示则代表安装成功．
+Then open a terminal, type `g++ --version` and press Enter. If you see output like the picture below, the installation succeeded.
 
 ![](./images/compiler6.png)
 
-#### MSYS2 安装
+#### Installing with MSYS2
 
-MSYS2 提供多个彼此独立的开发环境．如果不确定应该选择哪个，MSYS2 官方建议使用 UCRT64．
+MSYS2 provides several independent development environments. If you are not sure which to pick, MSYS2 officially recommends UCRT64.
 
-打开 PowerShell，运行以下命令安装 MSYS2：
+Open PowerShell and run the following command to install MSYS2:
 
 ```powershell
 winget install MSYS2.MSYS2
 ```
 
-安装完成后，在开始菜单中搜索并打开 MSYS2 UCRT64 终端．MSYS2 是滚动发行版，首先完整更新系统：
+After installation, search for and open the MSYS2 UCRT64 terminal from the Start menu. MSYS2 is a rolling release, so first fully update the system:
 
 ```bash
 pacman -Suy
 ```
 
-如果更新过程中提示关闭所有 MSYS2 进程，确认后重新打开 MSYS2 UCRT64 终端，并再次执行 `pacman -Suy`，直到更新完成．
+If the update asks you to close all MSYS2 processes, confirm, reopen the MSYS2 UCRT64 terminal, and run `pacman -Suy` again until the update finishes.
 
-然后安装 UCRT64 环境下的完整 GNU 工具链：
+Then install the full GNU toolchain for the UCRT64 environment:
 
 ```bash
 pacman -S ${MINGW_PACKAGE_PREFIX}-toolchain
 ```
 
-在 UCRT64 环境中，`MINGW_PACKAGE_PREFIX` 的值为 `mingw-w64-ucrt-x86_64`，因此上述命令会安装 GCC、GDB、Make 等工具．安装完成后，可运行以下命令验证：
+In the UCRT64 environment, `MINGW_PACKAGE_PREFIX` is `mingw-w64-ucrt-x86_64`, so the command above installs GCC, GDB, Make and other tools. After installation, you can verify with:
 
 ```bash
 gcc --version
@@ -71,19 +71,19 @@ g++ --version
 gdb --version
 ```
 
-??? note "为什么是 UCRT64"
-    UCRT64 使用 GCC、UCRT 和 libstdc++，也是 MSYS2 在不确定如何选择环境时推荐使用的环境．CLANG64 同样使用 UCRT，但默认使用 LLVM/Clang、LLD 和 libc++．MINGW64 使用较旧的 MSVCRT，目前已被 MSYS2 列为 legacy 环境．MSYS 环境则主要用于运行依赖 POSIX 兼容层的 Unix 工具，不适合用来生成普通的原生 Windows 竞赛程序．
+??? note "Why UCRT64"
+    UCRT64 uses GCC, UCRT and libstdc++, and it is the environment MSYS2 recommends when you are unsure which to choose. CLANG64 also uses UCRT, but uses LLVM/Clang, LLD and libc++ by default. MINGW64 uses the older MSVCRT and is now listed by MSYS2 as a legacy environment. The MSYS environment is mainly for running Unix tools that depend on the POSIX compatibility layer, and is not suitable for building ordinary native Windows contest programs.
     
-    UCRT 能提高与 MSVC 在 C 运行时层面的兼容性，但这并不意味着 GCC/MinGW 与 MSVC 的 C++ ABI 或对象文件、静态库可以直接互换．
+    UCRT improves compatibility with MSVC at the C runtime level, but this does not mean that GCC/MinGW and MSVC share a C++ ABI, or that their object files and static libraries can be used interchangeably.
 
-??? warning "不要修改全局 Path"
-    不建议将 `C:\msys64\ucrt64\bin` 添加到 Windows 的全局 `Path`．MSYS2 UCRT64 终端启动时已经会为当前环境设置正确的 `PATH`；直接使用对应的 MSYS2 终端可以避免不同环境的工具链和运行库相互混用．
+??? warning "Do not modify the global Path"
+    We don't recommend adding `C:\msys64\ucrt64\bin` to the global Windows `Path`. The MSYS2 UCRT64 terminal already sets the correct `PATH` for its environment when it starts. Using the matching MSYS2 terminal directly avoids mixing toolchains and runtime libraries from different environments.
     
-    需要注意的是，在不把 UCRT64 的 `bin` 目录加入 Windows 全局 `Path` 的情况下，也不应直接在普通的 PowerShell 或 CMD 中调用 MSYS2 安装的 GCC．例如，GCC 在编译过程中会启动 `cc1.exe` 等内部程序，而这些程序依赖的 DLL 位于 UCRT64 环境的 `bin` 目录中；如果没有由 MSYS2 UCRT64 终端预先设置好环境变量，就可能因找不到依赖 DLL 而启动失败．因此，使用这套 GCC 工具链时，应从 MSYS2 UCRT64 终端或继承了该终端环境变量的终端中运行编译命令．
+    Note that if you don't add the UCRT64 `bin` directory to the global Windows `Path`, you also shouldn't call the MSYS2-installed GCC directly from an ordinary PowerShell or CMD. For example, during compilation GCC starts internal programs such as `cc1.exe`, and the DLLs these programs depend on are in the `bin` directory of the UCRT64 environment. Without the environment variables that the MSYS2 UCRT64 terminal sets up, they may fail to start because the DLLs cannot be found. So when using this GCC toolchain, run your compile commands from the MSYS2 UCRT64 terminal, or from a terminal that inherits its environment variables.
 
-#### Scoop 安装
+#### Installing with Scoop
 
-打开 PowerShell，运行以下脚本：
+Open PowerShell and run the following script:
 
 ```powershell
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
@@ -95,13 +95,13 @@ scoop install mingw-winlibs
 
 #### Debian/Ubuntu
 
-首先先更新软件包列表：
+First update the package list:
 
 ```bash
 sudo apt update
 ```
 
-再使用命令直接安装即可：
+Then install it directly with:
 
 ```bash
 sudo apt install g++
@@ -109,7 +109,7 @@ sudo apt install g++
 
 #### Arch Linux
 
-使用命令直接安装即可：
+Install it directly with:
 
 ```bash
 sudo pacman -Syu gcc
@@ -117,7 +117,7 @@ sudo pacman -Syu gcc
 
 #### openSUSE
 
-使用命令直接安装即可：
+Install it directly with:
 
 ```bash
 sudo zypper in gcc-c++
@@ -125,14 +125,14 @@ sudo zypper in gcc-c++
 
 ### macOS
 
-首先更新包管理器：
+First update the package manager:
 
 ```bash
 brew upgrade
 brew update
 ```
 
-再使用命令直接安装即可：
+Then install it directly with:
 
 ```bash
 brew install gcc
@@ -140,31 +140,31 @@ brew install gcc
 
 ## JDK
 
-JDK 的发行版有很多，以下介绍两种：
+There are many JDK distributions. Here are two:
 
--   OpenJDK 中的 [Eclipse Temurin](https://adoptium.net/zh-cn/)[^temurin]：参见 [Install Eclipse Temurin™ | Adoptium](https://adoptium.net/zh-CN/installation/)．
--   Oracle JDK：可参见 [JDK Installation Guide（JDK 17）](https://docs.oracle.com/en/java/javase/17/install/overview-jdk-installation.html)．
+-   [Eclipse Temurin](https://adoptium.net/zh-cn/)[^temurin], an OpenJDK build: see [Install Eclipse Temurin™ | Adoptium](https://adoptium.net/zh-CN/installation/).
+-   Oracle JDK: see [JDK Installation Guide (JDK 17)](https://docs.oracle.com/en/java/javase/17/install/overview-jdk-installation.html).
 
 ## Python 3
 
-Python 的实现也有很多[^pythonimpl]，以 CPython 3 为例，参见 [Download Python | Python.org](https://www.python.org/downloads/)．
+There are also many Python implementations[^pythonimpl]. For CPython 3, see [Download Python | Python.org](https://www.python.org/downloads/).
 
 ## LLVM
 
 ### Windows
 
-??? note "LLVM 在 Windows 上的坑"
-    由于 LLVM 在 Windows 上缺失标准库，所以你仍需安装 MSVC 或 GCC．
+??? note "A pitfall of LLVM on Windows"
+    LLVM lacks a standard library on Windows, so you still need to install MSVC or GCC.
 
-#### 直接安装
+#### Direct install
 
-访问 [LLVM](https://github.com/llvm/llvm-project/releases/latest) 的下载页面，选择 LLVM-\*-win64.exe 下载．
+Visit the [LLVM](https://github.com/llvm/llvm-project/releases/latest) download page and download LLVM-\*-win64.exe.
 
-如果你的网络质量不佳，你也可以选择访问 [清华大学开源软件镜像站](https://mirrors.tuna.tsinghua.edu.cn/github-release/llvm/llvm-project/LatestRelease/) 进行下载．
+If your network connection is poor, you can also download it from the [Tsinghua University open source mirror](https://mirrors.tuna.tsinghua.edu.cn/github-release/llvm/llvm-project/LatestRelease/).
 
-打开 .exe 文件，安装时勾选 Add LLVM to system PATH for current user，随后一直点击下一步即可安装完成．
+Open the .exe file. During installation, check "Add LLVM to system PATH for current user", then keep clicking "Next" to finish.
 
-打开终端，输入 `clang++ --version` 并回车，出现
+Open a terminal, type `clang++ --version` and press Enter. If you see
 
 ```text
 clang version 15.0.1
@@ -173,52 +173,52 @@ Thread model: posix
 InstalledDir: <omitted>
 ```
 
-类似物即代表成功．
+or something similar, the installation succeeded.
 
-#### MSYS2 安装
+#### Installing with MSYS2
 
-MSYS2 中既可以在 UCRT64 环境里额外安装 Clang，也可以直接使用以 LLVM 为默认工具链的 CLANG64 环境．
+In MSYS2 you can either install Clang as an extra in the UCRT64 environment, or use the CLANG64 environment, whose default toolchain is LLVM.
 
-##### UCRT64 环境
+##### UCRT64 environment
 
-如果平时主要使用 GNU GCC，只是偶尔需要 Clang，可以在 MSYS2 UCRT64 终端中安装：
+If you mainly use GNU GCC and only need Clang now and then, install it in the MSYS2 UCRT64 terminal:
 
 ```bash
 pacman -S ${MINGW_PACKAGE_PREFIX}-clang ${MINGW_PACKAGE_PREFIX}-llvm
 ```
 
-如果还需要 `clangd`、`clang-tidy` 等开发工具，再安装：
+If you also need development tools such as `clangd` and `clang-tidy`, install:
 
 ```bash
 pacman -S ${MINGW_PACKAGE_PREFIX}-clang-tools-extra
 ```
 
-UCRT64 属于 GCC 系环境，因此这里安装的 Clang 默认仍使用 GNU 链接器和 libstdc++，可以继续使用 `bits/stdc++.h` 等 libstdc++ 提供的内容．安装完成后，可运行以下命令验证：
+UCRT64 is a GCC-based environment, so the Clang installed here still uses the GNU linker and libstdc++ by default, and you can keep using things provided by libstdc++ such as `bits/stdc++.h`. After installation, you can verify with:
 
 ```bash
 clang --version
 clang++ --version
 ```
 
-##### CLANG64 环境
+##### CLANG64 environment
 
-如果希望使用以 LLVM 为核心的完整环境，可以从开始菜单打开 MSYS2 CLANG64 终端．如果此前还没有更新 MSYS2，先执行：
+If you want a full environment built around LLVM, open the MSYS2 CLANG64 terminal from the Start menu. If you haven't updated MSYS2 yet, first run:
 
 ```bash
 pacman -Suy
 ```
 
-如果更新过程中提示关闭所有 MSYS2 进程，重新打开 MSYS2 CLANG64 终端后再次执行该命令．随后安装当前环境的完整工具链：
+If the update asks you to close all MSYS2 processes, reopen the MSYS2 CLANG64 terminal and run the command again. Then install the full toolchain for this environment:
 
 ```bash
 pacman -S ${MINGW_PACKAGE_PREFIX}-toolchain
 ```
 
-在 CLANG64 环境中，`MINGW_PACKAGE_PREFIX` 的值为 `mingw-w64-clang-x86_64`；该工具链包含 Clang、LLVM、LLD、LLDB、libc++、Make 等组件．CLANG64 终端会自动设置当前环境所需的 `PATH`，同样不建议把 `C:\msys64\clang64\bin` 添加到 Windows 的全局 `Path`．
+In the CLANG64 environment, `MINGW_PACKAGE_PREFIX` is `mingw-w64-clang-x86_64`. This toolchain includes Clang, LLVM, LLD, LLDB, libc++, Make and other components. The CLANG64 terminal automatically sets the `PATH` this environment needs, so again we don't recommend adding `C:\msys64\clang64\bin` to the global Windows `Path`.
 
-#### Scoop 安装
+#### Installing with Scoop
 
-打开 PowerShell，运行以下脚本：
+Open PowerShell and run the following script:
 
 ```powershell
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
@@ -230,7 +230,7 @@ scoop install llvm
 
 #### openSUSE
 
-使用命令直接安装即可：
+Install it directly with:
 
 ```bash
 sudo zypper in llvm clang
@@ -238,10 +238,10 @@ sudo zypper in llvm clang
 
 ## MSVC (Visual Studio)
 
-访问 [下载 Visual Studio](https://visualstudio.microsoft.com/zh-hans/downloads/) 页面，找到「下载」一节中的「社区」部分，点击「免费下载」．下载完成后打开安装器选择「Community 2022 安装」．在随后弹出来的窗口中仅选择「使用 C++ 的桌面开发」，然后单击安装．
+Visit the [Download Visual Studio](https://visualstudio.microsoft.com/zh-hans/downloads/) page, find the "Community" part of the "Downloads" section, and click "Free download". When the download finishes, open the installer and choose to install "Community 2022". In the window that pops up, select only "Desktop development with C++", then click Install.
 
-如果你不想安装完整的 Visual Studio，可以滚动到下方「所有下载」一节，在「用于 Visual Studio 的工具」中找到「Visual Studio 生成工具」，点击后方的「下载」．下载完成后打开安装器，按照提示步骤选择「使用 C++ 的桌面开发」后安装即可．也可以使用 [PortableBuildTools](https://github.com/Data-Oriented-House/PortableBuildTools) 工具以仅安装 MSVC 编译器．
+If you don't want to install the full Visual Studio, scroll down to the "All Downloads" section, find "Build Tools for Visual Studio" under "Tools for Visual Studio", and click "Download" next to it. When the download finishes, open the installer, follow the prompts to select "Desktop development with C++", and install. You can also use the [PortableBuildTools](https://github.com/Data-Oriented-House/PortableBuildTools) tool to install just the MSVC compiler.
 
-[^temurin]: [Eclipse Temurin](https://adoptium.net/) 即为原 [AdoptOpenJDK](https://adoptopenjdk.net/)，后者已于 2021 年 7 月移交至 [Eclipse 基金会](https://www.eclipse.org/org/foundation/)．具体可见 [本声明](https://blog.adoptopenjdk.net/2021/03/transition-to-eclipse-an-update/)．
+[^temurin]: [Eclipse Temurin](https://adoptium.net/) is the former [AdoptOpenJDK](https://adoptopenjdk.net/), which was transferred to the [Eclipse Foundation](https://www.eclipse.org/org/foundation/) in July 2021. See [this announcement](https://blog.adoptopenjdk.net/2021/03/transition-to-eclipse-an-update/) for details.
 
 [^pythonimpl]: [Alternative Python Implementations | Python.org](https://www.python.org/download/alternatives/)

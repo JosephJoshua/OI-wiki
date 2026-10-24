@@ -1,57 +1,57 @@
 author: zarttic, xk2013
 
-## 简介
+## Introduction
 
-[CP Editor](https://github.com/cpeditor/cpeditor) 专为算法竞赛设计，不像其它 IDE 主要是为了开发设计的．它可以帮助你自动化编译、运行、测试，从而让你专注于算法设计．它甚至可以从各种算法竞赛网站上获取样例，将代码提交到 [Codeforces](https://codeforces.com/) 上！
+[CP Editor](https://github.com/cpeditor/cpeditor) is designed specifically for competitive programming, unlike other IDEs, which are mainly designed for software development. It automates compiling, running and testing, so you can focus on designing algorithms. It can even fetch sample tests from various competitive programming websites and submit your code to [Codeforces](https://codeforces.com/)!
 
-## 下载与安装
+## Download and installation
 
-参见 [安装 | CP Editor](https://cpeditor.org/zh/docs/installation/)．
+See [Installation | CP Editor](https://cpeditor.org/zh/docs/installation/).
 
-## 基础配置
+## Basic configuration
 
-> CP Editor 内部没有集成编译器，需要自己安装配置编译器，如有需要请参考本站关于编译器安装相关的文章[^compiler]，当然，如果你在下载时选择了带有 `with-gcc-<GCC 版本号>-llvm-<LLVM 版本号>` 后缀的安装包，你就可以使用 CP Editor 自带的编译器，路径在 `{安装目录}/mingw64/bin/`．
+> CP Editor does not bundle a compiler, so you need to install and configure one yourself. If needed, see this site's article on installing compilers[^compiler]. Of course, if you downloaded an installer with the suffix `with-gcc-<GCC version>-llvm-<LLVM version>`, you can use CP Editor's bundled compiler, located at `{install directory}/mingw64/bin/`.
 
--   设置默认语言
+-   Set the default language
 
-    编辑器默认的语言为 `C++`．
+    The editor's default language is `C++`.
 
     ![cp-setting-lang-1](images/cp-setting-lang-1.png)
 
     ![cp-setting-lang-2](images/cp-setting-lang-2.png)
 
--   设置 `C++` 命令
+-   Set the `C++` commands
 
-    需要设置一些必要的编译命令，这个要根据编译器来设定．
+    You need to set some necessary compile commands, depending on your compiler.
 
     ![cp-setting-lang-3](images/cp-setting-lang-3.png)
 
--   设置模板
+-   Set a template
 
-    新建文件的时候会自动初始化的模板，需要注意的是 CP Editor 需要的是一个 `xxx.cpp` 的文件作为模板文件．
+    The template is filled in automatically when you create a new file. Note that CP Editor needs a `xxx.cpp` file as the template file.
 
     ![cp-setting-lang-4](images/cp-setting-lang-4.png)
 
-> 完成了以上的基本操作你就可以使用最基本的功能了．
+> After finishing the basic steps above, you can use the most basic features.
 
-## 基本功能
+## Basic features
 
--   快捷键
+-   Keyboard shortcuts
 
-    |                       命令                      |    操作   |
-    | :-------------------------------------------: | :-----: |
-    | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd> |   编译．   |
-    | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd> |  编译并运行． |
-    |          <kbd>Ctrl</kbd>+<kbd>R</kbd>         |   运行．   |
-    |  <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>D</kbd>  | 在终端中运行． |
-    |          <kbd>Ctrl</kbd>+<kbd>K</kbd>         | 终止所有进程． |
-    | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> |  格式化代码． |
+    |                    Shortcut                   |        Action        |
+    | :-------------------------------------------: | :------------------: |
+    | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd> |       Compile.       |
+    | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd> |   Compile and run.   |
+    |          <kbd>Ctrl</kbd>+<kbd>R</kbd>         |         Run.         |
+    |  <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>D</kbd>  |   Run in terminal.   |
+    |          <kbd>Ctrl</kbd>+<kbd>K</kbd>         | Kill all processes.  |
+    | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> |     Format code.     |
 
-    具体可以查阅 [官方文档](https://cpeditor.org/zh/docs/preferences/key-bindings/)．
+    See the [official documentation](https://cpeditor.org/zh/docs/preferences/key-bindings/) for details.
 
--   样例测试
+-   Sample testing
 
-    可以把题面的样例复制下来，由 CP Editor 自动评测，而且还可以设置时间限制！
+    You can copy the samples from the problem statement and let CP Editor judge your program automatically. You can even set a time limit!
 
     ![cp-setting-limits](images/cp-setting-limits.png)
 
@@ -63,6 +63,6 @@ author: zarttic, xk2013
 
     ![cp-judge-4](images/cp-judge-4.png)
 
-## 参考资料
+## References
 
-[^compiler]: [编译器 - OI Wiki](../compiler.md)
+[^compiler]: [Compilers - OI Wiki](../compiler.md)
