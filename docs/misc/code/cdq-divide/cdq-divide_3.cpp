@@ -1,5 +1,5 @@
-// 一道二维最长上升子序列的题
-// 为了确定某一个元素是否在最长上升子序列中可以正反跑两遍 CDQ
+// a two-dimensional longest increasing subsequence problem
+// to decide whether an element is in a longest increasing subsequence, run CDQ twice, forward and backward
 #include <algorithm>
 #include <iomanip>
 #include <iostream>
@@ -18,7 +18,7 @@ struct data_ {
 int n;
 bool tr;
 
-// 底下是重写比较
+// below we override the comparison
 bool cmp1(const data_& a, const data_& b) {
   if (tr)
     return a.h > b.h;
@@ -78,7 +78,7 @@ struct treearray {
 
 int rk[2][N];
 
-void solve(int l, int r, int t) {  // 递归跑
+void solve(int l, int r, int t) {  // run recursively
   if (r - l == 1) {
     return;
   }

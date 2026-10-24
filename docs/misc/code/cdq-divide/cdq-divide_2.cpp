@@ -1,4 +1,4 @@
-// 仔细推一下就是和三维偏序差不多的式子了，基本就是一个三维偏序的板子
+// after some derivation this becomes almost the same formula as 3D partial order; it is basically a 3D partial order template
 #include <algorithm>
 #include <iostream>
 using namespace std;
@@ -33,12 +33,12 @@ struct data_ {
 int rv[100010];
 ll res;
 
-// 重写两个比较
+// override the two comparisons
 bool cmp1(const data_& a, const data_& b) { return a.val < b.val; }
 
 bool cmp2(const data_& a, const data_& b) { return a.del < b.del; }
 
-void solve(int l, int r) {  // 底下是具体的式子，套用
+void solve(int l, int r) {  // below is the actual formula; just apply it
   if (r - l == 1) {
     return;
   }

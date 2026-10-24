@@ -1,12 +1,12 @@
-前置知识：[线性规划基础](./linear-programming.md)
+Prerequisites: [Linear programming basics](./linear-programming.md)
 
-## 引入
+## Introduction
 
-算法竞赛中，经常使用单纯形法解决线性规划问题．但是，由于算法竞赛中遇到的线性规划问题大多有着更特殊的结构，常常可以转化为网络流问题，因此，单纯形法并不常用，效率也不如专门为网络流问题设计的算法．
+In competitive programming, the simplex method is often used to solve linear programming problems. However, most linear programs that come up in contests have a more special structure and can often be turned into network flow problems. So the simplex method is not used much, and it is less efficient than algorithms designed specifically for network flow.
 
-## 基本概念
+## Basic concepts
 
-假设要求解如下一个有 $n$ 个决策变量和 $m+n$ 个约束的 [标准形式](./linear-programming.md#标准形式) 线性规划问题：
+Suppose we want to solve the following linear program in [standard form](./linear-programming.md#标准形式) with $n$ decision variables and $m+n$ constraints:
 
 $$
 \begin{aligned}
@@ -16,14 +16,14 @@ $$
 \end{aligned}
 $$
 
-不妨假设这 $m$ 个等式约束确定的线性方程组有解，且 $A$ 满秩，则 $\operatorname{rank}A = m \le n$．
+We may assume that the system of linear equations given by these $m$ equality constraints has a solution and that $A$ has full rank. Then $\operatorname{rank}A = m \le n$.
 
-### 一个例子
+### An example
 
-在严格叙述单纯形法的步骤之前，本节首先考察一个具体的例子，以方便理解．
+Before describing the steps of the simplex method precisely, this section first looks at a concrete example to make it easier to understand.
 
-???+ example "例子"
-    考虑线性规划问题
+???+ example "Example"
+    Consider the linear program
     
     $$
     \begin{aligned}
@@ -35,7 +35,7 @@ $$
     \end{aligned}
     $$
     
-    通过添加松弛变量，就得到它的标准形式：
+    Adding slack variables gives its standard form:
     
     $$
     \begin{aligned}
@@ -47,7 +47,7 @@ $$
     \end{aligned}
     $$
     
-    观察该问题的等式约束，它们其实相当于将变量 $x_4,x_5,x_6$ 由变量 $x_1,x_2,x_3$ 表示．将原问题稍微整理一下，就有
+    Look at the equality constraints of this problem. They actually express the variables $x_4,x_5,x_6$ in terms of the variables $x_1,x_2,x_3$. Rearranging the original problem a little gives
     
     $$
     \begin{array}{rrrrrr}
@@ -58,33 +58,33 @@ $$
     \end{array}
     $$
     
-    从这个形式中，可以清楚地看到，如果令 $x_1=x_2=x_3=0$，就可以得到原问题的一组可行解
+    From this form we can clearly see that setting $x_1=x_2=x_3=0$ gives a feasible solution of the original problem
     
     $$
     x = (0,0,0,20,20,20)^T.
     $$
     
-    且它对应的价值为 $z=0$．为方便叙述，称那些设为零的变量 $x_1,x_2,x_3$ 为非基变量，剩下的变量 $x_4,x_5,x_6$ 为基变量．
+    and its value is $z=0$. For convenience, call the variables set to zero, $x_1,x_2,x_3$, non-basic variables, and the remaining variables $x_4,x_5,x_6$ basic variables.
     
-    这组可行解显然不是最优解．只要适当地增加 $x_1,x_2,x_3$ 的值，使得 $x_4,x_5,x_6$ 仍然是非负数，就可以保持解仍然可行．而且，因为目标函数中，$x_1,x_2,x_3$ 的系数都是严格的负数，所以，增加它们的值一定会降低目标函数的值．比如说，可以选择增加 $x_1$ 的值．为了尽可能多地降低目标函数的值，需要尽可能多地增加 $x_1$ 的值．但是，为了保证解仍然是可行的，就需要保证 $x_4,x_5,x_6\ge 0$．因此，$x_1$ 最多可以增加到
+    This feasible solution is clearly not optimal. As long as we increase $x_1,x_2,x_3$ by suitable amounts so that $x_4,x_5,x_6$ stay non-negative, the solution stays feasible. Moreover, since the coefficients of $x_1,x_2,x_3$ in the objective function are all strictly negative, increasing them will definitely decrease the objective value. For example, we can choose to increase $x_1$. To decrease the objective as much as possible, we want to increase $x_1$ as much as possible. But to keep the solution feasible, we must keep $x_4,x_5,x_6\ge 0$. So $x_1$ can be increased to at most
     
     $$
     \min\left\{\dfrac{20}{1},\dfrac{20}{2},\dfrac{20}{2}\right\} = 10.
     $$
     
-    此时，可行解变为
+    The feasible solution then becomes
     
     $$
     x = (10,0,0,10,0,0)^T.
     $$
     
-    因为 $x_1$ 成为了基变量，为了回到最初的情形（即三个基变量由三个非基变量表示），需要选择一个新的非基变量．因为 $x_5,x_6$ 都是零，所以，可以选择它们其中的任何一个作为非基变量，设为零．不妨选择 $x_5$ 作为非基变量．而且，将
+    Since $x_1$ has become a basic variable, to get back to the initial situation (three basic variables expressed in terms of three non-basic variables), we need to choose a new non-basic variable. Since $x_5$ and $x_6$ are both zero, either one can be chosen as the non-basic variable and set to zero. Let us choose $x_5$. Then, substituting
     
     $$
     x_1 = 10 - 0.5x_5 - 0.5x_2 - x_3
     $$
     
-    代入到原来的问题中，就可以将原问题改写作
+    into the original problem, we can rewrite it as
     
     $$
     \begin{array}{rrrrrr}
@@ -95,21 +95,21 @@ $$
     \end{array}
     $$
     
-    这就回到了初始的情形．
+    This brings us back to the initial situation.
     
-    继续观察当前的目标函数．非基变量 $x_3$ 的系数仍然是负数．可以考虑增加 $x_3$ 的值．为了保证 $x_4,x_1,x_6\ge 0$，变量 $x_3$ 最多只能增加到
+    Keep looking at the current objective function. The coefficient of the non-basic variable $x_3$ is still negative, so we can consider increasing $x_3$. To keep $x_4,x_1,x_6\ge 0$, the variable $x_3$ can be increased to at most
     
     $$
     \min\left\{\dfrac{10}{1},\dfrac{10}{1}\right\} = 10.
     $$
     
-    注意到，因为 $x_6$ 的表达式中，$x_3$ 的系数是正数，所以，无论怎么增加 $x_3$ 的值，都不会使得 $x_6$ 变为负数．这就是这次大括号中只有两项的原因．因为 $x_3$ 增加到 $10$ 的时候，$x_1,x_4$ 都变为零，所以，可以任选其中一个作为新的非基变量．不妨选择 $x_4$．就可以将
+    Note that since the coefficient of $x_3$ in the expression for $x_6$ is positive, no matter how much we increase $x_3$, $x_6$ will never become negative. That is why the braces contain only two terms this time. When $x_3$ is increased to $10$, both $x_1$ and $x_4$ become zero, so either one can be chosen as the new non-basic variable. Let us choose $x_4$. Then substituting
     
     $$
     x_3 = 10 + 0.5x_5 - 1.5x_2 - x_4
     $$
     
-    代入上述问题中，问题变形为
+    into the problem above transforms it into
     
     $$
     \begin{array}{rrrrrr}
@@ -120,27 +120,27 @@ $$
     \end{array}
     $$
     
-    只需要代入 $x_5=x_2=x_4=0$，就能从这个形式中读出当前的可行解是
+    Just substituting $x_5=x_2=x_4=0$, we can read off from this form that the current feasible solution is
     
     $$
     x = (0,0,10,0,0,10)^T,
     $$
     
-    以及它对应的价值为 $z=-120$．
+    and its value is $z=-120$.
     
-    重复之前的操作．因为 $x_2$ 的系数是负数，可以增加它的值；但为了保持 $x_3,x_6$ 仍然是非负数，只能增加到
+    Repeat the previous step. Since the coefficient of $x_2$ is negative, we can increase it; but to keep $x_3,x_6$ non-negative, it can only go up to
     
     $$
     \min\left\{\dfrac{10}{1.5},\dfrac{10}{2.5}\right\} = 4.
     $$
     
-    因为大括号中的最小值出现在变量 $x_6$ 的表达式中，所以，它将在 $x_2=4$ 时变为零．将表达式
+    Since the minimum in the braces comes from the expression for $x_6$, $x_6$ becomes zero when $x_2=4$. Substituting the expression
     
     $$
     x_2 = 4 + 0.6x_5 - 0.4x_6 - 0.4x_4
     $$
     
-    代入上述问题，就可以将原问题改写为
+    into the problem above, we can rewrite the original problem as
     
     $$
     \begin{array}{rrrrrr}
@@ -151,47 +151,47 @@ $$
     \end{array}
     $$
     
-    仍然令非基变量 $x_5,x_6,x_4$ 为零，就可以得到当前的可行解为
+    Again setting the non-basic variables $x_5,x_6,x_4$ to zero gives the current feasible solution
     
     $$
     x = (4,4,4,0,0,0)^T.
     $$
     
-    对应的价值为 $z=-136$．
+    with value $z=-136$.
     
-    因为目标函数中所有非基变量的系数都是正数，无法继续前文所述过程以改进目标函数，所以，当前的可行解就是最优解．算法终止．
+    Since all the coefficients of the non-basic variables in the objective function are positive, the process described above cannot improve the objective any further, so the current feasible solution is optimal. The algorithm terminates.
 
-这个例子中，算法从一组可行解出发，不断地改进目标函数，直到无法继续改进．这就是单纯形法的基本思想．
+In this example, the algorithm starts from a feasible solution and keeps improving the objective function until no further improvement is possible. This is the basic idea of the simplex method.
 
-### 基本可行解
+### Basic feasible solutions
 
-由于 $A$ 是满秩的，所以，总是可以选取大小为 $m$ 的子集 $B\subseteq\{1,2,\cdots,n\}$ 使得 $A_B$ 是可逆方阵．由此，可以将 $x_B$ 由剩下的变量 $x_N$ 表示：
+Since $A$ has full rank, we can always choose a subset $B\subseteq\{1,2,\cdots,n\}$ of size $m$ such that $A_B$ is an invertible square matrix. Then $x_B$ can be expressed in terms of the remaining variables $x_N$:
 
 $$
 x_B = A_B^{-1}b - A_B^{-1}A_Nx_N.
 $$
 
-其中，$N=\{1,2,\cdots,n\}\setminus B$，矩阵 $A_B,A_N$ 分别为矩阵 $A$ 中标号 $i\in B$ 和标号 $i\in N$ 的列组成的子矩阵，向量 $x_B,x_N$ 分别为向量 $x$ 中标号 $i\in B$ 和标号 $i\in N$ 的分量组成的子向量．如果 $i\in B$，那么，称 $x_i$ 为 **基变量**（basic variable）；否则，称 $x_i$ 为 **非基变量**（non-basic variable）．基变量的全体称为一组 **基**（basis），本文用对应的标号集合 $B$ 表示一组基．
+Here $N=\{1,2,\cdots,n\}\setminus B$. The matrices $A_B,A_N$ are the submatrices of $A$ made of the columns with indices $i\in B$ and $i\in N$ respectively, and the vectors $x_B,x_N$ are the subvectors of $x$ made of the components with indices $i\in B$ and $i\in N$ respectively. If $i\in B$, $x_i$ is called a **basic variable**; otherwise, $x_i$ is called a **non-basic variable**. The set of all basic variables is called a **basis**, and in this article we denote a basis by its index set $B$.
 
-???+ tip "「基」"
-    「基」这个名称，可以从线性代数的角度理解．设 $A$ 的全体列向量张成的线性空间为 $V$．那么，基 $B$ 对应的列向量就是空间 $V$ 的一组基．
+???+ tip "\"Basis\""
+    The name "basis" can be understood from the point of view of linear algebra. Let $V$ be the linear space spanned by all the column vectors of $A$. Then the column vectors corresponding to the basis $B$ form a basis of the space $V$.
 
-在基变量 $x_B$ 的表达式中，令 $x_N=0$，就得到全体等式约束的一组解[^notation]
+In the expression for the basic variables $x_B$, setting $x_N=0$ gives a solution of all the equality constraints[^notation]
 
 $$
 x = (x_B,x_N) = (A_B^{-1}b,0).
 $$
 
-这样得到的解称为线性规划问题的一个 **基本解**（basic solution）．如果它还满足所有非负约束，即 $x\ge 0$，那么，它也是原问题的一个可行解，也称为 **基本可行解**（basic feasible solution, BFS）．在单纯形法的迭代过程中，需要始终保持当前的解为一组基本可行解．
+A solution obtained this way is called a **basic solution** of the linear program. If it also satisfies all the non-negativity constraints, i.e. $x\ge 0$, then it is also a feasible solution of the original problem, called a **basic feasible solution** (BFS). During the iterations of the simplex method, the current solution must always be a basic feasible solution.
 
-### 转轴
+### Pivoting
 
-单纯形法的每次迭代就称为一次 **转轴**（pivoting）．从结果上看，每次转轴总是移除一个旧的基变量，再添加一个新的基变量，进而改进目标函数的值．
+Each iteration of the simplex method is called a **pivot** (pivoting). In terms of the result, each pivot removes an old basic variable and adds a new one, which improves the objective value.
 
-???+ tip "「转轴」"
-    「转轴」这个名称，同样可以从线性代数的角度理解．如上文所述，基 $B$ 对应的列向量是空间 $V$ 的一组基，它们也就对应着对应基的表示下空间 $V$ 的一组坐标轴．因此，转轴的过程，就是将某条坐标轴旋转到新的位置的过程．
+???+ tip "\"Pivot\""
+    The name "pivot" can also be understood from linear algebra. As mentioned above, the column vectors of the basis $B$ form a basis of the space $V$, and so they correspond to a set of coordinate axes of $V$ in the representation given by that basis. So pivoting is the process of rotating one coordinate axis to a new position.
 
-为了确定需要添加的基变量，可以将目标函数利用非基变量表示为
+To decide which basic variable to add, we can write the objective function in terms of the non-basic variables as
 
 $$
 \begin{aligned}
@@ -200,64 +200,64 @@ c^Tx &= c^T_Bx_B + c^T_Nx_N \\
 \end{aligned}
 $$
 
-令 $x_N=0$，就得到目标函数在当前基本可行解处的价值 $z=c_B^TA_B^{-1}b$．表达式中的第二项的系数则表示 $x_N$ 改变时，目标函数的改变为
+Setting $x_N=0$ gives the objective value at the current basic feasible solution, $z=c_B^TA_B^{-1}b$. The coefficients of the second term give how the objective changes when $x_N$ changes:
 
 $$
 \tilde c_N = \dfrac{\partial z}{\partial x_N} = c_N - A_N^T(A_B^{-1})^Tc_B.
 $$
 
-注意到 $c_B - A_B^T(A_B^{-1})^Tc_B = 0$，所以，可以记向量
+Note that $c_B - A_B^T(A_B^{-1})^Tc_B = 0$, so we can call the vector
 
 $$
 \tilde c = (\tilde c_B^T,\tilde c_N^T)^T = c - A^T(A_B^{-1})^Tc_B
 $$
 
-为线性规划问题在基本可行解 $x$ 处的 **约化成本**（reduced cost）．分量 $\tilde c_i<0$ 说明增加变量 $x_i$ 的值可以改进原问题的目标函数．这样的变量只能是一个非基变量，它称为本次转轴的 **入基变量**（entering variable）．因为在转轴后，$x_i$ 将变为基变量，不再恒设为零（但依然有可能等于零）．
+the **reduced cost** of the linear program at the basic feasible solution $x$. A component $\tilde c_i<0$ means that increasing the variable $x_i$ improves the objective of the original problem. Such a variable can only be a non-basic variable, and it is called the **entering variable** of this pivot, because after the pivot $x_i$ becomes a basic variable and is no longer fixed at zero (though it may still equal zero).
 
-选择完入基变量后，还需要选择需要移除的旧的基变量．为此，只需要确定，在增加 $x_i$ 的过程中，哪个现有的基变量最先变为零．将 $x_N=(x_i,x_{N\setminus\{i\}})=(x_i,0)$ 代入 $x_B$ 的表达式，就有
+After choosing the entering variable, we also need to choose an old basic variable to remove. For this, we just need to find which current basic variable becomes zero first as $x_i$ increases. Substituting $x_N=(x_i,x_{N\setminus\{i\}})=(x_i,0)$ into the expression for $x_B$ gives
 
 $$
 x_B = A_B^{-1}b - A_B^{-1}A_ix_i.
 $$
 
-因此，$x_i$ 可以增加的最大量就等于
+So the maximum amount by which $x_i$ can increase is
 
 $$
 \theta = \min\left\{\dfrac{(A_B^{-1}b)_j}{(A_B^{-1}A_i)_j}:(A_B^{-1}A_i)_j>0\right\}.
 $$
 
-最先变为零的变量就是使得该表达式取得最小值的下标 $j$ 对应的基变量 $x_{B_j}$．它也是增加 $x_i$ 的过程中的「瓶颈」——继续增加 $x_i$ 将使得 $x_{B_j}$ 成为负值．这一变量就是本次转轴的 **出基变量**（leaving variable）．确定出基变量的方法称为 **最小比值检验**（minimum ratio test）．
+The variable that becomes zero first is the basic variable $x_{B_j}$ whose index $j$ attains the minimum in this expression. It is the "bottleneck" when increasing $x_i$: increasing $x_i$ any further would make $x_{B_j}$ negative. This variable is the **leaving variable** of this pivot. The method for finding the leaving variable is called the **minimum ratio test**.
 
-设入基变量为 $x_i$，出基变量为 $x_{i'}$．转轴之后，基变量就是 $x_{B\setminus\{i'\}\cup\{i\}}$，非基变量就是 $x_{N\setminus\{i\}\cup\{i'\}}$．
+Let the entering variable be $x_i$ and the leaving variable be $x_{i'}$. After the pivot, the basic variables are $x_{B\setminus\{i'\}\cup\{i\}}$ and the non-basic variables are $x_{N\setminus\{i\}\cup\{i'\}}$.
 
-### 终止条件
+### Termination conditions
 
-单纯形法，就是从一组基本可行解出发，不断进行转轴的过程．上一节对转轴的讨论并不是完整的，它忽略了一些特殊的情形．有些特殊情形对应着算法的终止，有些则需要额外的处理．
+The simplex method starts from a basic feasible solution and keeps pivoting. The discussion of pivoting in the previous section is not complete; it ignores some special cases. Some special cases mean the algorithm terminates, and others need extra handling.
 
-首先，入基变量未必存在，即 $\tilde c\ge 0$．此时，没有进一步改进最优价值的方法，这说明当前基本可行解就是最优解，算法终止．要严格地证明这一点，需要用到 [互补松弛条件](./linear-programming.md#互补松弛条件)．令 $y=(A_B^{-1})^Tc_B$．注意到，在算法的整个过程中，始终保持 $x$ 是可行解，且互补松弛条件成立，即
+First, an entering variable may not exist, i.e. $\tilde c\ge 0$. Then there is no way to improve the objective value further, which means the current basic feasible solution is optimal, and the algorithm terminates. A rigorous proof uses the [complementary slackness conditions](./linear-programming.md#互补松弛条件). Let $y=(A_B^{-1})^Tc_B$. Note that throughout the algorithm, $x$ is always a feasible solution and complementary slackness always holds, that is,
 
 $$
 x^T(c-A^Ty) = \tilde c^Tx = \tilde c_B^Tx_B + \tilde c_N^Tx_N = 0.
 $$
 
-因此，只需要 $y$ 是对偶问题的可行解，即 $A^Ty\le c$，就能得到 $x$ 和 $y$ 分别是原问题和对偶问题的最优解这一结论．这个条件就是 $\tilde c\ge 0$，即不存在入基变量．
+So as long as $y$ is a feasible solution of the dual problem, i.e. $A^Ty\le c$, we can conclude that $x$ and $y$ are optimal solutions of the primal and dual problems respectively. This condition is exactly $\tilde c\ge 0$, i.e. there is no entering variable.
 
-???+ tip "「影子价格」"
-    向量 $y=(A_B^{-1})^Tc_B$ 常称为 **对偶向量**（dual vector）．当 $B$ 对应的基本可行解是原问题的最优解时，向量 $y$ 是对偶问题的最优解．因此，利用单纯形法求解原问题的最优解时，也会获得对偶问题的最优解．因为向量 $y$ 是当前价值关于约束常量的偏导数，即
+???+ tip "\"Shadow price\""
+    The vector $y=(A_B^{-1})^Tc_B$ is often called the **dual vector**. When the basic feasible solution for $B$ is an optimal solution of the primal problem, the vector $y$ is an optimal solution of the dual problem. So when the simplex method finds an optimal solution of the primal problem, it also gets an optimal solution of the dual problem. Since the vector $y$ is the partial derivative of the current value with respect to the constraint constants, i.e.
     
     $$
     \dfrac{\partial(c^Tx)}{\partial b} = (A_B^{-1})^Tc_B = y,
     $$
     
-    它也称为 **影子价格**（shadow price）．
+    it is also called the **shadow price**.
 
-其次，出基变量未必存在，即 $A_B^{-1}A_i\le 0$．此时，转轴的过程不存在任何「瓶颈」，也就是说，可以不断地通过增加 $x_i$ 的值来改进目标函数，使它趋于 $-\infty$．这说明给定的线性规划问题是无界的，算法终止．
+Second, a leaving variable may not exist, i.e. $A_B^{-1}A_i\le 0$. Then the pivot has no "bottleneck": we can keep improving the objective by increasing $x_i$, sending it to $-\infty$. This means the given linear program is unbounded, and the algorithm terminates.
 
-最后，入基变量和出基变量的选择可能并非是唯一的．不恰当的选择方式可能会导致过多地转轴，甚至使得算法陷入循环，无法正常终止．这类情形的处理稍微复杂，需要应用一些 [转轴规则](#转轴规则) 以防止陷入循环并减少转轴次数．
+Finally, the choice of entering and leaving variables may not be unique. A poor choice can cause too many pivots, or even make the algorithm cycle and never terminate. Handling this is a bit more involved; we need some [pivot rules](#pivot-rules) to prevent cycling and reduce the number of pivots.
 
-### 单纯形表
+### Simplex tableau
 
-具体实现转轴过程时，只需要维护每次转轴之后，线性规划问题的系数矩阵：
+When implementing pivoting, we only need to maintain the coefficient matrix of the linear program after each pivot:
 
 $$
 \tilde T_B = 
@@ -272,7 +272,7 @@ A_B^{-1}b & A_B^{-1}A_N
 \end{pmatrix}.
 $$
 
-它对应着线性规划问题：
+It corresponds to the linear program:
 
 $$
 \begin{array}{rrrr}
@@ -281,39 +281,39 @@ $$
 \end{array}
 $$
 
-矩阵 $\tilde T_B$ 称为该线性规划问题相对于基 $B$ 的 **压缩单纯形表**（condensed simplex tableau）．表的左上角 $(\tilde T_B)_{00}$ 为当前解的价值（的相反数），第 $0$ 行、第 $i$ 列的量 $(\tilde T_B)_{0i}$ 为第 $i$ 个非基变量 $x_{N_i}$ 的约化成本，第 $j$ 行、第 $0$ 列的量 $(\tilde T_B)_{j0}$ 为第 $j$ 个基变量 $x_{B_j}$ 的值，而 $A_B^{-1}A_N$ 就是用非基变量 $x_N$ 表示基变量 $x_B$ 得到的表达式中的系数．
+The matrix $\tilde T_B$ is called the **condensed simplex tableau** of the linear program with respect to the basis $B$. The top-left entry $(\tilde T_B)_{00}$ is (the negative of) the value of the current solution. The entry $(\tilde T_B)_{0i}$ in row $0$, column $i$ is the reduced cost of the $i$-th non-basic variable $x_{N_i}$. The entry $(\tilde T_B)_{j0}$ in row $j$, column $0$ is the value of the $j$-th basic variable $x_{B_j}$. And $A_B^{-1}A_N$ holds the coefficients of the expressions for the basic variables $x_B$ in terms of the non-basic variables $x_N$.
 
-容易看出，转轴需要的所有信息都可以从压缩单纯形表中直接获得．具体地，利用压缩单纯形表，单次转轴包括如下操作：
+It is easy to see that all the information needed for pivoting can be read directly from the condensed simplex tableau. Specifically, with the condensed simplex tableau, one pivot consists of the following steps:
 
-1.  选取列 $i=1,\cdots,n-m$，使得 $(\tilde T_B)_{0i}<0$．如果不存在这样的 $i$，那么当前解就是最优解，量 $-(\tilde T_B)_{00}$ 就是最优价值．
-2.  选取行 $j=1,\cdots,m$，使得 $(\tilde T_B)_{ji}>0$ 且 $(\tilde T_B)_{j0}/(\tilde T_B)_{ji}$ 最小．如果不存在这样的 $j$，那么原问题无界．
-3.  令变量 $x_{N_i}$ 入基，变量 $x_{B_j}$ 出基，并更新单纯形表．
+1.  Choose a column $i=1,\cdots,n-m$ with $(\tilde T_B)_{0i}<0$. If no such $i$ exists, the current solution is optimal and $-(\tilde T_B)_{00}$ is the optimal value.
+2.  Choose a row $j=1,\cdots,m$ with $(\tilde T_B)_{ji}>0$ that minimizes $(\tilde T_B)_{j0}/(\tilde T_B)_{ji}$. If no such $j$ exists, the problem is unbounded.
+3.  Let the variable $x_{N_i}$ enter the basis and $x_{B_j}$ leave it, and update the simplex tableau.
 
-现在，具体地讨论一下如何更新单纯形表．在更新单纯形表之前，第 $j$ 行表示等式
+Now let us look at how exactly to update the simplex tableau. Before the update, row $j$ represents the equation
 
 $$
 x_{B_j} = (\tilde T_B)_{j0} - \sum_{i=1}^{n-m}(\tilde T_B)_{ji}x_{N_i}.
 $$
 
-为了更新单纯形表，需要用 $x_{N\setminus\{N_i\}\cup\{B_j\}}$ 表示 $x_{N_i}$，也就是：
+To update the tableau, we need to express $x_{N_i}$ in terms of $x_{N\setminus\{N_i\}\cup\{B_j\}}$, that is:
 
 $$
 x_{N_i} = \dfrac{(\tilde T_B)_{j0}}{(\tilde T_B)_{ji}} - \dfrac{1}{(\tilde T_B)_{ji}}x_{B_j} - \sum_{i'\neq i}\dfrac{(\tilde T_B)_{ji'}}{(\tilde T_B)_{ji}}x_{N_{i'}}.
 $$
 
-将它代入其余的式子中，就得到
+Substituting this into the other equations gives
 
 $$
 x_{B_{j'}} = \left((\tilde T_B)_{j'0} - (\tilde T_B)_{j'i}\dfrac{(\tilde T_B)_{j0}}{(\tilde T_B)_{ji}}\right) + \dfrac{(\tilde T_B)_{j'i}}{(\tilde T_B)_{ji}}x_{B_j} - \sum_{i'\neq i}\left((\tilde T_B)_{j'i'}-(\tilde T_B)_{j'i}\dfrac{(\tilde T_B)_{ji'}}{(\tilde T_B)_{ji}}\right)x_{N_{i'}}.
 $$
 
-第 $0$ 行类似，只是等式左侧变为 $-z_B$．虽然式子看起来复杂，但是实现时，只需要分两步：
+Row $0$ is similar, except that the left-hand side becomes $-z_B$. Although the formula looks complicated, the implementation takes only two steps:
 
-1.  更新第 $j$ 行，即令 $\alpha=(\tilde T_B)_{ji}$，再令第 $i$ 列数字为 $1$，然后将整行所有数字同除以 $\alpha$；
-2.  更新第 $j'\neq j$ 行，即令 $\beta=(\tilde T_B)_{j'i}$，再令第 $i$ 列数字为 $0$，然后将整行数字同时减去 $\beta$ 倍的第 $j$ 行数字．
+1.  Update row $j$: let $\alpha=(\tilde T_B)_{ji}$, set the entry in column $i$ to $1$, then divide every entry in the row by $\alpha$;
+2.  Update each row $j'\neq j$: let $\beta=(\tilde T_B)_{j'i}$, set the entry in column $i$ to $0$, then subtract $\beta$ times row $j$ from the whole row.
 
-???+ tip "「单纯形表」"
-    **单纯形表**（simplex tableau）指矩阵
+???+ tip "\"Simplex tableau\""
+    The **simplex tableau** is the matrix
     
     $$
     T_B = 
@@ -328,9 +328,9 @@ $$
     \end{pmatrix}.
     $$
     
-    相较于压缩单纯形表，它多了 $m$ 列，分别对应 $m$ 个基变量；而且，对应着第 $j$ 个基变量的列一定是 $e_j$，即该向量只在第 $j$ 行处取值为 $1$，其余行均为 $0$．因为这些列并没有提供多余的信息，所以在实现单纯形法时，常常省略这些列，这就得到了压缩单纯形表．
+    Compared with the condensed simplex tableau, it has $m$ extra columns, one for each of the $m$ basic variables. Moreover, the column for the $j$-th basic variable is always $e_j$, the vector that is $1$ in row $j$ and $0$ in every other row. Since these columns carry no extra information, implementations of the simplex method usually leave them out, which gives the condensed simplex tableau.
     
-    利用单纯形表可以更方便地理解更新单纯形表的步骤．因为所有的单纯形表 $T_B$ 都可以由同一个矩阵 $T_0$ 左乘一个与基有关的可逆矩阵 $L_B$ 得到，即
+    The simplex tableau makes the update steps easier to understand. Every simplex tableau $T_B$ can be obtained from the same matrix $T_0$ by left-multiplying by an invertible matrix $L_B$ that depends on the basis, that is,
     
     $$
     T_B=
@@ -349,21 +349,21 @@ $$
     \end{pmatrix}=L_BT_0,
     $$
     
-    所以，这些单纯形表和 $T_0$ 之间可以通过若干次 [初等行变换](./linear-algebra/elementary-operations.md) 相互转化．因此，在更新单纯形表时，只需要施行初等行变换，使得入基变量对应列变为 $e_j$ 即可．由此，所需要的操作迁移到压缩单纯形表上，就是上文给出的步骤．
+    so these simplex tableaux and $T_0$ can be transformed into each other by a number of [elementary row operations](./linear-algebra/elementary-operations.md). So when updating the simplex tableau, we only need to apply elementary row operations that turn the column of the entering variable into $e_j$. Carrying these operations over to the condensed simplex tableau gives exactly the steps above.
 
-更新压缩单纯形表的参考实现如下：
+A reference implementation for updating the condensed simplex tableau is as follows:
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     ```cpp
     --8<-- "docs/math/code/simplex/simplex_0.cpp:pivot"
     ```
 
-由该实现可知，单次更新单纯形表的时间复杂度是 $O(mn)$ 的．稍后讨论 [转轴规则](#转轴规则) 时会说明，确定出基变量和入基变量的复杂度同样不会超过 $O(mn)$，因此，单次转轴的时间复杂度就是 $O(mn)$ 的．
+From this implementation, one update of the simplex tableau takes $O(mn)$ time. When we discuss [pivot rules](#pivot-rules) later, we will see that finding the entering and leaving variables also takes at most $O(mn)$, so one pivot takes $O(mn)$ time.
 
-为方便理解，此处列出前文所示例子中，利用压缩单纯形表计算的详细步骤．
+To help understanding, here are the detailed steps for the earlier example, computed with the condensed simplex tableau.
 
-???+ example "例子（续）"
-    初始时，压缩单纯形表如下所示：
+???+ example "Example (continued)"
+    Initially, the condensed simplex tableau is:
     
     $$
     \begin{array}{|l|c|ccc|}
@@ -379,7 +379,7 @@ $$
     \end{array}
     $$
     
-    根据第 $0$ 行的约化成本，可以选择 $x_1,x_2,x_3$ 入基．令 $x_1$ 入基．再根据最小比值检验，可以选择 $x_5,x_6$ 出基．令 $x_5$ 出基．相应地，更新压缩单纯形表如下：
+    By the reduced costs in row $0$, any of $x_1,x_2,x_3$ may enter the basis. Let $x_1$ enter. Then by the minimum ratio test, either $x_5$ or $x_6$ may leave. Let $x_5$ leave. Updating the condensed simplex tableau accordingly gives:
     
     $$
     \begin{array}{|l|c|ccc|}
@@ -395,7 +395,7 @@ $$
     \end{array}
     $$
     
-    根据第 $0$ 行的约化成本，可以选择 $x_2,x_3$ 入基．令 $x_3$ 入基．再根据最小比值检验，可以选择 $x_4,x_1$ 出基．令 $x_4$ 出基．相应地，更新压缩单纯形表如下：
+    By the reduced costs in row $0$, either $x_2$ or $x_3$ may enter the basis. Let $x_3$ enter. Then by the minimum ratio test, either $x_4$ or $x_1$ may leave. Let $x_4$ leave. Updating the condensed simplex tableau accordingly gives:
     
     $$
     \begin{array}{|l|c|ccc|}
@@ -411,7 +411,7 @@ $$
     \end{array}
     $$
     
-    根据第 $0$ 行的约化成本，只能选择 $x_2$ 入基．令 $x_2$ 入基．再根据最小比值检验，只能选择 $x_6$ 出基．令 $x_6$ 出基．利用前述初等行变换更新单纯形表如下：
+    By the reduced costs in row $0$, only $x_2$ can enter the basis. Let $x_2$ enter. Then by the minimum ratio test, only $x_6$ can leave. Let $x_6$ leave. Updating the tableau with the elementary row operations above gives:
     
     $$
     \begin{array}{|l|c|ccc|}
@@ -427,89 +427,89 @@ $$
     \end{array}
     $$
     
-    根据第 $0$ 行的约化成本，不存在入基变量．因此，当前解
+    By the reduced costs in row $0$, there is no entering variable. So the current solution
     
     $$
     x=(4,4,4,0,0,0)^T
     $$
     
-    就是最优解，（最小化问题的）最优价值为 $-136$．
+    is optimal, and the optimal value (of the minimization problem) is $-136$.
 
-除了利用单纯形表实现单纯形法之外，还可以使用修正单纯形法（revised simplex method），它进一步改进了算法的时空复杂度，将单次更新的复杂度进一步降低到了 $O(m^2)$，在 $m\ll n$ 或 $A$ 是稀疏矩阵的情形下尤为高效．
+Besides implementing the simplex method with a simplex tableau, you can also use the revised simplex method. It further improves the time and space complexity, reducing the cost of one update to $O(m^2)$, and is especially efficient when $m\ll n$ or $A$ is sparse.
 
-## 几何背景
+## Geometric background
 
-本节介绍单纯形法的几何背景．
+This section explains the geometric background of the simplex method.
 
-对线性规划问题的可行域
+The [analysis](./linear-programming.md#可行域与问题的解) of the feasible region of a linear program
 
 $$
 \mathcal D = \{x\in\mathbf R^n : Ax = b,~ x\ge 0\}
 $$
 
-的 [分析](./linear-programming.md#可行域与问题的解) 指出：
+shows that:
 
--   线性规划问题的最优解（如果存在）必然可以选取为可行域 $\mathcal D$ 的顶点．求解线性规划问题，就转化为在所有顶点解里找到价值函数最优的那个．
--   每一个顶点的坐标，都可以通过 $n$ 个紧约束联立得到的方程组求解得到．对于标准形式的约束，所有 $m$ 个等式约束一定是紧的，剩下的 $n-m$ 个约束只能从非负约束中选取．选取这些非负约束作为紧约束，就相当于将相应的决策变量 $x_N$ 设为 $0$；相应地，方程组 $Ax = b$ 退化为关于剩余 $m$ 个决策变量 $x_B$ 的线性方程组 $A_Bx_B = b$．只要 $A_B$ 可逆，就可以解得 $x_B = A_B^{-1}b$．这就得到了一个解 $(x_B,x_N)=(A_B^{-1}b,0)$；如果 $x_B\ge 0$，这就是 $\mathcal D$ 的一个顶点坐标．
+-   An optimal solution of a linear program (if one exists) can always be chosen to be a vertex of the feasible region $\mathcal D$. So solving a linear program becomes finding the vertex with the best objective value among all vertices.
+-   The coordinates of each vertex can be found by solving the system of equations given by $n$ tight constraints. For constraints in standard form, all $m$ equality constraints are always tight, so the remaining $n-m$ constraints must be chosen from the non-negativity constraints. Choosing these non-negativity constraints to be tight is the same as setting the corresponding decision variables $x_N$ to $0$; then the system $Ax = b$ reduces to the linear system $A_Bx_B = b$ in the remaining $m$ decision variables $x_B$. As long as $A_B$ is invertible, we get $x_B = A_B^{-1}b$. This gives a solution $(x_B,x_N)=(A_B^{-1}b,0)$; if $x_B\ge 0$, it is the coordinates of a vertex of $\mathcal D$.
 
-容易看出，顶点解的概念，和前文定义的基本可行解是一致的．因此，只要在所有基本可行解内找到最优的那个，就能获得原问题的最优解．虽然这大幅简化了问题，但是，可行域的顶点的个数可能是指数级的，穷举并不现实．
+It is easy to see that vertex solutions are the same as the basic feasible solutions defined above. So finding the best basic feasible solution gives an optimal solution of the original problem. Although this simplifies the problem a lot, the feasible region can have exponentially many vertices, so brute-force enumeration is not practical.
 
-为了解决这一困难，可以考虑沿着可行域的 [边](./linear-programming.md#可行域与问题的解) 移动，从一个顶点移动到与之相邻的顶点．因为相邻的顶点必定位于同一条边上，所以，它们至少满足 $n-1$ 条相同的紧约束．也就是说，相邻的顶点对应的紧约束能且仅能相差一个．因此，对于一个基本可行解 $x$，只要将它的一个基变量换成一个非基变量，就能得到一个 **相邻的**（adjacent）基本可行解 $x'$．这正是转轴操作．
+To get around this, we can move along the [edges](./linear-programming.md#可行域与问题的解) of the feasible region, from one vertex to a neighboring vertex. Since neighboring vertices lie on the same edge, they share at least $n-1$ tight constraints. In other words, the tight constraints of neighboring vertices differ in exactly one constraint. So for a basic feasible solution $x$, swapping one of its basic variables with a non-basic variable gives an **adjacent** basic feasible solution $x'$. This is exactly the pivot operation.
 
-因此，单纯形法从一个基本可行解出发，不断进行转轴，改进目标函数的过程，其实就是在相应的可行域上，从一个顶点出发，不断向相邻顶点移动，进而改进目标函数的过程．
+So the simplex method, which starts from a basic feasible solution and keeps pivoting to improve the objective, is really starting from a vertex of the feasible region and moving to neighboring vertices one after another to improve the objective.
 
-???+ example "例子（续）"
-    本文讨论的例子中，可行域是一个有五个顶点的三维多面体，如下图所示：
+???+ example "Example (continued)"
+    In the example discussed in this article, the feasible region is a three-dimensional polyhedron with five vertices, as shown below:
     
     ![](./images/simplex-geo.svg)
     
-    前述求解过程，从几何直观上看，就对应着多面体的顶点间的如下路径：
+    Geometrically, the solving process above corresponds to the following path between vertices of the polyhedron:
     
     $$
     (0,0,0) \rightarrow (10,0,0) \rightarrow (0,0,10) \rightarrow (4,4,4).
     $$
 
-## 实现细节
+## Implementation details
 
-利用单纯形表，已经能够求解许多线性规划问题．然而，对于最一般的情形，单纯形法中仍有许多细节值得深入探讨．
+With the simplex tableau we can already solve many linear programs. But for the most general case, there are still many details of the simplex method worth discussing.
 
-### 松弛形式
+### Slack form
 
-将一般形式的线性规划问题转化为标准形式的 [方法](./linear-programming.md#标准形式) 已经讨论过了．但是，为了方便利用单纯形法求解，还需要保证系数矩阵 $A$ 满秩．虽然先转换为标准形式再消去线性相关的约束的方法是可行的，但是为了求解简便，通常采用如下策略：
+We have already discussed the [method](./linear-programming.md#标准形式) for converting a linear program in general form into standard form. But to make it convenient for the simplex method, we also need the coefficient matrix $A$ to have full rank. Converting to standard form first and then removing linearly dependent constraints works, but to keep things simple, the following strategy is usually used:
 
-1.  将线性规划问题转化为 **不等式形式**（inequality form），即 $\min\{c^Tx : Ax \le b,~ x \ge 0\}$ 的形式；
-2.  通过添加松弛变量 $s$，将问题转化为标准形式：$\min\{c^Tx : Ax + s = b,~ x\ge 0,~ s \ge 0\}$．
+1.  Convert the linear program to **inequality form**, i.e. the form $\min\{c^Tx : Ax \le b,~ x \ge 0\}$;
+2.  Add slack variables $s$ to convert the problem to standard form: $\min\{c^Tx : Ax + s = b,~ x\ge 0,~ s \ge 0\}$.
 
-这样做的好处是，最终得到的标准形式的系数矩阵 $(A,I)$ 总是满秩的，且总是存在（未必可行的）基本解 $(x,s)=(0,b)$．这种特殊的标准形式也称为 **松弛形式**（slack form）．
+The advantage is that the coefficient matrix $(A,I)$ of the resulting standard form always has full rank, and there is always a (not necessarily feasible) basic solution $(x,s)=(0,b)$. This special standard form is also called the **slack form**.
 
-### 初始基本可行解
+### Initial basic feasible solution
 
-前文描述的单纯形法总是假定已知一组基本可行解．有些时候，很容易找到一组基本可行解．例如，如果上述松弛形式中 $b\ge 0$，那么，$(x,s)=(0,b)$ 就是一组基本可行解．这就是前文的数值例子里遇到的情形．
+The simplex method described above always assumes that a basic feasible solution is known. Sometimes it is easy to find one. For example, if $b\ge 0$ in the slack form above, then $(x,s)=(0,b)$ is a basic feasible solution. This is the situation in the numerical example earlier.
 
-对于一般的情形，可以采用 **两阶段法**（two-phase method）．两阶段法中，需要做两次单纯形法．第一阶段求解一个可行性线性规划问题，获得原问题的一个基本可行解．第二阶段从这个基本可行解出发，应用单纯形法求解原问题．
+In the general case, we can use the **two-phase method**. The two-phase method runs the simplex method twice. Phase one solves a feasibility linear program to get a basic feasible solution of the original problem. Phase two starts from this basic feasible solution and applies the simplex method to the original problem.
 
-假设有标准形式的问题 $\min\{c^Tx : Ax = b \ge 0,~ x\ge 0\}$．在第一阶段中，需要求解问题
+Suppose we have a problem in standard form $\min\{c^Tx : Ax = b \ge 0,~ x\ge 0\}$. In phase one, we solve the problem
 
 $$
 \min\{1^Tx_a : Ax + x_a = b,~ x\ge 0,~ x_a\ge 0\}.
 $$
 
-这本质是可行性线性规划问题，其中，新添加的变量 $x_a$ 也称为 **人工变量**（artificial variable）．它一定有基本可行解 $(x,x_a)=(0,b)$，所以可以直接用单纯形法求解．如果该问题的最优价值严格大于 $0$，那么，就不存在 $x\ge 0$ 使得 $Ax=b$，也就是说，原问题不可行．如果该问题的最优价值等于 $0$，那么，它的最优解中人工变量只能是零．如果仍有一些人工变量是基变量，可以通过若干次转轴将它们出基．最后，当所有人工变量都是非基变量时，第一阶段得到的基本解就可以用作第二阶段的初始基本可行解．
+This is essentially a feasibility linear program, and the newly added variables $x_a$ are called **artificial variables**. It always has the basic feasible solution $(x,x_a)=(0,b)$, so it can be solved directly with the simplex method. If its optimal value is strictly greater than $0$, there is no $x\ge 0$ with $Ax=b$, i.e. the original problem is infeasible. If its optimal value equals $0$, the artificial variables in its optimal solution must all be zero. If some artificial variables are still basic, they can be moved out of the basis with a few pivots. Finally, when all artificial variables are non-basic, the basic solution from phase one can be used as the initial basic feasible solution for phase two.
 
-???+ note "不显式引入人工变量的第一阶段实现"
-    实现第一阶段时，没有必要显式地引入人工变量．对于任意选取的初始基 $B$，有
+???+ note "Implementing phase one without explicit artificial variables"
+    When implementing phase one, there is no need to introduce artificial variables explicitly. For any chosen initial basis $B$, we have
     
     $$
     x_B + A_B^{-1}A_Nx_N = A_B^{-1}b.
     $$
     
-    如果 $(A_B^{-1}b)_j\ge 0$，那么无需引入人工变量；否则，需要额外引入人工变量 $x^{-}_{B_j}$，即
+    If $(A_B^{-1}b)_j\ge 0$, no artificial variable is needed; otherwise, we need to introduce an extra artificial variable $x^{-}_{B_j}$, that is,
     
     $$
     x_{B_j} - x^-_{B_j} + (A_B^{-1}A_N)_{(j)}x_N = (A_B^{-1}b)_j.
     $$
     
-    记下标集合 $L:=\{j:(A_B^{-1}b)_j<0\}$，那么一阶段的单纯形表都是如下单纯形表经过若干初等行变换得到的：
+    Let the index set $L:=\{j:(A_B^{-1}b)_j<0\}$. Then every phase-one simplex tableau is obtained from the following simplex tableau by some elementary row operations:
     
     $$
     \begin{array}{|r|c|cccc|}
@@ -524,7 +524,7 @@ $$
     \end{array}
     $$
     
-    类似于将单纯形表简化为压缩单纯形表，可以将其适当地简化：（将 $x_{B_{L}}^-$ 行左乘以 $1^T$ 然后加到第 $0$ 行上，然后略去后三列）
+    Just as we simplified the simplex tableau into the condensed simplex tableau, we can simplify this one: (left-multiply the $x_{B_{L}}^-$ rows by $1^T$ and add them to row $0$, then drop the last three columns)
     
     $$
     \begin{array}{|r|c|cccc|}
@@ -539,95 +539,95 @@ $$
     \end{array}
     $$
     
-    这与正常的压缩单纯形表大体一致，只是最后一行的变量上标记了负号，表示该行仍然含有人工变量，即原来的松弛变量仍然不可行．利用该表，转轴过程如下：
+    This is mostly the same as an ordinary condensed simplex tableau, except that the variables in the last rows are marked with a minus sign. This means those rows still contain artificial variables, i.e. the original slack variables are still infeasible. Using this tableau, a pivot works as follows:
     
-    1.  如果 $L=\varnothing$，算法终止．
-    2.  否则，根据第 $0$ 行的约化成本为负这一条件选取入基变量 $x_{N_i}$．如果不存在，则原问题不可行，算法终止．
-    3.  再根据第 $i$ 列选取出基变量 $x_{B_j}$．仍然利用最小比值检验，但是要求同时保证当前的可行变量可行和当前的不可行变量不可行，即选取
+    1.  If $L=\varnothing$, the algorithm terminates.
+    2.  Otherwise, choose the entering variable $x_{N_i}$ by the condition that its reduced cost in row $0$ is negative. If none exists, the original problem is infeasible, and the algorithm terminates.
+    3.  Then choose the leaving variable $x_{B_j}$ using column $i$. We still use the minimum ratio test, but we must also make sure that currently feasible variables stay feasible and currently infeasible variables stay infeasible, i.e. choose
     
         $$
         \arg\min_{j}\left\{\dfrac{(\tilde T_B)_{j0}}{(\tilde T_B)_{ji}}:(j\notin L\land(\tilde T_B)_{ji}>0)\lor(j\in L\land(\tilde T_B)_{ji}<0)\right\}
         $$
     
-        作为出基变量所在行．如果存在多个这样的出基变量，优先选取不可行的出基变量．
-    4.  令 $x_{N_i}$ 入基，$x_{B_j}$ 出基，并更新单纯形表．
-    5.  如果 $j\in L$，那么将 $j$ 移出 $L$（即取消该行的负号标记），并且将 $(\tilde T_B)_{0i}$ 加一．
+        as the row of the leaving variable. If there are several such leaving variables, prefer an infeasible one.
+    4.  Let $x_{N_i}$ enter the basis and $x_{B_j}$ leave, and update the simplex tableau.
+    5.  If $j\in L$, remove $j$ from $L$ (i.e. remove the minus-sign mark from that row), and add one to $(\tilde T_B)_{0i}$.
     
-    之所以可以略去人工变量所在列，是因为如果它们仍然是基变量，那么它们对应的列就是 $e_j$，无需记录，而如果它们不再是基变量，那么它们就不会再次入基，也无需记录．人工变量出基时，需要替换成相应的非人工变量，这正是上述过程中最后一步的目的．
+    We can drop the columns of the artificial variables because: if they are still basic, their columns are $e_j$ and need not be stored; if they are no longer basic, they will never enter the basis again, so they need not be stored either. When an artificial variable leaves the basis, it must be replaced by the corresponding non-artificial variable, which is the purpose of the last step above.
     
-    参考实现如下：
+    A reference implementation is as follows:
     
-    ??? example "参考实现"
+    ??? example "Reference implementation"
         ```cpp
         --8<-- "docs/math/code/simplex/simplex_0.cpp:initialize"
         ```
     
-    在一阶段开始前，额外添加一行用于记录一阶段的目标函数．转轴时，对整个表进行转轴，包括第二阶段的目标函数．这样，在第一阶段完成时，第二阶段的目标函数也一并相应地更新，可以直接开始二阶段的单纯形法．
+    Before phase one starts, add an extra row to record the phase-one objective function. When pivoting, pivot the whole tableau, including the phase-two objective. This way, when phase one finishes, the phase-two objective has been updated accordingly, and phase two of the simplex method can start right away.
 
-两阶段法也可以通过一次单纯形法实现．只需要取充分大的正数 $M$，就可以通过直接求解问题
+The two-phase method can also be done with a single run of the simplex method. Just pick a sufficiently large positive number $M$ and directly solve the problem
 
 $$
 \min\{c^Tx + M1^Tx_a : Ax + x_a = b,~ x\ge 0,~ x_a\ge 0\}
 $$
 
-得到原问题的最优解．实现时，并不会赋予 $M$ 具体的数值，而是将它视为一个未知的充分大的正数进行运算．这种方法称为 **大 $M$ 法**（big $M$ method）．
+to get an optimal solution of the original problem. In the implementation, $M$ is not given a specific value; instead it is treated as an unknown, sufficiently large positive number during computation. This is called the **big $M$ method**.
 
-???+ warning "朴素算法的实际效率是指数级的"
-    因为松弛形式总是存在初始基本解，只是未必是可行的，所以，一种简单的寻找初始基本可行解的想法是，从一个不可行的基本解出发，反复利用转轴操作，将不可行的基变量出基，并选择对应行中同样为负的数字对应列的非基变量入基，直到所有基变量都是非负数为止．参考实现如下：
+???+ warning "The naive algorithm is exponential in practice"
+    Since the slack form always has an initial basic solution, which just may not be feasible, a simple idea for finding an initial basic feasible solution is: start from an infeasible basic solution and pivot repeatedly, moving an infeasible basic variable out of the basis and bringing in a non-basic variable whose column has a negative entry in the same row, until all basic variables are non-negative. A reference implementation is as follows:
     
-    ??? example "参考实现"
+    ??? example "Reference implementation"
         ```cpp
         --8<-- "docs/math/code/simplex/simplex_2.cpp:initialize"
         ```
     
-    这样做虽然简单，但是相较于两阶段法，它没有一个描述当前基的不可行程度的目标函数，所以缺乏明确的改进方向．实际测试可以发现，相较于通常只需要 $O(m)$ 的转轴次数的两阶段法或大 $M$ 法，这一朴素算法通常需要 $O(2^m)$ 的转轴次数，且当 $n,m$ 较大时容易陷入循环．虽然朴素算法的转轴次数中的常数很小，但是仅仅适用于 $n,m<50$ 的情形．
+    This is simple, but compared with the two-phase method it has no objective function that measures how infeasible the current basis is, so it lacks a clear direction of improvement. Experiments show that while the two-phase method or the big $M$ method usually needs only $O(m)$ pivots, this naive algorithm usually needs $O(2^m)$ pivots, and it easily cycles when $n,m$ are large. Although the constant in the naive algorithm's number of pivots is small, it is only suitable for $n,m<50$.
 
-### 转轴规则
+### Pivot rules
 
-转轴时，如果出现多个可选的入基变量或出基变量，就需要用到 **转轴规则**（pivot rule）来决定选择哪个变量入基或出基．利用单纯形表，本节讨论的所有规则都能够在 $O(mn)$ 时间内找到入基和出基变量，因此，单次转轴的时间复杂度仍然是 $O(mn)$ 的．
+When pivoting, if there are several possible entering or leaving variables, we need a **pivot rule** to decide which variable enters or leaves the basis. With the simplex tableau, all the rules discussed in this section can find the entering and leaving variables in $O(mn)$ time, so one pivot still takes $O(mn)$ time.
 
-入基变量的选择往往决定了算法终止前转轴的次数．常见的规则如下：
+The choice of entering variable often determines how many pivots happen before the algorithm terminates. Common rules are:
 
--   选择最先找到的入基变量；
--   选择标号最小的入基变量；（Bland 规则的一部分）
--   选择约化成本绝对值（即 $|\tilde c_i|$）最大的入基变量；（Dantzig 规则）
--   选择单次转轴价值函数改进（即 $|\tilde c_i|\theta_i$）最大的入基变量；
--   选择对应着最陡的边的入基变量，即沿着边移动单位长度引起的价值函数改进（即 $|\tilde c_i|/\sqrt{1+\|A_B^{-1}A_i\|^2}$）最大；
--   随机选择一个入基变量．
+-   choose the first entering variable found;
+-   choose the entering variable with the smallest index; (part of Bland's rule)
+-   choose the entering variable with the largest absolute reduced cost (i.e. $|\tilde c_i|$); (Dantzig's rule)
+-   choose the entering variable that gives the largest improvement of the objective in a single pivot (i.e. $|\tilde c_i|\theta_i$);
+-   choose the entering variable corresponding to the steepest edge, i.e. the one for which moving a unit length along the edge gives the largest improvement of the objective (i.e. $|\tilde c_i|/\sqrt{1+\|A_B^{-1}A_i\|^2}$);
+-   choose an entering variable at random.
 
-实践中，最陡边规则的效率最高[^steepest-edge]．通常认为，适当的转轴规则可以在大致 $2m$ 次转轴内得到大多数问题的最优解．但是，对于目前所有已知的转轴规则，都存在特殊构造的例子[^klee-minty]，能够将转轴次数卡到指数级．这也正是单纯形法实践中运行效率相当优秀，但是理论最差复杂度是指数级的原因．
+In practice, the steepest-edge rule is the most efficient[^steepest-edge]. It is generally believed that a suitable pivot rule finds the optimal solution of most problems in about $2m$ pivots. However, for every pivot rule known today, there are specially constructed examples[^klee-minty] that force an exponential number of pivots. This is why the simplex method runs very well in practice but has exponential worst-case complexity in theory.
 
-出基变量的选择往往决定了算法是否会陷入循环．如果存在多组基对应着同一个基本可行解（即退化情形），那么，算法就有可能一直在这些基之间循环．这些情形并不常见，因此很多单纯形法的实现并不会指定出基变量的选择规则．常见的避免循环的规则有两种：
+The choice of leaving variable often determines whether the algorithm cycles. If several bases correspond to the same basic feasible solution (the degenerate case), the algorithm may keep cycling among these bases. Such cases are uncommon, so many implementations of the simplex method do not specify a rule for choosing the leaving variable. There are two common rules to avoid cycling:
 
--   Bland 规则：总是选择标号最小的入基变量和出基变量．
--   字典序规则：总是选择 $(A_B^{-1}A_i)_j>0$ 且
+-   Bland's rule: always choose the entering and leaving variables with the smallest index.
+-   Lexicographic rule: always choose the leaving variable $x_{B_j}$ for the row $j$ with $(A_B^{-1}A_i)_j>0$ for which
 
     $$
     \left(\dfrac{(A_B^{-1}b)_j}{(A_B^{-1}A_i)_j},\dfrac{(A_B^{-1})_{j1}}{(A_B^{-1}A_i)_j},\cdots,\dfrac{(A_B^{-1})_{jm}}{(A_B^{-1}A_i)_j}\right)
     $$
 
-    字典序最小的行号 $j$ 对应的出基变量 $x_{B_j}$．入基变量的选择不重要．
+    is lexicographically smallest. The choice of entering variable does not matter.
 
-    注意，如果线性规划问题是松弛形式的，那么这些量都可以从前文所述形式的单纯形表 $T_B$ 中直接找到；否则，可以在找到一组初始基本解（未必可行）后，利用这些初始基中的基变量对应列（顺序保持固定）的系数作为 $A_B^{-1}$ 的系数．
+    Note that if the linear program is in slack form, all these quantities can be read directly from the simplex tableau $T_B$ in the form described above. Otherwise, after finding an initial basic solution (not necessarily feasible), you can use the coefficients of the columns of the basic variables of that initial basis (in a fixed order) as the coefficients of $A_B^{-1}$.
 
-Bland 规则效率很低，因为规则本身对入基和出基变量的选择方法是一样的，这很容易造成同一个变量反复入基再出基．相对来说，字典序规则更为实用．字典序规则相当于对线性规划问题中的参数进行微扰[^lexico]，使得不存在退化的基本可行解，也就不存在循环的可能性．
+Bland's rule is very inefficient, because it chooses entering and leaving variables in the same way, which easily makes the same variable enter and leave the basis over and over. The lexicographic rule is more practical. It is equivalent to perturbing the parameters of the linear program[^lexico] so that there are no degenerate basic feasible solutions, and therefore no possibility of cycling.
 
-## 参考实现
+## Reference implementation
 
-本节提供一个基于压缩单纯形表的两阶段单纯形法的参考实现．
+This section gives a reference implementation of the two-phase simplex method based on the condensed simplex tableau.
 
-??? example "[Luogu P13337【模板】线性规划](https://www.luogu.com.cn/problem/P13337)"
+??? example "[Luogu P13337 [Template] Linear Programming](https://www.luogu.com.cn/problem/P13337)"
     ```cpp
     --8<-- "docs/math/code/simplex/simplex_0.cpp:full-text"
     ```
 
-## 例题
+## Example problems
 
-???+ example "[「NOI2008」志愿者招募](https://www.luogu.com.cn/problem/P3980)"
-    总共 $n$ 天活动需要招募志愿者，其中，第 $i$ 天至少需要 $b_i$ 位志愿者．总有 $m$ 类志愿者，其中，第 $j$ 类志愿者可以服务的日期为连续区间 $[l_j,r_j]$，且单位招募成本为 $c_j$．求最优的招募方案，使得招募志愿者的成本最低．
+???+ example "[NOI2008 Volunteer Recruitment](https://www.luogu.com.cn/problem/P3980)"
+    An event lasts $n$ days and needs volunteers; day $i$ needs at least $b_i$ volunteers. There are $m$ types of volunteers. Volunteers of type $j$ can serve on the contiguous range of days $[l_j,r_j]$, and each costs $c_j$ to recruit. Find the best recruitment plan that minimizes the cost of recruiting volunteers.
 
-??? note "解答"
-    设第 $j$ 类志愿者招募 $x_j$ 位．那么，可以列出线性规划问题为
+??? note "Solution"
+    Suppose we recruit $x_j$ volunteers of type $j$. Then the linear program is
     
     $$
     \begin{align*}
@@ -637,7 +637,7 @@ Bland 规则效率很低，因为规则本身对入基和出基变量的选择�
     \end{align*}
     $$
     
-    其中，系数
+    where the coefficients are
     
     $$
     a_{ij} = 
@@ -647,7 +647,7 @@ Bland 规则效率很低，因为规则本身对入基和出基变量的选择�
     \end{cases}
     $$
     
-    原问题没有显然的初始可行解．因此，不妨考虑其 [对偶问题](./linear-programming.md#对偶问题)：
+    The original problem has no obvious initial feasible solution. So let us consider its [dual problem](./linear-programming.md#对偶问题):
     
     $$
     \begin{align*}
@@ -657,33 +657,33 @@ Bland 规则效率很低，因为规则本身对入基和出基变量的选择�
     \end{align*}
     $$
     
-    通过添加松弛变量，容易得到一组初始可行解，可以直接略过一阶段，通过单纯形法求解．根据对偶原理，得到的解就是原问题的解．
+    By adding slack variables, we easily get an initial feasible solution, so we can skip phase one and solve it directly with the simplex method. By duality, the solution we get is the solution of the original problem.
     
     ```cpp
     --8<-- "docs/math/code/simplex/simplex_1.cpp"
     ```
 
-## 习题
+## Exercises
 
--   [Luogu P13337【模板】线性规划](https://www.luogu.com.cn/problem/P13337)
--   [UOJ#179. 线性规划](https://uoj.ac/problem/179)
--   [Luogu P4232 无意识之外的捉迷藏](https://www.luogu.com.cn/problem/P4232)
+-   [Luogu P13337 [Template] Linear Programming](https://www.luogu.com.cn/problem/P13337)
+-   [UOJ#179. Linear Programming](https://uoj.ac/problem/179)
+-   [Luogu P4232 Hide and Seek Beyond the Unconscious](https://www.luogu.com.cn/problem/P4232)
 -   [Codeforces 1430 G. Yet Another DAG Problem](https://codeforces.com/problemset/problem/1430/G)
 -   [AtCoder Beginner Contest 231 H - Minimum Coloring](https://atcoder.jp/contests/abc231/tasks/abc231_h)
 
-## 参考资料
+## References
 
--   [线性规划之单纯形法【超详解 + 图解】](https://www.cnblogs.com/ECJTUACM-873284962/p/7097864.html)
--   [2016 国家集训队论文](https://github.com/OI-wiki/libs/blob/master/%E9%9B%86%E8%AE%AD%E9%98%9F%E5%8E%86%E5%B9%B4%E8%AE%BA%E6%96%87/%E5%9B%BD%E5%AE%B6%E9%9B%86%E8%AE%AD%E9%98%9F2016%E8%AE%BA%E6%96%87%E9%9B%86.pdf)
--   算法导论
+-   [The Simplex Method for Linear Programming (super detailed explanation + illustrations)](https://www.cnblogs.com/ECJTUACM-873284962/p/7097864.html)
+-   [2016 Chinese National Training Team Papers](https://github.com/OI-wiki/libs/blob/master/%E9%9B%86%E8%AE%AD%E9%98%9F%E5%8E%86%E5%B9%B4%E8%AE%BA%E6%96%87/%E5%9B%BD%E5%AE%B6%E9%9B%86%E8%AE%AD%E9%98%9F2016%E8%AE%BA%E6%96%87%E9%9B%86.pdf)
+-   Introduction to Algorithms (CLRS)
 -   Matoušek, Jiří, and Bernd Gärtner. Understanding and using linear programming. Vol. 1. Berlin: Springer, 2007.
 -   Inayatullah, Syed, Nasir Touheed, and Muhammad Imtiaz. "A streamlined artificial variable free version of simplex method." PloS one 10, no. 3 (2015): e0116156.
 -   Floudas, Christodoulos A., and Panos M. Pardalos, eds. Encyclopedia of optimization. Springer Science & Business Media, 2008.
 
-[^notation]: 原则上，因为所有向量默认为列向量，$(x_B,x_N)$ 应该写作 $(x_B^T,x_N^T)^T$．但是为了简化记号，本文所有类似的情形都直接写作 $(x_B,x_N)$，而省略转置符号．
+[^notation]: Strictly speaking, since all vectors are column vectors by default, $(x_B,x_N)$ should be written $(x_B^T,x_N^T)^T$. But to simplify notation, all similar cases in this article are written directly as $(x_B,x_N)$, without the transpose symbols.
 
-[^steepest-edge]: 测试结果参见 Forrest, John J., and Donald Goldfarb. "Steepest-edge simplex algorithms for linear programming." Mathematical programming 57, no. 1 (1992): 341-374．
+[^steepest-edge]: For test results, see Forrest, John J., and Donald Goldfarb. "Steepest-edge simplex algorithms for linear programming." Mathematical programming 57, no. 1 (1992): 341-374.
 
-[^klee-minty]: 一个经典的反例可以参见 Klee, Victor, and George J. Minty. "How good is the simplex algorithm." Inequalities 3, no. 3 (1972): 159-175．
+[^klee-minty]: For a classic counterexample, see Klee, Victor, and George J. Minty. "How good is the simplex algorithm." Inequalities 3, no. 3 (1972): 159-175.
 
-[^lexico]: 详细的解释可以看 [这份讲义](https://misha.fish/archive/docs/3272-fall-2022/lecture8.pdf)．
+[^lexico]: For a detailed explanation, see [these lecture notes](https://misha.fish/archive/docs/3272-fall-2022/lecture8.pdf).

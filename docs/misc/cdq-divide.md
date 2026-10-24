@@ -1,248 +1,248 @@
-本页面将介绍 CDQ 分治．
+This page introduces CDQ divide and conquer.
 
-## 简介
+## Introduction
 
-CDQ 分治是一种思想而不是具体的算法，与 [动态规划](../dp/index.md) 类似．目前这个思想的拓展十分广泛，依原理与写法的不同，大致分为三类：
+CDQ divide and conquer is an idea rather than a specific algorithm, much like [dynamic programming](../dp/index.md). Today this idea is used very widely. Depending on how it works and how it is written, its uses fall roughly into three types:
 
--   解决和点对有关的问题．
--   1D 动态规划的优化与转移．
--   通过 CDQ 分治，将一些动态问题转化为静态问题．
+-   Solving problems about pairs of points.
+-   Optimizing transitions in 1D dynamic programming.
+-   Turning some dynamic problems into static problems with CDQ divide and conquer.
 
-CDQ 分治的思想最早由 IOI2008 金牌得主陈丹琦在高中时整理并总结，它也因此得名．[^ref1]
+The idea of CDQ divide and conquer was first organized and summarized by Chen Danqi (CDQ), an IOI 2008 gold medalist, while she was in high school, and it is named after her.[^ref1]
 
-## 解决和点对有关的问题
+## Solving problems about pairs of points
 
-这类问题多数类似于「给定一个长度为 $n$ 的序列，统计有一些特性的点对 $(i,j)$ 的数量」或「给定一个长度为 $n$ 的序列，找到一对点 $(i,j)$ 使得一些函数的值最大」．
+Most problems of this kind look like "given a sequence of length $n$, count the pairs of points $(i,j)$ with certain properties" or "given a sequence of length $n$, find a pair of points $(i,j)$ that maximizes some function".
 
-CDQ 分治解决这类问题的算法流程如下：
+CDQ divide and conquer solves this kind of problem as follows:
 
-1.  找到这个序列的中点 $mid$；
+1.  Find the midpoint $mid$ of the sequence;
 
-2.  将所有点对 $(i,j)$ 划分为 3 类：
+2.  Split all pairs $(i,j)$ into 3 types:
 
-    1.  $1 \leq i \leq mid,1 \leq j \leq mid$ 的点对；
-    2.  $1  \leq i \leq mid ,mid+1 \leq j \leq n$ 的点对；
-    3.  $mid+1 \leq  i \leq n,mid+1 \leq j \leq n$ 的点对．
+    1.  pairs with $1 \leq i \leq mid,1 \leq j \leq mid$;
+    2.  pairs with $1  \leq i \leq mid ,mid+1 \leq j \leq n$;
+    3.  pairs with $mid+1 \leq  i \leq n,mid+1 \leq j \leq n$.
 
-3.  将 $(1,n)$ 这个序列拆成两个序列 $(1,mid)$ 和 $(mid+1,n)$．此时第一类点对和第三类点对都在这两个序列之中；
+3.  Split the sequence $(1,n)$ into two sequences $(1,mid)$ and $(mid+1,n)$. Now pairs of the first type and pairs of the third type each lie entirely within one of these two sequences;
 
-4.  递归地处理这两类点对；
+4.  Handle these two types of pairs recursively;
 
-5.  设法处理第二类点对．
+5.  Find a way to handle the pairs of the second type.
 
-可以看到 CDQ 分治的思想就是不断地把点对通过递归的方式分给左右两个区间．
+As you can see, the idea of CDQ divide and conquer is to keep handing pairs to the left and right halves recursively.
 
-在实际应用时，我们通常使用一个函数 `solve(l,r)` 处理 $l \leq i \leq r,l \leq j \leq r$ 的点对．上述算法流程中的递归部分便是通过 `solve(l,mid)` 与 `solve(mid+1,r)` 来实现的．剩下的第二类点对则需要额外设计算法解决．
+In practice, we usually use a function `solve(l,r)` to handle the pairs with $l \leq i \leq r,l \leq j \leq r$. The recursive part of the process above is done by `solve(l,mid)` and `solve(mid+1,r)`. The remaining pairs of the second type need a separately designed algorithm.
 
-### 例题
+### Example problems
 
-???+ example "[三维偏序](https://www.luogu.com.cn/problem/P3810)"
-    给定一个序列，每个点有 $a_i,b_i,c_i$ 三个属性，试求：这个序列里有多少对点对 $(i,j)$ 满足 $a_j \leq a_i$ 且 $b_j \leq b_i$ 且 $c_j \leq c_i$ 且 $j \ne i$．
+???+ example "[3D Partial Order](https://www.luogu.com.cn/problem/P3810)"
+    Given a sequence where each point has three attributes $a_i,b_i,c_i$, find how many pairs $(i,j)$ in the sequence satisfy $a_j \leq a_i$ and $b_j \leq b_i$ and $c_j \leq c_i$ and $j \ne i$.
 
-??? note "解题思路"
-    三维偏序是 CDQ 分治的经典问题．
+??? note "Solution idea"
+    3D partial order is a classic problem for CDQ divide and conquer.
     
-    题目要求统计序列里点对的个数，那试一下用 CDQ 分治．
+    The problem asks us to count pairs of points in a sequence, so let us try CDQ divide and conquer.
     
-    首先将序列按 $a$ 排序．
+    First, sort the sequence by $a$.
     
-    假设我们现在写好了 `solve(l,r)`，并且通过递归搞定了 `solve(l,mid)` 和 `solve(mid+1,r)`．现在我们要做的，就是统计满足 $l \leq i \leq mid$，$mid+1 \leq j \leq r$ 的点对 $(i,j)$ 中，有多个点对还满足 $a_{i} \leq a_{j}$，$b_{i} \leq b_{j}$，$c_{i} \leq c_{j}$ 的限制条件．
+    Suppose we have written `solve(l,r)`, and the recursion has already taken care of `solve(l,mid)` and `solve(mid+1,r)`. What we need to do now is count, among the pairs $(i,j)$ with $l \leq i \leq mid$, $mid+1 \leq j \leq r$, how many also satisfy the constraints $a_{i} \leq a_{j}$, $b_{i} \leq b_{j}$, $c_{i} \leq c_{j}$.
     
-    稍微思考一下就会发现，那个 $a_{i} \leq a_{j}$ 的限制条件没啥用了：既然 $i$ 比 $mid$ 小，$j$ 比 $mid$ 大，那 $i$ 肯定比 $j$ 要小；已经将序列按 $a$ 排序，就一定有 $a_{i} \leq a_{j}$．现在还剩下两个限制条件：$b_{i} \leq b_{j}$ 与 $c_{i} \leq c_{j}$．根据这个限制条件我们就可以枚举 $j$, 求出有多少个满足条件的 $i$．
+    A little thought shows that the constraint $a_{i} \leq a_{j}$ no longer matters: since $i$ is less than $mid$ and $j$ is greater than $mid$, $i$ is certainly less than $j$; and since the sequence is sorted by $a$, we must have $a_{i} \leq a_{j}$. Two constraints remain: $b_{i} \leq b_{j}$ and $c_{i} \leq c_{j}$. With these constraints we can enumerate $j$ and count how many $i$ satisfy them.
     
-    为了方便枚举，我们把 $(l,mid)$ 和 $(mid+1,r)$ 中的点全部按照 $b$ 的值从小到大排个序．之后我们依次枚举每一个 $j$, 把所有 $b_{i} \leq b_{j}$ 的点 $i$ 全部插入到某种数据结构里（这里我们选择 [树状数组](../ds/fenwick.md)）．此时只要查询树状数组里有多少个点的 $c$ 值是小于等于 $c_{j}$ 的，我们就求出了对于这个点 $j$，有多少个 $i$ 可以合法匹配它了．
+    To make the enumeration easy, we sort all points in $(l,mid)$ and in $(mid+1,r)$ by $b$ from smallest to largest. Then we enumerate each $j$ in order, and insert every point $i$ with $b_{i} \leq b_{j}$ into some data structure (here we choose a [Fenwick tree](../ds/fenwick.md)). Now we just query how many points in the Fenwick tree have a $c$ value less than or equal to $c_{j}$, and that tells us how many $i$ can be validly paired with this $j$.
     
-    当我们插入一个 $c$ 值等于 $x$ 的点时，我们就令树状数组的 $x$ 这个位置单点加一，而查询树状数组里有多少个点小于 $x$ 的操作实际上就是在求 [前缀和](../basic/prefix-sum.md)，只要我们事先对于所有的 $c$ 值做了 [离散化](../misc/discrete.md)，我们的复杂度就是对的．
+    When we insert a point whose $c$ value is $x$, we add one at position $x$ of the Fenwick tree. Querying how many points in the Fenwick tree are less than $x$ is really computing a [prefix sum](../basic/prefix-sum.md). As long as we [discretize](../misc/discrete.md) all the $c$ values beforehand, the complexity is fine.
     
-    对于每一个 $j$，我们都需要将所有 $b_{i} \leq b_{j}$ 的点 $i$ 插入树状数组中．由于所有的 $i$ 和 $j$ 都已事先按照 $b$ 值排好序，这样的话只要以双指针的方式在树状数组里插入点，则对树状数组的插入操作就能从 $O(n^2)$ 次降到 $O(n)$ 次．
+    For each $j$, we need to insert every point $i$ with $b_{i} \leq b_{j}$ into the Fenwick tree. Since all the $i$ and $j$ are already sorted by $b$, we can insert points with two pointers, which cuts the number of Fenwick tree insertions from $O(n^2)$ to $O(n)$.
     
-    通过这样一个算法流程，我们就用 $O(n\log n)$ 的时间处理完了关于第二类点对的信息了．此时算法的时间复杂度是 $T(n)=T(\lfloor \frac{n}{2} \rfloor)+T(\lceil \frac{n}{2} \rceil)+O(n\log n)=O(n\log^2n)$．
+    With this process, we handle all information about the second type of pairs in $O(n\log n)$ time. The time complexity of the algorithm is then $T(n)=T(\lfloor \frac{n}{2} \rfloor)+T(\lceil \frac{n}{2} \rceil)+O(n\log n)=O(n\log^2n)$.
 
-??? note "示例代码"
+??? note "Example code"
     ```cpp
     --8<-- "docs/misc/code/cdq-divide/cdq-divide_1.cpp"
     ```
 
-???+ example "[CQOI2011 动态逆序对](https://www.luogu.com.cn/problem/P3157)"
-    对于序列 $a$，它的逆序对数定义为集合 $\{(i,j)| i < j \wedge a_i > a_j \}$ 中的元素个数．
+???+ example "[CQOI2011 Dynamic Inversions](https://www.luogu.com.cn/problem/P3157)"
+    For a sequence $a$, its number of inversions is defined as the number of elements in the set $\{(i,j)| i < j \wedge a_i > a_j \}$.
     
-    现在给出 $1\sim n$ 的一个排列，按照某种顺序依次删除 $m$ 个元素，你的任务是在每次删除一个元素之前统计整个序列的逆序对数．
+    You are given a permutation of $1\sim n$. $m$ elements are deleted one by one in some order. Your task is to count the number of inversions in the whole sequence before each deletion.
 
-??? note "示例代码"
+??? note "Example code"
     ```cpp
     --8<-- "docs/misc/code/cdq-divide/cdq-divide_2.cpp"
     ```
 
-## CDQ 分治优化 1D/1D 动态规划的转移
+## Optimizing 1D/1D dynamic programming transitions with CDQ divide and conquer
 
-相关内容：[CDQ 分治优化 DP](../dp/opt/dp-opt.md#cdq-分治优化-dp)
+Related content: [Optimizing DP with CDQ divide and conquer](../dp/opt/dp-opt.md#cdq-分治优化-dp)
 
-1D/1D 动态规划指的是一类特定的 DP 问题，该类题目的特征是 DP 数组是一维的，转移是 $O(n)$ 的．如果条件良好的话，有时可以通过 CDQ 分治来把它们的时间复杂度由 $O(n^2)$ 降至 $O(n\log^2n)$．
+1D/1D dynamic programming refers to a particular kind of DP problem: the DP array is one-dimensional and each transition takes $O(n)$. If the conditions are right, CDQ divide and conquer can sometimes reduce the time complexity from $O(n^2)$ to $O(n\log^2n)$.
 
-例如，给定一个序列，每个元素有两个属性 $a$，$b$．我们希望计算一个 DP 式子的值，它的转移方程如下：
+For example, given a sequence where each element has two attributes $a$ and $b$, we want to compute a DP with the following transition:
 
 $dp_{i}=1+ \max_{j=1}^{i-1}dp_{j}[a_{j} < a_{i}][b_{j} < b_{i}]$
 
-这是一个二维最长上升子序列的 DP 方程，即只有 $j < i,a_{j} < a_{i},b_{j} < b_{i}$ 的点 $j$ 可以更新点 $i$ 的 DP 值．
+This is the DP for a two-dimensional longest increasing subsequence: only a point $j$ with $j < i,a_{j} < a_{i},b_{j} < b_{i}$ can update the DP value of point $i$.
 
-直接转移显然是 $O(n^2)$ 的．以下是使用 CDQ 分治优化转移过程的讲解．
+Doing the transitions directly is clearly $O(n^2)$. Below we explain how to optimize the transitions with CDQ divide and conquer.
 
-我们发现 $dp_{j}$ 转移到 $dp_{i}$ 这种转移关系也是一种点对间的关系，所以我们用类似 CDQ 分治处理点对关系的方式来处理它．
+Notice that the transition from $dp_{j}$ to $dp_{i}$ is also a relation between pairs of points, so we handle it in a way similar to how CDQ divide and conquer handles pairs of points.
 
-这个转移过程相对来讲比较套路．假设现在正在处理的区间是 $(l,r)$，算法流程大致如下：
+This transition process is fairly standard. Suppose the interval we are currently processing is $(l,r)$. The process is roughly:
 
-1.  如果 $l=r$，说明 $dp_{r}$ 值的 $\max$ 部分已经被计算好了，直接令 $dp_{r} \gets dp_{r} + 1$ 然后返回即可；
-2.  递归使用 `solve(l,mid)`；
-3.  处理所有 $l \leq j \leq mid$，$mid+1 \leq i \leq r$ 的转移关系；
-4.  递归使用 `solve(mid+1,r)`．
+1.  If $l=r$, the $\max$ part of $dp_{r}$ has already been computed, so just set $dp_{r} \gets dp_{r} + 1$ and return;
+2.  Recursively call `solve(l,mid)`;
+3.  Handle all transitions from $l \leq j \leq mid$ to $mid+1 \leq i \leq r$;
+4.  Recursively call `solve(mid+1,r)`.
 
-第三步的做法与 CDQ 分治求三维偏序差不多．处理 $l \leq j \leq mid$，$mid+1 \leq i \leq r$ 的转移关系的时候，我们会发现已经不用管 $j < i$ 这个限制条件了．因此，我们依然先将所有的点 $i$ 和点 $j$ 按 $a$ 值进行排序处理，然后用双指针的方式将 $j$ 点插入到树状数组里，最后查一下前缀最大值更新一下 $dp_{i}$ 就可以了．
+Step 3 works almost the same as using CDQ divide and conquer for 3D partial order. When handling the transitions from $l \leq j \leq mid$ to $mid+1 \leq i \leq r$, we no longer need to worry about the constraint $j < i$. So we again sort all points $i$ and $j$ by $a$, insert the points $j$ into a Fenwick tree with two pointers, and finally query the prefix maximum to update $dp_{i}$.
 
-### 转移过程的正确性证明
+### Proof that the transitions are correct
 
-该 CDQ 写法和处理点对间关系的 CDQ 写法最大的不同就是处理 $l \leq j \leq mid$，$mid+1 \leq i \leq r$ 的点对这一部分．处理点对间关系的 CDQ 写法中，这一部分放到哪里都是可以的．但是，在用 CDQ 分治优化 DP 的时候，这个流程却必须夹在 $solve(l,mid)$,$solve(mid+1,r)$ 的中间．原因是 DP 的转移是 **有序的**，它必须满足两个条件，否则就是不对的：
+The biggest difference between this version of CDQ and the version for pairs of points is the part that handles pairs with $l \leq j \leq mid$, $mid+1 \leq i \leq r$. In the version for pairs of points, this part can be placed anywhere. But when using CDQ divide and conquer to optimize DP, this step must be placed between $solve(l,mid)$ and $solve(mid+1,r)$. The reason is that DP transitions are **ordered**: they must satisfy two conditions, or the result is wrong:
 
-1.  用来计算 $dp_{i}$ 的所有 $dp_{j}$ 值都必须是已经计算完毕的，不能存在「半成品」；
+1.  Every $dp_{j}$ used to compute $dp_{i}$ must already be fully computed; no "half-finished" values are allowed;
 
-2.  用来计算 $dp_{i}$ 的所有 $dp_{j}$ 值都必须能更新到 $dp_{i}$，不能存在没有更新到的 $dp_{j}$ 值．
+2.  Every $dp_{j}$ that should be used to compute $dp_{i}$ must actually update $dp_{i}$; no $dp_{j}$ may be missed.
 
-上述两个条件可能在 $O(n^2)$ 暴力的时候是相当容易满足的，但是使用 CDQ 分治后，转移顺序很显然已经乱掉了，所以有必要考察转移的正确性．
+These two conditions are easy to satisfy with the $O(n^2)$ brute force, but with CDQ divide and conquer the order of transitions is clearly scrambled, so we need to check that the transitions are correct.
 
-CDQ 分治的递归树如下所示．
+The recursion tree of CDQ divide and conquer is shown below.
 
-![CDQ 分治的递归树](./images/cdq-divide.svg)
+![Recursion tree of CDQ divide and conquer](./images/cdq-divide.svg)
 
-执行刚才的算法流程的话，以 $8$ 这个点为例，它的 DP 值是在 `solve(1,8)`、`solve(5,8)`、`solve(7,8)` 这 3 个函数中更新完成的，而三次用来更新它的点分别是 $(1,4)$、$(5,6)$、$(7,7)$ 这三个不相交的区间；又以 $5$ 这个点为例，它的 DP 值是在 `solve(1,4)` 函数中解决的，更新它的区间是 $(1,4)$．仔细观察就会发现，一个 $i$ 点的 DP 值被更新了 $\log$ 次，而且，更新它的区间刚好是 $(1,i)$ 在线段树上被拆分出来的 $\log$ 个区间．因此，我们的确保证了所有合法的 $j$ 都更新过点 $i$，满足第 2 个条件．
+Running the process above, take point $8$ as an example: its DP value is updated in the 3 functions `solve(1,8)`, `solve(5,8)` and `solve(7,8)`, and the points used to update it in these three calls are the three disjoint intervals $(1,4)$, $(5,6)$ and $(7,7)$. Take point $5$ as another example: its DP value is handled in `solve(1,4)`, and the interval that updates it is $(1,4)$. Looking closely, you will find that the DP value of a point $i$ is updated $\log$ times, and the intervals that update it are exactly the $\log$ intervals into which $(1,i)$ is split on the segment tree. So we do guarantee that every valid $j$ has updated point $i$, which satisfies condition 2.
 
-接着分析我们算法的执行流程：
+Next, let us trace how the algorithm runs:
 
-1.  第一个结束的函数是 `solve(1,1)`．此时我们发现 $dp_{1}$ 的值已经计算完毕了；
-2.  第一个执行转移过程的函数是 `solve(1,2)`．此时我们发现 $dp_{2}$ 的值已经被转移好了；
-3.  第二个结束的函数是 `solve(2,2)`．此时我们发现 $dp_{2}$ 的值已经计算完毕了；
-4.  接下来 `solve(1,2)` 结束，$(1,2)$ 这段区间的 $dp$ 值均被计算好；
-5.  下一个执行转移流程的函数是 `solve(1,4)`．这次转移结束之后我们发现 $dp_{3}$ 的值已经被转移好了；
-6.  接下来结束的函数是 `solve(3,3)`．我们会发现 $dp_{3}$ 的 dp 值被计算好了；
-7.  接下来执行的转移是 `solve(3,4)`．此时 $dp_{4}$ 在 `solve(1,4)` 中被 $(1,2)$ 转移了一次，这次又被 $(3,3)$ 转移了，因此 $dp_{4}$ 的值也被转移好了；
-8.  `solve(4,4)` 结束，$dp_{4}$ 的值计算完毕；
-9.  `solve(3,4)` 结束，$(3,4)$ 的值计算完毕；
-10. `solve(1,4)` 结束，$(1,4)$ 的值计算完毕．
-11. ……
+1.  The first function to finish is `solve(1,1)`. At this point $dp_{1}$ is fully computed;
+2.  The first function to perform transitions is `solve(1,2)`. At this point all transitions into $dp_{2}$ are done;
+3.  The second function to finish is `solve(2,2)`. At this point $dp_{2}$ is fully computed;
+4.  Then `solve(1,2)` finishes, and all $dp$ values in the interval $(1,2)$ are computed;
+5.  The next function to perform transitions is `solve(1,4)`. After these transitions, all transitions into $dp_{3}$ are done;
+6.  The next function to finish is `solve(3,3)`. Now the dp value of $dp_{3}$ is computed;
+7.  The next transitions are in `solve(3,4)`. $dp_{4}$ already received a transition from $(1,2)$ in `solve(1,4)`, and now it receives one from $(3,3)$, so all transitions into $dp_{4}$ are done too;
+8.  `solve(4,4)` finishes, and $dp_{4}$ is fully computed;
+9.  `solve(3,4)` finishes, and the values in $(3,4)$ are fully computed;
+10. `solve(1,4)` finishes, and the values in $(1,4)$ are fully computed.
+11. ...
 
-通过模拟函数流程，我们发现一件事：每次 `solve(l,r)` 结束的时候，$(l,r)$ 区间的 DP 值会被全部计算好．由于我们每一次执行转移函数的时候，`solve(l,mid)` 已经结束，因此我们每一次执行的转移过程都是合法的，满足第 1 个条件．
+By simulating the calls, we notice one thing: every time `solve(l,r)` finishes, all DP values in the interval $(l,r)$ are fully computed. Since `solve(l,mid)` has already finished every time we perform transitions, every transition we perform is valid, which satisfies condition 1.
 
-在刚才的过程我们发现，如果将 CDQ 分治的递归树看成一棵线段树，那么 CDQ 分治就是这个线段树的 **中序遍历函数**，因此我们相当于按顺序处理了所有的 DP 值，只是转移顺序被拆开了而已，所以算法是正确的．
+From the process above, if we view the recursion tree of CDQ divide and conquer as a segment tree, then CDQ divide and conquer is an **in-order traversal** of this segment tree. So we effectively process all DP values in order; only the transitions are split apart. Therefore the algorithm is correct.
 
-### 例题
+### Example problems
 
-???+ example "[SDOI2011 拦截导弹](https://www.luogu.com.cn/problem/P2487)"
-    某国为了防御敌国的导弹袭击，发展出一种导弹拦截系统．但是这种导弹拦截系统有一个缺陷：虽然它的第一发炮弹能够到达任意的高度、并且能够拦截任意速度的导弹，但是以后每一发炮弹都不能高于前一发的高度，其拦截的导弹的飞行速度也不能大于前一发．某天，雷达捕捉到敌国的导弹来袭．由于该系统还在试用阶段，所以只有一套系统，因此有可能不能拦截所有的导弹．
+???+ example "[SDOI2011 Missile Interception](https://www.luogu.com.cn/problem/P2487)"
+    To defend against missile attacks from an enemy country, a country has developed a missile interception system. But this system has a flaw: although its first shell can reach any height and intercept a missile of any speed, every later shell cannot be higher than the previous one, and the speed of the missile it intercepts cannot be greater than that of the previous one. One day, radar detects incoming enemy missiles. Since the system is still on trial, there is only one set of it, so it may not be able to intercept all the missiles.
     
-    在不能拦截所有的导弹的情况下，我们当然要选择使国家损失最小、也就是拦截导弹的数量最多的方案．但是拦截导弹数量的最多的方案有可能有多个，如果有多个最优方案，那么我们会随机选取一个作为最终的拦截导弹行动蓝图．
+    If we cannot intercept all the missiles, we of course want the plan that minimizes the country's losses, i.e. the plan that intercepts the most missiles. But there may be several plans that intercept the most missiles. If there are several optimal plans, we pick one of them at random as the final interception plan.
     
-    我方间谍已经获取了所有敌军导弹的高度和速度，你的任务是计算出在执行上述决策时，每枚导弹被拦截掉的概率．
+    Our spies have obtained the heights and speeds of all enemy missiles. Your task is to compute, under the decision rule above, the probability that each missile is intercepted.
 
-??? note "示例代码"
+??? note "Example code"
     ```cpp
     --8<-- "docs/misc/code/cdq-divide/cdq-divide_3.cpp"
     ```
 
-## 将动态问题转化为静态问题
+## Turning dynamic problems into static problems
 
-前两种情况使用 CDQ 分治的目的是将序列折半之后递归处理点对间的关系，来获得良好的复杂度．不过在本节中，折半的不是一般的序列，而是时间序列．
+In the previous two cases, CDQ divide and conquer splits the sequence in half and recursively handles the relations between pairs of points to get a good complexity. In this section, however, what we split in half is not an ordinary sequence but the sequence of time.
 
-它适用于一些「需要支持做 xxx 修改然后做 xxx 询问」的数据结构题．该类题目有两个特点：
+It works for some data structure problems of the form "support modification xxx, then answer query xxx". Such problems have two features:
 
--   如果把询问 [离线](offline.md)，所有操作会按照时间自然地排成一个序列．
--   每一个修改均与之后的询问操作息息相关．而这样的「修改 - 询问」关系一共会有 $O(n^2)$ 对．
+-   If the queries are handled [offline](offline.md), all operations naturally form a sequence ordered by time.
+-   Each modification is closely related to the queries that come after it, and there are $O(n^2)$ such "modification–query" pairs in total.
 
-我们可以使用 CDQ 分治对于这个操作序列进行分治，处理修改和询问之间的关系．
+We can use CDQ divide and conquer on this sequence of operations to handle the relations between modifications and queries.
 
-与处理点对关系的 CDQ 分治类似，假设正在分治的序列是 $(l,r)$, 我们先递归地处理 $(l,mid)$ 和 $(mid,r)$ 之间的修改 - 询问关系，再处理所有 $l \leq i \leq mid$，$mid+1 \leq j \leq r$ 的修改 - 询问关系，其中 $i$ 是一个修改，$j$ 是一个询问．
+Similar to CDQ divide and conquer for pairs of points, suppose the sequence being divided is $(l,r)$. We first recursively handle the modification–query relations within $(l,mid)$ and within $(mid,r)$, and then handle all modification–query relations with $l \leq i \leq mid$, $mid+1 \leq j \leq r$, where $i$ is a modification and $j$ is a query.
 
-注意，如果各个修改之间是 **独立** 的话，我们无需处理 $l \leq i \leq mid$ 和 $mid+1 \leq j \leq r$，以及 `solve(l,mid)` 和 `solve(mid+1,r)` 之间的时序关系（比如普通的加减法问题）．但是如果各个修改之间并不独立（比如说赋值操作），做完这个修改后，序列长什么样可能依赖于之前的序列．此时处理所有跨越 mid 的修改 - 询问关系的步骤就必须放在 `solve(l,mid)` 和 `solve(mid+1,r)` 之间．理由和 CDQ 分治优化 1D/1D 动态规划的原因是一样的：按照中序遍历序进行分治才能保证每一个修改都是严格按照时间顺序执行的．
+Note that if the modifications are **independent** of each other, we don't need to care about the time order between handling $l \leq i \leq mid$ and $mid+1 \leq j \leq r$ and the calls `solve(l,mid)` and `solve(mid+1,r)` (for example, in plain addition/subtraction problems). But if the modifications are not independent (for example, assignment operations), what the sequence looks like after a modification may depend on the sequence before it. In that case, the step that handles all modification–query relations crossing mid must be placed between `solve(l,mid)` and `solve(mid+1,r)`. The reason is the same as for optimizing 1D/1D DP with CDQ divide and conquer: only dividing in in-order traversal order guarantees that every modification is applied strictly in time order.
 
-### 例题
+### Example problems
 
-???+ example "矩形加矩形求和"
-    维护一个二维数组，支持在一个矩形区域内加一个数字，每次询问一个矩形区域的和．
+???+ example "Rectangle add, rectangle sum"
+    Maintain a two-dimensional array that supports adding a number to every cell in a rectangular region, and answering queries for the sum of a rectangular region.
 
-??? note "解题思路"
-    对于这个问题的无修版本，即「给定一个二维数组，多次询问一个矩形区域的和」，有一个扫描线配合线段树的经典做法．具体的做法是先将每个矩形拆成插入和删除两个操作，接着将每个询问拆成二维前缀和相减的形式，最后离线．然而，原题目是带修改的，不能直接使用这种做法．
+??? note "Solution idea"
+    For the version of this problem without modifications, i.e. "given a two-dimensional array, answer many queries for the sum of a rectangular region", there is a classic approach using a sweep line with a segment tree. Split each rectangle into an insertion and a deletion, split each query into a difference of two-dimensional prefix sums, and then process everything offline. However, the original problem has modifications, so this approach cannot be used directly.
     
-    尝试对其使用 CDQ 分治．我们将所有的询问和修改操作全部离线．这些操作形成了一个序列，并且有 $O(N^2)$ 对修改 - 询问的关系．依然使用 CDQ 分治的一般流程，将所有的关系分成三类，在这一层分治过程当中只处理跨越 $mid$ 的修改 - 询问关系，剩下的修改 - 询问关系通过递归的方式来解决．
+    Let us try CDQ divide and conquer. We take all queries and modifications offline. These operations form a sequence, and there are $O(N^2)$ modification–query relations. Following the usual CDQ process, we split all relations into three types. At each level of the division, we only handle the modification–query relations that cross $mid$; the rest are solved recursively.
     
-    我们发现，所有的修改在询问之前就已完成．这时，原问题等价于「平面上有静态的一些矩形，不停地询问一个矩形区域的和」．
+    Notice that all these modifications are completed before the queries. So the problem becomes equivalent to "there are some static rectangles in the plane; answer many queries for the sum over a rectangular region".
     
-    使用一个扫描线在 $O(n\log n)$ 的时间内处理好所有跨越 $mid$ 的修改 - 询问关系，剩下的事情就是递归地分治左右两侧的修改 - 询问关系了．
+    Use a sweep line to handle all modification–query relations crossing $mid$ in $O(n\log n)$ time. What is left is to recursively divide the modification–query relations on the left and right sides.
     
-    在这样实现的 CDQ 分治中，同一个询问被处理了 $O(\log n)$ 次．不过没有关系，因为每次贡献这个询问的修改是互不相交的．全套流程的时间复杂度为 $T(n)=T(\lfloor \frac{n}{2} \rfloor)+T(\lceil \frac{n}{2} \rceil)+ O(n\log n)=O(n\log^2n)$．
+    In CDQ divide and conquer implemented this way, the same query is processed $O(\log n)$ times. That is fine, because the sets of modifications contributing to the query each time are disjoint. The total time complexity is $T(n)=T(\lfloor \frac{n}{2} \rfloor)+T(\lceil \frac{n}{2} \rceil)+ O(n\log n)=O(n\log^2n)$.
     
-    观察上述的算法流程，我们发现一开始我们只能解决静态的矩形加矩形求和问题，但只是简单地使用 CDQ 分治后，我们就可以离线地解决一个动态的矩形加矩形求和问题了．将动态问题转化为静态问题的精髓就在于 CDQ 分治每次仅仅处理跨越某一个点的修改和询问关系，这样的话我们就只需要考虑「所有询问都在修改之后」这个简单的问题了．也正是因为这一点，CDQ 分治被称为「动态问题转化为静态问题的工具」．
+    Looking at the process above, at first we could only solve the static rectangle add / rectangle sum problem, but simply by applying CDQ divide and conquer, we can solve the dynamic rectangle add / rectangle sum problem offline. The key to turning a dynamic problem into a static one is that CDQ divide and conquer only handles the modification–query relations that cross a single point each time, so we only need to consider the simple problem where "all queries come after all modifications". This is exactly why CDQ divide and conquer is called "a tool for turning dynamic problems into static ones".
 
-???+ example "[\[Ynoi2016\] 镜中的昆虫](https://www.luogu.com.cn/problem/P4690)"
-    维护一个长为 $n$ 的序列 $a_i$，有 $m$ 次操作．
+???+ example "[\[Ynoi2016\] Insects in the Mirror](https://www.luogu.com.cn/problem/P4690)"
+    Maintain a sequence $a_i$ of length $n$, with $m$ operations:
     
-    1.  将区间 $[l,r]$ 的值修改为 $x$；
-    2.  询问区间 $[l,r]$ 出现了多少种不同的数，也就是说同一个数出现多次只算一个．
+    1.  Set every value in the interval $[l,r]$ to $x$;
+    2.  Query how many distinct numbers appear in the interval $[l,r]$; a number that appears several times is counted once.
     
-    一句话题意：区间赋值区间数颜色．
+    In one sentence: range assignment, range count of distinct colors.
 
-??? note "解题思路"
-    维护一下每个位置左侧第一个同色点的位置，记为 $pre_{i}$，此时区间数颜色就被转化为了一个经典的二维数点问题．
+??? note "Solution idea"
+    For each position, maintain the position of the nearest point to its left with the same color, written $pre_{i}$. Then counting distinct colors in a range becomes a classic two-dimensional point counting problem.
     
-    通过将连续的一段颜色看成一个点的方式，可以证明 $pre$ 的变化量是 $O(n+m)$ 的，即单次操作仅仅引起 $O(1)$ 的 $pre$ 值变化，那么我们可以用 CDQ 分治来解决动态的单点加矩形求和问题．
+    By treating each contiguous run of one color as a single point, one can prove that the total number of changes to $pre$ is $O(n+m)$, i.e. each operation causes only amortized $O(1)$ changes to $pre$ values. So we can use CDQ divide and conquer to solve the dynamic problem of point add, rectangle sum.
     
-    $pre$ 数组的具体变化可以使用 `std::set` 来进行处理．这个用 set 维护连续的区间的技巧也被称为 [old driver tree](./odt.md)．
+    The exact changes to the $pre$ array can be handled with `std::set`. This trick of maintaining contiguous intervals with a set is also known as the [old driver tree](./odt.md).
 
-??? note "示例代码"
+??? note "Example code"
     ```cpp
     --8<-- "docs/misc/code/cdq-divide/cdq-divide_4.cpp"
     ```
 
-???+ example "[\[HNOI2010\] 城市建设](https://www.luogu.com.cn/problem/P3206)"
-    PS 国是一个拥有诸多城市的大国．国王 Louis 为城市的交通建设可谓绞尽脑汁．Louis 可以在某些城市之间修建道路，在不同的城市之间修建道路需要不同的花费．
+???+ example "[\[HNOI2010\] City Construction](https://www.luogu.com.cn/problem/P3206)"
+    The PS Kingdom is a large country with many cities. King Louis has racked his brains over transportation between the cities. Louis can build roads between some pairs of cities, and building roads between different cities costs different amounts.
     
-    Louis 希望建造最少的道路使得国内所有的城市连通．但是由于某些因素，城市之间修建道路需要的花费会随着时间而改变．Louis 会不断得到某道路的修建代价改变的消息．他希望每得到一条消息后能立即知道使城市连通的最小花费总和．Louis 决定求助于你来完成这个任务．
+    Louis wants to build the fewest roads so that all cities in the country are connected. But for various reasons, the cost of building a road between cities changes over time. Louis keeps receiving messages that the cost of some road has changed. After each message, he wants to know right away the minimum total cost of connecting the cities. Louis has decided to ask you to do this.
     
-    一句话题意：给定一张图支持动态的修改边权，要求在每次修改边权之后输出这张图的最小生成树的最小代价和．
+    In one sentence: given a graph that supports dynamic changes to edge weights, output the total weight of the minimum spanning tree after each change.
 
-??? note "解题思路"
-    事实上，有一个线段树分治套 lct 的做法可以解决这个问题，但是这个实现方式的常数过大，可能需要精妙的卡常技巧才可以通过本题，因此不妨考虑 CDQ 分治来解决这个问题．
+??? note "Solution idea"
+    In fact, segment tree divide and conquer combined with LCT can solve this problem, but its constant factor is too large and may need clever constant-factor optimization to pass. So let us consider CDQ divide and conquer instead.
     
-    和一般的 CDQ 分治解决的问题不同，此时使用 CDQ 分治的时候并没有修改和询问的关系来让我们进行分治，因为无法单独考虑「修改一个边对整张图的最小生成树有什么贡献」．传统的 CDQ 分治思路似乎不是很好使．
+    Unlike the usual problems solved by CDQ divide and conquer, here there is no modification–query relation to divide on, because we cannot consider on its own "what one edge modification contributes to the MST of the whole graph". The traditional CDQ idea does not seem to work well.
     
-    通过刚才的例题可以发现，一般的 CDQ 分治和线段树有着特殊的联系：我们在 CDQ 分治的过程中其实隐式地建了一棵线段树出来（因为 CDQ 分治的递归树就是一棵线段树）．通常的 CDQ 是考虑线段树左右儿子之间的联系．而对于这道题，我们需要考虑的是父亲和孩子之间的关系；换句话来讲，我们在 `$solve(l,r)$` 这段区间的时候，如果可以想办法使图的规模变成和区间长度相关的一个变量的话，就可以解决这个问题了．
+    From the previous examples, we can see that ordinary CDQ divide and conquer has a special connection with segment trees: during CDQ divide and conquer we are implicitly building a segment tree (because the recursion tree of CDQ divide and conquer is a segment tree). Ordinary CDQ looks at the relation between the left and right children of a segment tree node. For this problem, we need to look at the relation between a parent and its children instead. In other words, when we are at the interval `$solve(l,r)$`, if we can find a way to make the size of the graph depend only on the length of the interval, we can solve the problem.
     
-    那么具体来讲如何设计算法呢？
+    So how exactly do we design the algorithm?
     
-    假设我们正在构造 $(l,r)$ 这段区间的最小生成树边集，并且我们已知它父亲最小生成树的边集．我们将在 $(l,r)$ 这段区间中发生变化的边分别赋与 $+ \infty$ 和 $-\infty$ 的边权，并各跑一边 kruskal，求出在最小生成树里的那些边．
+    Suppose we are building the MST edge set for the interval $(l,r)$, and we already know the MST edge set of its parent. We give the edges that change within the interval $(l,r)$ a weight of $+ \infty$ in one run and $-\infty$ in another, run Kruskal once for each, and find the edges that are in the MST.
     
-    对于一条边来讲：
+    For an edge:
     
-    -   如果最小生成树里所有被修改的边权都被赋成了 $+\infty$，而它未出现在树中，则证明它不可能出现在 $(l,r)$ 这些询问的最小生成树当中．所以我们仅仅在 $(l,r)$ 的边集中加入最小生成树的树边．
-    -   如果最小生成树里所有被修改的边权都被赋成了 $-\infty$，而它出现在树中，则证明它一定会出现 $(l,r)$ 这段的区间的最小生成树当中．这样的话我们就可以使用并查集将这些边对应的点缩起来，并且将答案加上这些边的边权．
+    -   If, with all modified edge weights set to $+\infty$, the edge does not appear in the MST, then it cannot appear in the MST for any query in $(l,r)$. So we only add the MST's tree edges to the edge set of $(l,r)$.
+    -   If, with all modified edge weights set to $-\infty$, the edge appears in the MST, then it must appear in the MST for every query in the interval $(l,r)$. In that case we can use a DSU to contract the vertices joined by these edges, and add the weights of these edges to the answer.
     
-    这样我们就将 $(l,r)$ 这段区间的边集构造出来了．用这些边求出来的最小生成树和直接求原图的最小生成树等价．
+    This builds the edge set for the interval $(l,r)$. The MST computed from these edges is equivalent to the MST computed directly on the original graph.
     
-    那么为什么我们的复杂度是对的呢？
+    So why is the complexity correct?
     
-    首先，修改过的边一定会加进我们的边集，这些边的数目是 $O(len)$ 级别的．
+    First, modified edges are always added to our edge set, and there are $O(len)$ of them.
     
-    接下来我们需要证明边集当中不会有过多的未被修改的边．我们只会加入所有边权取 $+\infty$ 最小生成树的树边，因此我们加入的边数目不会超过当前图的点数．
+    Next we need to show that the edge set does not contain too many unmodified edges. We only add the tree edges of the MST where the modified edges have weight $+\infty$, so the number of edges we add is at most the number of vertices of the current graph.
     
-    现在我们只需证明每递归一层图的点数是 $O(len)$ 级别的，就可以说明图的边数是 $O(len)$ 级别的了．
+    Now we only need to show that the number of vertices of the graph at each level of recursion is $O(len)$; then the number of edges is also $O(len)$.
     
-    证明点数是 $O(len)$ 几倍就变得十分简单了．我们每次向下递归的时候缩掉的边是在 $-\infty$ 生成树中出现的未被修改边，反过来想就是，我们割掉了出现在 $-\infty$ 生成树当中的所有的被修改边．显然我们最多割掉 $len$ 条边，整张图最多分裂成 $O(len)$ 个连通块，这样的话新图点数就是 $O(len)$ 级别的了．所以我们就证明了每次我们用来跑 kruskal 的图都是 $O(len)$ 级别的了，从而每一层的时间复杂度都是 $O(n\log n)$ 了．
+    Showing that the number of vertices is $O(len)$ is now quite easy. Each time we recurse down, the edges we contract are the unmodified edges that appear in the $-\infty$ spanning tree. Looking at it the other way, we cut off all modified edges appearing in the $-\infty$ spanning tree. Clearly we cut at most $len$ edges, so the whole graph splits into at most $O(len)$ connected components, and the new graph has $O(len)$ vertices. This proves that every graph we run Kruskal on has size $O(len)$, so the time complexity of each level is $O(n\log n)$.
     
-    时间复杂度是 $T(n)=T(\lfloor \frac{n}{2} \rfloor)+T(\lceil \frac{n}{2} \rceil)+ O(n\log n)=O(n\log^2n)$．
+    The time complexity is $T(n)=T(\lfloor \frac{n}{2} \rfloor)+T(\lceil \frac{n}{2} \rceil)+ O(n\log n)=O(n\log^2n)$.
     
-    代码实现上可能会有一些难度．需要注意的是并查集不能使用路径压缩，否则就不支持回退操作了．执行缩点操作的时候也没有必要真的执行，而是每一层的 kruskal 都在上一层的并查集里直接做就可以了．
+    The implementation may be a bit tricky. Note that the DSU cannot use path compression, otherwise it cannot support rollback. You also don't need to actually perform the contraction; each level's Kruskal can simply run directly on the previous level's DSU.
 
-??? note "示例代码"
+??? note "Example code"
     ```cpp
     --8<-- "docs/misc/code/cdq-divide/cdq-divide_5.cpp"
     ```
 
-## 参考资料与注释
+## References and notes
 
-[^ref1]: [从《Cash》谈一类分治算法的应用](https://www.cs.princeton.edu/~danqic/papers/divide-and-conquer.pdf)
+[^ref1]: [On the Application of a Class of Divide-and-Conquer Algorithms, Starting from "Cash"](https://www.cs.princeton.edu/~danqic/papers/divide-and-conquer.pdf)
