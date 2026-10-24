@@ -1,17 +1,17 @@
 author: HeRaNO, Xeonacid, saffahyjp
 
-pb\_ds 库全称 Policy-Based Data Structures．
+The full name of the pb\_ds library is Policy-Based Data Structures.
 
-pb\_ds 库封装了很多数据结构，比如哈希（Hash）表，平衡二叉树，字典树（Trie 树），堆（优先队列）等．
+The pb\_ds library wraps many data structures, such as hash tables, balanced binary search trees, tries and heaps (priority queues).
 
-就像 `vector`、`set`、`map` 一样，其组件均符合 STL 的相关接口规范．部分（如优先队列）包含 STL 内对应组件的所有功能，但比 STL 功能更多．
+Just like `vector`, `set` and `map`, its components follow the STL interface conventions. Some of them (such as the priority queue) include all the features of the corresponding STL component and add more.
 
-pb\_ds 只在使用 libstdc++ 为标准库的编译器下可以用．
+pb\_ds can only be used with compilers whose standard library is libstdc++.
 
-可以使用 `begin()` 和 `end()` 来获取 `iterator` 从而遍历
+You can use `begin()` and `end()` to get an `iterator` and iterate over the elements
 
-可以 `increase_key`,`decrease_key` 以及删除单个元素
+You can `increase_key`, `decrease_key` and delete individual elements
 
-由于 pb\_ds 库的主要内容在以下划线开头的 `__gnu_pbds` 命名空间中，在 NOI 系列活动中的合规性一直没有确定．2021 年 9 月 1 日，根据 [《关于 NOI 系列活动中编程语言使用限制的补充说明》](https://www.noi.cn/xw/2021-09-01/735729.shtml)，允许使用以下划线开头的库函数或宏（但具有明确禁止操作的库函数和宏除外），在 NOI 系列活动中使用 pb\_ds 库的合规性有了文件上的依据．
+Since the main content of pb\_ds lives in the `__gnu_pbds` namespace, which starts with an underscore, whether it was allowed in NOI-series contests was long unclear. On September 1, 2021, the [Supplementary Notes on Restrictions on Programming Language Use in NOI-Series Contests](https://www.noi.cn/xw/2021-09-01/735729.shtml) allowed library functions and macros that start with an underscore (except those that perform explicitly forbidden operations). This gave an official written basis for using pb\_ds in NOI-series contests.
 
-**参考资料：[《C++ 的 pb\_ds 库在 OI 中的应用》](https://github.com/OI-Wiki/libs/blob/master/lang/pb-ds/C%2B%2B的pb_ds库在OI中的应用.pdf)**
+**Reference: [Applications of the C++ pb\_ds Library in OI](https://github.com/OI-Wiki/libs/blob/master/lang/pb-ds/C%2B%2B的pb_ds库在OI中的应用.pdf)**

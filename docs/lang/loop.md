@@ -1,22 +1,22 @@
-有时，我们需要做一件事很多遍，为了不写过多重复的代码，我们需要循环．
+Sometimes we need to do the same thing many times. To avoid writing lots of repeated code, we use loops.
 
-有时，循环的次数不是一个常量，那么我们无法将代码重复多遍，必须使用循环．
+Sometimes the number of repetitions is not a constant, so we cannot just copy the code several times. In that case we must use a loop.
 
-## for 语句
+## The for statement
 
-以下是 for 语句的结构：
+Here is the structure of a for statement:
 
 ```cpp
-for (初始化; 判断条件; 更新) {
-  循环体;
+for (initialization; condition; update) {
+  loop body;
 }
 ```
 
-执行顺序：
+Order of execution:
 
 ![](images/for-loop.svg)
 
-e.g. 读入 n 个数：
+e.g. Reading in n numbers:
 
 ```cpp
 for (int i = 1; i <= n; ++i) {
@@ -24,23 +24,23 @@ for (int i = 1; i <= n; ++i) {
 }
 ```
 
-for 语句的三个部分中，任何一个部分都可以省略．其中，若省略了判断条件，相当于判断条件永远为真．
+Any of the three parts of a for statement can be left out. If the condition is left out, it is as if the condition is always true.
 
-## while 语句
+## The while statement
 
-以下是 while 语句的结构：
+Here is the structure of a while statement:
 
 ```cpp
-while (判断条件) {
-  循环体;
+while (condition) {
+  loop body;
 }
 ```
 
-执行顺序：
+Order of execution:
 
 ![](images/while-loop.svg)
 
-e.g. 验证 3x+1 猜想：
+e.g. Checking the 3x+1 conjecture:
 
 ```cpp
 while (x > 1) {
@@ -52,23 +52,23 @@ while (x > 1) {
 }
 ```
 
-## do...while 语句
+## The do...while statement
 
-以下是 do...while 语句的结构：
+Here is the structure of a do...while statement:
 
 ```cpp
 do {
-  循环体;
-} while (判断条件);
+  loop body;
+} while (condition);
 ```
 
-执行顺序：
+Order of execution:
 
 ![](images/do-while-loop.svg)
 
-与 while 语句的区别在于，do...while 语句是先执行循环体再进行判断的．
+The difference from the while statement is that do...while runs the loop body first and checks the condition afterwards.
 
-e.g. 枚举排列：
+e.g. Enumerating permutations:
 
 ```cpp
 do {
@@ -76,16 +76,16 @@ do {
 } while (next_permutation(a + 1, a + n + 1));
 ```
 
-## 三种语句的联系
+## How the three statements relate
 
 ```cpp
-// for 语句
+// for statement
 
 for (statement1; statement2; statement3) {
   statement4;
 }
 
-// while 语句
+// while statement
 
 statement1;
 while (statement2) {
@@ -94,24 +94,24 @@ while (statement2) {
 }
 ```
 
-在 statement4 中没有 `continue` 语句（见下文）的时候是等价的，但是下面一种方法很少用到．
+These are equivalent when statement4 contains no `continue` statement (see below), but the second form is rarely used.
 
 ```cpp
-// while 语句
+// while statement
 
 statement1;
 while (statement2) {
   statement1;
 }
 
-// do...while 语句
+// do...while statement
 
 do {
   statement1;
 } while (statement2);
 ```
 
-在 statement1 中没有 `continue` 语句的时候这两种方式也是等价的．
+These two forms are also equivalent when statement1 contains no `continue` statement.
 
 ```cpp
 while (1) {
@@ -123,36 +123,36 @@ for (;;) {
 }
 ```
 
-这两种方式都是永远循环下去．（可以使用 `break`（见下文）退出．）
+Both of these loop forever. (You can exit with `break`, see below.)
 
-可以看出，三种语句可以彼此代替，但一般来说，语句的选用遵守以下原则：
+As you can see, the three statements can replace each other. In general, though, choose between them like this:
 
-1.  循环过程中有个固定的增加步骤（最常见的是枚举）时，使用 for 语句；
-2.  只确定循环的终止条件时，使用 while 语句；
-3.  使用 while 语句时，若要先执行循环体再进行判断，使用 do...while 语句．一般很少用到，常用场景是用户输入．
+1.  If the loop has a fixed increment step (most commonly when enumerating), use a for statement;
+2.  If you only know the condition for stopping the loop, use a while statement;
+3.  If you would use a while statement but need to run the loop body before checking the condition, use a do...while statement. This is rarely needed; a common use is reading user input.
 
-## break 与 continue 语句
+## The break and continue statements
 
-break 语句的作用是退出循环．
+The break statement exits the loop.
 
-continue 语句的作用是跳过循环体的余下部分．下面以 continue 语句在 do...while 语句中的使用为例：
+The continue statement skips the rest of the loop body. Here is an example of continue in a do...while statement:
 
 ```cpp
 do {
   // do something...
-  continue;  // 等价于 goto END;
+  continue;  // equivalent to goto END;
 // do something...
 END:;
 } while (statement);
 
 ```
 
-break 与 continue 语句均可在三种循环语句的循环体中使用．
+Both break and continue can be used in the body of any of the three loop statements.
 
-一般来说，break 与 continue 语句用于让代码的逻辑更加清晰，例如：
+In general, break and continue are used to make the logic of your code clearer, for example:
 
 ```cpp
-// 逻辑较为不清晰，大括号层次复杂
+// Less clear logic, deeply nested braces
 
 for (int i = 1; i <= n; ++i) {
   if (i != x) {
@@ -164,7 +164,7 @@ for (int i = 1; i <= n; ++i) {
   }
 }
 
-// 逻辑更加清晰，大括号层次简单明了
+// Clearer logic, simple and flat braces
 
 for (int i = 1; i <= n; ++i) {
   if (i == x) continue;
@@ -176,13 +176,13 @@ for (int i = 1; i <= n; ++i) {
 ```
 
 ```cpp
-// for 语句判断条件复杂，没有体现「枚举」的本质
+// The for condition is complicated and hides that this is really "enumeration"
 
 for (int i = l; i <= r && i % 10 != 0; ++i) {
   // do something...
 }
 
-// for 语句用于枚举，break 用于「到何时为止」
+// The for statement does the enumeration; break says "when to stop"
 
 for (int i = l; i <= r; ++i) {
   if (i % 10 == 0) break;
@@ -191,7 +191,7 @@ for (int i = l; i <= r; ++i) {
 ```
 
 ```cpp
-// 语句重复，顺序不自然
+// Repeated statement, unnatural order
 
 statement1;
 while (statement3) {
@@ -199,7 +199,7 @@ while (statement3) {
   statement1;
 }
 
-// 没有重复语句，顺序自然
+// No repeated statement, natural order
 
 while (1) {
   statement1;

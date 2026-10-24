@@ -1,28 +1,28 @@
-**注意**：考虑到算法竞赛的实际情况，本文将不会全面研究语法，只会讲述在算法竞赛中可能会应用到的部分．
+**Note**: Given what actually matters in competitive programming, this article does not cover the full syntax. It only describes the parts you are likely to use in contests.
 
-本文语法参照 **C++11** 标准．语义不同的将以 **C++11** 作为标准，C++14、C++17 等语法视情况提及并会特别标注．
+The syntax in this article follows the **C++11** standard. Where semantics differ, **C++11** is taken as the standard. Syntax from C++14, C++17 and so on is mentioned where relevant and clearly marked.
 
-## `auto` 类型说明符
+## The `auto` type specifier
 
-`auto` 类型说明符用于自动推导变量等的类型．例如：
+The `auto` type specifier deduces the type of a variable (and other things) automatically. For example:
 
 ```cpp
-auto a = 1;        // a 是 int 类型
-auto b = a + 0.1;  // b 是 double 类型
+auto a = 1;        // a has type int
+auto b = a + 0.1;  // b has type double
 ```
 
-注意 `auto` 会去除引用，如果不希望出现拷贝开销，需要手动指定：
+Note that `auto` drops references. If you want to avoid the cost of a copy, you need to say so explicitly:
 
 ```cpp
 int a = 1;
 int& b = a;
-auto c = b;   // c 是 int 类型，有拷贝开销
-auto& e = a;  // e 是 int& 类型，没有拷贝开销
+auto c = b;   // c has type int; there is a copy cost
+auto& e = a;  // e has type int&; no copy cost
 ```
 
-## decltype 说明符
+## The decltype specifier
 
-`decltype` 可以根据 **实体** 或 **表达式** 推断类型，注意二者推导类型的方式不同，错误使用可能造成悬垂引用．竞赛中不常用，此处仅粗略介绍．
+`decltype` can deduce a type from an **entity** or from an **expression**. Note that the two are deduced in different ways, and using them wrongly can create dangling references. It is rarely used in contests, so we only give a rough introduction here.
 
 ```cpp
 #include <iostream>
@@ -30,29 +30,29 @@ auto& e = a;  // e 是 int& 类型，没有拷贝开销
 
 int main() {
   int a = 1926;
-  decltype(a) b;                 // 根据实体推断， b 是 int 类型
-  decltype(1 + 1) c;             // 根据表达式推断，c 是 int 类型
-  decltype((a)) d = a;           // 根据表达式推断，d 是 int& 类型！
-  std::vector<decltype(b)> vec;  // 根据实体推断，vec 是 std::vector <int> 类型
+  decltype(a) b;                 // deduced from an entity; b has type int
+  decltype(1 + 1) c;             // deduced from an expression; c has type int
+  decltype((a)) d = a;           // deduced from an expression; d has type int&!
+  std::vector<decltype(b)> vec;  // deduced from an entity; vec has type std::vector <int>
   return 0;
 }
 ```
 
 ## constexpr
 
-> 另请参阅 [常量表达式 constexpr（C++11）](const.md#常量表达式-constexprc11)
+> See also [Constant expressions: constexpr (C++11)](const.md#常量表达式-constexprc11)
 
-## 基于范围的 `for` 循环
+## Range-based `for` loops
 
-使用范围 for 遍历可迭代对象，与使用迭代器遍历的效率相同．上述二者的效率一般优于索引遍历，因为不需要根据索引寻址．
+Iterating over an iterable object with a range-based for is as efficient as iterating with iterators. Both are usually more efficient than iterating by index, since they don't need to compute an address from the index.
 
-下面是一种简单的基于范围的 `for` 循环的语法：
+Here is a simple form of the range-based `for` loop syntax:
 
 ```cpp
 for (item_declaration : range_initializer) statement
 ```
 
-比如：
+For example:
 
 ```cpp
 std::array<int, 4> arr = {1, 2, 3, 4};
@@ -61,7 +61,7 @@ for (int x : arr) {
 }
 ```
 
-上述语法产生的代码效果等价于下列代码：
+The code above has the same effect as the following:
 
 ```cpp
 std::array<int, 4> arr = {1, 2, 3, 4};
@@ -70,15 +70,15 @@ for (auto px = arr.begin(), ed = arr.end(); px != ed; ++px) {
 }
 ```
 
-### item-declaration 项声明
+### item-declaration: item declaration
 
-声明一个变量用于接受右侧容器中的元素，变量类型要与容器内子元素类型一致．可以用 `auto` 自动推导类型，复杂类型常用 `auto&` 防止拷贝开销．
+This declares a variable that receives the elements of the container on the right. The variable's type must match the type of the container's elements. You can use `auto` to deduce the type; for complex types, `auto&` is often used to avoid the cost of copying.
 
-### range-initializer 范围初始化器
+### range-initializer: range initializer
 
-范围初始化器可以是任何一种可迭代的对象（比如数组，或定义了 `begin` 和 `end` 成员函数的类对象）．如果放入表达式，表达式也只会计算一次．
+The range initializer can be any iterable object (such as an array, or an object of a class that defines `begin` and `end` member functions). If you put an expression here, the expression is evaluated only once.
 
-例子：
+Example:
 
 ```cpp
 int a[] = {1, 1, 4, 5, 1, 4};
@@ -86,16 +86,16 @@ std::vector<int> b{1, 1, 4, 5, 1, 4};
 std::map<std::string, int> c{{"114", 114}, {"514", 514}};
 for (int i : a) std::cout << i;
 for (auto i : b) std::cout << i;
-// 下方 i 的类型是 std::pair<const std::string, int>&
+// below, i has type std::pair<const std::string, int>&
 for (auto& i : c) std::cout << i.first << i.second;
 for (auto i : {1, 1, 4, 5, 1, 4}) std::cout << i;
 ```
 
-### 自定义类型支持范围 for
+### Supporting range-based for in your own types
 
-只需提供 `begin` 和 `end` 成员函数，返回类型需要支持比较、自增和解引用（`*` 运算符）．
+You only need to provide `begin` and `end` member functions. Their return type must support comparison, increment and dereference (the `*` operator).
 
-这里有一个例子：
+Here is an example:
 
 ```cpp
 #include <iostream>
@@ -117,9 +117,9 @@ int main() {
 }
 ```
 
-### 初始化语句（C++20）
+### Init-statement (C++20)
 
-在 C++20 中还可以使用初始化语句实现一些功能，例如循环计数器：
+In C++20 you can also use an init-statement for things like a loop counter:
 
 ```cpp
 #include <iostream>
@@ -133,9 +133,9 @@ int main() {
 }
 ```
 
-## 结构化绑定（C++17）
+## Structured bindings (C++17)
 
-结构化绑定（Structured binding）是 C++17 提供的一种语法糖，可以方便的提取子元素或子元素的引用，像这样：
+A structured binding is a piece of syntactic sugar in C++17 that makes it easy to extract sub-elements, or references to them, like this:
 
 ```cpp
 struct C {
@@ -144,32 +144,32 @@ struct C {
 
 int arr[]{4, 5, 6};
 
-auto [c1, c2] = C{};       // c1=1,c2=2; int 类型
-auto& [a1, a2, a3] = arr;  // a1=arr[0],a2=arr[1],a3=arr[2]; int& 类型
+auto [c1, c2] = C{};       // c1=1,c2=2; type int
+auto& [a1, a2, a3] = arr;  // a1=arr[0],a2=arr[1],a3=arr[2]; type int&
 ```
 
-注意以下几点：
+Keep the following in mind:
 
--   左侧声明的变量数和右侧对象的子元素数必须一致
--   类型声明需要使用 `auto`
--   可以使用 `&` 修饰获取引用
+-   The number of variables declared on the left must equal the number of sub-elements of the object on the right
+-   The type must be declared with `auto`
+-   You can add `&` to get references
 
-你可以在遍历 `map` 容器时这样写：
+You can write this when iterating over a `map` container:
 
 ```cpp
 std::map<std::string, int> m = {{"k1", 1}, {"k2", 2}};
 
-// 使用 "auto&" ，没有拷贝开销
+// using "auto&", no copy cost
 for (auto& [k, v] : m) {
-  // k 的类型是 const std::string& ，因为键自带 const 修饰
-  // v 的类型是 int&
+  // k has type const std::string&, since keys are already const
+  // v has type int&
   std::cout << k << ' ' << v << std::endl;
 }
 ```
 
-## std::tuple 元组
+## std::tuple
 
-[元组](https://zh.cppreference.com/w/cpp/utility/tuple) 定义于头文件 `<tuple>`，是 `std::pair` 的推广，可以存储多个不同类型的值．下面来看一个例子：
+A [tuple](https://zh.cppreference.com/w/cpp/utility/tuple) is defined in the header `<tuple>`. It generalizes `std::pair` and can store several values of different types. Here is an example:
 
 ```cpp
 #include <iostream>
@@ -183,14 +183,14 @@ int main() {
   std::tuple<int, int, std::string, std::vector<int>> tup =
       std::make_tuple(817, 114, "514", vec);
 
-  // 使用 get<> 获取子元素，尖括号内必须是整型常量表达式
+  // use get<> to get a sub-element; the value in the angle brackets must be an integral constant expression
   for (auto i : std::get<expr>(tup)) std::cout << i << " ";
-  // 首元素编号为 0，故我们 std::get<3> 得到了一个 std::vector<int>
+  // the first element is numbered 0, so std::get<3> gives us a std::vector<int>
   return 0;
 }
 ```
 
-在 C++17 之后可以使用结构化绑定提取值，像这样：
+Since C++17, you can use structured bindings to extract the values, like this:
 
 ```cpp
 std::vector<int> vec = {1, 9, 2, 6, 0};
@@ -202,14 +202,14 @@ std::cout << a << ' ' << b << c << std::endl;
 std::cout << d.size() << ' ' << d[2] << std::endl;
 ```
 
-### 成员函数
+### Member functions
 
-| 函数          | 作用                   |
-| ----------- | -------------------- |
-| `operator=` | 赋值一个 `tuple` 的内容给另一个 |
-| `swap`      | 交换两个 `tuple` 的内容     |
+| Function    | Purpose                                      |
+| ----------- | -------------------------------------------- |
+| `operator=` | Assigns the contents of one `tuple` to another |
+| `swap`      | Swaps the contents of two `tuple`s           |
 
-例子：
+Example:
 
 ```cpp
 constexpr std::tuple<int, int> tup = {1, 2};
@@ -218,17 +218,17 @@ tupB = tup;
 tupB.swap(tupA);
 ```
 
-### 非成员函数
+### Non-member functions
 
-| 函数             | 作用                           |
-| -------------- | ---------------------------- |
-| `make_tuple`   | 创建一个 `tuple` 对象，其类型根据各实参类型定义 |
-| `std::get`     | 元组式访问指定的元素                   |
-| `std::tie`     | 将元组中的值赋值到已有变量                |
-| `operator==` 等 | 按字典顺序比较 `tuple` 中的值          |
-| `std::swap`    | 特化的 `std::swap` 算法           |
+| Function            | Purpose                                                              |
+| ------------------- | -------------------------------------------------------------------- |
+| `make_tuple`        | Creates a `tuple` object whose type is determined by the argument types |
+| `std::get`          | Tuple-style access to a given element                                |
+| `std::tie`          | Assigns the values in a tuple to existing variables                  |
+| `operator==` etc.   | Compares the values in `tuple`s lexicographically                    |
+| `std::swap`         | Specialization of the `std::swap` algorithm                          |
 
-例子：
+Example:
 
 ```cpp
 std::tuple<int, int> tupA = {2, 3}, tupB;
@@ -240,39 +240,39 @@ std::tie(x, std::ignore) = tupB;
 std::cout << x << std::endl;
 ```
 
-`std::tie` 将元组元素赋值给已有变量，可以使用 `std::ignore` 跳过不需要的元素．结构化绑定直接声明新变量（支持值/引用绑定），必须接受所有元素．
+`std::tie` assigns tuple elements to existing variables, and you can use `std::ignore` to skip elements you don't need. A structured binding declares new variables directly (by value or by reference) and must take all the elements.
 
-## 函数对象
+## Function objects
 
-可以使用函数调用运算符 `operator()` 的对象，称为函数对象（FunctionObject）．
+An object that can be used with the function call operator `operator()` is called a function object (FunctionObject).
 
-它不是一种语言特性，而是一种 [概念或者要求](https://zh.cppreference.com/w/cpp/named_req/FunctionObject)，在标准库中广泛应用．
+It is not a language feature but a [concept, or requirement](https://zh.cppreference.com/w/cpp/named_req/FunctionObject), and it is used widely in the standard library.
 
-函数对象大致可以分成两类：
+Function objects fall roughly into two kinds:
 
-1.  函数指针
-2.  重载了 `operator()` 运算符的类对象
+1.  Function pointers
+2.  Objects of classes that overload `operator()`
 
-[lambda](./lambda.md) 就是典型的第二类函数对象，它将捕获的内容存放在成员变量中，并重载了函数调用运算符．
+A [lambda](./lambda.md) is a typical function object of the second kind. It stores what it captures in member variables and overloads the function call operator.
 
-## Lambda 表达式
+## Lambda expressions
 
-> 请参考 [Lambda 表达式](lambda.md) 页面．
+> See the [Lambda expressions](lambda.md) page.
 
 ## std::function
 
-???+ warning "请注意性能开销"
-    `std::function` 会引入一定的性能开销，经 [Benchmark](./lambda.md#lambda-中的递归) 测试，通常会造成 2 到 3 倍以上的性能损失．
+???+ warning "Watch out for the performance cost"
+    `std::function` adds some performance overhead. In [benchmarks](./lambda.md#lambda-中的递归), it usually makes code 2 to 3 times slower or worse.
     
-    因为它使用了类型擦除的技术，而这通常借由虚函数机制实现，调用虚函数会引入额外的 [开销](https://stackoverflow.com/questions/5057382/what-is-the-performance-overhead-of-stdfunction)．
+    This is because it uses type erasure, which is usually implemented with virtual functions, and calling a virtual function adds extra [overhead](https://stackoverflow.com/questions/5057382/what-is-the-performance-overhead-of-stdfunction).
     
-    请考虑使用 [**Lambda 表达式**](./lambda.md) 或者 [**函数对象**](#函数对象) 代替．
+    Consider using a [**lambda expression**](./lambda.md) or a [**function object**](#function-objects) instead.
 
-`std::function` 是通用函数封装器，定义于头文件 `<functional>`．
+`std::function` is a general-purpose function wrapper, defined in the header `<functional>`.
 
-`std::function` 的实例能存储、复制及调用任何 [**可调用**](https://zh.cppreference.com/w/cpp/named_req/Callable) 对象，这包括 [**Lambda 表达式**](./lambda.md)、成员函数指针或其他 [**函数对象**](#函数对象)．
+An instance of `std::function` can store, copy and call any [**callable**](https://zh.cppreference.com/w/cpp/named_req/Callable) object, including [**lambda expressions**](./lambda.md), pointers to member functions, and other [**function objects**](#function-objects).
 
-若 `std::function` 不含任何可调用对象（比如默认构造），调用时将抛出 [`std::bad_function_call`](https://zh.cppreference.com/w/cpp/utility/functional/bad_function_call) 异常．
+If a `std::function` holds no callable object (for example, when it is default-constructed), calling it throws a [`std::bad_function_call`](https://zh.cppreference.com/w/cpp/utility/functional/bad_function_call) exception.
 
 ```cpp
 #include <functional>
@@ -293,51 +293,51 @@ struct PrintNum {
 };
 
 int main() {
-  // 存储自由函数
+  // store a free function
   std::function<void(int)> f_display = print_num;
   f_display(-9);
 
-  // 存储 Lambda
+  // store a lambda
   std::function<void()> f_display_42 = []() { print_num(42); };
   f_display_42();
 
-  // 存储到成员函数的调用
+  // store a call to a member function
   std::function<void(const Foo&, int)> f_add_display = &Foo::print_add;
   const Foo foo(314159);
   f_add_display(foo, 1);
   f_add_display(314159, 1);
 
-  // 存储到数据成员访问器的调用
+  // store a call to a data member accessor
   std::function<int(Foo const&)> f_num = &Foo::num_;
   std::cout << "num_: " << f_num(foo) << '\n';
 
-  // 存储到函数对象的调用
+  // store a call to a function object
   std::function<void(int)> f_display_obj = PrintNum();
   f_display_obj(18);
 }
 ```
 
-## 可变参数函数模板
+## Variadic function templates
 
-在 C++11 之前，类模板和函数模板都只能接受固定数目的模板参数．C++11 允许 **任意个数、任意类型** 的模板参数．
+Before C++11, class templates and function templates could only take a fixed number of template parameters. C++11 allows template parameters of **any number and any type**.
 
-这里仅简要介绍可变参数 **函数** 模板．
+Here we only briefly introduce variadic **function** templates.
 
-下列代码声明的函数模板 `fun` 可以接受任意个数、任意类型的模板参数作为它的模板形参．
+The function template `fun` declared below can take any number of template arguments of any type as its template parameters.
 
 ```cpp
 template <typename... Clazz>
 void fun(Clazz... paras) {}
 ```
 
-`paras` 是一个函数参数包（function parameter pack），接受 0 个或多个函数实参．`Clazz` 是一个模板参数包（template parameter pack），接受 0 个或多个模板实参（非类型、类型或模板），以 `typename` 标记时只接受类型．
+`paras` is a function parameter pack, which accepts zero or more function arguments. `Clazz` is a template parameter pack, which accepts zero or more template arguments (non-types, types or templates); when marked with `typename`, it only accepts types.
 
-可以简单理解如下：
+You can think of it simply like this:
 
--   模板参数包通常是一些类型名（但也可以使用编译期常量或模板名）
--   函数参数包通常是一些变量名
+-   A template parameter pack is usually a list of type names (but it can also hold compile-time constants or template names)
+-   A function parameter pack is usually a list of variable names
 
-现在可以这么调用 `fun` 函数：
+Now you can call `fun` like this:
 
 ```cpp
 fun();
@@ -346,42 +346,42 @@ fun(1, 2, 3);
 fun(1, 0.0, "abc");
 ```
 
-### 参数包展开
+### Pack expansion
 
-#### 参数包展开语法
+#### Pack expansion syntax
 
-参数包展开非常简单，使用 `...` 即可，将自动使用 `,` 分隔．比如：
+Expanding a pack is very simple: just use `...`, and the elements are automatically separated by `,`. For example:
 
 ```cpp
 template <class A, class... C>
 void func(A arg1, C... arg2) {
-  // C 是 模板参数包
-  tuple<A, C...>();  // 展开成 tuple<int, int, double, bool>();
+  // C is a template parameter pack
+  tuple<A, C...>();  // expands to tuple<int, int, double, bool>();
 
-  // arg2 是函数参数包
-  func(arg2...);  // 展开成 func( 2, 1.1, true );
+  // arg2 is a function parameter pack
+  func(arg2...);  // expands to func( 2, 1.1, true );
 }
 
 func(1, 2, 1.1, true);
 ```
 
-参数包展开时还可以附带需要的运算，比如：
+You can also apply an operation while expanding a pack, for example:
 
 ```cpp
 template <class A, class... C>
 void func(A arg1, C... arg2) {
   func((arg2 + 1)...);
-  // 展开成 func( (2+1) , (1.1+1), (2.1f+1) );
+  // expands to func( (2+1) , (1.1+1), (2.1f+1) );
 }
 
 func(1, 2, 1.1, 2.1f);
 ```
 
-#### 终止函数
+#### Terminating function
 
-上面的函数无法运行，因为参数数量不断减少，最后变为空参并报错．
+The function above cannot work: the number of arguments keeps shrinking until there are none, and then there is an error.
 
-我们需要指定终止条件，可以提供一个普通函数，像这样：
+We need a stopping condition. We can provide an ordinary function, like this:
 
 ```cpp
 void func() {}
@@ -395,45 +395,45 @@ void func(A arg1, C... arg2) {
 func(1, 2, 1.1, 2.1f);
 ```
 
-这样，参数数量不为 0 时会调用模板，空参时会调用普通函数，就能正常运行了．
+Now, when there is at least one argument the template is called, and with no arguments the ordinary function is called, so it works.
 
-### 折叠表达式（C++17）
+### Fold expressions (C++17)
 
-C++17 提供了一种简便的语法处理 **函数参数包**，他的语法是这样的（必须用小括号包裹）：
+C++17 provides a convenient syntax for working with **function parameter packs**. Its syntax is as follows (it must be wrapped in parentheses):
 
-1.  `( pack op ... )`，会变成 `(E1 op (... op (EN-1 op EN)))`
-2.  `( ... op pack )`，会变成 `(((E1 op E2) op ...) op EN)`
-3.  `( pack op ... op init )`，会变成 `(E1 op (... op (EN−1 op (EN op I))))`
-4.  `( init op ... op pack )`，会变成 `((((I op E1) op E2) op ...) op EN)`
+1.  `( pack op ... )` becomes `(E1 op (... op (EN-1 op EN)))`
+2.  `( ... op pack )` becomes `(((E1 op E2) op ...) op EN)`
+3.  `( pack op ... op init )` becomes `(E1 op (... op (EN−1 op (EN op I))))`
+4.  `( init op ... op pack )` becomes `((((I op E1) op E2) op ...) op EN)`
 
-简单演示一下就好理解了：
+A short demo makes it easy to understand:
 
 ```cpp
 template <class... C>
 void func(C... args) {
   (std::cout << ... << args) << std::endl;
-  // 语法 4, 等价于 ↓
+  // form 4, equivalent to ↓
   // ( ( ( std::cout << 1 ) << 2.1 ) << true ) << std::endl;
-  // 输出: 12.11  注意true输出成了1，因为这里没有指定boolalpha
+  // output: 12.11  note that true is printed as 1, since boolalpha is not set here
 
   std::cout << (args && ...) << std::endl;
-  // 语法 1, 等价于 ↓
+  // form 1, equivalent to ↓
   // std::cout << ( 1 && ( 2.1 && true ) ) ) << std::endl;
-  // 输出: 1
+  // output: 1
 }
 
 func(1, 2.1, true);
 ```
 
-### 缩写函数模板（C++20）
+### Abbreviated function templates (C++20)
 
-C++20 起可以直接使用 `auto ...` 作为参数类型，实现函数模板的缩写：
+Since C++20 you can use `auto ...` directly as a parameter type, which gives a shorthand for function templates:
 
 ```cpp
 void func(auto... args) { (std::cout << ... << args) << std::endl; }
 ```
 
-注意它本质上仍然是函数模板，与下面的写法等价：
+Note that this is still a function template. It is equivalent to:
 
 ```cpp
 template <class... T>
@@ -442,39 +442,39 @@ void func(T... args) {
 }
 ```
 
-## 范围库（C++20）
+## Ranges library (C++20)
 
-> 范围库是对迭代器和泛型算法库的一个扩展，使得迭代器和算法可以通过组合变得更强大，并且减少错误．
+> The ranges library is an extension of the iterator and generic algorithm libraries. It makes iterators and algorithms more powerful by letting you compose them, and less error-prone.
 
-范围即可遍历的序列，包括数组、容器、视图等．
+A range is a sequence you can iterate over, including arrays, containers, views and so on.
 
-在需要对容器等范围进行复杂操作时，[范围库](https://zh.cppreference.com/w/cpp/ranges) 可以使得算法编写更加容易和清晰．
+When you need to do complex operations on ranges such as containers, the [ranges library](https://zh.cppreference.com/w/cpp/ranges) makes writing algorithms easier and clearer.
 
-### View 视图
+### Views
 
-视图是一种轻量对象，通过特定机制（如自定义迭代器）来实现一些算法，给范围提供了更多的遍历方式以满足需求．
+A view is a lightweight object that implements some algorithm through a particular mechanism (such as a custom iterator), giving a range more ways to be traversed.
 
-范围库中已实现了一些常用的视图，大致分为两种：
+The ranges library already implements some common views. They fall roughly into two kinds:
 
-1.  **范围工厂**，用于构造一些特殊的范围，使用这类工厂可以省去手动构造容器的步骤，降低开销，直接生成一个范围．
-2.  **范围适配器**，提供多种多样的遍历支持，既能像函数一样调用，也可以通过管道运算符 `|` 连接，实现链式调用．
+1.  **Range factories**, which build special ranges. Using a factory saves you from building a container by hand, lowers the cost, and produces a range directly.
+2.  **Range adaptors**, which provide many kinds of traversal. They can be called like functions, or joined with the pipe operator `|` to form a chain of calls.
 
-**范围适配器** 作为 [**范围适配器闭包对象**](https://zh.cppreference.com/w/cpp/named_req/RangeAdaptorClosureObject)，也属于 [**函数对象**](#函数对象)，它们重载了 `operator|`，使得它们能够像管道一样拼装起来．
+As [**range adaptor closure objects**](https://zh.cppreference.com/w/cpp/named_req/RangeAdaptorClosureObject), **range adaptors** are also [**function objects**](#function-objects). They overload `operator|` so they can be put together like a pipeline.
 
-??? note "管道运算符"
-    此处的 `|` 应该理解成管道运算符，而非按位或运算符，这个用法来自于 Linux 中的 [管道](https://zh.wikipedia.org/wiki/%E7%AE%A1%E9%81%93_%28Unix%29)．
+??? note "The pipe operator"
+    Here `|` should be read as the pipe operator, not the bitwise OR operator. This usage comes from the [pipe](https://zh.wikipedia.org/wiki/%E7%AE%A1%E9%81%93_%28Unix%29) in Linux.
 
-在复杂操作下，也能保持良好可读性，有以下特性：
+Even with complex operations, the code stays readable. It has the following property:
 
-若 A、B、C 为一些范围适配器闭包对象，R 为某个范围，其他字母为可能的有效参数，表达式
+If A, B and C are range adaptor closure objects, R is a range, and the other letters are possible valid arguments, then the expression
 
     R | A(a) | B(b) | C(c, d)
 
-等价于
+is equivalent to
 
     C(B(A(R, a), b), c, d)
 
-下面以 `ranges::take_view` 与 `ranges::iota_view` 为例：
+Below we use `ranges::take_view` and `ranges::iota_view` as an example:
 
 ```cpp
 #include <iostream>
@@ -488,17 +488,17 @@ int main() {
 }
 ```
 
-1.  范围工厂 `std::views::iota(0, 6)` 生成了从 0 到 5 的整数序列的范围
-2.  范围适配器 `std::views::filter(even)` 过滤前一个范围，生成了一个只剩下偶数的范围
-3.  两个操作使用管道运算符链接
+1.  The range factory `std::views::iota(0, 6)` produces a range of the integers from 0 to 5
+2.  The range adaptor `std::views::filter(even)` filters the previous range, producing a range of only the even numbers
+3.  The two operations are joined with the pipe operator
 
-上述代码不需要额外分配堆空间存储每步生成的范围，实际的生成和过滤运算发生在遍历操作中（更具体而言，内部的迭代器构造、自增和解引用），也就是零开销（Zero Overhead）．
+The code above does not need to allocate extra heap space to store the range produced at each step. The actual generating and filtering happens during iteration (more precisely, in the construction, increment and dereference of the internal iterators). In other words, it has zero overhead.
 
-同时，外部输入的范围生命周期，等同于 **范围适配器** 的内部元素的生命周期．如果外部范围（比如容器、范围工厂）已经销毁，那么再对这些的视图遍历，其效果与解引用悬垂指针一致，属于未定义行为．
+At the same time, the lifetime of the outside range passed in is the lifetime of the elements inside the **range adaptor**. If the outside range (such as a container or a range factory) has already been destroyed, iterating over views of it has the same effect as dereferencing a dangling pointer, which is undefined behavior.
 
-为了避免上述情况，应该严格要求适配器的生命周期位于其使用的任何范围的生命周期内．
+To avoid this, make sure an adaptor's lifetime always lies within the lifetime of every range it uses.
 
-???+ note "范围被销毁时，视图内元素均悬垂"
+???+ note "When the range is destroyed, all elements in the view dangle"
     ```cpp
     #include <iostream>
     #include <ranges>
@@ -518,11 +518,11 @@ int main() {
     }
     ```
 
-### Constrained Algorithm 受约束的算法
+### Constrained algorithms
 
-> C++20 在命名空间 std::ranges 中提供大多数算法的受约束版本，可以用迭代器 - 哨位对或单个 range 作为实参来指定范围，并且支持投影和指向成员指针可调用对象．另外还更改了大多数算法的返回类型，以返回算法执行过程中计算的所有潜在有用信息．
+> C++20 provides constrained versions of most algorithms in the namespace std::ranges. You can specify a range with either an iterator-sentinel pair or a single range argument, and projections and pointer-to-member callables are supported. The return types of most algorithms were also changed to return all potentially useful information computed while the algorithm runs.
 
-这些算法可以理解成旧标准库算法的改良版本，均为函数对象，提供更友好的重载和入参类型检查（基于 [`concept`](https://zh.cppreference.com/w/cpp/language/constraints)），让我们先以 `std::sort` 和 `ranges::sort` 的对比作为例子
+You can think of these algorithms as improved versions of the old standard library algorithms. They are all function objects and provide friendlier overloads and argument type checking (based on [`concept`](https://zh.cppreference.com/w/cpp/language/constraints)). Let's start by comparing `std::sort` and `ranges::sort`:
 
 ```cpp
 #include <algorithm>
@@ -547,9 +547,9 @@ int main() {
 }
 ```
 
-`ranges::sort` 和 `sort` 的算法实现相同，但提供了基于范围的重载，使得传参更为简洁．其他的 `std` 命名空间下的算法，多数也有对应的范围重载版本位于 `ranges` 命名空间中．
+`ranges::sort` uses the same algorithm as `sort`, but it offers a range-based overload that makes passing arguments simpler. Most other algorithms in the `std` namespace also have range overloads in the `ranges` namespace.
 
-使用这些范围入参，再结合使用上节视图，能允许我们在进行复杂操作的同时，保持代码可读性，让我们看一个例子：
+Using these range arguments together with the views from the previous section lets us do complex operations while keeping the code readable. Let's look at an example:
 
 ```cpp
 #include <algorithm>
@@ -560,22 +560,22 @@ int main() {
 using namespace std;
 
 int main() {
-  const auto& inputs = views::iota(0u, 9u);  // 生产 0 到 8 的整数序列
-  const auto& chunks = inputs | views::chunk(3);  // 将序列分块，每块 3 个元素
+  const auto& inputs = views::iota(0u, 9u);  // produce the integers 0 to 8
+  const auto& chunks = inputs | views::chunk(3);  // split the sequence into chunks of 3 elements
   const auto& cartesian_product =
-      views::cartesian_product(chunks, chunks);  // 计算对块自身进行笛卡尔积
+      views::cartesian_product(chunks, chunks);  // take the Cartesian product of the chunks with themselves
 
   for (const auto [l_chunk, r_chunk] : cartesian_product)
-    // 计算笛卡尔积下的两个块整数的和
+    // compute the sum of the integers in the two chunks of each pair in the product
     cout << ranges::fold_left(l_chunk, 0u, plus{}) +
                 ranges::fold_left(r_chunk, 0u, plus{})
          << ' ';
 }
 ```
 
-???+ note "输出："
+???+ note "Output:"
     6 15 24 15 24 33 24 33 42
 
-## 参考
+## References
 
-1.  [C++ 参考手册](https://zh.cppreference.com/)
+1.  [C++ reference](https://zh.cppreference.com/)
