@@ -1,43 +1,43 @@
 author: StudyingFather, Backl1ght, countercurrent-time, Ir1d, greyqz, MicDZ, ouuan, YOYO-UIAT
 
-## 引入
+## Introduction
 
-有些题目在区间转移时，可能会出现增加或者删除无法实现的问题．在只有增加不可实现或者只有删除不可实现的时候，就可以使用回滚莫队在 $O(n \sqrt m)$ 的时间内解决问题．回滚莫队的核心思想就是：既然只能实现一个操作，那么就只使用一个操作，剩下的交给回滚解决．
+In some problems, when moving between intervals, either adding or deleting an element may be hard to implement. When only adding is hard, or only deleting is hard, we can use rollback Mo's algorithm to solve the problem in $O(n \sqrt m)$ time. The core idea of rollback Mo's algorithm is: since we can only implement one of the operations, we use only that operation and let rollback handle the rest.
 
-回滚莫队分为只使用增加操作的回滚莫队和只使用删除操作的回滚莫队．以下仅介绍只使用增加操作的回滚莫队，只使用删除操作的回滚莫队和只使用增加操作的回滚莫队只在算法实现上有一点区别，故不再赘述．
+There are two kinds of rollback Mo's algorithm: one that uses only additions and one that uses only deletions. Below we only describe the version that uses only additions. The deletion-only version differs from it only slightly in implementation, so we do not cover it separately.
 
-## 例题 [JOISC 2014 Day1 历史研究](https://loj.ac/problem/2874)
+## Example problem [JOISC 2014 Day1 Historical Research](https://loj.ac/problem/2874)
 
-给你一个长度为 $n$ 的数组 $A$ 和 $m$ 个询问 $(1 \leq n, m \leq 10^5)$，每次询问一个区间 $[L, R]$ 内重要度最大的数字，要求 **输出其重要度**．一个数字 $i$ 重要度的定义为 $i$ 乘上 $i$ 在区间内出现的次数．
+You are given an array $A$ of length $n$ and $m$ queries $(1 \leq n, m \leq 10^5)$. Each query asks for the number with the largest importance in an interval $[L, R]$, and you must **output that importance**. The importance of a number $i$ is defined as $i$ times the number of times $i$ appears in the interval.
 
-在这个问题中，在增加的过程中更新答案是很好实现的，但是在删除的过程中更新答案是不好实现的．因为如果增加会影响答案，那么新答案必定是刚刚增加的数字的重要度，而如果删除过后区间重要度最大的数字改变，我们很难确定新的重要度最大的数字是哪一个．所以，普通的莫队很难解决这个问题．
+In this problem, updating the answer while adding elements is easy, but updating it while deleting elements is hard. If an addition changes the answer, the new answer must be the importance of the number just added. But if a deletion changes which number has the largest importance in the interval, it is hard to figure out which number is the new maximum. So ordinary Mo's algorithm has trouble with this problem.
 
-## 过程
+## How it works
 
--   对原序列进行分块，对询问按以左端点所属块编号升序为第一关键字，右端点升序为第二关键字的方式排序．
--   按顺序处理询问：
-    -   如果询问左端点所属块 $B$ 和上一个询问左端点所属块的不同，那么将莫队区间的左端点初始化为 $B$ 的右端点加 $1$, 将莫队区间的右端点初始化为 $B$ 的右端点；
-    -   如果询问的左右端点所属的块相同，那么直接扫描区间回答询问；
-    -   如果询问的左右端点所属的块不同：
-        -   如果询问的右端点大于莫队区间的右端点，那么不断扩展右端点直至莫队区间的右端点等于询问的右端点；
-        -   不断扩展莫队区间的左端点直至莫队区间的左端点等于询问的左端点；
-        -   回答询问；
-        -   撤销莫队区间左端点的改动，使莫队区间的左端点回滚到 $B$ 的右端点加 $1$．
+-   Split the original sequence into blocks. Sort the queries using the block index of the left endpoint (ascending) as the first key and the right endpoint (ascending) as the second key.
+-   Process the queries in order:
+    -   If the block $B$ containing the query's left endpoint differs from the block containing the previous query's left endpoint, set the left end of the Mo's interval to the right end of $B$ plus $1$, and set the right end of the Mo's interval to the right end of $B$.
+    -   If the query's left and right endpoints are in the same block, scan the interval directly to answer the query.
+    -   If the query's left and right endpoints are in different blocks:
+        -   If the query's right endpoint is greater than the right end of the Mo's interval, keep extending the right end until it equals the query's right endpoint.
+        -   Keep extending the left end of the Mo's interval until it equals the query's left endpoint.
+        -   Answer the query.
+        -   Undo the changes made by moving the left end, so that the left end of the Mo's interval rolls back to the right end of $B$ plus $1$.
 
-## 复杂度证明
+## Complexity proof
 
-假设回滚莫队的分块大小是 $b$：
+Suppose the block size of rollback Mo's algorithm is $b$:
 
--   对于左、右端点在同一个块内的询问，可以在 $O(b)$ 时间内计算；
--   对于其他询问，考虑左端点在相同块内的询问，它们的右端点单调递增，移动右端点的时间复杂度是 $O(n)$，而左端点单次询问的移动不超过 $b$，因为有 $\frac{n}{b}$ 个块，所以总复杂度是 $O(mb+\frac{n^2}{b})$，取 $b=\frac{n}{\sqrt{m}}$ 最优，时间复杂度为 $O(n\sqrt{m})$．
+-   Queries whose left and right endpoints lie in the same block can each be answered in $O(b)$ time.
+-   For the other queries, consider those whose left endpoints are in the same block. Their right endpoints increase monotonically, so moving the right end costs $O(n)$ in total, while the left end moves at most $b$ times per query. Since there are $\frac{n}{b}$ blocks, the total complexity is $O(mb+\frac{n^2}{b})$. Choosing $b=\frac{n}{\sqrt{m}}$ is optimal, giving a time complexity of $O(n\sqrt{m})$.
 
-## 实现
+## Implementation
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/misc/code/rollback-mo-algo/rollback-mo-algo_1.cpp"
     ```
 
-## 参考资料
+## References
 
--   [回滚莫队及其简单运用 | Parsnip's Blog](https://www.cnblogs.com/Parsnip/p/10969989.html)
+-   [Rollback Mo's Algorithm and Its Simple Applications | Parsnip's Blog](https://www.cnblogs.com/Parsnip/p/10969989.html)

@@ -5,25 +5,25 @@ using namespace std;
 // --8<-- [start:core]
 pair<bool, vector<int>> findCycle(
     vector<int>
-        nxt)  // nxt[i]表示i在单向链表中指向的节点（0-indexed），-1表示没有指向任何节点
+        nxt)  // nxt[i] is the node that i points to in the singly linked list (0-indexed), -1 means it points to nothing
 {
   int fast = 0, slow = 0;
-  do  // 先判断有没有环
+  do  // first check whether there is a cycle
   {
     if (nxt[fast] == -1 || nxt[nxt[fast]] == -1) {
-      return make_pair(false, vector<int>());  // 没有环
+      return make_pair(false, vector<int>());  // no cycle
     }
     fast = nxt[nxt[fast]];
     slow = nxt[slow];
   } while (fast != slow);
   slow = 0;
-  while (slow != fast)  // 再找入环位置
+  while (slow != fast)  // then find where the cycle starts
   {
     slow = nxt[slow];
     fast = nxt[fast];
   }
   vector<int> cycle;
-  do  // 最后找出整个环
+  do  // finally collect the whole cycle
   {
     cycle.push_back(slow);
     slow = nxt[slow];

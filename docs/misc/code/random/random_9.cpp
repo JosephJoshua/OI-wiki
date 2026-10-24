@@ -20,18 +20,18 @@ struct myrand {
     this->k = k;
     cur = 0;
     for (int i = 0; i < l; i++) {
-      vec.push_back(rng());  // 先用其他方法生成随机序列中的前几个元素
+      vec.push_back(rng());  // first generate the first few elements of the sequence some other way
     }
   }
 
   unsigned int next() {
     vec[cur] = vec[(cur - j + l) % l] * vec[(cur - k + l) % l];
-    // 这里用 unsigned 类型是为了实现自动对 2^32 取模
+    // unsigned is used here so values are automatically taken modulo 2^32
     return vec[cur++];
   }
 };
 
-// 最后一个可以换成其它随机数生成器，自行设置种子
+// the last one can be replaced by another random number generator, with your own seed
 myrand rnd(11, 4, 7, mt19937(SEED));
 
 int main() {

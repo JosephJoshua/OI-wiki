@@ -11,11 +11,11 @@ struct myrand {
     this->x = 0;
   }
 
-  // 生成随机序列的下一个随机数
+  // produce the next number of the random sequence
   int next() { return x = ((long long)A * x + C) % M; }
 };
 
-myrand rnd(3, 5, 97);  // 初始化一个随机数生成器
+myrand rnd(3, 5, 97);  // initialize a random number generator
 
 int main() {
   int x = rnd.next();
