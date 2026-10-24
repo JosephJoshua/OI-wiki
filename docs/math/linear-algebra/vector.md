@@ -1,62 +1,62 @@
-在本文之前，特别说明一下翻译的相关问题．由于历史原因，数学学科和物理学科关于「vector」一词的翻译不同．
+Before we start, a quick note on terminology. For historical reasons, Chinese mathematics and Chinese physics translate the word "vector" differently.
 
-在物理学科，一般翻译成「矢量」，并且与「标量」一词相对．在数学学科，一般翻译成「向量」．这种翻译的差别还有「本征」与「特征」、「幺正」与「酉」，等等．
+In physics it is usually rendered as *shiliang* (literally "arrow quantity"), as the counterpart of *biaoliang* ("scalar"). In mathematics it is usually rendered as *xiangliang* ("directed quantity"). Similar differences exist for other pairs, such as the two Chinese renderings of "eigen-" and of "unitary".
 
-在 **OI Wiki**，主要面向计算机等工程类相关学科，与数学学科关系更近一些，因此采用「向量」这个词汇．
+**OI Wiki** is mainly aimed at computer science and other engineering fields, which are closer to mathematics, so the original Chinese text uses the mathematical term *xiangliang*. In English, both are simply "vector".
 
-## 定义及相关概念
+## Definitions and related concepts
 
-**向量**：既有大小又有方向的量称为向量．数学上研究的向量为 **自由向量**，即只要不改变它的大小和方向，起点和终点可以任意平行移动的向量．记作 $\vec a$ 或 $\boldsymbol{a}$．
+**Vector**: a quantity that has both a magnitude and a direction. The vectors studied in mathematics are **free vectors**: as long as the magnitude and direction stay the same, the vector can be moved parallel to itself, so its start and end points can be anywhere. A vector is written $\vec a$ or $\boldsymbol{a}$.
 
-**有向线段**：带有方向的线段称为有向线段．有向线段有三要素：**起点，方向，长度**，知道了三要素，终点就唯一确定．一般使用有向线段表示向量．
+**Directed line segment**: a line segment with a direction. A directed line segment has three elements: **start point, direction, length**. Once these three are known, the end point is uniquely determined. Vectors are usually represented by directed line segments.
 
-**向量的模**：有向线段 $\overrightarrow{AB}$ 的长度称为向量的模，即为这个向量的大小．记为：$|\overrightarrow{AB}|$ 或 $|\boldsymbol{a}|$．
+**Magnitude (norm) of a vector**: the length of the directed line segment $\overrightarrow{AB}$ is called the magnitude of the vector, that is, its size. It is written $|\overrightarrow{AB}|$ or $|\boldsymbol{a}|$.
 
-**零向量**：模为 $0$ 的向量．零向量的方向任意．记为：$\vec 0$ 或 $\boldsymbol{0}$．
+**Zero vector**: the vector with magnitude $0$. Its direction is arbitrary. It is written $\vec 0$ or $\boldsymbol{0}$.
 
-**单位向量**：模为 $1$ 的向量称为该方向上的单位向量．一般记为 $\vec e$ 或 $\boldsymbol{e}$．
+**Unit vector**: a vector with magnitude $1$ is called the unit vector in its direction. It is usually written $\vec e$ or $\boldsymbol{e}$.
 
-**平行向量**：方向相同或相反的两个 **非零** 向量．记作：$\boldsymbol a\parallel \boldsymbol b$．对于多个互相平行的向量，可以任作一条直线与这些向量平行，那么任一组平行向量都可以平移到同一直线上，所以平行向量又叫 **共线向量**．
+**Parallel vectors**: two **nonzero** vectors with the same or opposite directions. Written $\boldsymbol a\parallel \boldsymbol b$. For several mutually parallel vectors, we can draw any line parallel to them, and every one of them can be moved onto that same line. That is why parallel vectors are also called **collinear vectors**.
 
-**相等向量**：模相等且方向相同的向量．
+**Equal vectors**: vectors with equal magnitudes and the same direction.
 
-**相反向量**：模相等且方向相反的向量．
+**Opposite vectors**: vectors with equal magnitudes and opposite directions.
 
-**向量的夹角**：已知两个非零向量 $\boldsymbol a,\boldsymbol b$，作 $\overrightarrow{OA}=\boldsymbol a,\overrightarrow{OB}=\boldsymbol b$，那么 $\theta=\angle AOB$ 就是向量 $\boldsymbol a$ 与向量 $\boldsymbol b$ 的夹角．记作：$\langle \boldsymbol a,\boldsymbol b\rangle$．显然当 $\theta=0$ 时两向量同向，$\theta=\pi$ 时两向量反向，$\theta=\frac{\pi}{2}$ 时两向量垂直，记作 $\boldsymbol a\perp \boldsymbol b$，并且规定 $\theta \in [0,\pi]$．
+**Angle between vectors**: given two nonzero vectors $\boldsymbol a,\boldsymbol b$, draw $\overrightarrow{OA}=\boldsymbol a,\overrightarrow{OB}=\boldsymbol b$. Then $\theta=\angle AOB$ is the angle between $\boldsymbol a$ and $\boldsymbol b$, written $\langle \boldsymbol a,\boldsymbol b\rangle$. Clearly, when $\theta=0$ the two vectors point the same way; when $\theta=\pi$ they point in opposite directions; when $\theta=\frac{\pi}{2}$ they are perpendicular, written $\boldsymbol a\perp \boldsymbol b$. By convention, $\theta \in [0,\pi]$.
 
-注意到平面向量具有方向性，两个向量不能比较大小（但可以比较两向量的模长）．但是两个向量可以相等．
+Note that plane vectors have direction, so two vectors cannot be compared by size (though their magnitudes can be compared). Two vectors can, however, be equal.
 
-## 向量的线性运算
+## Linear operations on vectors
 
-### 向量的加减法
+### Vector addition and subtraction
 
-在定义了一种量之后，就希望让它具有运算．向量的运算可以类比数的运算，从物理学的角度出发也可以研究向量的运算．
+Once we have defined a new kind of quantity, we want to be able to compute with it. Vector operations can be modeled on operations on numbers, and they can also be studied from a physics point of view.
 
-类比物理学中的位移概念，假如一个人从 $A$ 经 $B$ 走到 $C$，那么他经过的位移为 $\overrightarrow{AB}+\overrightarrow{BC}$，这其实等价于这个人直接从 $A$ 走到 $C$，即 $\overrightarrow{AB}+\overrightarrow{BC}=\overrightarrow{AC}$．
+Think of displacement in physics. If a person walks from $A$ through $B$ to $C$, the total displacement is $\overrightarrow{AB}+\overrightarrow{BC}$. This is the same as walking directly from $A$ to $C$, so $\overrightarrow{AB}+\overrightarrow{BC}=\overrightarrow{AC}$.
 
-注意到力的合成法则——平行四边形法则，同样也可以看做一些向量相加．
+The rule for combining forces, the parallelogram rule, can also be seen as adding vectors.
 
-整理一下向量的加法法则：
+To sum up, the rules for vector addition are:
 
-1.  **向量加法的三角形法则**：若要求和的向量首尾顺次相连，那么这些向量的和为第一个向量的起点指向最后一个向量的终点；
-2.  **向量加法的平行四边形法则**：若要求和的两个向量 **共起点**，那么它们的和向量为以这两个向量为邻边的平行四边形的对角线，起点为两个向量共有的起点，方向沿平行四边形对角线方向．
+1.  **Triangle rule of vector addition**: if the vectors to be added are placed head to tail in order, their sum is the vector from the start of the first vector to the end of the last one;
+2.  **Parallelogram rule of vector addition**: if the two vectors to be added **share a start point**, their sum is the diagonal of the parallelogram with these two vectors as adjacent sides. It starts at the shared start point and points along the diagonal.
 
-这样，向量的加法就具有了几何意义．并且可以验证，向量的加法满足 **交换律与结合律**．
+This gives vector addition a geometric meaning. One can also check that vector addition is **commutative and associative**.
 
-因为实数的减法可以写成加上相反数的形式，考虑在向量做减法时也这么写．即：$\boldsymbol a-\boldsymbol b=\boldsymbol a+(-\boldsymbol b)$．
+Since subtracting a real number can be written as adding its negative, we do the same for vectors: $\boldsymbol a-\boldsymbol b=\boldsymbol a+(-\boldsymbol b)$.
 
-这样，考虑共起点的向量，按照平行四边形法则做出它们的差，经过平移后可以发现 **「共起点向量的差向量」是由「减向量」指向「被减向量」的有向线段**．这也是向量减法的几何意义．
+Now take two vectors with a common start point and build their difference with the parallelogram rule. After moving it into place, we see that **"the difference of two vectors with a common start point" is the directed segment pointing from the "subtrahend" to the "minuend"**. This is the geometric meaning of vector subtraction.
 
-有时候有两点 $A,B$，想知道 $\overrightarrow{AB}$，可以利用减法运算 $\overrightarrow{AB}=\overrightarrow{OB}-\overrightarrow{OA}$ 获得．
+Sometimes we have two points $A,B$ and want $\overrightarrow{AB}$. We can get it by subtraction: $\overrightarrow{AB}=\overrightarrow{OB}-\overrightarrow{OA}$.
 
-### 向量的数乘
+### Scalar multiplication
 
-规定「实数 $\lambda$ 与向量 $\boldsymbol a$ 的积」为一个向量，这种运算就是向量的 **数乘运算**，记作 $\lambda \boldsymbol a$，它的长度与方向规定如下：
+We define "the product of a real number $\lambda$ and a vector $\boldsymbol a$" to be a vector. This operation is called **scalar multiplication** and is written $\lambda \boldsymbol a$. Its length and direction are defined as follows:
 
-1.  $|\lambda \boldsymbol a|=|\lambda||\boldsymbol a|$；
-2.  当 $\lambda >0$ 时，$\lambda\boldsymbol a$ 与 $\boldsymbol a$ 同向，当 $\lambda =0$ 时，$\lambda \boldsymbol a=\boldsymbol 0$，当 $\lambda<0$ 时，$\lambda \boldsymbol a$ 与 $\boldsymbol a$ 方向相反．
+1.  $|\lambda \boldsymbol a|=|\lambda||\boldsymbol a|$;
+2.  When $\lambda >0$, $\lambda\boldsymbol a$ points the same way as $\boldsymbol a$; when $\lambda =0$, $\lambda \boldsymbol a=\boldsymbol 0$; when $\lambda<0$, $\lambda \boldsymbol a$ points opposite to $\boldsymbol a$.
 
-根据数乘的定义，可以验证有如下运算律：
+From the definition of scalar multiplication, one can check the following laws:
 
 $$
 \begin{aligned}
@@ -66,7 +66,7 @@ $$
 \end{aligned}
 $$
 
-特别地：
+In particular:
 
 $$
 \begin{gathered}
@@ -75,43 +75,43 @@ $$
 \end{gathered}
 $$
 
-### 判定两向量共线
+### Testing whether two vectors are collinear
 
-两个 **非零** 向量 $\boldsymbol a$ 与 $\boldsymbol b$ 共线 $\iff$ 有唯一实数 $\lambda$，使得 $\boldsymbol b=\lambda \boldsymbol a$．
+Two **nonzero** vectors $\boldsymbol a$ and $\boldsymbol b$ are collinear $\iff$ there is a unique real number $\lambda$ such that $\boldsymbol b=\lambda \boldsymbol a$.
 
-证明：由数乘的定义可知，对于 **非零** 向量 $\boldsymbol a$，如果存在实数 $\lambda$，使得 $\boldsymbol b=\lambda \boldsymbol a$，那么 $\boldsymbol a \parallel \boldsymbol b$．
+Proof: by the definition of scalar multiplication, for a **nonzero** vector $\boldsymbol a$, if some real $\lambda$ satisfies $\boldsymbol b=\lambda \boldsymbol a$, then $\boldsymbol a \parallel \boldsymbol b$.
 
-反过来，如果 $\boldsymbol a\parallel \boldsymbol b$，$\boldsymbol a \not = \boldsymbol 0$，且 $|\boldsymbol b|=\mu |\boldsymbol a|$，那么当 $\boldsymbol a$ 与 $\boldsymbol b$ 同向时，$\boldsymbol b=\mu \boldsymbol a$，反向时 $\boldsymbol b=-\mu \boldsymbol a$．
+Conversely, if $\boldsymbol a\parallel \boldsymbol b$, $\boldsymbol a \not = \boldsymbol 0$, and $|\boldsymbol b|=\mu |\boldsymbol a|$, then $\boldsymbol b=\mu \boldsymbol a$ when $\boldsymbol a$ and $\boldsymbol b$ point the same way, and $\boldsymbol b=-\mu \boldsymbol a$ when they point in opposite directions.
 
-最后，向量的加，减，数乘统称为向量的线性运算．
+Finally, vector addition, subtraction and scalar multiplication are together called the linear operations on vectors.
 
-## 平面向量的基本定理及坐标表示
+## Fundamental theorem of plane vectors and coordinates
 
-### 平面向量基本定理
+### Fundamental theorem of plane vectors
 
-定理内容：如果两个向量 $\boldsymbol{e_1},\boldsymbol{e_2}$ 不共线，那么存在唯一实数对 $(x,y)$，使得与 $\boldsymbol{e_1},\boldsymbol{e_2}$ 共面的任意向量 $\boldsymbol p$ 满足 $\mathbf p=x\boldsymbol{e_1}+y\boldsymbol{e_2}$．
+Statement: if two vectors $\boldsymbol{e_1},\boldsymbol{e_2}$ are not collinear, then for every vector $\boldsymbol p$ in the same plane as $\boldsymbol{e_1},\boldsymbol{e_2}$ there is a unique pair of real numbers $(x,y)$ such that $\mathbf p=x\boldsymbol{e_1}+y\boldsymbol{e_2}$.
 
-平面向量那么多，怎样用尽可能少的量表示出所有平面向量？
+There are so many plane vectors. How can we describe all of them using as few quantities as possible?
 
-只用一个向量表示出所有向量显然是不可能的，最多只能表示出某条直线上的向量．
+Clearly one vector is not enough to describe every vector; at most it describes the vectors on one line.
 
-再加入一个向量，用两个 **不共线** 向量表示（两个共线向量在此可以看成同一个向量），这样可以把任意一个平面向量分解到这两个向量的方向上了．
+Add a second vector, so we use two **non-collinear** vectors (two collinear vectors would act like a single one here). Now any plane vector can be decomposed along the directions of these two vectors.
 
-在同一平面内的两个不共线的向量称为 **基底**．如果基底相互垂直，那么在分解的时候就是对向量 **正交分解**．
+Two non-collinear vectors in the same plane are called a **basis**. If the basis vectors are perpendicular to each other, the decomposition is called an **orthogonal decomposition**.
 
-### 平面向量的坐标表示
+### Coordinates of plane vectors
 
-如果取与横轴与纵轴方向相同的单位向量 $i,j$ 作为一组基底，根据平面向量基本定理，平面上的所有向量与有序实数对 $(x,y)$ 一一对应．
+If we take the unit vectors $i,j$ along the horizontal and vertical axes as a basis, then by the fundamental theorem of plane vectors, the plane vectors are in one-to-one correspondence with ordered pairs of real numbers $(x,y)$.
 
-而有序实数对 $(x,y)$ 与平面直角坐标系上的点一一对应，于是作 $\overrightarrow{OP}=\boldsymbol p$，那么终点 $P(x,y)$ 也是唯一确定的．由于研究的对象是自由向量，可以自由平移起点，这样，在平面直角坐标系里，每一个向量都可以用有序实数对唯一表示．
+Ordered pairs $(x,y)$ are also in one-to-one correspondence with points in the Cartesian plane. So if we draw $\overrightarrow{OP}=\boldsymbol p$, the end point $P(x,y)$ is uniquely determined. Since we study free vectors, whose start point can be moved freely, every vector in the Cartesian plane can be uniquely represented by an ordered pair of real numbers.
 
-## 平面向量的坐标运算
+## Coordinate operations on plane vectors
 
-### 平面向量线性运算
+### Linear operations on plane vectors
 
-由平面向量的线性运算可以推导其坐标运算，主要方法是将坐标全部化为用基底表示，然后利用运算律进行合并，之后表示出运算结果的坐标形式．
+The coordinate formulas follow from the linear operations: write everything in terms of the basis, combine terms using the operation laws, and then read off the coordinates of the result.
 
-若两向量 $\boldsymbol a=(m,n)$，$\boldsymbol b=(p,q)$，则：
+If $\boldsymbol a=(m,n)$ and $\boldsymbol b=(p,q)$, then:
 
 $$
 \begin{aligned}
@@ -121,100 +121,100 @@ k\boldsymbol a&=(km,kn)
 \end{aligned}
 $$
 
-### 求一个向量的坐标表示
+### Finding the coordinates of a vector
 
-已知两点 $A(a,b),B(c,d)$，易证 $\overrightarrow{AB}=(c-a,d-b)$．
+Given two points $A(a,b),B(c,d)$, it is easy to show that $\overrightarrow{AB}=(c-a,d-b)$.
 
-### 平移一点
+### Translating a point
 
-有时需要将一个点 $P$ 沿一定方向平移某单位长度，这样把要平移的方向和距离组合成一个向量，利用向量加法的三角形法则，将 $\overrightarrow{OP}$ 加上这个向量，得到的向量终点即为平移后的点．
+Sometimes we need to move a point $P$ some distance in some direction. Combine the direction and distance into one vector. By the triangle rule of vector addition, add this vector to $\overrightarrow{OP}$; the end point of the result is the moved point.
 
-### 三点共线的判定
+### Testing whether three points are collinear
 
-若 $A,B,C$ 三点共线，则 $\overrightarrow{OB}=\lambda \overrightarrow{OA}+(1-\lambda)\overrightarrow{OC}$．
+If the three points $A,B,C$ are collinear, then $\overrightarrow{OB}=\lambda \overrightarrow{OA}+(1-\lambda)\overrightarrow{OC}$.
 
-### 三点共线判定的拓展
+### An extension of the collinearity test
 
-在三角形 $ABC$ 中，若 $D$ 为 $BC$ 的 $n$ 等分点（$n\ BD=k\ DC$），则有：$\overrightarrow{AD}=\frac{n}{k+n}\overrightarrow{AB}+\frac{k}{k+n}\overrightarrow{AC}$
+In triangle $ABC$, if $D$ is a point dividing $BC$ in a given ratio ($n\ BD=k\ DC$), then $\overrightarrow{AD}=\frac{n}{k+n}\overrightarrow{AB}+\frac{k}{k+n}\overrightarrow{AC}$
 
-## 在三维空间中的拓展（立体几何/空间向量）
+## Extension to three dimensions (solid geometry / space vectors)
 
-在空间中，以上部分所述的所有内容均成立．更有：
+In space, everything above still holds. In addition:
 
-### 空间向量基本定理
+### Fundamental theorem of space vectors
 
-定理内容：如果三个向量 $\boldsymbol{e_1},\boldsymbol{e_2},\boldsymbol{e_3}$ 不共面，那么存在唯一实数对 $(x,y,z)$，使得空间中任意向量 $\boldsymbol p$ 满足 $\mathbf p=x\boldsymbol{e_1}+y\boldsymbol{e_2}+z\boldsymbol{e_3}$．
-根据空间向量基本定理，我们同样可以使用三个相互垂直的基底 $\boldsymbol{e_1},\boldsymbol{e_2},\boldsymbol{e_3}$ 作为正交基底，建立 **空间直角坐标系** 并用一个三元组 $(x,y,z)$ 作为坐标表示空间向量．
+Statement: if three vectors $\boldsymbol{e_1},\boldsymbol{e_2},\boldsymbol{e_3}$ are not coplanar, then for every vector $\boldsymbol p$ in space there is a unique triple of real numbers $(x,y,z)$ such that $\mathbf p=x\boldsymbol{e_1}+y\boldsymbol{e_2}+z\boldsymbol{e_3}$.
+By this theorem, we can likewise take three mutually perpendicular vectors $\boldsymbol{e_1},\boldsymbol{e_2},\boldsymbol{e_3}$ as an orthogonal basis, set up a **three-dimensional Cartesian coordinate system**, and represent space vectors by triples $(x,y,z)$.
 
-### 共面向量基本定理
+### Fundamental theorem of coplanar vectors
 
-如果存在两个不共线的向量 $\boldsymbol{x},\boldsymbol{y}$, 则向量 $\boldsymbol{p}$ 与 $\boldsymbol{x},\boldsymbol{y}$ 共面的充要条件是存在唯一实数对 $(a,b)$ 使得 $\boldsymbol{p}=a\boldsymbol{x}+b\boldsymbol{y}$．
+If $\boldsymbol{x},\boldsymbol{y}$ are two non-collinear vectors, then a vector $\boldsymbol{p}$ is coplanar with $\boldsymbol{x},\boldsymbol{y}$ if and only if there is a unique pair of real numbers $(a,b)$ such that $\boldsymbol{p}=a\boldsymbol{x}+b\boldsymbol{y}$.
 
-### 方向向量
+### Direction vectors
 
-空间直线的方向用一个与该直线平行的非零向量来表示，该向量称为这条直线的一个方向向量．直线在空间中的位置，由它经过的空间一点及它的一个方向向量 **完全确定**．
+The direction of a line in space is described by a nonzero vector parallel to the line. Such a vector is called a direction vector of the line. The position of a line in space is **completely determined** by one point on it and one of its direction vectors.
 
-注意，平面中的直线也有方向向量．
+Note that lines in the plane also have direction vectors.
 
-对于 **空间** 中的直线，对其方向向量有以下求法：
+For a line in **space**, a direction vector can be found as follows:
 
--   若有 $A(x_1,y_1,z_1),B(x_2,y_2,z_2)$，则 $AB$ 所在直线的一个方向向量为 $\boldsymbol{s}=(x_2-x_1,y_2-y_1,z_2-z_1)$．
+-   Given $A(x_1,y_1,z_1),B(x_2,y_2,z_2)$, one direction vector of line $AB$ is $\boldsymbol{s}=(x_2-x_1,y_2-y_1,z_2-z_1)$.
 
--   若已知一个与所求直线 **垂直** 的平面，该平面一般方程为 $ax+by+cz+d=0$，那么垂直于该平面的直线的一个方向向量为 $\boldsymbol{s}=(a,b,c)$，该方向向量也是该平面的 **一个法向量**．
+-   Given a plane **perpendicular** to the line, with general equation $ax+by+cz+d=0$, one direction vector of a line perpendicular to this plane is $\boldsymbol{s}=(a,b,c)$. This direction vector is also **a normal vector** of the plane.
 
-### 法向量
+### Normal vectors
 
-对于一个面 $ABCD$，其法向量 $\boldsymbol{n}$ 与这个面垂直．
+For a plane $ABCD$, its normal vector $\boldsymbol{n}$ is perpendicular to the plane.
 
-计算方法：任取两个面内直线 $\overrightarrow{AB},\overrightarrow{AD}$，使得 $\overrightarrow{AB} \cdot \boldsymbol{n}=\boldsymbol{0}$ 且 $\overrightarrow{AD} \cdot \boldsymbol{n}=\boldsymbol{0}$，利用坐标法即可计算．
+How to compute it: take any two lines in the plane, $\overrightarrow{AB},\overrightarrow{AD}$, and require $\overrightarrow{AB} \cdot \boldsymbol{n}=\boldsymbol{0}$ and $\overrightarrow{AD} \cdot \boldsymbol{n}=\boldsymbol{0}$. Then solve with coordinates.
 
-## 向量与矩阵
+## Vectors and matrices
 
-线性代数中，线性变换可以用矩阵表示．令 $T$ 表示一个将 $\mathbf R^n$ 映射到 $\mathbf R^m$ 的线性变换，$\mathbf x$ 表示一个 $n$ 维列向量，则存在一个 $m\times n$ 矩阵 $A$，使得
+In linear algebra, linear transformations can be represented by matrices. Let $T$ be a linear transformation from $\mathbf R^n$ to $\mathbf R^m$ and let $\mathbf x$ be an $n$-dimensional column vector. Then there is an $m\times n$ matrix $A$ such that
 
 $$
 T(\mathbf x)=A\mathbf x.
 $$
 
-矩阵 $A$ 称为线性变换 $T$ 的变换矩阵．在算法问题中，一般情况下线性变换在相同维度下进行，因此 $A$ 是一个方阵．这样，对向量的线性变换问题可以转化为矩阵乘法问题．
+The matrix $A$ is called the transformation matrix of $T$. In algorithm problems, linear transformations usually keep the dimension the same, so $A$ is a square matrix. In this way, a linear transformation of vectors becomes a matrix multiplication problem.
 
-接下来我们探讨三种竞赛中较为常见的变换与其对应的变换矩阵：放缩变换（变换矩阵用 $S$ 表示）、旋转变换（变换矩阵用 $R$ 表示）和平移变换（变换矩阵用 $T$ 表示）．
+Next we look at three transformations that are fairly common in contests and their transformation matrices: scaling (matrix $S$), rotation (matrix $R$) and translation (matrix $T$).
 
-### 放缩变换
+### Scaling
 
-对于 $n$ 维列向量 $\boldsymbol a$，将其每一维放缩 $v_1,v_2,\ldots,v_n$ 倍．很容易发现放缩操作的变换矩阵 $R$ 是 $n\times n$ 的对角矩阵，即 $S=\operatorname{diag}\{v_1,v_2,\ldots,v_n\}$．
+For an $n$-dimensional column vector $\boldsymbol a$, scale its coordinates by factors $v_1,v_2,\ldots,v_n$. It is easy to see that the transformation matrix $R$ of scaling is the $n\times n$ diagonal matrix $S=\operatorname{diag}\{v_1,v_2,\ldots,v_n\}$.
 
-### 旋转变换
+### Rotation
 
-向量的旋转是相对复杂的操作，我们仅限于讨论二维和三维的情况．
+Rotating a vector is a relatively complicated operation. We only discuss two and three dimensions.
 
-#### 向量绕点旋转
+#### Rotating a vector about a point
 
-对于向量绕点旋转，一般指的是向量绕原点旋转．对于某一点绕另一点 $P$ 旋转，可以利用平移变换使得点 $P$ 位于原点，进行向量旋转后再将坐标系平移回原位置即可．设平移操作的变换矩阵为 $T$，绕原点旋转操作的变换矩阵为 $R$，则整个过程的变换矩阵为 $TRT^{-1}$．根据几何意义，$T^{-1}$ 一定存在．
+Rotating a vector about a point usually means rotating it about the origin. To rotate a point about another point $P$, first translate so that $P$ is at the origin, rotate the vector, then translate back. If $T$ is the translation matrix and $R$ is the matrix of rotation about the origin, the whole process has transformation matrix $TRT^{-1}$. Geometrically, $T^{-1}$ always exists.
 
-对于二维空间，设 $\boldsymbol a=(x,y)$，倾角为 $\theta$，长度为 $l=\sqrt{x^2+y^2}$．则 $x=l\cos \theta,y=l\sin\theta$．令其绕原点逆时针旋转 $\alpha$ 角，得到向量 $\boldsymbol b=(l\cos(\theta+\alpha),l\sin(\theta+\alpha))$．
+In two dimensions, let $\boldsymbol a=(x,y)$ have angle of inclination $\theta$ and length $l=\sqrt{x^2+y^2}$. Then $x=l\cos \theta,y=l\sin\theta$. Rotating it counterclockwise about the origin by angle $\alpha$ gives the vector $\boldsymbol b=(l\cos(\theta+\alpha),l\sin(\theta+\alpha))$.
 
 ![](./images/vector-rotation.svg)
 
-由三角恒等变换得，
+By trigonometric identities,
 
 $$
 \boldsymbol{b}=(l(\cos\theta\cos\alpha-\sin\theta\sin\alpha),l(\sin\theta\cos\alpha+\cos\theta\sin\alpha))
 $$
 
-化简，
+Simplifying,
 
 $$
 \boldsymbol b=(l\cos\theta\cos\alpha-l\sin\theta\sin\alpha,l\sin\theta\cos\alpha+l\cos\theta\sin\alpha)
 $$
 
-把上面的 $x,y$ 代回来得
+Substituting $x,y$ back in gives
 
 $$
 \boldsymbol b=(x\cos\alpha-y\sin\alpha,y\cos\alpha+x\sin\alpha)
 $$
 
-因此二维空间下，变换矩阵 $R$ 为
+So in two dimensions, the transformation matrix $R$ is
 
 $$
 R=
@@ -224,13 +224,13 @@ R=
 \end{bmatrix}.
 $$
 
-对于三维空间，向量旋转需要使用两个角度参量，即天顶角旋转角度与方向角旋转角度，可以利用 [空间球坐标系](../coordinate.md#空间球坐标系) 进行旋转操作．
+In three dimensions, rotating a vector needs two angle parameters, the change in the zenith (polar) angle and the change in the azimuth angle. The rotation can be done using [spherical coordinates](../coordinate.md#空间球坐标系).
 
-#### 向量绕直线旋转
+#### Rotating a vector about a line
 
-对于三维向量，更常见的是绕某直线旋转．同样为了方便，此直线是过原点的．如果直线不过原点，我们仍可以平移坐标系进行转化．
+For 3D vectors, it is more common to rotate about a line. Again for convenience, assume the line passes through the origin. If it does not, we can still translate the coordinate system to reduce to this case.
 
-取直线的方向向量 $\boldsymbol u=(u_x,u_y,u_z)$，设三维向量绕其逆时针旋转 $\theta$ 角．则对应的变换矩阵 $R$ 为[^note1]
+Take a direction vector $\boldsymbol u=(u_x,u_y,u_z)$ of the line, and rotate the 3D vector counterclockwise about it by angle $\theta$. The corresponding transformation matrix $R$ is[^note1]
 
 $$
 R=
@@ -241,11 +241,11 @@ u_x u_z \left(1-\cos \theta\right) - u_y \sin \theta & u_y u_z \left(1-\cos \the
 \end{bmatrix}.
 $$
 
-### 平移变换
+### Translation
 
-平移变换并非线性变换，而是仿射变换．但 $\mathbf R^n$ 下的仿射变换仍可以用 $\mathbf R^{n+1}$ 下的线性变换表示．
+Translation is not a linear transformation; it is an affine transformation. But an affine transformation on $\mathbf R^n$ can still be represented by a linear transformation on $\mathbf R^{n+1}$.
 
-考虑 $n$ 维向量 $\boldsymbol a=(a_1,a_2, \ldots , a_n)$，现在要将其沿向量 $\boldsymbol t=(t_1, t_2, \ldots , t_n)$ 平移．我们对列向量 $\boldsymbol a$ 添加一维并置为 $1$，得到新列向量 $\boldsymbol a'=(a_1, a_2, \ldots , a_n, 1)$．则变换矩阵 $T$ 可以写作
+Consider an $n$-dimensional vector $\boldsymbol a=(a_1,a_2, \ldots , a_n)$ that we want to translate by the vector $\boldsymbol t=(t_1, t_2, \ldots , t_n)$. Add one more coordinate to the column vector $\boldsymbol a$ and set it to $1$, giving the new column vector $\boldsymbol a'=(a_1, a_2, \ldots , a_n, 1)$. Then the transformation matrix $T$ can be written as
 
 $$
 T=
@@ -258,7 +258,7 @@ T=
 \end{bmatrix}.
 $$
 
-对于其他线性变换矩阵，在矩阵中增加一列与一行，除右下角的元素为 $1$ 外其它部分填充为 $0$，通过这种方法，所有的线性变换矩阵都可以转换为仿射变换矩阵．例如，对于二维向量旋转，变换矩阵可以变为
+For any other linear transformation matrix, add one row and one column, set the bottom-right entry to $1$ and fill the rest of the new row and column with $0$. In this way every linear transformation matrix can be turned into an affine transformation matrix. For example, the 2D rotation matrix becomes
 
 $$
 R'=
@@ -269,8 +269,8 @@ R'=
 \end{bmatrix}.
 $$
 
-## 向量的更严格定义
+## A more rigorous definition of vectors
 
-上文中，向量被定义为了空间中的有向线段．但是严格来说，向量不仅是有向线段．要作出向量的更严格定义，需要先定义 [线性空间](./vector-space.md)，具体内容参见 [线性空间](./vector-space.md) 页面的介绍．
+Above, vectors were defined as directed line segments in space. Strictly speaking, though, vectors are more than directed line segments. To give a more rigorous definition, we first need to define [vector spaces](./vector-space.md). See the [vector spaces](./vector-space.md) page for details.
 
-[^note1]: 参见 [Rotation matrix from axis and angle - Wikipedia](https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle)
+[^note1]: See [Rotation matrix from axis and angle - Wikipedia](https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle)

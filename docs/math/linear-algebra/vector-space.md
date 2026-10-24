@@ -1,381 +1,381 @@
 author: codewasp942, Tiphereth-A
 
-线性空间是 $d$ 维欧氏空间（$0\leq d\leq 3$）等的推广，相关概念的关系可参照 [欧氏空间与线性空间的关系](#欧氏空间与线性空间的关系)．
+A vector space (linear space) generalizes $d$-dimensional Euclidean space ($0\leq d\leq 3$) and similar spaces. For how the related concepts correspond, see [relation between Euclidean space and vector spaces](#relation-between-euclidean-space-and-vector-spaces).
 
-前置知识：阿贝尔群、域．
+Prerequisites: abelian groups, fields.
 
-通俗地讲，一个集合关于某运算封闭，满足结合律、单位元与逆元则构成群．如果还满足交换律，则构成阿贝尔群．
+Informally, a set that is closed under some operation, where the operation is associative and has an identity element and inverses, forms a group. If the operation is also commutative, it forms an abelian group.
 
-如果一个集合关于四则运算封闭，则构成域．相关定义详见 [抽象代数基本概念](../algebra/basic.md#域)．
+A set closed under the four arithmetic operations forms a field. For the precise definitions, see [basic concepts of abstract algebra](../algebra/basic.md#域).
 
-## 定义
+## Definition
 
-线性空间（向量空间）是线性代数的基本概念与重要研究对象．线性空间是由向量集合 $V$、域 $\Bbb{P}$、加法运算 $+$ 和标量乘法（数乘）组成的模类代数结构．
+A vector space (linear space) is a basic concept and a central object of study in linear algebra. It is a module-like algebraic structure made up of a set of vectors $V$, a field $\Bbb{P}$, an addition operation $+$ and scalar multiplication.
 
-具体来说，设 $(V,+)$ 是一个阿贝尔群，$\Bbb{P}$ 是一个域．
+Concretely, let $(V,+)$ be an abelian group and $\Bbb{P}$ a field.
 
-定义 $\Bbb{P}$ 中的数与 $V$ 中元素的一种代数运算，称为 **数乘**：$\cdot:\Bbb{P}\times V\mapsto V$，记为 $p\cdot v$ 或 $pv$，其中 $p$ 在域 $\Bbb{P}$ 中，$v$ 在阿贝尔群 $V$ 中．要求该数乘运算是封闭的，运算结果始终有意义，也在群 $V$ 中．
+Define an operation between numbers in $\Bbb{P}$ and elements of $V$, called **scalar multiplication**: $\cdot:\Bbb{P}\times V\mapsto V$, written $p\cdot v$ or $pv$, where $p$ is in the field $\Bbb{P}$ and $v$ is in the abelian group $V$. This operation must be closed: the result is always defined and also lies in the group $V$.
 
-且满足以下条件：
+It must also satisfy the following conditions:
 
-1.  **数乘对向量加法分配律**：对于 $\mathbf u,\mathbf v\in V,a\in \Bbb{P}$，$a(\mathbf u+\mathbf v)=a\mathbf u+a\mathbf v$
-2.  **数乘对标量加法分配律**：对于 $a,b\in \Bbb{P},\mathbf u\in V$，$(a+b)\mathbf u=a\mathbf u+b\mathbf u$
-3.  **数乘结合律（一致于域乘法）**：对于 $a,b\in \Bbb{P},\mathbf u\in V$，$a(b\mathbf u)=(ab)\mathbf u$
-4.  **标量乘法单位元**：令 $1\in \Bbb{P}$ 是 $\Bbb{P}$ 的乘法单位元，则对于 $u\in V$，$1\mathbf u=\mathbf u$
+1.  **Distributivity of scalar multiplication over vector addition**: for $\mathbf u,\mathbf v\in V,a\in \Bbb{P}$, $a(\mathbf u+\mathbf v)=a\mathbf u+a\mathbf v$
+2.  **Distributivity of scalar multiplication over scalar addition**: for $a,b\in \Bbb{P},\mathbf u\in V$, $(a+b)\mathbf u=a\mathbf u+b\mathbf u$
+3.  **Associativity of scalar multiplication (compatible with field multiplication)**: for $a,b\in \Bbb{P},\mathbf u\in V$, $a(b\mathbf u)=(ab)\mathbf u$
+4.  **Identity of scalar multiplication**: let $1\in \Bbb{P}$ be the multiplicative identity of $\Bbb{P}$; then for $u\in V$, $1\mathbf u=\mathbf u$
 
-则称代数系统 $(V,+,\cdot,\mathbb{P})$ 是 $V$ 关于 $+,\cdot$ 构成 $\Bbb{P}$ 上的一个 **线性空间**，$\Bbb{P}$ 为线性空间的 **基域**，$V$ 中元素称为 **向量**，$\Bbb{P}$ 中元素称为 **标量**．当域 $\Bbb{P}$ 为实数域时，称为实线性空间．当域 $\Bbb{P}$ 为复数域时，称为复线性空间．
+Then the algebraic system $(V,+,\cdot,\mathbb{P})$ is called a **vector space** (**linear space**) over $\Bbb{P}$ formed by $V$ with $+,\cdot$. $\Bbb{P}$ is the **base field** of the vector space, elements of $V$ are called **vectors**, and elements of $\Bbb{P}$ are called **scalars**. When $\Bbb{P}$ is the field of real numbers, it is called a real vector space. When $\Bbb{P}$ is the field of complex numbers, it is called a complex vector space.
 
-不管是一列数还是箭头，或是别的什么东西，只要满足上述公理，都可以认为是向量，也就都可以利用线性代数的理论来研究．
+Whether it is a list of numbers, an arrow or something else, anything that satisfies the axioms above can be treated as a vector, and so can be studied with the theory of linear algebra.
 
-称加法群中的零元为零向量，记作 $\mathbf 0$ 或 $\mathbf\theta$．
+The zero element of the additive group is called the zero vector, written $\mathbf 0$ or $\mathbf\theta$.
 
-原阿贝尔群中向量的加减法，与线性空间新定义的数乘，统称为 **线性运算**．
-
-???+ note "Note"
-    为行文方便，下文中：
-    
-    1.  对 $V$ 中的元素不做加粗处理．
-    2.  将满足线性空间定义的代数系统 $(V,+,\cdot,\mathbb{P})$ 也称为线性空间．
-    
-    请注意区分．
-
-### 直观理解
-
-不是很严谨地说，标量乘法对应着一种「**缩放**」，基域 $\Bbb{P}$ 中的元素就代表着缩放的「**比例**」，向量加法对应「**叠加**」．同时，$\Bbb{P}$ 中的元素还代表着向量的「**坐标**」的取值范围．
-
-条件 1-4 描述的是「缩放」与「叠加」的关联．可以结合二维平面上的箭头来理解．
-
-### 简单性质
+Addition and subtraction of vectors from the original abelian group, together with the newly defined scalar multiplication, are called the **linear operations**.
 
 ???+ note "Note"
-    以下性质可在群论等中找到．
+    For convenience, in what follows:
+    
+    1.  Elements of $V$ are not written in bold.
+    2.  An algebraic system $(V,+,\cdot,\mathbb{P})$ satisfying the definition of a vector space is also called a vector space.
+    
+    Please keep these distinctions in mind.
 
-对线性空间 $(V,+,\cdot,\Bbb{P})$,
+### Intuition
 
-1.  $\theta$ 唯一
-2.  $\forall\alpha\in V$,$-\alpha$ 唯一
-3.  $\exists 0\in\mathbb{P}$,$\forall\alpha\in V$, 有 $0\alpha=\theta$
-4.  $\forall k\in\mathbb{P}$, 有 $k\theta=\theta$
+Loosely speaking, scalar multiplication corresponds to "**scaling**", and the elements of the base field $\Bbb{P}$ are the scaling "**factors**"; vector addition corresponds to "**combining**" (superposition). The elements of $\Bbb{P}$ also give the range of values a vector's "**coordinates**" can take.
+
+Conditions 1-4 describe how "scaling" and "combining" interact. It helps to think of arrows in the 2D plane.
+
+### Basic properties
+
+???+ note "Note"
+    The following properties can be found in group theory and related topics.
+
+For a vector space $(V,+,\cdot,\Bbb{P})$,
+
+1.  $\theta$ is unique
+2.  $\forall\alpha\in V$, $-\alpha$ is unique
+3.  $\exists 0\in\mathbb{P}$, $\forall\alpha\in V$, $0\alpha=\theta$
+4.  $\forall k\in\mathbb{P}$, $k\theta=\theta$
 5.  $(-1)\alpha=-\alpha,~\forall\alpha\in V$
-6.  无零因子：$\forall\alpha\in V,k\in\mathbb{P}$, 有 $k\alpha=\theta\implies k=0\lor\alpha=\theta$
-7.  加法的消去律：$\forall\alpha,\beta,\gamma\in V$, 有 $\alpha+\beta=\alpha+\gamma\implies\beta=\gamma$
+6.  No zero divisors: $\forall\alpha\in V,k\in\mathbb{P}$, $k\alpha=\theta\implies k=0\lor\alpha=\theta$
+7.  Cancellation law for addition: $\forall\alpha,\beta,\gamma\in V$, $\alpha+\beta=\alpha+\gamma\implies\beta=\gamma$
 
-    > 实际上，加法的消去律是阿贝尔群的性质．
+    > In fact, the cancellation law for addition is a property of abelian groups.
 
-### 例子
+### Examples
 
-1.  $\Bbb{P}^n$ 关于数域 $\Bbb{P}$ 上的加法和乘法构成 $\Bbb{P}$ 上的一个线性空间．例如 $\Bbb{P}$ 可以是 $\Bbb{R}$,$\Bbb{C}$,$\Bbb{N}_p$（$p$ 为素数）等．
-2.  数域 $\Bbb{P}$ 上的 $n\times m$ 阶矩阵 $\Bbb{P}^{n\times m}$ 关于矩阵的加法和数乘构成 $\Bbb{P}$ 上的一个线性空间．
-3.  数域 $\Bbb{P}$ 上的一元多项式环 $\Bbb{P}[x]$ 关于多项式的加法和数乘构成 $\Bbb{P}$ 上的一个线性空间．
-4.  区间 $[a,b]$ 上的全体连续函数（记作 $C[a,b]$）关于「函数加法」和「值与连续函数的数乘」构成值域上的一个线性空间．
+1.  $\Bbb{P}^n$ with addition and multiplication over the field $\Bbb{P}$ is a vector space over $\Bbb{P}$. For example, $\Bbb{P}$ can be $\Bbb{R}$, $\Bbb{C}$, $\Bbb{N}_p$ ($p$ prime), and so on.
+2.  The $n\times m$ matrices $\Bbb{P}^{n\times m}$ over a field $\Bbb{P}$, with matrix addition and scalar multiplication, form a vector space over $\Bbb{P}$.
+3.  The univariate polynomial ring $\Bbb{P}[x]$ over a field $\Bbb{P}$, with polynomial addition and scalar multiplication, forms a vector space over $\Bbb{P}$.
+4.  All continuous functions on the interval $[a,b]$ (written $C[a,b]$), with "function addition" and "multiplying a continuous function by a value", form a vector space over the codomain's field.
 
-## 相关概念
+## Related concepts
 
-### 线性相关、线性无关
+### Linear dependence and linear independence
 
-对线性空间 $(V,+,\cdot,\Bbb{P})$：
+For a vector space $(V,+,\cdot,\Bbb{P})$:
 
-1.  称 $a_1,a_2,\dots,a_n\in V$ 为 $V$ 的一个 **向量组**．
-2.  对于 $k_1,k_2,\dots,k_n\in\Bbb{P}$, 称 $\sum_{i=1}^nk_ia_i$ 为向量组 $a_1,a_2,\dots,a_n$ 的一个 **线性组合**．
-3.  若向量 $\beta\in V$ 可以表示为向量组 $a_1,a_2,\dots,a_n$ 的一个线性组合，则称 $\beta$ 能被向量组 $a_1,a_2,\dots,a_n$  **线性表出**．
-4.  对于 $k_1,k_2,\dots,k_n\in\Bbb{P}$, 若向量组 $a_1,a_2,\dots,a_n$ 满足 $\sum_{i=1}^nk_ia_i=\theta\iff k_i=0, i=1,2,\dots,n$, 则称向量组 $a_1,a_2,\dots,a_n$  **线性无关**，否则称向量组 $a_1,a_2,\dots,a_n$  **线性相关**．
+1.  We call $a_1,a_2,\dots,a_n\in V$ a **set of vectors** (vector family) in $V$.
+2.  For $k_1,k_2,\dots,k_n\in\Bbb{P}$, $\sum_{i=1}^nk_ia_i$ is called a **linear combination** of $a_1,a_2,\dots,a_n$.
+3.  If a vector $\beta\in V$ can be written as a linear combination of $a_1,a_2,\dots,a_n$, we say $\beta$ can be **linearly represented** by $a_1,a_2,\dots,a_n$.
+4.  For $k_1,k_2,\dots,k_n\in\Bbb{P}$, if $a_1,a_2,\dots,a_n$ satisfy $\sum_{i=1}^nk_ia_i=\theta\iff k_i=0, i=1,2,\dots,n$, then $a_1,a_2,\dots,a_n$ are called **linearly independent**; otherwise they are **linearly dependent**.
 
-规定零向量与任意向量线性相关．
+By convention, the zero vector is linearly dependent with any vector.
 
-线性表示或线性相关的式子，可以写成矩阵乘法的形式：
+A linear representation or a linear dependence relation can be written as a matrix product:
 
 $$
 \beta=k_1a_1+k_2a_2+\cdots+k_ra_r=(a_1,a_2,\cdots,a_r)\begin{pmatrix} k_1 \\ k_2 \\ \vdots \\ k_r \end{pmatrix}
 $$
 
-根据习惯，把向量 $a$ 按顺序并排写在左边；把标量 $k$ 按顺序竖着写在右边，构成一个「列向量」．
+By convention, the vectors $a$ are written side by side on the left in order, and the scalars $k$ are written vertically on the right in order, forming a "column vector".
 
-注意：这里标量构成的「列向量」只是方便的形式记号，不在空间 $V$ 中，与左边的向量有着本质的区别．左边的向量如果恰好是列向量，并排拼起来就可以形式上构成一个「矩阵」，上述乘积恰好是矩阵中常见的「矩阵左乘列向量」的形式．
+Note: this "column vector" of scalars is just convenient formal notation. It is not in the space $V$ and is fundamentally different from the vectors on the left. If the vectors on the left happen to be column vectors, placing them side by side formally gives a "matrix", and the product above is exactly the familiar "matrix times column vector" form.
 
-下文指出，这里的线性表示也等价于，向量 $\beta$ 落在矩阵 $(a_1,a_2\cdots,a_r)$ 的像空间里．
+As shown below, this linear representation is also equivalent to saying that $\beta$ lies in the image space of the matrix $(a_1,a_2\cdots,a_r)$.
 
-根据下文中的定义，零向量一定会落在像空间里．如果用线性变换的观点看，线性相关等价于变换后多个向量变换到零向量，而线性无关等价于只有零向量本身变换到零向量．
+By the definition below, the zero vector always lies in the image space. From the viewpoint of linear transformations, linear dependence means that several vectors are mapped to the zero vector, while linear independence means that only the zero vector itself is mapped to the zero vector.
 
-#### 性质
+#### Properties
 
-对线性空间 $(V,+,\cdot,\Bbb{P})$,
+For a vector space $(V,+,\cdot,\Bbb{P})$,
 
-1.  若向量组的一部分线性相关，则向量组线性相关．若向量组线性无关，则其任意非空部分均线性无关．简记为：**「大无关、小无关」；「小相关、大相关」**．
-2.  含 $\theta$ 的向量组线性相关．
-3.  向量组线性相关当且仅当向量组的某个向量可以由其余向量线性表出．
-4.  若向量 $\beta$ 可被向量组 $a_1,a_2,\dots,a_n$ 线性表出，则表出方式唯一当且仅当向量组 $a_1,a_2,\dots,a_n$ 线性无关．
-5.  若向量组 $a_1,a_2,\dots,a_n$ 线性无关，则向量 $\beta$ 可被向量组 $a_1,a_2,\dots,a_n$ 线性表出当且仅当向量组 $a_1,a_2,\dots,a_n,\beta$ 线性相关．
+1.  If part of a set of vectors is linearly dependent, the whole set is linearly dependent. If a set is linearly independent, every nonempty subset of it is linearly independent. In short: **"whole independent, part independent"; "part dependent, whole dependent"**.
+2.  A set of vectors containing $\theta$ is linearly dependent.
+3.  A set of vectors is linearly dependent if and only if some vector in it can be linearly represented by the others.
+4.  If $\beta$ can be linearly represented by $a_1,a_2,\dots,a_n$, the representation is unique if and only if $a_1,a_2,\dots,a_n$ are linearly independent.
+5.  If $a_1,a_2,\dots,a_n$ are linearly independent, then $\beta$ can be linearly represented by $a_1,a_2,\dots,a_n$ if and only if $a_1,a_2,\dots,a_n,\beta$ are linearly dependent.
 
-### 极大线性无关组、秩
+### Maximal linearly independent subsets and rank
 
-线性相关可以理解为「多余」，说明向量组内部有的向量可以被其他向量表出，可以删去．删完了之后，将剩下极大线性无关组．
+Linear dependence can be thought of as "redundancy": some vectors in the set can be represented by the others and can be removed. After removing all of them, what remains is a maximal linearly independent subset.
 
-对线性空间 $(V,+,\cdot,\Bbb{P})$：
+For a vector space $(V,+,\cdot,\Bbb{P})$:
 
-1.  对于向量组 $b_1,b_2,\dots,b_m$, 令 $\{a_1,a_2,\dots,a_n\}\subseteq\{b_1,b_2,\dots,b_m\}$, 若有：
+1.  For a set of vectors $b_1,b_2,\dots,b_m$, let $\{a_1,a_2,\dots,a_n\}\subseteq\{b_1,b_2,\dots,b_m\}$. If:
 
-    -   向量组 $a_1,a_2,\dots,a_n$ 线性无关．
-    -   $\forall\beta\in\{b_1,b_2,\dots,b_m\}\setminus\{a_1,a_2,\dots,a_n\}$, 向量组 $a_1,a_2,\dots,a_n,\beta$ 线性相关．
+    -   $a_1,a_2,\dots,a_n$ are linearly independent;
+    -   $\forall\beta\in\{b_1,b_2,\dots,b_m\}\setminus\{a_1,a_2,\dots,a_n\}$, $a_1,a_2,\dots,a_n,\beta$ are linearly dependent,
 
-    则称向量组 $a_1,a_2,\dots,a_n$ 为向量组 $b_1,b_2,\dots,b_m$ 中的一个 **极大线性无关组**．类似地，可定义线性空间 $V$ 的极大线性无关组．
+    then $a_1,a_2,\dots,a_n$ is called a **maximal linearly independent subset** of $b_1,b_2,\dots,b_m$. A maximal linearly independent subset of the vector space $V$ is defined similarly.
 
-    规定向量组 $\theta,\theta,\dots,\theta$ 的极大线性无关组为空集，于是全 $0$ 矩阵对应的向量组没有极大线性无关组．
+    By convention, the maximal linearly independent subset of $\theta,\theta,\dots,\theta$ is the empty set, so the vectors of an all-zero matrix have no (nonempty) maximal linearly independent subset.
 
-    从向量组删向量的删法不唯一，因此极大线性无关组也不唯一．习惯上从左到右按顺序删．
+    There is more than one way to remove vectors from a set, so the maximal linearly independent subset is not unique either. By habit, we remove vectors from left to right in order.
 
-    很巧的是，按顺序删，留下的向量，恰好就是「按行看」观点里面，高斯消元法剩下的行最简形矩阵中，元素 $1$ 所在的列．
+    Conveniently, if we remove them in order, the vectors that remain are exactly the columns containing the leading $1$s in the reduced row echelon form produced by Gaussian elimination, in the "row view".
 
-    称向量组 $b_1,b_2,\dots,b_m$ 的极大线性无关组的大小为向量组的 **秩**，记作 $\operatorname{rank}\{b_1,b_2,\dots,b_m\}$, 规定 $\operatorname{rank}\{\theta,\theta,\dots,\theta\}=0$．
+    The size of a maximal linearly independent subset of $b_1,b_2,\dots,b_m$ is called the **rank** of the set, written $\operatorname{rank}\{b_1,b_2,\dots,b_m\}$. By convention, $\operatorname{rank}\{\theta,\theta,\dots,\theta\}=0$.
 
-    于是，向量组的秩的定义与矩阵的秩的定义完全一致．
+    So the rank of a set of vectors is defined in exactly the same way as the rank of a matrix.
 
-2.  若向量组 $a_1,a_2,\dots,a_n$ 能线性表出向量组 $b_1,b_2,\dots,b_m$ 中的所有向量，称向量组 $b_1,b_2,\dots,b_m$ 能被向量组 $a_1,a_2,\dots,a_n$ 线性表出．
+2.  If every vector in $b_1,b_2,\dots,b_m$ can be linearly represented by $a_1,a_2,\dots,a_n$, we say $b_1,b_2,\dots,b_m$ can be linearly represented by $a_1,a_2,\dots,a_n$.
 
-3.  若向量组 $a_1,a_2,\dots,a_n$ 能被向量组 $b_1,b_2,\dots,b_m$ 线性表出，且向量组 $b_1,b_2,\dots,b_m$ 能被向量组 $a_1,a_2,\dots,a_n$ 线性表出，则称两向量组 **等价**，记作 $\{a_1,a_2,\dots,a_n\}\cong\{b_1,b_2,\dots,b_m\}$．
+3.  If $a_1,a_2,\dots,a_n$ can be linearly represented by $b_1,b_2,\dots,b_m$, and $b_1,b_2,\dots,b_m$ can be linearly represented by $a_1,a_2,\dots,a_n$, the two sets are called **equivalent**, written $\{a_1,a_2,\dots,a_n\}\cong\{b_1,b_2,\dots,b_m\}$.
 
-    向量组的 **等价** 就是向量组张成的空间相同．张成空间相同的向量组相互等价，张成空间不同的向量组不等价．
+    Two sets of vectors are **equivalent** exactly when they span the same space. Sets spanning the same space are equivalent; sets spanning different spaces are not.
 
-    向量组等价比矩阵等价条件更强，不仅要求秩相同，还要求空间完全一样．因此，把两个矩阵 **横向** 拼在一起，秩不能发生变化．
+    Equivalence of vector sets is stronger than matrix equivalence: it requires not only the same rank but exactly the same space. So placing the two matrices side by side **horizontally** must not change the rank.
 
-    矩阵等价仅要求秩相同，因此矩阵等价表示前一个矩阵或空间，可以通过可逆变换，到达后一个矩阵或空间．
+    Matrix equivalence only requires equal rank, so it means the first matrix or space can be turned into the second one by invertible transformations.
 
-#### 性质
+#### Properties
 
-对线性空间 $(V,+,\cdot,\Bbb{P})$,
+For a vector space $(V,+,\cdot,\Bbb{P})$,
 
-1.  设向量组 $a_1,a_2,\dots,a_n$ 能被线性表出向量组 $b_1,b_2,\dots,b_m$ 线性表出．
-    -   若 $n>m$, 则向量组 $a_1,a_2,\dots,a_n$ 线性相关．
-    -   若向量组 $a_1,a_2,\dots,a_n$ 线性无关，则 $n\leq m$．
+1.  Suppose $a_1,a_2,\dots,a_n$ can be linearly represented by $b_1,b_2,\dots,b_m$.
+    -   If $n>m$, then $a_1,a_2,\dots,a_n$ are linearly dependent.
+    -   If $a_1,a_2,\dots,a_n$ are linearly independent, then $n\leq m$.
 
-2.  等价的线性无关向量组的大小相等．
+2.  Equivalent linearly independent sets have the same size.
 
-    向量组的任意极大线性无关组的大小均相等．
+    All maximal linearly independent subsets of a set of vectors have the same size.
 
-3.  向量组线性无关当且仅当其秩等于其大小．
+3.  A set of vectors is linearly independent if and only if its rank equals its size.
 
-4.  若向量组 $a_1,a_2,\dots,a_n$ 能被线性表出向量组 $b_1,b_2,\dots,b_m$ 线性表出，则 $\operatorname{rank}\{a_1,a_2,\dots,a_n\}\leq\operatorname{rank}\{b_1,b_2,\dots,b_m\}$．
+4.  If $a_1,a_2,\dots,a_n$ can be linearly represented by $b_1,b_2,\dots,b_m$, then $\operatorname{rank}\{a_1,a_2,\dots,a_n\}\leq\operatorname{rank}\{b_1,b_2,\dots,b_m\}$.
 
-5.  等价的向量组的秩相等．
+5.  Equivalent sets of vectors have equal rank.
 
-### 线性包
+### Linear span
 
-对于线性空间 $(V,+,\cdot,\Bbb{P})$，$\left\{v=\sum_{i=1}^nk_ia_i:a_i\in V,k_i\in\Bbb{P},i=1,2,\dots,n\right\}$ 也构成一个线性空间，称为由向量组 $a_1,a_2,\dots,a_n$  **张成** 的线性空间（或 **线性包**），记作 $\operatorname{span}\{a_1,a_2,\dots,a_n\}$．
+For a vector space $(V,+,\cdot,\Bbb{P})$, $\left\{v=\sum_{i=1}^nk_ia_i:a_i\in V,k_i\in\Bbb{P},i=1,2,\dots,n\right\}$ is also a vector space. It is called the space **spanned** by $a_1,a_2,\dots,a_n$ (or their **linear span**), written $\operatorname{span}\{a_1,a_2,\dots,a_n\}$.
 
-这里的 $n$ 个向量 $a$ 不一定线性无关．
+The $n$ vectors $a$ here need not be linearly independent.
 
-### 线性子空间
+### Linear subspaces
 
-对线性空间 $(V,+,\cdot,\Bbb{P})$, 若代数系统 $(V_1,+,\cdot,\Bbb{P})$ 满足：
+For a vector space $(V,+,\cdot,\Bbb{P})$, if the algebraic system $(V_1,+,\cdot,\Bbb{P})$ satisfies:
 
 1.  $\varnothing\ne V_1$
 2.  $V_1\subseteq V$
-3.  $V_1$ 关于 $+,\cdot$ 构成 $\mathbb{P}$ 上的线性空间
+3.  $V_1$ is a vector space over $\mathbb{P}$ with $+,\cdot$
 
-则称 $V_1$ 为 $V$ 的线性子空间，简称子空间，记作 $V_1\leq V$．
+then $V_1$ is called a linear subspace of $V$, or just a subspace, written $V_1\leq V$.
 
-任何空间 $V$ 都有两个 **平凡子空间**：它本身 $V$ 与零子空间．零子空间只含零向量，不含有线性无关的向量．
+Every space $V$ has two **trivial subspaces**: $V$ itself and the zero subspace. The zero subspace contains only the zero vector and has no linearly independent vectors.
 
-若第 2 条中的 $\subseteq$ 换为 $\subset$, 则称 $V_1$ 为 $V$ 的线性真子空间，记作 $V_1<V$．
+If $\subseteq$ in condition 2 is replaced by $\subset$, $V_1$ is called a proper linear subspace of $V$, written $V_1<V$.
 
-不难证明：线性空间 $V$ 的非空子集 $V_1$ 是其线性子空间当且仅当线性运算在 $V_1$ 上封闭，即：
+It is not hard to prove that a nonempty subset $V_1$ of a vector space $V$ is a linear subspace if and only if $V_1$ is closed under the linear operations, that is:
 
-1.  $\forall u,v\in V_1$,$u+v\in V_1$
-2.  $\forall v\in V_1$,$\forall k\in \Bbb{P}$,$kv\in V_1$
+1.  $\forall u,v\in V_1$, $u+v\in V_1$
+2.  $\forall v\in V_1$, $\forall k\in \Bbb{P}$, $kv\in V_1$
 
-### 交、和与直和、直积
+### Intersection, sum, direct sum and direct product
 
-对线性空间 $(V_1,+,\cdot,\Bbb{P})$ 与 $(V_2,+,\cdot,\Bbb{P})$：
+For vector spaces $(V_1,+,\cdot,\Bbb{P})$ and $(V_2,+,\cdot,\Bbb{P})$:
 
-1.  不难验证：加法和数乘在 $V_1\cap V_2$ 上封闭，故可称 $V_1\cap V_2$ 为线性空间 $V_1$ 和 $V_2$ 的 **交**．
+1.  It is easy to check that addition and scalar multiplication are closed on $V_1\cap V_2$, so $V_1\cap V_2$ is called the **intersection** of the vector spaces $V_1$ and $V_2$.
 
-    类似地，可定义多个线性空间的交 $\bigcap_{i=1}^m V_i$．
+    The intersection of several vector spaces $\bigcap_{i=1}^m V_i$ is defined similarly.
 
-2.  若线性空间 $V$ 满足 $V=\{u+v|u\in V_1,v\in V_2\}$, 则称 $V$ 为线性空间 $V_1$ 和 $V_2$ 的 **和**，记为 $V=V_1+V_2$．
+2.  If a vector space $V$ satisfies $V=\{u+v|u\in V_1,v\in V_2\}$, then $V$ is called the **sum** of the vector spaces $V_1$ and $V_2$, written $V=V_1+V_2$.
 
-    可以验证：$V_1+V_2$ 是包含 $V_1\cup V_2$ 的最小子空间．
+    One can check that $V_1+V_2$ is the smallest subspace containing $V_1\cup V_2$.
 
-    类似地，可定义多个线性空间的和 $\sum_{i=1}^m V_i$．
+    The sum of several vector spaces $\sum_{i=1}^m V_i$ is defined similarly.
 
-3.  设 $V=V_1+V_2$, 若线性空间 $V$ 中的任意元素 $v$, 均只能找到唯一一组向量 $v_1,v_2$ 满足 $v=v_1+v_2$, 则称 $V$ 为线性空间 $V_1$ 和 $V_2$ 的 **直和**(direct sum)，记为 $V_1\oplus V_2$．
+3.  Let $V=V_1+V_2$. If for every element $v$ of $V$ there is exactly one pair of vectors $v_1,v_2$ with $v=v_1+v_2$, then $V$ is called the **direct sum** of $V_1$ and $V_2$, written $V_1\oplus V_2$.
 
-    类似地，可定义多个线性空间的直和 $\bigoplus_{i=1}^m V_i$．
+    The direct sum of several vector spaces $\bigoplus_{i=1}^m V_i$ is defined similarly.
 
-4.  $V_1$ 与 $V_2$ 的 **直积**  $V_1\times V_2$ 定义为二者的笛卡儿积关于如下的加法和数乘构成 $\Bbb{P}$ 上的线性空间：
+4.  The **direct product** $V_1\times V_2$ of $V_1$ and $V_2$ is defined as their Cartesian product, which forms a vector space over $\Bbb{P}$ with the following addition and scalar multiplication:
 
     1.  $+:(V_1\times V_2)\times(V_1\times V_2)\mapsto V_1\times V_2; ((u_1,v_1),(u_2,v_2))\to (u_1+u_2,v_1+v_2)$
     2.  $\cdot:\Bbb{P}\times(V_1\times V_2)\mapsto V_1\times V_2; (k,(u,v))\to (ku,kv)$
 
-    类似地，可定义多个线性空间的直积 $\prod_{i=1}^m V_i$．
+    The direct product of several vector spaces $\prod_{i=1}^m V_i$ is defined similarly.
 
-#### 例子
+#### Example
 
-对于线性空间 $V=\Bbb{R}^3$，设线性空间：
+For the vector space $V=\Bbb{R}^3$, define the vector spaces:
 
 -   $V_1:=\{(x,0,0)|x\in\Bbb{R}\}$
 -   $V_2:=\{(x,y,0)|x,y\in\Bbb{R}\}$
 -   $V_3:=\{(0,y,z)|y,z\in\Bbb{R}\}$
 -   $V_4:=\{(x,0,z)|x,z\in\Bbb{R}\}$
 
-则
+Then
 
-1.  $V_1<V_2<V$,$V_3<V$
+1.  $V_1<V_2<V$, $V_3<V$
 2.  $V_2=V_1+V_2$
 3.  $V=V_1\oplus V_3=V_2+V_3$
 4.  $V_2+V_3\leq V$
 
-#### 性质
+#### Properties
 
-1.  令 $V_1,V_2,V_3$ 是关于 $\Bbb{P}$ 的线性空间，和集合的交一样，线性空间的交适用如下法则：
-    1.  交换律：$V_1\cap V_2=V_2\cap V_1$
-    2.  结合律：$V_1\cap(V_2\cap V_3)=(V_1\cap V_2)\cap V_3$
-2.  令 $V_1,V_2,V_3$ 是关于 $\Bbb{P}$ 的线性空间，类似于集合的并，线性空间的和适用如下法则：
-    1.  交换律：$V_1+V_2=V_2+V_1$
-    2.  结合律：$V_1+(V_2+V_3)=(V_1+V_2)+V_3$
-3.  令 $V_1,V_2,V_3$ 是关于 $\Bbb{P}$ 的线性空间，线性空间的交与并有如下关系：
+1.  Let $V_1,V_2,V_3$ be vector spaces over $\Bbb{P}$. Like intersections of sets, intersections of vector spaces obey:
+    1.  Commutativity: $V_1\cap V_2=V_2\cap V_1$
+    2.  Associativity: $V_1\cap(V_2\cap V_3)=(V_1\cap V_2)\cap V_3$
+2.  Let $V_1,V_2,V_3$ be vector spaces over $\Bbb{P}$. Similar to unions of sets, sums of vector spaces obey:
+    1.  Commutativity: $V_1+V_2=V_2+V_1$
+    2.  Associativity: $V_1+(V_2+V_3)=(V_1+V_2)+V_3$
+3.  Let $V_1,V_2,V_3$ be vector spaces over $\Bbb{P}$. Intersections and sums of vector spaces are related as follows:
     1.  $V_1\cap (V_2+V_3)\supseteq (V_1\cap V_2)+(V_1\cap V_3)$
     2.  $V_1+(V_2\cap V_3)\subseteq (V_1+V_2)\cap (V_1+V_3)$
 4.  $\operatorname{span}\{a_1,a_2,\dots,a_n\}+\operatorname{span}\{b_1,b_2,\dots,b_m\}=\operatorname{span}\{a_1,a_2,\dots,a_n,b_1,b_2,\dots,b_m\}$
-5.  令 $V_1,V_2$ 是关于 $\Bbb{P}$ 的线性空间，则下列诸款等价：
+5.  Let $V_1,V_2$ be vector spaces over $\Bbb{P}$. Then the following are equivalent:
 
     1.  $V_1+V_2=V_1\oplus V_2$
 
-    2.  $\exists \beta\in V_1+V_2$, 使得拆分为 $V_1$ 和 $V_2$ 中的向量和的方式唯一（任意 $\to$ 存在）
+    2.  $\exists \beta\in V_1+V_2$ that can be split into a sum of vectors from $V_1$ and $V_2$ in exactly one way ("for all" weakened to "there exists")
 
-    3.  $\theta$ 拆分为 $V_1$ 和 $V_2$ 中向量的和的方式唯一
+    3.  $\theta$ can be split into a sum of vectors from $V_1$ and $V_2$ in exactly one way
 
     4.  $V_1\cap V_2=\{\theta\}$
 
-    ???+ note "证明"
-        $1\implies 2$：由定义立得．
+    ???+ note "Proof"
+        $1\implies 2$: immediate from the definition.
         
-        $2 \implies 3$：
+        $2 \implies 3$:
         
-        令 $\beta=\beta_1+\beta_2$, 其中 $\beta_1\in V_1, \beta_2\in V_2$, 若 $\theta=\alpha_1+\alpha_2$,$\theta\ne\alpha_1\in V_1,\alpha_2\in V_2$, 则 $\beta=\beta+\theta=(\beta_1+\alpha_1)+(\beta_2+\alpha_2)$．
+        Let $\beta=\beta_1+\beta_2$ with $\beta_1\in V_1, \beta_2\in V_2$. If $\theta=\alpha_1+\alpha_2$ with $\theta\ne\alpha_1\in V_1,\alpha_2\in V_2$, then $\beta=\beta+\theta=(\beta_1+\alpha_1)+(\beta_2+\alpha_2)$.
         
-        而 $\beta_1\ne\beta_1+\alpha_1$, 与条件矛盾．
+        But $\beta_1\ne\beta_1+\alpha_1$, which contradicts the assumption.
         
-        $3 \implies 4$：
+        $3 \implies 4$:
         
-        在 $V_1$ 和 $V_2$ 中取一非零向量 $\alpha$, 则 $\theta=\alpha+(-\alpha)=(-\alpha)+\alpha$, 这与条件矛盾．
+        Take a nonzero vector $\alpha$ in both $V_1$ and $V_2$. Then $\theta=\alpha+(-\alpha)=(-\alpha)+\alpha$, which contradicts the assumption.
         
-        $4 \implies 1$：
+        $4 \implies 1$:
         
-        若 $V_1+V_2$ 不是直和，则存在 $\beta\in V_1+V_2$ 使得 $\beta=\beta_1+\beta_2=\gamma_1+\gamma_2$, 其中 $\beta_1,\gamma_1\in V_1,\beta_2,\gamma_2\in V_2$ 且 $\beta_1,\beta_2,\gamma_1,\gamma_2$ 互不相同．
+        If $V_1+V_2$ is not a direct sum, there is $\beta\in V_1+V_2$ with $\beta=\beta_1+\beta_2=\gamma_1+\gamma_2$, where $\beta_1,\gamma_1\in V_1,\beta_2,\gamma_2\in V_2$ and $\beta_1,\beta_2,\gamma_1,\gamma_2$ are pairwise distinct.
         
-        进而 $\theta\ne\beta_1-\gamma_1=\gamma_2-\beta_2\in V_1\cap V_2$, 与条件矛盾．
+        Then $\theta\ne\beta_1-\gamma_1=\gamma_2-\beta_2\in V_1\cap V_2$, which contradicts the assumption.
 
-### 同构
+### Isomorphism
 
-设 $V,V'$ 均为域 $\Bbb{P}$ 上的线性空间，若存在双射 $\sigma:V\mapsto V'$ 且保持加法与数乘，即 $\forall u,v\in V$,$\forall k\in\Bbb{P}$ 满足：
+Let $V,V'$ be vector spaces over a field $\Bbb{P}$. If there is a bijection $\sigma:V\mapsto V'$ that preserves addition and scalar multiplication, that is, $\forall u,v\in V$, $\forall k\in\Bbb{P}$:
 
 1.  $\sigma(u+v)=\sigma(u)+\sigma(v)$
 2.  $\sigma(ku)=k\sigma(u)$
 
-则称 $\sigma$ 是 $V$ 到 $V'$ 的 **同构映射**，此时称 $V$ 与 $V'$ **同构**，记为 $V\cong V'$．
+then $\sigma$ is called an **isomorphism** from $V$ to $V'$, and $V$ and $V'$ are called **isomorphic**, written $V\cong V'$.
 
 ???+ note "Note"
-    若 $\sigma$ 是单射，则可定义 **单同态**；若 $\sigma$ 是满射，则可定义 **满同态**．
+    If $\sigma$ is injective, we get a **monomorphism**; if $\sigma$ is surjective, we get an **epimorphism**.
 
-#### 性质
+#### Properties
 
-1.  域 $\Bbb{P}$ 上的两线性空间同构当且仅当其维数相等．（维数的定义参见 [线性基](./basis.md)．）
-2.  （1 的推论）域 $\Bbb{P}$ 上的 $n$ 维线性空间与线性空间 $\Bbb{P}^n$ 同构．
+1.  Two vector spaces over a field $\Bbb{P}$ are isomorphic if and only if they have the same dimension. (For the definition of dimension, see [basis](./basis.md).)
+2.  (Corollary of 1) Every $n$-dimensional vector space over $\Bbb{P}$ is isomorphic to $\Bbb{P}^n$.
 
     ???+ note "Note"
-        本性质说明我们基本上可以将坐标和向量等同看待．
+        This property shows that we can basically treat coordinates and vectors as the same thing.
 
-## 欧氏空间与线性空间的关系
+## Relation between Euclidean space and vector spaces
 
-以我们最熟悉的三维欧氏空间为例，其部分相关概念在线性空间中的对应关系如下表：
+Take the familiar 3D Euclidean space as an example. Some of its concepts correspond to concepts in vector spaces as follows:
 
-| 三维欧氏空间   | 线性空间              |
-| -------- | ----------------- |
-| 向量       | 向量                |
-| 垂直       | 正交（即内积为 $0$）      |
-| 三向量共线/共面 | $k$ 个向量线性相关       |
-| 三向量不共面   | $k$ 个向量线性无关       |
-| 基向量      | [线性基](./basis.md) |
-| 空间的维数    | 空间的维数             |
+| 3D Euclidean space | Vector space |
+| ------------------ | ------------ |
+| Vector | Vector |
+| Perpendicular | Orthogonal (inner product is $0$) |
+| Three vectors collinear/coplanar | $k$ vectors linearly dependent |
+| Three vectors not coplanar | $k$ vectors linearly independent |
+| Basis vectors | [Basis](./basis.md) |
+| Dimension of the space | Dimension of the space |
 
-## 应用
+## Applications
 
-从本节开始主要讲述对于线性方程组「按列看」的观点．
+From this section on, we mainly take the "column view" of systems of linear equations.
 
-矩阵 $A$ 本身也是由列向量构成的．把 $A$ 本身看成了列向量组，而 $x$ 是未知数系数，思考 $A$ 当中的这组列向量能不能配上未知数，凑出列向量 $b$．此时列向量 $x$ 是完全未知的．
+The matrix $A$ is itself made up of column vectors. We view $A$ as a set of column vectors and $x$ as the unknown coefficients, and ask whether the column vectors of $A$, with suitable coefficients, can add up to the column vector $b$. Here the column vector $x$ is completely unknown.
 
-此时研究的等式 $Ax=b$ 整理为：
+The equation $Ax=b$ then becomes:
 
 $$
 \alpha_1 x_1 +\alpha_2 x_2 +\cdots+\alpha_n x_n=b 
 $$
 
-这时，矩阵乘法中，位于左边的矩阵 $A$ 可以看作向量组，即一组列向量．这组列向量作为一组基，张成一个空间，探讨列向量 $b$ 是否落在这个空间里．
+In this matrix product, the matrix $A$ on the left can be seen as a set of vectors, namely its column vectors. These column vectors, as a basis, span a space, and we ask whether the column vector $b$ lies in this space.
 
-### 按列看待线性方程组的解
+### Solutions of linear systems in the column view
 
-秩是极大线性无关组中向量的个数，代表了「约束」．那么其余的向量将赋予解的自由度，即允许在其他方向赋予冗余的向量．
+The rank is the number of vectors in a maximal linearly independent subset, and it represents the "constraints". The remaining vectors give the solution its degrees of freedom: they allow redundant vectors in other directions.
 
-如果记 $n$ 是矩阵 $A$ 的列数，即含有的列向量个数，记 $r(A)$ 为矩阵 A 的秩，则有自由度 $S$：
+Let $n$ be the number of columns of $A$, that is, the number of column vectors, and let $r(A)$ be the rank of A. Then the number of degrees of freedom $S$ is:
 
 $$
 S=n-r(A)
 $$
 
-方程组的全体解也构成向量组，自由度 $S$ 就是 $Ax=0$ 解向量组的秩，即下文核空间的维数．
+The set of all solutions of a system also forms a set of vectors. The degrees of freedom $S$ equal the rank of the solution vectors of $Ax=0$, that is, the dimension of the null space defined below.
 
-### 方程组的同解
+### Systems with the same solutions
 
-两个方程组的公共解定义为两组解的交集．
+The common solutions of two systems are defined as the intersection of their solution sets.
 
-方程组的 **同解** 就是方程组的解的集合相等．解的集合相等的方程组同解，解的集合不相等的方程组不同解．
+Two systems have **the same solutions** when their solution sets are equal. Systems with equal solution sets have the same solutions; systems with different solution sets do not.
 
-方程组同解也比矩阵等价条件强，不仅要求秩相等，还要求把两个矩阵 **纵向** 拼在一起之后，秩仍然不改变．
+Having the same solutions is also stronger than matrix equivalence: it requires not only equal rank but also that stacking the two matrices **vertically** does not change the rank.
 
-这里与向量组等价对比，向量组等价要求矩阵横向拼接，秩不改变．因此，有如下关系：
+Compare this with equivalence of vector sets, which requires that joining the matrices horizontally does not change the rank. So we have the following relations:
 
-矩阵等价，不一定有对应的向量组等价或者方程组同解，但是若有向量组等价或者方程组同解，必然有对应的矩阵等价（秩相同）．
+If two matrices are equivalent, the corresponding vector sets need not be equivalent and the corresponding systems need not have the same solutions. But if the vector sets are equivalent or the systems have the same solutions, the corresponding matrices must be equivalent (have the same rank).
 
-如果矩阵对应的向量组等价，那么将矩阵转置后，对应的方程组同解，反之亦然．
+If the vector sets of two matrices are equivalent, then after transposing the matrices the corresponding systems have the same solutions, and vice versa.
 
-### 矩阵的核空间与像空间
+### Null space and image space of a matrix
 
-这部分的核空间与像空间是站在线性空间的角度上叙述的．
+The null space and image space here are described from the viewpoint of vector spaces.
 
-对于矩阵 $A$，令 $W$ 为方程 $Ax=0$ 的全体解 $x$ 构成的集合，则 $W$ 是一个线性空间，$W$ 的标量域与 $A$ 的元素所在的域相同．
+For a matrix $A$, let $W$ be the set of all solutions $x$ of $Ax=0$. Then $W$ is a vector space, and its scalar field is the same as the field containing the entries of $A$.
 
-称此时的 $W$ 为矩阵 $A$ 的 **核空间**，记作 $N(A)$．
+This $W$ is called the **null space** (kernel) of $A$, written $N(A)$.
 
-矩阵 $A$ 的核空间 $N(A)$ 就是方程 $Ax=0$ 的 **解空间**．根据后文基的定义，该方程的 **基础解系** 就是核空间的基．
+The null space $N(A)$ is exactly the **solution space** of $Ax=0$. By the definition of a basis given later, a **fundamental system of solutions** of this equation is a basis of the null space.
 
-如果矩阵 $A$ 是可逆矩阵，则 $A$ 的核空间 $N(A)$ 只含零向量．
+If $A$ is invertible, its null space $N(A)$ contains only the zero vector.
 
-对于矩阵 $A$，它的 $n$ 个列为向量 $\alpha$，称 $n$ 个列向量 $\alpha$ 张成的空间为 $A$ 的 **像空间**，或者记作 **列空间**，记作：
+For a matrix $A$ whose $n$ columns are the vectors $\alpha$, the space spanned by these $n$ column vectors is called the **image space** of $A$, also called the **column space**, written:
 
 $$
 R(A)=\operatorname{span}\{\alpha_1,\alpha_2,\cdots,\alpha_n\}
 $$
 
-根据后文维数的定义，像空间的维数等于矩阵 $A$ 的秩．
+By the definition of dimension given later, the dimension of the image space equals the rank of $A$.
 
-由定义，对于像空间 $R(A)$ 中的每一个元素 $y$，均有相应的表示：
+By definition, every element $y$ of the image space $R(A)$ can be written as:
 
 $$
 y=k_1\alpha_1+k_2\alpha_2+\cdots+k_n\alpha_n=(\alpha_1,\alpha_2,\cdots,\alpha_n)\begin{pmatrix}k_1\\k_2\\\vdots\\k_n\end{pmatrix}=A\begin{pmatrix}k_1\\k_2\\\vdots\\k_n\end{pmatrix}
 $$
 
-因此像空间 $R(A)$ 就是对于任意向量 $x$，$Ax$ 的 **值域**．
+So the image space $R(A)$ is exactly the **range** of $Ax$ over all vectors $x$.
 
-同理可以定义 $A$ 的 **行空间**，即 $A$ 的转置的值域 $R(A^T)$．
+Similarly, the **row space** of $A$ is defined as the range of the transpose of $A$, $R(A^T)$.
 
-由于矩阵的行秩等于列秩，行空间的维数也为矩阵的秩，因此转置改变像空间，而不改变像空间的维数．
+Since the row rank of a matrix equals its column rank, the dimension of the row space is also the rank of the matrix. So transposing changes the image space but not its dimension.
 
-在这里可以与前文建立对应关系：
+We can now connect this with the earlier discussion:
 
-向量组等价，等价于对应矩阵的像空间 $R(A)$ 相同．
+Two vector sets are equivalent if and only if the corresponding matrices have the same image space $R(A)$.
 
-方程组同解，等价于对应矩阵的行空间 $R(A^T)$ 相同．
+Two systems have the same solutions if and only if the corresponding matrices have the same row space $R(A^T)$.
 
-## 参考资料与注释
+## References and notes
 
-1.  丘维声，高等代数（下）．清华大学出版社．
+1.  Qiu Weisheng, *Higher Algebra (Volume 2)*. Tsinghua University Press.
 2.  [Vector space](https://en.wikipedia.org/w/index.php?title=Vector_space&oldid=1108546097).*Wikipedia, The Free Encyclopedia*.
