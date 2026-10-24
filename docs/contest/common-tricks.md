@@ -1,43 +1,43 @@
 author: H-J-Granger, Ir1d, ChungZH, Marcythm, StudyingFather, billchenchina, Suyun514, Psycho7, greyqz, Xeonacid, partychicken
 
-本页面主要列举一些竞赛中的小技巧．
+This page lists some small tricks that are useful in contests.
 
-## 利用局部性
+## Using locality
 
-局部性是指程序倾向于引用邻近于其他最近引用过的数据项的数据项，或者最近引用过的数据项本身．局部性分为时间局部性和空间局部性．
+Locality means that a program tends to access data items near other recently accessed data items, or the recently accessed data items themselves. There are two kinds of locality: temporal locality and spatial locality.
 
-具体可参见 [循环展开 (Loop Unroll)](../lang/optimizations.md#循环展开-loop-unroll)、[代码布局优化 (Code Layout Optimizations)](../lang/optimizations.md#代码布局优化-code-layout-optimizations) 等内容
+For details, see [Loop Unroll](../lang/optimizations.md#循环展开-loop-unroll), [Code Layout Optimizations](../lang/optimizations.md#代码布局优化-code-layout-optimizations) and similar sections.
 
-## 循环宏定义
+## Loop macros
 
-如下代码可使用宏定义简化：
+The following code can be simplified with a macro:
 
 ```cpp
 for (int i = 0; i < N; i++) {
-  // 循环内容略
+  // loop body omitted
 }
 
-// 使用宏简化
+// simplified with a macro
 #define f(x, y, z) for (int x = (y), __ = (z); x < __; ++x)
 
-// 这样写循环代码时，就可以简化成 `f(i, 0, N)` ．例如：
+// Now a loop can be written simply as `f(i, 0, N)`. For example:
 // a is a STL container
 f(i, 0, a.size()) { ... }
 ```
 
-另外推荐一个比较有用的宏定义：
+Here is another fairly useful macro:
 
 ```cpp
 #define _rep(i, a, b) for (int i = (a); i <= (b); ++i)
 ```
 
-## 善用 namespace
+## Make good use of namespaces
 
-使用 namespace 能使程序可读性更好，便于调试．
+Using namespaces makes a program easier to read and to debug.
 
-??? note "例题：NOI 2018 屠龙勇士"
+??? note "Example problem: NOI 2018 Dragon Slayer"
     ```cpp
-    // NOI 2018 屠龙勇士 40分部分分代码
+    // NOI 2018 Dragon Slayer, partial-credit code for 40 points
     #include <algorithm>
     #include <cmath>
     #include <cstring>
@@ -46,7 +46,7 @@ f(i, 0, a.size()) { ... }
     long long n, m, a[100005], p[100005], aw[100005], atk[100005];
     
     namespace one_game {
-    // 其实namespace里也可以声明变量
+    // you can also declare variables inside a namespace
     void solve() {
       for (int y = 0;; y++)
         if ((a[1] + p[1] * y) % atk[1] == 0) {
@@ -95,9 +95,9 @@ f(i, 0, a.size()) { ... }
     }
     ```
 
-## 使用宏进行调试
+## Debugging with macros
 
-编程者在本地测试的时候，往往要加入一些调试语句．而在需要提交到 OJ 时，为了不使调试语句的输出影响到系统对程序输出结果的判断，就要把它们全部删除，耗时较多．这种情况下，可以通过定义宏的方式来节省时间．大致的程序框架是这样的：
+When testing locally, programmers often add debugging statements. Before submitting to the OJ, they have to remove all of them so that the debug output doesn't affect how the judge checks the program's output, which takes a lot of time. In this situation, you can save time by defining a macro. The rough structure looks like this:
 
 ```cpp
 #define DEBUG
@@ -110,23 +110,23 @@ f(i, 0, a.size()) { ... }
 #endif
 ```
 
-`#ifdef` 会检查程序中是否有 `#define` 定义的对应标识符，如果有定义，就会执行后面的语句．而 `#ifndef` 会在没有定义相应标识符的情况下执行后面的语句．
+`#ifdef` checks whether the identifier has been defined with `#define` in the program; if it has, the code that follows is used. `#ifndef` uses the code that follows only if the identifier has not been defined.
 
-这样，只需在 `#ifdef DEBUG` 里写好调试用代码，`#ifndef DEBUG` 里写好真正提交的代码，就能方便地进行本地测试．提交程序的时候，只需要将 `#define DEBUG` 一行注释掉即可．也可以不在程序中定义标识符，而是通过 `-DDEBUG` 的编译选项在编译的时候定义 `DEBUG` 标识符．这样就可以在提交的时候不用修改程序了．
+This way, you just put your debugging code inside `#ifdef DEBUG` and the code you actually submit inside `#ifndef DEBUG`, which makes local testing convenient. When submitting, you only need to comment out the `#define DEBUG` line. You can also skip defining the identifier in the program and instead define `DEBUG` at compile time with the `-DDEBUG` compiler option. Then you don't need to change the program at all when submitting.
 
-不少 OJ 都开启了 `-DONLINE_JUDGE` 这一编译选项，善用这一特性可以节约不少时间．
+Many OJs compile with the `-DONLINE_JUDGE` option. Making good use of this can save you a lot of time.
 
-## 对拍
+## Stress testing
 
-对拍是一种进行检验或调试的方法，通过对比两个程序的输出来检验程序的正确性．可以将自己程序的输出与其他程序的输出进行对比，从而判断自己的程序是否正确．
+Stress testing (comparing against a brute-force solution) is a way to check or debug a program by comparing the outputs of two programs. You compare your program's output with the output of another program to decide whether your program is correct.
 
-对拍过程要多次进行，因此需要通过批处理的方法来实现对拍的自动化．
+Stress testing has to be run many times, so you should automate it with a batch script.
 
-具体而言，对拍需要一个 [数据生成器](../tools/testlib/generator.md) 和两个要进行输出结果比对的程序．
+Specifically, stress testing needs a [test data generator](../tools/testlib/generator.md) and the two programs whose outputs you want to compare.
 
-每运行一次数据生成器都将生成的数据写入输入文件，通过重定向的方法使两个程序读入数据，并将输出写入指定文件，最后利用 Windows 下的 `fc` 命令比对文件（Linux 下为 `diff` 命令）来检验程序的正确性．如果发现程序出错，可以直接利用刚刚生成的数据进行调试．
+Each time the generator runs, it writes the generated data to the input file. Both programs read that data through redirection and write their output to given files. Finally, the `fc` command on Windows (`diff` on Linux) compares the files to check whether the program is correct. If you find a mistake, you can debug directly with the data that was just generated.
 
-对拍程序的大致框架如下：
+The rough structure of a stress-testing program is as follows:
 
 ```cpp
 #include <cstdio>
@@ -134,49 +134,49 @@ f(i, 0, a.size()) { ... }
 
 int main() {
   // For Windows
-  // 对拍时不开文件输入输出
-  // 当然，这段程序也可以改写成批处理的形式
+  // don't use file input/output when stress testing
+  // of course, this program can also be rewritten as a batch script
   while (true) {
-    system("gen > test.in");  // 数据生成器将生成数据写入输入文件
-    system("test1.exe < test.in > a.out");  // 获取程序1输出
-    system("test2.exe < test.in > b.out");  // 获取程序2输出
+    system("gen > test.in");  // the generator writes data to the input file
+    system("test1.exe < test.in > a.out");  // get the output of program 1
+    system("test2.exe < test.in > b.out");  // get the output of program 2
     if (system("fc a.out b.out")) {
-      // 该行语句比对输入输出
-      // fc返回0时表示输出一致，否则表示有不同处
-      system("pause");  // 方便查看不同处
+      // this line compares the outputs
+      // fc returns 0 if the outputs are identical, nonzero if they differ
+      system("pause");  // so you can look at the differences
       return 0;
-      // 该输入数据已经存放在test.in文件中，可以直接利用进行调试
+      // the input data is saved in test.in, so you can debug with it directly
     }
   }
 }
 ```
 
-## 内存池
+## Memory pools
 
-当动态分配内存时，频繁使用 `new`/`malloc` 会占用大量的时间和空间，甚至生成大量的内存碎片从而降低程序的性能，可能会使原本正确的程序 TLE/MLE．
+When allocating memory dynamically, calling `new`/`malloc` frequently costs a lot of time and space, and can even create lots of memory fragmentation that hurts performance. A program that is otherwise correct may get TLE/MLE because of it.
 
-这时候需要使用到「内存池」这种技巧：在真正使用内存之前，先申请分配一定大小的内存作为备用．当需要动态分配时直接从备用内存中分配一块即可．
+In this case you can use a technique called a "memory pool": before you actually need memory, request a block of a certain size in advance as a reserve. Whenever you need dynamic allocation, just take a piece from that reserve.
 
-在大多数 OI 题当中，可以预先算出需要使用到的最大内存并一次性申请分配．
+In most OI problems, you can work out the maximum amount of memory you will need in advance and allocate it all at once.
 
-示例：
+Example:
 
 ```cpp
-// 申请动态分配 32 位有符号整数数组：
+// allocate an array of 32-bit signed integers:
 int* newarr(int sz) {
   static int pool[MAXN], *allocp = pool;
   return allocp += sz, allocp - sz;
 }
 
-// 线段树动态开点的代码：
+// creating a node in a dynamically allocated segment tree:
 Node* newnode() {
   static Node pool[MAXN << 1], *allocp = pool - 1;
   return ++allocp;
 }
 ```
 
-## 参考资料
+## References
 
-[洛谷日报 #86](https://studyingfather.blog.luogu.org/some-coding-tips-for-oiers)
+[Luogu Daily #86](https://studyingfather.blog.luogu.org/some-coding-tips-for-oiers)
 
-《算法竞赛入门经典 习题与解答》
+*Introduction to Algorithm Contests: Exercises and Solutions* (Chinese book)

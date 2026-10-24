@@ -1,5 +1,5 @@
-本章主要介绍计算机编程比赛直接相关的知识，包括各种赛事、赛制、题型，以及赛场上常见的坑点与技巧．
+This chapter covers knowledge directly related to programming contests, including the various contests, contest formats and problem types, as well as common pitfalls and useful tricks during a contest.
 
-学习路线，与常用的学习资源也可以在本章找到．
+You can also find learning roadmaps and commonly used learning resources in this chapter.
 
-本章亦设出题板块，介绍出竞赛题的相关知识．
+This chapter also has a section on problem setting, which introduces what you need to know about writing contest problems.

@@ -1,138 +1,138 @@
 author: StudyingFather, NachtgeistW, countercurrent-time, Ir1d, H-J-Granger, Chrogeek, sshwy, Suyun514, hsfzLZH1, CBW2007, Xeonacid, kawa-yoiko, Konano
 
-在算法竞赛中，有多种多样的问题类型．
+Competitive programming has many different types of problems.
 
-## 传统题
+## Traditional problems
 
-**传统题** 是目前算法竞赛中较为常见的题型．
+**Traditional problems** are currently the most common type of problem in competitive programming.
 
-选手需要提交源代码，评测系统会使用事先准备好一些输入数据和相应的输出数据作为测试点[^note1]，将选手提交的源代码编译后[^note2]，让选手程序读入输入数据，通过将选手输出与事先准备好的输出比较，来判断选手程序是否正确．这种评测方式被称之为 **黑盒评测**[^note3]．
+The contestant submits source code. The judge has prepared some input data and the matching output data in advance as test cases[^note1]. It compiles the submitted source code[^note2], makes the program read the input data, and compares the program's output with the prepared output to decide whether the program is correct. This kind of judging is called **black-box judging**[^note3].
 
-对于一个测试点，往往还会设置时间限制和空间限制．
+Each test case usually also has a time limit and a memory limit.
 
-时间限制，指的是程序运行时间的限制[^note4]．选手程序在一个测试点上的运行时间不能超过给定的时间限制．
+The time limit is a limit on how long the program runs[^note4]. The contestant's program must not run longer than the given time limit on a test case.
 
-空间限制，指的是程序使用的内存量的限制．选手程序在运行时占用的最大空间不能超过给定的空间限制．
+The memory limit is a limit on how much memory the program uses. The maximum memory the contestant's program uses while running must not exceed the given memory limit.
 
-在程序正常运行结束后，选手的输出会和测试点输出进行比对．这种比对一般采用过滤文末换行和行末空格之后，进行全文比对的方式．对于某些特殊的题目，会使用 [Special Judge](../tools/special-judge.md) 来进行比对．
+After the program finishes normally, its output is compared with the test case's output. Usually the comparison ignores trailing newlines at the end of the file and trailing spaces at the end of lines, and then compares the full text. For some special problems, a [Special Judge](../tools/special-judge.md) is used for the comparison.
 
-这一过程结束后，评测系统会根据程序的运行状态，给出不同的 **评测结果**[^note5]：
+When this process is done, the judge gives different **verdicts**[^note5] depending on how the program ran:
 
--   Accepted（AC）：选手程序被接受．
--   Compile Error（CE）：选手程序无法正常编译．
--   Wrong Answer（WA）：选手程序正常结束，但是选手程序的输出与测试点输出不符．
--   Presentation Error（PE）：选手程序正常结束，但是格式不符合要求[^note6]．
--   Runtime Error（RE）：选手程序非正常结束（选手程序结束时的返回值不为零）．
--   Time Limit Exceeded（TLE）：选手程序运行的时间超过了给定的时间限制．
--   Memory Limit Exceeded（MLE）：选手程序占用的最大空间超过了给定的空间限制．
--   Output Limit Exceeded（OLE）：选手程序输出的内容的量超过了最大限制．
+-   Accepted (AC): the program is accepted.
+-   Compile Error (CE): the program fails to compile.
+-   Wrong Answer (WA): the program finishes normally, but its output doesn't match the test case's output.
+-   Presentation Error (PE): the program finishes normally, but the output format doesn't meet the requirements[^note6].
+-   Runtime Error (RE): the program terminates abnormally (its exit code is not zero).
+-   Time Limit Exceeded (TLE): the program runs longer than the given time limit.
+-   Memory Limit Exceeded (MLE): the maximum memory the program uses exceeds the given memory limit.
+-   Output Limit Exceeded (OLE): the program prints more output than the maximum allowed.
 
-在 ICPC 赛事中，你的程序需要在一道题目的所有测试点上都取得 AC 状态，才能视为通过相应的题目．在 OI 赛事中，在一个测试点中取得 AC 状态，即可拿到该测试点的分数[^note7]．
+In ICPC contests, your program must get AC on every test case of a problem for the problem to count as solved. In OI contests, getting AC on a test case is enough to get that test case's points[^note7].
 
-## 提交答案题
+## Output-only problems
 
-**提交答案题** 是直接提交答案的题目．该种题目一般会给出输入文件，要求提交包含有 `XXX1.out`、`XXX2.out`、`XXX3.out`…`XXXn.out` 的压缩包、文件夹或纯文件．
+**Output-only problems** are problems where you submit the answers directly. They usually give you the input files and ask you to submit an archive, a folder, or plain files containing `XXX1.out`, `XXX2.out`, `XXX3.out`…`XXXn.out`.
 
-提交答案后，评测系统会比较答案文件与标准答案，根据选手答案的优劣情况和任务完成度，给予一定的分数．
+After you submit, the judge compares your answer files with the reference answers and gives you points based on how good your answers are and how much of the task you completed.
 
-因为提交答案题不需要运行源程序，故提交答案题不存在时间和空间限制．
+Since output-only problems don't run your program, they have no time or memory limits.
 
-做这种题目一般有两种方法：
+There are generally two ways to solve these problems:
 
--   手玩．这种方法简单粗暴，但是遇到较大的数据就没辙了．
--   编写一个程序来获得答案文件．
+-   Work them out by hand. This is simple and direct, but it's hopeless for large data.
+-   Write a program to produce the answer files.
 
-## 交互题
+## Interactive problems
 
-**交互题** 是需要选手程序与测评程序交互来完成任务的题目．一类常见的情形是，选手程序向测评程序发出询问，并得到其反馈．测评程序可能对选手的询问作出限制，或调整应答策略来尽可能增加询问次数，这也给题目带来了更多变化．
+**Interactive problems** are problems where the contestant's program must interact with a judging program to complete a task. A common case is that the contestant's program sends queries to the judging program and gets responses. The judging program may restrict the queries, or adjust its answering strategy to force as many queries as possible, which makes these problems more varied.
 
-更详细的交互题讲解可以看 [交互题](./interaction.md)．
+For a more detailed explanation of interactive problems, see [Interactive problems](./interaction.md).
 
-交互方式主要有如下两种．虽然技术上有不小的差异，但在考察算法的本质上它们并没有实际区别．
+There are two main ways of interacting. Although they differ quite a bit technically, there is no real difference in the nature of the algorithms they test.
 
-### STDIO 交互
+### STDIO interaction
 
-STDIO 交互（标准 I/O 交互）是 Codeforces、AtCoder 等在线平台的交互手段，也是 ICPC 系列赛事中的标准．Codeforces 提供了一个更加简要的 [说明（英文）](https://codeforces.com/blog/entry/45307)．
+STDIO interaction (standard I/O interaction) is how online platforms such as Codeforces and AtCoder do interaction, and it is also the standard in ICPC contests. Codeforces provides a shorter [explanation (in English)](https://codeforces.com/blog/entry/45307).
 
-???+ note "例题 [LOJ #559.「LibreOJ Round #9」ZQC 的迷宫](https://loj.ac/problem/559)"
-    请注意最下方添加内容．
+???+ note "Example problem [LOJ #559. "LibreOJ Round #9" ZQC's Maze](https://loj.ac/problem/559)"
+    Please note the content added at the bottom.
     
-    本题是一道交互题．
+    This is an interactive problem.
     
-    位于 $n \times m$ 个方格组成的黑暗迷宫的你，需要走到这个迷宫的终点，以完成迷宫挑战．
+    You are in a dark maze made of $n \times m$ squares, and you need to reach the exit of the maze to complete the maze challenge.
     
-    最开始，你位于迷宫的起点即 $(1,1)$ 处，且面向右侧，终点位于 $(n,m)$ 处．迷宫中任意两个方格之间均连通，且仅有唯一的一条路径，两个相邻（即上、下、左、右四连通）方格间长度为一个单位长度．两个相邻方格之间可能会有墙壁，墙壁厚度相对于方格而言非常小，粗略不计．迷宫的边界均有墙壁，且每一堵墙壁均与边界连通．迷宫是完全黑暗的，这意味着，你无法得到除 $(n,m)$ 以外的任何信息．
+    At the start, you are at the entrance of the maze, $(1,1)$, facing right. The exit is at $(n,m)$. Any two squares in the maze are connected by exactly one path. Two adjacent squares (up, down, left or right, i.e. 4-connected) are one unit of length apart. There may be a wall between two adjacent squares; walls are very thin compared with the squares, so their thickness is ignored. The boundary of the maze has walls everywhere, and every wall is connected to the boundary. The maze is completely dark, which means you can't get any information except about $(n,m)$.
     
-    为了在黑暗条件下尽量不迷路，每次前进时你只能从当前格子出发，沿着左侧或右侧墙壁，左手或右手扶着墙壁前进，并且使扶着墙壁的手移动距离恰好为一个单位长度．需要注意的是，若左侧或右侧墙壁不存在，则沿该侧方向无法前进．
+    To avoid getting lost in the dark, each time you move you can only start from your current square and follow the wall on your left or right, keeping your left or right hand on the wall, so that the hand on the wall moves exactly one unit of length. Note that if there is no wall on the left or right side, you can't move along that side.
     
-    在黑暗中过久的你会感到恐惧，因此你需要在你尽早走出迷宫．如果你没有在限定步数内走出迷宫，挑战将会失败．
+    After too long in the dark you will become afraid, so you need to get out of the maze as early as possible. If you don't get out within the step limit, the challenge fails.
 
-对于这类题目，选手只需像往常一样将询问写到标准输出，**刷新输出缓冲** 后从标准输入读取结果．选手程序刷新输出缓冲后，通过管道连接它的测评程序（称为交互器）才能立刻接收到这些数据．在 C/C++ 中，`fflush(stdout)` 和 `std::cout << std::flush` 可以实现这个操作（使用 `std::cout << std::endl` 换行时也会自动刷新缓冲区，但是 `std::cout << '\n'` 不会）；Pascal 则是 `flush(output)`．
+For this kind of problem, the contestant just writes queries to standard output as usual, **flushes the output buffer**, and then reads the result from standard input. Only after the contestant's program flushes its output buffer can the judging program connected to it through a pipe (called the interactor) receive the data right away. In C/C++, `fflush(stdout)` and `std::cout << std::flush` do this (printing a newline with `std::cout << std::endl` also flushes the buffer automatically, but `std::cout << '\n'` doesn't); in Pascal it's `flush(output)`.
 
-### Grader 交互
+### Grader interaction
 
-Grader 交互方式常见于 IOI、APIO 等国际 OI 赛事（特别是 CMS 平台的竞赛）．
+Grader interaction is common in international OI contests such as IOI and APIO (especially contests run on the CMS platform).
 
-???+ note "例题 [UOJ #206.【APIO2016】Gap](https://uoj.ac/problem/206)"
-    有 $N$ 个严格递增的非负整数 $a_1,a_2,\cdots,a_N (0\leq a_1<a2<\cdots<a_N\leq 10^{18})$．你需要找出 $a_{i+1}−a_i (0\leq i\leq N−1)$ 里的最大的值．
+???+ note "Example problem [UOJ #206. [APIO2016] Gap](https://uoj.ac/problem/206)"
+    There are $N$ strictly increasing non-negative integers $a_1,a_2,\cdots,a_N (0\leq a_1<a2<\cdots<a_N\leq 10^{18})$. You need to find the largest value among $a_{i+1}−a_i (0\leq i\leq N−1)$.
     
-    你的程序不能直接读入这个整数序列，但是你可以通过给定的函数来查询该序列的信息．关于查询函数的细节，请根据你所使用的语言，参考下面的实现细节部分．
+    Your program can't read this integer sequence directly, but it can query information about the sequence through the given function. For details of the query function, see the implementation details section below for the language you use.
     
-    你需要实现一个函数，该函数返回 $a_{i+1}−a_i (0\leq i\leq N−1)$ 中的最大值．
+    You need to implement a function that returns the maximum of $a_{i+1}−a_i (0\leq i\leq N−1)$.
 
-对于这类题目，选手只需编写一个特定的函数完成某项任务，它通过调用给定的若干辅助函数来进行交互．为了便于选手在本地测试，题目会下发一个头文件与一个参考测评程序 `grader.cpp`（对于 Pascal 语言是一个库 `graderlib`），选手将自己的程序与 `grader.cpp` 一同编译方可得到可执行文件．
+For this kind of problem, the contestant only writes one specific function to complete some task, and it interacts by calling several given helper functions. To make local testing easier, the problem provides a header file and a sample judging program `grader.cpp` (for Pascal, a library `graderlib`). The contestant compiles their own program together with `grader.cpp` to get an executable.
 
 ```sh
 g++ grader.cpp my_solution.cpp -o my_solution -Wall -O2
-./my_solution   # 执行程序
+./my_solution   # run the program
 ```
 
-编译得到的程序表现与传统题程序类似．它会打开固定的文件，以固定的格式读取数据，调用选手编写的函数，并将结果和若干信息（例如询问的次数、答案正确性）显示在标准输出上．
+The compiled program behaves like a program for a traditional problem. It opens a fixed file, reads the data in a fixed format, calls the function the contestant wrote, and prints the result and some information (for example, the number of queries and whether the answer is correct) to standard output.
 
-实际测评时，选手的程序会与一个不同的 `grader.cpp` 编译．这个 `grader.cpp` 将以类似的方式调用选手编写的函数，并记录其得分．一般来说，这个版本的 `grader.cpp` 所有全局符号都会设为 `static`，也即不能通过冲突命名的方式破解它，但是任何尝试突破 grader 限制的行为都会被判失格 (disqualification)．
+During actual judging, the contestant's program is compiled with a different `grader.cpp`. This `grader.cpp` calls the contestant's function in a similar way and records the score. Usually all global symbols in this version of `grader.cpp` are made `static`, so you can't break it by using conflicting names. In any case, any attempt to get around the grader's restrictions leads to disqualification.
 
-### 差别
+### Differences
 
-STDIO 交互的一个明显优势在于它可以支持任何编程语言，但是输入输出的耗时容易成为问题设计的瓶颈，导致有时无法区分程序的时间效率差别；Grader 交互则恰好相反，由于函数调用的开销不大，常常可以允许 $10^6$ 数量级的询问次数，但是语言的限制是其短板．
+An obvious advantage of STDIO interaction is that it supports any programming language. But the time spent on input and output easily becomes the bottleneck of the problem design, so sometimes the difference in time efficiency between programs can't be distinguished. Grader interaction is the opposite: since function calls are cheap, it often allows on the order of $10^6$ queries, but its weakness is the restriction on languages.
 
-如果自己设计题目或举办比赛，需要对二者认真权衡和比较．
+If you design problems or host a contest yourself, you need to weigh and compare the two carefully.
 
-## 通信题
+## Communication problems
 
-**通信题** 是需要两个选手程序进行通信，合作完成某项任务的题目．第一个程序接收问题的输入，并产生某些输出；第二个程序的输入会与第一个的输出相关（有时是原封不动地作为一个参数，有时会由评测端处理得到），它需要产生问题的解．
+**Communication problems** are problems where two contestant programs need to communicate and cooperate to complete a task. The first program receives the input of the problem and produces some output. The input of the second program is related to the output of the first (sometimes passed unchanged as a parameter, sometimes processed by the judge first), and it must produce the solution to the problem.
 
-通信题的例子有：[UOJ #178. 新年的贺电](https://uoj.ac/problem/178)，[#454.【UER #8】打雪仗](https://uoj.ac/problem/454) 等．
+Examples of communication problems include [UOJ #178. New Year's Greeting Telegram](https://uoj.ac/problem/178), [#454. [UER #8] Snowball Fight](https://uoj.ac/problem/454), and so on.
 
-本地测试的方法由于题目设定的不同而多种多样，常用的形式如：
+How to test locally varies a lot depending on how the problem is set up. Common approaches include:
 
--   手工输入
--   编写一个辅助程序，转换第一个程序的输出到第二个程序的输入
--   用双向管道将两个程序的标准输入/输出连接起来
+-   Typing the input by hand
+-   Writing a helper program that converts the first program's output into the second program's input
+-   Connecting the standard input/output of the two programs with a two-way pipe
 
-由于评测平台对于通信题的支持有限，因而目前为止，通信题只常见于 IOI 系列赛和 UOJ 等少数在线平台举办的比赛．它仍是一个有待探索的领域．
+Because judging platforms have limited support for communication problems, so far they have mostly appeared only in the IOI series and in contests hosted by a few online platforms such as UOJ. It is still an area waiting to be explored.
 
-## 函数补全题
+## Function-completion problems
 
-**函数补全题** 是需要选手补全程序的题目．可以理解为在一道交互题中，题目给定了选手代码，要求编写辅助函数．
+**Function-completion problems** are problems where the contestant has to complete a program. You can think of them as interactive problems where the problem gives the contestant's code and asks you to write the helper functions.
 
-通常有以下几种形式：
+They usually come in these forms:
 
--   给定一个程序，并告知要求补全的代码块将被嵌入在哪里．
--   不给出程序，而将输入信息作为待提交函数的参数．
+-   You are given a program and told where the code block you complete will be inserted.
+-   No program is given; instead, the input is passed as parameters of the function you submit.
 
-这种题在 [LeetCode](https://leetcode.com/) 和 [PTA - 拼题 A](https://pintia.cn/problem-sets) 上比较多见．
+This kind of problem is common on [LeetCode](https://leetcode.com/) and [PTA](https://pintia.cn/problem-sets).
 
-## 其他类型
+## Other types
 
-???+ note "例题 [Quine](https://loj.ac/problem/4)"
-    写一个程序，使其能输出自己的源代码．
+???+ note "Example problem [Quine](https://loj.ac/problem/4)"
+    Write a program that prints its own source code.
     
-    代码中必须至少包含十个可见字符．
+    The code must contain at least ten visible characters.
 
-题目很经典，但是在绝大多数 OJ 上都很难实现．
+This is a classic problem, but it is hard to support on most OJs.
 
-??? note "参考代码"
-    **注意**：源代码不包含下方第一行（即 `// clang-format off`）．
+??? note "Reference code"
+    **Note**: the source code does not include the first line below (that is, `// clang-format off`).
     
     ```cpp
     // clang-format off
@@ -143,18 +143,18 @@ STDIO 交互的一个明显优势在于它可以支持任何编程语言，但�
     int main(){printf(s,10,34,s,34,10);return 0;}
     ```
 
-## 参考资料与注释
+## References and notes
 
-[^note1]: 因为技术上和资源上的限制，一道题目的测试点大多数情况下不能覆盖满足数据范围的全部数据．
+[^note1]: Because of technical and resource limits, in most cases the test cases of a problem can't cover all data that fits the constraints.
 
-[^note2]: 对于 Python 这样的解释性语言则直接由解释器解释运行程序．
+[^note2]: For interpreted languages like Python, the interpreter runs the program directly.
 
-[^note3]: 事实上评测系统的实现远比这个复杂，这里只是大概介绍了评测系统的评测过程．
+[^note3]: In reality, judges are implemented in a much more complicated way; this is only a rough description of the judging process.
 
-[^note4]: 准确来说，一般是程序的用户态时间．
+[^note4]: More precisely, it is usually the program's user-mode CPU time.
 
-[^note5]: 这里的评测结果大多也适用于其他类型题目．
+[^note5]: Most of these verdicts also apply to other types of problems.
 
-[^note6]: 大多数评测系统会将 PE 状态归到 WA 状态当中．
+[^note6]: Most judges count PE as WA.
 
-[^note7]: 一些测试点可能会有部分分，选手在完成一个测试点的部分任务，或者选手的输出正确但不够优的情况下，可以获得一定比例的分数．
+[^note7]: Some test cases may give partial points. If the contestant completes part of the task on a test case, or the output is correct but not optimal, they can get a certain fraction of the points.

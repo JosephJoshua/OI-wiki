@@ -1,326 +1,326 @@
 author: Ir1d, Planet6174, abc1763613206, StudyingFather, cjsoft, Marcythm, luoguyuntianming, ChungZH, Xeonacid, YZircon, i-Yirannn, H-J-Granger, NachtgeistW, YuzhenQin, Andycode3759, HHH2309, shigengxin123456, Re-Ori, hcx1204
 
-## 赛事简介
+## About the contests
 
-**信息学奥林匹克竞赛**（英语：Olympiad in Informatics，简称：OI）是一门在中学生中广泛开展的学科竞赛，和物理、数学等竞赛性质相同．OI 考察的内容是参赛者运用算法、数据结构和数学知识，通过编写计算机程序解决实际问题的能力．
+The **Olympiad in Informatics** (OI) is a subject competition widely held among secondary school students, just like the physics and math olympiads. OI tests a contestant's ability to solve practical problems by writing computer programs, using algorithms, data structures and mathematics.
 
-OI 竞赛种类繁多，仅中国就包括：
+There are many OI contests. In China alone, they include:
 
--   全国青少年信息学奥林匹克联赛（NOIP）
--   全国青少年信息学奥林匹克竞赛（NOI）
--   全国青少年信息学奥林匹克竞赛冬令营（WC）
--   国际信息学奥林匹克竞赛中国队选拔赛（CTSC）
+-   National Olympiad in Informatics in Provinces (NOIP)
+-   National Olympiad in Informatics (NOI)
+-   NOI Winter Camp (WC)
+-   China Team Selection Competition for the IOI (CTSC)
 
-国际性的 OI 竞赛包括：
+International OI contests include:
 
--   国际信息学奥林匹克（IOI）
--   美国计算机奥林匹克竞赛（USACO）
--   日本信息学奥林匹克（JOI）
--   亚太地区信息学奥林匹克（APIO）
+-   International Olympiad in Informatics (IOI)
+-   USA Computing Olympiad (USACO)
+-   Japanese Olympiad in Informatics (JOI)
+-   Asia-Pacific Informatics Olympiad (APIO)
 
     ……
 
-对于大部分选手而言，每年的新赛季从 9 月的 CSP-J/S 第一轮开始．
+For most contestants, each new season starts with the first round of CSP-J/S in September.
 
-在中国，OI 竞赛允许使用的语言只有 C++（曾经也开放过 C 和 Pascal 语言，但都已停止支持）．其中，不同的竞赛对 C++ 的版本有不同的规定．考试题目一般为算法或者数据结构相关的内容，题目形式包括传统题（最常见的规定输入和输出到文件的题目）和非传统题（提交答案题、交互题、补全代码题……等等）．
+In China, the only language allowed in OI contests is C++ (C and Pascal were allowed in the past, but support for both has ended). Different contests have different rules about the C++ version. Problems are usually about algorithms or data structures. Problem types include traditional problems (the most common kind, where input and output go through specified files) and non-traditional problems (output-only problems, interactive problems, code-completion problems, and so on).
 
-## 赛制介绍
+## Contest formats
 
-### OI 赛制
+### OI format
 
-选手仅有一次提交机会．比赛时无法看到评测结果，评分会在赛后公布．每道题都有多个测试点，根据每道题通过的测试点的数量获得相应的分数；每个测试点还可能会有部分分，即使只有部分数据通过也能拿到分数．
+Contestants get only one submission. They can't see judging results during the contest; scores are published after the contest. Each problem has several test cases, and you get points based on how many test cases you pass. Test cases may also give partial points, so you can score even if your program only works on part of the data.
 
-???+ note "自评测工具 selfEval"
-    现如今，在一些 NOI 系列赛中，提供了 selfEval 自评测工具．selfEval 内置于全国赛定制版 NOI Linux 中．自 NOI2023 正式公布并投入使用后，selfEval 陆续用于其后的 NOI 全国赛、APIO（中国区）和 NOI 冬令营等．选手可以使用 selfEval 在一组测试数据（称为预测试数据）上测试自己的程序，并得到反馈结果．选手在每场比赛中的自测次数有指定上限（NOI2024 自测次数上限为 50 次，NOI2025 自测次数上限为 30 次），而且预测试数据也是选手不可见的．由于预测试数据不同于正式测试数据，因此自测结果仅用于调试，不能被视作正式评测成绩．选手在同一题目上多次进行预测试，所使用的预测试数据是相同的．
+???+ note "The selfEval self-testing tool"
+    Nowadays some NOI-series contests provide the selfEval self-testing tool, which is built into the custom edition of NOI Linux used in national contests. It was officially announced and first used at NOI2023, and has since been used at later NOI national contests, APIO (China region), the NOI Winter Camp and others. Contestants can use selfEval to test their programs on a set of test data (called pretest data) and get feedback. There is a cap on the number of self-tests per contest (50 at NOI2024 and 30 at NOI2025), and the pretest data is not visible to contestants. Since the pretest data differs from the official test data, self-test results are only for debugging and do not count as official scores. Repeated pretests on the same problem use the same pretest data.
 
-CSP-J/S 第二轮、NOIP、省选、NOI 都是 OI 赛制．
+The second round of CSP-J/S, NOIP, the provincial team selection and NOI all use the OI format.
 
-### IOI 赛制
+### IOI format
 
-选手在比赛时有多次提交机会．比赛实时评测并返回结果，如果提交的结果是错误的，不会有任何惩罚．每道题都有多个测试点，根据每道题通过的测试点的数量获得相应的分数．
+Contestants can submit many times during the contest. Submissions are judged in real time and results are returned. Wrong submissions carry no penalty. Each problem has several test cases, and you get points based on how many test cases you pass.
 
-APIO、IOI 都是 IOI 赛制．目前国内比赛也在逐渐向 IOI 赛制靠拢．
+APIO and IOI both use the IOI format. Contests in China are also gradually moving toward the IOI format.
 
-### Codeforces (CF) 赛制
+### Codeforces (CF) format
 
-[Codeforces](https://codeforces.com) 是一个在线评测系统，会定期举办比赛．
+[Codeforces](https://codeforces.com) is an online judge that holds contests regularly.
 
-它的比赛特点是在比赛过程中只测试一部分数据（Pretests），而在比赛结束后返回完整的所有测试点的测试结果（System Tests）．比赛时可以多次提交，允许 Hack 别人的代码（此处 Hack 的意思是提交一个测试数据，使得别人的代码无法给出正确答案）．如果想要 Hack，选手必须要锁定自己的代码（换言之，比赛时无法重新提交该题）．Hack 时不允许将选手程序拷贝到本地进行测试，源代码会被转换成图片．
+What's special about its contests is that only part of the data (Pretests) is tested during the contest, and the full results on all test cases (System Tests) are returned after the contest ends. You can submit many times during the contest, and you may Hack other people's code (here, Hack means submitting a test case that makes someone else's code give a wrong answer). To Hack, you must lock your own code for that problem (in other words, you can't resubmit it for the rest of the contest). When hacking, you are not allowed to copy the other contestant's program to test it locally; the source code is shown as an image.
 
-Codeforces 同时提供另外一种赛制，称作扩展 ICPC（Extended ICPC 或 ICPC+）．在这一赛制中，在比赛过程中会测试全部数据，但比赛结束以后会有 12 小时的全网 Hack 时间．Hack 时允许将选手程序拷贝到本地进行测试．
+Codeforces also offers another format called Extended ICPC (or ICPC+). In this format, all data is tested during the contest, but after the contest there is a 12-hour open Hack phase for everyone. During this phase you may copy contestants' programs to test them locally.
 
-## 主要比赛
+## Major contests
 
 ### CSP-J/S
 
-**CSP-J/S**（英文：Certified Software Professional Junior/Senior）是 NOIP 在 2019 年被取消之后，CCF 开设的非专业级软件能力认证测试，在 2025 年以前面向全年龄段，[后改为 12 周岁以上](https://www.noi.cn/xw/2025-02-13/837984.shtml)．
+**CSP-J/S** (Certified Software Professional Junior/Senior) is a non-professional software skills certification test that the CCF set up after NOIP was cancelled in 2019. Before 2025 it was open to all ages; [later it was limited to those aged 12 and above](https://www.noi.cn/xw/2025-02-13/837984.shtml).
 
-CSP-J/S 分为入门级（Junior，简写为 CSP-J）与提高级（Senior，简写为 CSP-S）两组，赛程分为第一轮（一般在每年 9 月）和第二轮（一般在每年 10 月）两场．第一轮为笔试，考察计算机理论和操作常识和基本的算法与数学知识；第二轮为上机考试，入门组与提高组都为 4 题，其中入门组考试时间 3.5 个小时，提高组 4 个小时（CSP-S 2019 除外，该场比赛使用旧 NOIP 提高组赛制，赛程分为两天，一天 3 题 3.5 小时）．第一轮面向社会全体 12 周岁以上学生报名，经过一定的排名筛选后成绩优秀者有机会参加第二轮．
+CSP-J/S has two groups: Junior (CSP-J) and Senior (CSP-S). There are two rounds: the first round (usually in September each year) and the second round (usually in October each year). The first round is a written test covering computer theory, general computer knowledge, and basic algorithms and math. The second round is a programming exam on computers. Both Junior and Senior have 4 problems; the Junior exam lasts 3.5 hours and the Senior exam 4 hours (except CSP-S 2019, which used the old NOIP Senior Group format: two days, 3 problems in 3.5 hours each day). Any student aged 12 or above can register for the first round, and the top performers after ranking get the chance to take part in the second round.
 
-报名参加第一/二轮、第二轮后进行题目申诉等都需要向 CCF 缴费．
+Registering for the first/second round and filing appeals about problems after the second round all require paying fees to the CCF.
 
-两轮测试都会以省为单位按照排名对选手成绩进行评级认证，分为一、二、三等．
+Both rounds rank contestants within each province and certify them at first, second and third levels.
 
 ### NOIP
 
-**NOIP**（英语：National Olympiad in Informatics in Provinces，中文：全国青少年信息学奥林匹克联赛）是中华人民共和国组织的、面向中国（含港澳）中学生的信息学竞赛．
+**NOIP** (National Olympiad in Informatics in Provinces) is an informatics contest organized in the People's Republic of China for secondary school students in China (including Hong Kong and Macau).
 
-2018 年及以前的旧赛制：NOIP 按参赛对象分为普及组和提高组，2018 年于上海试点入门组；按阶段分为初赛和复赛两个阶段．初赛会考察一些计算机基础知识和算法基础，复赛为上机考试．时间上一般是 11 月的第二个周末，周六上午提高组一试 8:30-12:00（3.5 小时，共 3 题），下午 14:30-18:00 普及组（3.5 小时，共 4 题），周日上午提高组二试 8:30-12:00（3.5 小时，共 3 题）．全国使用同一套试卷，但是评奖规则按照省内情况由 CCF（中国计算机学会）统一指定，并于赛后在 [NOI 官方网站](http://www.noi.cn) 上公布．各省的一等奖分数线略有不同．
+Old format, 2018 and earlier: NOIP was divided by participant level into the Junior Group and the Senior Group, and in 2018 an entry-level group was piloted in Shanghai. It was divided into two stages: the preliminary round and the final round. The preliminary round tested some basic computer knowledge and basic algorithms, and the final round was a programming exam on computers. It was usually held on the second weekend of November: Senior Group Day 1 on Saturday morning 8:30-12:00 (3.5 hours, 3 problems), the Junior Group on Saturday afternoon 14:30-18:00 (3.5 hours, 4 problems), and Senior Group Day 2 on Sunday morning 8:30-12:00 (3.5 hours, 3 problems). The whole country used the same problem set, but award rules were set uniformly by the CCF (China Computer Federation) based on each province's situation and were published after the contest on the [official NOI website](http://www.noi.cn). The cutoff for a first prize differed slightly between provinces.
 
-NOIP 于 2019 年 8 月 16 日 [被 CCF 暂停](http://www.noi.cn/xw/2019-08-16/715365.shtml)，于 2020 年 1 月 21 日 [被宣布恢复](http://www.noi.cn/xw/2020-01-21/715520.shtml)．2020 年起的 NOIP 赛制与以往有所不同，具体如下：
+NOIP was [suspended by the CCF](http://www.noi.cn/xw/2019-08-16/715365.shtml) on August 16, 2019, and [announced to be restored](http://www.noi.cn/xw/2020-01-21/715520.shtml) on January 21, 2020. Since 2020, the NOIP format has been different from before:
 
--   取消初赛，由 CSP-J/S 第一轮替代；
--   取消普及组，由 CSP-J 替代，此后 NOIP 仅有一个组别，面向提高组水平选手；
--   赛程由以往的两天共 6 题、每天 3.5 个小时，缩减为一天 4 题、共 4.5 个小时．
--   选手需要在 CSP-S 第二轮中取得一定名次才能获得 NOIP 参赛资格，具体名额各省有所差异．NOIP 省级参赛资格由该省在去年赛季中的参赛人数和成绩等有关．
+-   The preliminary round was dropped and replaced by the first round of CSP-J/S;
+-   The Junior Group was dropped and replaced by CSP-J. Since then NOIP has had only one group, aimed at Senior-level contestants;
+-   The schedule was cut from two days with 6 problems in total (3.5 hours each day) to one day with 4 problems in 4.5 hours.
+-   Contestants need to reach a certain rank in the second round of CSP-S to qualify for NOIP; the exact quotas differ between provinces. A province's NOIP quota depends on factors such as its number of participants and results in the previous season.
 
-报名参加 NOIP 和进行题目申诉不需要额外缴费．
+Registering for NOIP and filing appeals about problems do not require extra fees.
 
-NOIP 以省为单位排名评奖．截至 2019 年，大部分高校的选手获得提高组省一等奖可以得到自主招生资格．
+NOIP awards are ranked within each province. As of 2019, at most universities, a provincial first prize in the Senior Group qualified a student for independent admission.
 
-> 2020 年 1 月，中华人民共和国教育部发布 [关于在部分高校开展基础学科招生改革试点工作的意见](http://www.moe.gov.cn/srcsite/A15/moe_776/s3258/202001/t20200115_415589.html)．意见指出，2020 年起，不再组织开展高校自主招生工作，并在部分一流大学建设高校开展基础学科招生改革试点（强基计划）．
+> In January 2020, the Ministry of Education of the People's Republic of China issued [Opinions on Piloting Admission Reform for Basic Disciplines at Some Universities](http://www.moe.gov.cn/srcsite/A15/moe_776/s3258/202001/t20200115_415589.html). It stated that from 2020, universities would no longer run independent admissions, and that some top universities would pilot an admission reform for basic disciplines (the Strong Foundation Plan).
 
-### 省队选拔赛
+### Provincial team selection
 
-**省队选拔赛**（简称：省选）用于选拔各省参加全国赛的代表队，一般举行于每年的 1\~4 月．赛程上一般分为两天，每天 3 题 4.5 小时．
+The **provincial team selection** (Shengxuan) selects each province's team for the national contest. It is usually held between January and April each year. It generally lasts two days, with 3 problems in 4.5 hours each day.
 
-省选题目由各个省自行决定，目前的趋势是很多省份选择联合命题．
+Each province decides its own selection problems; the current trend is for many provinces to set problems jointly.
 
-各个省队的名额有复杂的计算公式，一般和之前的成绩和参赛人数有关．通常来讲，NOIP 分数需要在省选的指标中占一定比例．根据规则，初中选手只能被选拔为 E 类选手，不能参加 A、B 类选拔．A 类选手有 5 人（[至少 1 女](https://www.noi.cn/xw/2024-08-26/829152.shtml)），其他选手根据给定名额和所得分数依次进入 B 队．一个学校参加 NOI 的名额不超过本省 A、B 名额总数的三分之一（四舍五入），得分最高且入选 A 队的女选手不占该比例（简称 1/3 限制或 1/3 淘汰，详见 [CCF 官方说明](https://www.noi.cn/xw/2022-12-14/781364.shtml)）．
+The quota for each provincial team is computed by a complicated formula, usually related to past results and the number of participants. Usually, the NOIP score must make up a certain proportion of the selection score. According to the rules, junior high school students can only be selected as category E contestants and can't take part in the selection for categories A and B. Category A has 5 contestants ([at least 1 female](https://www.noi.cn/xw/2024-08-26/829152.shtml)), and the other contestants enter team B in order of their scores up to the given quota. The number of NOI places for one school can't exceed one third (rounded to the nearest integer) of the province's total A and B places; the highest-scoring female contestant who is selected for team A does not count toward this limit (this is called the 1/3 limit or 1/3 elimination; see the [CCF official explanation](https://www.noi.cn/xw/2022-12-14/781364.shtml) for details).
 
-自 2020 年起，NOI 省队选拔由 CCF 统一命题和评测，有能力命题的省可自行命题，但选拔方式需得到 CCF 的批准．自 2024 年起，NOI 省队选拔恢复各省自主命题，有需求的省份可组织联考或使用他省试题，但具体方案需要得到 CCF 的批准．
+From 2020, the NOI provincial team selection problems were set and judged uniformly by the CCF. Provinces able to set problems could set their own, but their selection method needed CCF approval. From 2024, provinces went back to setting their own selection problems. Provinces that want to can hold joint exams or use other provinces' problems, but the specific plan needs CCF approval.
 
 ### NOI
 
-**NOI**（英文：National Olympiad in Informatics，中文：全国信息学奥林匹克竞赛）是国内包括港澳在内的省级代表队最高水平的大赛．
+**NOI** (National Olympiad in Informatics) is the highest-level contest for provincial teams in China, including Hong Kong and Macau.
 
-NOI 一般在七月份举行，选手分为正式选手与夏令营选手两类．正式选手又分为三类，其中 A、B 类为省队正式选手，C 类选手为邀请赛选手．A、B 类对应省队的 A、B 类选手（其中 A 类在计算成绩时会有 5 分加分）；C 类名义上是学校对 CCF 做出突出贡献后的奖励名额．夏令营选手分为 D、E 类，分别对应以非正式选手身份参赛的高中组与初中组选手．夏令营选手如果成绩超过分数线的话，只有成绩证明而没有奖牌（同等分数含金量要低一些）．排名前 50 的正式选手组成国家集训队，获得保送资格．
+NOI is usually held in July. Contestants are either official contestants or summer camp contestants. Official contestants are split into three categories: A and B are official members of provincial teams, and C are invitational contestants. Categories A and B match the A and B contestants of the provincial teams (category A gets a 5-point bonus when scores are calculated). Category C is, in name, a reward quota for schools that have made outstanding contributions to the CCF. Summer camp contestants are split into categories D and E, which are senior high and junior high students taking part as unofficial contestants. If a summer camp contestant scores above the cutoff, they only get a certificate of their score, not a medal (so the same score is worth somewhat less). The top 50 official contestants form the national training team and get guaranteed university admission.
 
-在国际平台上，为了与其他同样称作 NOI 的比赛区分，有时会被称作 CNOI．
+On international platforms, it is sometimes called CNOI to tell it apart from other contests also called NOI.
 
 ### CTT
 
-**CTT**（英文：China Team Training，中文：国际信息学奥林匹克国家集训队培训）是每年冬天为 IOI 国家集训队选手举办的集训与选拔活动，由 3-4 场测试组成．除国家集训队外，部分在当年 NOI 中取得优异成绩的选手也可以「精英集训」的名义参加 CTT．
+**CTT** (China Team Training) is the training and selection event held every winter for members of the IOI national training team. It consists of 3-4 tests. Besides the national training team, some contestants who did especially well at that year's NOI can also take part in CTT under the name "elite training".
 
-CTT 与平时作业等其他流程共同组成了国家队选拔的第一阶段．自 2021 年起，在第一阶段排名前 30 的选手将成为国家候选队，进入第二阶段的选拔（WC）．
+CTT, together with homework and other parts, makes up the first stage of national team selection. Since 2021, the top 30 contestants in the first stage become national team candidates and move on to the second stage of selection (WC).
 
 ### WC
 
-**WC**（英文：Winter Camp，中文：全国青少年信息学奥林匹克竞赛冬令营）是每年冬天在当年 NOI 举办地进行的一项活动．虽然该活动主要用于集训队培训与国家队选拔，但是前一年 NOIP 与 CSP-S 第二轮取得较好成绩的选手也可作为非正式营员参加．
+**WC** (Winter Camp, the NOI Winter Camp) is an event held every winter in the city that hosted that year's NOI. Although it is mainly for training the national training team and selecting the national team, contestants who did well at the previous year's NOIP and the second round of CSP-S can also attend as unofficial participants.
 
-WC 的内容包括若干天的培训和测试，测试成绩将和先前阶段的成绩汇总，算出集训队选手的综合排名．在 2020 年前，测试仅有一场，且集训队与非正式营员的测试题目相同，集训队综合成绩前 15 的选手将成为国家候选队，参与最后阶段的选拔（CTS 等）；而自 2021 年起，随着 CTS 的国家队选拔功能并入到 WC 中，国家候选队的测试变为两场，而非正式营员的测试仍为一场，且非正式营员的测试题目和候选队测试题目有部分重合．候选队中综合排名前 6 的选手将进入到最终的面试，并选出 4 名正式选手和 2 名替补选手参与当年的 IOI 比赛．
+WC consists of several days of training and tests. The test scores are combined with scores from earlier stages to compute the overall ranking of the training team members. Before 2020, there was only one test, and the training team and unofficial participants took the same problems; the top 15 of the training team by overall score became national team candidates and took part in the final stage of selection (CTS, etc.). Since 2021, as the national team selection role of CTS was merged into WC, the candidates take two tests, while unofficial participants still take one, and some of the unofficial participants' problems overlap with the candidates' problems. The top 6 candidates by overall ranking go on to a final interview, from which 4 official contestants and 2 reserve contestants are chosen for that year's IOI.
 
 ### APIO
 
-**APIO**（英文：Asia-Pacific Informatics Olympiad，中文：亚太地区信息学奥林匹克竞赛）是一个面向亚太地区在校中学生的信息学学科竞赛．CCF 每年会在五月初举办中国赛区镜像赛．在比赛日前后会有培训活动．
+**APIO** (Asia-Pacific Informatics Olympiad) is an informatics competition for secondary school students in the Asia-Pacific region. Every year in early May, the CCF hosts a mirror contest for the China region. There are training activities around the contest day.
 
-APIO 参赛选手可分为 A 类和 B 类，A 类选手中的前六名（含并列）可参与 APIO 的国际奖项评选；而 B 类选手只能参与中国赛区的奖项评选．
+APIO contestants are split into categories A and B. The top six of category A (ties included) are eligible for APIO's international awards, while category B contestants can only receive China-region awards.
 
 ### CTS
 
-**CTS**（旧称：CTSC, 英文：China Team Selection Competition，中文：国际信息学奥林匹克竞赛中国队选拔赛）用来从国家候选队（15 人）中选拔国家队（6 人）准备参加当年夏天的 IOI 比赛，其中正式选手 4 人，替补选手 2 人．与 WC 一样，前一年 NOIP 取得较好成绩的选手也可以参加（不参与选拔）．
+**CTS** (formerly CTSC, China Team Selection Competition for the IOI) selects the national team (6 people) from the national team candidates (15 people) to compete at that summer's IOI: 4 official contestants and 2 reserves. As with WC, contestants who did well at the previous year's NOIP can also take part (but are not part of the selection).
 
-APIO 和 CTS 都以省为单位报名，一般按照 NOIP 的成绩排序来确定参加 APIO 和 CTS 的人员（二者一般时间上非常接近）．
+Registration for APIO and CTS is done by province. The participants are usually decided by ranking NOIP scores (the two events are usually very close in time).
 
-2020 年的 CTS 因为疫情而停办，当年的国家集训队通过 NOI 选出；2021 年起，CTS 的选拔流程被 WC 取代．
+CTS 2020 was cancelled due to the pandemic, and that year's national team was selected through NOI. Since 2021, the CTS selection process has been replaced by WC.
 
 ### IOI
 
-**IOI**（英文：International Olympiad in Informatics，中文：国际信息学奥林匹克竞赛）是一年一度的面向全球中学生的信息学科竞赛．每个国家有四人参赛，比赛一般会有直播．IOI 赛制中每个题目会有 Subtask（子任务），每个子任务对应一定的分数．
+**IOI** (International Olympiad in Informatics) is an annual informatics competition for secondary school students around the world. Each country sends four contestants, and the contest is usually streamed live. In the IOI format, each problem has Subtasks, and each subtask is worth a certain number of points.
 
-### 学科营
+### University camps
 
-#### 北京大学（PKU）
+#### Peking University (PKU)
 
--   北京大学信息学冬季体验营（PKUWC）：在冬令营前后举行．
--   北京大学信息学体验营（PKUSC）：一般在六月份在校内举行．由于在学校机房比赛，机房环境是 Windows，比赛系统是 OpenJudge．
--   北京大学中学生暑期课堂（信息学）：在暑假举行，面向高二年级理科学生．
+-   Peking University Informatics Winter Camp (PKUWC): held around the time of the Winter Camp.
+-   Peking University Informatics Camp (PKUSC): usually held on campus in June. Since the contest takes place in the university's computer labs, the environment is Windows and the contest system is OpenJudge.
+-   Peking University Summer Classes for Secondary School Students (Informatics): held during the summer holiday, for science students in the second year of senior high school.
 
-#### 清华大学（THU）
+#### Tsinghua University (THU)
 
--   计算机系 "大中衔接" 冬季研讨与教学活动：相当于信息学冬令营，有时也会用英文简写为 THUWC．一般共两天，上午为竞赛（第一天是标准 OI 竞赛，第二天为清华独创的 "工程题" 竞赛），下午为课程培训．
+-   Department of Computer Science "High School–University Bridging" winter seminar and teaching event: similar to an informatics winter camp, sometimes abbreviated in English as THUWC. It usually lasts two days. Mornings are contests (day one is a standard OI contest, day two is Tsinghua's own "engineering problem" contest), and afternoons are training courses.
 
-## 其他国家和地区的 OI 竞赛
+## OI contests in other countries and regions
 
-### 美国：USACO
+### USA: USACO
 
-官网地址：<http://www.usaco.org/>
+Official website: <http://www.usaco.org/>
 
-USACO 或许是国内选手最熟悉的外国 OI 竞赛（可能也是中文题解最多的外国 OI 竞赛）．
+USACO is probably the foreign OI contest Chinese contestants know best (and probably also the one with the most editorials in Chinese).
 
-每年冬季到初春，USACO 会每月举办一场网络赛．一场比赛持续 3\~5 个小时．
+From winter to early spring each year, USACO holds one online contest per month. Each contest lasts 3\~5 hours.
 
-根据官网的介绍，USACO 的比赛分成这 4 档难度（2015\~2016 学年之前为 3 档）：
+According to the official website, USACO contests are divided into these 4 levels (3 levels before the 2015\~2016 school year):
 
--   铜牌组，适合编程初学者，尤其是只学了最最基础的算法（如：排序，二分查找）的学生；
--   银牌组，适合开始学习基本的算法技巧（如：递归，搜索，贪心算法）和基础数据结构的学生；
--   金牌组，学生会遇到更复杂的算法（如：最短路径，DP）和更高级的数据结构；
--   铂金组，适合有着扎实的算法设计能力的选手，铂金组可以帮助他们以复杂且更开放的问题来挑战自我．
+-   Bronze, for programming beginners, especially students who have only learned the most basic algorithms (such as sorting and binary search);
+-   Silver, for students starting to learn basic algorithmic techniques (such as recursion, search and greedy algorithms) and basic data structures;
+-   Gold, where students meet more complex algorithms (such as shortest paths and DP) and more advanced data structures;
+-   Platinum, for contestants with solid algorithm design skills; Platinum challenges them with complex and more open-ended problems.
 
-在国内，目前 USACO 题目最齐全的 OJ 平台是洛谷．
+In China, Luogu is currently the OJ with the most complete collection of USACO problems.
 
-### 波兰：POI
+### Poland: POI
 
-官网地址：<https://oi.edu.pl/>
+Official website: <https://oi.edu.pl/>
 
-官方提交地址：<https://szkopul.edu.pl/p/default/problemset/>
+Official submission site: <https://szkopul.edu.pl/p/default/problemset/>
 
-POI 是不少省选选手最常刷的外国 OI 比赛．
+POI is the foreign OI contest that many provincial-selection-level contestants practice on most.
 
-根据 [POI 官网](https://oi.edu.pl/l/42/) 的描述，POI 的流程如下：
+According to the [POI official website](https://oi.edu.pl/l/42/), POI works as follows:
 
--   第一轮：六题（第 31 届及以前为五题），网络赛；
--   第二轮：包含一场练习赛，和两场正式赛，其中练习赛一题，正式赛每场两题；
--   第三轮：包含一场练习赛，和两场正式赛，其中练习赛一题，正式赛每场三题．
+-   Round 1: six problems (five problems in the 31st edition and earlier), online contest;
+-   Round 2: one practice contest and two official contests; the practice contest has one problem and each official contest has two;
+-   Round 3: one practice contest and two official contests; the practice contest has one problem and each official contest has three.
 
-在部分年份，曾举办名为 ONTAK 的比赛，其正式名称为 POI 训练营，对标国内的国家集训队集训赛（CTT）．
+In some years there was also a contest called ONTAK, officially the POI training camp, comparable to China's national training team training (CTT).
 
-另外，波兰国内还举办名为 PA 的公开比赛，大意为「算法大战」，其官网地址是：<https://potyczki.mimuw.edu.pl/>．
+Poland also holds an open contest called PA, which roughly means "Algorithmic Engagements". Its official website is: <https://potyczki.mimuw.edu.pl/>.
 
-目前在国内 OJ 中，POI 题目最全的是 BZOJ．
+Among Chinese OJs, BZOJ currently has the most complete collection of POI problems.
 
-### 克罗地亚：COCI
+### Croatia: COCI
 
-官网地址（英文）：<http://www.hsin.hr/coci/>
+Official website (English): <http://www.hsin.hr/coci/>
 
-官网地址（克罗地亚语）：<http://www.hsin.hr/honi/>
+Official website (Croatian): <http://www.hsin.hr/honi/>
 
-难度跨度很大的比赛，大约是从普及 - 到省选 -．
+The difficulty range is very wide, roughly from Junior-minus to provincial-selection-minus level.
 
-以往 COCI 所有的题目均提供题目、数据、题解和标程．2017 年底起，COCI 的题解和标程停止了更新．2019-2020 赛季重新开始更新题解和标程．
+In the past, COCI provided statements, test data, editorials and reference solutions for all problems. From the end of 2017, COCI stopped publishing editorials and reference solutions. Starting from the 2019-2020 season, they began publishing them again.
 
-洛谷、BZOJ 和 LibreOJ 都有少量的 COCI 题目．
+Luogu, BZOJ and LibreOJ all have a few COCI problems.
 
-### 日本：JOI
+### Japan: JOI
 
-官网地址：<https://www.ioi-jp.org/>
+Official website: <https://www.ioi-jp.org/>
 
-JOI（日文：日本情報オリンピック，中文：日本信息学奥赛）所有的题目都提供题目、数据、题解和标程．近两年的 JOI 决赛和春训营提供了英语题面，但并没有英语题解．历年的 JOI Open 都提供了英语版题面和题解．
+JOI (Japanese Olympiad in Informatics) provides statements, test data, editorials and reference solutions for all problems. The JOI Final and Spring Camp of the past two years provide English statements but no English editorials. Every JOI Open so far has provided English statements and editorials.
 
-JOI 的流程：
+How JOI works:
 
--   预赛（予選）
--   决赛（本選/JOI Final）
--   春训营（春季トレーニング合宿/JOI Spring Camp/JOISC）
--   公开赛（通信教育/JOI Open Contest）
+-   Preliminary round (Yosen)
+-   Final round (Honsen/JOI Final)
+-   Spring camp (Spring Training Camp/JOI Spring Camp/JOISC)
+-   Open contest (correspondence course/JOI Open Contest)
 
-预赛难度较低，自 2019/2020 赛季起，预赛分为多轮．JOI Final 的难度从提高 - 到 提高 + 左右．JOISC 和 JOI Open 的题目的难度从提高到 NOI - 不等．
+The preliminary round is fairly easy, and since the 2019/2020 season it has been split into several rounds. JOI Final ranges from about Senior-minus to Senior-plus difficulty. JOISC and JOI Open problems range from Senior to NOI-minus difficulty.
 
-绝大部分 JOI 题可以前往 [AtCoder](https://atcoder.jp/) 提交．你可以在 JOI 官网或者 AtCoder 上找到更多的 JOI 题（日文题面）．
+Most JOI problems can be submitted on [AtCoder](https://atcoder.jp/). You can find more JOI problems (with Japanese statements) on the JOI official website or on AtCoder.
 
-目前 LibreOJ 和 BZOJ 有近些年的 JOI Final、JOISC 和 JOI Open 的题目．
+LibreOJ and BZOJ currently have problems from recent JOI Final, JOISC and JOI Open contests.
 
-### 俄罗斯：ROI
+### Russia: ROI
 
-官网地址：<http://neerc.ifmo.ru/school/archive/index.html>
+Official website: <http://neerc.ifmo.ru/school/archive/index.html>
 
-在线提交地址：<https://contest.yandex.ru/roiarchive/> 和 Codeforces（部分）．
+Online submission: <https://contest.yandex.ru/roiarchive/> and Codeforces (some problems).
 
-ROI（俄文：олимпиадная информатика，中文：俄罗斯信息学奥赛）是俄罗斯的信息学竞赛．
+ROI (Russian: олимпиадная информатика, Russian Olympiad in Informatics) is Russia's informatics olympiad.
 
-流程：
+Stages:
 
--   市级比赛（Municipal Stage/Муниципальный этап）
--   州级比赛（Regional Stage/Региональный этап）
--   决赛（Final Stage/Заключительный этап）
+-   Municipal stage (Municipal Stage/Муниципальный этап)
+-   Regional stage (Regional Stage/Региональный этап)
+-   Final stage (Final Stage/Заключительный этап)
 
-目前 LibreOJ 有近几年的 ROI 决赛题的译文．
+LibreOJ currently has translations of the ROI final problems from recent years.
 
-除此之外，俄罗斯较大型的、面向中学生的比赛还有：
+Besides ROI, other large Russian contests for secondary school students include:
 
--   信息学网络奥赛（俄文：Интернет-олимпиады по информатике）
-    -   官网地址：<http://neerc.ifmo.ru/school/io/index.html>
-    -   该比赛由 ROI 出题人举办．
--   全国中学生团队信息学竞赛（俄文：Всероссийской командной олимпиады школьников）
-    -   官网地址：<http://neerc.ifmo.ru/school/russia-team/index.html>
-    -   该比赛的预选赛 Moscow Team Olympiad 可以在 Codeforces 上提交．
+-   Internet Olympiads in Informatics (Russian: Интернет-олимпиады по информатике)
+    -   Official website: <http://neerc.ifmo.ru/school/io/index.html>
+    -   This contest is run by the ROI problem setters.
+-   All-Russian Team Olympiad in Informatics for school students (Russian: Всероссийской командной олимпиады школьников)
+    -   Official website: <http://neerc.ifmo.ru/school/russia-team/index.html>
+    -   Its qualifying contest, the Moscow Team Olympiad, can be submitted on Codeforces.
 -   Innopolis Open
-    -   官网地址 <https://olymp.innopolis.ru/en/ooui/information/>
--   中学生编程公开赛（Открытая олимпиада школьников по программированию）
-    -   官网地址：<https://olympiads.ru/zaoch/>
-    -   官网称该比赛对标 ROI．
+    -   Official website <https://olymp.innopolis.ru/en/ooui/information/>
+-   Open Olympiad in Programming for school students (Открытая олимпиада школьников по программированию)
+    -   Official website: <https://olympiads.ru/zaoch/>
+    -   The official website says this contest is on the same level as ROI.
 
-### 加拿大：CCC & CCO
+### Canada: CCC & CCO
 
-CCC（英文：Canadian Computing Competition），CCO（英文：Canadian Computing Olympiad），可在其 [官网](https://cemc.math.uwaterloo.ca/contests/past_contests.html#ccc) 查询历届的信息和试题等．
+CCC (Canadian Computing Competition) and CCO (Canadian Computing Olympiad): you can find information and problems from past years on their [official website](https://cemc.math.uwaterloo.ca/contests/past_contests.html#ccc).
 
-在 DMOJ 上可以提交 [CCC](https://dmoj.ca/problems/?category=4) 和 [CCO](https://dmoj.ca/problems/?category=24)，该 OJ 上还有 CCC 题解．
+You can submit [CCC](https://dmoj.ca/problems/?category=4) and [CCO](https://dmoj.ca/problems/?category=24) problems on DMOJ, which also has editorials for CCC.
 
-CCC Junior/Senior 贴近 NOIP 普及组/提高组难度．CCO 想要拿到金牌可能得有 NOI 银牌的水平．
+CCC Junior/Senior are close in difficulty to the NOIP Junior/Senior Groups. To win a gold medal at CCO you probably need NOI silver medal level.
 
-### 新加坡：NOI SG
+### Singapore: NOI SG
 
-官网地址：<https://noisg.comp.nus.edu.sg/noi/>
+Official website: <https://noisg.comp.nus.edu.sg/noi/>
 
-全称 Singapore National Olympiad in Informatics，在新加坡国内语境且不引起歧义的情况下也作 NOI．赛制上分为 Online Qualification Contest（在线资格赛）和 Final Contest（全国决赛）．在线资格赛以学校为单位报名参加，选手在本校参赛，通过网络进行远程提交．资格赛成绩只在校内排名，前 5 名且非零分选手有资格作为校代表队参加全国决赛．
+Its full name is the Singapore National Olympiad in Informatics; within Singapore, where there is no ambiguity, it is also called NOI. It has an Online Qualification Contest and a Final Contest. Schools register for the online qualification contest, and contestants compete at their own school and submit remotely over the internet. Qualification results are only ranked within each school; the top 5 contestants with non-zero scores qualify to represent their school at the national final.
 
-目前国内 OJ 对于 NOI SG 的题目收录比较匮乏，可以在 [官方的 GitHub 账号](https://github.com/noisg) 上找到历年题面、测试数据和官方标准程序．
+Chinese OJs currently have few NOI SG problems. You can find past statements, test data and official solutions on the [official GitHub account](https://github.com/noisg).
 
-### 台湾地区：資訊奧林匹亞競賽
+### Taiwan: Informatics Olympiad
 
-台湾地区把 OI 中的 informatics 翻译成「資訊」而非大陆通用的翻译「信息」．
+In Taiwan, the "informatics" in OI is translated with a different Chinese word than the one commonly used in mainland China.
 
-台湾地区的选手如果想参加 IOI，需要经过这几轮比赛：
+Contestants in Taiwan who want to go to the IOI need to go through these contests:
 
--   區域資訊學科能力競賽
--   全國資訊學科能力競賽
--   資訊研習營（TOI）
+-   Regional Informatics Subject Competition
+-   National Informatics Subject Competition
+-   Informatics Training Camp (TOI)
 
-### 其他国家
+### Other countries
 
--   澳大利亚：AIO：<https://orac.amt.edu.au/hub/aio/>
+-   Australia: AIO: <https://orac.amt.edu.au/hub/aio/>
 
-    -   难度与 NOI 类似．
+    -   Difficulty similar to NOI.
 
--   英国：British Informatics Olympiad：<https://www.olympiad.org.uk/>
+-   UK: British Informatics Olympiad: <https://www.olympiad.org.uk/>
 
-    -   难度太低．
+    -   Too easy.
 
--   捷克：Matematická olympiáda–kategorie P：<http://mo.mff.cuni.cz/p/archiv.html>
+-   Czech Republic: Matematická olympiáda–kategorie P: <http://mo.mff.cuni.cz/p/archiv.html>
 
--   罗马尼亚：Olimpiada Nationala de Informatica：<http://olimpiada.info/>
-    -   题面、测试数据、题解请在含有 Subiecte 字样的标签页中寻找．
+-   Romania: Olimpiada Nationala de Informatica: <http://olimpiada.info/>
+    -   Look for statements, test data and editorials in the tabs labeled Subiecte.
 
-## 其它国际 OI 竞赛
+## Other international OI contests
 
 ### BalticOI
 
-**BalticOI** 面向的是波罗的海周边各国．BalticOI 2018 的参赛国有立陶宛、波兰、爱沙尼亚、芬兰等 9 国．题目难度大．
+**BalticOI** is for the countries around the Baltic Sea. BalticOI 2018 had 9 participating countries, including Lithuania, Poland, Estonia and Finland. The problems are hard.
 
-除了 2017 年，BalticOI 每年都公开题面、测试数据和题解．BalticOI 没有一个固定的官网，每年的主办方都会新建一个网站．历年的官网地址见 [帖子](https://loj.ac/article/416)．
+Except for 2017, BalticOI publishes statements, test data and editorials every year. BalticOI has no fixed official website; each year's host creates a new one. See this [post](https://loj.ac/article/416) for the official websites of past years.
 
-目前 LibreOJ 有近十年的 BalticOI 题．
+LibreOJ currently has BalticOI problems from about the last ten years.
 
 ### BalkanOI
 
-**BalkanOI** 面向巴尔干地区周边各国．BalkanOI 2018 的参赛国有罗马尼亚、希腊、保加利亚、塞尔维亚等 12 国．题目难度大．
+**BalkanOI** is for the countries around the Balkans. BalkanOI 2018 had 12 participating countries, including Romania, Greece, Bulgaria and Serbia. The problems are hard.
 
-BalkanOI 只有某几年公开题面、测试数据和题解，官网地址见 [帖子](https://loj.ac/article/416)．
+BalkanOI only published statements, test data and editorials in some years. See this [post](https://loj.ac/article/416) for the official websites.
 
 ### CEOI
 
-CEOI 2018 的参赛国与上面两个比赛有部分重叠，包括波兰、罗马尼亚、格鲁吉亚、克罗地亚等国．题目难度大．
+The participating countries of CEOI 2018 partly overlap with the two contests above, including Poland, Romania, Georgia and Croatia. The problems are hard.
 
-CEOI 每年都公开题面、测试数据和题解，官网地址见 [帖子](https://loj.ac/article/416)．
+CEOI publishes statements, test data and editorials every year. See this [post](https://loj.ac/article/416) for the official websites.
 
 ### eJOI
 
-**eJOI** 全名 European Junior Olympiad in Informatics．参赛国包含俄罗斯、亚美尼亚、保加利亚、波兰等国．题目难度较大．
+**eJOI** stands for European Junior Olympiad in Informatics. Participating countries include Russia, Armenia, Bulgaria and Poland. The problems are fairly hard.
 
-eJOI 每年都公开题面、测试数据和题解，官网地址见 [帖子](https://loj.ac/article/416)．
+eJOI publishes statements, test data and editorials every year. See this [post](https://loj.ac/article/416) for the official websites.
 
 ### NOI
 
 ???+ warning "Warning"
-    此处介绍的不是「全国信息学奥林匹克竞赛」．
+    This is not China's "National Olympiad in Informatics".
 
-**NOI** 全名 Nordic Olympiads in Informatics．
+**NOI** stands for Nordic Olympiads in Informatics.
 
-官网地址：<http://nordic.progolymp.se>
+Official website: <http://nordic.progolymp.se>
 
-近两年才开始举办的比赛，面向北欧各国．
+A contest that only started in the last couple of years, for the Nordic countries.
 
-## 参考资料
+## References
 
--   [ICPC/CCPC 赛事与赛制](./icpc.md)
--   [「翻译组」一些大洲级 OI 比赛的地址](https://loj.ac/article/416)
+-   [ICPC/CCPC contests and format](./icpc.md)
+-   ["Translation Team" Websites of some continental OI contests](https://loj.ac/article/416)

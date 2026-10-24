@@ -29,10 +29,10 @@ void rd(int &x) {
 }
 
 int main() {
-  int fd = 0;  // 从 stdin 读入
-  // int fd = open("xxx.in", O_RDONLY); // 从文件读入
+  int fd = 0;  // read from stdin
+  // int fd = open("xxx.in", O_RDONLY); // read from a file
   struct stat state;
-  fstat(fd, &state);  // 获取文件大小
+  fstat(fd, &state);  // get the file size
   pc = (char *)mmap(NULL, state.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
   int n, x, sum = 0;
   rd(n);
