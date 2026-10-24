@@ -1,32 +1,32 @@
 author: ouuan, HeRaNO
 
-堆是一棵树，其每个节点都有一个键值，且每个节点的键值都大于等于/小于等于其父亲的键值．
+A heap is a tree in which every node has a key, and every node's key is greater than or equal to (or less than or equal to) its parent's key.
 
-每个节点的键值都大于等于其父亲键值的堆叫做小根堆，否则叫做大根堆．[STL 中的 `priority_queue`](../lang/csl/container-adapter.md#优先队列) 其实就是一个大根堆．
+A heap where every node's key is greater than or equal to its parent's key is called a min-heap; otherwise it is called a max-heap. [The STL `priority_queue`](../lang/csl/container-adapter.md#优先队列) is actually a max-heap.
 
-（小根）堆主要支持的操作有：插入一个数、查询最小值、删除最小值、合并两个堆、减小一个元素的值．
+The main operations supported by a (min-)heap are: insert a number, find the minimum, delete the minimum, merge two heaps, and decrease the value of an element.
 
-一些功能强大的堆（可并堆）还能（高效地）支持 merge 等操作．
+Some more powerful heaps (mergeable heaps) can also support operations such as merge (efficiently).
 
-一些功能更强大的堆还支持可持久化，也就是对任意历史版本进行查询或者操作，产生新的版本．
+Some even more powerful heaps also support persistence, that is, querying or operating on any past version to produce a new version.
 
-## 堆的分类
+## Types of heaps
 
-|    操作 `\` 数据结构[^ref4]   |                                      配对堆                                     |      二叉堆     |      左偏树     |          二项堆         |        斐波那契堆       |
+| Operation `\` data structure[^ref4] | Pairing heap | Binary heap | Leftist heap | Binomial heap | Fibonacci heap |
 | :---------------------: | :--------------------------------------------------------------------------: | :----------: | :----------: | :------------------: | :----------------: |
-|        插入（insert）       |                                    $O(1)$                                    |  $O(\log n)$ |  $O(\log n)$ |  $O(\log n)$[^ref1]  |       $O(1)$       |
-|     查询最小值（find-min）     |                                    $O(1)$                                    |    $O(1)$    |    $O(1)$    | $O(1)$[^ref2][^ref3] |       $O(1)$       |
-|    删除最小值（delete-min）    |                              $O(\log n)$[^ref3]                              |  $O(\log n)$ |  $O(\log n)$ |      $O(\log n)$     | $O(\log n)$[^ref3] |
-|        合并 (merge)       |                                    $O(1)$                                    |    $O(n)$    |  $O(\log n)$ |      $O(\log n)$     |       $O(1)$       |
-| 减小一个元素的值 (decrease-key) | $o(\log n)$（下界 $\Omega(\log \log n)$，上界 $O(2^{2\sqrt{\log \log n}})$）[^ref3] |  $O(\log n)$ |  $O(\log n)$ |      $O(\log n)$     |    $O(1)$[^ref3]   |
-|         是否支持可持久化        |                                   $\times$                                   | $\checkmark$ | $\checkmark$ |     $\checkmark$     |      $\times$      |
+| insert | $O(1)$ | $O(\log n)$ | $O(\log n)$ | $O(\log n)$[^ref1] | $O(1)$ |
+| find-min | $O(1)$ | $O(1)$ | $O(1)$ | $O(1)$[^ref2][^ref3] | $O(1)$ |
+| delete-min | $O(\log n)$[^ref3] | $O(\log n)$ | $O(\log n)$ | $O(\log n)$ | $O(\log n)$[^ref3] |
+| merge | $O(1)$ | $O(n)$ | $O(\log n)$ | $O(\log n)$ | $O(1)$ |
+| decrease-key | $o(\log n)$ (lower bound $\Omega(\log \log n)$, upper bound $O(2^{2\sqrt{\log \log n}})$)[^ref3] | $O(\log n)$ | $O(\log n)$ | $O(\log n)$ | $O(1)$[^ref3] |
+| Persistent? | $\times$ | $\checkmark$ | $\checkmark$ | $\checkmark$ | $\times$ |
 
-[^ref1]: 单次插入的复杂度为 $O(\log n)$，但有 $k$ 次连续插入时，可创建一个只包含要插入元素的二项堆，再将此堆与原先的二项堆进行合并，均摊复杂度为 $O(1)$
+[^ref1]: A single insertion costs $O(\log n)$. But for $k$ consecutive insertions, you can build a binomial heap containing only the new elements and then merge it with the original binomial heap, giving an amortized cost of $O(1)$.
 
-[^ref2]: 可以保存一个指向最小元素的指针，在执行其他操作时修改该指针，即可在 $O(1)$ 的复杂度下进行查询了
+[^ref2]: You can keep a pointer to the minimum element and update it during other operations. Then a query takes $O(1)$.
 
-[^ref3]: 复杂度为均摊复杂度
+[^ref3]: Amortized complexity.
 
-[^ref4]: 表格来自于 [Wikipedia](https://en.wikipedia.org/wiki/Priority_queue#Summary_of_running_times)
+[^ref4]: The table comes from [Wikipedia](https://en.wikipedia.org/wiki/Priority_queue#Summary_of_running_times).
 
-习惯上，不加限定提到「堆」时往往都指二叉堆．
+By convention, when people say "heap" without any qualifier, they usually mean a binary heap.

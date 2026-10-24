@@ -1,129 +1,129 @@
-## 简介
+## Introduction
 
-Link/Cut Tree 是一种数据结构，我们用它来解决 **动态树问题**．
+The Link/Cut Tree is a data structure used to solve **dynamic tree problems**.
 
-Link/Cut Tree 又称 Link-Cut Tree，简称 LCT，但它不叫动态树，动态树是指一类问题．
+The Link/Cut Tree is also called the Link-Cut Tree, or LCT for short. But it is not called a "dynamic tree": "dynamic tree" refers to a class of problems.
 
-Splay Tree 是 LCT 的基础，但是 LCT 用的 Splay Tree 和普通的 Splay 在细节处不太一样（进行了一些扩展）．
+The Splay Tree is the foundation of the LCT, but the Splay Tree used in an LCT differs from an ordinary Splay in some details (it has some extensions).
 
-## 问题引入
+## Motivating problem
 
-维护一棵树，支持如下操作：
+Maintain a tree that supports the following operations:
 
--   修改两点间路径权值．
--   查询两点间路径权值和．
--   修改某点子树权值．
--   查询某点子树权值和．
+-   Update the weights on the path between two vertices.
+-   Query the sum of weights on the path between two vertices.
+-   Update the weights in the subtree of a vertex.
+-   Query the sum of weights in the subtree of a vertex.
 
-这是一道树剖模版题．
+This is a standard heavy-light decomposition template problem.
 
-但是再加一个操作：
+But now add one more operation:
 
--   断开并连接一些边，保证仍是一棵树．
+-   Cut and link some edges, while guaranteeing the result is still a tree.
 
-要求在线求出上面的答案．
+The answers above must be computed online.
 
-这就成了动态树问题，可以使用 LCT 求解．
+This turns it into a dynamic tree problem, which can be solved with an LCT.
 
-## 动态树问题
+## Dynamic tree problems
 
-维护一个 **森林**，支持删除某条边，加入某条边，并保证加边，删边之后仍是森林．我们要维护这个森林的一些信息．
+Maintain a **forest** that supports deleting an edge and adding an edge, with the guarantee that it is still a forest after each addition or deletion. We need to maintain some information about this forest.
 
-一般的操作有两点连通性，两点路径权值和，连接两点和切断某条边、修改信息等．
+Common operations include checking whether two vertices are connected, the sum of weights on the path between two vertices, linking two vertices, cutting an edge, updating information, and so on.
 
-### 从 LCT 的角度回顾一下树链剖分
+### Reviewing heavy-light decomposition from the LCT point of view
 
--   对整棵树按子树大小进行剖分，并重新标号．
--   我们发现重新标号之后，在树上形成了一些以链为单位的连续区间，并且可以用线段树进行区间操作．
+-   Decompose the whole tree by subtree size, and relabel the vertices.
+-   After relabeling, the tree is made of contiguous ranges, one per chain, and range operations can be done on them with a segment tree.
 
-### 转向动态树问题
+### Moving to dynamic tree problems
 
-我们发现我们刚刚讲的树剖是以子树大小作为划分条件．那我们能不能重定义一种剖分，使它更适应我们的动态树问题呢？
+The heavy-light decomposition we just described splits the tree based on subtree sizes. Can we define a different kind of decomposition that suits dynamic tree problems better?
 
-考虑动态树问题需要什么链．
+Let's think about what kind of chains dynamic tree problems need.
 
-由于动态维护一个森林，显然我们希望这个链是我们指定的链，以便利用来求解．
+Since we maintain a forest dynamically, we clearly want these chains to be ones we choose ourselves, so that we can use them to solve the problem.
 
-## 实链剖分
+## Preferred-path decomposition
 
-对于一个点连向它所有儿子的边，我们自己选择一条边进行剖分，我们称被选择的边为实边，其他边则为虚边．对于实边，我们称它所连接的儿子为实儿子．对于一条由实边组成的链，我们同样称之为实链．请记住我们选择实链剖分的最重要的原因：它是我们选择的，灵活且可变．正是它的这种灵活可变性，我们采用 Splay Tree 来维护这些实链．
+Among the edges from a vertex to all its children, we choose one edge ourselves for the decomposition. The chosen edge is called a preferred (solid) edge, and the other edges are called light (dashed) edges. For a preferred edge, the child it connects to is called the preferred child. A chain made of preferred edges is called a preferred path. Remember the most important reason for choosing this decomposition: it is chosen by us, so it is flexible and can change. Because of this flexibility, we use Splay Trees to maintain these preferred paths.
 
 ## LCT
 
-我们可以简单的把 LCT 理解成用一些 Splay 来维护动态的树链剖分，以期实现动态树上的区间操作．对于每条实链，我们建一个 Splay 来维护整个链区间的信息．
+Simply put, you can think of an LCT as using several Splays to maintain a dynamic path decomposition of a tree, so that range operations can be done on a dynamic tree. For each preferred path, we build a Splay to maintain information about the whole path.
 
-## 辅助树
+## Auxiliary tree
 
-我们先来看一看辅助树的一些性质，再通过一张图实际了解一下辅助树的具体结构．
+Let's first look at some properties of the auxiliary tree, and then look at a figure to see its actual structure.
 
-在本文里，你可以认为一些 Splay 构成了一个辅助树，每棵辅助树维护的是一棵树，一些辅助树构成了 LCT，其维护的是整个森林．
+In this article, you can think of several Splays as forming one auxiliary tree, where each auxiliary tree maintains one tree. Several auxiliary trees form the LCT, which maintains the whole forest.
 
-1.  辅助树由多棵 Splay 组成，每棵 Splay 维护原树中的一条路径，且中序遍历这棵 Splay 得到的点序列，从前到后对应原树「从上到下」的一条路径．
-2.  原树每个节点与辅助树的 Splay 节点一一对应．
-3.  辅助树的各棵 Splay 之间并不是独立的．每棵 Splay 的根节点的父亲节点本应是空，但在 LCT 中每棵 Splay 的根节点的父亲节点指向原树中 **这条链** 的父亲节点（即链最顶端的点的父亲节点）．这类父亲链接与通常 Splay 的父亲链接区别在于儿子认父亲，而父亲不认儿子，对应原树的一条 **虚边**．因此，每个连通块恰好有一个点的父亲节点为空．
-4.  由于辅助树的以上性质，我们维护任何操作都不需要维护原树，辅助树可以在任何情况下拿出一个唯一的原树，我们只需要维护辅助树即可．
+1.  An auxiliary tree consists of several Splays. Each Splay maintains one path in the original tree, and the in-order traversal of the Splay gives the vertices of that path in "top-to-bottom" order in the original tree.
+2.  Each vertex of the original tree corresponds one-to-one with a Splay node of the auxiliary tree.
+3.  The Splays in an auxiliary tree are not independent. The parent of each Splay's root would normally be empty, but in an LCT the parent of each Splay's root points to the parent of **this path** in the original tree (that is, the parent of the topmost vertex of the path). Unlike an ordinary Splay parent link, here the child knows its parent but the parent does not know the child. This corresponds to a **virtual edge** in the original tree. So in each connected component, exactly one vertex has an empty parent.
+4.  Because of these properties of the auxiliary tree, we never need to maintain the original tree for any operation. The auxiliary tree always determines a unique original tree, so we only need to maintain the auxiliary tree.
 
-现在我们有一棵原树，如图所示．（加粗边是实边，虚线边是虚边．）
+Now suppose we have an original tree, as shown below. (Bold edges are preferred edges, and dashed edges are virtual edges.)
 
 ![tree](images/lct-atree-1.svg)
 
-由刚刚的定义，辅助树的结构如图所示．
+By the definition above, the auxiliary tree has the structure shown below.
 
 ![auxtree](images/lct-atree-2.svg)
 
-### 考虑原树和辅助树的结构关系
+### The structural relationship between the original tree and the auxiliary tree
 
--   原树中的实链 : 在辅助树中节点都在一棵 Splay 中．
--   原树中的虚链 : 在辅助树中，子节点所在 Splay 的 Father 指向父节点，但是父节点的两个儿子都不指向子节点．
--   注意：原树的根不等于辅助树的根．
--   原树的 Father 指向不等于辅助树的 Father 指向．
--   辅助树是可以在满足辅助树、Splay 的性质下任意换根的．
--   虚实链变换可以轻松在辅助树上完成，这也就是实现了动态维护树链剖分．
+-   A preferred path in the original tree: in the auxiliary tree, its nodes are all in the same Splay.
+-   A virtual edge in the original tree: in the auxiliary tree, the Father of the Splay containing the child points to the parent, but neither of the parent's two children points to the child.
+-   Note: the root of the original tree is not the same as the root of the auxiliary tree.
+-   The Father pointers of the original tree are not the same as the Father pointers of the auxiliary tree.
+-   The auxiliary tree can be re-rooted freely as long as the properties of the auxiliary tree and of Splays hold.
+-   Switching edges between preferred and light is easy to do on the auxiliary tree. This is how we maintain the path decomposition dynamically.
 
-### 接下来要用到的变量声明
+### Variables used below
 
--   `ch[N][2]` 左右儿子
--   `f[N]` 父亲指向
--   `sum[N]` 路径权值和
--   `val[N]` 点权
--   `tag[N]` 翻转标记
--   `laz[N]` 权值标记
--   `siz[N]` 辅助树上子树大小
+-   `ch[N][2]` left and right children
+-   `f[N]` parent pointer
+-   `sum[N]` sum of weights on the path
+-   `val[N]` vertex weight
+-   `tag[N]` reversal tag
+-   `laz[N]` weight tag
+-   `siz[N]` subtree size in the auxiliary tree
 -   Other\_Vars
 
-### 函数声明
+### Functions
 
-#### 一般数据结构函数（字面意思）
+#### General data structure functions (as the names say)
 
 1.  `PushUp(x)`
 2.  `PushDown(x)`
 
-#### Splay 树的函数
+#### Splay tree functions
 
-下面是 Splay 树中用到的函数，具体可以查阅 [Splay 树](./splay.md)．
+Below are the functions used in the Splay tree. For details, see [Splay tree](./splay.md).
 
-1.  `Get(x)` 获取 $x$ 是父亲的哪个儿子．
-2.  `Splay(x)` 通过和 Rotate 操作联动实现把 $x$ 旋转到 **当前 Splay 的根**．
-3.  `Rotate(x)` 将 $x$ 向上旋转一层的操作．
+1.  `Get(x)` finds which child of its parent $x$ is.
+2.  `Splay(x)` works together with Rotate to rotate $x$ to **the root of its current Splay**.
+3.  `Rotate(x)` rotates $x$ up by one level.
 
-#### 新操作
+#### New operations
 
-1.  `Access(x)` 把从根到 $x$ 的所有点放在一条实链里，使根到 $x$ 成为一条实路径，并且在同一棵 Splay 里．**只有此操作是必须实现的，其他操作视题目而实现．**
-2.  `IsRoot(x)` 判断 $x$ 是否是所在树的根．
-3.  `Update(x)` 在 `Access` 操作之后，递归地从上到下 `PushDown` 更新信息．
-4.  `MakeRoot(x)` 使 $x$ 点成为其所在树的根．
-5.  `Link(x, y)` 在 $x, y$ 两点间连一条边．
-6.  `Cut(x, y)` 把 $x, y$ 两点间边删掉．
-7.  `Find(x)` 找到 $x$ 所在树的根节点编号．
-8.  `Fix(x, v)` 修改 $x$ 的点权为 $v$．
-9.  `Split(x, y)` 提取出 $x, y$ 间的路径，方便做区间操作．
+1.  `Access(x)` puts all vertices from the root to $x$ on one preferred path, so that the path from the root to $x$ is a preferred path and lies in the same Splay. **Only this operation is required; implement the others as the problem needs.**
+2.  `IsRoot(x)` checks whether $x$ is the root of the tree (Splay) it is in.
+3.  `Update(x)` after `Access`, recursively `PushDown`s from top to bottom to update information.
+4.  `MakeRoot(x)` makes $x$ the root of its tree.
+5.  `Link(x, y)` adds an edge between $x$ and $y$.
+6.  `Cut(x, y)` deletes the edge between $x$ and $y$.
+7.  `Find(x)` finds the index of the root of the tree containing $x$.
+8.  `Fix(x, v)` changes the weight of $x$ to $v$.
+9.  `Split(x, y)` extracts the path between $x$ and $y$, so that range operations are easy.
 
-### 宏定义
+### Macros
 
 -   `#define ls ch[p][0]`
 -   `#define rs ch[p][1]`
 
-## 函数讲解
+## Functions explained
 
 ### `PushUp()`
 
@@ -147,7 +147,7 @@ void PushDown(int p) {
 
 ### `Splay() && Rotate()`
 
-这里 `Splay()` 和 `Rotate()` 与 Splay 树的实现有些区别．
+Here `Splay()` and `Rotate()` differ a little from the Splay tree implementation.
 
 ```cpp
 #define Get(x) (ch[f[x]][1] == x)
@@ -155,7 +155,7 @@ void PushDown(int p) {
 void Rotate(int x) {
   int y = f[x], z = f[y], k = Get(x);
   if (!isRoot(y)) ch[z][ch[z][1] == y] = x;
-  // 上面这句一定要写在前面，普通的 Splay 是不用的，因为 isRoot  (后面会讲)
+  // The line above must come first. An ordinary Splay doesn't need this, because of isRoot (explained later)
   ch[y][k] = ch[x][!k], f[ch[x][!k]] = y;
   ch[x][!k] = y, f[y] = x, f[x] = z;
   PushUp(y), PushUp(x);
@@ -163,31 +163,31 @@ void Rotate(int x) {
 
 void Splay(int x) {
   Update(
-      x);  // 马上就能看到啦．在 Splay 之前要把旋转会经过的路径上的点都 PushDown
+      x);  // You'll see it soon. Before Splay, PushDown all nodes on the path the rotation will pass through
   for (int fa; fa = f[x], !isRoot(x); Rotate(x)) {
     if (!isRoot(fa)) Rotate(Get(fa) == Get(x) ? fa : x);
   }
 }
 ```
 
-以上函数可以查阅 [Splay 树](./splay.md)．
+For the functions above, see [Splay tree](./splay.md).
 
-下面是 LCT 独有的函数．
+Below are the functions unique to LCT.
 
 ### `isRoot()`
 
 ```cpp
-// 在前面我们已经说过，LCT 具有 如果一个儿子不是实儿子，他的父亲找不到它的性质
-// 所以当一个点既不是它父亲的左儿子，又不是它父亲的右儿子，它就是当前 Splay 的根
+// As we said before, in an LCT, if a child is not a preferred child, its parent cannot find it
+// So when a node is neither the left child nor the right child of its parent, it is the root of its current Splay
 #define isRoot(x) (ch[f[x]][0] != x && ch[f[x]][1] != x)
 ```
 
 ### `Access()`
 
 ```cpp
-// Access 是 LCT
-// 的核心操作，试想我们想求解一条路径，而这条路径恰好就是我们当前的一棵 Splay，
-// 直接调用其信息即可．先来看一下代码，再结合图来看看过程
+// Access is the core operation of
+// LCT. Imagine we want to solve for a path, and this path happens to be exactly one of our current Splays;
+// then we can just use its information directly. Let's look at the code first, then go through the process with figures
 int Access(int x) {
   int p;
   for (p = 0; x; p = x, x = f[x]) {
@@ -197,50 +197,50 @@ int Access(int x) {
 }
 ```
 
--   我们有这样一棵树，实线为实边，虚线为虚边．
+-   We have this tree, where solid lines are preferred edges and dashed lines are virtual edges.
 
     ![initial tree](images/lct-access-1.svg)
 
--   它的辅助树可能长成这样（构图方式不同可能 LCT 的结构也不同）．
+-   Its auxiliary tree might look like this (different construction orders may give different LCT structures).
 
     ![initial auxtree](images/lct-access-2.svg)
 
--   现在我们要 `Access(N)`，把 $A$ 到 $N$ 路径上的边都变为实边，拉成一棵 Splay．
+-   Now we want to `Access(N)`: turn all edges on the path from $A$ to $N$ into preferred edges and pull them into one Splay.
 
     ![access tree](images/lct-access-3.svg)
 
--   实现的方法是从下到上逐步更新 Splay．
+-   We do this by updating the Splays step by step from bottom to top.
 
--   首先我们要把 $N$ 旋至当前 Splay 的根．
+-   First, rotate $N$ to the root of its current Splay.
 
--   为了保证 AuxTree（辅助树）的性质，原来 $N$ 到 $O$ 的实边要更改为虚边．
+-   To keep the properties of the AuxTree (auxiliary tree), the old preferred edge from $N$ to $O$ must become a virtual edge.
 
--   由于认父不认子的性质，我们可以单方面的把 $N$ 的儿子改为 `NULL`．
+-   Since a child knows its parent but not the other way around, we can simply set $N$'s child to `NULL` on its own.
 
--   于是原来的 AuxTree 就从下图变成了下下图．
+-   So the original AuxTree changes from the figure below to the one after it.
 
     ![step 1 auxtree](images/lct-access-4.svg)
 
--   下一步，我们把 $N$ 指向的 Father $I$ 也旋转到 $I$ 的 Splay 树根．
+-   Next, rotate the Father that $N$ points to, $I$, to the root of $I$'s Splay tree.
 
--   原来的实边 $I$—$K$ 要去掉，这时候我们把 $I$ 的右儿子指向 $N$，就得到了 $I$—$L$ 这样一棵 Splay．
+-   The old preferred edge $I$—$K$ must be removed. Now we point $I$'s right child to $N$, which gives the Splay $I$—$L$.
 
     ![step 2 auxtree](images/lct-access-5.svg)
 
--   接下来，按照刚刚的操作步骤，由于 $I$ 的 Father 指向 $H$，我们把 $H$ 旋转到他所在 Splay Tree 的根，然后把 $H$ 的 rs 设为 $I$．
+-   Next, following the same steps, since $I$'s Father points to $H$, we rotate $H$ to the root of its Splay Tree and then set $H$'s rs to $I$.
 
--   之后的树是这样的．
+-   The tree afterward looks like this.
 
     ![step 3 auxtree](images/lct-access-6.svg)
 
--   同理我们 `Splay(A)`，并把 $A$ 的右儿子指向 $H$．
+-   Similarly, we `Splay(A)` and point $A$'s right child to $H$.
 
--   于是我们得到了这样一棵 AuxTree．并且发现 $A$—$N$ 的整个路径已经在同一棵 Splay 中了．
+-   So we get this AuxTree, and we see that the whole path $A$—$N$ is now in the same Splay.
 
     ![step final auxtree](images/lct-access-7.svg)
 
 ```cpp
-// 回顾一下代码
+// Let's review the code
 int Access(int x) {
   int p;
   for (p = 0; x; p = x, x = f[x]) {
@@ -250,22 +250,22 @@ int Access(int x) {
 }
 ```
 
-我们发现 `Access()` 其实很容易，只有如下四步操作：
+As you can see, `Access()` is actually quite easy. It has only four steps:
 
-1.  把当前节点转到根．
-2.  把儿子换成之前的节点．
-3.  更新当前点的信息．
-4.  把当前点换成当前点的父亲，继续操作．
+1.  Rotate the current node to the root.
+2.  Replace its (right) child with the previous node.
+3.  Update the current node's information.
+4.  Move to the current node's parent and continue.
 
-这里提供的 Access 还有一个返回值．这个返回值相当于最后一次虚实链变换时虚边父亲节点的编号．该值有两个含义：
+The Access given here also has a return value. It is the index of the light-edge parent at the last preferred/light switch. This value has two meanings:
 
--   连续两次 Access 操作时，第二次 Access 操作的返回值等于这两个节点的 LCA.
--   表示 $x$ 到根的链所在的 Splay 树的根．这个节点一定已经被旋转到了根节点，且父亲一定为空．
+-   When Access is called twice in a row, the return value of the second Access is the LCA of the two vertices.
+-   It is the root of the Splay tree containing the path from $x$ to the root. This node must already have been rotated to the root, and its parent must be empty.
 
 ### `Update()`
 
 ```cpp
-// 从上到下一层一层 pushDown 即可
+// Just pushDown level by level from top to bottom
 void Update(int p) {
   if (!isRoot(p)) Update(f[p]);
   pushDown(p);
@@ -274,13 +274,13 @@ void Update(int p) {
 
 ### `makeRoot()`
 
--   `Make_Root()` 的重要性丝毫不亚于 `Access()`．我们在需要维护路径信息的时候，一定会出现路径深度无法严格递增的情况，根据 AuxTree 的性质，这种路径是不能出现在一棵 Splay 中的．
--   这时候我们需要用到 `Make_Root()`．
--   `Make_Root()` 的作用是使指定的点成为原树的根，考虑如何实现这种操作．
--   设 `Access(x)` 的返回值为 $y$，则此时 $x$ 到当前根的路径恰好构成一个 Splay，且该 Splay 的根为 $y$.
--   考虑将树用有向图表示出来，给每条边定一个方向，表示从儿子到父亲的方向．容易发现换根相当于将 $x$ 到根的路径的所有边反向（请仔细思考）．
--   因此将 $x$ 到当前根的路径翻转即可．
--   由于 $y$ 是 $x$ 到当前根的路径所代表的 Splay 的根，因此将以 $y$ 为根的 Splay 树进行区间翻转即可．
+-   `Make_Root()` is just as important as `Access()`. When we maintain path information, there will always be paths whose depths are not strictly increasing, and by the properties of the AuxTree, such a path cannot appear in a single Splay.
+-   This is when we need `Make_Root()`.
+-   `Make_Root()` makes a given vertex the root of the original tree. Let's think about how to implement it.
+-   Let the return value of `Access(x)` be $y$. Then the path from $x$ to the current root forms exactly one Splay, and the root of that Splay is $y$.
+-   Represent the tree as a directed graph, giving each edge a direction from child to parent. It is easy to see that re-rooting is the same as reversing all edges on the path from $x$ to the root (think about this carefully).
+-   So we just reverse the path from $x$ to the current root.
+-   Since $y$ is the root of the Splay representing the path from $x$ to the current root, we just reverse the range of the Splay tree rooted at $y$.
 
 ```cpp
 void makeRoot(int p) {
@@ -292,7 +292,7 @@ void makeRoot(int p) {
 
 ### `Link()`
 
--   Link 两个点其实很简单，先 `Make_Root(x)`，然后把 $x$ 的父亲指向 $y$ 即可．显然，这个操作肯定不能发生在同一棵树内，所以记得先判一下．
+-   Linking two vertices is actually simple: first `Make_Root(x)`, then point $x$'s parent to $y$. Clearly this operation cannot happen within the same tree, so remember to check that first.
 
 ```cpp
 void Link(int x, int p) {
@@ -304,36 +304,36 @@ void Link(int x, int p) {
 
 ### `Split()`
 
--   `Split` 操作意义很简单，就是拿出一棵 Splay，维护的是 $x$ 到 $y$ 的路径．
--   先 `MakeRoot(x)`，然后 `Access(y)`．如果要 $y$ 做根，再 `Splay(y)`．
--   另外 Split 这三个操作可以直接把需要的路径拿出到 $y$ 的子树上，可以进行其他操作．
+-   The meaning of `Split` is simple: it pulls out a Splay that maintains the path from $x$ to $y$.
+-   First `MakeRoot(x)`, then `Access(y)`. If you want $y$ as the root, also `Splay(y)`.
+-   Also, these three steps of Split bring the needed path directly into $y$'s subtree, where other operations can be done.
 
 ### `Cut()`
 
--   `Cut` 有两种情况，保证合法和不一定保证合法．
--   如果保证合法，直接 `Split(x, y)`，这时候 $y$ 是根，$x$ 一定是它的儿子，双向断开即可．就像这样：
+-   `Cut` has two cases: the edge is guaranteed to exist, or it is not.
+-   If it is guaranteed to exist, just `Split(x, y)`. Now $y$ is the root and $x$ must be its child, so cut the link in both directions. Like this:
 
 ```cpp
 void Cut(int x, int p) { makeRoot(x), Access(p), Splay(p), ls = f[x] = 0; }
 ```
 
-如果是不保证合法，我们需要判断一下是否有，这里选择使用 `map` 存一下，但是这里有一个利用性质的方法：
+If the edge is not guaranteed to exist, we need to check whether it does. One option is to store edges in a `map`, but there is also a way that uses the structure's properties:
 
-想要删边，必须要满足如下三个条件：
+To delete an edge, the following three conditions must hold:
 
-1.  $x,y$ 连通．
-2.  $x,y$ 的路径上没有其他的链．
-3.  $x$ 没有右儿子．
+1.  $x$ and $y$ are connected.
+2.  There are no other vertices on the path between $x$ and $y$.
+3.  $x$ has no right child.
 
-总结一下，上面三句话的意思就一个：$x,y$ 之间有边．
+In short, these three statements all say one thing: there is an edge between $x$ and $y$.
 
-具体实现就留作一个思考题给大家．判断连通需要用到后面的 `Find`，其他两点稍作思考分析一下结构就知道该怎么判断了．
+The concrete implementation is left as an exercise. Checking connectivity uses the `Find` described later; for the other two points, a little thought about the structure will tell you how to check them.
 
 ### `Find()`
 
--   `Find()` 查找的是 $x$ 所在的 **原树** 的根，请不要把原树根和辅助树根弄混．在 `Access(p)` 后，再 `Splay(p)`．这样根就是树里深度最小的那个，一直往左儿子走，沿途 `PushDown` 即可．
--   一直走到没有 ls，非常简单．
--   注意，每次查询之后需要把查询到的答案对应的结点 `Splay` 上去以保证复杂度．
+-   `Find()` finds the root of the **original tree** containing $x$. Don't confuse the root of the original tree with the root of the auxiliary tree. After `Access(p)`, do `Splay(p)`. Now the root is the vertex with the smallest depth in the tree, so just keep walking to the left child, calling `PushDown` along the way.
+-   Walk until there is no ls. Very simple.
+-   Note: after each query, `Splay` the node found as the answer to the top to keep the complexity bound.
 
 ```cpp
 int Find(int p) {
@@ -346,74 +346,74 @@ int Find(int p) {
 }
 ```
 
-### 注意事项
+### Things to watch out for
 
--   操作前一定要想一想需不需要 `PushUp` 或者 `PushDown`，LCT 由于特别灵活的原因，少 `Pushdown` 或者 `Pushup` 一次就可能把修改改到不该改的点上！
--   LCT 的 `Rotate` 和 Splay 的不太一样，`if (z)` 一定要放在前面．
--   LCT 的 `Splay` 操作就是旋转到根，没有旋转到谁儿子的操作，因为不需要．
+-   Before each operation, always think about whether you need `PushUp` or `PushDown`. Because an LCT is so flexible, missing a single `Pushdown` or `Pushup` can apply an update to the wrong vertices!
+-   The LCT's `Rotate` differs from the Splay's: `if (z)` must come first.
+-   The LCT's `Splay` only rotates a node to the root. There is no operation to rotate it to be the child of some node, because it is not needed.
 
-## 时间复杂度
+## Time complexity
 
-LCT 中的大部分操作都基于 `Access`，其余操作的时间复杂度都为常数，因此我们只需要分析 `Access` 操作的时间复杂度．
+Most operations in an LCT are based on `Access`, and the rest take constant time. So we only need to analyze the time complexity of `Access`.
 
-其中，`Access` 的时间复杂度主要来自于多次 splay 操作和对路径中虚边的访问，接下来分别分析这两部分的时间复杂度．
+The time of `Access` mainly comes from the many splay operations and from visiting the virtual edges on the path. Below we analyze these two parts separately.
 
 1.  splay
 
-    -   定义 $w(x) = \log size(x)$，其中 $size(x)$ 表示以 $x$ 为根的所有虚边和实边的数量之和．
+    -   Define $w(x) = \log size(x)$, where $size(x)$ is the total number of light and preferred edges under $x$ (in the subtree rooted at $x$).
 
-    -   定义势能函数 $\Phi = \sum_{x \in T} w(x)$，其中 $T$ 表示所有节点的集合．
+    -   Define the potential function $\Phi = \sum_{x \in T} w(x)$, where $T$ is the set of all nodes.
 
-    由 [Splay 的时间复杂度](./splay.md#时间复杂度) 分析易知，splay 操作的均摊时间复杂度为 $O(\log n)$．
+    From the analysis of [the time complexity of Splay](./splay.md#时间复杂度), it is easy to see that a splay operation takes amortized $O(\log n)$ time.
 
-2.  访问虚边
+2.  Visiting virtual edges
 
-    参考 [重链剖分](../graph/hld.md#重链剖分)，定义两种虚边：
+    Following [heavy-light decomposition](../graph/hld.md#重链剖分), we define two kinds of virtual edges:
 
-    -   **重虚边**：从节点 $v$ 到其父节点的虚边，其中 $size(v) > \frac{1}{2} size(parent(v))$．
+    -   **Heavy virtual edge**: a virtual edge from node $v$ to its parent where $size(v) > \frac{1}{2} size(parent(v))$.
 
-    -   **轻虚边**：从节点 $v$ 到其父节点的虚边，其中 $size(v) \leq \frac{1}{2} size(parent(v))$．
+    -   **Light virtual edge**: a virtual edge from node $v$ to its parent where $size(v) \leq \frac{1}{2} size(parent(v))$.
 
-    对于虚边的处理，可以使用势能分析，定义势能函数 $\Phi$ 为所有重虚边的数量，定义均摊成本 $c_i = t_i + \Delta \Phi_i$，其中 $t_i$ 为实际操作的成本，$\Delta \Phi_i$ 为势能的变化．
+    To handle virtual edges, we can use potential analysis. Define the potential function $\Phi$ as the number of heavy virtual edges, and define the amortized cost $c_i = t_i + \Delta \Phi_i$, where $t_i$ is the actual cost of the operation and $\Delta \Phi_i$ is the change in potential.
 
-    -   走过重虚边后，会将重虚边转换为实边，该操作会减少 $1$ 的势能，因为它通过加强重要连接来优化树的结构．且由于其实际操作成本为 $O(1)$，抵消了势能的增加，故不会增加均摊成本，所有的均摊成本集中在轻虚边的处理上．
+    -   Passing through a heavy virtual edge turns it into a preferred edge, which decreases the potential by $1$, since it improves the tree structure by strengthening an important connection. Its actual cost is $O(1)$, which is canceled out by the change in potential, so it does not add to the amortized cost. All of the amortized cost is concentrated on handling light virtual edges.
 
-    -   每次 `Access` 操作最多遍历 $O(\log n)$ 条轻虚边，因此至多消耗 $O(\log n)$ 的实际操作成本，转化得到 $O(\log n)$ 条重虚边，即势能以 $O(\log n)$ 的代价增加．
+    -   Each `Access` passes through at most $O(\log n)$ light virtual edges, so it spends at most $O(\log n)$ actual cost and creates at most $O(\log n)$ heavy virtual edges, meaning the potential increases by $O(\log n)$.
 
-    由此，最终访问虚边的均摊复杂度为实际操作成本和势能变化的和，即 $O(\log n)$．
+    So the final amortized cost of visiting virtual edges is the sum of the actual cost and the change in potential, which is $O(\log n)$.
 
-综上所述，LCT 中 `Access` 操作的时间复杂度是 splay 和 虚边访问的复杂度之和，因此最后的均摊复杂度为 $O(\log n)$，即 n 个节点的 LCT，做 m 次 `Access` 操作的时间复杂度为 $O(n \log n + m \log n)$，从而基于 `Access` 操作的 `Cut`,`Link`,`Findroot` 等操作的均摊复杂度也为 $O(\log n)$．
+In summary, the time of `Access` in an LCT is the sum of the costs of splaying and of visiting virtual edges, so the final amortized complexity is $O(\log n)$. That is, for an LCT with n nodes, doing m `Access` operations takes $O(n \log n + m \log n)$ time. So operations based on `Access`, such as `Cut`, `Link` and `Findroot`, also take amortized $O(\log n)$.
 
-## 习题
+## Exercises
 
--   [「BZOJ 3282」Tree](https://hydro.ac/p/bzoj-P3282)
--   [「HNOI2010」弹飞绵羊](https://www.luogu.com.cn/problem/P3203)
+-   [BZOJ 3282 Tree](https://hydro.ac/p/bzoj-P3282)
+-   [HNOI2010 Bounce the Sheep](https://www.luogu.com.cn/problem/P3203)
 
-## 维护树链信息
+## Maintaining path information
 
-LCT 通过 `Split(x,y)` 操作，可以将树上从点 $x$ 到点 $y$ 的路径提取到以 $y$ 为根的 Splay 内，树链信息的修改和统计转化为平衡树上的操作，这使得 LCT 在维护树链信息上具有优势．此外，借助 LCT 实现的在树链上二分比树链剖分少一个 $O(\log n)$ 的复杂度．
+With `Split(x,y)`, an LCT can pull the path from $x$ to $y$ in the tree into the Splay rooted at $y$. Updating and querying path information then becomes operations on a balanced binary search tree, which gives the LCT an advantage for maintaining path information. Also, binary search on a tree path done with an LCT costs one $O(\log n)$ factor less than with heavy-light decomposition.
 
-???+ note "例题 [「国家集训队」Tree II](https://www.luogu.com.cn/problem/P1501)"
-    给出一棵有 $n$ 个结点的树，每个点的初始权值为 $1$．$q$ 次操作，每次操作均为以下四种之一：
+???+ note "Example problem [National Training Team Tree II](https://www.luogu.com.cn/problem/P1501)"
+    Given a tree with $n$ nodes, each with initial weight $1$. There are $q$ operations, each one of the following four:
     
-    1.  `- u1 v1 u2 v2`：将树上 $u_1,v_1$ 两点之间的边删除，连接 $u_2,v_2$ 两点，保证操作合法且连边后仍是一棵树．
-    2.  `+ u v c`：将树上 $u,v$ 两点之间的路径上的点权都增加 $c$．
-    3.  `* u v c`：将树上 $u,v$ 两点之间的路径上的点权都乘以 $c$．
-    4.  `/ u v`：输出树上 $u,v$ 两点之间的路径上的点权之和对 $51061$ 取模后的值．
+    1.  `- u1 v1 u2 v2`: delete the edge between $u_1$ and $v_1$, and connect $u_2$ and $v_2$. The operation is guaranteed to be valid and the result is still a tree.
+    2.  `+ u v c`: add $c$ to the weights of all vertices on the path between $u$ and $v$.
+    3.  `* u v c`: multiply the weights of all vertices on the path between $u$ and $v$ by $c$.
+    4.  `/ u v`: output the sum of the weights of the vertices on the path between $u$ and $v$, modulo $51061$.
     
         $1\le n,q\le 10^5,0\le c\le 10^4$
     
-        `-` 操作可以直接 `Cut(u1,v1),Link(u2,v2)`．
+        The `-` operation can be done directly as `Cut(u1,v1),Link(u2,v2)`.
 
-对树上 $u,v$ 两点之间的路径进行修改时，先 `Split(u,v)`．
+To update the path between $u$ and $v$ in the tree, first `Split(u,v)`.
 
-此题要求进行在辅助树上的子树加，子树乘，子树求和操作，所以我们除了一般 LCT 需要维护的子树翻转标记，还要维护子树加法标记和子树乘法标记．处理标记的方法和在 Splay 上是一样的．
+This problem needs subtree add, subtree multiply and subtree sum on the auxiliary tree. So besides the subtree reversal tag that every LCT maintains, we also need a subtree addition tag and a subtree multiplication tag. The tags are handled the same way as in a Splay.
 
-在打上和下传加法标记时，子树权值和的变化量和子树中的结点数有关，所以我们还要维护子树的大小 `siz`．
+When applying and pushing down the addition tag, the change in the subtree's sum depends on the number of nodes in the subtree, so we also need to maintain the subtree size `siz`.
 
-在下传标记时，需要注意顺序，先下传乘法标记再下传加法标记．子树翻转和子树加乘两种标记没有冲突．
+When pushing down tags, watch the order: push down the multiplication tag first, then the addition tag. The subtree reversal tag does not conflict with the add/multiply tags.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     #include <algorithm>
     #include <cstdio>
@@ -571,30 +571,30 @@ LCT 通过 `Split(x,y)` 操作，可以将树上从点 $x$ 到点 $y$ 的路径�
     }
     ```
 
-### 习题
+### Exercises
 
--   [luogu P3690【模板】Link Cut Tree（动态树）](https://www.luogu.com.cn/problem/P3690)
--   [「SDOI2011」染色](https://www.luogu.com.cn/problem/P2486)
--   [「SHOI2014」三叉神经树](https://loj.ac/problem/2187)
+-   [Luogu P3690 [Template] Link Cut Tree (Dynamic Tree)](https://www.luogu.com.cn/problem/P3690)
+-   [SDOI2011 Coloring](https://www.luogu.com.cn/problem/P2486)
+-   [SHOI2014 Trigeminal Nerve Tree](https://loj.ac/problem/2187)
 
-## 维护连通性质
+## Maintaining connectivity
 
-### 判断是否连通
+### Checking connectivity
 
-借助 LCT 的 `Find()` 函数，可以判断动态森林上的两点是否连通．如果有 `Find(x)==Find(y)`，则说明 $x,y$ 两点在一棵树上，相互连通．
+Using the LCT's `Find()` function, we can check whether two vertices in a dynamic forest are connected. If `Find(x)==Find(y)`, then $x$ and $y$ are in the same tree and are connected.
 
-???+ note "例题 [「SDOI2008」洞穴勘测](https://www.luogu.com.cn/problem/P2147)"
-    一开始有 $n$ 个独立的点，$m$ 次操作．每次操作为以下之一：
+???+ note "Example problem [SDOI2008 Cave Exploration](https://www.luogu.com.cn/problem/P2147)"
+    Initially there are $n$ separate vertices and $m$ operations. Each operation is one of the following:
     
-    1.  `Connect u v`：在 $u,v$ 两点之间连接一条边．
-    2.  `Destroy u v`：删除在 $u,v$ 两点之间的边，保证之前存在这样的一条边．
-    3.  `Query u v`：询问 $u,v$ 两点是否连通．
+    1.  `Connect u v`: add an edge between $u$ and $v$.
+    2.  `Destroy u v`: delete the edge between $u$ and $v$. It is guaranteed that such an edge exists.
+    3.  `Query u v`: ask whether $u$ and $v$ are connected.
     
-    保证在任何时刻图的形态都是一个森林．
+    It is guaranteed that the graph is a forest at all times.
     
     $n\le 10^4, m\le 2\times 10^5$
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     #include <algorithm>
     #include <cstdio>
@@ -686,29 +686,29 @@ LCT 通过 `Split(x,y)` 操作，可以将树上从点 $x$ 到点 $y$ 的路径�
     }
     ```
 
-### 维护边双连通分量
+### Maintaining 2-edge-connected components
 
-如果要求将边双连通分量缩成点，每次添加一条边，所连接的树上的两点如果相互连通，那么这条路径上的所有点都会被缩成一个点．
+Suppose we need to contract each 2-edge-connected component into a single vertex. Each time an edge is added, if the two tree vertices it connects are already connected, then all vertices on the path between them are contracted into one vertex.
 
-???+ note "例题 [「AHOI2005」航线规划](https://www.luogu.com.cn/problem/P2542)"
-    给出 $n$ 个点，初始时有 $m$ 条无向边，$q$ 次操作，每次操作为以下之一：
+???+ note "Example problem [AHOI2005 Route Planning](https://www.luogu.com.cn/problem/P2542)"
+    Given $n$ vertices and initially $m$ undirected edges, there are $q$ operations, each one of the following:
     
-    1.  `0 u v`：删除 $u,v$ 之间的连边，保证此时存在这样的一条边．
-    2.  `1 u v`：查询此时 $u,v$ 两点之间可能的所有路径必须经过的边的数量．
+    1.  `0 u v`: delete the edge between $u$ and $v$. It is guaranteed that such an edge exists at that time.
+    2.  `1 u v`: query the number of edges that every possible path between $u$ and $v$ must pass through at this time.
     
-    保证图在任意时刻都连通．
+    It is guaranteed that the graph is connected at all times.
     
     $1<n<3\times 10^4,1<m<10^5,0\le q\le 4\times 10^4$
 
-可以发现，$u,v$ 两点之间的所有可能路径必须经过的边的数量为将所有边双连通分量缩成点之后 $u$ 所在点和 $v$ 所在点之间的路径上的结点数 $-1$．
+Notice that the number of edges every possible path between $u$ and $v$ must pass through equals, after contracting all 2-edge-connected components into vertices, the number of vertices on the path between the vertex containing $u$ and the vertex containing $v$, minus $1$.
 
-由于题目中的删边操作不好进行，我们考虑离线逆向进行操作，改删边为加边．
+Since edge deletion is hard to handle, we process the operations offline in reverse order, turning edge deletions into edge additions.
 
-加入一条边时，如果两点原来不连通，则在 LCT 上连接两点；否则提取出加这条边之前 LCT 上这两点之间的路径，遍历辅助树上的这个子树，相当于遍历了这条路径，将这些点合并，利用并查集维护合并的信息．
+When adding an edge, if the two vertices were not connected before, link them in the LCT. Otherwise, extract the path between these two vertices in the LCT before adding the edge, and traverse this subtree of the auxiliary tree, which is the same as traversing this path. Merge these vertices, and use a DSU to keep track of the merges.
 
-用合并后并查集的代表元素代替原来树上的路径．注意之后的每次操作都要找到操作点在并查集上的代表元素进行操作．
+Replace the original path in the tree with the representative element of the merged DSU set. Note that every later operation must first find the DSU representative of the vertices it operates on.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     #include <algorithm>
     #include <cstdio>
@@ -881,32 +881,32 @@ LCT 通过 `Split(x,y)` 操作，可以将树上从点 $x$ 到点 $y$ 的路径�
     }
     ```
 
-### 习题
+### Exercises
 
--   [洛谷 P3950 部落冲突](https://www.luogu.com.cn/problem/P3950)
--   [BZOJ 4998 星球联盟](https://hydro.ac/p/bzoj-P4998)
--   [BZOJ 2959 长跑](https://hydro.ac/p/bzoj-P2959)
+-   [Luogu P3950 Tribal Conflict](https://www.luogu.com.cn/problem/P3950)
+-   [BZOJ 4998 Planet Alliance](https://hydro.ac/p/bzoj-P4998)
+-   [BZOJ 2959 Long Run](https://hydro.ac/p/bzoj-P2959)
 
-## 维护边权
+## Maintaining edge weights
 
-LCT 并不能直接处理边权，此时需要对每条边建立一个对应点，方便查询链上的边信息．利用这一技巧可以动态维护生成树．
+An LCT cannot handle edge weights directly. Instead, create a vertex for each edge, so that edge information on a path is easy to query. With this trick, a spanning tree can be maintained dynamically.
 
-???+ note "例题 [luogu P4234 最小差值生成树](https://www.luogu.com.cn/problem/P4234)"
-    给定一个 $n$ 个点，$m$ 条边的带权无向图，求其边权最大值和边权最小值的差值最小的生成树，输出这个差值．
+???+ note "Example problem [Luogu P4234 Minimum Difference Spanning Tree](https://www.luogu.com.cn/problem/P4234)"
+    Given a weighted undirected graph with $n$ vertices and $m$ edges, find the spanning tree that minimizes the difference between its maximum and minimum edge weights, and output this difference.
     
-    数据保证至少存在一棵生成树．
+    At least one spanning tree is guaranteed to exist.
     
     $1\le n\le 5\times 10^4,1\le m\le 2\times 10^5,1\le w_i\le 10^4$
 
-将边按照边权从小到大排序，枚举选择的最右边的一条边，要得到最优解，需要使边权最小边的边权最大．
+Sort the edges by weight in increasing order and enumerate the rightmost chosen edge. To get the optimal answer, we need the smallest edge weight to be as large as possible.
 
-每次按照顺序添加边，如果将要连接的这两个点已经连通，则删除这两点之间边权最小的一条边．如果整个图已经连通成了一棵树，则用当前边权减去最小边权更新答案．最小边权可用双指针法更新．
+Add edges in this order. If the two vertices to be connected are already connected, delete the edge with the smallest weight between them. If the whole graph is now connected into a tree, update the answer with the current edge weight minus the smallest edge weight. The smallest edge weight can be updated with two pointers.
 
-LCT 上没有固定的父子关系，所以不能将边权记录在点权中．
+An LCT has no fixed parent-child relationship, so edge weights cannot be stored as vertex weights.
 
-记录树链上的边的信息，可以使用 **拆边**．对每条边建立一个对应的点，从这条边向其两个端点连接一条边，原先的连边与删边操作都变成两次操作．
+To record information about edges on a tree path, we can **split edges**: create a vertex for each edge and connect it to both endpoints of that edge. Each original link or cut then becomes two operations.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     #include <algorithm>
     #include <cstdio>
@@ -1056,35 +1056,35 @@ LCT 上没有固定的父子关系，所以不能将边权记录在点权中．
     }
     ```
 
-### 习题
+### Exercises
 
--   [「WC2006」水管局长](https://www.luogu.com.cn/problem/P4172)
--   [「BJWC2010」严格次小生成树](https://www.luogu.com.cn/problem/P4180)
--   [「NOI2014」魔法森林](https://uoj.ac/problem/3)
+-   [WC2006 Water Pipe Director](https://www.luogu.com.cn/problem/P4172)
+-   [BJWC2010 Strict Second-Minimum Spanning Tree](https://www.luogu.com.cn/problem/P4180)
+-   [NOI2014 Magic Forest](https://uoj.ac/problem/3)
 
-## 维护子树信息
+## Maintaining subtree information
 
-LCT 不擅长维护子树信息．统计一个结点所有虚子树的信息，就可以求得整棵树的信息．
+An LCT is not good at maintaining subtree information. By aggregating the information of all virtual subtrees of a node, we can get information about the whole tree.
 
-???+ note "例题 [「BJOI2014」大融合](https://loj.ac/problem/2230)"
-    给定 $n$ 个结点和 $q$ 次操作，每个操作为如下形式：
+???+ note "Example problem [BJOI2014 Great Fusion](https://loj.ac/problem/2230)"
+    Given $n$ nodes and $q$ operations, each of the following form:
     
-    1.  `A x y` 在结点 $x$ 和 $y$ 之间连接一条边．
-    2.  `Q x y` 给定一条已经存在的边 $(x,y)$，求有多少条简单路径，其中包含边 $(x,y)$．
+    1.  `A x y` adds an edge between nodes $x$ and $y$.
+    2.  `Q x y` given an existing edge $(x,y)$, find how many simple paths contain the edge $(x,y)$.
     
-    保证在任意时刻，图的形态都是一棵森林．
+    It is guaranteed that the graph is a forest at all times.
     
     $1\le n,q,x,y\le 10^5$
 
-为询问 `Q` 考虑另一种表述，我们发现答案等于边 $(x,y)$ 在 $x$ 侧的结点数与 $y$ 侧的结点数的乘积，即将边 $(x,y)$ 断开后分别包含 $x$ 和 $y$ 的树的结点数．为了消除断边的影响，在询问后我们再次连接边 $(x,y)$．
+Let's rephrase the query `Q`. The answer equals the number of nodes on $x$'s side of the edge $(x,y)$ times the number of nodes on $y$'s side, that is, the sizes of the trees containing $x$ and $y$ after cutting the edge $(x,y)$. To undo the cut, we link the edge $(x,y)$ again after the query.
 
-题目中的操作既有连边，又有删边，还保证在任意时刻都是一棵森林，我们不由得想到用 LCT 来维护．但是这题中 LCT 维护的是子树的大小，不像我们印象中的维护一条链的信息，而 LCT 的构造 **认父不认子**，不方便我们直接进行子树的统计．怎么办呢？
+The operations in this problem include both linking and cutting edges, and the graph is guaranteed to be a forest at all times, so an LCT naturally comes to mind. But here the LCT must maintain subtree sizes, unlike the path information we usually maintain, and in an LCT **the child knows its parent but not the other way around**, which makes it hard to aggregate subtrees directly. What can we do?
 
-方法是统计一个结点 $x$ 所有虚儿子（即父亲为 $x$，但 $x$ 在 Splay 中的左右儿子并不包含它）所代表的子树的贡献．
+The method is to aggregate the contributions of the subtrees represented by all virtual children of a node $x$ (children whose parent is $x$ but which are not $x$'s left or right child in the Splay).
 
-定义 $siz2[x]$ 为结点 $x$ 的所有虚儿子代表的子树的结点数，$siz[x]$ 为 结点 $x$ 子树中的结点数．
+Define $siz2[x]$ as the number of nodes in the subtrees represented by all virtual children of node $x$, and $siz[x]$ as the number of nodes in the subtree of node $x$.
 
-不同于以往我们维护 Splay 中子树结点个数的方法，我们在计算结点 $x$ 子树中的结点数时，还要加上 $siz2[x]$，即
+Unlike how we usually maintain the number of nodes in a Splay subtree, when computing the number of nodes in the subtree of node $x$, we must also add $siz2[x]$, that is
 
 ```cpp
 void maintain(int x) {
@@ -1093,11 +1093,11 @@ void maintain(int x) {
 }
 ```
 
-而且在我们 **改变 Splay 的形态**（即改变一个结点在 Splay 上的左右儿子指向时），需要及时修改 $siz2[x]$ 的值．
+Also, whenever we **change the shape of the Splay** (that is, change which nodes are a node's left and right children in the Splay), we need to update $siz2[x]$ right away.
 
-在 `Rotate(),Splay()` 操作中，我们都只是改变了 Splay 中结点的相对位置，没有改变任意一条边的虚实情况，所以不对 $siz2[x]$ 进行任何修改．
+In `Rotate(),Splay()`, we only change the relative positions of nodes in the Splay and don't change whether any edge is preferred or light, so $siz2[x]$ is not modified.
 
-在 `access` 操作中，在每次 splay 完后，都会改变刚刚 splay 完的结点的右儿子，即该结点与其原右儿子的连边和该节点和新右儿子的连边的虚实情况发生了变化，我们需要加上新变成虚边所连的子树的贡献，减去刚刚变成实边所连的子树的贡献．代码如下：
+In `access`, after each splay, the right child of the node just splayed changes. That is, the edge between this node and its old right child and the edge between this node and its new right child change between preferred and light. We need to add the contribution of the subtree attached by the edge that just became light, and subtract the contribution of the subtree attached by the edge that just became preferred. The code is:
 
 ```cpp
 void access(int x) {
@@ -1106,9 +1106,9 @@ void access(int x) {
 }
 ```
 
-在 `MakeRoot(),Find()` 操作中，我们都只是调用了之前的函数或者在 Splay 上条边，并不用做任何修改．
+In `MakeRoot(),Find()`, we only call earlier functions or walk along edges in the Splay, so no changes are needed.
 
-在连接两点时，我们修改了一个结点的父亲．我们需要在父亲结点的 $siz2$ 值中加上新子结点的子树大小贡献．
+When linking two vertices, we change the parent of one node. We need to add the new child's subtree size to the parent's $siz2$ value.
 
 ```cpp
 st.makeroot(x);
@@ -1117,16 +1117,16 @@ st.fa[x] = y;
 st.siz2[y] += st.siz[x];
 ```
 
-在断开一条边时，我们只是删除了 Splay 上的一条实边，`Maintain` 操作会维护这些信息，不需要做任何修改．
+When cutting an edge, we only delete a preferred edge in the Splay. `Maintain` will keep this information up to date, so no changes are needed.
 
-以上是代码修改的细节，最后总结一下 LCT 维护子树信息的要求与方法：
+Those are the details of the code changes. Finally, let's summarize the requirements and method for maintaining subtree information with an LCT:
 
-1.  维护的信息要有 **可减性**，如子树结点数，子树权值和，但不能直接维护子树最大最小值，因为在将一条虚边变成实边时要排除原先虚边的贡献．
-2.  新建一个附加值存储虚子树的贡献，在统计时将其加入本结点答案，在改变边的虚实时及时维护．
-3.  其余部分同普通 LCT，在统计子树信息时一定将其作为根节点．
-4.  如果维护的信息没有可减性，如维护区间最值，可以对每个结点开一个平衡树维护结点的虚子树中的最值．
+1.  The maintained information must be **subtractable**, like the number of nodes or the sum of weights in a subtree. Subtree maximum or minimum cannot be maintained directly, because when a virtual edge becomes preferred, the old virtual edge's contribution must be removed.
+2.  Add an extra value storing the contribution of virtual subtrees. Include it in the node's answer when aggregating, and update it whenever an edge switches between preferred and light.
+3.  Everything else is the same as an ordinary LCT. When aggregating subtree information, always make the node the root first.
+4.  If the maintained information is not subtractable, such as a range maximum or minimum, you can keep a balanced binary search tree at each node to maintain the extreme values over the node's virtual subtrees.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     #include <algorithm>
     #include <cstdio>
@@ -1236,7 +1236,7 @@ st.siz2[y] += st.siz[x];
     }
     ```
 
-### 习题
+### Exercises
 
--   [luogu P4299 首都](https://www.luogu.com.cn/problem/P4299)
+-   [Luogu P4299 Capital](https://www.luogu.com.cn/problem/P4299)
 -   [SPOJ QTREE5 - Query on a tree V](https://www.spoj.com/problems/QTREE5)

@@ -1,53 +1,53 @@
 author: hsfzLZH1, Ir1d, JosephusW
 
-k-D Tree(KDT , k-Dimension Tree) 是一种可以 **高效处理 $k$ 维空间信息** 的数据结构．
+A k-D Tree (KDT, k-dimensional tree) is a data structure that can **efficiently handle information in $k$-dimensional space**.
 
-在结点数 $n$ 远大于 $2^k$ 时，应用 k-D Tree 的时间效率很好．
+When the number of nodes $n$ is much larger than $2^k$, a k-D Tree runs very efficiently.
 
-在算法竞赛的题目中，一般有 $k=2$．在本页面分析时间复杂度时，将认为 $k$ 是常数．
+In competitive programming problems, usually $k=2$. When analyzing time complexity on this page, we treat $k$ as a constant.
 
-## 建树
+## Building the tree
 
-k-D Tree 具有二叉搜索树的形态，二叉搜索树上的每个结点都对应 $k$ 维空间内的一个点．其每个子树中的点都在一个 $k$ 维的超长方体内，这个超长方体内的所有点也都在这个子树中．
+A k-D Tree has the shape of a binary search tree, and each node of this binary search tree corresponds to a point in $k$-dimensional space. The points in each subtree all lie inside a $k$-dimensional hyperrectangle, and all points inside this hyperrectangle are also in that subtree.
 
-假设我们已经知道了 $k$ 维空间内的 $n$ 个不同的点的坐标，要将其构建成一棵 k-D Tree，步骤如下：
+Suppose we know the coordinates of $n$ distinct points in $k$-dimensional space and want to build a k-D Tree from them. The steps are:
 
-1.  若当前超长方体中只有一个点，返回这个点．
+1.  If the current hyperrectangle contains only one point, return that point.
 
-2.  选择一个维度，将当前超长方体按照这个维度分成两个超长方体．
+2.  Choose a dimension, and split the current hyperrectangle into two hyperrectangles along this dimension.
 
-3.  选择切割点：在选择的维度上选择一个点，这一维度上的值小于这个点的归入一个超长方体（左子树），其余的归入另一个超长方体（右子树）．
+3.  Choose the split point: pick a point along the chosen dimension. Points whose value in this dimension is less than this point's value go into one hyperrectangle (the left subtree), and the rest go into the other hyperrectangle (the right subtree).
 
-4.  将选择的点作为这棵子树的根节点，递归对分出的两个超长方体构建左右子树，维护子树的信息．
+4.  Make the chosen point the root of this subtree, recursively build the left and right subtrees from the two hyperrectangles, and maintain the subtree information.
 
-为了方便理解，我们举一个 $k=2$ 时的例子．
+To make this easier to understand, here is an example with $k=2$.
 
 ![](./images/kdt1.jpg)
 
-其构建出 k-D Tree 的形态可能是这样的：
+The k-D Tree built from it might look like this:
 
 ![](./images/kdt2.jpg)
 
-其中树上每个结点上的坐标是选择的分割点的坐标，非叶子结点旁的 $x$ 或 $y$ 是选择的切割维度．
+The coordinates on each node of the tree are the coordinates of the chosen split point, and the $x$ or $y$ next to each non-leaf node is the chosen split dimension.
 
-这样的复杂度无法保证．对于 $2,3$ 两步，我们提出两个优化：
+With this approach, the complexity is not guaranteed. For steps $2$ and $3$, we propose two optimizations:
 
-1.  轮流选择 $k$ 个维度，以保证在任意连续 $k$ 层里每个维度都被切割到．
-2.  每次在维度上选择切割点时选择该维度上的 **中位数**，这样可以保证每次分成的左右子树大小尽量相等．
+1.  Choose the $k$ dimensions in turn, so that every dimension is split at least once in any $k$ consecutive levels.
+2.  Each time, choose the **median** along the dimension as the split point. This keeps the sizes of the left and right subtrees as equal as possible.
 
-可以发现，使用优化 $2$ 后，构建出的 k-D Tree 的树高最多为 $\log n+O(1)$．
+You can see that with optimization $2$, the height of the k-D Tree is at most $\log n+O(1)$.
 
-现在，构建 k-D Tree 时间复杂度的瓶颈在于快速选出一个维度上的中位数，并将在该维度上的值小于该中位数的置于中位数的左边，其余置于右边．如果每次都使用 `sort` 函数对该维度进行排序，时间复杂度是 $O(n\log^2 n)$ 的．事实上，单次找出 $n$ 个元素中的中位数并将中位数置于排序后正确的位置的复杂度可以达到 $O(n)$．
+Now the bottleneck in building a k-D Tree is quickly finding the median along a dimension, putting the points whose value in that dimension is less than the median to its left and the rest to its right. If we sort along that dimension with `sort` every time, the time complexity is $O(n\log^2 n)$. In fact, finding the median of $n$ elements and putting it in its correct sorted position can be done in $O(n)$.
 
-我们来回顾一下快速排序的思想．每次我们选出一个数，将小于该数的置于该数的左边，大于该数的置于该数的右边，保证该数在排好序后正确的位置上，然后递归排序左侧和右侧的值．这样的期望复杂度是 $O(n\log n)$ 的．但是由于 k-D Tree 只要求要中位数在排序后正确的位置上，所以我们只需要递归排序包含中位数的 **一侧**．可以证明，这样的期望复杂度是 $O(n)$ 的．在 `algorithm` 库中，有一个实现相同功能的函数 `nth_element()`，要找到 `s[l]` 和 `s[r]` 之间的值按照排序规则 `cmp` 排序后在 `s[mid]` 位置上的值，并保证 `s[mid]` 左边的值小于 `s[mid]`，右边的值大于 `s[mid]`，只需写 `nth_element(s+l,s+mid,s+r+1,cmp)`．
+Let's recall the idea of quicksort. Each time we pick a number, put the numbers smaller than it on its left and the numbers larger than it on its right, so that this number is at its correct sorted position. Then we recursively sort the left and right parts. The expected complexity is $O(n\log n)$. But a k-D Tree only needs the median to be at its correct sorted position, so we only need to recursively sort the **one side** that contains the median. One can prove that the expected complexity of this is $O(n)$. The `algorithm` library has a function `nth_element()` that does exactly this. To find the value that would be at position `s[mid]` after sorting the values between `s[l]` and `s[r]` by the ordering `cmp`, while making sure the values left of `s[mid]` are smaller than `s[mid]` and the values on its right are larger, just write `nth_element(s+l,s+mid,s+r+1,cmp)`.
 
-借助这种思想，构建 k-D Tree 时间复杂度是 $O(n\log n)$ 的．
+Using this idea, building a k-D Tree takes $O(n\log n)$ time.
 
-## 高维空间上的操作
+## Operations in high-dimensional space
 
-在查询高维矩形区域内的所有点的一些信息时，记录每个结点子树内每一维度上的坐标的最大值和最小值．如果当前子树对应的矩形与所求矩形没有交点，则不继续搜索其子树；如果当前子树对应的矩形完全包含在所求矩形内，返回当前子树内所有点的权值和；否则，判断当前点是否在所求矩形内，更新答案并递归在左右子树中查找答案．
+To query some information about all points inside a high-dimensional rectangle, store for each node the maximum and minimum coordinates in each dimension over its subtree. If the rectangle of the current subtree does not intersect the query rectangle, do not search its subtree. If the rectangle of the current subtree lies entirely inside the query rectangle, return the sum of the weights of all points in the current subtree. Otherwise, check whether the current point is inside the query rectangle, update the answer, and recursively search the left and right subtrees.
 
-??? note "实现"
+??? note "Implementation"
     ```cpp
     int query(int p) {
       if (!p) return 0;
@@ -64,70 +64,70 @@ k-D Tree 具有二叉搜索树的形态，二叉搜索树上的每个结点都�
     }
     ```
 
-### 复杂度分析
+### Complexity analysis
 
-先考虑二维的，在查询矩形 $R$ 时，我们将 k-D Tree 上的结点分为三类：
+First consider the 2D case. When querying a rectangle $R$, we split the nodes of the k-D Tree into three kinds:
 
-1.  与 $R$ 无交．
-2.  完全被 $R$ 包含．
-3.  部分被 $R$ 包含．
+1.  Disjoint from $R$.
+2.  Fully contained in $R$.
+3.  Partly contained in $R$.
 
-显然单次查询的复杂度是第 3 类点的个数．注意到第三类点的矩形要么完全包含 $R$，要么互不包含，而前者显然只有 $O(h)=O(\log n)$ 个，现在我们来分析后者的个数．
+Clearly, the cost of a single query is the number of nodes of kind 3. Note that the rectangles of kind-3 nodes either fully contain $R$ or do not contain each other. There are clearly only $O(h)=O(\log n)$ of the former, so now we count the latter.
 
-首先，我们不妨令矩形的所有边偏移 $\epsilon$，使得查询矩形不穿过已经有的任何点．这样显然是不影响矩形的查询所涵盖的点集的．
+First, we may shift all edges of the query rectangle by $\epsilon$, so that the query rectangle does not pass through any existing point. Clearly this does not change the set of points covered by the query.
 
-注意到互不包含的第 3 类点所对应的矩形，一定有 $R$ 的一条边穿过之．所以我们只需要计算 $R$ 的每条边穿过的矩形个数，即任意一条线段最多经过多少个点对应的矩形．
+Note that for kind-3 nodes whose rectangles do not contain each other, some edge of $R$ must pass through each of those rectangles. So we only need to count how many rectangles each edge of $R$ passes through, that is, the maximum number of node rectangles any one segment can pass through.
 
-考虑对于某一个结点 $u$，它有四个孙子，且它到每一个孙子都在两个维度上各进行了一次划分．经过观察可以发现，按照这种方法将一个矩形划分成四个子矩形，一条与坐标轴平行的线段最多经过两个区域，即从 $u$ 出发的查询，最多向下进入两个孙子仍有第 3 类点（如果线段刚好与分割边界重合则不一定，但是我们偏移查询矩形边界的操作使得这种情况不存在）．
+Consider a node $u$. It has four grandchildren, and going from $u$ to each grandchild makes one split in each of the two dimensions. If you look at this carefully, you will see that when a rectangle is split into four sub-rectangles this way, a segment parallel to an axis passes through at most two of the regions. That is, a query starting from $u$ goes down into at most two grandchildren that still contain kind-3 nodes. (This may fail if the segment lies exactly on a split boundary, but shifting the query rectangle's edges rules this case out.)
 
-而因为建树的时候，每个点是其整个子树在当前划分维度上的中位数，所以子树大小必定减半．于是，设 $u$ 的子树大小为 $n$，我们能写出如下递归式：
+When building the tree, each point is the median of its whole subtree in the current split dimension, so the subtree size is always halved. So if the size of $u$'s subtree is $n$, we get the recurrence:
 
 $$
 T(n)=2T(n/4)+O(1)
 $$
 
-由主定理得 $T(n)=O(\sqrt{n})$．
+By the master theorem, $T(n)=O(\sqrt{n})$.
 
-将递归式推广到固定的 $k\ge 2$ 维，即 $T(n)=2^{k-1}T(n/2^k)+O(1)$，于是 $T(n)=O(n^{1-\frac1k})$．当 $k=1$ 时，递归式为 $T(n)=T(n/2)+O(1)$，复杂度为 $O(\log n)$．
+Generalizing the recurrence to a fixed dimension $k\ge 2$ gives $T(n)=2^{k-1}T(n/2^k)+O(1)$, so $T(n)=O(n^{1-\frac1k})$. When $k=1$, the recurrence is $T(n)=T(n/2)+O(1)$, and the complexity is $O(\log n)$.
 
-### 插入/删除
+### Insertion/deletion
 
-如果维护的这个 $k$ 维点集是可变的，即可能会插入或删除一些点，此时 k-D Tree 的平衡性无法保证．由于 k-D Tree 的构造，不能直接使用二叉搜索树的旋转维护平衡，类似于 FHQ Treap 的随机优先级也不能保证其复杂度．下面介绍几种维护方法，均假设 $k\ge 2$ 为常数，查询为矩形内的计数或权值和．
+If the $k$-dimensional point set can change, meaning points may be inserted or deleted, then the balance of the k-D Tree is no longer guaranteed. Because of how a k-D Tree is structured, you cannot use binary search tree rotations to keep it balanced, and random priorities like those in an FHQ Treap do not guarantee the complexity either. Below are several ways to maintain it. All of them assume $k\ge 2$ is a constant and the query is a count or weight sum over a rectangle.
 
-#### 替罪羊式重构
+#### Scapegoat-style rebuilding
 
-考虑只含插入的情况，可以在插入后检查插入路径上的子树大小，并将失衡子树拍扁，重新按中位数建树．重构时仍然按照结点的深度循环选择划分维度．固定常数 $\frac12<\alpha<1$，要求每次操作结束后，每个结点都满足
+Consider the insert-only case. After an insertion, check the subtree sizes along the insertion path, flatten any unbalanced subtree, and rebuild it using medians. When rebuilding, still choose the split dimension cyclically by node depth. Fix a constant $\frac12<\alpha<1$, and require that after each operation, every node satisfies
 
 $$
 \max\{\operatorname{size}(\mathrm{left}),\operatorname{size}(\mathrm{right})\}\le\alpha\operatorname{size}(\mathrm{parent}).
 $$
 
-在上述重量平衡条件下，可以保证单次查询的最坏时间复杂度为
+Under this weight-balance condition, the worst-case time of a single query is guaranteed to be
 
 $$
 O(n^p),\qquad p=\frac{k-1}{k-1+\log_2(1/\alpha)}.
 $$
 
-其中 $n$ 是树中保留的结点数．对于固定的 $\frac12<\alpha<1$，有 $1-\frac1k<p<1$．例如，$k=2$，$\alpha=0.6$ 时 $p\approx 0.5757$；$k=2$，$\alpha=0.75$ 时 $p\approx 0.7067$．
+Here $n$ is the number of nodes kept in the tree. For fixed $\frac12<\alpha<1$, we have $1-\frac1k<p<1$. For example, with $k=2$ and $\alpha=0.6$, $p\approx 0.5757$; with $k=2$ and $\alpha=0.75$, $p\approx 0.7067$.
 
-??? note "复杂度证明"
-    考虑其中一个边界所在的超平面 $x_i=c$，只统计包围盒被这个超平面穿过的非空子树．
+??? note "Proof of complexity"
+    Consider the hyperplane $x_i=c$ that contains one of the boundaries, and count only the non-empty subtrees whose bounding boxes are crossed by this hyperplane.
     
-    在沿第 $i$ 维划分时，至多一个儿子的包围盒被穿过，且这个儿子的大小至多为父亲的 $\alpha$ 倍；在沿其他维度划分时，至多两个儿子的包围盒被穿过，但它们的大小之和不超过父亲的大小．因此，每向下经过完整的 $k$ 层，被穿过的子树数量至多变为原来的 $b=2^{k-1}$ 倍，**这些子树的大小之和** 至多变为原来的 $\alpha$ 倍．
+    When splitting along dimension $i$, at most one child's bounding box is crossed, and that child's size is at most $\alpha$ times its parent's. When splitting along other dimensions, at most two children's bounding boxes are crossed, but their total size is at most the parent's size. So every time we go down a full $k$ levels, the number of crossed subtrees grows by a factor of at most $b=2^{k-1}$, and **the total size of these subtrees** shrinks by a factor of at least $\alpha$.
     
-    记深度为 $jk$ 的被穿过的非空子树数量为 $a_j$．从数量和大小之和两个角度分别估计，得到
+    Let $a_j$ be the number of crossed non-empty subtrees at depth $jk$. Bounding it by count and by total size separately gives
     
     $$
     a_j\le b^j,\qquad a_j\le n\alpha^j,
     $$
     
-    相邻两个这样的深度之间只有 $k-1$ 层，至多额外贡献常数倍的结点，故总数为
+    Between two adjacent such depths there are only $k-1$ levels, which add at most a constant factor more nodes. So the total is
     
     $$
     O\left(\sum_{j\ge 0}\min\{b^j,n\alpha^j\}\right).
     $$
     
-    令 $L=\lfloor\log_{b/\alpha}n\rfloor$，将求和在 $L$ 处分开，前半段用 $b^j$ 估计，后半段用 $n\alpha^j$ 估计．可得
+    Let $L=\lfloor\log_{b/\alpha}n\rfloor$ and split the sum at $L$. Bound the first part with $b^j$ and the second part with $n\alpha^j$. This gives
     
     $$
     \sum_{j\ge 0}\min\{b^j,n\alpha^j\}
@@ -135,96 +135,96 @@ $$
     =O(n^{\log_{b/\alpha}b})=O(n^p).
     $$
     
-    每个需要继续递归的结点，其包围盒都被查询矩形的某个边界超平面穿过；每个这样的结点至多额外访问两个儿子．将 $2k$ 个边界的贡献相加，就得到了单次查询的上界．
+    Every node where the recursion continues has a bounding box crossed by some boundary hyperplane of the query rectangle, and each such node visits at most two extra children. Adding up the contributions of all $2k$ boundaries gives the upper bound for a single query.
 
-重构大小为 $s$ 的子树需要 $O(s\log s)$ 时间．刚重构完时两个儿子的大小至多为 $s/2$，要再次破坏固定的 $\alpha$ 重量平衡，至少要在这棵子树中插入 $\Omega(s)$ 个点．将重构代价分摊给这些插入，每次插入在每个祖先处承担 $O(\log N)$ 的代价，而祖先数量为 $O(\log N)$，所以单次插入的均摊复杂度为 $O(\log^2 N)$，其中 $N$ 为操作过程中树的最大大小．
+Rebuilding a subtree of size $s$ takes $O(s\log s)$ time. Right after a rebuild, both children have size at most $s/2$. To break the fixed $\alpha$ weight balance again, at least $\Omega(s)$ points must be inserted into this subtree. Spreading the rebuild cost over these insertions, each insertion pays $O(\log N)$ at each ancestor, and there are $O(\log N)$ ancestors. So the amortized cost of one insertion is $O(\log^2 N)$, where $N$ is the maximum size of the tree during the operations.
 
-#### 根号重构
+#### Sqrt rebuilding
 
-插入的时候，先存下来要插入的点，每 $B$ 次插入进行一次重构．
+On insertion, first store the points to be inserted, and rebuild once every $B$ insertions.
 
-删除打个标记即可．如果要求较为严格，可以维护树内有多少个被删除了，达到 $B$ 则重构．
+For deletion, just mark the point as deleted. If you need stricter bounds, you can keep track of how many points in the tree have been deleted and rebuild when this reaches $B$.
 
-修改复杂度均摊 $O(n\log n/B)$，查询 $O(B+n^{1-\frac1k})$，若二者数量同阶则 $B=O(\sqrt{n\log n})$ 最优（修改 $O(\sqrt{n\log n})$，查询 $O(\sqrt{n\log n}+n^{1-\frac1k})$）．
+Updates cost amortized $O(n\log n/B)$, and queries cost $O(B+n^{1-\frac1k})$. If the numbers of the two are of the same order, $B=O(\sqrt{n\log n})$ is optimal (updates $O(\sqrt{n\log n})$, queries $O(\sqrt{n\log n}+n^{1-\frac1k})$).
 
-#### 二进制分组
+#### Binary grouping
 
-考虑维护若干棵 $2$ 的自然数次幂的 k-D Tree，满足这些树的大小之和为 $n$．
+Maintain several k-D Trees whose sizes are powers of $2$ (with natural-number exponents), so that their sizes add up to $n$.
 
-插入的时候，新增一棵大小为 $1$ 的 k-D Tree，然后不断将相同大小的树合并（直接拍扁重构）．实现的时候可以只重构一次．
+On insertion, add a new k-D Tree of size $1$, then keep merging trees of the same size (just flatten and rebuild). In the implementation, you can rebuild only once.
 
-容易发现需要合并的树的大小一定从 $2^0$ 开始且指数连续．从空结构开始进行 $n$ 次插入时，大小为 $2^i$ 的树至多重构 $O(n/2^i)$ 次，每次花费 $O(2^i(i+1))$ 时间．对所有 $i$ 求和，总时间为 $O(n\log^2 n)$，因此单次插入的均摊复杂度是 $O(\log^2 n)$．
+It is easy to see that the trees to be merged always start from size $2^0$ with consecutive exponents. Starting from an empty structure and doing $n$ insertions, a tree of size $2^i$ is rebuilt at most $O(n/2^i)$ times, each costing $O(2^i(i+1))$ time. Summing over all $i$, the total time is $O(n\log^2 n)$, so the amortized cost of one insertion is $O(\log^2 n)$.
 
-查询的时候，直接分别在每棵树上查询，复杂度为 $O\left(\sum_{i\geq0} (\frac n{2^i})^{1-\frac1k}\right)=O(n^{1-\frac1k})$．
+To query, simply query each tree separately. The complexity is $O\left(\sum_{i\geq0} (\frac n{2^i})^{1-\frac1k}\right)=O(n^{1-\frac1k})$.
 
-因此，对于只含插入和矩形计数、求和查询的操作序列，二进制分组可以在保持 $O(\log^2 n)$ 均摊插入复杂度和 $O(n)$ 空间的同时，得到比固定 $\alpha>\frac12$ 的上述重量平衡分析更好的查询上界．
+So for a sequence of operations with only insertions and rectangle count/sum queries, binary grouping keeps $O(\log^2 n)$ amortized insertion and $O(n)$ space, while giving a better query bound than the weight-balance analysis above with a fixed $\alpha>\frac12$.
 
-### 例题
+### Example problem
 
-???+ note "[洛谷 P4148 简单题](https://www.luogu.com.cn/problem/P4148)"
-    在一个初始值全为 $0$ 的 $n\times n$ 的二维矩阵上，进行 $q$ 次操作，每次操作为以下两种之一：
+???+ note "[Luogu P4148 Simple Problem](https://www.luogu.com.cn/problem/P4148)"
+    On an $n\times n$ 2D matrix whose values are all initially $0$, perform $q$ operations. Each operation is one of the following:
     
-    1.  `1 x y A`：将坐标 $(x,y)$ 上的数加上 $A$．
-    2.  `2 x1 y1 x2 y2`：输出以 $(x1,y1)$ 为左下角，$(x2,y2)$ 为右上角的矩形内（包括矩形边界）的数字和．
+    1.  `1 x y A`: add $A$ to the number at $(x,y)$.
+    2.  `2 x1 y1 x2 y2`: output the sum of the numbers inside the rectangle (including its border) whose lower-left corner is $(x1,y1)$ and upper-right corner is $(x2,y2)$.
     
-    强制在线．内存限制 `20M`．保证答案及所有过程量在 `int` 范围内．
+    The problem is forced online. Memory limit `20M`. The answer and all intermediate values are guaranteed to fit in `int`.
     
     $1\le n\le 500000 , 1\le q\le 200000$
 
-20M 的空间卡掉了所有树套树，强制在线卡掉了 CDQ 分治，只能使用 k-D Tree．
+The 20M memory limit rules out all tree-of-trees approaches, and forcing the problem online rules out CDQ divide and conquer, so the only choice is a k-D Tree.
 
-以下是二进制分组的参考代码．
+Here is reference code using binary grouping.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/ds/code/kdt/kdt_3.cpp"
     ```
 
-## 邻域查询
+## Neighborhood queries
 
 ???+ warning "Warning"
-    使用 k-D Tree 单次查询最近点的时间复杂度最坏还是 $O(n)$ 的，但不失为一种优秀的骗分算法，使用时请注意．在这里对邻域查询的讲解仅限于加强对 k-D Tree 结构的认识．
+    A single nearest-point query with a k-D Tree still takes $O(n)$ time in the worst case, but it is a very good partial-credit trick. Keep this in mind when you use it. The explanation of neighborhood queries here is only meant to deepen your understanding of the k-D Tree structure.
 
-???+ note "例题 [luogu P1429 平面最近点对（加强版）](https://www.luogu.com.cn/problem/P1429)"
-    给定平面上的 $n$ 个点 $(x_i,y_i)$，找出平面上最近两个点对之间的 [欧几里得距离](../geometry/distance.md#欧氏距离)．
+???+ note "Example problem [Luogu P1429 Closest Pair of Points in the Plane (Enhanced)](https://www.luogu.com.cn/problem/P1429)"
+    Given $n$ points $(x_i,y_i)$ in the plane, find the [Euclidean distance](../geometry/distance.md#欧氏距离) between the closest pair of points.
     
     $2\le n\le 200000 , 0\le x_i,y_i\le 10^9$
 
-首先建出关于这 $n$ 个点的 2-D Tree．
+First build a 2-D Tree on these $n$ points.
 
-枚举每个结点，对于每个结点找到不等于该结点且距离最小的点，即可求出答案．每次暴力遍历 2-D Tree 上的每个结点的时间复杂度是 $O(n)$ 的，需要剪枝．我们可以维护一个子树中的所有结点在每一维上的坐标的最小值和最大值．假设当前已经找到的最近点对的距离是 $ans$，如果查询点到子树内所有点都包含在内的长方形的 **最近** 距离大于等于 $ans$，则在这个子树内一定没有答案，搜索时不进入这个子树．
+Enumerate each node, and for each node find the point closest to it other than itself. This gives the answer. Brute-force traversing every node of the 2-D Tree takes $O(n)$ time per query, so we need pruning. We can maintain the minimum and maximum coordinates in each dimension over all nodes in a subtree. Suppose the distance of the closest pair found so far is $ans$. If the **minimum** distance from the query point to the rectangle containing all points in a subtree is greater than or equal to $ans$, then that subtree cannot contain the answer, so the search does not enter it.
 
-此外，还可以使用一种启发式搜索的方法，即若一个结点的两个子树都有可能包含答案，先在与查询点距离最近的一个子树中搜索答案．可以认为，**查询点到子树对应的长方形的最近距离就是此题的估价函数**．
+Also, you can use a heuristic search: if both subtrees of a node may contain the answer, search the subtree closer to the query point first. You can think of **the minimum distance from the query point to a subtree's rectangle as the heuristic function for this problem**.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/ds/code/kdt/kdt_1.cpp"
     ```
 
-???+ note "例题 [「CQOI2016」K 远点对](https://loj.ac/problem/2043)"
-    给定平面上的 $n$ 个点 $(x_i,y_i)$，求欧几里得距离下的第 $k$ 远无序点对之间的距离．
+???+ note "Example problem [CQOI2016 K Farthest Point Pairs](https://loj.ac/problem/2043)"
+    Given $n$ points $(x_i,y_i)$ in the plane, find the Euclidean distance of the $k$-th farthest unordered pair of points.
     
     $n\le 100000 , 1\le k\le 100 , 0\le x_i,y_i<2^{31}$
 
-和上一道例题类似，从最近点对变成了 $k$ 远点对，估价函数改成了查询点到子树对应的长方形区域的最远距离．用一个小根堆来维护当前找到的前 $k$ 远点对之间的距离，如果当前找到的点对距离大于堆顶，则弹出堆顶并插入这个距离，同样的，使用堆顶的距离来剪枝．
+This is similar to the previous example, but instead of the closest pair we want the $k$-th farthest pair, and the heuristic function becomes the maximum distance from the query point to the rectangle of a subtree. Use a min-heap to keep the distances of the $k$ farthest pairs found so far. If a pair found is farther than the heap top, pop the heap top and push this distance. Likewise, use the distance at the heap top for pruning.
 
-由于题目中强调的是无序点对，即交换前后两点的顺序后仍是相同的点对，则每个有序点对会被计算两次，那么读入的 $k$ 要乘以 $2$．
+Since the problem asks about unordered pairs, meaning swapping the two points gives the same pair, each ordered pair is counted twice. So the $k$ read from input should be multiplied by $2$.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/ds/code/kdt/kdt_2.cpp"
     ```
 
-## 习题
+## Exercises
 
-[「SDOI2010」捉迷藏](https://www.luogu.com.cn/problem/P2479)
+[SDOI2010 Hide and Seek](https://www.luogu.com.cn/problem/P2479)
 
-[「Violet」天使玩偶/SJY 摆棋子](https://www.luogu.com.cn/problem/P4169)
+[Violet Angel Doll / SJY Placing Chess Pieces](https://www.luogu.com.cn/problem/P4169)
 
-[「国家集训队」JZPFAR](https://www.luogu.com.cn/problem/P2093)
+[National Training Team JZPFAR](https://www.luogu.com.cn/problem/P2093)
 
-[「BOI2007」Mokia 摩基亚](https://www.luogu.com.cn/problem/P4390)
+[BOI2007 Mokia](https://www.luogu.com.cn/problem/P4390)
 
-[luogu P4475 巧克力王国](https://www.luogu.com.cn/problem/P4475)
+[Luogu P4475 Chocolate Kingdom](https://www.luogu.com.cn/problem/P4475)
 
-[「CH 弱省胡策 R2」TATT](https://www.luogu.com.cn/problem/P3769)
+[CH Weak Province Mock R2 TATT](https://www.luogu.com.cn/problem/P3769)
