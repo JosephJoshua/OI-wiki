@@ -1,216 +1,216 @@
-前置知识：[抽象代数基本概念](./basic.md)、[群论](./group-theory.md)、[环论](./ring-theory.md)
+Prerequisites: [Basic Concepts of Abstract Algebra](./basic.md), [Group Theory](./group-theory.md), [Ring Theory](./ring-theory.md)
 
-## 引入
+## Introduction
 
-**域论**（field theory）是关于域的理论．
+**Field theory** is the theory of fields.
 
-本文涉及的域论主要是域的扩张理论．域是对加、减、乘、除都封闭的代数结构，算法竞赛中经常需要对质数 $p$ 取模，就相当于在有限域 $\mathbf F_p$ 上进行运算．和实数域 $\mathbf R$ 的情形类似，有些问题的求解在更大的域（即复数域 $\mathbf C$）上进行计算更为方便，常见的例子比如利用 [快速傅里叶变换](../poly/fft.md) 加速实系数多项式的乘法．对于有限域也可以做类似的操作．多数读者对于有限域的扩张相对陌生，因而，了解一般的域上的扩张理论是有益的．文末给出了一些需要对有限域进行扩张的算法应用，同时也简单地讨论了部分应用中可能需要的整数环上的扩张．
+The field theory covered on this page is mainly the theory of field extensions. A field is an algebraic structure closed under addition, subtraction, multiplication and division. In competitive programming we often work modulo a prime $p$, which is the same as computing in the finite field $\mathbf F_p$. Just as with the real field $\mathbf R$, some problems are easier to solve by computing in a larger field (the complex field $\mathbf C$). A common example is using the [Fast Fourier Transform](../poly/fft.md) to speed up multiplying polynomials with real coefficients. The same kind of thing can be done for finite fields. Most readers are less familiar with extensions of finite fields, so it helps to learn the general theory of field extensions. The end of this page gives some algorithmic applications that need extensions of finite fields, and also briefly discusses extensions of the ring of integers that some of these applications may need.
 
-与域论紧密相关的是 Galois 理论．它将域的扩张与其自同构群联系起来，从而可以通过群论的工具来理解域的扩张的性质．尽管这一理论也往往是相关代数课程的核心内容，但是与算法竞赛的内容相去甚远，故而本文不做过多介绍．有兴趣的读者应当阅读相关专业书籍．
+Closely related to field theory is Galois theory. It links a field extension to its automorphism group, so that properties of field extensions can be understood with tools from group theory. Although this theory is usually a core part of algebra courses, it is far from what competitive programming needs, so this page does not go into it much. Interested readers should consult specialized textbooks.
 
-???+ info "记号"
-    在不引起歧义时，本文可能会省略掉环和域的乘法记号，并且会将环 $(R,+,\cdot)$ 写作环 $R$，将域 $(F,+,\cdot)$ 写作域 $F$．环和域的加法单位元称为零元，乘法单位元称为幺元．而且，本文中的 $p$ 总是素数，而 $q$ 总是素数幂，且可以写作 $p^n$，其中，$n$ 是正整数．
+???+ info "Notation"
+    When there is no ambiguity, this page may omit the multiplication sign of rings and fields, and will write the ring $(R,+,\cdot)$ as the ring $R$ and the field $(F,+,\cdot)$ as the field $F$. The additive identity of a ring or field is called the zero, and the multiplicative identity is called the unity (or one). Also, on this page $p$ is always a prime and $q$ is always a prime power, which can be written as $p^n$ where $n$ is a positive integer.
 
-## 域的扩张
+## Field extensions
 
-类似群、环的情形，可以建立子域和域同态的概念．
+As with groups and rings, we can define subfields and field homomorphisms.
 
-???+ abstract "子域"
-    对于域 $F$，如果它的子环 $E$ 也是域，那么称 $E$ 是域 $F$ 的 **子域**（subfield）．
+???+ abstract "Subfield"
+    For a field $F$, if a subring $E$ of $F$ is also a field, then $E$ is called a **subfield** of $F$.
 
-其中，无论环和子环的定义对于幺元的处理如何，子域 $E$ 必然包含域 $F$ 的幺元[^subfield-one]．
+Here, no matter how the definitions of rings and subrings treat the unity, a subfield $E$ must contain the unity of the field $F$.[^subfield-one]
 
-???+ abstract "域同态"
-    自域 $F$ 到域 $E$ 的环同态 $\varphi:F\rightarrow E$ 也称为自域 $F$ 到域 $E$ 的 **域同态**（field homomorphism）．
+???+ abstract "Field homomorphism"
+    A ring homomorphism $\varphi:F\rightarrow E$ from a field $F$ to a field $E$ is also called a **field homomorphism** from $F$ to $E$.
 
-??? info "域同态对幺元的处理"
-    如果与本文的定义不同，环同态要求幺元映射到幺元，那么域同态自然也要求幺元映射到幺元．否则，幺元也可能映射到零元．
+??? info "How field homomorphisms treat the unity"
+    If, unlike the definition used here, ring homomorphisms are required to map the unity to the unity, then field homomorphisms naturally must also map the unity to the unity. Otherwise, the unity may also be mapped to zero.
 
-因为域只有平凡的理想，所以域同态要么将整个域映射到零元，要么必然是嵌入映射．这说明，域同态的讨论可以转化为子域的讨论．
+Since a field has only trivial ideals, a field homomorphism either maps the whole field to zero or is an embedding. This means that the study of field homomorphisms can be reduced to the study of subfields.
 
-在域的情形，往往更小的域是更为熟悉的域，所以，通常会转而以子域作为基点来考察更大的域．这就是域的扩张的概念．
+For fields, the smaller field is usually the more familiar one. So we usually take the subfield as the base and study the larger field from there. This is the idea of a field extension.
 
-???+ abstract "域扩张"
-    对于域 $F$，如果 $F$ 是 $E$ 的子域，则称域 $E$ 是域 $F$ 的 **扩张**（extension），或称 **扩域**，记作 $E/F$．
+???+ abstract "Field extension"
+    For a field $F$, if $F$ is a subfield of $E$, then the field $E$ is called an **extension** of $F$, or an **extension field**, written $E/F$.
 
-???+ info "域扩张的记号"
-    尽管形式上一致，但是域扩张的概念和商环并没有关系，不应混淆．
+???+ info "Notation for field extensions"
+    Although the notation looks the same, field extensions have nothing to do with quotient rings. Do not confuse them.
 
-???+ example "例子"
-    复数域 $\mathbf C$ 就是实数域 $\mathbf R$ 的扩张，而实数域 $\mathbf R$ 又是有理数域 $\mathbf Q$ 的扩张．
+???+ example "Example"
+    The complex field $\mathbf C$ is an extension of the real field $\mathbf R$, and the real field $\mathbf R$ is in turn an extension of the rational field $\mathbf Q$.
 
-### 域扩张的次数
+### Degree of a field extension
 
-对于域扩张 $E/F$，域 $E$ 总是域 $F$ 上的 [线性空间](../linear-algebra/vector-space.md)．这个线性空间的维度就是域扩张的次数．
+For a field extension $E/F$, the field $E$ is always a [vector space](../linear-algebra/vector-space.md) over $F$. The dimension of this vector space is the degree of the extension.
 
-???+ abstract "域扩张的次数"
-    域扩张 $E/F$ 的 **次数**（degree），是指将 $E$ 看作是域 $F$ 上线性空间时的维度，即 $\dim_F(E)$，记作 $[E:F]$．如果域扩张的次数是有限的，就称域扩张为 **有限扩张**（finite extension），否则就称为 **无限扩张**（infinite extension）．
+???+ abstract "Degree of a field extension"
+    The **degree** of a field extension $E/F$ is the dimension of $E$ viewed as a vector space over $F$, that is, $\dim_F(E)$, written $[E:F]$. If the degree is finite, the extension is called a **finite extension**; otherwise it is called an **infinite extension**.
 
-???+ example "例子"
-    域扩张 $\mathbf C/\mathbf R$ 的次数 $[\mathbf C:\mathbf R]$ 等于 $2$，所以是有限扩张．域扩张 $\mathbf R/\mathbf Q$ 是无限扩张．
+???+ example "Example"
+    The degree $[\mathbf C:\mathbf R]$ of the extension $\mathbf C/\mathbf R$ is $2$, so it is a finite extension. The extension $\mathbf R/\mathbf Q$ is an infinite extension.
 
-域的扩张次数满足乘法原理．
+Degrees of field extensions are multiplicative.
 
-???+ note "定理"
-    设 $F\subseteq K\subseteq E$ 都是域，则它们之间的扩张次数满足 $[E:F]=[E:K][K:F]$．
+???+ note "Theorem"
+    Let $F\subseteq K\subseteq E$ be fields. Then their degrees satisfy $[E:F]=[E:K][K:F]$.
 
-??? note "证明"
-    对于扩张次数是无限的情形，这是显然的；否则，如果 $\{\alpha_i\}$ 是 $E$ 作为 $K$ 上线性空间的一组基，且 $\{\beta_j\}$ 是 $K$ 作为 $F$ 上线性空间的一组基，那么可以验证，$\{\alpha_i\beta_j\}$ 是 $E$ 作为 $F$ 上线性空间的一组基．
+??? note "Proof"
+    If a degree is infinite, this is obvious. Otherwise, if $\{\alpha_i\}$ is a basis of $E$ as a vector space over $K$ and $\{\beta_j\}$ is a basis of $K$ as a vector space over $F$, one can check that $\{\alpha_i\beta_j\}$ is a basis of $E$ as a vector space over $F$.
 
-本文讨论的情形主要是域的有限扩张．
+This page mainly deals with finite extensions.
 
-### 域的特征
+### Characteristic of a field
 
-对域扩张的研究，有一个自然的起点，就是包含域 $F$ 幺元的最小子域，这个域也称为域 $F$ 的 **素子域**（prime subfield）．
+A natural starting point for studying field extensions is the smallest subfield containing the unity of $F$. This field is called the **prime subfield** of $F$.
 
-素子域的结构，由域幺元的性质唯一确定．域的特征就概括了这样的性质．
+The structure of the prime subfield is determined entirely by the properties of the field's unity. The characteristic of a field sums up these properties.
 
-???+ abstract "域的特征"
-    域 $F$ 的 **特征**（characteristic）是使得 $n\cdot 1=0$ 成立的最小正整数 $n$；如果这样的 $n$ 不存在，则称域 $F$ 的特征是 $0$．其中，$n\cdot 1$ 指 $n$ 个幺元 $1$ 相加的结果．如果域 $F$ 的特征不为 $0$，那么就称域 $F$ 是 **有限特征的**（finite characteristic）．
+???+ abstract "Characteristic of a field"
+    The **characteristic** of a field $F$ is the smallest positive integer $n$ such that $n\cdot 1=0$. If no such $n$ exists, the characteristic of $F$ is said to be $0$. Here $n\cdot 1$ means the sum of $n$ copies of the unity $1$. If the characteristic of $F$ is not $0$, $F$ is said to have **finite characteristic**.
 
-域的特征可以通过环同态来理解．整数环 $\mathbf Z$ 就是自 $0$ 和 $1$ 出发，反复施加加、减、乘等运算得到的封闭结构．它可以看作某种「原型」，所有包含幺元的环都应当「继承」了整数环的部分结构[^initial-object-ring]．因而，对于域 $F$，可以考察环同态 $\varphi:\mathbf Z\rightarrow F$ 并要求 $\varphi(1)=1$．这样的环同态是唯一确定的，它将 $n\in\mathbf N_+$ 映射到 $n\cdot 1$，即 $n$ 个幺元 $1$ 相加．该同态的像 $\varphi(\mathbf Z)$ 嵌入了域 $F$ 中，必然含幺、交换、无零因子，故而是整环．所以，同态的核 $\ker\varphi$ 必然是素理想．整数环 $\mathbf Z$ 的素理想只能是 $(n)$ 的形式，其中 $n=0$ 或者 $n$ 是素数．这样得到的 $n$ 就是该域的特征．
+The characteristic can be understood through ring homomorphisms. The ring of integers $\mathbf Z$ is the closed structure obtained by starting from $0$ and $1$ and repeatedly applying addition, subtraction and multiplication. It can be seen as a kind of "prototype": every ring with unity should "inherit" part of the structure of the integers.[^initial-object-ring] So for a field $F$, we can look at ring homomorphisms $\varphi:\mathbf Z\rightarrow F$ with $\varphi(1)=1$. Such a homomorphism is uniquely determined: it maps $n\in\mathbf N_+$ to $n\cdot 1$, the sum of $n$ copies of the unity $1$. Its image $\varphi(\mathbf Z)$ is embedded in the field $F$, so it has a unity, is commutative and has no zero divisors. Hence it is an integral domain. So the kernel $\ker\varphi$ must be a prime ideal. The prime ideals of $\mathbf Z$ can only have the form $(n)$, where $n=0$ or $n$ is a prime. The $n$ obtained this way is the characteristic of the field.
 
-域的特征确定了素子域的结构：
+The characteristic determines the structure of the prime subfield:
 
-1.  当特征为 $0$ 时，同态 $\varphi$ 是单的，整数环 $\mathbf Z$ 嵌入了域 $F$ 中．有理数域 $\mathbf Q$ 作为最小的包含整数环的域必然也可以嵌入域 $F$ 中，它就是域 $F$ 的素子域；
-2.  当特征为素数 $p$ 时，同态 $\varphi$ 的像 $\mathbf Z/p\mathbf Z$ 嵌入了域 $F$ 中．此时，$\mathbf Z/p\mathbf Z$ 已经是域，记作 $\mathbf F_p$，它就是域 $F$ 的素子域．
+1.  When the characteristic is $0$, the homomorphism $\varphi$ is injective, so $\mathbf Z$ is embedded in $F$. The rational field $\mathbf Q$, being the smallest field containing the integers, must also embed in $F$. It is the prime subfield of $F$;
+2.  When the characteristic is a prime $p$, the image $\mathbf Z/p\mathbf Z$ of $\varphi$ is embedded in $F$. Here $\mathbf Z/p\mathbf Z$ is already a field, written $\mathbf F_p$, and it is the prime subfield of $F$.
 
-这些讨论实际上说明了如下结论：
+This discussion actually proves the following:
 
-???+ note "定理"
-    域 $F$ 的特征只能是 $0$ 或素数 $p$．特征为 $0$ 的域对应的素子域是 $\mathbf Q$，特征为素数 $p$ 的域对应的素子域是 $\mathbf F_p$．
+???+ note "Theorem"
+    The characteristic of a field $F$ can only be $0$ or a prime $p$. A field of characteristic $0$ has prime subfield $\mathbf Q$, and a field of characteristic $p$ has prime subfield $\mathbf F_p$.
 
-定理中的 $\mathbf Q$ 和 $\mathbf F_p$ 也称为 **素域**（prime field），即子域只有它自身的域．有限域必然是有限特征的，因为特征为 $0$ 的域至少包含子域 $\mathbf Q$．
+The fields $\mathbf Q$ and $\mathbf F_p$ in the theorem are also called **prime fields**, meaning fields whose only subfield is themselves. A finite field must have finite characteristic, because a field of characteristic $0$ contains at least the subfield $\mathbf Q$.
 
-特征有限的域和零特征的域性质往往不同．比如，有限特征的域有如下性质：
+Fields of finite characteristic often behave differently from fields of characteristic zero. For example, fields of finite characteristic have the following properties:
 
-???+ note "定理"
-    设 $F$ 的特征为 $p$，则有：
+???+ note "Theorem"
+    Let $F$ have characteristic $p$. Then:
     
-    1.  域 $F$ 的加法群中，所有非零元素的阶都是 $p$，即对所有 $x\in F$ 都有 $px=0$；
-    2.  「新手之梦」（freshman's dream），即对所有 $x,y\in F$ 都有 $(x+y)^p=x^p+y^p$．进而，映射 $x\mapsto x^p$ 是 $F$ 上的单自同态，叫做 **Frobenius 自同态**（Frobenius endomorphism）．
+    1.  In the additive group of $F$, every nonzero element has order $p$, that is, $px=0$ for all $x\in F$;
+    2.  The "freshman's dream": $(x+y)^p=x^p+y^p$ for all $x,y\in F$. Moreover, the map $x\mapsto x^p$ is an injective endomorphism of $F$, called the **Frobenius endomorphism**.
 
-??? note "证明"
-    对于第一条性质，只要注意到 $px=(p1)x=0x=0$ 即可．对于第二条性质，只需要注意到 $(x+y)^p$ 的二项式展开中，除了 $x^p$ 和 $y^p$ 外的全部其他项的系数都是 $p$ 的倍数，故而根据第一条性质就有 $(x+y)^p=x^p+y^p$．至于验证 $x\mapsto x^p$ 是自同态，只需要再验证 $(xy)^p=x^py^p$，这是因为域的乘法满足交换律．最后，域之间的环同态将幺元映射到幺元，则必然是单射．
+??? note "Proof"
+    For the first property, just note that $px=(p1)x=0x=0$. For the second, note that in the binomial expansion of $(x+y)^p$, every term other than $x^p$ and $y^p$ has a coefficient divisible by $p$, so by the first property $(x+y)^p=x^p+y^p$. To check that $x\mapsto x^p$ is an endomorphism, we also need $(xy)^p=x^py^p$, which holds because multiplication in a field is commutative. Finally, a ring homomorphism between fields that maps the unity to the unity must be injective.
 
-当然，对于有限域，Frobenius 自同态必然也是满的，因而是域的自同构．
+Of course, for a finite field the Frobenius endomorphism must also be surjective, so it is an automorphism of the field.
 
-### 单扩张
+### Simple extensions
 
-类似于实数域扩张到复数域的情形，很多扩张可以通过向域中添加额外的元素，并规定其运算性质来完成．在一般的情形，为避免规定运算性质引起的麻烦，不妨考虑在域扩张 $E/F$ 中，将 $E\setminus F$ 中的元素附加到 $F$ 上的情形，此时这些额外的元素与域 $F$ 中元素的运算的规则已经在更大的域 $E$ 中确定了．
+Just like extending the real field to the complex field, many extensions can be built by adding extra elements to a field and specifying how they behave under the operations. In general, to avoid the trouble of specifying those rules, we may consider a field extension $E/F$ and adjoin elements of $E\setminus F$ to $F$. Then the rules for operating on these extra elements together with elements of $F$ are already fixed inside the larger field $E$.
 
-???+ abstract "由子集生成的域扩张"
-    设 $E/F$ 是域扩张，$S\subseteq E$，那么 **由 $S$ 生成的域 $F$ 上的扩张**（extension generated by $S$ over $F$）就是指同时包含 $F$ 和 $S$ 的，最小的 $E$ 的子域，记作 $F(S)$．
+???+ abstract "Extension generated by a subset"
+    Let $E/F$ be a field extension and $S\subseteq E$. The **extension generated by $S$ over $F$** is the smallest subfield of $E$ that contains both $F$ and $S$, written $F(S)$.
 
-最为简单的情形自然是集合 $S$ 中的元素很少的情形．
+The simplest case, of course, is when $S$ has very few elements.
 
-???+ abstract "有限生成扩张"
-    设 $E/F$ 是域扩张，如果存在有限集 $S=\{\alpha_1,\cdots,\alpha_n\}\subseteq E$ 使得 $E=F(S)$ 成立，则称 $E$ 为域 $F$ 的 **有限生成扩张**（finitely generated extension），也记作 $F(\alpha_1,\cdots,\alpha_n)$．
+???+ abstract "Finitely generated extension"
+    Let $E/F$ be a field extension. If there is a finite set $S=\{\alpha_1,\cdots,\alpha_n\}\subseteq E$ such that $E=F(S)$, then $E$ is called a **finitely generated extension** of $F$, also written $F(\alpha_1,\cdots,\alpha_n)$.
 
-???+ abstract "单扩张"
-    设 $E/F$ 是域扩张，如果存在 $\alpha\in E$ 使得 $E=F(\alpha)$ 成立，则称域 $E$ 是域 $F$ 的 **单扩张**（simple extension）．其中，元素 $\alpha$ 称为这个单扩张的 **本原元**（primitive element）．
+???+ abstract "Simple extension"
+    Let $E/F$ be a field extension. If there is $\alpha\in E$ such that $E=F(\alpha)$, then $E$ is called a **simple extension** of $F$. The element $\alpha$ is called a **primitive element** of this simple extension.
 
-???+ example "例子"
-    这些例子都是向 $\mathbf Q$ 中添加 $\mathbf C$ 中的元素得到的．
+???+ example "Example"
+    These examples are all obtained by adjoining elements of $\mathbf C$ to $\mathbf Q$.
     
-    1.  对于无平方因子的整数 $D\neq 0,1$，二次域 $\mathbf Q(\sqrt D)$ 就是在域 $\mathbf Q$ 中添加了 $\sqrt D\in\mathbf C\setminus\mathbf Q$ 得到的单扩张．它的扩张次数是 $2$，因为 $\{1,\sqrt D\}$ 构成了一组基．
-    2.  域 $\mathbf Q(\sqrt 2,\sqrt 3)$ 就是在域 $\mathbf Q$ 中添加了 $\sqrt 2$ 和 $\sqrt 3$ 得到的扩张．当然有 $\mathbf Q(\sqrt 2,\sqrt 3)=\mathbf Q(\sqrt 2)(\sqrt 3)=\mathbf Q(\sqrt 3)(\sqrt 2)$，即最后的扩张与元素的添加顺序和方式无关．这也是单扩张，因为 $\mathbf Q(\sqrt 2,\sqrt 3)=\mathbf Q(\sqrt 2+\sqrt 3)$．它的扩张次数是 $4$，因为 $\{1,\sqrt 2,\sqrt 3,\sqrt 6\}$ 构成了一组基．
-    3.  域 $\mathbf Q(\pi)$ 也是单扩张，其中，$\pi$ 是圆周率．它是无限扩张，因为 $\mathbf Q[\pi]\subseteq \mathbf Q(\pi)$ 已经有一组基 $\{1,\pi,\pi^2,\cdots\}$．
-    4.  有限生成的扩张未必是单扩张．例如，设 $x,y$ 是两个不定元，则有理分式域 $\mathbf Q(x,y)$ 是 $\mathbf Q$ 的有限生成扩张，但它的超越次数是 $2$，故而不是单扩张．
+    1.  For a square-free integer $D\neq 0,1$, the quadratic field $\mathbf Q(\sqrt D)$ is the simple extension obtained by adjoining $\sqrt D\in\mathbf C\setminus\mathbf Q$ to $\mathbf Q$. Its degree is $2$, because $\{1,\sqrt D\}$ is a basis.
+    2.  The field $\mathbf Q(\sqrt 2,\sqrt 3)$ is the extension obtained by adjoining $\sqrt 2$ and $\sqrt 3$ to $\mathbf Q$. Of course $\mathbf Q(\sqrt 2,\sqrt 3)=\mathbf Q(\sqrt 2)(\sqrt 3)=\mathbf Q(\sqrt 3)(\sqrt 2)$, so the final extension does not depend on the order or the way the elements are added. It is also a simple extension, because $\mathbf Q(\sqrt 2,\sqrt 3)=\mathbf Q(\sqrt 2+\sqrt 3)$. Its degree is $4$, because $\{1,\sqrt 2,\sqrt 3,\sqrt 6\}$ is a basis.
+    3.  The field $\mathbf Q(\pi)$ is also a simple extension, where $\pi$ is the circle constant. It is an infinite extension, because $\mathbf Q[\pi]\subseteq \mathbf Q(\pi)$ already has the basis $\{1,\pi,\pi^2,\cdots\}$.
+    4.  A finitely generated extension need not be simple. For example, let $x,y$ be two indeterminates. Then the field of rational functions $\mathbf Q(x,y)$ is a finitely generated extension of $\mathbf Q$, but its transcendence degree is $2$, so it is not a simple extension.
 
-这些例子说明，单扩张的性质可能相差悬殊．这取决于添加的元素的性质．
+These examples show that simple extensions can have very different properties. It depends on the properties of the element being adjoined.
 
-### 代数扩张
+### Algebraic extensions
 
-为了分析向域中添加元素可能出现的所有情形，不妨仿照前文对域的特征的讨论，考察多项式环 $F[x]$ 到扩张 $E/F$ 的环同态．此处的 $F[x]$ 起到了前文的整数环 $\mathbf Z$ 的作用：它正是在域 $F$ 中添加不定元 $x$ 后且对加、减、乘封闭的结构的「原型」[^polynomial-universal]．
+To analyze every case that can happen when adjoining an element to a field, we can follow the earlier discussion of the characteristic and look at ring homomorphisms from the polynomial ring $F[x]$ to an extension $E/F$. Here $F[x]$ plays the role that $\mathbf Z$ played before: it is exactly the "prototype" of the structure obtained by adjoining an indeterminate $x$ to $F$ and closing under addition, subtraction and multiplication.[^polynomial-universal]
 
-设环同态 $\varphi:F[x]\rightarrow E$ 满足 $\varphi$ 限制在 $F$ 上是恒等映射，且 $\varphi(x)=\alpha$，即将不定元映射到扩张 $E$ 中的某个元素．此时，因为像 $\varphi(F[x])=F[\alpha]$ 必然是整环，同态的核 $\ker\varphi$ 必然是多项式环 $F[x]$ 的素理想．域上的多项式环是主理想整环，因而它必然有 $(f(x))$ 的形式，其中 $f(x)=0$ 或 $f(x)$ 是 $F[x]$ 中的不可约元．对此有如下讨论：
+Let $\varphi:F[x]\rightarrow E$ be a ring homomorphism whose restriction to $F$ is the identity and with $\varphi(x)=\alpha$; that is, it maps the indeterminate to some element of the extension $E$. Since the image $\varphi(F[x])=F[\alpha]$ must be an integral domain, the kernel $\ker\varphi$ must be a prime ideal of $F[x]$. A polynomial ring over a field is a principal ideal domain, so the kernel has the form $(f(x))$, where $f(x)=0$ or $f(x)$ is an irreducible element of $F[x]$. There are the following cases:
 
-1.  当同态的核 $\ker\varphi=\{0\}$ 时，多项式环 $F[x]$ 嵌入到 $E$ 中，它的像 $F[\alpha]$ 是整环．因而，域 $E$ 中同时包含 $F$ 和 $\alpha$ 的最小的域就是 $F[\alpha]$ 的分式域，即 $F(\alpha)$．这个记号，既可以解释为将有理分式域 $F(x)$ 中的不定元代入 $\alpha$ 的结果，也可以解释为域 $F$ 上由 $\alpha$ 生成的单扩张：这两个解释在这个语境下得到的结果是一致的；
+1.  When the kernel $\ker\varphi=\{0\}$, the polynomial ring $F[x]$ embeds in $E$, and its image $F[\alpha]$ is an integral domain. So the smallest field in $E$ containing both $F$ and $\alpha$ is the field of fractions of $F[\alpha]$, namely $F(\alpha)$. This notation can be read either as substituting $\alpha$ for the indeterminate in the field of rational functions $F(x)$, or as the simple extension of $F$ generated by $\alpha$. In this context, the two readings give the same result;
 
-2.  当同态的核 $\ker\varphi=(f(x))$，且 $f(x)$ 为不可约元时，就成立 $\varphi(f(x))=f(\alpha)=0$，即 $\alpha\in E$ 是 $F$ 上的多项式 $f(x)$ 的根．因为 $F$ 是域，不妨设 $f(x)$ 是首一多项式．此时同态 $\varphi$ 的像是域 $F(\alpha)$，故而有
+2.  When the kernel $\ker\varphi=(f(x))$ with $f(x)$ irreducible, we have $\varphi(f(x))=f(\alpha)=0$, that is, $\alpha\in E$ is a root of the polynomial $f(x)$ over $F$. Since $F$ is a field, we may assume $f(x)$ is monic. In this case the image of $\varphi$ is the field $F(\alpha)$, so
 
     $$
     F[x]/(f(x))\cong F(\alpha).
     $$
 
-    此时又可以分为两种情形：
+    This splits into two more cases:
 
-    1.  如果 $f(x)$ 是一次多项式，即 $f(x)=x-\alpha$ 时，有 $\alpha\in F$，故而扩张 $F(\alpha)=F$ 是平凡的；
-    2.  其余情形，$f(x)$ 是高于一次的不可约多项式，且 $\alpha\in E\setminus F$，此时的像 $F[\alpha]$ 已经是包含 $F$ 和 $\alpha$ 的域，因而，它就是 $F(\alpha)$，即 $F$ 上由 $\alpha$ 生成的扩张，且 $F(\alpha)\supset F$ 不是平凡的．
+    1.  If $f(x)$ has degree one, that is, $f(x)=x-\alpha$, then $\alpha\in F$, so the extension $F(\alpha)=F$ is trivial;
+    2.  Otherwise, $f(x)$ is an irreducible polynomial of degree greater than one and $\alpha\in E\setminus F$. Then the image $F[\alpha]$ is already a field containing $F$ and $\alpha$, so it is $F(\alpha)$, the extension of $F$ generated by $\alpha$, and $F(\alpha)\supset F$ is not trivial.
 
-这些讨论启发了如下的定义：
+This discussion motivates the following definitions:
 
-???+ abstract "代数元与超越元"
-    对于扩张 $E/F$，如果元素 $\alpha\in E$ 是 $F$ 上某个非零多项式 $f(x)$ 的根，则称 $\alpha$ 是 $F$ 上的 **代数元**（algebraic element）；否则，称元素 $\alpha$ 是 $F$ 上的 **超越元**（transcendental element）．
+???+ abstract "Algebraic and transcendental elements"
+    For an extension $E/F$, if an element $\alpha\in E$ is a root of some nonzero polynomial $f(x)$ over $F$, then $\alpha$ is called **algebraic** over $F$ (an **algebraic element**). Otherwise $\alpha$ is called **transcendental** over $F$ (a **transcendental element**).
 
-???+ abstract "极小多项式"
-    对于域 $F$ 上的代数元 $\alpha$，以 $\alpha$ 为根且次数最小的首一多项式 $f(x)$ 称作它的 **极小多项式**（minimal polynomial）．
+???+ abstract "Minimal polynomial"
+    For an algebraic element $\alpha$ over a field $F$, the monic polynomial $f(x)$ of smallest degree having $\alpha$ as a root is called its **minimal polynomial**.
 
-此处的极小多项式就是前文分析中的不可约多项式 $f(x)$．当然，也可以直接证明极小多项式都是不可约的．极小多项式 $f(x)$ 的极小性就意味着，只要域 $F$ 上的多项式以 $\alpha$ 为根，就必然能够分解出因子 $f(x)$．
+The minimal polynomial here is exactly the irreducible polynomial $f(x)$ from the analysis above. Of course, one can also prove directly that minimal polynomials are irreducible. The minimality of $f(x)$ means that any polynomial over $F$ that has $\alpha$ as a root must have $f(x)$ as a factor.
 
-???+ example "例子"
-    1.  $\sqrt 2$ 是 $\mathbf Q$ 上的代数元，极小多项式是 $x^2-2$．
-    2.  $\sqrt 2$ 是 $\mathbf R$ 上的代数元，极小多项式是 $x-\sqrt 2$．
-    3.  $\pi$ 是 $\mathbf Q$ 上的超越元．
-    4.  一般地，$\mathbf Q$ 上的代数元称为 **代数数**（algebraic number），而超越元称为 **超越数**（transcendental number）．特别地，如果代数数的极小多项式是整系数多项式，它就称作 **代数整数**（algebraic integer）．代数扩张中的全体代数整数构成环．例如，二次域 $\mathbf Q(\sqrt{D})$ 中的代数整数就构成二次整数环 $\mathbf Z[\omega]$．此处记号的含义见 [二次整数环](./ring-theory.md#例子二次整数环) 页面．
+???+ example "Example"
+    1.  $\sqrt 2$ is algebraic over $\mathbf Q$, with minimal polynomial $x^2-2$.
+    2.  $\sqrt 2$ is algebraic over $\mathbf R$, with minimal polynomial $x-\sqrt 2$.
+    3.  $\pi$ is transcendental over $\mathbf Q$.
+    4.  In general, elements algebraic over $\mathbf Q$ are called **algebraic numbers**, and transcendental elements are called **transcendental numbers**. In particular, if the minimal polynomial of an algebraic number has integer coefficients, it is called an **algebraic integer**. The algebraic integers in an algebraic extension form a ring. For example, the algebraic integers in the quadratic field $\mathbf Q(\sqrt{D})$ form the ring of quadratic integers $\mathbf Z[\omega]$. For the meaning of this notation, see [ring of quadratic integers](./ring-theory.md#例子二次整数环).
 
-???+ abstract "代数扩张与超越扩张"
-    对于扩张 $E/F$，如果域 $E$ 的元素都是 $F$ 中的代数元，则称域 $E$ 是 $F$ 上的 **代数扩张**（algebraic extension）；否则，称域 $E$ 是 $F$ 上的 **超越扩张**（transcendental extension）．
+???+ abstract "Algebraic and transcendental extensions"
+    For an extension $E/F$, if every element of $E$ is algebraic over $F$, then $E$ is called an **algebraic extension** of $F$. Otherwise $E$ is called a **transcendental extension** of $F$.
 
-单扩张的结果，根据添加元素的性质不同，可以分为两类．当添加的元素是超越元时，单扩张总是同构于有理分式域．此时，没有任何可以进一步化简的可能性．但是，当添加的元素是代数元时，单扩张实际上就是 $F[\alpha]$，即将 $\alpha$ 直接替换多项式环 $F[x]$ 中的不定元 $x$ 得到的结果．从初等的视角看，相较于超越元的情形，此时扩域中的元素可以没有分母；这意味着，类似于初等算术中「分母有理化」的过程，在代数元的单扩张中总是可行的．因为算法竞赛中涉及到的扩域主要是单代数扩张，下一节要对它的计算做更为细致的讨论．
+Simple extensions fall into two classes, depending on the element adjoined. When the adjoined element is transcendental, the simple extension is always isomorphic to a field of rational functions. In that case nothing can be simplified further. But when the adjoined element is algebraic, the simple extension is actually $F[\alpha]$, the result of replacing the indeterminate $x$ in $F[x]$ with $\alpha$. From an elementary point of view, compared with the transcendental case, elements of this extension field need no denominators. This means that a process like "rationalizing the denominator" in elementary arithmetic always works in a simple extension by an algebraic element. Since the extension fields in competitive programming are mainly simple algebraic extensions, the next section discusses how to compute in them in more detail.
 
-单代数扩张的重要性，也反映在如下的定理中：
+The importance of simple algebraic extensions is also reflected in the following theorem:
 
-???+ note "定理"
-    域扩张是有限扩张，当且仅当它是有限生成的代数扩张．
+???+ note "Theorem"
+    A field extension is finite if and only if it is a finitely generated algebraic extension.
 
-??? note "证明"
-    设 $F$ 为域，$E=F(\alpha_1,\cdots,\alpha_n)$ 为域上的有限生成代数扩张，即 $\alpha_i$ 都是 $F$ 上的代数元．设 $E_i=F(\alpha_1,\cdots,\alpha_i)$，则 $E_0=F$ 且 $E_n=E$．注意到，$\alpha_i$ 必然是 $E_{i-1}$ 上的代数元，因为 $\alpha_i$ 在域 $F$ 上的极小多项式也是 $E_{i-1}$ 上的多项式；而且 $\alpha_i$ 在 $E_{i-1}$ 上的极小多项式次数必然不超过 $\alpha_i$ 在域 $F$ 上的极小多项式次数．故而，$[E_i:E_{i-1}]$ 必然是有限的，根据域扩张次数的乘法原理，$[E:F]=\prod_{i=1}^n[E_i:E_{i-1}]$ 也是有限的．反过来，从 $E_0=F$ 开始，对于已经构造好的 $E_i$，可以每次都在 $E\setminus E_i$ 中选择元素 $\alpha_{i+1}$ 加入到 $E_i$ 中，得到扩域 $E_{i+1}=E_i(\alpha_{i+1})$，直到 $E_n=E$ 为止．因为扩张的次数在不断的降低，这个过程必然在有限步内终止．因此，有限扩张必然是有限生成的代数扩张．
+??? note "Proof"
+    Let $F$ be a field and $E=F(\alpha_1,\cdots,\alpha_n)$ a finitely generated algebraic extension, so every $\alpha_i$ is algebraic over $F$. Let $E_i=F(\alpha_1,\cdots,\alpha_i)$, so $E_0=F$ and $E_n=E$. Note that $\alpha_i$ must be algebraic over $E_{i-1}$, because the minimal polynomial of $\alpha_i$ over $F$ is also a polynomial over $E_{i-1}$; moreover, the degree of the minimal polynomial of $\alpha_i$ over $E_{i-1}$ is at most the degree of its minimal polynomial over $F$. So $[E_i:E_{i-1}]$ must be finite, and by the multiplicativity of degrees, $[E:F]=\prod_{i=1}^n[E_i:E_{i-1}]$ is finite too. Conversely, start with $E_0=F$. Given $E_i$, pick an element $\alpha_{i+1}$ from $E\setminus E_i$ and adjoin it to $E_i$ to get the extension field $E_{i+1}=E_i(\alpha_{i+1})$, until $E_n=E$. Since the remaining degree keeps decreasing, this process must stop after finitely many steps. Hence a finite extension must be a finitely generated algebraic extension.
 
-这意味着，要理解有限扩张的性质，只要理解单代数扩张即可．因为有限扩张总是可以通过有限多个的单代数扩张得到．
+This means that to understand finite extensions, it is enough to understand simple algebraic extensions, because every finite extension can be obtained by finitely many simple algebraic extensions.
 
-### 单代数扩张的结构与计算
+### Structure of and computation in simple algebraic extensions
 
-本节中，设 $F$ 是域，$E$ 是它的扩域，且 $\alpha\in E\setminus F$ 是域 $F$ 上的代数元．设 $\alpha$ 的极小多项式是 $f(x)$，且多项式 $f(x)$ 是 $n$ 次首一多项式，亦即
+In this section, let $F$ be a field, $E$ an extension field of it, and $\alpha\in E\setminus F$ an element algebraic over $F$. Let the minimal polynomial of $\alpha$ be $f(x)$, a monic polynomial of degree $n$, that is,
 
 $$
 f(x)=x^n+a_{n-1}x^{n-1}+\cdots+a_1x+a_0,
 $$
 
-其中，$a_0,a_1,\cdots,a_{n-1}\in F$ 且 $f(x)$ 在 $F$ 上不可约．
+where $a_0,a_1,\cdots,a_{n-1}\in F$ and $f(x)$ is irreducible over $F$.
 
-同构关系 $F(\alpha)\cong F[x]/(f(x))$ 指出，扩域 $F(\alpha)$ 中的运算就是模 $f(x)$ 的多项式的计算．根据多项式的带余除法，只需要考虑所有次数小于 $n=\deg f(x)$ 的多项式的同余类就可以了．对于这些多项式，自然的一组基就是 $\{1,\alpha,\cdots,\alpha^{n-1}\}$．因此，有如下结论：
+The isomorphism $F(\alpha)\cong F[x]/(f(x))$ tells us that computing in the extension field $F(\alpha)$ is the same as computing with polynomials modulo $f(x)$. By polynomial division with remainder, we only need to consider the congruence classes of polynomials of degree less than $n=\deg f(x)$. For these polynomials, a natural basis is $\{1,\alpha,\cdots,\alpha^{n-1}\}$. So we have:
 
-???+ note "定理"
-    在本节的假设下，扩域 $F(\alpha)$ 可以写作
+???+ note "Theorem"
+    Under the assumptions of this section, the extension field $F(\alpha)$ can be written as
     
     $$
     F(\alpha)=\{\lambda(\alpha)=\lambda_0+\lambda_1\alpha+\cdots+\lambda_{n-1}\alpha^{n-1}:\lambda_0,\lambda_1,\cdots,\lambda_{n-1}\in F\}.
     $$
     
-    其中，$\lambda(x)$ 遍历全体次数小于 $n$ 的多项式．因此，扩张次数 $[F(\alpha):F]=n$，即 $\alpha$ 的极小多项式的次数．扩域中，元素 $\lambda(\alpha)$ 和 $\mu(\alpha)$ 的加法，就是多项式的加法，即对应位置的系数相加；元素 $\lambda(\alpha)$ 和 $\mu(\alpha)$ 的乘法，结果可以写作 $\rho(\alpha)$，其中 $\rho(x)$ 是乘积 $\lambda(x)\mu(x)$ 除以 $f(x)$ 的余式．
+    Here $\lambda(x)$ ranges over all polynomials of degree less than $n$. So the degree $[F(\alpha):F]=n$, the degree of the minimal polynomial of $\alpha$. In the extension field, adding $\lambda(\alpha)$ and $\mu(\alpha)$ is just polynomial addition: add the coefficients in matching positions. Multiplying $\lambda(\alpha)$ and $\mu(\alpha)$ gives $\rho(\alpha)$, where $\rho(x)$ is the remainder of the product $\lambda(x)\mu(x)$ divided by $f(x)$.
 
-当然，作为域，还可以计算 $F(\alpha)$ 中元素的除法．根据定理中描述的乘法的过程，这相当于求解多项式环上的 [线性同余方程](../number-theory/linear-equation.md)．类比整数的做法，要计算商 $\lambda(\alpha)/\mu(\alpha)$，可以先确定 $\mu(\alpha)$ 的乘法逆元，再乘以 $\lambda(\alpha)$ 即可．要计算 $\mu(\alpha)$ 的乘法逆元，只要解同余方程 $\mu(x)\xi(x)\equiv 1\pmod{f(x)}$ 即可．这可以通过扩展欧几里得算法实现．
+Of course, since it is a field, we can also divide elements of $F(\alpha)$. By the multiplication process described in the theorem, this amounts to solving a [linear congruence](../number-theory/linear-equation.md) over the polynomial ring. As with integers, to compute the quotient $\lambda(\alpha)/\mu(\alpha)$, first find the multiplicative inverse of $\mu(\alpha)$, then multiply it by $\lambda(\alpha)$. To find the inverse of $\mu(\alpha)$, solve the congruence $\mu(x)\xi(x)\equiv 1\pmod{f(x)}$. This can be done with the extended Euclidean algorithm.
 
-下面，通过几个具体的例子理解计算的细节．
+Below, a few concrete examples show the details of the computation.
 
-???+ example "例子"
-    考察扩域 $\mathbf Q(\alpha)$，其中的 $\alpha$ 是方程 $x^3-2x-2=0$ 的一个根．要计算
+???+ example "Example"
+    Consider the extension field $\mathbf Q(\alpha)$, where $\alpha$ is a root of $x^3-2x-2=0$. We want to compute the value of
     
     $$
     \frac{1+\alpha}{1+\alpha+\alpha^2}
     $$
     
-    的值．
+    .
     
-    第一步是计算 $1+\alpha+\alpha^2$ 的逆元，也就是要计算同余方程
+    The first step is to compute the inverse of $1+\alpha+\alpha^2$, that is, to find a solution of
     
     $$
     (x^2+x+1)\xi(x)+(x^3-2x-2)\nu(x)=1
     $$
     
-    的解．对此应用扩展欧几里得算法．先做辗转相除法，即有如下过程：
+    . We apply the extended Euclidean algorithm. First run the Euclidean algorithm:
     
     $$
     \begin{aligned}
@@ -220,7 +220,7 @@ $$
     \end{aligned}
     $$
     
-    再计算同余方程中的系数，即有
+    Then work out the coefficients in the congruence:
     
     $$
     \begin{aligned}
@@ -231,19 +231,19 @@ $$
     \end{aligned}
     $$
     
-    因而，方程的解为
+    So a solution is
     
     $$
     \xi(x)=-\frac23x^2+\frac13x+\frac53,\ \nu(x)=\frac23x+\frac13.
     $$
     
-    这说明 $1+\alpha+\alpha^2$ 的逆元是
+    This shows that the inverse of $1+\alpha+\alpha^2$ is
     
     $$
     -\frac23\alpha^2+\frac13\alpha+\frac53.
     $$
     
-    第二步，就是计算逆元和 $1+\alpha$ 的乘积．对此，有
+    The second step is to multiply this inverse by $1+\alpha$:
     
     $$
     \begin{aligned}
@@ -254,14 +254,14 @@ $$
     \end{aligned}
     $$
     
-    这就是最后的答案．
+    This is the final answer.
 
-在例子中只用到了 $\alpha$ 是方程的一个根这个条件，却并没有指定它是任何一个具体的根．多项式 $x^3-2x-2=0$ 在复数域 $\mathbf C$ 有一个实根和一对共轭复根，将它们中的任何一个添加进有理数域 $\mathbf Q$ 中得到的扩域都是同构的．也就是说，这三个互异的根在代数的视角上是没有区别的．
+The example only used the fact that $\alpha$ is a root of the equation; it never said which root. The polynomial $x^3-2x-2=0$ has one real root and a pair of complex conjugate roots in $\mathbf C$, and adjoining any one of them to $\mathbf Q$ gives isomorphic extension fields. In other words, from the algebraic point of view, these three distinct roots cannot be told apart.
 
-一般地，对于域 $F$ 上的不可约多项式 $f(x)$，在扩域中有不同的根 $\alpha\neq\beta$，这些根在分别对域 $F$ 做单扩张时表现出相同的代数性质，这些根互相称为 **共轭**（conjugate）．复数域上的通常意义的共轭，就是这一概念在域扩张 $\mathbf C/\mathbf R$ 上的特例．
+In general, if an irreducible polynomial $f(x)$ over a field $F$ has distinct roots $\alpha\neq\beta$ in some extension field, these roots show the same algebraic behavior when each is used to make a simple extension of $F$. Such roots are called **conjugates** of each other. The usual conjugate of a complex number is the special case of this concept for the extension $\mathbf C/\mathbf R$.
 
-???+ example "例子"
-    考察扩域 $\mathbf F_2(\alpha)$，其中的 $\alpha$ 是方程 $x^2+x+1=0$ 的一个根．一般地，对于 $a+b\alpha$ 和 $c+d\alpha$，有运算规则
+???+ example "Example"
+    Consider the extension field $\mathbf F_2(\alpha)$, where $\alpha$ is a root of $x^2+x+1=0$. In general, for $a+b\alpha$ and $c+d\alpha$ the rules are
     
     $$
     \begin{aligned}
@@ -271,142 +271,142 @@ $$
     \end{aligned}
     $$
     
-    这提供了类似于复数域上的运算法则．大多数读者对于这样的根 $\alpha$ 都应当是陌生的，但这并不妨碍对这样的域中的元素进行运算．实际上，有 $[\mathbf F_2(\alpha):\mathbf F_2]=2$，因而，作为线性空间 $|\mathbf F_2(\alpha)|=4$，即这样得到的是大小为 $4$ 的有限域．稍后会看到，所有的有限域都是这样构造的．
+    These rules are similar to those for complex numbers. Most readers will find such a root $\alpha$ unfamiliar, but that does not stop us from computing with the elements of this field. In fact, $[\mathbf F_2(\alpha):\mathbf F_2]=2$, so as a vector space $|\mathbf F_2(\alpha)|=4$; that is, we get a finite field of size $4$. We will see later that every finite field is built this way.
 
-在小规模运算时，对首一多项式取模 $f(x)$ 的运算通常可以通过代入
+For small computations, reducing modulo a monic polynomial $f(x)$ can usually be done by substituting
 
 $$
 x^n=-a_{n-1}x^{n-1}-\cdots-a_1x-a_0
 $$
 
-对目标多项式降次来进行．而且，对于低次的扩张，往往可以直接计算出系数的运算规则，使用类似复数类的实现而不必每次都计算取模等过程．
+to lower the degree of the target polynomial. Also, for extensions of low degree, one can often work out the rules for the coefficients directly and use an implementation similar to a complex-number class, without doing a modulo step each time.
 
-作为单代数扩张的实例，可以参考下文中的有限域的 [参考实现](#参考实现)．
+For an example of a simple algebraic extension, see the finite field [reference implementation](#reference-implementation) below.
 
-此处描述的算法在实践中都只能处理扩张次数比较低的情形，这对于绝大多数算法竞赛中的应用都是足够的．对于扩张次数高到成为复杂度瓶颈的情形，应当采取适当的多项式技术（[快速傅里叶变换](../poly/fft.md)、[快速数论变换](../poly/ntt.md)、[多项式快速取余](../poly/elementary-func.md#多项式除法--取模)、[多项式欧几里得](../poly/intro.md#因式分解和欧几里得) 等）加速运算．
+In practice, the algorithms described here can only handle extensions of fairly low degree, which is enough for almost all applications in competitive programming. When the degree is high enough to become the complexity bottleneck, use suitable polynomial techniques ([Fast Fourier Transform](../poly/fft.md), [Number Theoretic Transform](../poly/ntt.md), [fast polynomial modulo](../poly/elementary-func.md#多项式除法--取模), [polynomial Euclidean algorithm](../poly/intro.md#因式分解和欧几里得), etc.) to speed things up.
 
-### 分裂域
+### Splitting fields
 
-上文已经对单代数扩张的结构做了详尽的讨论．但是，这样的扩张往往并不充分：
+The structure of simple algebraic extensions was discussed in detail above. But such an extension is often not enough:
 
-???+ example "例子"
-    考察扩张 $\mathbf Q(\sqrt[3]{2})/\mathbf Q$．代数元 $\sqrt[3]{2}$ 在域 $\mathbf Q$ 上的极小多项式是 $x^3-2$．在复数域 $\mathbf C$ 中，多项式 $x^3-2$ 有三个根，即 $\sqrt[3]{2},\sqrt[3]{2}\omega,\sqrt[3]{2}\omega^2$，其中，$\omega=\mathrm{e}^{2\pi\mathrm{i}/3}$ 是 $1$ 的三次本原单位根．尽管 $\mathbf Q(\sqrt[3]{2})\cong\mathbf Q(\sqrt[3]{2}\omega)\cong\mathbf Q(\sqrt[3]{2}\omega^2)$，但是 $\mathbf Q(\sqrt[3]{2})$ 中并没有另外的两个根，这使得 $\sqrt[3]{2}+\sqrt[3]{2}\omega$ 这种运算就已经无法进行．如果要完整地考察这三个根，需要对域 $\mathbf Q(\sqrt[3]{2})$ 做进一步扩张，即扩张至 $\mathbf Q(\sqrt[3]{2},\sqrt[3]{2}\omega,\sqrt[3]{2}\omega^2)$．
+???+ example "Example"
+    Consider the extension $\mathbf Q(\sqrt[3]{2})/\mathbf Q$. The minimal polynomial of the algebraic element $\sqrt[3]{2}$ over $\mathbf Q$ is $x^3-2$. In $\mathbf C$, the polynomial $x^3-2$ has three roots: $\sqrt[3]{2},\sqrt[3]{2}\omega,\sqrt[3]{2}\omega^2$, where $\omega=\mathrm{e}^{2\pi\mathrm{i}/3}$ is a primitive cube root of unity. Although $\mathbf Q(\sqrt[3]{2})\cong\mathbf Q(\sqrt[3]{2}\omega)\cong\mathbf Q(\sqrt[3]{2}\omega^2)$, the field $\mathbf Q(\sqrt[3]{2})$ does not contain the other two roots, so even an operation like $\sqrt[3]{2}+\sqrt[3]{2}\omega$ cannot be carried out. To study all three roots together, we must extend $\mathbf Q(\sqrt[3]{2})$ further, to $\mathbf Q(\sqrt[3]{2},\sqrt[3]{2}\omega,\sqrt[3]{2}\omega^2)$.
     
-    前文已经说明，要做这样的扩张，只要对元素逐个做单扩张即可．应当注意的是，$\sqrt[3]{2}\omega$ 在域 $\mathbf Q$ 中和在域 $\mathbf Q(\sqrt[3]{2})$ 中的极小多项式并不相同：前者是 $x^3-2\in\mathbf Q[x]$，后者则是 $x^2+\sqrt[3]{2}x+\sqrt[3]{4}\in \mathbf Q(\sqrt[3]{2})[x]$，因为有
+    As shown earlier, such an extension can be made by doing simple extensions one element at a time. Note that the minimal polynomial of $\sqrt[3]{2}\omega$ over $\mathbf Q$ differs from the one over $\mathbf Q(\sqrt[3]{2})$: the former is $x^3-2\in\mathbf Q[x]$, while the latter is $x^2+\sqrt[3]{2}x+\sqrt[3]{4}\in \mathbf Q(\sqrt[3]{2})[x]$, because
     
     $$
     x^3-2 = (x-\sqrt[3]{2})(x^2+\sqrt[3]{2}x+\sqrt[3]{4}).
     $$
     
-    原来的极小多项式在域的扩张后分解出一次因子，因而剩余的根的极小多项式的次数低于原来的域上的极小多项式．域不断扩张的过程，就是多项式不断「分裂」的过程．因此，每次单扩张时，都需要重新确定极小多项式．
+    After the field is extended, the original minimal polynomial splits off a linear factor, so the minimal polynomial of the remaining roots has lower degree than over the original field. Extending the field step by step is the same as "splitting" the polynomial step by step. So at every simple extension, the minimal polynomial has to be determined again.
 
-将多项式的全部根都添加到域中，得到的就是多项式的分裂域．
+Adjoining all roots of a polynomial to a field gives the splitting field of the polynomial.
 
-???+ abstract "分裂"
-    设 $F$ 为域．如果多项式 $f(x)$ 在 $F[x]$ 中可以分解为一系列一次因子的乘积，就称多项式 $f(x)$ 在域 $F$ 中 **分裂**（split）．
+???+ abstract "Split"
+    Let $F$ be a field. If a polynomial $f(x)$ can be factored in $F[x]$ into a product of linear factors, we say $f(x)$ **splits** over $F$.
 
-???+ abstract "分裂域"
-    对于域 $F$ 上的多项式 $f(x)$，如果扩张 $E/F$ 满足 $f(x)$ 在域 $E$ 中分裂但不在任何 $E$ 的真子域中分裂，就称域 $E$ 是多项式 $f(x)$ 的 **分裂域**（splitting field）．
+???+ abstract "Splitting field"
+    For a polynomial $f(x)$ over a field $F$, if an extension $E/F$ is such that $f(x)$ splits over $E$ but not over any proper subfield of $E$, then $E$ is called the **splitting field** of $f(x)$.
 
-可以证明，如同单扩张一样，给定多项式的分裂域在同构意义下是唯一确定的，与具体的构造方法无关．分裂域总是有限扩张．
+One can prove that, as with simple extensions, the splitting field of a given polynomial is unique up to isomorphism, regardless of how it is constructed. A splitting field is always a finite extension.
 
-???+ abstract "正规扩张"
-    对于代数扩张 $E/F$，如果对所有 $\alpha\in E$ 都有 $\alpha$ 的极小多项式在 $E$ 中分裂，则称域 $E$ 是域 $F$ 的 **正规扩张**（normal extension）．
+???+ abstract "Normal extension"
+    For an algebraic extension $E/F$, if for every $\alpha\in E$ the minimal polynomial of $\alpha$ splits over $E$, then $E$ is called a **normal extension** of $F$.
 
-正规扩张在 Galois 理论中起到基础的作用．
+Normal extensions play a basic role in Galois theory.
 
-### 代数闭域
+### Algebraically closed fields
 
-前文提及的多数扩张的概念原则上需要在比扩张更大的域内进行．尽管对于单扩张的情形，通过多项式环可以不依赖于更大的域构造出域的扩张，但是对于一般的情形并没有这样的手段．对于有理数域 $\mathbf Q$ 和实数域 $\mathbf R$，总是可以假定代数扩张包含在复数域 $\mathbf C$ 内部．对于有限域，并没有类似的已知的域．其实，对于所有的域，都存在代数闭包，使得域上所有的代数扩张都可以假定在代数闭包内进行．这就彻底解决了这一问题．
+Most of the extension concepts above, in principle, need to be worked out inside a field even larger than the extension. For simple extensions we can use polynomial rings to build the extension without relying on a larger field, but there is no such tool in general. For the rational field $\mathbf Q$ and the real field $\mathbf R$, we can always assume algebraic extensions live inside the complex field $\mathbf C$. For finite fields there is no similar well-known field. In fact, every field has an algebraic closure, and all algebraic extensions of the field can be assumed to live inside it. This settles the problem completely.
 
-???+ abstract "代数闭包"
-    对于域 $F$，如果域 $\overline F$ 是域 $F$ 的代数扩张，且所有的 $f(x)\in F[x]$ 都在 $\overline F$ 中分裂，则称域 $\overline F$ 是域 $F$ 的 **代数闭包**（algebraic closure）．
+???+ abstract "Algebraic closure"
+    For a field $F$, if a field $\overline F$ is an algebraic extension of $F$ and every $f(x)\in F[x]$ splits over $\overline F$, then $\overline F$ is called an **algebraic closure** of $F$.
 
-代数闭包是域上的正规扩张．它的构造方式也基本上就是将所有可能的多项式的根添加到域中．而且和分裂域一样，某个域的代数闭包在同构意义下也是唯一的．
+An algebraic closure is a normal extension of the field. It is built essentially by adjoining the roots of all possible polynomials to the field. And just like splitting fields, the algebraic closure of a field is unique up to isomorphism.
 
-???+ note "定理"
-    任何域 $F$ 都有代数闭包．
+???+ note "Theorem"
+    Every field $F$ has an algebraic closure.
 
-??? note "证明"
-    证明的困难来自于集合论．此处引用 Artin 的一个证明．
+??? note "Proof"
+    The difficulty of the proof comes from set theory. Here we give a proof due to Artin.
     
-    证明的第一部分从 $F$ 出发，构造了扩张 $K_1/F$ 使得所有 $F$ 上的多项式在 $K_1$ 中都有至少一个根．对于域 $F$，考察多元多项式环[^multi-poly-ring] $R=F[\cdots,x_f,\cdots]$，其中的不定元 $x_f$ 的下标取遍所有 $F$ 上的首一多项式．此时，由所有 $f(x_f)$ 生成的理想记作 $I$．首先，$I\neq R$，故而极大理想 $M\supseteq I$ 存在．否则，如果 $1\in I$，必然存在有限多个域 $F$ 上的首一多项式 $f_i$ 和相应的环 $R$ 中的元素 $g_i$ 使得 $g_1f_1(x_{f_1})+\cdots+g_kf_k(x_{f_k})=1$ 成立．设 $F(\alpha_1,\cdots,\alpha_k)$ 为向 $F$ 中添加 $f_i(x)$ 的根 $\alpha_i$ 后得到的代数扩张，则在 $F(\alpha_1,\cdots,\alpha_k)$ 中令上面得到的恒等式中 $x_{f_i}$ 都代入 $\alpha_i$，而在各个 $g_i$ 中出现的其它不定元 $x_f$ 都带入 $0$，则得到 $F(\alpha_1,\cdots,\alpha_k)$ 上的等式 $0=1$，这矛盾．故而，$I\neq R$，极大理想 $M$ 的构造是合法的．此时商环 $R/M$ 是域，记作 $K_1$，且任何 $F$ 上的首一多项式 $f(x)$ 都在 $K_1$ 中有根 $\overline{x_f}$．
+    The first part of the proof starts from $F$ and builds an extension $K_1/F$ such that every polynomial over $F$ has at least one root in $K_1$. For the field $F$, consider the multivariate polynomial ring[^multi-poly-ring] $R=F[\cdots,x_f,\cdots]$, where the indeterminates $x_f$ are indexed by all monic polynomials over $F$. Let $I$ be the ideal generated by all $f(x_f)$. First, $I\neq R$, so a maximal ideal $M\supseteq I$ exists. Otherwise, if $1\in I$, there would be finitely many monic polynomials $f_i$ over $F$ and corresponding elements $g_i$ of $R$ such that $g_1f_1(x_{f_1})+\cdots+g_kf_k(x_{f_k})=1$. Let $F(\alpha_1,\cdots,\alpha_k)$ be the algebraic extension obtained by adjoining to $F$ a root $\alpha_i$ of each $f_i(x)$. In $F(\alpha_1,\cdots,\alpha_k)$, substitute $\alpha_i$ for each $x_{f_i}$ in the identity above, and substitute $0$ for every other indeterminate $x_f$ appearing in the $g_i$. This gives the equation $0=1$ in $F(\alpha_1,\cdots,\alpha_k)$, a contradiction. So $I\neq R$, and the maximal ideal $M$ is well defined. The quotient ring $R/M$ is then a field, written $K_1$, and every monic polynomial $f(x)$ over $F$ has the root $\overline{x_f}$ in $K_1$.
     
-    证明的第二部分则归纳地得到了包含 $F$ 的一个代数闭域 $K$（定义见下文）．重复上述构造，基于域 $K_i$ 可以构造出域 $K_{i+1}$，使得 $K_i$ 的多项式在 $K_{i+1}$ 中都至少有一个根．而且，$K_i$ 自然地嵌入到 $K_{i+1}$ 中，所以可以定义它们的并集 $K=\bigcup_{i=1}^\infty K_i$．容易验证，这也是域，而且 $K$ 上的任何多项式的系数必然全部包含在某个 $K_i$ 中，故而它的一个根必然出现 $K_{i+1}\subseteq K$ 中．这说明 $K$ 上的所有多项式都在 $K$ 上至少有一个根，所以，$K$ 是代数闭域．
+    The second part of the proof builds, by induction, an algebraically closed field $K$ containing $F$ (defined below). Repeating the construction above, from the field $K_i$ we can build a field $K_{i+1}$ in which every polynomial over $K_i$ has at least one root. Also, $K_i$ embeds naturally in $K_{i+1}$, so we can define their union $K=\bigcup_{i=1}^\infty K_i$. It is easy to check that this is also a field. The coefficients of any polynomial over $K$ must all lie in some $K_i$, so one of its roots must appear in $K_{i+1}\subseteq K$. This shows every polynomial over $K$ has at least one root in $K$, so $K$ is algebraically closed.
     
-    最后，令 $K$ 中所有 $F$ 上的代数元组成的集合记作 $\overline F$．它显然是域；因为对于任何 $\alpha,\beta\in\overline F$，都有 $\alpha\pm\beta,\alpha\beta,\alpha/\beta\in F(\alpha,\beta)\subseteq\overline F$．它也是 $F$ 的代数扩张，因为它的元素都是 $F$ 上的代数元．对于 $F$ 上的多项式 $f(x)$，它的所有根都是 $F$ 上的代数元，故而也在 $\overline F$ 中，故而必然可以分裂为一次因子的乘积．这就说明 $\overline F$ 是 $F$ 上的代数闭包．
+    Finally, let $\overline F$ be the set of all elements of $K$ that are algebraic over $F$. It is clearly a field, because for any $\alpha,\beta\in\overline F$ we have $\alpha\pm\beta,\alpha\beta,\alpha/\beta\in F(\alpha,\beta)\subseteq\overline F$. It is also an algebraic extension of $F$, because its elements are all algebraic over $F$. For a polynomial $f(x)$ over $F$, all its roots are algebraic over $F$, so they are in $\overline F$ too, and $f(x)$ must split into linear factors. This shows that $\overline F$ is an algebraic closure of $F$.
 
-???+ example "例子"
-    1.  实数域 $\mathbf R$ 的代数闭包是复数域 $\mathbf C$．
-    2.  有理数域 $\mathbf Q$ 的代数闭包是全体代数数（即域扩张 $\mathbf C/\mathbf Q$ 中的代数元）的集合，记作 $\overline{\mathbf Q}$．
+???+ example "Example"
+    1.  The algebraic closure of the real field $\mathbf R$ is the complex field $\mathbf C$.
+    2.  The algebraic closure of the rational field $\mathbf Q$ is the set of all algebraic numbers (the algebraic elements of the extension $\mathbf C/\mathbf Q$), written $\overline{\mathbf Q}$.
 
-所有的代数闭包的代数扩张都是平凡的．这样的域称为代数闭域．
+Every algebraic extension of an algebraic closure is trivial. Such fields are called algebraically closed fields.
 
-???+ abstract "代数闭域"
-    如果域 $F$ 上任意非常数多项式 $f(x)$ 都至少有一个根 $\alpha\in F$，那么就称域 $F$ 为一个 **代数闭域**（algebraically closed field）．
+???+ abstract "Algebraically closed field"
+    If every non-constant polynomial $f(x)$ over a field $F$ has at least one root $\alpha\in F$, then $F$ is called an **algebraically closed field**.
 
-事实上，它有如下等价定义：
+In fact, it has the following equivalent definitions:
 
-???+ note "定理"
-    对于域 $F$，以下性质都是等价的：
+???+ note "Theorem"
+    For a field $F$, the following are equivalent:
     
-    1.  域 $F$ 是代数闭域；
-    2.  域 $F$ 上的所有多项式 $f(x)$ 都分裂；
-    3.  域 $F$ 上的不可约多项式只有一次多项式；
-    4.  域 $F$ 没有非平凡的代数扩张；
-    5.  域 $F$ 没有非平凡的有限扩张；
-    6.  域 $F$ 是某个域的代数闭包．
+    1.  $F$ is algebraically closed;
+    2.  Every polynomial $f(x)$ over $F$ splits;
+    3.  The only irreducible polynomials over $F$ are those of degree one;
+    4.  $F$ has no nontrivial algebraic extension;
+    5.  $F$ has no nontrivial finite extension;
+    6.  $F$ is the algebraic closure of some field.
 
-??? note "证明"
-    前五条性质的等价性显然，考察定义即可．对于第六条，代数闭域显然是自身的代数闭包，因为它没有非平凡的代数扩张；反过来，要证明域 $F$ 的代数闭包必然是代数闭域．设 $\overline F$ 是域 $F$ 的代数闭包，且 $f(x)$ 是 $\overline F$ 上的多项式．设 $\alpha$ 是 $f(x)$ 的分裂域中 $f(x)$ 的一个根，且 $f(x)$ 的非零系数的集合是 $S\subseteq\overline F$．那么，因为 $F(S)(\alpha)=F(S\cup\{\alpha\})$ 是有限扩张，$\alpha$ 必然也是 $F$ 上的代数元，故而根据代数闭包的定义，$\alpha$ 在 $F$ 上的极小多项式在域 $\overline F$ 中分裂，故而 $\alpha\in\overline F$．这说明，$\overline F$ 上任意多项式都有至少一个根．
+??? note "Proof"
+    The equivalence of the first five properties is clear from the definitions. For the sixth: an algebraically closed field is clearly its own algebraic closure, since it has no nontrivial algebraic extension. Conversely, we must show the algebraic closure of a field $F$ is algebraically closed. Let $\overline F$ be an algebraic closure of $F$ and $f(x)$ a polynomial over $\overline F$. Let $\alpha$ be a root of $f(x)$ in its splitting field, and let $S\subseteq\overline F$ be the set of nonzero coefficients of $f(x)$. Since $F(S)(\alpha)=F(S\cup\{\alpha\})$ is a finite extension, $\alpha$ must also be algebraic over $F$. So by the definition of algebraic closure, the minimal polynomial of $\alpha$ over $F$ splits over $\overline F$, and hence $\alpha\in\overline F$. This shows every polynomial over $\overline F$ has at least one root.
 
-最后，[代数基本定理](../poly/fundamental.md) [^fundamental-algebra]说明，$\mathbf C$ 是代数闭域．实数域 $\mathbf R$ 上的不可约多项式至多是二次的，或者等价地，它上面的代数扩张至多是二次扩张，就是因为通过代数扩张能够得到的最大的域就是 $\mathbf C$．
+Finally, the [fundamental theorem of algebra](../poly/fundamental.md) [^fundamental-algebra] says that $\mathbf C$ is algebraically closed. Irreducible polynomials over the real field $\mathbf R$ have degree at most two, or equivalently, its algebraic extensions have degree at most two, precisely because the largest field reachable by algebraic extensions is $\mathbf C$.
 
-### 可分扩张
+### Separable extensions
 
-分裂域的概念保证了对于任何域上的多项式，总有扩域能够包括它的所有根，且分裂域精确地给出了这样的最小的扩域．多项式的性质和它的分裂域的性质紧密联系．但是，如果希望通过多项式的分裂域来研究多项式的性质，那么首先要面临的一个问题就是，多项式的分裂域与多项式的根的重数无关．因而，如果有可能，应当考虑多项式的某种意义上的「最简表示」．受此启发，把在域的代数闭包中也没有重根的多项式称为可分多项式．
+The idea of a splitting field guarantees that for any polynomial over any field, there is an extension field containing all its roots, and the splitting field is exactly the smallest such extension. The properties of a polynomial are closely tied to those of its splitting field. But if we want to study a polynomial through its splitting field, the first problem is that the splitting field ignores the multiplicities of the roots. So, if possible, we should consider some kind of "simplest form" of the polynomial. This motivates calling a polynomial separable if it has no repeated roots even in the algebraic closure of the field.
 
-???+ abstract "可分多项式"
-    对于域 $F$ 上的多项式 $f(x)$，如果 $f(x)$ 在 $F$ 的代数闭包 $\overline F$ 中没有重根，即它分解成一次因子的乘积时没有重复因子，那么 $f(x)$ 称为 **可分的**（separable）．
+???+ abstract "Separable polynomial"
+    For a polynomial $f(x)$ over a field $F$, if $f(x)$ has no repeated roots in the algebraic closure $\overline F$ of $F$, that is, its factorization into linear factors has no repeated factor, then $f(x)$ is called **separable**.
 
-因为总是要扩张到域 $F$ 的代数闭包上讨论，可分多项式的判断其实与域 $F$ 的选取无关．但是，因为多项式的系数在 $F$ 中，应当考虑给出一个判断方法，能够使得在域 $F$ 上就能判断多项式是否可分而不必显式地构造出其扩域．
+Since we always extend to the algebraic closure of $F$ for this, whether a polynomial is separable does not actually depend on the choice of $F$. But since the coefficients lie in $F$, we would like a test that decides separability inside $F$ itself, without explicitly constructing an extension field.
 
-熟悉分析学的读者知道，多项式函数的重根有无可以通过它的导数判断：多项式函数的重根同样是它的导数的根．虽然多项式和多项式函数并非一致的概念，但是判断多项式函数重根有无的方法可以类比地迁移到多项式上．多项式的导数可以形式地定义如下：
+Readers familiar with analysis know that whether a polynomial function has repeated roots can be checked with its derivative: a repeated root of a polynomial function is also a root of its derivative. Polynomials and polynomial functions are not the same concept, but this test can be carried over to polynomials by analogy. The derivative of a polynomial can be defined formally as follows:
 
-???+ abstract "形式导数"
-    域 $F$ 上的多项式
+???+ abstract "Formal derivative"
+    For a polynomial over a field $F$
     
     $$
     f(x)=a_0+a_1x+a_2x^2+\cdots+a_{n-1}x^{n-1}+a_nx^n=\sum_{i=0}^na_ix^i
     $$
     
-    的 **（形式）导数**（derivative），记作 $Df(x)$，定义为多项式
+    , its **(formal) derivative**, written $Df(x)$, is defined as the polynomial
     
     $$
     Df(x)=a_1+2a_2x+\cdots+(n-1)a_{n-1}x^{n-2}+na_nx^{n-1}=\sum_{i=1}^nia_ix^{i-1}.
     $$
 
-这个定义对于所有域上的多项式都适用，不依赖于任何拓扑结构，此处的导数算子 $D$ 只是把一个多项式映射到了另一个多项式．而且，可以通过对比系数验证，常见的导数运算法则，比如 $D(f(x)g(x))=(Df(x))g(x)+f(x)(Dg(x))$ 等，对于形式导数依然成立．
+This definition works for polynomials over any field and does not rely on any topology. The derivative operator $D$ here just maps one polynomial to another. Also, by comparing coefficients one can check that the usual rules of differentiation, such as $D(f(x)g(x))=(Df(x))g(x)+f(x)(Dg(x))$, still hold for formal derivatives.
 
-进而，要检查多项式 $f(x)$ 和它的导数 $Df(x)$ 在分裂域中是否有相同的根，可以不显式地构造出这个分裂域，而是通过它们的最大公因子来判断；这是因为多项式的根总是出现在它的极小多项式中，重复的根意味着相应的极小多项式因子也重复．于是，有重根的判断法则如下：
+Furthermore, to check whether $f(x)$ and its derivative $Df(x)$ share a root in the splitting field, we do not need to build the splitting field explicitly; we can use their greatest common divisor instead. This is because a root of a polynomial always appears in its minimal polynomial, and a repeated root means the corresponding minimal-polynomial factor is repeated. So the test for repeated roots is:
 
-???+ note "定理"
-    对于域 $F$ 上的多项式 $f(x)$，如果 $f(x)$ 有重根 $\alpha$，那么导数 $Df(x)$ 也有同样的根 $\alpha$．进而，多项式 $f(x)$ 可分的充分必要条件是 $f(x)$ 与它的导数 $Df(x)$ 互素，即 $\gcd(f(x),Df(x))=1$．
+???+ note "Theorem"
+    For a polynomial $f(x)$ over a field $F$, if $f(x)$ has a repeated root $\alpha$, then its derivative $Df(x)$ also has the root $\alpha$. Moreover, $f(x)$ is separable if and only if $f(x)$ and $Df(x)$ are coprime, that is, $\gcd(f(x),Df(x))=1$.
 
-??? note "证明"
-    首先，因为带余除法在扩域中依然保持，欧几里得算法的结果也和扩域的选取无关，所以只要在分裂域中讨论它们的公因子就好了．由此，设 $\alpha$ 是 $f(x)$ 的 $k>1$ 重根，则分裂域中有分解 $f(x)=(x-\alpha)^kg(x)$，于是它的导数 $Df(x)=k(x-\alpha)^{k-1}g(x)+(x-\alpha)^kDg(x)$ 必然也有根 $\alpha$．反过来，如果 $f(x)$ 和 $Df(x)$ 都有根 $\alpha$，那么对于分裂域中的分解 $f(x)=(x-\alpha)g(x)$，就有 $Df(x)=(x-\alpha)Dg(x)+g(x)$，故而 $\alpha$ 也是 $g(x)$ 的根，因而 $\alpha$ 是 $f(x)$ 的重根．这就说明定理的第一部分．进而，多项式 $f(x)$ 有重根 $\alpha$，等价于 $x-\alpha$ 是 $\gcd(f(x),Df(x))$ 的因子．所以，多项式 $f(x)$ 不可分，就等价于 $\gcd(f(x),Df(x))$ 次数大于等于一．
+??? note "Proof"
+    First, since division with remainder is preserved in extension fields, the result of the Euclidean algorithm does not depend on the choice of extension field, so it is enough to study their common factors in the splitting field. Let $\alpha$ be a root of $f(x)$ of multiplicity $k>1$. Then in the splitting field $f(x)=(x-\alpha)^kg(x)$, so its derivative $Df(x)=k(x-\alpha)^{k-1}g(x)+(x-\alpha)^kDg(x)$ also has the root $\alpha$. Conversely, if both $f(x)$ and $Df(x)$ have the root $\alpha$, then for the factorization $f(x)=(x-\alpha)g(x)$ in the splitting field we have $Df(x)=(x-\alpha)Dg(x)+g(x)$, so $\alpha$ is also a root of $g(x)$, and therefore $\alpha$ is a repeated root of $f(x)$. This proves the first part of the theorem. Furthermore, $f(x)$ having a repeated root $\alpha$ is equivalent to $x-\alpha$ being a factor of $\gcd(f(x),Df(x))$. So $f(x)$ is not separable exactly when $\gcd(f(x),Df(x))$ has degree at least one.
 
-域上的多项式总是可以分解为若干个不可约多项式的乘积．因为（相伴意义下）不同的不可约多项式总是有着不同的根，根的重复自然联系到相应的多项式因子的重复．那么，如果多项式的分解中没有重复的不可约因子，是否就能判断多项式可分呢？换句话说，不可约的多项式是否都可分？很遗憾，在一般的情形下，无法得到肯定的答案．问题出现在有限特征的域．
+A polynomial over a field can always be factored into a product of irreducible polynomials. Since distinct irreducible polynomials (up to associates) always have distinct roots, repeated roots are naturally linked to repeated polynomial factors. So if a polynomial's factorization has no repeated irreducible factor, can we conclude it is separable? In other words, is every irreducible polynomial separable? Unfortunately, in general the answer is no. The problem shows up in fields of finite characteristic.
 
-对于域 $F$ 上的不可约多项式 $f(x)$，多项式 $\gcd(f(x),Df(x))$ 作为 $f(x)$ 的因子，只能有两种情形，即 $1$ 或者 $f(x)$．对于前一种情况，多项式 $f(x)$ 自然是可分的；问题出现在后一种情况．但是，由于导数的定义中已经保证 $Df(x)=0$ 或者 $\deg Df(x)<\deg f(x)$，多项式 $f(x)$ 成为 $Df(x)$ 的因子，只能说明 $Df(x)=0$．这在有限特征的域中是有可能的．
+For an irreducible polynomial $f(x)$ over a field $F$, the polynomial $\gcd(f(x),Df(x))$ is a factor of $f(x)$, so there are only two possibilities: $1$ or $f(x)$. In the first case, $f(x)$ is of course separable; the problem is the second case. But the definition of the derivative already ensures $Df(x)=0$ or $\deg Df(x)<\deg f(x)$, so $f(x)$ being a factor of $Df(x)$ can only mean $Df(x)=0$. This can happen in fields of finite characteristic.
 
-对于特征为 $p$ 的域 $F$，如果 $Df(x)=0$，则多项式的所有非零系数都只能出现在次数恰为 $p$ 的倍数的项上，即多项式 $f(x)$ 可以写作
+For a field $F$ of characteristic $p$, if $Df(x)=0$, then all nonzero coefficients of the polynomial can only appear on terms whose degree is a multiple of $p$; that is, $f(x)$ can be written as
 
 $$
 f(x)=a_0+a_px^p+a_{2p}x^{2p}+\cdots+a_{(k-1)p}x^{(k-1)p}+a_{kp}x^{kp}.
 $$
 
-如果真的存在域 $F$ 上的多项式 $f(x)$ 既不可约也不可分，则它只能有这种形式．但是，如果域 $F$ 中的所有元素总有 $p$ 次根，即对每个系数 $a_{jp}$ 都存在 $b_j\in F$ 使得 $a_{jp}$ 可以写作 $b_j^p$ 的形式，那么，根据 Frobenius 自同态，总有
+If a polynomial $f(x)$ over $F$ is both irreducible and not separable, it must have this form. But if every element of $F$ has a $p$-th root, that is, for each coefficient $a_{jp}$ there is $b_j\in F$ such that $a_{jp}$ can be written as $b_j^p$, then by the Frobenius endomorphism we always have
 
 $$
 \begin{aligned}
@@ -416,116 +416,116 @@ f(x)&=a_0+a_px^p+a_{2p}x^{2p}+\cdots+a_{(k-1)p}x^{(k-1)p}+a_{kp}x^{kp}\\
 \end{aligned}
 $$
 
-因而，这样的域 $F$ 上并不存在这种形式的不可约多项式．因而，这种域上，所有不可约多项式都是可分的．这种域称为完美域．
+So over such a field $F$ there is no irreducible polynomial of this form. Therefore, over such fields, every irreducible polynomial is separable. Such fields are called perfect fields.
 
-???+ abstract "完美域"
-    如果域 $F$ 上的所有不可约多项式都是可分多项式，就称它为 **完美域**（perfect field）．
+???+ abstract "Perfect field"
+    If every irreducible polynomial over a field $F$ is separable, then $F$ is called a **perfect field**.
 
-对于完美域，可分多项式的概念和唯一分解中没有平方因子的多项式的概念是等同的．
+For a perfect field, being separable is the same as having no square factor in the unique factorization.
 
-???+ note "定理"
-    设域 $F$ 是完美域，则 $F$ 上的多项式可分，当且仅当它可以写作若干个（相伴意义下）不同的不可约多项式的乘积．
+???+ note "Theorem"
+    Let $F$ be a perfect field. A polynomial over $F$ is separable if and only if it can be written as a product of distinct (up to associates) irreducible polynomials.
 
-本节的讨论其实已经足够给出移除多项式中的重复因子的方法，它是对多项式的因式分解算法中的关键步骤．但这超出了本文范畴，有兴趣的读者可以参考文末的相关资料．
+The discussion in this section is actually enough to give a method for removing repeated factors from a polynomial, which is a key step in polynomial factorization algorithms. But that is beyond the scope of this page; interested readers can consult the references at the end.
 
-这些讨论其实也给出了完美域的刻画：
+This discussion also characterizes perfect fields:
 
-???+ note "定理"
-    域 $F$ 为完美域，当且仅当域 $F$ 的特征是零，或者域 $F$ 的特征是 $p$ 且任何元素 $x\in F$ 都有 $p$ 次根（即 Frobenius 自同态也是自同构）．
+???+ note "Theorem"
+    A field $F$ is perfect if and only if $F$ has characteristic zero, or $F$ has characteristic $p$ and every element $x\in F$ has a $p$-th root (that is, the Frobenius endomorphism is also an automorphism).
 
-有理数域 $\mathbf Q$ 和下文会讨论的有限域 $\mathbf F_q$ 都是完美域．
+The rational field $\mathbf Q$ and the finite fields $\mathbf F_q$ discussed below are both perfect fields.
 
-对于域不是完美域的情形，的确存在不可分的不可约多项式．
+For fields that are not perfect, there really are irreducible polynomials that are not separable.
 
-??? example "例子"
-    考虑 $\mathbf F_2$ 的有理分式域 $\mathbf F_2(t)$ 上的多项式 $x^2-t$．因为 $\mathbf F_2(t)$ 是唯一分解整环 $\mathbf F_2[t]$ 的分式域，且 $t$ 是 $\mathbf F_2[t]$ 中的素元，则对素元 $t$ 应用 Eisenstein 判别法可知 $x^2-t$ 在 $\mathbf F_2[t]$ 中不可约，故而在 $\mathbf F_2(t)$ 中也不可约．但是，它的导数为 $0$，因而 $x^2-t$ 并不可分．事实上，在扩域 $\mathbf F_2(t)(\sqrt t)$ 中，它有二重根 $\sqrt t$．
+??? example "Example"
+    Consider the polynomial $x^2-t$ over $\mathbf F_2(t)$, the field of rational functions over $\mathbf F_2$. Since $\mathbf F_2(t)$ is the field of fractions of the unique factorization domain $\mathbf F_2[t]$, and $t$ is a prime element of $\mathbf F_2[t]$, applying Eisenstein's criterion with the prime $t$ shows that $x^2-t$ is irreducible in $\mathbf F_2[t]$, and hence also in $\mathbf F_2(t)$. But its derivative is $0$, so $x^2-t$ is not separable. In fact, in the extension field $\mathbf F_2(t)(\sqrt t)$ it has the double root $\sqrt t$.
 
-最后回到域的扩张的讨论．
+Finally, back to field extensions.
 
-???+ abstract "可分扩张"
-    对于代数扩张 $E/F$，如果对所有 $\alpha\in E$ 都有 $\alpha$ 的极小多项式是可分多项式，那么称域 $E$ 是域 $F$ 的 **可分扩张**（separable extension）．
+???+ abstract "Separable extension"
+    For an algebraic extension $E/F$, if for every $\alpha\in E$ the minimal polynomial of $\alpha$ is separable, then $E$ is called a **separable extension** of $F$.
 
-完美域上的代数扩张都是可分扩张．这也可以作为完美域的等价定义．
+Every algebraic extension of a perfect field is separable. This can also serve as an equivalent definition of a perfect field.
 
-如果一个代数扩张既是正规扩张，也是可分扩张，它也称作 Galois 扩张．Galois 扩张中，任何不可约多项式都没有重根，且根的数目都恰好等于多项式的次数，因而对根的置换可以充分地反映域扩张和多项式的性质．这样的扩张提供了建立 Galois 理论的基石．有兴趣的读者可以参考文末的相关资料．
+An algebraic extension that is both normal and separable is called a Galois extension. In a Galois extension, no irreducible polynomial has repeated roots, and the number of roots always equals the degree of the polynomial, so permutations of the roots fully reflect the properties of the extension and of the polynomial. Such extensions are the foundation of Galois theory. Interested readers can consult the references at the end.
 
-## 分圆域
+## Cyclotomic fields
 
-作为域扩张的简单例子，本节讨论分圆域．另一个域扩张的简单例子是 [二次域](../number-theory/quadratic.md)．
+As a simple example of field extensions, this section discusses cyclotomic fields. Another simple example is [quadratic fields](../number-theory/quadratic.md).
 
-### 单位根群
+### Group of roots of unity
 
-复数域 $\mathbf C$ 中，多项式 $x^n-1$ 的根称为 **$n$ 次单位根**（$n$-th root of unity）．记 $\zeta_n=\mathrm{e}^{2\pi\mathrm{i}/n}$．那么，全体 $n$ 次单位根就是集合 $C_n=\{\zeta_n^k:k\in\mathbf Z\}$．在乘法运算下，$C_n$ 构成 $n$ 次循环群，可以记作 $\langle\zeta_n\rangle$，称为 $n$ 次单位根群．群 $C_n$ 的生成元，也就是那些阶恰好为 $n$ 的元素，称为 **$n$ 次本原单位根**（primitive $n$-th root of unity）．$n$ 次本原单位根的集合 $P_n=\{\zeta_n^k:k\in\mathbf Z,k\perp n\}$，恰有 $\varphi(n)$ 个元素；其中，$\varphi(n)$ 是 [欧拉函数](../number-theory/euler-totient.md)．将单位根群 $C_n$ 的元素按照它的阶分类，就得到如下分解：
+In the complex field $\mathbf C$, the roots of the polynomial $x^n-1$ are called the **$n$-th roots of unity**. Let $\zeta_n=\mathrm{e}^{2\pi\mathrm{i}/n}$. Then the set of all $n$-th roots of unity is $C_n=\{\zeta_n^k:k\in\mathbf Z\}$. Under multiplication, $C_n$ is a cyclic group of order $n$, which can be written $\langle\zeta_n\rangle$ and is called the group of $n$-th roots of unity. The generators of $C_n$, that is, the elements of order exactly $n$, are called **primitive $n$-th roots of unity**. The set of primitive $n$-th roots of unity $P_n=\{\zeta_n^k:k\in\mathbf Z,k\perp n\}$ has exactly $\varphi(n)$ elements, where $\varphi(n)$ is [Euler's totient function](../number-theory/euler-totient.md). Grouping the elements of $C_n$ by their order gives the decomposition:
 
 $$
 C_n=\bigcup_{d|n}P_d.
 $$
 
-对两边元素计数，就得到恒等式 $n=\sum_{d\mid n}\varphi(d)$．
+Counting elements on both sides gives the identity $n=\sum_{d\mid n}\varphi(d)$.
 
-### 分圆域
+### Cyclotomic fields
 
-分圆域是将单位根添加到有理数域中得到的扩域．
+A cyclotomic field is the extension field obtained by adjoining roots of unity to the rational field.
 
-???+ abstract "分圆域"
-    将 $n$ 次复单位根 $\zeta_n=\mathrm{e}^{2\pi\mathrm{i}/n}$ 添加到有理数域 $\mathbf Q$ 中得到的扩域 $\mathbf Q(\zeta_n)$ 称为 **$n$ 次分圆域**（$n$-th cyclotomic field）．
+???+ abstract "Cyclotomic field"
+    The extension field $\mathbf Q(\zeta_n)$ obtained by adjoining the complex $n$-th root of unity $\zeta_n=\mathrm{e}^{2\pi\mathrm{i}/n}$ to the rational field $\mathbf Q$ is called the **$n$-th cyclotomic field**.
 
-因为全体 $n$ 次单位根在乘法运算下构成循环群 $\langle\zeta_n\rangle$，分圆域 $\mathbf Q(\zeta_n)$ 也包括所有这些 $n$ 次单位根．其实，$\mathbf Q(\zeta_n)$ 正是域 $\mathbf Q$ 上多项式 $x^n-1$ 的分裂域．
+Since all $n$-th roots of unity form the cyclic group $\langle\zeta_n\rangle$ under multiplication, the cyclotomic field $\mathbf Q(\zeta_n)$ contains all of these $n$-th roots of unity. In fact, $\mathbf Q(\zeta_n)$ is exactly the splitting field of $x^n-1$ over $\mathbf Q$.
 
-???+ note "定理"
-    分圆域 $\mathbf Q(\zeta_n)$ 是有理数域 $\mathbf Q$ 上多项式 $x^n-1$ 的分裂域．
+???+ note "Theorem"
+    The cyclotomic field $\mathbf Q(\zeta_n)$ is the splitting field of the polynomial $x^n-1$ over the rational field $\mathbf Q$.
 
-??? note "证明"
-    设 $F$ 为有理数域 $\mathbf Q$ 上多项式 $x^n-1$ 的分裂域．因为 $\mathbf Q(\zeta_n)$ 上有多项式 $x^n-1$ 的全体复根，所以 $F\subseteq\mathbf Q(\zeta_n)$．反过来，因为 $\zeta_n\in F$，就必然有 $\mathbf Q(\zeta_n)=F$．这就说明 $F=\mathbf Q(\zeta_n)$．
+??? note "Proof"
+    Let $F$ be the splitting field of $x^n-1$ over $\mathbf Q$. Since $\mathbf Q(\zeta_n)$ contains all complex roots of $x^n-1$, we have $F\subseteq\mathbf Q(\zeta_n)$. Conversely, since $\zeta_n\in F$, we must have $\mathbf Q(\zeta_n)=F$. This shows $F=\mathbf Q(\zeta_n)$.
 
-这可以作为分圆域的等价定义．其实，将任何 $n$ 次本原单位根添加到分圆域中都能够得到 $\mathbf Q(\zeta_n)$．
+This can serve as an equivalent definition of a cyclotomic field. In fact, adjoining any primitive $n$-th root of unity to $\mathbf Q$ gives $\mathbf Q(\zeta_n)$.
 
-### 分圆多项式
+### Cyclotomic polynomials
 
-分圆域 $\mathbf Q(\zeta_n)$ 是有理数域 $\mathbf Q$ 上的单代数扩张．根据上文的分析，这样的域总是同构于某个多项式环的商环．为了得到这样的同构，需要分析 $\zeta_n$ 的极小多项式 $f(x)$．因为 $\zeta_n$ 是 $x^n-1$ 的根，所以 $f(x)$ 必然是 $x^n-1$ 的某个因子．这说明，需要考察多项式 $x^n-1$ 在 $\mathbf Q[x]$ 内的因式分解．根据 Gauss 引理，它必然可以在 $\mathbf Z[x]$ 中分解为若干个不可约的首一多项式的乘积．
+The cyclotomic field $\mathbf Q(\zeta_n)$ is a simple algebraic extension of $\mathbf Q$. By the analysis above, such a field is always isomorphic to a quotient of a polynomial ring. To get this isomorphism, we need to find the minimal polynomial $f(x)$ of $\zeta_n$. Since $\zeta_n$ is a root of $x^n-1$, $f(x)$ must be a factor of $x^n-1$. So we need to study the factorization of $x^n-1$ in $\mathbf Q[x]$. By Gauss's lemma, it can be factored in $\mathbf Z[x]$ into a product of irreducible monic polynomials.
 
-因为 $\mathbf Q(\zeta_n)$ 是分裂域，多项式 $x^n-1$ 有分解：
+Since $\mathbf Q(\zeta_n)$ is a splitting field, $x^n-1$ factors as:
 
 $$
 x^n-1=\prod_{\zeta\in C_n}(x-\zeta)=\prod_{d\mid n}\prod_{\zeta\in P_d}(x-\zeta).
 $$
 
-因为不同阶的单位根的代数性质不同，它们必然不会是同一个不可约多项式的根．因此，要考察 $\zeta_n$ 的极小多项式，只要考虑上述分解中的因子
+Roots of unity of different orders have different algebraic properties, so they cannot be roots of the same irreducible polynomial. So to find the minimal polynomial of $\zeta_n$, it suffices to look at the factor
 
 $$
 \Phi_n(x)=\prod_{\zeta\in P_n}(x-\zeta)
 $$
 
-即可．单位根 $\zeta_n$ 的极小多项式，必然是 $\Phi_n(x)$ 的因子．而且，这样定义的 $\Phi_n(x)$ 有如下性质：
+in the factorization above. The minimal polynomial of $\zeta_n$ must be a factor of $\Phi_n(x)$. Moreover, $\Phi_n(x)$ defined this way has the following property:
 
-???+ note "定理"
-    $\Phi_n(x)$ 是整系数首一多项式，且在 $\mathbf Z[x]$ 中不可约．
+???+ note "Theorem"
+    $\Phi_n(x)$ is a monic polynomial with integer coefficients, and it is irreducible in $\mathbf Z[x]$.
 
-??? note "证明"
-    由定义，$\Phi_n(x)$ 显然是首一多项式．首先，要证明 $\Phi_n(x)\in\mathbf Z[x]$．根据 Gauss 引理，多项式 $x^n-1$ 在 $\mathbf Z[x]$ 和 $\mathbf Q[x]$ 中有着相同的分解，且每个因子都是整系数首一多项式．这个分解中，每个因子 $f(x)$ 都是 $\mathbf Q[x]$ 上不可约的，且在 $\mathbf Q(\zeta_n)$ 中分裂；它的所有根都是 $n$ 次单位根，且必然有着相同的阶，所以这些根必然全部属于某一个 $P_d$ 而不能分别存在于不同的 $P_d$．这意味着，每个因子 $f(x)$ 都是某个 $\Phi_d(x)$ 的因子．故而，$\Phi_n(x)$ 可以写成若干个的整系数首一多项式的乘积，必然也是整系数首一多项式．
+??? note "Proof"
+    By definition, $\Phi_n(x)$ is clearly monic. First we show $\Phi_n(x)\in\mathbf Z[x]$. By Gauss's lemma, $x^n-1$ has the same factorization in $\mathbf Z[x]$ and $\mathbf Q[x]$, and every factor is a monic polynomial with integer coefficients. In this factorization, every factor $f(x)$ is irreducible over $\mathbf Q[x]$ and splits over $\mathbf Q(\zeta_n)$. All its roots are $n$-th roots of unity and must have the same order, so they all belong to a single $P_d$ rather than being spread over different $P_d$. This means every factor $f(x)$ is a factor of some $\Phi_d(x)$. So $\Phi_n(x)$ can be written as a product of monic polynomials with integer coefficients, and so it is itself a monic polynomial with integer coefficients.
     
-    接下来，要证明 $\Phi_n(x)$ 在 $\mathbf Z[x]$ 是不可约的．设它有分解 $f(x)g(x)$，且 $f(x)$ 在 $\mathbf Z[x]$ 中不可约，那么只要证明 $f(x)$ 包含所有 $n$ 次本原单位根即可．也就是说，设 $\zeta$ 是 $f(x)$ 的一个根，要证明对于所有 $k\perp n$，都有 $\zeta^k$ 也是 $f(x)$ 的根；由于 $k$ 总是可以分解为素数的乘积，所以只需要证明对于所有素数 $p\perp n$，$\zeta^p$ 是 $f(x)$ 的根就可以了．假设不然，$\zeta^p$ 是 $g(x)$ 的根．因而，$\zeta$ 是 $\mathbf Z[x]$ 中多项式 $f(x)$ 和 $g(x^p)$ 的共同的根．因为 $f(x)$ 是 $\zeta$ 在 $\mathbf Q$ 上的极小多项式，必然有 $f(x)$ 整除 $g(x^p)$；亦即存在 $h(x)\in\mathbf Z[x]$ 使得 $g(x^p)=f(x)h(x)$．等式两侧同时对 $p$ 取模，得到 $\mathbf F_p[x]$ 上的等式 $\overline{g}(x^p)=\overline{f}(x)\overline{h}(x)$．利用 Frobenius 自同态可知，$\overline{g}(x)^p=\overline{f}(x)\overline{h}(x)$．因为 $\mathbf F_p[x]$ 也是唯一分解整环，$\overline{g}(x)$ 和 $\overline{f}(x)$ 必然有不平凡的公因子，所以，$x^n-\overline 1=\overline{f}(x)\overline{g}(x)$ 在 $\mathbf F_p$ 上不可分．但是，因为 $p\perp n$，它的形式导数 $nx^{n-1}$ 与它自身互素，这与它不可分矛盾．故而，可以证明 $\zeta^p$ 必然还是 $f(x)$ 的根，因而 $f(x)$ 包含所有 $n$ 次本原单位根，它就是 $\Phi_n(x)$．
+    Next we show $\Phi_n(x)$ is irreducible in $\mathbf Z[x]$. Suppose it factors as $f(x)g(x)$ with $f(x)$ irreducible in $\mathbf Z[x]$. It suffices to show that $f(x)$ contains all primitive $n$-th roots of unity. That is, if $\zeta$ is a root of $f(x)$, we must show $\zeta^k$ is also a root of $f(x)$ for all $k\perp n$. Since $k$ can always be factored into primes, it suffices to show $\zeta^p$ is a root of $f(x)$ for every prime $p\perp n$. Suppose not, so $\zeta^p$ is a root of $g(x)$. Then $\zeta$ is a common root of the polynomials $f(x)$ and $g(x^p)$ in $\mathbf Z[x]$. Since $f(x)$ is the minimal polynomial of $\zeta$ over $\mathbf Q$, $f(x)$ must divide $g(x^p)$; that is, there is $h(x)\in\mathbf Z[x]$ with $g(x^p)=f(x)h(x)$. Reducing both sides modulo $p$ gives the equation $\overline{g}(x^p)=\overline{f}(x)\overline{h}(x)$ over $\mathbf F_p[x]$. By the Frobenius endomorphism, $\overline{g}(x)^p=\overline{f}(x)\overline{h}(x)$. Since $\mathbf F_p[x]$ is also a unique factorization domain, $\overline{g}(x)$ and $\overline{f}(x)$ must have a nontrivial common factor, so $x^n-\overline 1=\overline{f}(x)\overline{g}(x)$ is not separable over $\mathbf F_p$. But since $p\perp n$, its formal derivative $nx^{n-1}$ is coprime to it, which contradicts its not being separable. So $\zeta^p$ must still be a root of $f(x)$. Therefore $f(x)$ contains all primitive $n$-th roots of unity, and it is $\Phi_n(x)$.
 
-这就说明，它就是 $\zeta_n$ 的极小多项式，也称为 **$n$ 次分圆多项式**（$n$-th cyclotomic polynomial）．上面的定义式指出，它有 $\varphi(n)$ 个复根，且这些复根正是全体 $n$ 次本原单位根；其中，$\varphi(n)$ 是 [欧拉函数](../number-theory/euler-totient.md)．这也说明，$\mathbf Q(\zeta_n)/\mathbf Q$ 是 $\varphi(n)$ 次扩张．
+This shows that it is the minimal polynomial of $\zeta_n$, also called the **$n$-th cyclotomic polynomial**. The defining formula above shows that it has $\varphi(n)$ complex roots, and these are exactly all the primitive $n$-th roots of unity; here $\varphi(n)$ is [Euler's totient function](../number-theory/euler-totient.md). It also shows that $\mathbf Q(\zeta_n)/\mathbf Q$ is an extension of degree $\varphi(n)$.
 
-分圆域 $\mathbf Q(\zeta_n)$ 中的代数整数环是 $\mathbf Z[\zeta_n]$．另外，当 $\varphi(n)=2$ 时，分圆域是 [二次扩张](../number-theory/quadratic.md)．具体来说，$\mathbf Q(\zeta_4)$ 是二次域 $\mathbf Q(\sqrt{-1})$；$\mathbf Q(\zeta_3)$ 和 $\mathbf Q(\zeta_6)$ 相同，都是二次域 $\mathbf Q(\sqrt{-3})$．
+The ring of algebraic integers in the cyclotomic field $\mathbf Q(\zeta_n)$ is $\mathbf Z[\zeta_n]$. Also, when $\varphi(n)=2$, the cyclotomic field is a [quadratic extension](../number-theory/quadratic.md). Specifically, $\mathbf Q(\zeta_4)$ is the quadratic field $\mathbf Q(\sqrt{-1})$, and $\mathbf Q(\zeta_3)$ and $\mathbf Q(\zeta_6)$ are the same, both equal to the quadratic field $\mathbf Q(\sqrt{-3})$.
 
-利用分圆多项式，多项式 $x^n-1$ 在 $\mathbf Z[x]$ 中有唯一分解
+Using cyclotomic polynomials, $x^n-1$ has the unique factorization in $\mathbf Z[x]$
 
 $$
 x^n-1=\prod_{d\mid n}\Phi_d(x).
 $$
 
-因此，$(x^d-1)\mid(x^n-1)$ 当且仅当 $d\mid n$．而且，对此式应用 [Möbius 反演](../number-theory/mobius.md) 可得
+So $(x^d-1)\mid(x^n-1)$ if and only if $d\mid n$. Moreover, applying [Möbius inversion](../number-theory/mobius.md) to this formula gives
 
 $$
 \Phi_n(x)=\prod_{d\mid n}(x^d-1)^{\mu(n/d)}.
 $$
 
-利用这个表达式，可以递归地计算出全部的分圆多项式．此处给出前几个分圆多项式的例子，便于读者熟悉．
+With this expression, all cyclotomic polynomials can be computed recursively. Here are the first few, to help the reader get familiar with them.
 
-???+ example "分圆多项式"
-    前 $10$ 个分圆多项式如下：
+???+ example "Cyclotomic polynomials"
+    The first $10$ cyclotomic polynomials are:
     
     $$
     \begin{aligned}
@@ -542,285 +542,285 @@ $$
     \end{aligned}
     $$
     
-    一个有趣的事实是，虽然看起来这些分圆多项式的系数都只能是 $0$ 和 $\pm1$，但是对于一般的 $n$，这个结论是不对的．第一个反例出现在 $\Phi_{105}(x)$，而且可以证明，随着 $n$ 的增大，它的系数可以取到任意大的值．
+    An interesting fact: although the coefficients of these cyclotomic polynomials all seem to be $0$ or $\pm1$, this is not true for general $n$. The first counterexample is $\Phi_{105}(x)$, and one can prove that as $n$ grows, the coefficients can become arbitrarily large.
 
-利用上文的 Möbius 反演式，可以总结出如下性质来简化 $\Phi_n(x)$ 的计算：
+Using the Möbius inversion formula above, we can derive the following properties that simplify computing $\Phi_n(x)$:
 
-???+ note "性质"
-    对于分圆多项式 $\Phi_n(x)$，有：
+???+ note "Properties"
+    For the cyclotomic polynomial $\Phi_n(x)$:
     
-    1.  如果素数 $p\mid n$，则 $\Phi_{pn}(x)=\Phi_n(x^p)$；
-    2.  如果素数 $p\perp n$，则 $\Phi_{pn}(x)=\dfrac{\Phi_n(x^p)}{\Phi_n(x)}$；
-    3.  特别地，如果 $n>1$ 是奇数，则 $\Phi_{2n}(x)=\Phi_n(-x)$；
-    4.  对于素数 $p$，有 $\Phi_{p}(x)=1+x+\cdots+x^{p-1}$；
-    5.  特别地，$\Phi_{2^k}(x)=x^{2^{k-1}}+1$．
+    1.  If a prime $p\mid n$, then $\Phi_{pn}(x)=\Phi_n(x^p)$;
+    2.  If a prime $p\perp n$, then $\Phi_{pn}(x)=\dfrac{\Phi_n(x^p)}{\Phi_n(x)}$;
+    3.  In particular, if $n>1$ is odd, then $\Phi_{2n}(x)=\Phi_n(-x)$;
+    4.  For a prime $p$, $\Phi_{p}(x)=1+x+\cdots+x^{p-1}$;
+    5.  In particular, $\Phi_{2^k}(x)=x^{2^{k-1}}+1$.
 
-这些性质说明，对分圆多项式的计算，重点在于那些次数是无平方因子的奇数的情形．而对于这种情形，可以用性质二逐个添加素因子；每个素因子的加入，只需要做一次多项式除法．
+These properties show that the key to computing cyclotomic polynomials is the case where the index is a square-free odd number. In that case, we can use property 2 to add prime factors one at a time; adding each prime factor needs just one polynomial division.
 
-分圆多项式还有很多其它的性质．
+Cyclotomic polynomials have many other properties.
 
-???+ note "定理"
-    设 $\Phi_n(x)$ 为 $n>1$ 次分圆多项式，且多项式的次数是 $\varphi(n)$．于是，有：
+???+ note "Theorem"
+    Let $\Phi_n(x)$ be the $n$-th cyclotomic polynomial with $n>1$; its degree is $\varphi(n)$. Then:
     
-    1.  多项式 $\Phi_n(x)$ 是回文多项式，它的 $j$ 次项系数和 $\varphi(n)-j$ 次项系数相同，即 $\Phi_n(x)=x^{\varphi(n)}\Phi_n(1/x)$；
-    2.  多项式的 $\varphi(n)-1$ 次项系数等于 Möbius 函数 $-\mu(n)$；
-    3.  如果 $n$ 是素数幂 $p^k$，那么 $\Phi_n(1)=p$；否则，$\Phi_n(1)=1$；
-    4.  设 $b>1$ 且 $p$ 为 $\Phi_n(b)$ 的素因子，则 $p\mid n$，或者 $n$ 是乘法群 $(\mathbf Z/p\mathbf Z)^\times$ 中的 $b$ 的阶，且这两种情况不能同时发生．
+    1.  $\Phi_n(x)$ is a palindromic polynomial: its coefficient of degree $j$ equals its coefficient of degree $\varphi(n)-j$, that is, $\Phi_n(x)=x^{\varphi(n)}\Phi_n(1/x)$;
+    2.  Its coefficient of degree $\varphi(n)-1$ equals the Möbius function value $-\mu(n)$;
+    3.  If $n$ is a prime power $p^k$, then $\Phi_n(1)=p$; otherwise $\Phi_n(1)=1$;
+    4.  Let $b>1$ and let $p$ be a prime factor of $\Phi_n(b)$. Then either $p\mid n$, or $n$ is the order of $b$ in the multiplicative group $(\mathbf Z/p\mathbf Z)^\times$, and the two cases cannot both happen.
 
-??? note "证明"
-    对于前三条性质，只需要利用 Möbius 反演即可．对于 1，直接考察 $\Phi_n(x)$ 的 Möbius 反演形式，即 $\Phi_n(x)=\prod_{d\mid n}(x^d-1)^{\mu(n/d)}$；对于 2，设 $\Phi_n(x)$ 的 $\varphi(n)-1$ 次项系数为 $f(n)$，则比较 $x^n-1=\prod_{d\mid n}\Phi_d(x)$ 等式两侧的 $n-1$ 次项系数可知，$\sum_{d\mid n}f(d)=-[n=1]$，再做 Möbius 反演；对于 3，在 $x^n-1=\prod_{d\mid n}\Phi_d(x)$ 两侧同时除以 $\Phi_1(x)=x-1$，再代入 $x=1$，即有 $n=\prod_{d\mid n,d\neq 1}\Phi_d(1)$，再做 Möbius 反演．
+??? note "Proof"
+    The first three properties follow from Möbius inversion. For 1, look directly at the Möbius inversion form $\Phi_n(x)=\prod_{d\mid n}(x^d-1)^{\mu(n/d)}$. For 2, let $f(n)$ be the coefficient of degree $\varphi(n)-1$ in $\Phi_n(x)$; comparing the coefficients of degree $n-1$ on both sides of $x^n-1=\prod_{d\mid n}\Phi_d(x)$ gives $\sum_{d\mid n}f(d)=-[n=1]$, then apply Möbius inversion. For 3, divide both sides of $x^n-1=\prod_{d\mid n}\Phi_d(x)$ by $\Phi_1(x)=x-1$ and substitute $x=1$, which gives $n=\prod_{d\mid n,d\neq 1}\Phi_d(1)$, then apply Möbius inversion.
     
-    下面证明第四条性质．首先，如果 $n$ 是乘法群 $(\mathbf Z/p\mathbf Z)^\times$ 中的 $b$ 的阶，那么 $n$ 是满足 $p\mid b^n-1$ 的正整数中最小的，故而 $p\mid\Phi_n(b)$．反过来，如果 $p\mid\Phi_n(b)$，则有 $b^n\equiv 1\pmod p$；可如果 $n$ 不是乘法群 $(\mathbf Z/p\mathbf Z)^\times$ 中的 $b$ 的阶，那么设它的阶为 $k$，必然有 $k\mid n$ 且 $p\mid\Phi_k(b)$．此时，$\Phi_k(x)$ 和 $\Phi_n(x)$ 在域 $\mathbf F_p$ 中有公共根 $b$，这说明 $x^n-1$ 有重根 $b$．这说明 $p\mid n$；否则，$x^n-1$ 与它的导数互素，所以在 $\mathbf F_p$ 上可分，不可能有重根．因而，$\Phi_n(b)$ 的素因子 $p$ 只有两种情况：$p\mid n$，或者 $n$ 是乘法群 $(\mathbf Z/p\mathbf Z)^\times$ 中的 $b$ 的阶．这两种情况是互斥的，因为后者意味着 $n\mid p-1$．
+    Now we prove the fourth property. First, if $n$ is the order of $b$ in $(\mathbf Z/p\mathbf Z)^\times$, then $n$ is the smallest positive integer with $p\mid b^n-1$, so $p\mid\Phi_n(b)$. Conversely, if $p\mid\Phi_n(b)$, then $b^n\equiv 1\pmod p$. If $n$ is not the order of $b$ in $(\mathbf Z/p\mathbf Z)^\times$, let that order be $k$; then $k\mid n$ and $p\mid\Phi_k(b)$. In that case $\Phi_k(x)$ and $\Phi_n(x)$ have the common root $b$ in $\mathbf F_p$, so $x^n-1$ has the repeated root $b$. This implies $p\mid n$; otherwise $x^n-1$ would be coprime to its derivative, hence separable over $\mathbf F_p$, and could not have a repeated root. So a prime factor $p$ of $\Phi_n(b)$ falls into one of two cases: $p\mid n$, or $n$ is the order of $b$ in $(\mathbf Z/p\mathbf Z)^\times$. The two cases are mutually exclusive, because the latter implies $n\mid p-1$.
 
-分圆多项式还可以用于解决一些数论和代数问题．比如说分数在写成某个进制下的小数时的循环节长度，就和分圆多项式有密切的联系．对于这些具体的应用，有兴趣的读者可以参考文末的资料．
+Cyclotomic polynomials can also be used to solve some number theory and algebra problems. For example, the period length of a fraction written as a repeating decimal in some base is closely related to cyclotomic polynomials. For these specific applications, interested readers can consult the references at the end.
 
-## 有限域
+## Finite fields
 
-**有限域**（finite field），也称作 **Galois 域**（Galois field），就是只有有限多个元素的域．有限域的结构由其元素个数唯一确定，且它的元素个数必然是素数的幂．
+A **finite field**, also called a **Galois field**, is a field with finitely many elements. The structure of a finite field is uniquely determined by its number of elements, and that number must be a prime power.
 
-???+ note "定理"
-    大小为 $q$ 的域存在，当且仅当 $q$ 具有素数幂 $p^n$ 的形式．而且，这样的域在同构意义下唯一，记作 $\mathbf F_q$．素数 $p$ 是域 $\mathbf F_q$ 的特征，正整数 $n$ 为域扩张 $\mathbf F_q/\mathbf F_p$ 的次数．最后，$\mathbf F_q$ 是 $\mathbf F_p$ 上多项式 $x^q-x$ 的分裂域，且恰好包括 $x^q-x$ 的 $q$ 个互异的根．
+???+ note "Theorem"
+    A field of size $q$ exists if and only if $q$ is a prime power $p^n$. Moreover, such a field is unique up to isomorphism and is written $\mathbf F_q$. The prime $p$ is the characteristic of $\mathbf F_q$, and the positive integer $n$ is the degree of the extension $\mathbf F_q/\mathbf F_p$. Finally, $\mathbf F_q$ is the splitting field of the polynomial $x^q-x$ over $\mathbf F_p$, and it consists of exactly the $q$ distinct roots of $x^q-x$.
 
-??? note "证明"
-    设域 $F$ 是有限域．域 $F$ 的特征必然有限，记作 $p$；故而，域 $F$ 有素子域 $\mathbf F_p$．而且，域 $F$ 必然是 $\mathbf F_p$ 上的有限扩张，扩张次数记作 $n$．作为 $\mathbf F_p$ 上的 $n$ 维向量空间，域 $F$ 有 $q=p^n$ 个元素．域 $F$ 的全体非零元构成群 $F^\times$，它的阶为 $q-1$，所以有 $x^{q-1}=1$．因此，$F=F^\times\cup\{0\}$ 的所有元素都满足 $x^q=x$，即它们是多项式 $x^q-x$ 的 $q$ 个互异的根．因此，在域 $F$ 中多项式 $x^q-x$ 有因子 $\prod_{\alpha\in F}(x-\alpha)$，但是这个因子的次数已经是 $q$ 且最高次项系数就等于 $1$，所以有 $x^q-x=\prod_{\alpha\in F}(x-\alpha)$．这说明 $x^q-x$ 在 $F$ 中分裂．对于任何能够使 $x^q-x$ 分裂的域，由于 $x^q-x$ 有 $q$ 个相异的根，必然至少有 $q$ 个元素．这说明 $F$ 是使 $x^q-x$ 可以分裂的最小的域，即 $x^q-x$ 的分裂域．总而言之，大小为 $q$ 的有限域必然是它的素子域上的多项式 $x^q-x$ 的分裂域．因为分裂域在同构意义下唯一，所以大小为 $q$ 的域必然也唯一．
+??? note "Proof"
+    Let $F$ be a finite field. Its characteristic must be finite; call it $p$. So $F$ has the prime subfield $\mathbf F_p$. Also, $F$ must be a finite extension of $\mathbf F_p$; call its degree $n$. As an $n$-dimensional vector space over $\mathbf F_p$, $F$ has $q=p^n$ elements. The nonzero elements of $F$ form the group $F^\times$ of order $q-1$, so $x^{q-1}=1$. Hence every element of $F=F^\times\cup\{0\}$ satisfies $x^q=x$; that is, they are $q$ distinct roots of $x^q-x$. So in $F$, the polynomial $x^q-x$ has the factor $\prod_{\alpha\in F}(x-\alpha)$. But this factor already has degree $q$ and leading coefficient $1$, so $x^q-x=\prod_{\alpha\in F}(x-\alpha)$. This shows $x^q-x$ splits in $F$. Any field over which $x^q-x$ splits must have at least $q$ elements, since $x^q-x$ has $q$ distinct roots. So $F$ is the smallest field over which $x^q-x$ splits, that is, the splitting field of $x^q-x$. In short, a finite field of size $q$ must be the splitting field of $x^q-x$ over its prime subfield. Since splitting fields are unique up to isomorphism, the field of size $q$ is unique as well.
     
-    反过来，给定素数 $p$ 和它的幂 $q=p^n$，要说明 $\mathbf F_p$ 上的多项式 $x^q-x$ 的分裂域恰好有 $q$ 个元素，才能说明所有素数幂 $q$ 阶的域都存在．因为 $\mathbf F_p$ 上的多项式 $x^q-x$ 的分裂域总是存在，所以可以设该分裂域中多项式 $x^q-x$ 的全部根组成的集合为 $F$．现在要证明 $F$ 是域，因而它就是多项式 $x^q-x$ 的分裂域本身．但是，迭代 $n$ 次 Frobenius 自同态就可以知道 $x\mapsto x^q$ 也是自同态，因此对任意 $\alpha,\beta\in F$ 都有 $(\alpha\pm\beta)^q=\alpha^q\pm\beta^q$，$(\alpha\beta)^q=\alpha^q\beta^q$ 和 $(\alpha^{-1})^q=(\alpha^q)^{-1}$．因此，集合 $F$ 对加、减、乘、除都封闭，它是域．这就说明 $F$ 就是 $\mathbf F_p$ 上的多项式 $x^q-x$ 的分裂域．
+    Conversely, given a prime $p$ and a power $q=p^n$, to show that a field of every prime-power order $q$ exists, we must show that the splitting field of $x^q-x$ over $\mathbf F_p$ has exactly $q$ elements. The splitting field of $x^q-x$ over $\mathbf F_p$ always exists, so let $F$ be the set of all roots of $x^q-x$ in it. We now show $F$ is a field, so that it is the splitting field of $x^q-x$ itself. Iterating the Frobenius endomorphism $n$ times shows that $x\mapsto x^q$ is also an endomorphism, so for any $\alpha,\beta\in F$ we have $(\alpha\pm\beta)^q=\alpha^q\pm\beta^q$, $(\alpha\beta)^q=\alpha^q\beta^q$ and $(\alpha^{-1})^q=(\alpha^q)^{-1}$. So $F$ is closed under addition, subtraction, multiplication and division, and it is a field. This shows $F$ is the splitting field of $x^q-x$ over $\mathbf F_p$.
 
-???+ note "推论"
-    有限域 $\mathbf F_q$（$q>2$）中，全体非零元的和是 $0$，积是 $-1$．
+???+ note "Corollary"
+    In a finite field $\mathbf F_q$ ($q>2$), the sum of all nonzero elements is $0$ and their product is $-1$.
 
-??? note "证明"
-    有限域的全体非零元恰好是多项式 $x^{q-1}-1$ 的 $q-1$ 个根，应用 Vieta 定理即可．
+??? note "Proof"
+    The nonzero elements of a finite field are exactly the $q-1$ roots of $x^{q-1}-1$. Apply Vieta's formulas.
 
-在素域 $\mathbf F_p$ 中，这个推论关于积的结论正是数论中的 [Wilson 定理](../number-theory/factorial.md#wilson-定理)（的一部分）．
+In the prime field $\mathbf F_p$, the statement about the product is exactly (part of) [Wilson's theorem](../number-theory/factorial.md#wilson-定理) from number theory.
 
-### 乘法结构
+### Multiplicative structure
 
-有限域的乘法群 $\mathbf F_q^\times=\mathbf F_q\setminus\{0\}$ 一定是循环群．
+The multiplicative group $\mathbf F_q^\times=\mathbf F_q\setminus\{0\}$ of a finite field is always cyclic.
 
-???+ note "定理"
-    域 $F$ 的乘法群的有限子群一定是循环群．
+???+ note "Theorem"
+    Every finite subgroup of the multiplicative group of a field $F$ is cyclic.
 
-??? note "证明"
-    设 $G$ 为域 $F$ 的乘法群的子群且 $|G|=n$．因而，$G$ 是有限 Abel 群．根据有限 Abel 群基本定理，群 $G$ 有不变因子分解 $C_{n_1}\times\cdots\times C_{n_s}$ 且 $n_1\mid\cdots\mid n_s$．所以，对于 $G$ 中的所有元素 $x$，都有 $x^{n_s}=1$．也就是说，群 $G$ 中的元素都是域 $F$ 上多项式 $x^{n_s}-1$ 的根．但是，多项式 $x^{n_s}-1$ 至多有 $n_s$ 个相异的根，即 $n\le n_s$．但是，$n_s\le n$，所以其实有 $n_s=n$．这说明 $G\cong C_{n_s}$，即群 $G$ 是循环群．
+??? note "Proof"
+    Let $G$ be a subgroup of the multiplicative group of $F$ with $|G|=n$. Then $G$ is a finite abelian group. By the fundamental theorem of finite abelian groups, $G$ has an invariant factor decomposition $C_{n_1}\times\cdots\times C_{n_s}$ with $n_1\mid\cdots\mid n_s$. So every element $x$ of $G$ satisfies $x^{n_s}=1$. That is, the elements of $G$ are all roots of the polynomial $x^{n_s}-1$ over $F$. But $x^{n_s}-1$ has at most $n_s$ distinct roots, so $n\le n_s$. Also $n_s\le n$, so in fact $n_s=n$. This shows $G\cong C_{n_s}$, so $G$ is cyclic.
 
-???+ note "推论"
-    有限域 $\mathbf F_q$ 的乘法群 $\mathbf F_q^\times\cong C_{q-1}$．
+???+ note "Corollary"
+    The multiplicative group of the finite field $\mathbf F_q$ satisfies $\mathbf F_q^\times\cong C_{q-1}$.
 
-循环群 $\mathbf F_q^\times$ 中有 $\varphi(q-1)$ 个生成元，它们称为有限域的本原元；其中，$\varphi(n)$ 是 [欧拉函数](../number-theory/euler-totient.md)．
+The cyclic group $\mathbf F_q^\times$ has $\varphi(q-1)$ generators, called the primitive elements of the finite field; here $\varphi(n)$ is [Euler's totient function](../number-theory/euler-totient.md).
 
-???+ abstract "本原元"
-    有限域 $\mathbf F_q$ 的乘法群的生成元，称为 $\mathbf F_q$ 的 **本原元**（primitive element）．
+???+ abstract "Primitive element"
+    A generator of the multiplicative group of a finite field $\mathbf F_q$ is called a **primitive element** of $\mathbf F_q$.
 
-??? warning "单扩张中的本原元和有限域中的本原元并不相同"
-    尽管单扩张中的本原元和有限域中的本原元的名称一致，两者并不相同．单扩张中的本原元是相应的单扩张的生成元，而有限域中的本原元是相应的乘法群（作为循环群）的生成元．有限域作为它的素子域的单扩张的本原元，未必是有限域本身的本原元．例如，$\mathbf F_{25}\cong\mathbf F_5[x]/(x^2+x+1)$ 中，$\overline x$ 是域扩张的本原元，但是并不是域 $\mathbf F_{25}$ 的本原元，因为它的阶数是 $3$．
+??? warning "A primitive element of a simple extension is not the same as a primitive element of a finite field"
+    Although they share the same name, a primitive element of a simple extension and a primitive element of a finite field are different things. A primitive element of a simple extension generates that simple extension, while a primitive element of a finite field generates its multiplicative group (as a cyclic group). A primitive element of a finite field viewed as a simple extension of its prime subfield need not be a primitive element of the finite field itself. For example, in $\mathbf F_{25}\cong\mathbf F_5[x]/(x^2+x+1)$, $\overline x$ is a primitive element of the field extension, but not a primitive element of the field $\mathbf F_{25}$, because its order is $3$.
 
-??? warning "$\mathbf F_{q}$ 中的本原元和模 $q$ 的原根也不相同"
-    对于奇数特征的有限域 $\mathbf F_{q}$，总是存在模 $q$ 的 [原根](./ring-theory.md#应用整数同余类的乘法群)（primitive root）．但是，不应将它与有限域 $\mathbf F_{q}$ 中的本原元（primitive element）混淆．虽然它们都是相应的乘法结构作为循环群时的生成元，但是 $(\mathbf Z/q\mathbf Z)^\times$ 和 $\mathbf F_q$ 在 $q$ 本身不是素数的情况下并不相同．比如，前者的阶是 $\varphi(q)$ 而后者的阶是 $q-1$，两个乘法群的大小就不相同．
+??? warning "A primitive element of $\mathbf F_{q}$ is also not the same as a primitive root modulo $q$"
+    For a finite field $\mathbf F_{q}$ of odd characteristic, a [primitive root](./ring-theory.md#应用整数同余类的乘法群) modulo $q$ always exists. But it should not be confused with a primitive element of the finite field $\mathbf F_{q}$. Both are generators of the corresponding multiplicative structure as a cyclic group, but $(\mathbf Z/q\mathbf Z)^\times$ and $\mathbf F_q$ are different when $q$ itself is not prime. For example, the order of the former is $\varphi(q)$ while the order of the latter is $q-1$, so the two multiplicative groups do not even have the same size.
 
-设 $\alpha$ 是有限域 $\mathbf F_q$ 的一个本原元．那么，对于所有非零元 $x\in\mathbf F_q^\times$ 都存在唯一的自然数 $k<q-1$ 使得 $x=\alpha^k$；这个 $k$ 就称为 $\mathbf F_q$ 上元素 $x$ 关于基 $\alpha$ 的 **离散对数**（discrete logarithm）．和 $\mathbf F_p$ 上的情形一致，[离散对数的算法](../number-theory/discrete-logarithm.md) 的复杂度都比较高．
+Let $\alpha$ be a primitive element of the finite field $\mathbf F_q$. Then for every nonzero $x\in\mathbf F_q^\times$ there is a unique natural number $k<q-1$ with $x=\alpha^k$; this $k$ is called the **discrete logarithm** of $x$ in $\mathbf F_q$ to the base $\alpha$. As in $\mathbf F_p$, [algorithms for discrete logarithms](../number-theory/discrete-logarithm.md) all have fairly high complexity.
 
-通过乘法运算，本原元已经可以生成域的全体非零元素．这说明，有限域作为它的子域的扩张，一定是单扩张．
+Through multiplication, a primitive element already generates all nonzero elements of the field. This shows that a finite field, as an extension of any of its subfields, is always a simple extension.
 
-???+ note "定理"
-    对于有限域 $\mathbf F_q$，设 $F$ 为 $\mathbf F_q$ 的子域，则 $\mathbf F_q$ 是 $F$ 上的单代数扩张；又设 $\alpha$ 为 $\mathbf F_q$ 的本原元，则 $\mathbf F_q=F(\alpha)$．
+???+ note "Theorem"
+    For a finite field $\mathbf F_q$ and a subfield $F$ of $\mathbf F_q$, $\mathbf F_q$ is a simple algebraic extension of $F$. Moreover, if $\alpha$ is a primitive element of $\mathbf F_q$, then $\mathbf F_q=F(\alpha)$.
 
-本原元的极小多项式是有限域的子域上的不可约多项式．
+The minimal polynomial of a primitive element is an irreducible polynomial over a subfield of the finite field.
 
-### 包含关系
+### Inclusion relations
 
-有限域的子域也是有限域．有限域之间的包含关系，也完全由它们的阶决定．
+A subfield of a finite field is also a finite field. Inclusion between finite fields is also completely determined by their orders.
 
-???+ note "定理"
-    设 $\mathbf F_q$ 和 $\mathbf F_r$ 是有限域，则 $\mathbf F_r$ 是 $\mathbf F_q$ 的子域，当且仅当存在 $k$ 使得 $q=r^k$．换句话说，$\mathbf F_{p^d}$ 是 $\mathbf F_{p^n}$ 的子域，当且仅当 $d\mid n$．
+???+ note "Theorem"
+    Let $\mathbf F_q$ and $\mathbf F_r$ be finite fields. Then $\mathbf F_r$ is a subfield of $\mathbf F_q$ if and only if there is $k$ with $q=r^k$. In other words, $\mathbf F_{p^d}$ is a subfield of $\mathbf F_{p^n}$ if and only if $d\mid n$.
 
-??? note "证明"
-    如果 $\mathbf F_r$ 是 $\mathbf F_q$ 的子域，那么两者必然有相同的特征 $p$．域扩张 $\mathbf F_q/\mathbf F_r$、$\mathbf F_r/\mathbf F_p$ 和 $\mathbf F_q/\mathbf F_p$ 都是单代数扩张，分别记它们的扩张次数为 $k,d,n$，则扩张次数必然满足 $n=kd$．而且，$r=p^d$ 和 $q=p^n$，并成立 $q=p^n=p^{kd}=(p^d)^k=r^k$．
+??? note "Proof"
+    If $\mathbf F_r$ is a subfield of $\mathbf F_q$, they must have the same characteristic $p$. The extensions $\mathbf F_q/\mathbf F_r$, $\mathbf F_r/\mathbf F_p$ and $\mathbf F_q/\mathbf F_p$ are all simple algebraic extensions. Call their degrees $k,d,n$; then $n=kd$. Also $r=p^d$ and $q=p^n$, so $q=p^n=p^{kd}=(p^d)^k=r^k$.
     
-    反过来，要证明对于所有 $d\mid n$，$\mathbf F_{p^d}$ 都是 $\mathbf F_{p^n}$ 的子域．记 $r=p^d$ 且 $q=p^n$．设 $F$ 为有限域 $\mathbf F_q$ 中方程 $x^r-x=0$ 的全体根的集合．通过 Frobenius 自同态可以证明，集合 $F$ 必然构成域；关键是要证明，这样的根恰好有 $r$ 个，所以才有 $F\cong\mathbf F_r$．因为 $d\mid n$，所以 $(p^d-1)\mid(p^n-1)$，所以 $(x^{p^d-1}-1)\mid(x^{p^n-1}-1)$，也就是 $(x^r-x)\mid (x^q-x)$．所以，$x^r-x$ 在 $\mathbf F_q$ 上分裂，故而在 $\mathbf F_q$ 内有 $r$ 个不同的根．这就说明 $F\cong\mathbf F_r$ 是 $\mathbf F_q$ 的子域．
+    Conversely, we must show that $\mathbf F_{p^d}$ is a subfield of $\mathbf F_{p^n}$ for every $d\mid n$. Let $r=p^d$ and $q=p^n$. Let $F$ be the set of all roots of $x^r-x=0$ in the finite field $\mathbf F_q$. Using the Frobenius endomorphism one can show that $F$ is a field; the key is to show there are exactly $r$ such roots, which gives $F\cong\mathbf F_r$. Since $d\mid n$, we have $(p^d-1)\mid(p^n-1)$, so $(x^{p^d-1}-1)\mid(x^{p^n-1}-1)$, that is, $(x^r-x)\mid (x^q-x)$. So $x^r-x$ splits over $\mathbf F_q$ and has $r$ distinct roots in $\mathbf F_q$. This shows $F\cong\mathbf F_r$ is a subfield of $\mathbf F_q$.
 
-这一定理说明，有限域 $\mathbf F_{p^n}$ 的包含关系，对应着域的阶 $p^n$ 中的指数 $n$ 之间的整除关系．所有特征为 $p$ 的有限域 $\mathbf F_{p^n}$ 之间形成的格，也就同构于整数 $n$ 在整除关系下形成的格．当然，为了让有限域 $\mathbf F_{p^n}$ 之间的交集等运算有意义，需要将所有特征为 $p$ 的域都嵌入到 $\mathbf F_p$ 的代数闭包中．
+This theorem shows that inclusion between finite fields $\mathbf F_{p^n}$ corresponds to divisibility between the exponents $n$ in their orders $p^n$. The lattice formed by all finite fields $\mathbf F_{p^n}$ of characteristic $p$ is therefore isomorphic to the lattice of integers $n$ under divisibility. Of course, for operations such as intersections of the fields $\mathbf F_{p^n}$ to make sense, all fields of characteristic $p$ must be embedded in the algebraic closure of $\mathbf F_p$.
 
-???+ note "定理"
-    设 $F$ 为 $\mathbf F_p$ 的代数闭包，则域 $F$ 中多项式 $x^{p^n}-x$ 的根的集合构成有限域 $\mathbf F_{p^n}$．那么，有：
+???+ note "Theorem"
+    Let $F$ be the algebraic closure of $\mathbf F_p$. The set of roots of $x^{p^n}-x$ in $F$ forms the finite field $\mathbf F_{p^n}$. Then:
     
-    1.  $F=\bigcup_{n=1}^\infty\mathbf F_{p^n}$，即 $\mathbf F_p$ 的代数闭包就是所有特征为 $p$ 的有限域的并集；
-    2.  全体特征为 $p$ 的有限域 $\mathbf F_{p^n}$ 在包含关系下形成的格，同构于整数 $n$ 在整除关系下形成的格．特别地，$\mathbf F_{p^n}$ 和 $\mathbf F_{p^m}$ 的交集 $\mathbf F_{p^n}\cap\mathbf F_{p^m}=\mathbf F_{p^{\gcd(n,m)}}$，而同时包含 $\mathbf F_{p^n}$ 和 $\mathbf F_{p^m}$ 的最小的域 $\mathbf F_{p^n}\mathbf F_{p^m}=\mathbf F_{p^{\operatorname{lcm}(n,m)}}$．
+    1.  $F=\bigcup_{n=1}^\infty\mathbf F_{p^n}$; that is, the algebraic closure of $\mathbf F_p$ is the union of all finite fields of characteristic $p$;
+    2.  The lattice formed by all finite fields $\mathbf F_{p^n}$ of characteristic $p$ under inclusion is isomorphic to the lattice of integers $n$ under divisibility. In particular, the intersection of $\mathbf F_{p^n}$ and $\mathbf F_{p^m}$ is $\mathbf F_{p^n}\cap\mathbf F_{p^m}=\mathbf F_{p^{\gcd(n,m)}}$, and the smallest field containing both $\mathbf F_{p^n}$ and $\mathbf F_{p^m}$ is $\mathbf F_{p^n}\mathbf F_{p^m}=\mathbf F_{p^{\operatorname{lcm}(n,m)}}$.
 
-??? note "证明"
-    关键在于证明第一部分，即 $\bigcup_{n=1}^\infty\mathbf F_{p^n}$ 是 $\mathbf F_p$ 的代数闭包．第二部分是前面关于有限域的子域的定理的简单推论．
+??? note "Proof"
+    The key is to prove the first part, that $\bigcup_{n=1}^\infty\mathbf F_{p^n}$ is the algebraic closure of $\mathbf F_p$. The second part is a simple corollary of the earlier theorem about subfields of finite fields.
     
-    注意到，任取 $\alpha\in\bigcup_{n=1}^\infty\mathbf F_{p^n}$，必然存在 $n\in\mathbf N_+$ 使得 $\alpha\in\mathbf F_{p^n}$ 成立，故而 $\alpha$ 是 $\mathbf F_p$ 上的代数元；因而，$\bigcup_{n=1}^\infty\mathbf F_{p^n}$ 是 $\mathbf F_p$ 的代数扩张．对于任何 $\mathbf F_p$ 上的 $m$ 次多项式 $f(x)$，它在代数闭包 $F$ 中有至多 $m$ 个不同的根 $\{\alpha_i\}_{i=1}^m$．设根 $\alpha_i$ 的极小多项式次数为 $n_i$，则 $\alpha_i$ 必然包含在域 $\mathbf F_{p^{n_i}}$ 内；故而，$f(x)$ 的所有根都在 $\bigcup_{n=1}^\infty\mathbf F_{p^n}$ 中，亦即 $f(x)$ 在 $\bigcup_{n=1}^\infty\mathbf F_{p^n}$ 上分裂．根据代数闭包的定义，$\bigcup_{n=1}^\infty\mathbf F_{p^n}$ 就是 $\mathbf F_p$ 的代数闭包．
+    Note that for any $\alpha\in\bigcup_{n=1}^\infty\mathbf F_{p^n}$, there is some $n\in\mathbf N_+$ with $\alpha\in\mathbf F_{p^n}$, so $\alpha$ is algebraic over $\mathbf F_p$. Hence $\bigcup_{n=1}^\infty\mathbf F_{p^n}$ is an algebraic extension of $\mathbf F_p$. Any polynomial $f(x)$ of degree $m$ over $\mathbf F_p$ has at most $m$ distinct roots $\{\alpha_i\}_{i=1}^m$ in the algebraic closure $F$. If the minimal polynomial of the root $\alpha_i$ has degree $n_i$, then $\alpha_i$ lies in the field $\mathbf F_{p^{n_i}}$. So all roots of $f(x)$ lie in $\bigcup_{n=1}^\infty\mathbf F_{p^n}$; that is, $f(x)$ splits over $\bigcup_{n=1}^\infty\mathbf F_{p^n}$. By the definition of algebraic closure, $\bigcup_{n=1}^\infty\mathbf F_{p^n}$ is the algebraic closure of $\mathbf F_p$.
 
-### 自同构群
+### Automorphism group
 
-有限域 $\mathbf F_q$ 上的子域都是形如 $x^r-x$ 的多项式的根的集合．换言之，它们都是某个映射 $x\mapsto x^r$ 的不动点集合．这其实揭示了有限域的子域和自同构群的子群之间的深刻对应关系．
+Every subfield of a finite field $\mathbf F_q$ is the set of roots of a polynomial of the form $x^r-x$. In other words, each one is the set of fixed points of some map $x\mapsto x^r$. This reveals a deep correspondence between the subfields of a finite field and the subgroups of its automorphism group.
 
-特征为 $p$ 的域上都有 Frobenius 自同态 $\sigma_p:x\mapsto x^p$．对于有限域 $\mathbf F_q$ 的情形，这也是自同构；这说明有限域 $\mathbf F_q$ 都是完美域．域 $\mathbf F_q$ 的自同构群就是 $n$ 阶循环群 $\langle \sigma_p\rangle$，它的一个生成元就是 Frobenius 自同态 $\sigma_p$．
+Every field of characteristic $p$ has the Frobenius endomorphism $\sigma_p:x\mapsto x^p$. For a finite field $\mathbf F_q$ this is also an automorphism, which shows that every finite field $\mathbf F_q$ is perfect. The automorphism group of $\mathbf F_q$ is the cyclic group $\langle \sigma_p\rangle$ of order $n$, and one generator is the Frobenius endomorphism $\sigma_p$.
 
-???+ note "定理"
-    有限域 $\mathbf F_q$ 的自同构群 $\operatorname{Aut}(\mathbf F_q)=\langle\sigma_p\rangle$ 是 $n$ 阶循环群，且生成元 $\sigma_p$ 是 Frobenius 自同态 $x\mapsto x^p$．
+???+ note "Theorem"
+    The automorphism group $\operatorname{Aut}(\mathbf F_q)=\langle\sigma_p\rangle$ of a finite field $\mathbf F_q$ is a cyclic group of order $n$, and its generator $\sigma_p$ is the Frobenius endomorphism $x\mapsto x^p$.
 
-??? note "证明"
-    首先，Frobenius 自同态 $\sigma_p$ 在有限域 $\mathbf F_q$ 上是自同构，因为有限集合上的单射必然也是满射．因此，$\sigma_p\in\operatorname{Aut}(\mathbf F_q)$．
+??? note "Proof"
+    First, the Frobenius endomorphism $\sigma_p$ is an automorphism of the finite field $\mathbf F_q$, because an injective map on a finite set is also surjective. So $\sigma_p\in\operatorname{Aut}(\mathbf F_q)$.
     
-    然后，$\sigma_p$ 的阶是 $n$．这是因为对于所有 $x\in\mathbf F_q$ 都有 $\sigma_p^n(x)=x^{p^n}=x$，故而 $\sigma_p^n$ 是恒等映射；而且对于任何 $k<n$ 都有 $\sigma_p^k$ 不是恒等映射，否则 $\mathbf F_q$ 的元素都得是 $x^{p^k}-x$ 的根，这不可能．
+    Next, $\sigma_p$ has order $n$. This is because $\sigma_p^n(x)=x^{p^n}=x$ for all $x\in\mathbf F_q$, so $\sigma_p^n$ is the identity map; and for any $k<n$, $\sigma_p^k$ is not the identity, since otherwise every element of $\mathbf F_q$ would be a root of $x^{p^k}-x$, which is impossible.
     
-    最后，$\operatorname{Aut}(\mathbf F_q)$ 至多有 $n$ 个元素．设 $\alpha$ 为 $\mathbf F_q$ 的一个本原元，则自同构 $\sigma\in \operatorname{Aut}(\mathbf F_q)$ 由它在 $\alpha$ 处的取值 $\sigma(\alpha)$ 唯一确定．但是，$\sigma$ 必须将 $\alpha$ 映射到它的共轭元；否则，$\alpha$ 和 $\sigma(\alpha)$ 不再是同一个极小多项式的根．这样的共轭元只有 $n$ 个，这就说明 $\operatorname{Aut}(\mathbf F_q)$ 也至多有 $n$ 个元素．
+    Finally, $\operatorname{Aut}(\mathbf F_q)$ has at most $n$ elements. Let $\alpha$ be a primitive element of $\mathbf F_q$. An automorphism $\sigma\in \operatorname{Aut}(\mathbf F_q)$ is uniquely determined by its value $\sigma(\alpha)$. But $\sigma$ must map $\alpha$ to one of its conjugates; otherwise $\alpha$ and $\sigma(\alpha)$ would no longer be roots of the same minimal polynomial. There are only $n$ such conjugates, which shows $\operatorname{Aut}(\mathbf F_q)$ has at most $n$ elements.
     
-    因此，$\operatorname{Aut}(\mathbf F_q)$ 中的 $n$ 个元素正是 $\langle\sigma_p\rangle$．定理得证．
+    So the $n$ elements of $\operatorname{Aut}(\mathbf F_q)$ are exactly $\langle\sigma_p\rangle$. This proves the theorem.
 
-自同构群 $\operatorname{Aut}(\mathbf F_q)$ 的子群和有限域 $\mathbf F_q$ 上的子域一一对应．
+The subgroups of the automorphism group $\operatorname{Aut}(\mathbf F_q)$ correspond one-to-one with the subfields of the finite field $\mathbf F_q$.
 
-???+ note "定理"
-    设 $\mathbf F_q$ 为有限域，$\mathcal F$ 为它的全体子域，$\mathcal G$ 为它的自同构群 $\operatorname{Aut}(\mathbf F_q)$ 的全体子群．对此，有：
+???+ note "Theorem"
+    Let $\mathbf F_q$ be a finite field, $\mathcal F$ the set of all its subfields, and $\mathcal G$ the set of all subgroups of its automorphism group $\operatorname{Aut}(\mathbf F_q)$. Then:
     
-    1.  对于 $F\in\mathcal F$，设 $\operatorname{Aut}(\mathbf F_q/F)$ 为 $\operatorname{Aut}(\mathbf F_q)$ 中保持 $F$ 不变的自同构的集合，即 $\operatorname{Aut}(\mathbf F_q/F)=\{\sigma\in\operatorname{Aut}(\mathbf F_q):\forall x\in F(\sigma(x)=x)\}$，则 $\operatorname{Aut}(\mathbf F_q/F)\le\operatorname{Aut}(\mathbf F_q)$；
-    2.  对于 $G\in\mathcal G$，设 $F^G$ 为 $G$ 中的所有自同构的不动点集合的交集，即 $F^G=\{x\in\mathbf F_q:\forall\sigma\in G(\sigma(x)=x)\}$，则 $F^G$ 为 $\mathbf F_q$ 的子域；
-    3.  映射 $F\rightarrow\operatorname{Aut}(\mathbf F_q/F)$ 和映射 $G\rightarrow F^G$ 互为逆映射，且是 $\mathcal F$ 和 $\mathcal G$ 之间的一一对应；
-    4.  这个一一对应，将子域之间的扩张关系映射为子群之间的包含关系，即对于任何 $F_1\subseteq F_2$，都有 $\operatorname{Aut}(\mathbf F_q/F_2)\le\operatorname{Aut}(\mathbf F_q/F_1)$．
+    1.  For $F\in\mathcal F$, let $\operatorname{Aut}(\mathbf F_q/F)$ be the set of automorphisms in $\operatorname{Aut}(\mathbf F_q)$ that fix $F$, that is, $\operatorname{Aut}(\mathbf F_q/F)=\{\sigma\in\operatorname{Aut}(\mathbf F_q):\forall x\in F(\sigma(x)=x)\}$. Then $\operatorname{Aut}(\mathbf F_q/F)\le\operatorname{Aut}(\mathbf F_q)$;
+    2.  For $G\in\mathcal G$, let $F^G$ be the intersection of the fixed-point sets of all automorphisms in $G$, that is, $F^G=\{x\in\mathbf F_q:\forall\sigma\in G(\sigma(x)=x)\}$. Then $F^G$ is a subfield of $\mathbf F_q$;
+    3.  The maps $F\rightarrow\operatorname{Aut}(\mathbf F_q/F)$ and $G\rightarrow F^G$ are inverse to each other and give a one-to-one correspondence between $\mathcal F$ and $\mathcal G$;
+    4.  This correspondence turns extension relations between subfields into inclusion relations between subgroups (in reverse): for any $F_1\subseteq F_2$, we have $\operatorname{Aut}(\mathbf F_q/F_2)\le\operatorname{Aut}(\mathbf F_q/F_1)$.
 
-这个结论是一般的 Galois 理论的基本定理的特殊情形，它将域扩张和群论的内容联系起来，从而可以通过群论的方法解决域扩张的问题．
+This result is a special case of the fundamental theorem of Galois theory. It links field extensions with group theory, so that problems about field extensions can be solved with group-theoretic methods.
 
-### 不可约多项式
+### Irreducible polynomials
 
-有限域 $\mathbf F_q$ 上的不可约多项式十分容易确定．因为有限域 $\mathbf F_q$ 上的每个 $n$ 次不可约多项式都对应着 $n$ 次代数扩张，而这样的扩张是唯一的，故而所有 $n$ 次不可约多项式的根都可以在 $\mathbf F_{q^n}$ 中找到．这说明，$\mathbf F_q$ 上的 $n$ 次不可约多项式必然是 $x^{q^n}-x$ 的因子．要确定有限域 $\mathbf F_q$ 上的所有 $n$ 次不可约多项式，需要考察 $x^{q^n}-x$ 在 $\mathbf F_q$ 上的因式分解．这和分圆多项式的情形十分类似．
+Irreducible polynomials over a finite field $\mathbf F_q$ are easy to describe. Each irreducible polynomial of degree $n$ over $\mathbf F_q$ corresponds to an algebraic extension of degree $n$, and that extension is unique, so the roots of all irreducible polynomials of degree $n$ can be found in $\mathbf F_{q^n}$. This shows that an irreducible polynomial of degree $n$ over $\mathbf F_q$ must be a factor of $x^{q^n}-x$. To find all irreducible polynomials of degree $n$ over $\mathbf F_q$, we look at the factorization of $x^{q^n}-x$ over $\mathbf F_q$. This is very similar to the case of cyclotomic polynomials.
 
-有限域 $\mathbf F_q$ 上的代数元可以根据其极小多项式的次数分类．设 $P_n$ 是极小多项式次数恰为 $n$ 的代数元集合，则
+Algebraic elements over a finite field $\mathbf F_q$ can be classified by the degree of their minimal polynomial. Let $P_n$ be the set of algebraic elements whose minimal polynomial has degree exactly $n$. Then
 
 $$
 \mathbf F_{q^n} = \bigcup_{d\mid n}P_d.
 $$
 
-这对应着因式分解
+This corresponds to the factorization
 
 $$
 x^{q^n}-x = \prod_{d|n}\prod_{\zeta\in P_d}(x-\zeta).
 $$
 
-因为 $n$ 次不可约多项式有 $n$ 个根，而且这些根的极小多项式的次数都是 $n$，所以 $n$ 次不可约多项式必然是多项式
+An irreducible polynomial of degree $n$ has $n$ roots, and their minimal polynomials all have degree $n$, so an irreducible polynomial of degree $n$ must be a factor of the polynomial
 
 $$
 \prod_{\zeta\in P_n}(x-\zeta) = \prod_{d\mid n}\left(x^{q^d}-x\right)^{\mu(n/d)}
 $$
 
-的因子；这个表达式是对前面的因式分解应用 [Möbius 反演](../number-theory/mobius.md) 得到的．因为这个多项式的次数是
+; this expression comes from applying [Möbius inversion](../number-theory/mobius.md) to the factorization above. Since the degree of this polynomial is
 
 $$
 \sum_{d\mid n}\mu(d)q^{n/d},
 $$
 
-所以，$\mathbf F_q$ 上的 $n$ 次不可约首一多项式共计
+the number of monic irreducible polynomials of degree $n$ over $\mathbf F_q$ is
 
 $$
 \frac1n\sum_{d\mid n}\mu(d)q^{n/d}
 $$
 
-个．这恰为不计旋转意义下，$q$ 个颜色的珠子能够串成的长度为 $n$ 的非周期项链的种类个数（[证明](../combinatorics/polya.md#循环群)），所以又称为项链多项式（necklace polynomial）．
+. This is exactly the number of aperiodic necklaces of length $n$ that can be made from beads of $q$ colors, counted up to rotation ([proof](../combinatorics/polya.md#循环群)), so it is also called the necklace polynomial.
 
-???+ note "定理"
-    有限域 $\mathbf F_q$ 上存在任意次数的不可约多项式．
+???+ note "Theorem"
+    Over a finite field $\mathbf F_q$ there are irreducible polynomials of every degree.
 
-因为有限域上的不可约多项式有着简单的结构，这使得有限域上的多项式的因式分解十分容易．比如，要确定给定多项式的全体 $n$ 次不可约因子，只要求解给定多项式与 $x^{q^n}-x$ 的最大公因子即可[^ddf]．类似地，只要 $n$ 次多项式对所有的 $k<n$ 都与多项式 $x^{q^k}-x$ 互素，就可以断定该 $n$ 次多项式在 $\mathbf F_q$ 上不可约．
+Because irreducible polynomials over finite fields have such a simple structure, factoring polynomials over finite fields is quite easy. For example, to find all irreducible factors of degree $n$ of a given polynomial, just compute the greatest common divisor of the polynomial and $x^{q^n}-x$.[^ddf] Similarly, if a polynomial of degree $n$ is coprime to $x^{q^k}-x$ for every $k<n$, we can conclude that it is irreducible over $\mathbf F_q$.
 
-前文已经指出，有限域上的不可约多项式的根未必是相应扩域作为有限域的本原元．有限域 $\mathbf F_q$ 的本原元在它的素子域 $\mathbf F_p$ 上的极小多项式也称为域 $\mathbf F_p$ 上的 **本原多项式**[^prim-poly]（primitive polynomial）．用这样的多项式实现扩域，就可以保证 $\overline x$ 必然是扩域中的本原元．域 $\mathbf F_p$ 上的 $n$ 次本原多项式可以通过在 $\mathbf F_p$ 上对分圆多项式 $\Phi_{p^n-1}(x)$ 进行因式分解得到．
+As noted earlier, a root of an irreducible polynomial over a finite field need not be a primitive element of the corresponding extension field as a finite field. The minimal polynomial over the prime subfield $\mathbf F_p$ of a primitive element of $\mathbf F_q$ is also called a **primitive polynomial**[^prim-poly] over $\mathbf F_p$. Building the extension field with such a polynomial guarantees that $\overline x$ is a primitive element of the extension field. Primitive polynomials of degree $n$ over $\mathbf F_p$ can be found by factoring the cyclotomic polynomial $\Phi_{p^n-1}(x)$ over $\mathbf F_p$.
 
-???+ note "定理"
-    设 $p$ 为素数，$n$ 为正整数，且 $p\perp n$．又设 $d$ 是乘法群 $(\mathbf Z/n\mathbf Z)^\times$ 中元素 $p$ 的阶．那么，分圆多项式 $\Phi_n(x)$ 在域 $\mathbf F_p$ 上可以分解为 $\dfrac{\varphi(n)}{d}$ 个 $\mathbf F_p$ 上的 $d$ 次不可约多项式的乘积；而且，当且仅当 $n=p^d-1$ 时，这些因子是本原多项式．特别地，分圆多项式 $\Phi_n(x)$ 在域 $\mathbf F_p$ 上不可约，当且仅当 $p$ 是模 $n$ 的原根．
+???+ note "Theorem"
+    Let $p$ be a prime and $n$ a positive integer with $p\perp n$. Let $d$ be the order of $p$ in the multiplicative group $(\mathbf Z/n\mathbf Z)^\times$. Then the cyclotomic polynomial $\Phi_n(x)$ factors over $\mathbf F_p$ into a product of $\dfrac{\varphi(n)}{d}$ irreducible polynomials of degree $d$ over $\mathbf F_p$; moreover, these factors are primitive polynomials if and only if $n=p^d-1$. In particular, $\Phi_n(x)$ is irreducible over $\mathbf F_p$ if and only if $p$ is a primitive root modulo $n$.
 
-??? note "证明"
-    如果注意到，$n$ 次分圆多项式的根是所有 $\mathbf F_p$ 的 $n$ 次本原单位根，而 $n$ 次本原单位根的极小多项式的次数 $d$ 就是它的共轭（包括自身）的数量，也就等于它在自同构群 $\langle\sigma_p\rangle$ 下的轨道长度，那么就可以知道 $d$ 是 $\{\zeta^i:i\perp n\}$ 中映射 $\zeta^i\mapsto\zeta^{ip}$ 的循环子群的轨道长度，亦即乘法群 $(\mathbf Z/n\mathbf Z)^\times$ 中元素 $p$ 的阶．如果不想依赖于 Galois 理论，也可以通过说明 $d$ 是最小的正整数使得 $(x^n-1)\mid(x^{p^d-1}-1)$ 成立来证明此事．其余结论显然．
+??? note "Proof"
+    Note that the roots of the $n$-th cyclotomic polynomial are all the primitive $n$-th roots of unity over $\mathbf F_p$, and the degree $d$ of the minimal polynomial of a primitive $n$-th root of unity equals the number of its conjugates (including itself), which equals the length of its orbit under the automorphism group $\langle\sigma_p\rangle$. From this, $d$ is the orbit length of the cyclic subgroup generated by the map $\zeta^i\mapsto\zeta^{ip}$ on $\{\zeta^i:i\perp n\}$, that is, the order of $p$ in $(\mathbf Z/n\mathbf Z)^\times$. If you prefer not to rely on Galois theory, you can also prove this by showing that $d$ is the smallest positive integer with $(x^n-1)\mid(x^{p^d-1}-1)$. The other statements are clear.
 
-虽然不可约多项式对于有限域的实现很重要，但是要找到有限域 $\mathbf F_q$ 上的一个 $n$ 次不可约多项式却并没有较好的确定性的方法．在一般的情况下，可以使用随机方法生成这样的不可约多项式．因为所有 $n$ 次首一多项式中，不可约多项式占的比例是 $\Theta(1/n)$ 的，所以可以先随机生成一个 $n$ 次首一多项式再判断它是否可约．这样做可以在生成期望 $\Theta(n)$ 个首一多项式后找到一个不可约多项式．当然，这样生成的不可约多项式未必是本原多项式，系数也未必是简单的．在实际操作中，如果有限域的大小提前给定，往往可以通过查表[^list-prim-poly]的方式找到系数简单的本原多项式，方便后续的计算．
+Although irreducible polynomials are important for implementing finite fields, there is no good deterministic method for finding an irreducible polynomial of degree $n$ over a finite field $\mathbf F_q$. In general, a randomized method can be used to generate one. Among all monic polynomials of degree $n$, the fraction that are irreducible is $\Theta(1/n)$, so we can generate a random monic polynomial of degree $n$ and test whether it is irreducible. This finds an irreducible polynomial after generating $\Theta(n)$ monic polynomials in expectation. Of course, an irreducible polynomial generated this way need not be primitive, and its coefficients need not be simple. In practice, if the size of the finite field is known in advance, one can often look up[^list-prim-poly] a primitive polynomial with simple coefficients in a table, which makes later computation easier.
 
-### 参考实现
+### Reference implementation
 
-本节提供一个朴素的有限域的实现，仅供参考．代码中实现了随机生成不可约多项式的方法．
+This section gives a naive implementation of finite fields, for reference only. The code includes a method for randomly generating irreducible polynomials.
 
-??? example "参考实现"
+??? example "Reference implementation"
     ```cpp
     --8<-- "docs/math/code/finite-field/finite-field_1.cpp"
     ```
 
-密码学上用的最多的是特征为 $2$ 的有限域．对于这类有限域，可以将域中的元素存储为 01 串，用位运算的方式实现域中的操作．
+The finite fields used most in cryptography are those of characteristic $2$. For such finite fields, field elements can be stored as 0/1 strings, and field operations can be implemented with bitwise operations.
 
-## 应用
+## Applications
 
-本节列举一些域扩张在算法竞赛中的应用．最主要的情形，就是在对域上的算术表达式进行计算时，需要在中间过程引入一些原本的域中并不存在的元素，从而使得直接的计算成为可能．读者应当熟悉利用复数解决实数问题的情形，这就是实数域上的扩张的例子；读者相对陌生的，可能是有限域上的扩张．所以，这里主要讨论有限域上的扩张，尤其是素域 $\mathbf F_p$ 上的扩张．
+This section lists some applications of field extensions in competitive programming. The main situation is this: when evaluating an arithmetic expression over a field, we introduce in the middle of the computation some elements that do not exist in the original field, which makes a direct computation possible. Readers should already be familiar with using complex numbers to solve real-number problems, which is an example of extending the real field. What may be less familiar is extending finite fields. So here we mainly discuss extensions of finite fields, especially of the prime field $\mathbf F_p$.
 
-有些情形下，域扩张可以降低计算的复杂度，故而是必要的，例如实数域上的 [快速傅里叶变换](../poly/fft.md)；有些情形下，域扩张只是众多解决问题方法中的一种，且通常有类似复杂度的方法可以避免使用域扩张，例如马上要提到的对斐波那契数列的计算．读者在理解这些应用的同时，应当比较不同方法的优劣，从而能够在解决问题时选择合适的方法．
+In some cases a field extension lowers the complexity of the computation, so it is necessary, as with the [Fast Fourier Transform](../poly/fft.md) over the reals. In other cases a field extension is just one of many ways to solve the problem, and there is usually a method of similar complexity that avoids it, as with computing the Fibonacci sequence, discussed next. While learning these applications, readers should compare the strengths and weaknesses of different methods, so they can pick a suitable one when solving problems.
 
-### 斐波那契数列
+### Fibonacci sequence
 
-对于 [斐波那契数列](../combinatorics/fibonacci.md) 的计算，常见方法有 $O(n)$ 的线性递推和 $O(\log n)$ 的矩阵快速幂．实际上，它还可以通过域扩张的方法加以解决，时间复杂度同样是 $O(\log n)$．斐波那契数列有通项公式：
+Common methods for computing the [Fibonacci sequence](../combinatorics/fibonacci.md) are the $O(n)$ linear recurrence and $O(\log n)$ fast matrix exponentiation. In fact, it can also be computed with a field extension, again in $O(\log n)$ time. The Fibonacci sequence has the closed form:
 
 $$
 f(n) = \frac{1}{\sqrt{5}}\left(\left(\frac{1+\sqrt{5}}{2}\right)^n-\left(\frac{1-\sqrt{5}}{2}\right)^n\right).
 $$
 
-现在要计算 $f(n)$ 在素数模 $p\neq 5$ 下的值[^fib-p5]．将这个问题转化为有限域 $\mathbf F_p$ 上的计算，首先要解决的就是 $\sqrt 5$ 在 $\mathbf F_p$ 中的意义．从代数角度看，它就是元素 $5$ 的平方根．因而，如果 $\mathbf F_p$ 中存在 $5$ 的平方根，即 $5$ 是模 $p$ 的二次剩余的时候，可以直接计算其二次剩余并带入计算；否则，就需要在扩域 $\mathbf F_p(\sqrt 5)\cong\mathbf F_p[x]/(x^2-5)$ 下进行计算．
+Now we want the value of $f(n)$ modulo a prime $p\neq 5$.[^fib-p5] To turn this into a computation in the finite field $\mathbf F_p$, the first question is what $\sqrt 5$ means in $\mathbf F_p$. Algebraically, it is a square root of the element $5$. So if $5$ has a square root in $\mathbf F_p$, that is, if $5$ is a quadratic residue modulo $p$, we can compute that square root directly and plug it in. Otherwise, we need to compute in the extension field $\mathbf F_p(\sqrt 5)\cong\mathbf F_p[x]/(x^2-5)$.
 
-当然，在扩域中进行计算的时候，没有必要一定加入 $\sqrt 5$．比如说，对于斐波那契数列，也可以设 $\phi$ 是多项式 $x^2-x-1$ 的根，从而 $f(n)$ 可以写作
+Of course, when computing in an extension field, we do not have to adjoin $\sqrt 5$ specifically. For example, for the Fibonacci sequence we can also let $\phi$ be a root of $x^2-x-1$, and then $f(n)$ can be written as
 
 $$
 f(n)=\frac{\phi^n-(-\phi)^{-n}}{2\phi-1}=\frac{\phi^n-(1-\phi)^n}{2\phi-1}.
 $$
 
-如果 $5$ 并非模 $p$ 下的二次剩余，多项式 $x^2-x-1$ 就是不可约的．此时，可以在扩域 $\mathbf F_p(\phi)\cong\mathbf F_p[x]/(x^2-x-1)$ 上进行计算，能够得到和前文一致的结果．
+If $5$ is not a quadratic residue modulo $p$, the polynomial $x^2-x-1$ is irreducible. Then we can compute in the extension field $\mathbf F_p(\phi)\cong\mathbf F_p[x]/(x^2-x-1)$ and get the same result as before.
 
-计算斐波那契数列的方法当然可以推广到别的情形．但是，有一点应当注意：有限域上多项式的不可约性和有理数域并不一致．譬如 $x^4-10x^2+1$，它在 $\mathbf Q$ 上是不可约的，相应的分裂域是 $\mathbf Q(\sqrt 2+\sqrt 3)=\mathbf Q(\sqrt 2,\sqrt 3)$；但是在 $\mathbf F_p$ 中，如果 $2$ 和 $3$ 都不是模 $p$ 的二次剩余，那么它是两个不可约多项式的乘积，亦即在扩域 $\mathbf F_p(\sqrt 2)$ 中就已经存在平方根 $\sqrt{3}$ 而不需要进一步扩张．
+This method for the Fibonacci sequence can of course be generalized to other cases. But one thing needs care: whether a polynomial is irreducible over a finite field does not match whether it is irreducible over the rationals. For example, $x^4-10x^2+1$ is irreducible over $\mathbf Q$, with splitting field $\mathbf Q(\sqrt 2+\sqrt 3)=\mathbf Q(\sqrt 2,\sqrt 3)$. But over $\mathbf F_p$, if neither $2$ nor $3$ is a quadratic residue modulo $p$, it is a product of two irreducible polynomials; that is, the square root $\sqrt{3}$ already exists in the extension field $\mathbf F_p(\sqrt 2)$, and no further extension is needed.
 
-### 推广到环上的「扩张」
+### Generalizing to "extensions" of rings
 
-正如上一节所展示的那样，域的扩张有着各种各样的限制．对于斐波那契数列的计算，只用扩域的方法只能解决模数 $p$ 是素数且 $5$ 不是 $p$ 的二次剩余的情形．但是应当注意，在 [代数扩张](#代数扩张) 一节中的论述表明，如果不要求在扩张后的结构中做除法运算，那么可以对环进行扩张[^ring-extension]．本节以任意模数 $m$ 下斐波那契数列的计算为例，简要讨论这种方法．其他的不涉及过多除法运算的常见情景，包括行列式的计算、快速傅里叶变换等，有必要的时候都可以尝试应用这种方法．
+As the previous section shows, field extensions come with all kinds of restrictions. For the Fibonacci sequence, extension fields alone only handle the case where the modulus $p$ is prime and $5$ is not a quadratic residue modulo $p$. But note that the discussion in the [Algebraic extensions](#algebraic-extensions) section shows that if we do not need division in the extended structure, we can extend rings instead.[^ring-extension] This section uses computing the Fibonacci sequence modulo an arbitrary $m$ as an example to briefly discuss this method. It can also be tried, when needed, in other common situations that do not involve much division, such as computing determinants or the Fast Fourier Transform.
 
-设 $m$ 为任意正整数，$f(n)$ 为斐波那契数列的第 $n$ 项．问题是要计算 $f(n)\bmod m$ 的值．原则上，需要在 $\mathbf Z/m\mathbf Z$ 上进行计算．但是，正如上节所表明的，在不同模数下，多项式 $x^2-x-1$ 的可约性和有无重根的情形不一致，所以斐波那契数列的通项可能相差甚远．而且，如果本身 $\mathbf Z/m\mathbf Z$ 并不是域，扩张后的元素也往往没有合法的逆（比如模 $5$ 的时候，分母 $\sqrt 5$ 直接就是零）．虽然有着诸多问题，但是其实在系数对 $m$ 取模的条件下，计算余数
+Let $m$ be any positive integer and $f(n)$ the $n$-th Fibonacci number. The problem is to compute $f(n)\bmod m$. In principle we need to compute in $\mathbf Z/m\mathbf Z$. But as the previous section showed, under different moduli the polynomial $x^2-x-1$ may or may not be reducible and may or may not have repeated roots, so the closed form of the Fibonacci sequence can look very different. Moreover, if $\mathbf Z/m\mathbf Z$ is not itself a field, elements of the extension often have no valid inverse (for example, modulo $5$, the denominator $\sqrt 5$ is simply zero). Despite all these problems, it actually suffices to compute, with coefficients taken modulo $m$, the constant term of the remainder
 
 $$
 (1-x)^n-x^n\mod{x^2-x-1}
 $$
 
-的常数项即可．比对上文中的通项公式，这个做法的合理性是显然的：这似乎就是在「扩张」$(\mathbf Z/m\mathbf Z)[x]/(x^2-x-1)$ 中计算
+. Comparing with the closed form above, why this works is clear: it looks like computing, in the "extension" $(\mathbf Z/m\mathbf Z)[x]/(x^2-x-1)$, the value of
 
 $$
 f(n)=\frac{(1-\phi)^n-\phi^n}{1-2\phi}
 $$
 
-的值，且 $\phi$ 是 $x^2-x-1$ 的根．
+where $\phi$ is a root of $x^2-x-1$.
 
-虽然没有那么显然，但是这个做法也是合法的．注意到，在有理数域的扩张 $\mathbf Q(\phi)\cong\mathbf Q[x]/(x^2-x-1)$ 中，通项公式成立．这就说明，在 $\mathbf Q[x]$ 中，
+Although less obvious, this method is also valid. Note that the closed form holds in the extension of the rationals $\mathbf Q(\phi)\cong\mathbf Q[x]/(x^2-x-1)$. This means that in $\mathbf Q[x]$,
 
 $$
 (1-x)^n-x^n \equiv f(n)(1-2x) \pmod{x^2-x-1}
 $$
 
-成立．这只涉及到整系数多项式，因而在 $\mathbf Z[x]$ 中也成立．写成带余除法，等式两边的系数都对 $m$ 取模，就得到 $(\mathbf Z/m\mathbf Z)[x]$ 上的恒等式．这个结论对于任意 $m$ 都成立．
+holds. This involves only polynomials with integer coefficients, so it also holds in $\mathbf Z[x]$. Write it as a division with remainder and reduce the coefficients on both sides modulo $m$; this gives an identity in $(\mathbf Z/m\mathbf Z)[x]$. The conclusion holds for every $m$.
 
-一般的情况下，如果某个表达式可以在有理数域 $\mathbf Q$ 的扩域上进行计算，那么就一定可以通过约去分母的方式得到 $\mathbf Z[x]$ 上的结论，再对 $m$ 取模就得到 $(\mathbf Z/m\mathbf Z)[x]$ 上的结论．这种思路能够行得通的关键在于，约去分母这一步不应该造成「不可挽回」的后果．比如，对于斐波那契数列的计算，如果不用常数项的系数，而是用一次项的系数，那么因为系数有因子 $2$，那么 $2$ 在模 $m$ 是偶数的情况下就没有逆元，没有办法恢复 $f(n)$ 的值；再比如，同样是斐波那契数列的计算，如果使用带有 $(-\phi)^{-n}$ 项的通项公式，那么约去分母的步骤会引入难以处理的因子，从而无法从取余后的结果得到结论．因而，对于计算过程的选择，是能够应用这一技巧的关键．
+In general, if an expression can be computed in an extension of the rational field $\mathbf Q$, then clearing denominators gives a result in $\mathbf Z[x]$, and reducing modulo $m$ gives a result in $(\mathbf Z/m\mathbf Z)[x]$. The key to making this idea work is that clearing denominators must not cause "irreversible" damage. For example, when computing the Fibonacci sequence, if we used the coefficient of the linear term instead of the constant term, the coefficient has a factor $2$, and $2$ has no inverse when $m$ is even, so $f(n)$ cannot be recovered. As another example, again for the Fibonacci sequence, if we used the closed form with the $(-\phi)^{-n}$ term, clearing denominators would bring in factors that are hard to handle, so no conclusion could be drawn from the reduced result. So choosing the right computation is the key to applying this trick.
 
-### Cipolla 算法
+### Cipolla's algorithm
 
-这是利用有限域的扩域进行计算的典型例子．对于模 $p\neq 2$ 下的二次剩余 $a$，要找到它的平方根，即使得 $x^2\equiv a\pmod p$ 成立的 $x$．虽然这是 $\mathbf F_p$ 上的问题，但是 [Cipolla 算法](../number-theory/quad-residue.md#cipolla-算法) 在有限域 $\mathbf F_{p^2}$ 上进行计算．本节使用域论的语言对这个算法进行说明．初等数论的证明可以参考所给链接．
+This is a typical example of computing in an extension of a finite field. Given a quadratic residue $a$ modulo $p\neq 2$, we want to find its square root, that is, an $x$ with $x^2\equiv a\pmod p$. Although this is a problem in $\mathbf F_p$, [Cipolla's algorithm](../number-theory/quad-residue.md#cipolla-算法) computes in the finite field $\mathbf F_{p^2}$. This section explains the algorithm in the language of field theory. For a proof using elementary number theory, see the given link.
 
-具体来说，Cipolla 算法首先选择 $r$ 使得 $r^2-a$ 是模 $p$ 的二次非剩余，这意味着 $x^2-(r^2-a)$ 是不可约多项式．因而，令 $u=r^2-a$，可以考虑扩域 $\mathbf F_p(\sqrt u)$．因为 Frobenius 自同态只能将元素映射到它的共轭，而这样的共轭在二次扩张中是唯一的，即有 $(r-\sqrt u)^p=r+\sqrt u$．故而，$(r-\sqrt u)^{p+1}=(r+\sqrt u)(r-\sqrt u)=r^2-u=a$．所以，要确定平方根，只要计算 $(r-\sqrt u)^{(p+1)/2}$ 就好了．这个值必然位于 $\mathbf F_p$ 中，因为 $x^2-a$ 的分裂域就是 $\mathbf F_p$ 本身．
+Specifically, Cipolla's algorithm first picks $r$ such that $r^2-a$ is a quadratic non-residue modulo $p$, which means $x^2-(r^2-a)$ is an irreducible polynomial. So, letting $u=r^2-a$, we can consider the extension field $\mathbf F_p(\sqrt u)$. The Frobenius endomorphism can only map an element to one of its conjugates, and in a quadratic extension that conjugate is unique, so $(r-\sqrt u)^p=r+\sqrt u$. Hence $(r-\sqrt u)^{p+1}=(r+\sqrt u)(r-\sqrt u)=r^2-u=a$. So to find the square root, we just compute $(r-\sqrt u)^{(p+1)/2}$. This value must lie in $\mathbf F_p$, because the splitting field of $x^2-a$ is $\mathbf F_p$ itself.
 
-## 习题
+## Exercises
 
-最后，列举一些直接应用本文内容的题目，以便加深理解．但应注意，很多内容并不是算法竞赛的常规考点．
+Finally, here are some problems that directly apply the content of this page, to deepen understanding. Note, however, that much of this content is not commonly tested in competitive programming.
 
--   分圆多项式：
-    -   [Luogu P1520 因式分解](https://www.luogu.com.cn/problem/P1520)
+-   Cyclotomic polynomials:
+    -   [Luogu P1520 Factorization](https://www.luogu.com.cn/problem/P1520)
     -   [Gym102114C Call It What You Want](https://codeforces.com/gym/102114/problem/C)
--   有限域：
-    -   [Luogu P3923 大学数学题](https://www.luogu.com.cn/problem/P3923)
-    -   [\[COTS 2021\] 菜 Jelo](https://www.luogu.com.cn/problem/P11192)
+-   Finite fields:
+    -   [Luogu P3923 A College Math Problem](https://www.luogu.com.cn/problem/P3923)
+    -   [\[COTS 2021\] Dish (Jelo)](https://www.luogu.com.cn/problem/P11192)
     -   [CF1310F. Bad Cryptography](https://codeforces.com/problemset/problem/1310/F)
-    -   [LOJ 178. 多项式求根](https://loj.ac/p/178)
--   域扩张：
+    -   [LOJ 178. Polynomial Root Finding](https://loj.ac/p/178)
+-   Field extensions:
     -   [\[Oleksandr Kulkov Contest 2\] Problem A. Square Root Partitioning](https://codeforces.com/gym/102354/problem/A)
     -   [CF1103E. Radix Sum](https://codeforces.com/problemset/problem/1103/E)
 
-## 参考资料与注释
+## References and notes
 
 -   Dummit, D.S. and Foote, R.M. (2004) Abstract Algebra. 3rd Edition, John Wiley & Sons, Inc.
 -   [Milne, J.S. Fields and Galois Theory.](https://www.jmilne.org/math/CourseNotes/FT.pdf)
@@ -832,22 +832,22 @@ $$
 -   [Michel Waldschmidt. An introduction to the theory of finite fields](https://webusers.imj-prg.fr/~michel.waldschmidt/articles/pdf/FiniteFields.pdf)
 -   [Finite Field Arithmetic - Wikipedia](https://en.wikipedia.org/wiki/Finite_field_arithmetic)
 
-[^subfield-one]: 这是因为域 $E$ 的幺元 $1_E$ 必然满足 $F$ 上的关系 $x^2-x=0$，而后者在域 $F$ 内只有两个根 $0_F$ 和 $1_F$，由于域的定义要求 $1_E\neq 0_E$，就必然有 $1_E=1_F$ 和 $0_E=0_F$．
+[^subfield-one]: This is because the unity $1_E$ of the field $E$ must satisfy the relation $x^2-x=0$ over $F$, and this equation has only two roots in $F$, namely $0_F$ and $1_F$. Since the definition of a field requires $1_E\neq 0_E$, we must have $1_E=1_F$ and $0_E=0_F$.
 
-[^initial-object-ring]: 用范畴论的语言来说，就是 $\mathbf Z$ 是幺环范畴的 [始对象](https://en.wikipedia.org/wiki/Initial_and_terminal_objects)．
+[^initial-object-ring]: In the language of category theory, $\mathbf Z$ is the [initial object](https://en.wikipedia.org/wiki/Initial_and_terminal_objects) of the category of rings with unity.
 
-[^polynomial-universal]: 严格地说，这里指的是多项式环 $R[x]$ 的 [万有性质](https://en.wikipedia.org/wiki/Polynomial_ring#Polynomial_evaluation)（universal property）．
+[^polynomial-universal]: Strictly speaking, this refers to the [universal property](https://en.wikipedia.org/wiki/Polynomial_ring#Polynomial_evaluation) of the polynomial ring $R[x]$.
 
-[^multi-poly-ring]: 此处的多项式环有无限多个不定元．要定义这样的多项式环，首先要定义单项式．设不定元的集合为 $X$，则它上面的单项式是全体只在有限多个不定元处取值不为零的函数 $\alpha:X\rightarrow\mathbf N$，可以记作 $x_{i_1}^{\alpha(i_1)}\cdots x_{i_k}^{\alpha(i_k)}$，其中，$i_1,\cdots,i_k$ 是所有 $\alpha$ 取值不为零的不定元的指标．多项式是所有有限多个单项式的线性组合．它们在相应定义的加法和乘法运算下成为环．对于有限多个不定元的情形，可以证明这种定义与 [多元多项式环](./ring-theory.md#多元多项式环) 一节的递归定义得到的结果是一致的．
+[^multi-poly-ring]: This polynomial ring has infinitely many indeterminates. To define such a ring, first define monomials. Let $X$ be the set of indeterminates. A monomial on $X$ is a function $\alpha:X\rightarrow\mathbf N$ that is nonzero at only finitely many indeterminates, and can be written $x_{i_1}^{\alpha(i_1)}\cdots x_{i_k}^{\alpha(i_k)}$, where $i_1,\cdots,i_k$ are the indices of all indeterminates where $\alpha$ is nonzero. A polynomial is a linear combination of finitely many monomials. With suitably defined addition and multiplication, these form a ring. For finitely many indeterminates, one can prove that this definition agrees with the recursive definition in the [multivariate polynomial ring](./ring-theory.md#多元多项式环) section.
 
-[^fundamental-algebra]: 虽然名字是代数基本定理，这个结论并不是纯代数的，这是因为实数域的构造需要通过拓扑结构进行．
+[^fundamental-algebra]: Despite its name, the fundamental theorem of algebra is not purely algebraic, because constructing the real numbers requires topology.
 
-[^ddf]: 这样的说法有失严谨，因为还会得到次数 $d\mid n$ 的不可约因子．但是，由于算法实现时通常会从较小的次数的因子开始分离，在分离 $n$ 次不可约多项式因子时，较小的因子应该已经分离完了，所以这说法也是可以接受的．
+[^ddf]: This statement is not quite rigorous, because it also yields irreducible factors of degree $d\mid n$. But implementations usually split off factors starting from smaller degrees, so by the time the irreducible factors of degree $n$ are being split off, the smaller ones should already have been removed. So the statement is acceptable.
 
-[^prim-poly]: 不要把这里的名称和多项式理论中的本原多项式（即所有系数的最大公因子是一的多项式）混淆．
+[^prim-poly]: Do not confuse this name with the primitive polynomials of polynomial theory (polynomials whose coefficients have greatest common divisor one).
 
-[^list-prim-poly]: 比如，[Hansen, T., & Mullen, G. L. (1992). Primitive polynomials over finite fields. Mathematics of computation, 59(200), 639-643](https://www.ams.org/journals/mcom/1992-59-200/S0025-5718-1992-1134730-7/S0025-5718-1992-1134730-7.pdf) 的附录就提供了这样的列表．
+[^list-prim-poly]: For example, the appendix of [Hansen, T., & Mullen, G. L. (1992). Primitive polynomials over finite fields. Mathematics of computation, 59(200), 639-643](https://www.ams.org/journals/mcom/1992-59-200/S0025-5718-1992-1134730-7/S0025-5718-1992-1134730-7.pdf) provides such a list.
 
-[^fib-p5]: 当 $p=5$ 时，Fibonacci 数列的特征方程 $x^2-x-1=0$ 有重根 $x=3$，因而在 $\mathbf F_5$ 中，Fibonacci 数列的通项公式是 $f(n)=n3^{n-1}$．
+[^fib-p5]: When $p=5$, the characteristic equation $x^2-x-1=0$ of the Fibonacci sequence has the double root $x=3$, so in $\mathbf F_5$ the closed form of the Fibonacci sequence is $f(n)=n3^{n-1}$.
 
-[^ring-extension]: 所谓的环上的扩张，通常有两种含义：一种是 [群的扩张的推广](https://en.wikipedia.org/wiki/Algebra_extension)，一种是 [域的扩张的推广](https://en.wikipedia.org/wiki/Subring#Ring_extensions)．本文指的是第二种含义．更具体地说，本节涉及的扩张都是交换幺环上的 [整扩张](https://en.wikipedia.org/wiki/Integral_element#Integral_extensions)，它是域上的代数扩张的概念在交换幺环上的推广．
+[^ring-extension]: "Extension of a ring" usually has two meanings: one is a [generalization of group extensions](https://en.wikipedia.org/wiki/Algebra_extension), and the other is a [generalization of field extensions](https://en.wikipedia.org/wiki/Subring#Ring_extensions). This page uses the second meaning. More specifically, the extensions in this section are all [integral extensions](https://en.wikipedia.org/wiki/Integral_element#Integral_extensions) of commutative rings with unity, which generalize algebraic extensions of fields to commutative rings with unity.
