@@ -1,106 +1,106 @@
-斐波那契数列（The Fibonacci sequence，[OEIS A000045](http://oeis.org/A000045)）的定义如下：
+The Fibonacci sequence ([OEIS A000045](http://oeis.org/A000045)) is defined as follows:
 
 $$
 F_0 = 0, F_1 = 1, F_n = F_{n-1} + F_{n-2}
 $$
 
-该数列的前几项如下：
+The first few terms of the sequence are:
 
 $$
 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, \dots
 $$
 
-## 卢卡斯数列
+## The Lucas sequence
 
-卢卡斯数列（The Lucas sequence，[OEIS A000032](http://oeis.org/A000032)）的定义如下：
+The Lucas sequence ([OEIS A000032](http://oeis.org/A000032)) is defined as follows:
 
 $$
 L_0 = 2, L_1 = 1, L_n = L_{n-1} + L_{n-2}
 $$
 
-该数列的前几项如下：
+The first few terms of the sequence are:
 
 $$
 2, 1, 3, 4, 7, 11, 18, 29, 47, 76, 123, 199, \dots
 $$
 
-研究斐波那契数列，很多时候需要借助卢卡斯数列为工具．
+When studying the Fibonacci sequence, the Lucas sequence is often a useful tool.
 
-## 斐波那契数列通项公式
+## Closed-form formula for the Fibonacci sequence
 
-第 $n$ 个斐波那契数可以在 $\Theta (n)$ 的时间内使用递推公式计算．但我们仍有更快速的方法计算．
+The $n$-th Fibonacci number can be computed in $\Theta (n)$ time using the recurrence. But there are faster methods.
 
-### 解析解
+### Analytic solution
 
-解析解即公式解．我们有斐波那契数列的通项公式（Binet's Formula）：
+An analytic solution is a closed-form formula. The Fibonacci sequence has the following closed form (Binet's formula):
 
 $$
 F_n = \frac{\left(\frac{1 + \sqrt{5}}{2}\right)^n - \left(\frac{1 - \sqrt{5}}{2}\right)^n}{\sqrt{5}}
 $$
 
-这个公式可以很容易地用归纳法证明，当然也可以通过生成函数的概念推导，或者解一个方程得到．
+This formula is easy to prove by induction. It can also be derived using generating functions, or by solving an equation.
 
-当然你可能发现，这个公式分子的第二项总是小于 $1$，并且它以指数级的速度减小．因此我们可以把这个公式写成
+You may notice that the second term in the numerator is always less than $1$ in absolute value and shrinks exponentially. So we can write the formula as
 
 $$
 F_n = \left[\frac{\left(\frac{1 + \sqrt{5}}{2}\right)^n}{\sqrt{5}}\right]
 $$
 
-这里的中括号表示取离它最近的整数．
+Here the brackets mean rounding to the nearest integer.
 
-这两个公式在计算的时候要求极高的精确度，因此在实践中很少用到．但是请不要忽视！结合模意义下二次剩余和逆元的概念，在 OI 中使用这个公式仍是有用的．
+Both formulas need very high precision to compute, so they are rarely used in practice. But do not ignore them! Combined with quadratic residues and modular inverses, this formula is still useful in OI.
 
-### 卢卡斯数列通项公式
+### Closed-form formula for the Lucas sequence
 
-我们有卢卡斯数列的通项公式：
+The Lucas sequence has the closed form:
 
 $$
 L_n = \left(\frac{1 + \sqrt{5}}{2}\right)^n + \left(\frac{1 - \sqrt{5}}{2}\right)^n
 $$
 
-与斐波那契数列非常相似．事实上有：
+This is very similar to the Fibonacci sequence. In fact:
 
 $$
 \frac{L_n + F_n\sqrt{5}}{2} = \left(\frac{1 + \sqrt{5}}{2}\right)^n
 $$
 
-也就是说，$L_n$ 和 $F_n$ 恰好构成 $\left(\frac{1 + \sqrt{5}}{2}\right)^n$ 二项式展开再合并同类项后的分子系数．也就是说，Pell 方程
+That is, $L_n$ and $F_n$ are exactly the numerator coefficients after expanding $\left(\frac{1 + \sqrt{5}}{2}\right)^n$ with the binomial theorem and collecting like terms. In other words, all solutions of the Pell equation
 
 $$
 x^2-5y^2=-4
 $$
 
-的全体解，恰好是
+are exactly
 
 $$
 \frac{x_n + y_n\sqrt{5}}{2} = \frac{L_n + F_n\sqrt{5}}{2}
 $$
 
-恰好是卢卡斯数列和斐波那契数列．因此有
+which are exactly the Lucas and Fibonacci numbers. So
 
 $$
 {L_n}^2-5{F_n}^2=-4
 $$
 
-### 矩阵形式
+### Matrix form
 
-斐波那契数列的递推可以用矩阵乘法的形式表达：
+The Fibonacci recurrence can be written as a matrix multiplication:
 
 $$
 \begin{bmatrix}F_{n-1} & F_{n} \cr\end{bmatrix} = \begin{bmatrix}F_{n-2} & F_{n-1} \cr\end{bmatrix} \begin{bmatrix}0 & 1 \cr 1 & 1 \cr\end{bmatrix}
 $$
 
-设 $P = \begin{bmatrix}0 & 1 \cr 1 & 1 \cr\end{bmatrix}$，我们得到
+Let $P = \begin{bmatrix}0 & 1 \cr 1 & 1 \cr\end{bmatrix}$. We get
 
 $$
 \begin{bmatrix}F_n & F_{n+1} \cr\end{bmatrix} = \begin{bmatrix}F_0 & F_1 \cr\end{bmatrix} P^n
 $$
 
-于是我们可以用矩阵乘法在 $\Theta(\log n)$ 的时间内计算斐波那契数列．此外，前一节讲述的公式也可通过矩阵对角化的技巧来得到．
+So we can compute Fibonacci numbers in $\Theta(\log n)$ time with matrix multiplication. Also, the formula from the previous section can be derived by diagonalizing the matrix.
 
-### 快速倍增法
+### Fast doubling
 
-使用上面的方法我们可以得到以下等式：
+From the method above we can get the following identities:
 
 $$
 \begin{aligned}
@@ -109,7 +109,7 @@ F_{2k+1} &= F_{k+1}^2 + F_{k}^2
 \end{aligned}
 $$
 
-于是可以通过这样的方法快速计算两个相邻的斐波那契数（常数比矩乘小）．代码如下，返回值是一个二元组 $(F_n,F_{n+1})$．
+With these, we can quickly compute two adjacent Fibonacci numbers (with a smaller constant factor than matrix multiplication). The code is below; it returns the pair $(F_n,F_{n+1})$.
 
 ```cpp
 pair<int, int> fib(int n) {
@@ -124,51 +124,51 @@ pair<int, int> fib(int n) {
 }
 ```
 
-## 性质
+## Properties
 
-斐波那契数列拥有许多有趣的性质，这里列举出一部分简单的性质：
+The Fibonacci sequence has many interesting properties. Here are some simple ones:
 
-1.  卡西尼性质（Cassini's identity）：$F_{n-1} F_{n+1} - F_n^2 = (-1)^n$．
-2.  附加性质：$F_{n+k} = F_k F_{n+1} + F_{k-1} F_n$．
-3.  取上一条性质中 $k = n$，我们得到 $F_{2n} = F_n (F_{n+1} + F_{n-1})$．
-4.  由上一条性质可以归纳证明，$\forall k\in \mathbb{N},F_n|F_{nk}$．
-5.  上述性质可逆，即 $\forall F_a|F_b,a|b$．
-6.  GCD 性质：$(F_m, F_n) = F_{(m, n)}$．
-7.  以斐波那契数列相邻两项作为输入会使欧几里德算法达到最坏复杂度（具体参见 [维基 - 拉梅](https://en.wikipedia.org/wiki/Gabriel_Lam%C3%A9)）．
+1.  Cassini's identity: $F_{n-1} F_{n+1} - F_n^2 = (-1)^n$.
+2.  Addition rule: $F_{n+k} = F_k F_{n+1} + F_{k-1} F_n$.
+3.  Taking $k = n$ in the previous property, we get $F_{2n} = F_n (F_{n+1} + F_{n-1})$.
+4.  From the previous property, induction shows that $\forall k\in \mathbb{N},F_n|F_{nk}$.
+5.  The converse of the property above also holds, i.e. $\forall F_a|F_b,a|b$.
+6.  GCD property: $(F_m, F_n) = F_{(m, n)}$.
+7.  Two adjacent Fibonacci numbers as input make the Euclidean algorithm reach its worst-case complexity (see [Wikipedia - Lamé](https://en.wikipedia.org/wiki/Gabriel_Lam%C3%A9)).
 
-### 斐波那契数列与卢卡斯数列的关系
+### Relation between the Fibonacci and Lucas sequences
 
-不难发现，关于卢卡斯数列与斐波那契数列的等式，与三角函数公式具有很高的相似性．比如：
+It is easy to see that identities between the Lucas and Fibonacci sequences look a lot like trigonometric identities. For example,
 
 $$
 \frac{L_n + F_n\sqrt{5}}{2} = \left(\frac{1 + \sqrt{5}}{2}\right)^n
 $$
 
-与
+and
 
 $$
 \cos nx + i\sin nx = \left(\cos x + i\sin x\right)^n
 $$
 
-很像．以及
+look alike. Also,
 
 $$
 {L_n}^2-5{F_n}^2=-4
 $$
 
-与
+and
 
 $$
 \cos^2 x + \sin^2 x = 1
 $$
 
-很像．因此，卢卡斯数列与余弦函数很像，而斐波那契数列与正弦函数很像．比如，根据
+look alike. So the Lucas sequence resembles cosine, and the Fibonacci sequence resembles sine. For example, from
 
 $$
 \left(\frac{1 + \sqrt{5}}{2}\right)^m\left(\frac{1 + \sqrt{5}}{2}\right)^n = \left(\frac{1 + \sqrt{5}}{2}\right)^{m+n}
 $$
 
-可以得到两下标之和的等式：
+we get the identities for the sum of two indices:
 
 $$
 2L_{m+n}=5F_mF_n+L_mL_n
@@ -178,7 +178,7 @@ $$
 2F_{m+n}=F_mL_n+L_mF_n
 $$
 
-于是推论就有二倍下标的等式：
+As a corollary, we get the identities for double indices:
 
 $$
 L_{2n}={L_n}^2-2{\left(-1\right)}^n
@@ -188,19 +188,19 @@ $$
 F_{2n}=F_nL_n
 $$
 
-这也是一种快速倍增下标的办法．同样地，也可以仿照三角函数的公式，比如奇偶性、和差化积、积化和差、半角、万能代换等等，推理出更多有关卢卡斯数列与斐波那契数列的相应等式．
+This is another way to double the index quickly. In the same way, by imitating trigonometric formulas, such as parity, sum-to-product, product-to-sum, half-angle and the universal (tangent half-angle) substitution, we can derive more identities for the Lucas and Fibonacci sequences.
 
-## 斐波那契编码
+## Fibonacci coding
 
-我们可以利用斐波那契数列为正整数编码．根据 [齐肯多夫定理](https://zh.wikipedia.org/wiki/%E9%BD%8A%E8%82%AF%E5%A4%9A%E5%A4%AB%E5%AE%9A%E7%90%86)，任何自然数 $n$ 可以被唯一地表示成一些斐波那契数的和：
+We can use the Fibonacci sequence to encode positive integers. By [Zeckendorf's theorem](https://zh.wikipedia.org/wiki/%E9%BD%8A%E8%82%AF%E5%A4%9A%E5%A4%AB%E5%AE%9A%E7%90%86), every natural number $n$ can be written uniquely as a sum of Fibonacci numbers:
 
 $$
 N = F_{k_1} + F_{k_2} + \ldots + F_{k_r}
 $$
 
-并且 $k_1 \ge k_2 + 2,\ k_2 \ge k_3 + 2,\  \ldots,\  k_r \ge 2$（即不能使用两个相邻的斐波那契数）
+where $k_1 \ge k_2 + 2,\ k_2 \ge k_3 + 2,\  \ldots,\  k_r \ge 2$ (that is, no two adjacent Fibonacci numbers may be used).
 
-于是我们可以用 $d_0 d_1 d_2 \dots d_s 1$ 的编码表示一个正整数，其中 $d_i=1$ 则表示 $F_{i+2}$ 被使用．编码末位我们强制给它加一个 1（这样会出现两个相邻的 1），表示这一串编码结束．举几个例子：
+So we can represent a positive integer by the code $d_0 d_1 d_2 \dots d_s 1$, where $d_i=1$ means $F_{i+2}$ is used. We always append an extra 1 at the end (which creates two adjacent 1s) to mark the end of the code. Some examples:
 
 $$
 \begin{aligned}
@@ -213,96 +213,96 @@ $$
 \end{aligned}
 $$
 
-给 $n$ 编码的过程可以使用贪心算法解决：
+Encoding $n$ can be done with a greedy algorithm:
 
-1.  从大到小枚举斐波那契数 $F_i$，直到 $F_i\le n$．
-2.  把 $n$ 减掉 $F_i$，在编码的 $i-2$ 的位置上放一个 1（编码从左到右以 0 为起点）．
-3.  如果 $n$ 为正，回到步骤 1．
-4.  最后在编码末位添加一个 1，表示编码的结束位置．
+1.  Go through the Fibonacci numbers $F_i$ from largest to smallest until $F_i\le n$.
+2.  Subtract $F_i$ from $n$, and put a 1 at position $i-2$ of the code (positions count from 0, left to right).
+3.  If $n$ is positive, go back to step 1.
+4.  Finally, append a 1 at the end of the code to mark where it ends.
 
-解码过程同理，先删掉末位的 1，对于编码为 1 的位置 $i$（编码从左到右以 0 为起点），累加一个 $F_{i+2}$ 到答案．最后的答案就是原数字．
+Decoding works the same way. First remove the final 1. Then for each position $i$ in the code holding a 1 (positions count from 0, left to right), add $F_{i+2}$ to the answer. The final answer is the original number.
 
-## 模意义下周期性
+## Periodicity under a modulus
 
-对于模 $m$ 意义下的斐波那契数列，可以容易地使用抽屉原理证明，该数列是有周期性的．由于斐波那契数每一项的计算都依赖于前两项的取值，所以需要用相邻斐波那契数组成的数对描述数列当且所处的状态．考虑模意义下前 $m^2+1$ 个斐波那契数对：
+For the Fibonacci sequence modulo $m$, the pigeonhole principle easily shows that the sequence is periodic. Each Fibonacci number depends on the previous two, so the current state of the sequence is described by a pair of adjacent Fibonacci numbers. Consider the first $m^2+1$ pairs of Fibonacci numbers modulo $m$:
 
 $$
 (F_0,\ F_1),\ (F_1,\ F_2),\ \ldots,\ (F_{m^2},\ F_{m^2 + 1})
 $$
 
-模 $m$ 的剩余系大小为 $m$，这意味着至多只可能有 $m^2$ 种互不相同的数对．因此，在前 $m^2+1$ 个数对中必有两个相同的数对，于是从这两个数对可以往后生成相同的斐波那契数列．那么，斐波那契数列就是周期性的，且（最小正）周期不会超过 $m^2$．
+There are $m$ residues modulo $m$, so there can be at most $m^2$ distinct pairs. So among the first $m^2+1$ pairs, two must be equal, and the sequence generated after these two pairs is the same. So the Fibonacci sequence is periodic, and its (smallest positive) period is at most $m^2$.
 
-### Pisano 周期
+### Pisano period
 
-模 $m$ 意义下斐波那契数列的最小正周期被称为 **Pisano 周期**（Pisano period，皮萨诺周期，[OEIS A001175](http://oeis.org/A001175)）．本文中用 $\pi(m)$ 表示模 $m$ 的 Pisano 周期．
+The smallest positive period of the Fibonacci sequence modulo $m$ is called the **Pisano period** ([OEIS A001175](http://oeis.org/A001175)). On this page, $\pi(m)$ denotes the Pisano period modulo $m$.
 
-这一观察可以用于计算第 $n$ 项斐波那契数模 $m$ 的值．如果 $n$ 非常大，就需要计算斐波那契数模 $m$ 的周期．当然，只需要计算周期，不一定是最小正周期．
+This observation can be used to compute the $n$-th Fibonacci number modulo $m$. If $n$ is very large, we need the period of the Fibonacci numbers modulo $m$. Of course, any period works; it does not have to be the smallest positive one.
 
-为此，有如下结论：
+For this, we have the following results:
 
-1.  对于互素的模数 $m_1,m_2$，有 $\pi(m_1m_2)=\operatorname{lcm}(\pi(m_1),\pi(m_2))$．
-2.  对于素数 $p$ 和正整数 $e$，有 $\pi(p^{e})\mid p^{e-1}\pi(p)$．
-3.  对于 $m=2^e~(e\in\mathbf N_+)$，有 $\pi(m)=3\cdot 2^{e-1}$．
-4.  对于 $m=5^e~(e\in\mathbf N_+)$，有 $\pi(m)=4\cdot 5^e$．
-5.  最后，对于素数 $p\equiv\pm1\pmod{10}$，有 $\pi(p)\mid(p-1)$；对于素数 $p\equiv\pm3\pmod{10}$，有 $\pi(p)\mid 2(p+1)$．
+1.  For coprime moduli $m_1,m_2$, we have $\pi(m_1m_2)=\operatorname{lcm}(\pi(m_1),\pi(m_2))$.
+2.  For a prime $p$ and a positive integer $e$, we have $\pi(p^{e})\mid p^{e-1}\pi(p)$.
+3.  For $m=2^e~(e\in\mathbf N_+)$, we have $\pi(m)=3\cdot 2^{e-1}$.
+4.  For $m=5^e~(e\in\mathbf N_+)$, we have $\pi(m)=4\cdot 5^e$.
+5.  Finally, for a prime $p\equiv\pm1\pmod{10}$, we have $\pi(p)\mid(p-1)$; for a prime $p\equiv\pm3\pmod{10}$, we have $\pi(p)\mid 2(p+1)$.
 
-综合这些情形，可以说明：模 $m$ 的 Pisano 周期不会超过 $6m$，等号当且仅当 $m = 2\times 5^e~(e\in\mathbf N_+)$ 时取得．
+Putting these cases together shows that the Pisano period modulo $m$ is at most $6m$, with equality if and only if $m = 2\times 5^e~(e\in\mathbf N_+)$.
 
-利用上述结论，可以基于素因数分解算法，得到如下快速计算 Pisano 周期的方法：
+Using these results together with a prime factorization algorithm, we get the following fast method to compute the Pisano period:
 
-??? example "参考代码"
+??? example "Reference code"
     ```cpp
     --8<-- "docs/math/code/combinatorics/fibonacci/pisano_estimate.cpp:pisano"
     ```
 
-这样得到的周期可能只是 Pisano 周期的一个倍数．要得到精确的 Pisano 周期，可以进一步考察该周期的因数；或者，可以直接通过 [BSGS 算法](../number-theory/discrete-logarithm.md#大步小步算法) 以 $O(\sqrt{m})$ 的时间复杂度计算．
+The period found this way may only be a multiple of the Pisano period. To get the exact Pisano period, we can further check the divisors of this period, or compute it directly in $O(\sqrt{m})$ time with the [BSGS algorithm](../number-theory/discrete-logarithm.md#大步小步算法).
 
-### 证明
+### Proof
 
-最后，本文简要证明上述关于 Pisano 周期的结论．值得说明的是，利用下文说明的方法，类似的结论可以推广到一般的二阶常系数线性齐次递推数列．尽管具体的常数有所差异，这些数列模 $m$ 的 Pisano 周期都是 $O(m)$ 的．
+Finally, we briefly prove the results above about the Pisano period. It is worth noting that, with the method below, similar results extend to general second-order linear homogeneous recurrences with constant coefficients. Although the exact constants differ, the Pisano periods of these sequences modulo $m$ are all $O(m)$.
 
-第一个观察是：利用 [中国剩余定理](../number-theory/crt.md)，可以将讨论限制在素数幂模的情形．设 $m_1,m_2$ 是两个互素的模数．斐波那契数列在模 $m_1$ 下的周期是 $\pi(m_1)$ 及其倍数，在模 $m_2$ 下的周期是 $\pi(m_2)$ 及其倍数，所以它在模 $m_1m_2$ 下的最小正周期则恰为 $\pi(m_1)$ 和 $\pi(m_2)$ 的最小公倍数．这就是前文的结论 1．
+The first observation is that, by the [Chinese remainder theorem](../number-theory/crt.md), we can restrict the discussion to prime power moduli. Let $m_1,m_2$ be two coprime moduli. The periods of the Fibonacci sequence modulo $m_1$ are $\pi(m_1)$ and its multiples, and the periods modulo $m_2$ are $\pi(m_2)$ and its multiples, so its smallest positive period modulo $m_1m_2$ is exactly the least common multiple of $\pi(m_1)$ and $\pi(m_2)$. This is result 1 above.
 
-另一个观察是：模 $m$ 下的 Pisano 周期，其实是最小的正整数 $k$，使得
+Another observation is that the Pisano period modulo $m$ is really the smallest positive integer $k$ such that
 
 $$
 A^k = \begin{pmatrix} 1&1\\1&0 \end{pmatrix}^k \equiv I \pmod{m}.
 $$
 
-也就是说，它其实是矩阵 $A$ 在模 $m$ 下[^mod-m]的 [阶](../algebra/group-theory.md#阶)．
+In other words, it is the [order](../algebra/group-theory.md#阶) of the matrix $A$ modulo $m$[^mod-m].
 
-对于素数幂模 $m=p^e$ 的情形，可以通过经典的升幂论证联系到相应的素数模的情形．设 $k=\pi(p^e)$，就存在二阶方阵 $\Lambda$，使得
+For prime power moduli $m=p^e$, a classic lifting-the-exponent argument relates it to the case of the corresponding prime modulus. Let $k=\pi(p^e)$. Then there is a $2\times 2$ matrix $\Lambda$ such that
 
 $$
 A^k = p^e\Lambda + I 
 $$
 
-成立．故而，由 [二项式定理](./combination.md#二项式定理) 可知
+holds. So by the [binomial theorem](./combination.md#二项式定理),
 
 $$
 A^{kp} = (p^e\Lambda + I)^p = I + \sum_{i=1}^p\binom{p}{i}(p^e\Lambda)^i \equiv I\pmod{p^{e+1}}. 
 $$
 
-因此，由 [阶的性质](../number-theory/primitive-root.md#幂的循环结构)，有 $\pi(p^{e+1})\mid kp = p\pi(p^e)$．对 $e$ 归纳可知，$\pi(p^e)\mid p^{e-1}\pi(p)$ 总是成立．
+So, by the [properties of the order](../number-theory/primitive-root.md#幂的循环结构), we have $\pi(p^{e+1})\mid kp = p\pi(p^e)$. By induction on $e$, $\pi(p^e)\mid p^{e-1}\pi(p)$ always holds.
 
-对于素数模 $p$ 的情形，本文讨论两种证明方式．
+For a prime modulus $p$, we give two proofs.
 
-=== "利用通项公式"
-    一种是利用斐波那契数列的通项公式：
+=== "Using the closed-form formula"
+    One proof uses the closed form of the Fibonacci sequence:
     
     $$
     F_n = \dfrac{1}{\sqrt{5}}\left(\dfrac{1+\sqrt{5}}{2}\right)^n - \dfrac{1}{\sqrt{5}}\left(\dfrac{1-\sqrt{5}}{2}\right)^n.
     $$
     
-    将它用二项式定理展开，并消去根式项：
+    Expand it with the binomial theorem and cancel the radical terms:
     
     $$
     F_n = \dfrac{1}{2^{n-1}}\sum_{i=0}^{\lfloor(n-1)/2\rfloor}\binom{n}{2i+1}5^i.
     $$
     
-    对于 $p=2$，这一表达式无法直接取模，但可以验证对应的 Pisano 周期为 $\pi(2)=3$．对于 $p=5$，有 $F_n\equiv n\cdot 3^{n-1}\pmod{p}$，可以直接验证对应的 Pisano 周期为 $\pi(5)=20$．对于剩余的奇素模数，可以分为两种情形：
+    For $p=2$, this expression cannot be reduced modulo $p$ directly, but we can check that the Pisano period is $\pi(2)=3$. For $p=5$, we have $F_n\equiv n\cdot 3^{n-1}\pmod{p}$, and we can check directly that the Pisano period is $\pi(5)=20$. The remaining odd prime moduli fall into two cases:
     
-    -   如果 $p\equiv 1,4\pmod{5}$，就有
+    -   If $p\equiv 1,4\pmod{5}$, then
     
         $$
         \begin{aligned}
@@ -311,8 +311,8 @@ $$
         \end{aligned}
         $$
     
-        化简过程中，利用了如下结论：由 [Lucas 定理](../number-theory/lucas.md)，对于 $0 < k < p$ 都有 $\dbinom{p}{k}\equiv 0\pmod{p}$，而对于 $1 < k < p$ 都有 $\dbinom{p+1}{k}\equiv 0\pmod{p}$；由 [Fermat 小定理](../number-theory/fermat.md#费马小定理)，有 $2^{p-1}\equiv 5^{p-1}\equiv 1\pmod{p}$；对于 $p\equiv 1,4\pmod{5}$，都有 $p$ 是模 $5$ 的二次剩余，利用 [二次互反律](../number-theory/quad-residue.md#二次互反律)，也有 $5$ 是模 $p$ 的二次剩余，故而 $5^{(p-1)/2} \equiv 1\pmod{p}$．由此，有 $(F_p,F_{p+1}) \equiv (F_1,F_2) \pmod{p}$，所以 $(p-1)$ 是模 $p$ 的一个周期．所以，$\pi(p)\mid(p-1)$．
-    -   如果 $p\equiv 2,3\pmod{5}$，就有
+        This simplification uses the following facts: by [Lucas's theorem](../number-theory/lucas.md), $\dbinom{p}{k}\equiv 0\pmod{p}$ for $0 < k < p$, and $\dbinom{p+1}{k}\equiv 0\pmod{p}$ for $1 < k < p$; by [Fermat's little theorem](../number-theory/fermat.md#费马小定理), $2^{p-1}\equiv 5^{p-1}\equiv 1\pmod{p}$; for $p\equiv 1,4\pmod{5}$, $p$ is a quadratic residue modulo $5$, so by [quadratic reciprocity](../number-theory/quad-residue.md#二次互反律), $5$ is also a quadratic residue modulo $p$, hence $5^{(p-1)/2} \equiv 1\pmod{p}$. So $(F_p,F_{p+1}) \equiv (F_1,F_2) \pmod{p}$, which means $(p-1)$ is a period modulo $p$. So $\pi(p)\mid(p-1)$.
+    -   If $p\equiv 2,3\pmod{5}$, then
     
         $$
         \begin{aligned}
@@ -321,20 +321,20 @@ $$
         \end{aligned}
         $$
     
-        化简过程中，利用了如下结论：由 Lucas 定理，对于 $0 < k < p$ 和 $p < k < 2p$ 都有 $\dbinom{p}{k}\equiv 0\pmod{p}$，以及 $\dbinom{2p}{p}\equiv 2\pmod{p}$，而对于 $1 < k < p$ 和 $p + 1 < k < 2p$ 都有 $\dbinom{p}{k}\equiv 0\pmod{p}$，以及 $\dbinom{2p+1}{p}\equiv 2\pmod{p}$；由 Fermat 小定理，有 $2^{p-1}\equiv 5^{p-1}\equiv 1\pmod{p}$；对于 $p\equiv 2,3\pmod{5}$，都有 $p$ 是模 $5$ 的二次非剩余，利用二次互反律，也有 $5$ 是模 $p$ 的二次非剩余，故而 $5^{(p-1)/2} \equiv -1\pmod{p}$．由此，有 $(F_{2p},F_{2p+1}) \equiv (F_{-2},F_{-1}) \pmod{p}$，所以 $2(p+1)$ 是模 $p$ 的一个周期．所以，$\pi(p)\mid 2(p+1)$．
+        This simplification uses the following facts: by Lucas's theorem, $\dbinom{p}{k}\equiv 0\pmod{p}$ for $0 < k < p$ and $p < k < 2p$, and $\dbinom{2p}{p}\equiv 2\pmod{p}$; also $\dbinom{p}{k}\equiv 0\pmod{p}$ for $1 < k < p$ and $p + 1 < k < 2p$, and $\dbinom{2p+1}{p}\equiv 2\pmod{p}$; by Fermat's little theorem, $2^{p-1}\equiv 5^{p-1}\equiv 1\pmod{p}$; for $p\equiv 2,3\pmod{5}$, $p$ is a quadratic non-residue modulo $5$, so by quadratic reciprocity, $5$ is also a quadratic non-residue modulo $p$, hence $5^{(p-1)/2} \equiv -1\pmod{p}$. So $(F_{2p},F_{2p+1}) \equiv (F_{-2},F_{-1}) \pmod{p}$, which means $2(p+1)$ is a period modulo $p$. So $\pi(p)\mid 2(p+1)$.
     
-    这就完成了证明．这一方法的局限性在于它高度依赖于斐波那契数列的通项公式，所以较难直接推广到一般的情形．
+    This completes the proof. The limitation of this method is that it relies heavily on the closed form of the Fibonacci sequence, so it is hard to extend directly to the general case.
 
-=== "利用扩域"
-    另一种证明方式则是试图直接计算矩阵 $A=\begin{pmatrix}1&1\\1&0\end{pmatrix}$ 的阶．它的 [特征多项式](../linear-algebra/char-poly.md) 是 $f(x) = x^2-x-1$，对应的判别式为 $\Delta = 5$．对于模 $p=5$，有 $\Delta\equiv 0\pmod{5}$，矩阵 $A$ 有两个相同特征值 $\lambda=3$，且不能对角化，需要单独计算．对于模 $p\equiv 1,4\pmod{5}$，由二次互反律可知，判别式 $\Delta=5$ 是模 $p$ 的二次剩余，矩阵 $A$ 在域 $\mathbf F_p$ 内有两个相异特征值 $\lambda_1\neq\lambda_2$，矩阵 $A$ 的阶就是 $\operatorname{lcm}(\operatorname{ord}(\lambda_1),\operatorname{ord}(\lambda_2))$，必然整除 $|\mathbf F_p^\times|=p-1$．对于模 $p\equiv 2,3\pmod{5}$，由二次互反律可知，判别式 $\Delta=5$ 是模 $p$ 的二次非剩余，矩阵 $A$ 在域 $\mathbf F_p$ 内没有特征值，而只有在 [扩域](../algebra/field-theory.md#域的扩张) $\mathbf F_p[\sqrt{5}]$ 内才有两个相异特征值 $\lambda_1\neq\lambda_2$，由于 Frobenius 自同态 $x\mapsto x^p$ 将两根交换，有 $\lambda_2=\lambda_1^p$，故而 $\lambda_1^{p+1}=\lambda_2^{p+1}=\lambda_1\lambda_2=-1$，亦即 $\lambda_1^{2(p+1)}=\lambda_2^{2(p+1)}=1$，由此，矩阵 $A$ 的阶就是 $\operatorname{lcm}(\operatorname{ord}(\lambda_1),\operatorname{ord}(\lambda_2))$，必然整除 $2(p+1)$．这就得到了与前种方法一致的结论．
+=== "Using a field extension"
+    The other proof tries to compute the order of the matrix $A=\begin{pmatrix}1&1\\1&0\end{pmatrix}$ directly. Its [characteristic polynomial](../linear-algebra/char-poly.md) is $f(x) = x^2-x-1$, with discriminant $\Delta = 5$. For the modulus $p=5$, we have $\Delta\equiv 0\pmod{5}$, so the matrix $A$ has a repeated eigenvalue $\lambda=3$ and cannot be diagonalized; this case is computed separately. For moduli $p\equiv 1,4\pmod{5}$, quadratic reciprocity shows that the discriminant $\Delta=5$ is a quadratic residue modulo $p$, so $A$ has two distinct eigenvalues $\lambda_1\neq\lambda_2$ in the field $\mathbf F_p$. The order of $A$ is then $\operatorname{lcm}(\operatorname{ord}(\lambda_1),\operatorname{ord}(\lambda_2))$, which must divide $|\mathbf F_p^\times|=p-1$. For moduli $p\equiv 2,3\pmod{5}$, quadratic reciprocity shows that the discriminant $\Delta=5$ is a quadratic non-residue modulo $p$, so $A$ has no eigenvalues in $\mathbf F_p$; it only has two distinct eigenvalues $\lambda_1\neq\lambda_2$ in the [field extension](../algebra/field-theory.md#域的扩张) $\mathbf F_p[\sqrt{5}]$. Since the Frobenius endomorphism $x\mapsto x^p$ swaps the two roots, we have $\lambda_2=\lambda_1^p$, so $\lambda_1^{p+1}=\lambda_2^{p+1}=\lambda_1\lambda_2=-1$, that is, $\lambda_1^{2(p+1)}=\lambda_2^{2(p+1)}=1$. So the order of $A$ is $\operatorname{lcm}(\operatorname{ord}(\lambda_1),\operatorname{ord}(\lambda_2))$, which must divide $2(p+1)$. This gives the same result as the first method.
 
-综上，对于不同的情形，相应地有：
+In summary, for the different cases we have:
 
--   $\pi(2^e)=\dfrac{3}{2}\cdot 2^e,~\dfrac{1}{4}\pi(5^e)=5^e$．
--   当 $p\equiv\pm1\pmod{10}$ 时，$\pi(p^e) \mid (p-1)p^{e-1}$，所以 $\pi(p^e)\le p^e$．
--   当 $p\equiv\pm3\pmod{10}$ 时，$\dfrac{1}{4}\pi(p^e) \mid \dfrac{p+1}{2}p^{e-1}$，所以 $\dfrac{1}{4}\pi(p^e)\le p^e$．
+-   $\pi(2^e)=\dfrac{3}{2}\cdot 2^e,~\dfrac{1}{4}\pi(5^e)=5^e$.
+-   When $p\equiv\pm1\pmod{10}$, $\pi(p^e) \mid (p-1)p^{e-1}$, so $\pi(p^e)\le p^e$.
+-   When $p\equiv\pm3\pmod{10}$, $\dfrac{1}{4}\pi(p^e) \mid \dfrac{p+1}{2}p^{e-1}$, so $\dfrac{1}{4}\pi(p^e)\le p^e$.
 
-所以，利用结论 1，对于一般的模数 $m=\prod_i p_i^{e_i}$，有
+So, using result 1, for a general modulus $m=\prod_i p_i^{e_i}$ we have
 
 $$
 \begin{aligned}
@@ -349,22 +349,22 @@ $$
 \end{aligned}
 $$
 
-这就说明了斐波那契数列模 $m$ 的 Pisano 周期总是不超过 $6m$，而且等号当且仅当在 $m=2\cdot 5^e$ 处取得．
+This shows that the Pisano period of the Fibonacci sequence modulo $m$ is always at most $6m$, with equality if and only if $m=2\cdot 5^e$.
 
-## 习题
+## Exercises
 
 -   [SPOJ - Euclid Algorithm Revisited](http://www.spoj.com/problems/MAIN74/)
 -   [SPOJ - Fibonacci Sum](http://www.spoj.com/problems/FIBOSUM/)
 -   [HackerRank - Is Fibo](https://www.hackerrank.com/challenges/is-fibo/problem)
 -   [Project Euler - Even Fibonacci numbers](https://www.hackerrank.com/contests/projecteuler/challenges/euler002/problem)
--   [洛谷 P4000 斐波那契数列](https://www.luogu.com.cn/problem/P4000)
+-   [Luogu P4000 Fibonacci Sequence](https://www.luogu.com.cn/problem/P4000)
 
-## 参考文献与注释
+## References and notes
 
 -   [Fibonacci sequence - Wikipedia](https://en.wikipedia.org/wiki/Fibonacci_sequence)
 -   [Zeckendorf's theorem - Wikipedia](https://en.wikipedia.org/wiki/Zeckendorf%27s_theorem)
 -   [Pisano period - Wikipedia](https://en.wikipedia.org/wiki/Pisano_period)
 
-**本页面主要译自博文 [Числа Фибоначчи](http://e-maxx.ru/algo/fibonacci_numbers) 与其英文翻译版 [Fibonacci Numbers](https://cp-algorithms.com/algebra/fibonacci-numbers.html)．其中俄文版版权协议为 Public Domain + Leave a Link；英文版版权协议为 CC-BY-SA 4.0．内容有改动．**
+**This page is mainly translated from the blog post [Числа Фибоначчи](http://e-maxx.ru/algo/fibonacci_numbers) and its English translation [Fibonacci Numbers](https://cp-algorithms.com/algebra/fibonacci-numbers.html). The Russian version is licensed under Public Domain + Leave a Link; the English version is licensed under CC-BY-SA 4.0. The content has been modified.**
 
-[^mod-m]: 严格来说，它是矩阵 $A$ 在一般线性群 $GL_2(\mathbf Z_m)$ 中的阶．
+[^mod-m]: Strictly speaking, it is the order of the matrix $A$ in the general linear group $GL_2(\mathbf Z_m)$.

@@ -1,14 +1,14 @@
-## 错位排列
+## Derangements
 
-### 定义
+### Definition
 
-错位排列（derangement）是没有任何元素出现在其有序位置的排列．即，对于 $1\sim n$ 的排列 $P$，如果满足 $P_i\neq i$，则称 $P$ 是 $n$ 的错位排列．
+A derangement is a permutation in which no element appears in its original position. That is, a permutation $P$ of $1\sim n$ is called a derangement of $n$ if $P_i\neq i$ for all $i$.
 
-例如，三元错位排列有 $\{2,3,1\}$ 和 $\{3,1,2\}$．四元错位排列有 $\{2,1,4,3\}$、$\{2,3,4,1\}$、$\{2,4,1,3\}$、$\{3,1,4,2\}$、$\{3,4,1,2\}$、$\{3,4,2,1\}$、$\{4,1,2,3\}$、$\{4,3,1,2\}$ 和 $\{4,3,2,1\}$．错位排列是没有不动点的排列，即没有长度为 1 的循环．
+For example, the derangements of 3 elements are $\{2,3,1\}$ and $\{3,1,2\}$. The derangements of 4 elements are $\{2,1,4,3\}$, $\{2,3,4,1\}$, $\{2,4,1,3\}$, $\{3,1,4,2\}$, $\{3,4,1,2\}$, $\{3,4,2,1\}$, $\{4,1,2,3\}$, $\{4,3,1,2\}$ and $\{4,3,2,1\}$. A derangement is a permutation with no fixed points, that is, with no cycles of length 1.
 
-### 容斥原理的计算
+### Computing with inclusion–exclusion
 
-全集 $U$ 即为 $1\sim n$ 的排列，$|U|=n!$；令 $S_i$ 是其中满足 $P_i\neq i$ 的排列．运用补集和 [容斥原理](./inclusion-exclusion-principle.md) 的知识，问题变成求：
+The universe $U$ is the set of permutations of $1\sim n$, so $|U|=n!$. Let $S_i$ be the set of permutations in it with $P_i\neq i$. Using complements and the [inclusion–exclusion principle](./inclusion-exclusion-principle.md), the problem becomes computing:
 
 $$
 \begin{aligned}
@@ -18,19 +18,19 @@ $$
 \end{aligned}
 $$
 
-其中求和的含义是 $1, 2, \cdots, n$ 中取 $a_1, a_2, \cdots, a_k$ 且满足 $a_i<a_{i+1}$．于是
+Here the sum ranges over choices of $a_1, a_2, \cdots, a_k$ from $1, 2, \cdots, n$ with $a_i<a_{i+1}$. Then
 
 $$
 \left|\bigcap_{i=1}^{k}\overline{S_{a_i}}\right|
 $$
 
-表示有 $k$ 个数 $a_1,a_2,\cdots,a_k$ 满足 $P_{a_i}=a_i$，而剩下 $n-k$ 个数的位置任意的排列数，因此：
+is the number of permutations in which the $k$ numbers $a_1,a_2,\cdots,a_k$ satisfy $P_{a_i}=a_i$, and the remaining $n-k$ numbers can be in any positions. So:
 
 $$
 \left|\bigcap_{i=1}^{k}\overline{S_{a_i}}\right|=(n-k)!
 $$
 
-这 $k$ 个数的选择情况共 $\dbinom{n}{k}$ 种，对其求和有：
+There are $\dbinom{n}{k}$ ways to choose these $k$ numbers. Summing gives:
 
 $$
 \begin{aligned}
@@ -41,52 +41,52 @@ $$
 \end{aligned}
 $$
 
-因此 $n$ 个元素的错位排列数为：
+So the number of derangements of $n$ elements is:
 
 $$
 D_n=n!-n!\sum_{k=1}^n\frac{(-1)^{k-1} }{k!}=n!\sum_{k=0}^n\frac{(-1)^k}{k!}
 $$
 
-错位排列数列的前几项为 $0,1,2,9,44,265$（[OEIS A000166](http://oeis.org/A000166)）．
+The first few terms of the derangement sequence are $0,1,2,9,44,265$ ([OEIS A000166](http://oeis.org/A000166)).
 
-### 递推的计算
+### Computing with a recurrence
 
-把错位排列问题具体化，考虑这样一个问题：
+To make the derangement problem concrete, consider the following problem:
 
-$n$ 封不同的信，编号分别是 $1,2,3,4,5$，现在要把这五封信放在编号 $1,2,3,4,5$ 的信封中，要求信封的编号与信的编号不一样．问有多少种不同的放置方法？
+There are $n$ different letters, numbered $1,2,3,4,5$. We want to put these five letters into envelopes numbered $1,2,3,4,5$ so that no letter goes into the envelope with its own number. How many different ways are there?
 
-假设考虑到第 $n$ 个信封，初始时暂时把第 $n$ 封信放在第 $n$ 个信封中，然后考虑两种情况的递推：
+Suppose we are now considering the $n$-th envelope. At first, temporarily put letter $n$ into envelope $n$, then consider two cases for the recurrence:
 
--   前面 $n-1$ 个信封全部装错；
--   前面 $n-1$ 个信封有一个没有装错其余全部装错．
+-   all of the first $n-1$ envelopes hold the wrong letters;
+-   among the first $n-1$ envelopes, exactly one holds the right letter and the rest hold wrong letters.
 
-对于第一种情况，前面 $n-1$ 个信封全部装错：因为前面 $n-1$ 个已经全部装错了，所以第 $n$ 封只需要与前面任一一个位置交换即可，总共有 $D_{n-1}\times (n-1)$ 种情况．
+In the first case, all of the first $n-1$ envelopes hold wrong letters. Since the first $n-1$ are already all wrong, letter $n$ just needs to swap with any one of the earlier positions, giving $D_{n-1}\times (n-1)$ cases in total.
 
-对于第二种情况，前面 $n-1$ 个信封有一个没有装错其余全部装错：考虑这种情况的目的在于，若 $n-1$ 个信封中如果有一个没装错，那么把那个没装错的与 $n$ 交换，即可得到一个全错位排列情况．
+In the second case, among the first $n-1$ envelopes exactly one holds the right letter and the rest are wrong. We consider this case because if exactly one of the $n-1$ envelopes is right, swapping that one with $n$ gives a full derangement.
 
-其他情况，不可能通过一次操作来把它变成一个长度为 $n$ 的错排．
+In any other case, a single operation cannot turn it into a derangement of length $n$.
 
-于是可得，错位排列数满足递推关系：
+So the number of derangements satisfies the recurrence:
 
 $$
 D_n=(n-1)(D_{n-1}+D_{n-2})
 $$
 
-这里也给出另一个递推关系：
+Here is another recurrence as well:
 
 $$
 D_n=nD_{n-1}+{(-1)}^n
 $$
 
-### 其他关系
+### Other relations
 
-错位排列数有一个简单的取整表达式，增长速度与阶乘仅相差常数：
+The number of derangements has a simple rounding formula, and its growth differs from the factorial only by a constant factor:
 
 $$
 D_n=\left\lfloor\frac{n!}{\mathrm{e}} + \frac{1}{2}\right\rfloor
 $$
 
-随着元素数量的增加，形成错位排列的概率 P 接近：
+As the number of elements grows, the probability P that a permutation is a derangement approaches:
 
 $$
 P=\lim_{n\to\infty}\frac{D_n}{n!}=\frac{1}{\mathrm{e}}

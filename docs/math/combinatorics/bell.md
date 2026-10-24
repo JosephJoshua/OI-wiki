@@ -1,10 +1,10 @@
-贝尔数 $B_n$ 以埃里克·坦普尔·贝尔命名，是组合数学中的一组整数数列，开首是（[OEIS A000110](https://oeis.org/A000110)）：
+The Bell numbers $B_n$, named after Eric Temple Bell, are an integer sequence in combinatorics. The sequence begins with ([OEIS A000110](https://oeis.org/A000110)):
 
 $$
 B_0 = 1,B_1 = 1,B_2=2,B_3=5,B_4=15,B_5=52,B_6=203,\dots
 $$
 
-$B_n$ 是基数为 $n$ 的集合的划分方法的数目．集合 $S$ 的一个划分是定义为 $S$ 的两两不相交的非空子集的族，它们的并是 $S$．例如 $B_3 = 5$ 因为 3 个元素的集合 ${a, b, c}$ 有 5 种不同的划分方法：
+$B_n$ is the number of ways to partition a set with $n$ elements. A partition of a set $S$ is a family of pairwise disjoint non-empty subsets of $S$ whose union is $S$. For example, $B_3 = 5$ because the 3-element set ${a, b, c}$ has 5 different partitions:
 
 $$
 \begin{aligned}
@@ -16,46 +16,46 @@ $$
 \end{aligned}
 $$
 
-$B_0$ 是 1 因为空集正好有 1 种划分方法．
+$B_0$ is 1 because the empty set has exactly 1 partition.
 
-## 递推公式
+## Recurrence
 
-贝尔数适合递推公式：
+The Bell numbers satisfy the recurrence:
 
 $$
 B_{n+1}=\sum_{k=0}^n\binom{n}{k}B_{k}
 $$
 
-证明：
+Proof:
 
-$B_{n+1}$ 是含有 $n+1$ 个元素集合的划分个数，设 $B_n$ 的集合为 $\{b_1,b_2,b_3,\dots,b_n\}$，$B_{n+1}$ 的集合为 $\{b_1,b_2,b_3,\dots,b_n,b_{n+1}\}$，那么可以认为 $B_{n+1}$ 是有 $B_{n}$ 增添了一个 $b_{n+1}$ 而产生的，考虑元素 $b_{n+1}$．
+$B_{n+1}$ is the number of partitions of a set with $n+1$ elements. Let the set for $B_n$ be $\{b_1,b_2,b_3,\dots,b_n\}$ and the set for $B_{n+1}$ be $\{b_1,b_2,b_3,\dots,b_n,b_{n+1}\}$. We can view $B_{n+1}$ as coming from $B_{n}$ by adding one element $b_{n+1}$. Consider the element $b_{n+1}$.
 
--   假如它被单独分到一类，那么还剩下 $n$ 个元素，这种情况下划分数为 $\dbinom{n}{n}B_{n}$;
+-   If it is in a block by itself, $n$ elements remain, and the number of partitions in this case is $\dbinom{n}{n}B_{n}$;
 
--   假如它和某 1 个元素分到一类，那么还剩下 $n-1$ 个元素，这种情况下划分数为 $\dbinom{n}{n-1}B_{n-1}$；
+-   If it is in a block with exactly 1 other element, $n-1$ elements remain, and the number of partitions in this case is $\dbinom{n}{n-1}B_{n-1}$;
 
--   假如它和某 2 个元素分到一类，那么还剩下 $n-2$ 个元素，这种情况下划分数为 $\dbinom{n}{n-2}B_{n-2}$；
+-   If it is in a block with exactly 2 other elements, $n-2$ elements remain, and the number of partitions in this case is $\dbinom{n}{n-2}B_{n-2}$;
 
--   ……
+-   ...
 
-以此类推就得到了上面的公式．
+Continuing this way gives the formula above.
 
-每个贝尔数都是相应的 [第二类斯特林数](./stirling.md#第二类斯特林数stirling-number) 的和．
-因为第二类斯特林数是把基数为 $n$ 的集合划分为正好 $k$ 个非空集的方法数目．
+Each Bell number is the sum of the corresponding [Stirling numbers of the second kind](./stirling.md#第二类斯特林数stirling-number),
+because a Stirling number of the second kind counts the ways to partition a set of $n$ elements into exactly $k$ non-empty subsets.
 
 $$
 B_{n} = \sum_{k=0}^n{n\brace k}
 $$
 
-## 贝尔三角形
+## Bell triangle
 
-用以下方法构造一个三角矩阵（形式类似杨辉三角形）：
+Build a triangular array as follows (similar in form to Pascal's triangle):
 
--   $a_{0,0} = 1$；
--   对于 $n \ge 1$，第 $n$ 行首项等于上一行的末项，即 $a_{n,0}=a_{n-1,n-1}$；
--   对于 $m,n \ge 1$，第 $n$ 行第 $m$ 项等于它左边和左上角两个数之和，即 $a_{n,m}=a_{n,m-1}+a_{n-1,m-1}$．
+-   $a_{0,0} = 1$;
+-   for $n \ge 1$, the first entry of row $n$ equals the last entry of the previous row, i.e. $a_{n,0}=a_{n-1,n-1}$;
+-   for $m,n \ge 1$, entry $m$ of row $n$ is the sum of the two numbers to its left and to its upper left, i.e. $a_{n,m}=a_{n,m-1}+a_{n-1,m-1}$.
 
-部分结果如下：
+The first few rows are:
 
 $$
 \begin{aligned}
@@ -69,9 +69,9 @@ $$
 \end{aligned}
 $$
 
-每行的首项是贝尔数．可以利用这个三角形来递推求出贝尔数．
+The first entry of each row is a Bell number. We can use this triangle to compute Bell numbers one row at a time.
 
-??? note "参考实现"
+??? note "Reference implementation"
     === "C++"
         ```cpp
         constexpr int MAXN = 2000 + 5;
@@ -101,9 +101,9 @@ $$
                     bell[i][j] = bell[i - 1][j - 1] + bell[i][j - 1]
         ```
 
-## 指数生成函数
+## Exponential generating function
 
-考虑贝尔数的指数生成函数及其导函数：
+Consider the exponential generating function of the Bell numbers and its derivative:
 
 $$
 \begin{aligned}
@@ -113,32 +113,32 @@ $$
 \end{aligned}
 $$
 
-根据贝尔数的递推公式可以得到：
+From the recurrence for Bell numbers we get:
 
 $$
 \frac{B_{n+1}}{n!} = \sum_{k = 0}^{n}\frac{1}{(n-k)!}\frac{B_{k}}{k!}
 $$
 
-这是一个卷积的式子，因此有：
+This is a convolution, so:
 
 $$
 \hat B'(x) = \mathrm{e}^x \hat B(x)
 $$
 
-这是一个微分方程，解得：
+This is a differential equation. Solving it gives:
 
 $$
 \hat B(x) = \exp\left(\mathrm{e}^x + C\right)
 $$
 
-最后当 $x = 0$ 时 $\hat B(x) = 1$，带入后解得 $C = -1$，得到贝尔数指数生成函数的封闭形式：
+Finally, $\hat B(x) = 1$ when $x = 0$. Substituting gives $C = -1$, so the closed form of the exponential generating function of the Bell numbers is:
 
 $$
 \hat B(x) = \exp\left(\mathrm{e}^x - 1\right)
 $$
 
-预处理出 $\mathrm{e}^x - 1$ 的前 $n$ 项后做一次 [多项式 exp](../poly/elementary-func.md#多项式对数函数--指数函数) 即可得出贝尔数前 $n$ 项，时间复杂度瓶颈在多项式 exp，可做到 $O(n \log n)$ 的时间复杂度．
+Precompute the first $n$ terms of $\mathrm{e}^x - 1$, then apply one [polynomial exp](../poly/elementary-func.md#多项式对数函数--指数函数) to get the first $n$ Bell numbers. The bottleneck is the polynomial exp, so the time complexity can be $O(n \log n)$.
 
-## 参考文献
+## References
 
 <https://en.wikipedia.org/wiki/Bell_number>

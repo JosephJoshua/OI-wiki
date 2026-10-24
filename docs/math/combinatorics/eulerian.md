@@ -1,7 +1,7 @@
-???+ warning "注意"
-    下文中的欧拉数特指 Eulerian number．注意与 Euler number，以及 Euler's number（指与欧拉相关的数学常数例如 $\gamma$ 或 $\mathrm{e}$）作区分．
+???+ warning "Note"
+    The "Eulerian numbers" on this page are the Eulerian numbers in the strict sense. Do not confuse them with the Euler numbers, or with Euler's number (mathematical constants related to Euler, such as $\gamma$ or $\mathrm{e}$).
 
-在计算组合中，**欧拉数**（Eulerian Number）是从 $1$ 到 $n$ 中正好满足 $m$ 个元素大于前一个元素（具有 $m$ 个「上升」的排列）条件的排列 **个数**．定义为：
+In enumerative combinatorics, the **Eulerian number** is the **number** of permutations of $1$ to $n$ in which exactly $m$ elements are larger than the element before them (permutations with $m$ "ascents"). It is written as:
 
 $$
 A(n, m) = 
@@ -13,10 +13,10 @@ A(n, m) =
 \right\rangle
 $$
 
-例如，从数字 $1$ 到 $3$ 一共有 $4$ 种排列使得恰好有一个元素比前一个元素大：
+For example, there are $4$ permutations of the numbers $1$ to $3$ in which exactly one element is larger than the element before it:
 
-| 排列    | 满足条件的相邻元素   | 个数 |
-| ----- | ----------- | -- |
+| Permutation | Adjacent pairs that qualify | Count |
+| ----------- | --------------------------- | ----- |
 | 1 2 3 | 1, 2 & 2, 3 | 2  |
 | 1 3 2 | 1, 3        | 1  |
 | 2 1 3 | 1, 3        | 1  |
@@ -24,12 +24,12 @@ $$
 | 3 1 2 | 1, 2        | 1  |
 | 3 2 1 |             | 0  |
 
-所以按照 $A(n, m)$ 定义：如果 $n$ 等于 $3$，$m$ 等于 $1$，欧拉数值为 $4$，表示共有 $4$ 个有 $1$ 个元素大于前一个元素的排列．
+So by the definition of $A(n, m)$: when $n$ is $3$ and $m$ is $1$, the Eulerian number is $4$, meaning there are $4$ permutations with exactly $1$ element larger than the element before it.
 
-对于 $n$ 和 $m$ 值比较小的欧拉数来说，我们可以直接得到结果：
+For Eulerian numbers with small $n$ and $m$, we can write down the results directly:
 
-| $A(n, m)$ | 满足要求的排列                                      | 个数 |
-| --------- | -------------------------------------------- | -- |
+| $A(n, m)$ | Qualifying permutations                      | Count |
+| --------- | -------------------------------------------- | ----- |
 | $A(1, 0)$ | $(1)$                                        | 1  |
 | $A(2, 0)$ | $(2, 1)$                                     | 1  |
 | $A(2, 1)$ | $(1, 2)$                                     | 1  |
@@ -37,23 +37,23 @@ $$
 | $A(3, 1)$ | $(1, 3, 2), (2, 1, 3), (2, 3, 1), (3, 1, 2)$ | 4  |
 | $A(3, 2)$ | $(1, 2, 3)$                                  | 1  |
 
-## 公式
+## Formula
 
-可以通过递推或者递归的方法计算欧拉数．
+Eulerian numbers can be computed by a recurrence or by recursion.
 
-首先，当 $m \ge n$ 或 $n = 0$ 时，没有满足条件的排列，即此时欧拉数为 $0$．
+First, when $m \ge n$ or $n = 0$, no permutation qualifies, so the Eulerian number is $0$.
 
-其次，当 $m = 0$ 时，只有降序的排列满足条件，即此时欧拉数为 $1$．
+Next, when $m = 0$, only the decreasing permutation qualifies, so the Eulerian number is $1$.
 
-最后，考虑在 $n-1$ 的排列的基础上插入 $n$ 从而得到 $n$ 的排列，由于插入 $n$ 至多使欧拉数增加 $1$，所以 $A(n, m)$ 可以仅从 $A(n-1, m-1)$ 处和 $A(n-1, m)$ 处转移得到．
+Finally, consider building a permutation of $n$ by inserting $n$ into a permutation of $n-1$. Inserting $n$ raises the number of ascents by at most $1$, so $A(n, m)$ can be obtained from only $A(n-1, m-1)$ and $A(n-1, m)$.
 
-考虑 $n$ 插入的位置：当 $p_{i-1} < p_{i}$ 时，若将 $n$ 插到 $p_{i}$ 之前，即将 $n$ 插入到「上升」中，排列的欧拉数不变；此外，将 $n$ 插在排列之前，排列的欧拉数也不变；否则，若将 $n$ 插到其余位置，排列的欧拉数增加 $1$．
+Consider where $n$ is inserted: when $p_{i-1} < p_{i}$, inserting $n$ right before $p_{i}$, i.e. inserting $n$ into an "ascent", leaves the number of ascents unchanged. Inserting $n$ at the front of the permutation also leaves it unchanged. Inserting $n$ anywhere else raises the number of ascents by $1$.
 
-考虑从 $A(n-1, m-1)$ 转移到 $A(n, m)$，此时需要使欧拉数增加 $1$，此时不能将 $n$ 插在「上升」中或者排列开头，共有 $n - (m-1) - 1 = n-m$ 种方案．
+For the transition from $A(n-1, m-1)$ to $A(n, m)$, the number of ascents must go up by $1$, so $n$ cannot be inserted into an "ascent" or at the front. This gives $n - (m-1) - 1 = n-m$ choices.
 
-考虑从 $A(n-1, m)$ 转移到 $A(n, m)$，此时需要欧拉数保持不变，只能将 $n$ 插在「上升」中或者排列开头，共 $m+1$ 种方案．
+For the transition from $A(n-1, m)$ to $A(n, m)$, the number of ascents must stay the same, so $n$ can only be inserted into an "ascent" or at the front. This gives $m+1$ choices.
 
-综上所述，有
+Putting it all together, we have
 
 $$
 A(n, m) = \begin{cases}
@@ -63,7 +63,7 @@ A(n, m) = \begin{cases}
 \end{cases}
 $$
 
-## 实现
+## Implementation
 
 === "C++"
     ```cpp
@@ -87,9 +87,9 @@ $$
         )
     ```
 
-## 习题
+## Exercises
 
 -   [CF1349F1 Slime and Sequences (Easy Version)](https://codeforces.com/problemset/problem/1349/F1)
 -   [CF1349F2 Slime and Sequences (Hard Version)](https://codeforces.com/problemset/problem/1349/F2)
--   [UOJ 593. 新年的军队](https://uoj.ac/problem/593)
--   [P7511 三到六](https://www.luogu.com.cn/problem/P7511)
+-   [UOJ 593. New Year's Army](https://uoj.ac/problem/593)
+-   [P7511 Three to Six](https://www.luogu.com.cn/problem/P7511)

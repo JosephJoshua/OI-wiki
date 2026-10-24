@@ -1,11 +1,11 @@
-## 恩特林格数
+## Entringer numbers
 
-恩特林格数（Entringer number，[OEIS A008281](http://oeis.org/A008281)）$E(n,k)$ 是满足下述条件的 $0$ 到 $n$ 共 $n+1$ 个数的置换数目：
+The Entringer number $E(n,k)$ ([OEIS A008281](http://oeis.org/A008281)) is the number of permutations of the $n+1$ numbers $0$ to $n$ that satisfy the following conditions:
 
--   首元素是 $k$；
--   首元素的下一个元素比首元素小，再下一个元素比前一个元素大，再下一个元素比前一个元素小……后面相邻元素的大小关系均满足这样的规则．
+-   the first element is $k$;
+-   the next element is smaller than the first, the one after is larger than the previous one, the one after that is smaller than the previous one, and so on: every pair of adjacent elements after that follows this pattern.
 
-恩特林格数的初值有：
+The initial values of the Entringer numbers are:
 
 $$
 E(0,0)=1
@@ -15,15 +15,15 @@ $$
 E(n,0)=0
 $$
 
-有递推关系：
+They satisfy the recurrence:
 
 $$
 E(n,k)=E(n,k-1)+E(n-1,n-k)
 $$
 
-## Seidel–Entringer–Arnold 三角
+## The Seidel–Entringer–Arnold triangle
 
-恩特林格数的一个适当排列的数字三角，称为 Seidel–Entringer–Arnold 三角（Seidel–Entringer–Arnold triangle，[OEIS A008280](http://oeis.org/A008280)）．该三角是按照「牛耕」顺序（ox-plowing order）排列的恩特林格数 $E_(n,k)$：
+Arranging the Entringer numbers suitably gives a triangle of numbers called the Seidel–Entringer–Arnold triangle ([OEIS A008280](http://oeis.org/A008280)). It lists the Entringer numbers $E_(n,k)$ in "ox-plowing" order (boustrophedon order):
 
 $$
 \begin{aligned}
@@ -35,7 +35,7 @@ $$
 \end{aligned}
 $$
 
-即：
+That is:
 
 $$
 \begin{aligned}
@@ -47,15 +47,15 @@ $$
 \end{aligned}
 $$
 
-按照这种方式排列的恩特林格数的优势是，与它的递推关系 $E(n,k)=E(n,k-1)+E(n-1,n-k)$ 一致，可以方便记忆和理解．
+The advantage of arranging the Entringer numbers this way is that it matches their recurrence $E(n,k)=E(n,k-1)+E(n-1,n-k)$, which makes it easy to remember and understand.
 
-恩特林格数有一个指数型生成函数：
+The Entringer numbers have an exponential generating function:
 
 $$
 \sum_{m=0}^\infty\sum_{n=0}^\infty E\left(m+n,\frac{1}{2}\left(m+n+{(-1)}^{m+n}(n-m)\right)\right)\frac{x^m}{m!}\frac{x^n}{n!}=\frac{\cos x+\sin x}{\cos (x+y)}
 $$
 
-这个生成函数的系数分布事实上是上面的 Seidel–Entringer–Arnold 三角的简单拉伸变形：
+The layout of the coefficients of this generating function is in fact a simple stretched version of the Seidel–Entringer–Arnold triangle above:
 
 $$
 \begin{array}{ccccc}
@@ -67,7 +67,7 @@ E(4,4) & & & &
 \end{array}
 $$
 
-即：
+That is:
 
 $$
 \begin{aligned}
@@ -79,17 +79,17 @@ $$
 \end{aligned}
 $$
 
-## zigzag 置换
+## Zigzag permutations
 
-一个 zigzag 置换（zigzag permutation）是一个 $1$ 到 $n$ 的排列 $c_1$ 到 $c_i$，使得任意一个元素 $c_i$ 的大小都不介于 $c_{i-1}$ 和 $c_{i+1}$ 之间．
+A zigzag permutation is a permutation $c_1$ to $c_i$ of $1$ to $n$ such that no element $c_i$ lies between $c_{i-1}$ and $c_{i+1}$ in value.
 
-对于 zigzag 置换的个数 $Z_n$（[OEIS A001250](http://oeis.org/A001250)），从 $n=0$ 开始有：
+The numbers of zigzag permutations $Z_n$ ([OEIS A001250](http://oeis.org/A001250)), starting from $n=0$, are:
 
 $$
 1, 1, 2, 4, 10, 32, 122, 544, \cdots
 $$
 
-例如，前几个 $n$ 的交替置换有：
+For example, the alternating permutations for the first few $n$ are:
 
 $$
 \begin{aligned}
@@ -101,55 +101,55 @@ n=4: & \{1,3,2,4\}, \{1,4,2,3\}, \{2,1,4,3\}, \{2,3,1,4\}, \{2,4,1,3\}, \\
 \end{aligned}
 $$
 
-## 交替置换与 zigzag 数
+## Alternating permutations and zigzag numbers
 
-（注意和「错位排列」进行概念上的区分．）
+(Do not confuse this concept with "derangements".)
 
-对于大于 $1$ 的 $n$，每个 zigzag 置换翻转过来仍旧为 zigzag 置换，可以两两配对，所以必然为偶数．
+For $n$ greater than $1$, reversing a zigzag permutation gives another zigzag permutation, so they can be paired up, and their number must be even.
 
-这里再给出一种配对的方法：将 zigzag 置换分为交替置换（alternating permutation）和反交替置换（reverse alternating permutation）．
+Here is another way to pair them: split the zigzag permutations into alternating permutations and reverse alternating permutations.
 
-交替置换的首元素大于第二个元素，大小关系为：
+In an alternating permutation, the first element is larger than the second, and the order relations are:
 
 $$
 c_1>c_2<c_3>\cdots
 $$
 
-反交替置换的首元素小于第二个元素，大小关系为：
+In a reverse alternating permutation, the first element is smaller than the second, and the order relations are:
 
 $$
 c_1<c_2>c_3<\cdots
 $$
 
-如果将 $1$ 和 $n$ 位置互换，$2$ 和 $n-1$ 位置互换，以此类推，即可将交替置换与反交替置换两个集合互换．因此，交替置换与反交替置换的个数相等，恰好为 zigzag 置换的一半．
+If we swap the positions of $1$ and $n$, of $2$ and $n-1$, and so on, the set of alternating permutations and the set of reverse alternating permutations map onto each other. So the numbers of alternating and reverse alternating permutations are equal, each exactly half the number of zigzag permutations.
 
-对于大于 $1$ 的 $n$，记：
+For $n$ greater than $1$, let:
 
 $$
 A_n=\frac{Z_n}{2}
 $$
 
-定义初值：
+Define the initial values:
 
 $$
 A_0=A_1=1
 $$
 
-这里的 $A_n$ 称为 zigzag 数（Euler zigzag number，[OEIS A000111](http://oeis.org/A000111)），从 $n=0$ 开始有：
+Here $A_n$ is called the zigzag number (Euler zigzag number, [OEIS A000111](http://oeis.org/A000111)). Starting from $n=0$, they are:
 
 $$
 1, 1, 1, 2, 5, 16, 61, 272, \cdots
 $$
 
-接下来试着求解 $A_n$．
+Next, let us try to find $A_n$.
 
-从 $1$ 到 $n$ 之中，选取 $k$ 个数构成子集，有 $\dbinom{n}{k}$ 种选法．
+There are $\dbinom{n}{k}$ ways to choose a subset of $k$ numbers from $1$ to $n$.
 
-在这个 $k$ 元子集中，选反交替置换 $u$，有 $A_k$ 种选法；用全集减掉这个 $k$ 元子集，剩余的 $n-k$ 元子集中，选反交替置换 $v$，有 $A_{n-k}$ 种选法．
+Within this $k$-element subset, there are $A_k$ ways to choose a reverse alternating permutation $u$. Removing this $k$-element subset from the whole set leaves an $(n-k)$-element subset, in which there are $A_{n-k}$ ways to choose a reverse alternating permutation $v$.
 
-考虑 $n+1$ 元排列 $w$，将 $u$ 倒置作为开头，接上 $n+1$，再接上 $v$．那么，$w$ 一定是 zigzag 置换，并且任意一个 $n+1$ 元 zigzag 置换，都可以在 $n+1$ 处截断得到对应的反交替置换 $u$ 和 $v$，并且不同的 $n+1$ 元 zigzag 置换对应的 $u$ 和 $v$ 不同．
+Consider the permutation $w$ of $n+1$ elements formed by $u$ reversed, followed by $n+1$, followed by $v$. Then $w$ must be a zigzag permutation. Moreover, any zigzag permutation of $n+1$ elements can be cut at $n+1$ to get the matching reverse alternating permutations $u$ and $v$, and different zigzag permutations of $n+1$ elements give different pairs $u$ and $v$.
 
-因此有递推关系：
+So we get the recurrence:
 
 $$
 2A_{n+1}=\sum_{k=0}^n \dbinom{n}{k} A_k A_{n-k}
@@ -159,63 +159,63 @@ $$
 2(n+1)\frac{A_{n+1}}{(n+1)!}=\sum_{k=0}^n \frac{A_k}{k!}\frac{A_{n-k}}{(n-k)!}
 $$
 
-当 $n$ 为 $0$ 时并不满足这个递推式，初值 $A_0$ 和 $A_1$ 都是 $1$．
+This recurrence does not hold when $n$ is $0$; the initial values $A_0$ and $A_1$ are both $1$.
 
-可见，这是一个指数型生成函数的卷积．假设 $A_n$ 的指数型生成函数为 $y$，就有微分方程：
+We can see that this is a convolution of exponential generating functions. If $y$ is the exponential generating function of $A_n$, we get the differential equation:
 
 $$
 2\frac{\mathrm{d}y}{\mathrm{d}x}=y^2+1
 $$
 
-等式右面加 $1$ 是为了处理 $n$ 为 $0$ 时的特殊情况．该方程的通解为：
+The $1$ added on the right-hand side handles the special case when $n$ is $0$. The general solution of this equation is:
 
 $$
 y=\tan\left(\frac{1}{2}x+C\right)
 $$
 
-代入第 $0$ 项为 $1$ 之后，可以得到特解：
+Plugging in that the $0$-th term is $1$ gives the particular solution:
 
 $$
 y=\tan x+\sec x
 $$
 
-正切函数是奇函数，正割函数是偶函数，两者之和构成 zigzag 数的生成函数．
+Tangent is an odd function and secant is an even function, and their sum is the generating function of the zigzag numbers.
 
-## 恩特林格数与 zigzag 数的关系
+## Relation between Entringer numbers and zigzag numbers
 
-根据恩特林格数的定义，恩特林格数 $E(n,k)$ 是首元素为 $k$ 的 $0$ 到 $n$ 的交替置换个数．因此恩特林格数与 zigzag 数事实上有关系：
+By definition, the Entringer number $E(n,k)$ is the number of alternating permutations of $0$ to $n$ whose first element is $k$. So the Entringer numbers and zigzag numbers are related by:
 
 $$
 A_n=E(n,n)
 $$
 
-将 $A_n$ 称为「zigzag 数」也有原因：记 $E_n$ 是欧拉数（Euler number），$B_n$ 是伯努利数．
+There is also a reason to call $A_n$ "zigzag numbers": let $E_n$ be the Euler numbers and $B_n$ the Bernoulli numbers.
 
-当 $n$ 为偶数时，偶数项下标的 zigzag 数也称「正割数」$S_n$ 或者「zig 数」．有关系：
+When $n$ is even, the zigzag numbers with even index are also called "secant numbers" $S_n$ or "zig numbers". They satisfy:
 
 $$
 A_n=(-1)^{n/2}E_n
 $$
 
-前几项为（[OEIS A000364](http://oeis.org/A000364)）：
+The first few are ([OEIS A000364](http://oeis.org/A000364)):
 
 $$
 1, 1, 5, 61, 1385, \cdots
 $$
 
-当 $n$ 为奇数时，奇数项下标的 zigzag 数也称「正切数」$T_n$ 或者「zag 数」．有关系：
+When $n$ is odd, the zigzag numbers with odd index are also called "tangent numbers" $T_n$ or "zag numbers". They satisfy:
 
 $$
 A_n=\frac{(-1)^{(n-1)/2}2^{n+1}(2^{n+1}-1)B_{n+1}}{n+1}
 $$
 
-前几项为（[OEIS A000182](http://oeis.org/A000182)）：
+The first few are ([OEIS A000182](http://oeis.org/A000182)):
 
 $$
 1, 2, 16, 272, 7936, \cdots
 $$
 
-于是对于在 $x=0$ 处的泰勒展开，可以给出正割数和正切数：
+So the Taylor expansions at $x=0$ give the secant numbers and tangent numbers:
 
 $$
 \sec x=A_0+A_2\frac{x^2}{2!}+A_4\frac{x^4}{4!}+\cdots
@@ -225,14 +225,14 @@ $$
 \tan x=A_1x+A_3\frac{x^3}{3!}+A_5\frac{x^5}{5!}+\cdots
 $$
 
-或者写到一起：
+Or, written together:
 
 $$
 \sec x+\tan x=A_0+A_1x+A_2\frac{x^2}{2!}+A_3\frac{x^3}{3!}+A_4\frac{x^4}{4!}+A_5\frac{x^5}{5!}+\cdots
 $$
 
-构成 zigzag 数的生成函数．
+This is the generating function of the zigzag numbers.
 
-## 参考资料与链接
+## References and links
 
 1.  [Alternating permutation - Wikipedia](https://en.wikipedia.org/wiki/Alternating_permutation)
