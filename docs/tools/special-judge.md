@@ -1,40 +1,40 @@
 author: Xeonacid, NachtgeistW, 2014CAIS01, sshwy, Chrogeek, Menci, yzy-1
 
-本页面主要介绍部分评测工具/OJ 的 spj 编写方法．
+This page explains how to write a special judge (spj) for several judging tools and OJs.
 
-## 简介
+## Introduction
 
-**Special Judge**（简称：spj，别名：checker）是当一道题有多组解时，用来判断答案合法性的程序．
+A **Special Judge** (spj for short, also called a checker) is a program that checks whether an answer is valid when a problem has multiple correct answers.
 
 ???+ warning "Warning"
-    spj 还应当判断文件尾是否有多余内容，及输出格式是否正确（如题目要求数字间用一个空格隔开，而选手却使用了换行）．但是，目前前者只有 Testlib 可以方便地做到这一点，而后者几乎无人去特意进行这种判断．
+    An spj should also check whether there is extra content at the end of the file, and whether the output format is correct (for example, the problem requires numbers to be separated by a single space, but the contestant used newlines). However, currently only Testlib makes the former easy, and almost nobody deliberately checks the latter.
     
-    判断浮点数时应注意 NaN．不合理的判断方式会导致输出 NaN 即可 AC 的情况．
+    Watch out for NaN when comparing floating-point numbers. A careless comparison can let a solution get AC just by printing NaN.
     
-    在对选手文件进行读入操作时应该要检查是否正确读入了所需的内容，防止造成 spj 的运行错误．（部分 OJ 会将 spj 的运行错误作为系统错误处理）
+    When reading the contestant's file, check that the required content was actually read correctly, so the spj doesn't hit a runtime error. (Some OJs treat a runtime error in the spj as a system error.)
 
 ???+ note "Note"
-    以下均以 C++ 作为编程语言，以「要求标准答案与选手答案差值小于 1e-3，文件名为 num，单个测试点满分为 10 分」为例．
+    All examples below use C++, with the setting "the difference between the reference answer and the contestant's answer must be less than 1e-3, the file name is num, and each test is worth 10 points".
 
 ## Testlib
 
-参见：[Testlib/简介](./testlib/index.md)，[Testlib/Checker](./testlib/checker.md)
+See also: [Testlib/Introduction](./testlib/index.md), [Testlib/Checker](./testlib/checker.md)
 
-Testlib 是一个 C++ 的库，用于辅助出题人使用 C++ 编写算法竞赛题．
+Testlib is a C++ library that helps problem setters write competitive programming problems in C++.
 
-必须使用 Testlib 作为 spj 的 评测工具/OJ：Codeforces、洛谷、UOJ 等．
+Judging tools/OJs that require Testlib for the spj: Codeforces, Luogu, UOJ, etc.
 
-可以使用 Testlib 作为 spj 的 评测工具/OJ：LibreOJ ([Lyrio](https://github.com/lyrio-dev))、Lemon、牛客网等．
+Judging tools/OJs that can use Testlib for the spj: LibreOJ ([Lyrio](https://github.com/lyrio-dev)), Lemon, Nowcoder, etc.
 
-SYZOJ 2 所需的修改版 Testlib 托管于 [pastebin](https://pastebin.com/3GANXMG7)[^1]，但此修改版并未修改交互模式．[syzoj/testlib](https://github.com/syzoj/testlib) 处托管了一份可以在 SYZOJ 2 上使用交互模式的 Testlib．
+The modified Testlib needed by SYZOJ 2 is hosted on [pastebin](https://pastebin.com/3GANXMG7)[^1], but this modified version does not change interactive mode. [syzoj/testlib](https://github.com/syzoj/testlib) hosts a Testlib that supports interactive mode on SYZOJ 2.
 
-Lemon 所需的修改版 Testlib 托管于 [GitHub - GitPinkRabbit/Testlib-for-Lemons](https://github.com/GitPinkRabbit/Testlib-for-Lemons)．注意此版本 Testlib 注册 checker 时应使用 `registerLemonChecker()`，而非 `registerTestlibCmd()`．此版本继承自 [matthew99 的旧版](https://paste.ubuntu.com/p/JsTspHHnmB/)，添加了一些 Testlib 的新功能．如果你使用 LemonLime，则可以使用原生的 Testlib．
+The modified Testlib needed by Lemon is hosted at [GitHub - GitPinkRabbit/Testlib-for-Lemons](https://github.com/GitPinkRabbit/Testlib-for-Lemons). Note that with this version, you register the checker with `registerLemonChecker()` instead of `registerTestlibCmd()`. This version is based on [matthew99's old version](https://paste.ubuntu.com/p/JsTspHHnmB/) and adds some newer Testlib features. If you use LemonLime, you can use the original Testlib.
 
-DOMJudge 所需的修改版 Testlib 托管于 [cn-xcpc-tools/testlib-for-domjudge](https://github.com/cn-xcpc-tools/testlib-for-domjudge)．此版本 Testlib 同时可作为 Special Judge 的 checker 和交互题的 interactor．
+The modified Testlib needed by DOMJudge is hosted at [cn-xcpc-tools/testlib-for-domjudge](https://github.com/cn-xcpc-tools/testlib-for-domjudge). This version of Testlib works both as a Special Judge checker and as an interactor for interactive problems.
 
-Arbiter 所需的修改版 Testlib 托管于 [testlib-for-arbiter](https://github.com/HeRaNO/ChickenRibs/tree/master/testlib-for-arbiter)．
+The modified Testlib needed by Arbiter is hosted at [testlib-for-arbiter](https://github.com/HeRaNO/ChickenRibs/tree/master/testlib-for-arbiter).
 
-其他评测工具/OJ 大部分需要按照其 spj 编写格式修改 Testlib，并将 testlib.h 与 spj 一同上传；或将 testlib.h 置于 include 目录．
+For most other judging tools/OJs, you need to adapt Testlib to their spj format and upload testlib.h together with the spj, or put testlib.h in the include directory.
 
 ```cpp
 #include "testlib.h"
@@ -43,9 +43,9 @@ Arbiter 所需的修改版 Testlib 托管于 [testlib-for-arbiter](https://githu
 
 int main(int argc, char *argv[]) {
   /*
-   * inf：输入
-   * ouf：选手输出
-   * ans：标准输出
+   * inf: input
+   * ouf: contestant output
+   * ans: reference output
    */
   registerTestlibCmd(argc, argv);
 
@@ -61,9 +61,9 @@ int main(int argc, char *argv[]) {
 ## Lemon
 
 ???+ note "Note"
-    Lemon 有现成的修改版 [Testlib](#testlib)，建议使用 Testlib．
+    Lemon has a ready-made modified [Testlib](#testlib); using Testlib is recommended.
     
-    LemonLime 最新版已经支持使用原版 Testlib 编写评测器，如果你使用 LemonLime，建议使用 Testlib．
+    The latest LemonLime supports writing checkers with the original Testlib. If you use LemonLime, using Testlib is recommended.
 
 ```cpp
 #include <cmath>
@@ -71,12 +71,12 @@ int main(int argc, char *argv[]) {
 
 int main(int argc, char* argv[]) {
   /*
-   * argv[1]：输入
-   * argv[2]：选手输出
-   * argv[3]：标准输出
-   * argv[4]：单个测试点分值
-   * argv[5]：输出最终得分 (0 ~ argv[4])
-   * argv[6]：输出错误报告
+   * argv[1]: input
+   * argv[2]: contestant output
+   * argv[3]: reference output
+   * argv[4]: score of a single test
+   * argv[5]: write the final score (0 ~ argv[4])
+   * argv[6]: write the error report
    */
   FILE* fin = fopen(argv[1], "r");
   FILE* fout = fopen(argv[2], "r");
@@ -107,12 +107,12 @@ int main(int argc, char* argv[]) {
 
 int main(int argc, char* argv[]) {
   /*
-   * FILENAME.in：输入
-   * FILENAME.out：选手输出
-   * argv[1]：单个测试点分值
-   * argv[2]：标准输出
-   * score.log：输出最终得分 (0 ~ argv[1])
-   * report.log：输出错误报告
+   * FILENAME.in: input
+   * FILENAME.out: contestant output
+   * argv[1]: score of a single test
+   * argv[2]: reference output
+   * score.log: write the final score (0 ~ argv[1])
+   * report.log: write the error report
    */
   FILE* fin = fopen("num.in", "r");
   FILE* fout = fopen("num.out", "r");
@@ -143,11 +143,11 @@ int main(int argc, char* argv[]) {
 
 int main(int argc, char* argv[]) {
   /*
-   * stdin：输入
-   * argv[2]：标准输出
-   * argv[3]：选手输出
-   * stdout:L1：输出最终得分比率 (0 ~ 1)
-   * stdout:L2：输出错误报告
+   * stdin: input
+   * argv[2]: reference output
+   * argv[3]: contestant output
+   * stdout:L1: write the final score ratio (0 ~ 1)
+   * stdout:L2: write the error report
    */
   FILE* fout = fopen(argv[3], "r");
   FILE* fstd = fopen(argv[2], "r");
@@ -174,11 +174,11 @@ int main(int argc, char* argv[]) {
 
 int main(int argc, char* argv[]) {
   /*
-   * argv[1]：输入
-   * argv[2]：选手输出
-   * argv[3]：标准输出
-   * /tmp/_eval.score:L1：输出错误报告
-   * /tmp/_eval.score:L2：输出最终得分
+   * argv[1]: input
+   * argv[2]: contestant output
+   * argv[3]: reference output
+   * /tmp/_eval.score:L1: write the error report
+   * /tmp/_eval.score:L2: write the final score
    */
   FILE* fout = fopen(argv[2], "r");
   FILE* fstd = fopen(argv[3], "r");
@@ -210,10 +210,10 @@ int main(int argc, char* argv[]) {
 
 int main(int argc, char* argv[]) {
   /*
-   * argv[1]：输入
-   * argv[2]：标准输出
-   * argv[3]：选手输出
-   * exit code：返回判断结果
+   * argv[1]: input
+   * argv[2]: reference output
+   * argv[3]: contestant output
+   * exit code: return the verdict
    */
   FILE* fin = fopen(argv[1], "r");
   FILE* fout = fopen(argv[3], "r");
@@ -232,7 +232,7 @@ int main(int argc, char* argv[]) {
 
 ## QDUOJ
 
-相较之下，QDUOJ 略为麻烦．它带 spj 的题目没有标准输出，只能把 std 写进 spj，待跑出标准输出后再判断．
+QDUOJ is a bit more troublesome by comparison. Its problems with an spj have no reference output, so you have to put the reference solution (std) inside the spj and compute the reference output before checking.
 
 ```cpp
 #include <cmath>
@@ -248,9 +248,9 @@ double solve(...) {
 
 int main(int argc, char* argv[]) {
   /*
-   * argv[1]：输入
-   * argv[2]：选手输出
-   * exit code：返回判断结果
+   * argv[1]: input
+   * argv[2]: contestant output
+   * exit code: return the verdict
    */
   FILE* fin = fopen(argv[1], "r");
   FILE* fout = fopen(argv[2], "r");
@@ -268,9 +268,9 @@ int main(int argc, char* argv[]) {
 
 ## HDOJ
 
-HDOJ 和 QDUOJ 的情况基本一致，也需要在 spj 中实现 std 后与选手输出比较．但与 QDUOJ 不同的是，HDOJ 会比较答案与 spj 输出在标准输出的内容后给出最终结果．因此，上传输出时仅需上传 spj 在正确时的输出即可．
+HDOJ is basically the same as QDUOJ: you also implement the std in the spj and compare it with the contestant's output. Unlike QDUOJ, however, HDOJ gives the final verdict by comparing the answer file with what the spj prints to standard output. So for the output file, you only need to upload what the spj prints when the answer is correct.
 
-HDOJ 需上传 Windows 下编译后的二进制文件，而非源代码．
+HDOJ requires you to upload a binary compiled on Windows, not the source code.
 
 ```cpp
 #include <cmath>
@@ -282,8 +282,8 @@ double solve(FILE* fin) {
 
 int main(int argc, char* argv[]) {
   /*
-   * argv[1]：输入
-   * stdin：选手输出
+   * argv[1]: input
+   * stdin: contestant output
    */
   FILE* fin = fopen(argv[1], "r");
 
@@ -305,7 +305,7 @@ finish:
 }
 ```
 
-对应的答案文件为：
+The corresponding answer file is:
 
 ```text
 AC
@@ -314,9 +314,9 @@ AC
 ## SYZOJ 2
 
 ???+ note "Note"
-    SYZOJ 2 有现成的修改版 [Testlib](#testlib)，建议使用 Testlib．
+    SYZOJ 2 has a ready-made modified [Testlib](#testlib); using Testlib is recommended.
     
-    LibreOJ 的最新版本已不再基于 SYZOJ，而是基于 [Lyrio](https://github.com/lyrio-dev/lyrio)．Lyrio 支持使用原版 Testlib 编写评测器，这也是更加通用且推荐的做法．
+    The latest version of LibreOJ is no longer based on SYZOJ but on [Lyrio](https://github.com/lyrio-dev/lyrio). Lyrio supports writing checkers with the original Testlib, which is the more general and recommended approach.
 
 ```cpp
 #include <cmath>
@@ -324,12 +324,12 @@ AC
 
 int main(int argc, char* argv[]) {
   /*
-   * in：输入
-   * user_out：选手输出
-   * answer：标准输出
-   * code：选手代码
-   * stdout：输出最终得分 (0 ~ 100)
-   * stderr：输出错误报告
+   * in: input
+   * user_out: contestant output
+   * answer: reference output
+   * code: contestant code
+   * stdout: write the final score (0 ~ 100)
+   * stderr: write the error report
    */
   FILE* fin = fopen("input", "r");
   FILE* fout = fopen("user_out", "r");
@@ -351,12 +351,12 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-## 牛客网
+## Nowcoder
 
 ???+ note "Note"
-    牛客网有现成的修改版 [Testlib](#testlib)，建议使用 Testlib．
+    Nowcoder has a ready-made modified [Testlib](#testlib); using Testlib is recommended.
 
-参见：[如何在牛客网出 Special Judge 的编程题](https://www.nowcoder.com/discuss/84666)
+See also: [How to set a Special Judge programming problem on Nowcoder (in Chinese)](https://www.nowcoder.com/discuss/84666)
 
 ```cpp
 #include <cmath>
@@ -367,10 +367,10 @@ int main(int argc, char* argv[]) {
 
 int main(int argc, char* argv[]) {
   /*
-   * input：输入
-   * user_output：选手输出
-   * output：标准输出
-   * exit code：返回判断结果
+   * input: input
+   * user_output: contestant output
+   * output: reference output
+   * exit code: return the verdict
    */
   FILE* fin = fopen("input", "r");
   FILE* fout = fopen("user_output", "r");
@@ -390,13 +390,13 @@ int main(int argc, char* argv[]) {
 ## DOMJudge
 
 ???+ note "Note"
-    DOMJudge 支持任何语言编写的 spj，参见：[problemarchive.org output validator 格式](https://www.problemarchive.org/wiki/index.php/Output_validator)．
+    DOMJudge supports an spj written in any language; see the [problemarchive.org output validator format](https://www.problemarchive.org/wiki/index.php/Output_validator).
     
-    DOMJudge 有现成的修改版 [Testlib](#testlib)，建议使用 Testlib．
+    DOMJudge has a ready-made modified [Testlib](#testlib); using Testlib is recommended.
 
-DOMJudge 使用的 Testlib 及导入 Polygon 题目包方式的文档：<https://github.com/cn-xcpc-tools/testlib-for-domjudge>
+Documentation on the Testlib used by DOMJudge and on importing Polygon problem packages: <https://github.com/cn-xcpc-tools/testlib-for-domjudge>
 
-DOMJudge 的 [默认比较器](https://github.com/Kattis/problemtools/blob/master/support/default_validator/) 自带了浮点数带精度比较，只需要在题目配置的 `validator_flags` 中添加 `float_tolerance 1e-3` 即可．
+DOMJudge's [default validator](https://github.com/Kattis/problemtools/blob/master/support/default_validator/) has built-in floating-point comparison with tolerance; just add `float_tolerance 1e-3` to `validator_flags` in the problem configuration.
 
 ```cpp
 #include <cmath>
@@ -408,10 +408,10 @@ char reportfile[50];
 
 int main(int argc, char* argv[]) {
   /*
-   * argv[1]: 输入
-   * argv[2]: 标准输出
-   * argv[3]: 评测信息输出的文件夹
-   * stdin: 选手输出
+   * argv[1]: input
+   * argv[2]: reference output
+   * argv[3]: folder for judge messages
+   * stdin: contestant output
    */
   FILE* fin = fopen(argv[1], "r");
   FILE* fstd = fopen(argv[2], "r");
@@ -433,8 +433,8 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-也可以使用 Kattis Problem Tools 提供的头文件 [validate.h](https://github.com/Kattis/problemtools/blob/master/examples/different/output_validators/different_validator/validate.h) 编写，以实现更加复杂的功能．
+You can also write it with the header [validate.h](https://github.com/Kattis/problemtools/blob/master/examples/different/output_validators/different_validator/validate.h) provided by Kattis Problem Tools, to implement more complex features.
 
-## 参考资料
+## References
 
-[^1]: [LibreOJ 支持 testlib 检查器啦！](https://loj.ac/article/124)
+[^1]: [LibreOJ now supports testlib checkers! (in Chinese)](https://loj.ac/article/124)

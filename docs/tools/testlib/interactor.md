@@ -1,17 +1,17 @@
-Interactor，即交互器，用于交互题与选手程序交互．交互题的介绍见 [题型介绍 - 交互题](../../contest/problems.md#)．
+An interactor talks to the contestant's program in interactive problems. For an introduction to interactive problems, see [Problem types - Interactive problems](../../contest/problems.md#).
 
 ???+ note "Note"
-    Testlib 仅支持 Codeforces 形式交互题，即两程序交互．不支持 NOI 形式的选手编写函数与其他函数交互．
+    Testlib supports only Codeforces-style interactive problems, where two programs interact. It does not support NOI-style problems where the contestant writes functions that interact with other functions.
 
-请在阅读下文前先阅读 [通用](./general.md)．
+Please read [General](./general.md) before reading the rest of this page.
 
-Testlib 为 interactor 提供了一个特殊的流 `std::fstream tout`，它是一个 log 流，你可以在 interactor 中向它写入，并在 checker 中用 `ouf` 读取．
+Testlib provides interactors with a special stream `std::fstream tout`. It is a log stream: you can write to it in the interactor and read it with `ouf` in the checker.
 
-在 interactor 中，我们从 `inf` 读取题目测试数据，将选手程序（和标程）的标准输入写入 `stdout`（在线），从 `ouf` 读选手输出（在线），从 `ans` 读标准输出（在线）．
+In the interactor, we read the test data from `inf`, write the standard input of the contestant's program (and the reference solution) to `stdout` (online), read the contestant's output from `ouf` (online), and read the reference output from `ans` (online).
 
-如果 interactor 返回了 ok 状态，checker（如果有的话）将接管工作，检查答案合法性．
+If the interactor returns ok, the checker (if there is one) takes over and checks whether the answer is valid.
 
-## 用法
+## Usage
 
 Windows:
 
@@ -25,31 +25,31 @@ Linux:
 ./interactor.out <Input_File> <Output_File> [<Answer_File> [<Result_File> [-appes]]],
 ```
 
-## 简单的例子
+## A simple example
 
-???+ note "题目"
-    interactor 随机选择一个 $[1,10^9]$ 范围内的整数，你要写一个程序来猜它，你最多可以询问 $50$ 次一个 $[1,10^9]$ 范围内的整数．
+???+ note "Problem"
+    The interactor picks a random integer in $[1,10^9]$. Write a program that guesses it. You may ask about an integer in $[1,10^9]$ at most $50$ times.
     
-    interactor 将返回：
+    The interactor replies:
     
-    `1`：询问与答案相同，你的程序应当停止询问．
+    `1`: the query equals the answer; your program should stop asking.
     
-    `0`：询问比答案小．
+    `0`: the query is less than the answer.
     
-    `2`：询问比答案大．
+    `2`: the query is greater than the answer.
 
-注意在此题中我们不需要 `ans`，因为我们不需要将标准输出与其比较；而在其他题中可能需要这么做．
+Note that in this problem we don't need `ans`, because we don't need to compare against the reference output; in other problems you may need to.
 
 ```cpp
 int main(int argc, char** argv) {
   registerInteraction(argc, argv);
-  int n = inf.readInt();  // 选数
-  cout.flush();           // 刷新缓冲区
+  int n = inf.readInt();  // the chosen number
+  cout.flush();           // flush the buffer
   int left = 50;
   bool found = false;
   while (left > 0 && !found) {
     left--;
-    int a = ouf.readInt(1, 1000000000);  // 询问
+    int a = ouf.readInt(1, 1000000000);  // query
     if (a < n)
       cout << 0 << endl;
     else if (a > n)
@@ -64,4 +64,4 @@ int main(int argc, char** argv) {
 }
 ```
 
-**本文主要翻译自 [Interactors with testlib.h - Codeforces](https://codeforces.com/blog/entry/18455)．`testlib.h` 的 GitHub 存储库为 [MikeMirzayanov/testlib](https://github.com/MikeMirzayanov/testlib)．**
+**This article is mainly translated from [Interactors with testlib.h - Codeforces](https://codeforces.com/blog/entry/18455). The GitHub repository of `testlib.h` is [MikeMirzayanov/testlib](https://github.com/MikeMirzayanov/testlib).**

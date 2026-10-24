@@ -1,34 +1,34 @@
-前置知识：[通用](./general.md)
+Prerequisites: [General](./general.md)
 
-本页面将简要介绍 validator 的概念与用法．
+This page gives a short introduction to the concept and usage of validators.
 
-## 概述
+## Overview
 
-Validator（中文：校验器）用于检验造好的数据的合法性．当造好一道题的数据，又担心数据不合法（不符合题目的限制条件：上溢、图不连通、不是树……）时，出题者通常会借助 validator 来检查．[^ref1]
+A validator checks whether generated test data is valid. When you have made the tests for a problem but worry that they might be invalid (breaking the problem's constraints: overflow, a disconnected graph, not a tree...), problem setters usually check them with a validator.[^ref1]
 
-因为 Coderforces 支持 hack 功能，所以所有 Codeforces 上的题目都必须要有 validator．UOJ 也如此．[Polygon](../polygon.md) 内建了对 validator 的支持．
+Because Codeforces supports hacks, every problem on Codeforces must have a validator. The same goes for UOJ. [Polygon](../polygon.md) has built-in support for validators.
 
-## 使用方法
+## Usage
 
-直接在命令行输入 `./val` 即可．数据通过 stdin 输入．如果想从文件输入可 `./val < a.in`．
+Just run `./val` from the command line. The data is read from stdin. To read from a file, use `./val < a.in`.
 
-若数据没有问题，则什么都不会输出且返回 0；否则会输出错误信息并返回一个非 0 值．
+If the data is fine, nothing is printed and the exit code is 0; otherwise an error message is printed and a nonzero value is returned.
 
-## 提示
+## Tips
 
--   写 validator 时，不能对被 validate 的数据做任何假设，因为它可能包含任何内容．因此，出题者要对各种不合法的情况进行判断（使用 Testlib 会大大简化这一流程）．
-    -   例如，输入一个点数为 $n$ 的树，主要工作是判断 $n$ 是否符合范围和判断输入的是树与否．但是切不可在判断过 $n$ 范围之后就不对接下来输入的边的起点与终点的范围进行判断，否则可能会导致 validator RE．
-    -   即使不会 RE 也不应该不判断，这会导致你的报错不正确．如上例，如果不判断，报错可能会是「不是一棵树」，但是正确的报错应当是「边起点/终点不在 $[1,n]$ 之间」．
--   不能对选手的读入方式做任何假设．因此，必须保证能通过 validate 的数据完全符合输入格式．
-    -   例如，选手可能逐字符地读入数字，在数字与数字之间只读入一个空格．所以在编写 validator 时，数据中的每一个空白字符都要在 validator 中显式地读入（如空格和换行）．
--   结束时不要忘记 `inf.readEof()`．
--   如果题目开放 hack（或者说，validator 的错误信息会给别人看），请使报错信息尽量友好．
-    -   读入变量时使用「项别名」．
-    -   在判断使用的表达式不那么易懂时，使用 ensuref 而非 ensure．
+-   When writing a validator, you cannot assume anything about the data being validated, because it may contain anything. So the problem setter must check for all kinds of invalid cases (Testlib makes this much simpler).
+    -   For example, if the input is a tree with $n$ vertices, the main job is to check that $n$ is in range and that the input is a tree. But never stop checking after you have checked the range of $n$: you must also check the ranges of the endpoints of the edges that follow, or the validator may RE.
+    -   Even if it wouldn't RE, you should still check, or your error message will be wrong. In the example above, without the check the error might be "not a tree", but the correct error should be "an edge endpoint is not in $[1,n]$".
+-   You cannot assume anything about how contestants read input. So you must make sure that data passing validation matches the input format exactly.
+    -   For example, a contestant may read numbers character by character and read exactly one space between numbers. So when writing a validator, every whitespace character in the data (such as spaces and line breaks) must be read explicitly in the validator.
+-   Don't forget `inf.readEof()` at the end.
+-   If the problem allows hacks (in other words, other people will see the validator's error messages), make the error messages as friendly as possible.
+    -   Use "item names" when reading variables.
+    -   When the expression being checked is not easy to understand, use ensuref instead of ensure.
 
-## 示例
+## Example
 
-以下是 [CF Gym 100541A - Stock Market](https://codeforces.com/gym/100541/problem/A) 的 validator：
+Here is the validator for [CF Gym 100541A - Stock Market](https://codeforces.com/gym/100541/problem/A):
 
 ```cpp
 #include "testlib.h"
@@ -55,11 +55,11 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-## 外部链接
+## External links
 
--   [Validator 的更多示例](https://github.com/MikeMirzayanov/testlib/tree/master/validators)
--   [`testlib.h` 的 GitHub 存储库 MikeMirzayanov/testlib](https://github.com/MikeMirzayanov/testlib)
+-   [More validator examples](https://github.com/MikeMirzayanov/testlib/tree/master/validators)
+-   [The GitHub repository of `testlib.h`: MikeMirzayanov/testlib](https://github.com/MikeMirzayanov/testlib)
 
-## 参考资料与注释
+## References and notes
 
 [^ref1]: [Validators with testlib.h - Codeforces](https://codeforces.com/blog/entry/18426)

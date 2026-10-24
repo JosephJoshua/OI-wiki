@@ -1,15 +1,15 @@
-Checker，即 [Special Judge](../special-judge.md)，用于检验答案是否合法．使用 Testlib 可以让我们免去检验许多东西，使编写简单许多．
+A checker, also known as a [Special Judge](../special-judge.md), verifies whether an answer is valid. Testlib saves us from checking many things by hand, which makes writing one much simpler.
 
-Checker 从命令行参数读取到输入文件名、选手输出文件名、标准输出文件名，并确定选手输出是否正确，并返回一个预定义的结果：
+A checker gets the input file name, the contestant's output file name and the reference output file name from its command-line arguments, decides whether the contestant's output is correct, and returns one of the predefined verdicts:
 
-请在阅读下文前先阅读 [通用](./general.md)．
+Please read [General](./general.md) before reading the rest of this page.
 
-## 简单的例子
+## A simple example
 
-???+ note "题目"
-    给定两个整数 $a,b$（$-1000 \le a,b \le 1000$），输出它们的和．
+???+ note "Problem"
+    Given two integers $a,b$ ($-1000 \le a,b \le 1000$), output their sum.
 
-这题显然不需要 checker 对吧，但是如果一定要的话也可以写一个：
+This problem obviously doesn't need a checker, right? But if you really want one, you can write it like this:
 
 ```cpp
 #include "testlib.h"
@@ -19,8 +19,8 @@ int main(int argc, char* argv[]) {
 
   int pans = ouf.readInt(-2000, 2000, "sum of numbers");
 
-  // 假定标准输出是正确的，不检查其范围
-  // 之后我们会看到这并不合理
+  // Assume the reference output is correct and don't check its range
+  // We'll see later that this isn't a good idea
   int jans = ans.readInt();
 
   if (pans == jans)
@@ -30,13 +30,13 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-## 编写 readAns 函数
+## Writing a readAns function
 
-假设你有一道题输入输出均有很多数，如：给定一张 DAG，求 $s$ 到 $t$ 的最长路并输出路径（可能有多条，输出任一）．
+Suppose you have a problem whose input and output both contain many numbers, for example: given a DAG, find the longest path from $s$ to $t$ and output the path (there may be several; output any of them).
 
-下面是一个 **不好** 的 checker 的例子．
+Below is an example of a **bad** checker.
 
-### 不好的实现
+### A bad implementation
 
 ```cpp
 #include "testlib.h"
@@ -49,9 +49,9 @@ map<pair<int, int>, int> edges;
 
 int main(int argc, char* argv[]) {
   registerTestlibCmd(argc, argv);
-  int n = inf.readInt();  // 不需要 readSpace() 或 readEoln()
-  int m = inf.readInt();  // 因为不需要在 checker 中检查标准输入合法性
-                          // （有 validator）
+  int n = inf.readInt();  // No need for readSpace() or readEoln()
+  int m = inf.readInt();  // because the checker doesn't need to validate the input
+                          // (there is a validator for that)
   for (int i = 0; i < m; i++) {
     int a = inf.readInt();
     int b = inf.readInt();
@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
   int s = inf.readInt();
   int t = inf.readInt();
 
-  // 读入标准输出
+  // Read the reference output
   int jvalue = 0;
   vector<int> jpath;
   int jlen = ans.readInt();
@@ -72,26 +72,26 @@ int main(int argc, char* argv[]) {
     jvalue += edges[make_pair(jpath[i], jpath[i + 1])];
   }
 
-  // 读入选手输出
+  // Read the contestant's output
   int pvalue = 0;
   vector<int> ppath;
   vector<bool> used(n);
-  int plen = ouf.readInt(2, n, "number of vertices");  // 至少包含 s 和 t 两个点
+  int plen = ouf.readInt(2, n, "number of vertices");  // contains at least s and t
   for (int i = 0; i < plen; i++) {
     int v = ouf.readInt(1, n, format("path[%d]", i + 1).c_str());
-    if (used[v - 1])  // 检查每条边是否只用到一次
+    if (used[v - 1])  // check that each vertex is used only once
       quitf(_wa, "vertex %d was used twice", v);
     used[v - 1] = true;
     ppath.push_back(v);
   }
-  // 检查起点终点合法性
+  // Check the start and end vertices
   if (ppath.front() != s)
     quitf(_wa, "path doesn't start in s: expected s = %d, found %d", s,
           ppath.front());
   if (ppath.back() != t)
     quitf(_wa, "path doesn't finish in t: expected t = %d, found %d", t,
           ppath.back());
-  // 检查相邻点间是否有边
+  // Check that adjacent vertices are connected by an edge
   for (int i = 0; i < plen - 1; i++) {
     if (edges.find(make_pair(ppath[i], ppath[i + 1])) == edges.end())
       quitf(_wa, "there is no edge (%d, %d) in the graph", ppath[i],
@@ -106,14 +106,14 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-这个 checker 主要有两个问题：
+This checker has two main problems:
 
-1.  它确信标准输出是正确的．如果选手输出比标准输出更优，它会被判成 WA，这不太妙．同时，如果标准输出不合法，也会产生 WA．对于这两种情况，正确的操作都是返回 Fail 状态．
-2.  读入标准输出和选手输出的代码是重复的．在这道题中写两遍读入问题不大，只需要一个 `for` 循环；但是如果有一道题输出很复杂，就会导致你的 checker 结构混乱．重复代码会大大降低可维护性，让你在 debug 或修改格式时变得困难．
+1.  It trusts that the reference output is correct. If the contestant's output is better than the reference output, it is judged WA, which is not good. Also, if the reference output is invalid, it also gives WA. In both cases, the right thing to do is to return Fail.
+2.  The code that reads the reference output and the contestant's output is duplicated. In this problem, writing the reading code twice is no big deal, since it's just one `for` loop; but if a problem has complex output, your checker becomes messy. Duplicated code makes the checker much harder to maintain, and makes debugging or changing the format difficult.
 
-读入标准输出和选手输出的方式实际上是完全相同的，这就是我们通常编写一个用流作为参数的读入函数的原因．
+The reference output and the contestant's output are actually read in exactly the same way. That is why we usually write a reading function that takes the stream as a parameter.
 
-### 好的实现
+### A good implementation
 
 ```cpp
 // clang-format off
@@ -126,14 +126,14 @@ using namespace std;
 map<pair<int, int>, int> edges;
 int n, m, s, t;
 
-// 这个函数接受一个流，从其中读入
-// 检查路径的合法性并返回路径长度
-// 当 stream 为 ans 时，所有 stream.quitf(_wa, ...)
-// 和失败的 readXxx() 均会返回 _fail 而非 _wa
-// 也就是说，如果输出非法，对于选手输出流它将返回 _wa，
-// 对于标准输出流它将返回 _fail
+// This function takes a stream and reads from it,
+// checks that the path is valid, and returns its length.
+// When stream is ans, every stream.quitf(_wa, ...)
+// and every failed readXxx() returns _fail instead of _wa.
+// In other words, if the output is invalid, it returns _wa for the contestant's output stream
+// and _fail for the reference output stream.
 int readAns(InStream& stream) {
-  // 读入输出
+  // Read the output
   int value = 0;
   vector<int> path;
   vector<bool> used(n);
@@ -187,73 +187,73 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-注意到这种写法我们同时也检查了标准输出是否合法，这样写 checker 让程序更短，且易于理解和 debug．此种写法也适用于输出 YES（并输出方案什么的），或 NO 的题目．
+Notice that this way we also check that the reference output is valid. Writing checkers like this makes the program shorter and easier to understand and debug. The same approach also works for problems where the output is YES (plus a construction or similar) or NO.
 
 ???+ note "Note"
-    对于某些限制的检查可以用 `InStream::ensure/ensuref()` 函数更简洁地实现．如上例第 23 至 25 行也可以等价地写成如下形式：
+    Some constraint checks can be written more concisely with the `InStream::ensure/ensuref()` functions. For example, lines 23 to 25 of the example above can equivalently be written as:
     
     ```cpp
     stream.ensuref(!used[v - 1], "vertex %d was used twice", v);
     ```
 
 ???+ warning "Warning"
-    请在 `readAns` 中避免调用 **全局** 函数 `::ensure/ensuref()`，这会导致在某些应判为 WA 的选手输出下返回 `_fail`，产生错误．
+    Avoid calling the **global** functions `::ensure/ensuref()` in `readAns`. Otherwise, some contestant outputs that should be judged WA will return `_fail`, which is wrong.
 
-## 建议与常见错误
+## Tips and common mistakes
 
--   编写 `readAns` 函数，它真的可以让你的 checker 变得很棒．
+-   Write a `readAns` function. It really makes your checker great.
 
--   读入选手输出时永远限定好范围，如果某些变量忘记了限定且被用于某些参数，你的 checker 可能会判定错误或 RE 等．
+-   Always restrict the range when reading the contestant's output. If you forget to restrict some variable and it is then used as a parameter somewhere, your checker may give a wrong verdict, crash with RE, and so on.
 
-    -   反面教材
+    -   Bad example
 
     ```cpp
     // ....
     int k = ouf.readInt();
     vector<int> lst;
-    for (int i = 0; i < k; i++)  // k = 0 和 k = -5 在这里作用相同（不会进入循环体）
+    for (int i = 0; i < k; i++)  // k = 0 and k = -5 behave the same here (the loop body never runs)
       lst.push_back(ouf.readInt());
-    // 但是我们并不想接受一个长度为 -5 的 list，不是吗？
+    // But we don't want to accept a list of length -5, do we?
     // ....
     int pos = ouf.readInt();
     int x = A[pos];
-    // 可能会有人输出 -42, 2147483456 或其他一些非法数字导致 checker RE
+    // Someone might print -42, 2147483456 or some other invalid number and make the checker RE
     ```
 
-    -   正面教材
+    -   Good example
 
     ```cpp
     // ....
-    int k = ouf.readInt(0, n);  // 长度不合法会立刻判 WA 而不会继续 check 导致 RE
+    int k = ouf.readInt(0, n);  // an invalid length gives WA immediately instead of continuing the check and causing RE
     vector<int> lst;
     for (int i = 0; i < k; i++) lst.push_back(ouf.readInt());
     // ....
-    int pos = ouf.readInt(0, (int)A.size() - 1);  // 防止 out of range
+    int pos = ouf.readInt(0, (int)A.size() - 1);  // prevents out of range
     int x = A[pos];
     // ....
     ```
 
--   使用项别名．
+-   Use item names.
 
--   和 validator 不同，checker 不用特意检查非空字符．例如对于一个按顺序比较整数的 checker，我们只需判断选手输出的整数和答案整数是否对应相等，而选手是每行输出一个整数，还是在一行中输出所有整数等格式问题，我们的 checker 不必关心．
+-   Unlike a validator, a checker doesn't need to check whitespace characters specifically. For example, for a checker that compares integers in order, we only need to check that each integer in the contestant's output equals the corresponding integer in the answer. Our checker doesn't care about format details such as whether the contestant prints one integer per line or all integers on one line.
 
-## 使用方法
+## Usage
 
-通常我们不需要本地运行它，评测工具/OJ 会帮我们做好这一切．但是如果需要的话，以以下格式在命令行运行：
+Usually we don't need to run it locally; the judging tool/OJ does all of this for us. But if needed, run it from the command line in the following format:
 
 ```bash
 ./checker <input-file> <output-file> <answer-file> [<report-file> [<-appes>]]
 ```
 
-## 一些预设的 checker
+## Some predefined checkers
 
-很多时候我们的 checker 完成的工作很简单（如判断输出的整数是否正确，输出的浮点数是否满足精度要求），[Testlib](https://github.com/MikeMirzayanov/testlib/tree/master/checkers) 已经为我们给出了这些 checker 的实现，我们可以直接使用．
+Very often our checker does something simple (such as checking whether the output integers are correct, or whether the output floating-point numbers meet the precision requirement). [Testlib](https://github.com/MikeMirzayanov/testlib/tree/master/checkers) already provides implementations of these checkers, and we can use them directly.
 
-一些常用的 checker 有：
+Some commonly used checkers are:
 
--   ncmp：按顺序比较 64 位整数．
--   rcmp4：按顺序比较浮点数，最大可接受误差（绝对误差或相对误差）不超过 $10^{-4}$（还有 rcmp6，rcmp9 等对精度要求不同的 checker，用法和 rcmp4 类似）．
--   wcmp：按顺序比较字符串（不带空格，换行符等非空字符）．
--   yesno：比较 YES 和 NO，大小写不敏感．
+-   ncmp: compares 64-bit integers in order.
+-   rcmp4: compares floating-point numbers in order, with a maximum allowed error (absolute or relative) of $10^{-4}$ (there are also checkers such as rcmp6 and rcmp9 with different precision requirements; they are used like rcmp4).
+-   wcmp: compares strings (tokens without whitespace such as spaces and line breaks) in order.
+-   yesno: compares YES and NO, case-insensitively.
 
-    **本文主要翻译自 [Checkers with testlib.h - Codeforces](https://codeforces.com/blog/entry/18431)．`testlib.h` 的 GitHub 存储库为 [MikeMirzayanov/testlib](https://github.com/MikeMirzayanov/testlib)．**
+    **This article is mainly translated from [Checkers with testlib.h - Codeforces](https://codeforces.com/blog/entry/18431). The GitHub repository of `testlib.h` is [MikeMirzayanov/testlib](https://github.com/MikeMirzayanov/testlib).**

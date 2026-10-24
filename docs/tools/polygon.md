@@ -1,182 +1,182 @@
 author: ouuan, NachtgeistW
 
-本页面将简要介绍多人协作出题平台 Polygon．
+This page gives a short introduction to Polygon, a platform for collaborative problem setting.
 
-## 简介
+## Introduction
 
-### 什么是 Polygon
+### What is Polygon
 
-网址：[Index Page - Polygon](https://polygon.codeforces.com)
+Website: [Index Page - Polygon](https://polygon.codeforces.com)
 
-Polygon 是一个支持多人协作的出题平台，功能非常完善．官网描述为「Polygon 的使命是为创建编程竞赛题目提供平台．」
+Polygon is a problem-setting platform that supports collaboration among several people, and it is very full-featured. The official site describes it as "Polygon mission is to provide platform for creation of programming contest problems."
 
-在 Codeforces (CF) 出题必须使用 Polygon．在其它地方出题，尤其是多人合作出题时，使用 Polygon 也是不错的选择．
+Problems for Codeforces (CF) must be prepared on Polygon. When setting problems elsewhere, especially as a team, Polygon is also a good choice.
 
-### 优点
+### Advantages
 
--   有版本管理系统，多人合作时不会乱成一团，也不需要互相传文件．
+-   It has version control, so collaboration doesn't turn into a mess and nobody has to send files back and forth.
 
--   出题系统完善，validator、generator、checker、solutions 环环相扣，输出自动生成．
+-   The problem-preparation system is complete: validator, generator, checker and solutions all fit together, and outputs are generated automatically.
 
--   可以为 solutions 设置标签，错解 AC、正解未 AC 都会警告，方便地逐一卡掉错解．
+-   You can tag solutions. It warns you when a wrong solution gets AC or a correct one doesn't, which makes it easy to break wrong solutions one by one.
 
--   可以方便地对拍，拍出来的数据可以直接添加到题目数据中．
+-   Stress testing is easy, and tests found by stress testing can be added directly to the problem's tests.
 
--   发现问题可以提 issue，而不会被消息刷屏却一直没有 fix．
+-   You can open issues when you find problems, instead of being flooded with messages while nothing gets fixed.
 
--   为日后出 CF 做准备．
+-   It prepares you for setting CF rounds in the future.
 
--   ……
+-   ...
 
-## 题目列表
+## Problem list
 
-题目列表中会显示一道题目的基本信息，如题面、题解撰写情况、数据生成情况以及 std、validator 和 checker 的设置．
+The problem list shows basic information about each problem, such as the progress of the statement and editorial, the test generation status, and the settings of the main solution (std), validator and checker.
 
-可以双击题目列表的 "Name" 这一栏来写上 note，比如需要提醒自己做的事（need to add more tests/need to write tutorial），或者是这道题预订的 score distribution，可以根据自己的需要随意填写，当然也可以空着．
+You can double-click the "Name" column of the problem list to write a note, such as things to remind yourself of (need to add more tests/need to write tutorial) or the planned score distribution for the problem. Fill it in however you like, or leave it empty.
 
-"Rev." 中的 "x/y" 的 x 指当前题目版本，y 指 package 的版本．如果两者不一样 y 会显示为红色．
+In the "x/y" of "Rev.", x is the current version of the problem and y is the version of the package. If they differ, y is shown in red.
 
-"Edit session" 中的 "Start" 是指你的账号还没有看过这道题，"Continue (x) Discard" 是指你的账号处于这个题目的第 x 个版本，点击 "Start" 或 "Continue (x)" 就会进入题目管理界面，点击 "Discard" 会 **不可恢复地** 撤销你的所有更改，回到没有看过这题的状态．
+In "Edit session", "Start" means your account hasn't opened this problem yet, and "Continue (x) Discard" means your account is at version x of this problem. Click "Start" or "Continue (x)" to enter the problem management page. Clicking "Discard" **irreversibly** throws away all your changes and returns to the state as if you had never opened the problem.
 
-如果你的账号上有一道题的更改没有提交，题目列表中这一整行就会变红．
+If your account has uncommitted changes to a problem, the whole row in the problem list turns red.
 
-## 题目管理
+## Problem management
 
-Polygon 的大部分功能都不需要学，能看懂英文就基本能用了．
+Most of Polygon's features need no learning; if you can read English, you can basically use it.
 
 ???+ warning "Warning"
-    题面不能使用 Markdown，只能用 TeX．
+    Statements cannot use Markdown; only TeX is allowed.
 
--   Invocation 是用来测试 solution 的．
+-   Invocation is for testing solutions.
 
--   Stress 是用来对拍的．
+-   Stress is for stress testing.
 
--   数据在 Tests 中用 generator 造，generator 在 Files 中上传．
+-   Tests are made in Tests with a generator, and generators are uploaded in Files.
 
 ### General Info
 
-在这个页面中可以设置题目的时间限制、空间限制、题目类型、题目的标签、所属比赛．
+On this page you can set the problem's time limit, memory limit, problem type, tags and the contest it belongs to.
 
-在页面的最下方的 "statement sketch" 和 "tutorial sketch" 可以编辑题面、题解的 **草稿**，注意这两项不会出现在正式的题面、题解上．
+At the bottom of the page, "statement sketch" and "tutorial sketch" let you edit **drafts** of the statement and editorial. Note that these two do not appear in the final statement or editorial.
 
 ### Statement
 
-这个页面是用来写题面和题解的．还可以通过 "Review" 按钮来查看题面、validator 与 checker，一般用于审核．
+This page is for writing the statement and the editorial. You can also use the "Review" button to view the statement, validator and checker, usually for reviewing.
 
-题面和题解都需要使用 TeX 的语法，不能使用 Markdown．例如，需要使用 `\textbf{text}` 而不是 `**text**`．但 Polygon 支持的实际上是 TeX 的一个非常小的子集，具体可以自己尝试．
+Both the statement and the editorial use TeX syntax, not Markdown. For example, you must use `\textbf{text}` instead of `**text**`. However, Polygon actually supports only a very small subset of TeX; try things out yourself to see what works.
 
-可以通过最上方的 "In HTML" 链接查看渲染后的题面，通过 "Tutorial in HTML" 查看渲染后的题解．
+Use the "In HTML" link at the top to see the rendered statement, and "Tutorial in HTML" to see the rendered editorial.
 
-如果需要在题面中添加图片，需要先在下面的 "Statement Resource Files" 中上传图片，然后在题面中加上 `\includegraphics{filename.png}`．
+To add images to the statement, first upload them in "Statement Resource Files" below, then add `\includegraphics{filename.png}` to the statement.
 
 ### Files
 
-"Source Files" 是用来存放 **除了 solutions 外** 的其它代码的，如 validator、checker、generator，如果是 IO 式交互题还有 interactor．
+"Source Files" holds all code **other than solutions**, such as the validator, checker and generator, plus the interactor for IO-style interactive problems.
 
-如果这些代码需要 include 其它文件，例如 [Tree-Generator](https://github.com/ouuan/Tree-Generator)，需要放在 "Resource Files" 中．
+If this code needs to include other files, such as [Tree-Generator](https://github.com/ouuan/Tree-Generator), those files go in "Resource Files".
 
-grader 式交互参见 [官方教程](https://codeforces.com/blog/entry/66916)．
+For grader-style interactive problems, see the [official tutorial](https://codeforces.com/blog/entry/66916).
 
 ### Checker
 
-testlib.h 提供了一些内置的 checker，在选择框中有简要介绍，也可以选择后再点 "View source" 查看源码．
+testlib.h provides some built-in checkers. They are briefly described in the drop-down box, and you can select one and click "View source" to see its source code.
 
-如果需要自己编写 checker，请参考 [checker 教程](./testlib/checker.md)．
+If you need to write your own checker, see the [checker tutorial](./testlib/checker.md).
 
-下面的 "Checker tests" 是通过 "Add test" 添加若干组输出以及对应的期望评测结果，然后点击 "Run tests" 就可以测试 checker 是否正确返回了评测结果．
+In "Checker tests" below, use "Add test" to add some outputs together with the expected verdicts, then click "Run tests" to check whether the checker returns the right verdicts.
 
 ### Interactor
 
-仅 IO 式交互题需要，请参考 [interactor 教程](./testlib/interactor.md)．
+Needed only for IO-style interactive problems; see the [interactor tutorial](./testlib/interactor.md).
 
 ### Validator
 
-validator 用来检测数据合法性，编写请参考 [validator 教程](./testlib/validator.md)．
+The validator checks that the tests are valid. To write one, see the [validator tutorial](./testlib/validator.md).
 
-下面的 "Validator tests" 类似于 "Checker tests"，需要提供输入和期望是否合法，用来测试 validator．
+"Validator tests" below works like "Checker tests": you provide inputs and whether each is expected to be valid, to test the validator.
 
 ### Tests
 
-这个页面是用来管理数据的．
+This page is for managing tests.
 
-在 Polygon 上，推荐的做法是使用少量 **带命令行参数** 的 [generator](./testlib/generator.md) 来生成数据，而不是写一堆 generator 或者每生成一组数据都修改 generator．并且，只需要生成输入，输出会自动生成．
+On Polygon, the recommended approach is to generate tests with a small number of [generators](./testlib/generator.md) **that take command-line parameters**, rather than writing many generators or editing the generator for every test. Also, you only need to generate the inputs; the outputs are generated automatically.
 
-"Testset" 就是一个测试集，如果是给 CF 出题需要手动添加 "pretests" 这个 Testset，并且 "pretests" 需要是 "tests" 的子集．
+A "Testset" is a set of tests. If you are setting a problem for CF, you need to add a "pretests" testset by hand, and "pretests" must be a subset of "tests".
 
-"Add Test" 是手动添加一组数据，一般用于手动输入样例或较小的数据．虽然可以通过文件上传数据，但这是 **不推荐的**，数据应该要么是手动输入的要么是使用 generator 在某个参数下生成的．
+"Add Test" adds a test by hand, usually for typing in samples or small tests. You can upload tests from files, but this is **not recommended**: every test should either be typed in by hand or generated by a generator with some parameters.
 
-如果勾选了 "Use in statements"，这组数据就会成为样例，自动加在题面里．如果需要题面里显示的不是样例的输入输出（一般用于交互题），就可以点 "If you want to specify custom content of input or output data for statements click here"，然后输入你想显示在题面中的输入输出．
+If you check "Use in statements", the test becomes a sample and is added to the statement automatically. If you want the statement to show something other than the sample's input and output (usually for interactive problems), click "If you want to specify custom content of input or output data for statements click here" and enter the input and output you want to show in the statement.
 
-Tests 页面的下方是用来输入生成数据的脚本的，如 `generator-name [params] > test-index`．可以使用 `generator-name [params] > $`，就不用手动指定测试点编号了．
+The bottom of the Tests page is where you enter the script that generates tests, such as `generator-name [params] > test-index`. You can use `generator-name [params] > $` so you don't have to give test numbers by hand.
 
-可以参考 [Polygon 提供的教程](https://polygon.codeforces.com/docs/freemarker-manual) 使用 Freemarker 来批量生成脚本．
+You can follow [Polygon's tutorial](https://polygon.codeforces.com/docs/freemarker-manual) to generate scripts in bulk with Freemarker.
 
-"Preview Tests" 可以预览生成的数据．
+"Preview Tests" lets you preview the generated tests.
 
 ### Stresses
 
-这个页面是用来对拍的．
+This page is for stress testing.
 
-点击 "Add Stress" 就可以添加一组对拍，"Script pattern" 是一个生成数据的脚本，其中可以使用 "\[10..100]" 之类的来表示在一个范围内随机选择．
+Click "Add Stress" to add a stress test. "Script pattern" is a script that generates tests, where you can write things like "\[10..100]" to pick a random value in a range.
 
-然后运行对拍，如果拍出错就会显示 "Crashed"，并且可以一键把这组数据加到 Tests 中．
+Then run the stress test. If it finds a failure, it shows "Crashed", and you can add that test to Tests with one click.
 
 ### Solution Files
 
-这个页面是用来放解这道题的代码的，可以是正解也可以是错解．将错解传上来可以便捷地卡掉它们，也可以提醒自己需要卡掉它们．
+This page holds code that solves the problem, both correct and wrong solutions. Uploading wrong solutions makes it easy to break them, and also reminds you that they need to be broken.
 
 ### Invocations
 
-这个页面是用来运行 solutions 的．
+This page is for running solutions.
 
-选择代码和测试点就可以运行了，之后可以在列表里点进去（"View"）查看详细信息．
+Pick the code and the tests, and run them. Afterwards you can click into an entry in the list ("View") to see the details.
 
-评测状态 "FL" 表示评测出错了，一般是数据没有过 validate 或者 validator/checker/interactor 之类的 RE 了．"RJ" 有两种情况，一种是出现了 "FL"，另一种是这份代码第一个测试点就没有通过．
+The verdict "FL" means judging failed, usually because a test didn't pass validation or the validator/checker/interactor got RE. "RJ" happens in two cases: either an "FL" occurred, or the code failed the very first test.
 
-如果用时在时限的一半到两倍之间，会用黄色标识出来．
+If the running time is between half and twice the time limit, it is highlighted in yellow.
 
-如果数据中存在变量没有达到最小值或最大值，会在最下方提醒．
+If some variable in the tests never reaches its minimum or maximum value, you get a reminder at the bottom.
 
 ### Issues
 
-用来提 Issue 的地方．
+The place to open issues.
 
 ### Packages
 
-Package 包含了一道题的全部信息，在出 CF 时是 CF 评测的依据（例如，如果赛时要修锅，更新了 package 才会影响到 CF），其它时候可以用来导出．
+A package contains all the information about a problem. When setting a CF round, CF judges based on the package (for example, if you fix a mistake during the contest, it only affects CF after you update the package). At other times, it can be used for exporting.
 
-"Verify" 是测试所有 solution 都符合标签（AC、WA、TLE），并且 checker 通过 checker tests，validator 通过 validator tests．
+"Verify" checks that all solutions match their tags (AC, WA, TLE), that the checker passes the checker tests, and that the validator passes the validator tests.
 
 ### Manage access
 
-管理题目权限．
+Manages access rights to the problem.
 
-### 侧边栏
+### Sidebar
 
-第一栏会显示一些基本信息，如果有哪里不符合规范（如 tests 没有包含 pretests、有重复的测试点）就会显示为黄色，鼠标移上去会显示具体信息．
+The first panel shows some basic information. If something breaks the rules (for example, tests don't contain pretests, or there are duplicate tests), it is shown in yellow; hover over it to see details.
 
-"View changes" 可以看修改的历史记录．需要注意的是 "switch" 不能用来回退到某一个版本，只能在某个版本的基础上进行不产生冲突的修改，而这实际上是没有意义的，所以 switch 相当于是只读的．
+"View changes" shows the history of changes. Note that "switch" cannot be used to roll back to a given version; it only allows non-conflicting changes on top of some version, which is actually pointless, so switch is effectively read-only.
 
-"Update Working Copy" 是获取（他人的）更新．
+"Update Working Copy" fetches updates (from others).
 
-"Commit Changes" 是提交你的更新．
+"Commit Changes" commits your updates.
 
-commit 时如果有不合规范、需要警告的地方会列出来．
+When you commit, anything that breaks the rules or needs a warning is listed.
 
-## 比赛管理
+## Contest management
 
-如果要出一场比赛，可以通过 "New Contest" 来创建比赛，就可以更加方便地管理题目．
+If you are setting a whole contest, you can create one with "New Contest", which makes managing the problems easier.
 
-比赛管理页面的题目列表右上角的 "Add problems?" 是把一道已有的题目加到比赛里．
+"Add problems?" in the top right of the problem list on the contest management page adds an existing problem to the contest.
 
-侧边栏的 "New problem" 是新建一道题目加到比赛里．
+"New problem" in the sidebar creates a new problem and adds it to the contest.
 
-上面的 "Manage problem access" 是查看每道题的权限，下面的 "Manage developers list" 是管理有这场比赛的权限的人．通过 "New problem" 创建一道题以及添加一个新的 developer 时会自动添加权限，但通过 "Add problems?" 加进来的题不会给已有的 developer 权限．
+"Manage problem access" above shows the access rights of each problem, and "Manage developers list" below manages who has access to the contest. Access is granted automatically when you create a problem with "New problem" or add a new developer, but problems added with "Add problems?" do not grant access to existing developers.
 
-侧边栏还可以预览所有题面、所有题解、所有 validator & checker，下载整个比赛的 package，给题目重新编号．
+The sidebar also lets you preview all statements, all editorials and all validators & checkers, download the package of the whole contest, and renumber the problems.
 
-## 冲突解决
+## Resolving conflicts
 
-在多人合作使用 Polygon 命题时，如果当前修改的题目版本与远程的题目版本不同，并且在从远程获取最新版本或提交更新时，修改的文件无法自动合并，就会发生冲突（Conflicted）．
+When several people prepare problems together on Polygon, a conflict ("Conflicted") happens if your version of a problem differs from the remote version and the changed files cannot be merged automatically when you fetch the latest version or commit your updates.
 
-发生冲突后，Polygon 会在冲突题目选项中提供 "Resolve conflicts" 选项，用户可以在里面对冲突文件进行冲突解决．
+After a conflict, Polygon offers a "Resolve conflicts" option among the options of the conflicted problem, where you can resolve conflicts in the conflicting files.

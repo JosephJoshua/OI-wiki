@@ -1,94 +1,94 @@
-本页面介绍 Testlib checker/interactor/validator 的一些通用状态/对象/函数、一些用法及注意事项．请在阅读其他页面前完整阅读本页面的内容．
+This page covers some common verdicts, objects and functions of Testlib checkers, interactors and validators, along with some usage notes and caveats. Please read this page in full before reading the other pages.
 
-## 通用状态
+## Common verdicts
 
-| 结果                 | Testlib 别名   | 含义                                                                                                                              |
+| Verdict            | Testlib alias | Meaning                                                                                                                                                                                                                                                       |
 | ------------------ | ------------ | ------------------------------------------------------------------------------------------------------------------------------- |
-| Ok                 | `_ok`        | 答案正确．                                                                                                                           |
-| Wrong Answer       | `_wa`        | 答案错误．                                                                                                                           |
-| Presentation Error | `_pe`        | 答案格式错误．注意包括 Codeforces 在内的许多 OJ 并不区分 PE 和 WA．                                                                                   |
-| Partially Correct  | `_pc(score)` | 答案部分正确．仅限于有部分分的测试点，其中 `score` 为一个正整数，从 $0$（没分）到 $100$（可能的最大分数）．（`quitf+_pc` 只是为了兼容旧的 pascal-testlib，如果想要输出部分分，建议使用 `quitp`[^1]） |
-| Fail               | `_fail`      | validator 中表示输入不合法，不通过校验．<br>checker 中表示程序内部错误、标准输出有误或选手输出比标准输出更优，需要裁判/出题人关注．（也就是题目锅了）                                          |
+| Ok                 | `_ok`        | The answer is correct.                                                                                                                                                                                                                                        |
+| Wrong Answer       | `_wa`        | The answer is wrong.                                                                                                                                                                                                                                          |
+| Presentation Error | `_pe`        | The answer has a format error. Note that many OJs, including Codeforces, do not distinguish PE from WA.                                                                                                                                                       |
+| Partially Correct  | `_pc(score)` | The answer is partially correct. Only for tests with partial points, where `score` is a positive integer from $0$ (no points) to $100$ (the maximum possible score). (`quitf+_pc` exists only for compatibility with the old pascal-testlib; to give partial points, `quitp` is recommended[^1].) |
+| Fail               | `_fail`      | In a validator: the input is invalid and fails validation.<br>In a checker: an internal error, a wrong reference output, or a contestant output better than the reference output; the judge/problem setter needs to look into it. (In other words, the problem is broken.) |
 
-通常用程序的返回值表明结果，但是也有一些其他方法：创建一个输出 xml 文件、输出信息到 stdout 或其他位置……这些都通过下方函数表中的 `quitf` 函数来完成．
+Usually the verdict is reported by the program's exit code, but there are other ways too: writing an xml output file, printing information to stdout or elsewhere... All of these are done by the `quitf` function in the function table below.
 
-## 通用对象
+## Common objects
 
-| 对象    | 含义    |
+| Object | Meaning                   |
 | ----- | ----- |
-| `inf` | 输入文件流 |
-| `ouf` | 选手输出流 |
-| `ans` | 参考输出流 |
+| `inf` | Input file stream         |
+| `ouf` | Contestant output stream  |
+| `ans` | Reference output stream   |
 
-## 通用函数
+## Common functions
 
-非成员函数：
+Non-member functions:
 
-| 调用                                                                                              | 含义                                                                                                                                          |
+| Call                                                                                            | Meaning                                                                                                                                     |
 | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `void registerTestlibCmd(int argc, char* argv[])`                                               | 注册程序为 checker                                                                                                                               |
-| `void registerInteraction(int argc, char* argv[])`                                              | 注册程序为 interactor                                                                                                                            |
-| `void registerValidation()`/`void registerValidation(int argc, char* argv[])`                   | 注册程序为 validator                                                                                                                             |
-| `void registerGen(int argc, char* argv[], int randomGeneratorVersion)`                          | 注册程序为 generator<br>`randomGeneratorVersion` 推荐为 `1`                                                                                         |
-| `void quit(TResult verdict, string message)`/`void quitf(TResult verdict, string message, ...)` | 结束程序，返回 `verdict`，输出 `message`                                                                                                              |
-| `void quitif(bool condition, TResult verdict, string message, ...)`                             | 如果 `condition` 成立，调用 `quitf(verdict, message, ...)`                                                                                         |
-| `void quitp(F points, string message, ...)`                                                     | 结束程序，返回部分分．大部分 OJ（如洛谷、UOJ）的 `points` 需要提供一个 $[0,1]$ 内的实数，表示得分百分比，还有部分 OJ（如 Lyrio）的 `points` 需要提供一个 $[0,100]$ 的实数（OJ 会自动舍弃小数部分），表示百分制下的测试点得分 |
+| `void registerTestlibCmd(int argc, char* argv[])`                                               | Registers the program as a checker                                                                                                          |
+| `void registerInteraction(int argc, char* argv[])`                                              | Registers the program as an interactor                                                                                                      |
+| `void registerValidation()`/`void registerValidation(int argc, char* argv[])`                   | Registers the program as a validator                                                                                                        |
+| `void registerGen(int argc, char* argv[], int randomGeneratorVersion)`                          | Registers the program as a generator<br>`randomGeneratorVersion` should preferably be `1`                                                   |
+| `void quit(TResult verdict, string message)`/`void quitf(TResult verdict, string message, ...)` | Ends the program, returning `verdict` and printing `message`                                                                                |
+| `void quitif(bool condition, TResult verdict, string message, ...)`                             | If `condition` holds, calls `quitf(verdict, message, ...)`                                                                                  |
+| `void quitp(F points, string message, ...)`                                                     | Ends the program with partial points. Most OJs (such as Luogu and UOJ) expect `points` to be a real number in $[0,1]$, meaning the fraction of the score; some OJs (such as Lyrio) expect a real number in $[0,100]$ (the OJ drops the fractional part automatically), meaning the test's score out of 100 |
 
-流成员函数：
+Stream member functions:
 
-| 调用                                                                                                                                                                | 含义                                                                                 |
+| Call                                                                                                                                                              | Meaning                                                                            |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `char readChar()`                                                                                                                                                 | 读入一个字符                                                                             |
-| `char readChar(char c)`                                                                                                                                           | 读入一个字符，必须为 `c`                                                                     |
-| `char readSpace()`                                                                                                                                                | 等同于 `readChar(' ')`                                                                |
-| `string readToken()`/`string readWord()`                                                                                                                          | 读入一个串，到空白字符（空格、Tab、EOLN 等）停止                                                       |
-| `string readToken(string regex)`/`string readWord(string regex)`                                                                                                  | 读入一个串，必须与 `regex` 匹配                                                               |
-| `long long readLong()`                                                                                                                                            | 读入一个 64 位整数                                                                        |
-| `long long readLong(long long L, long long R)`                                                                                                                    | 读入一个 64 位整数，必须在 $[L,R]$ 之间                                                         |
-| `vector<long long> readLongs(int n, long long L, long long R)`                                                                                                    | 读入 $N$ 个 64 位整数，必须均在 $[L,R]$ 之间                                                    |
-| `int readInt()`/`int readInteger()`                                                                                                                               | 读入一个 32 位整数                                                                        |
-| `int readInt(int L, int R)`/`int readInteger(L, R)`                                                                                                               | 读入一个 32 位整数，必须在 $[L,R]$ 之间                                                         |
-| `vector<int> readInts(int n, int L, int R)`/`vector<int> readIntegers(int n, int L, int R)`                                                                       | 读入 $N$ 个 32 位整数，必须均在 $[L,R]$ 之间                                                    |
-| `double readReal()`/`double readDouble()`                                                                                                                         | 读入一个双精度浮点数                                                                         |
-| `double readReal(double L, double R)`/`double readDouble(double L, double R)`                                                                                     | 读入一个双精度浮点数，必须在 $[L,R]$ 之间                                                          |
-| `double readStrictReal(double L, double R, int minPrecision, int maxPrecision)`/`double readStrictDouble(double L, double R, int minPrecision, int maxPrecision)` | 读入一个双精度浮点数，必须在 $[L,R]$ 之间，小数位数必须在 $[minPrecision,maxPrecision]$ 之间，不得使用指数计数法等非正常格式 |
-| `string readString()`/`string readLine()`                                                                                                                         | 读入一行（包括换行符），同时将流指针指向下一行的开头                                                         |
-| `string readString(string regex)`/`string readLine(string regex)`                                                                                                 | 读入一行，必须与 `regex` 匹配                                                                |
-| `void readEoln()`                                                                                                                                                 | 读入 EOLN（在 Linux 环境下读入 `LF`，在 Windows 环境下读入 `CR LF`）                                |
-| `void readEof()`                                                                                                                                                  | 读入 EOF                                                                             |
-| `void quit(TResult verdict, string message)`/`void quitf(TResult verdict, string message, ...)`                                                                   | 结束程序，若 `Stream` 为 `ouf` 返回 `verdict`，否则返回 `_fail`；输出 `message`                     |
-| `void quitif(bool condition, TResult verdict, string message, ...)`                                                                                               | 如果 `condition` 成立，调用 `quitf(verdict, message, ...)`                                |
+| `char readChar()`                                                                                                                                                 | Reads one character                                                                |
+| `char readChar(char c)`                                                                                                                                           | Reads one character, which must be `c`                                             |
+| `char readSpace()`                                                                                                                                                | Same as `readChar(' ')`                                                            |
+| `string readToken()`/`string readWord()`                                                                                                                          | Reads a string, stopping at whitespace (space, Tab, EOLN, etc.)                    |
+| `string readToken(string regex)`/`string readWord(string regex)`                                                                                                  | Reads a string, which must match `regex`                                           |
+| `long long readLong()`                                                                                                                                            | Reads a 64-bit integer                                                             |
+| `long long readLong(long long L, long long R)`                                                                                                                    | Reads a 64-bit integer, which must be in $[L,R]$                                   |
+| `vector<long long> readLongs(int n, long long L, long long R)`                                                                                                    | Reads $N$ 64-bit integers, all of which must be in $[L,R]$                         |
+| `int readInt()`/`int readInteger()`                                                                                                                               | Reads a 32-bit integer                                                             |
+| `int readInt(int L, int R)`/`int readInteger(L, R)`                                                                                                               | Reads a 32-bit integer, which must be in $[L,R]$                                   |
+| `vector<int> readInts(int n, int L, int R)`/`vector<int> readIntegers(int n, int L, int R)`                                                                       | Reads $N$ 32-bit integers, all of which must be in $[L,R]$                         |
+| `double readReal()`/`double readDouble()`                                                                                                                         | Reads a double-precision floating-point number                                     |
+| `double readReal(double L, double R)`/`double readDouble(double L, double R)`                                                                                     | Reads a double-precision floating-point number, which must be in $[L,R]$           |
+| `double readStrictReal(double L, double R, int minPrecision, int maxPrecision)`/`double readStrictDouble(double L, double R, int minPrecision, int maxPrecision)` | Reads a double-precision floating-point number, which must be in $[L,R]$, with the number of digits after the decimal point in $[minPrecision,maxPrecision]$; unusual formats such as scientific notation are not allowed |
+| `string readString()`/`string readLine()`                                                                                                                         | Reads a line (including the line break) and moves the stream pointer to the start of the next line |
+| `string readString(string regex)`/`string readLine(string regex)`                                                                                                 | Reads a line, which must match `regex`                                             |
+| `void readEoln()`                                                                                                                                                 | Reads EOLN (`LF` on Linux, `CR LF` on Windows)                                     |
+| `void readEof()`                                                                                                                                                  | Reads EOF                                                                          |
+| `void quit(TResult verdict, string message)`/`void quitf(TResult verdict, string message, ...)`                                                                   | Ends the program, returning `verdict` if `Stream` is `ouf` and `_fail` otherwise; prints `message` |
+| `void quitif(bool condition, TResult verdict, string message, ...)`                                                                                               | If `condition` holds, calls `quitf(verdict, message, ...)`                         |
 
-未完待续……
+To be continued...
 
-## 极简正则表达式
+## Minimal regular expressions
 
-上面的输入函数中的一部分允许使用「极简正则表达式」特性，如下所示：
+Some of the input functions above accept "minimal regular expressions", as follows:
 
--   字符集．如 `[a-z]` 表示所有小写英文字母，`[^a-z]` 表示除小写英文字母外任何字符．
--   范围．如 `[a-z]{1,5}` 表示一个长度在 $[1,5]$ 范围内且只包含小写英文字母的串．
--   「或」标识符．如 `mike|john` 表示 `mike` 或 `john` 其一．
--   「可选」标识符．如 `-?[1-9][0-9]{0,3}` 表示 $[-9999,9999]$ 范围内的非零整数（注意那个可选的负号）．
--   「重复」标识符．如 `[0-9]*` 表示零个或更多数字，`[0-9]+` 表示一个或更多数字．
--   注意这里的正则表达式是「贪婪」的（「重复」会尽可能匹配）．如 `[0-9]?1` 将不会匹配 `1`（因为 `[0-9]?` 将 `1` 匹配上，导致模板串剩余的那个 `1` 无法匹配）．
+-   Character sets. For example, `[a-z]` means any lowercase English letter, and `[^a-z]` means any character except lowercase English letters.
+-   Ranges. For example, `[a-z]{1,5}` means a string of length in $[1,5]$ containing only lowercase English letters.
+-   The "or" operator. For example, `mike|john` means either `mike` or `john`.
+-   The "optional" operator. For example, `-?[1-9][0-9]{0,3}` means a nonzero integer in $[-9999,9999]$ (note the optional minus sign).
+-   The "repeat" operators. For example, `[0-9]*` means zero or more digits, and `[0-9]+` means one or more digits.
+-   Note that these regular expressions are "greedy" ("repeat" matches as much as possible). For example, `[0-9]?1` does not match `1` (because `[0-9]?` matches the `1`, leaving the remaining `1` in the pattern unmatched).
 
-## 首先 include testlib.h
+## Include testlib.h first
 
-请确保 testlib.h 是你 include 的 **第一个** 头文件，Testlib 会重写/禁用（通过名字冲突的方式）一些与随机有关的函数（如 `random()`），保证随机结果与环境无关，这对于 generator 非常重要，[generator 页面](./generator.md) 会详细说明这一点．
+Make sure testlib.h is the **first** header you include. Testlib redefines/disables (through name clashes) some random-related functions (such as `random()`) so that random results don't depend on the environment. This is very important for generators; the [generator page](./generator.md) explains this in detail.
 
-## 使用项别名
+## Use item names
 
-推荐给 `readInt/readInteger/readLong/readDouble/readWord/readToken/readString/readLine` 等的有限制调用最后多传入一个 `string` 参数，即当前读入的项的别名，使报错易读．例如使用 `inf.readInt(1, 100, "n")` 而非 `inf.readInt(1, 100)`，报错信息将为 `FAIL Integer parameter [name=n] equals to 0, violates the range [1, 100]`．
+For the range-checked calls such as `readInt/readInteger/readLong/readDouble/readWord/readToken/readString/readLine`, it is recommended to pass one more `string` argument at the end: a name for the item being read, which makes error messages readable. For example, if you use `inf.readInt(1, 100, "n")` instead of `inf.readInt(1, 100)`, the error message becomes `FAIL Integer parameter [name=n] equals to 0, violates the range [1, 100]`.
 
-## 使用 `ensuref/ensure()`
+## Use `ensuref/ensure()`
 
-这两个函数用于检查条件是否成立（类似于 `assert()`）．例如检查 $x_i \neq y_i$，我们可以使用
+These two functions check whether a condition holds (similar to `assert()`). For example, to check $x_i \neq y_i$, we can use
 
 ```cpp
 ensuref(x[i] != y[i], "Graph can't contain loops");
 ```
 
-还可以使用 C 风格占位符如
+You can also use C-style placeholders, such as
 
 ```cpp
 ensuref(s.length() % 2 == 0,
@@ -96,15 +96,15 @@ ensuref(s.length() % 2 == 0,
         int(s.length()));
 ```
 
-它有一个简化版 `ensure()`，我们可以直接使用 `ensure(x> y)` 而不添加说明内容（也不支持添加说明内容），如果条件不满足报错将为 `FAIL Condition failed: "x > y"`．很多情况下不加额外的说明的这种报错很不友好，所以我们通常使用 `ensuref()` 并加以说明内容，而非使用 `ensure()`．
+It has a simplified version, `ensure()`: we can write `ensure(x> y)` directly without a description (adding a description is not supported). If the condition fails, the error is `FAIL Condition failed: "x > y"`. Without an extra description, this kind of error is often unhelpful, so we usually use `ensuref()` with a description instead of `ensure()`.
 
 ???+ warning "Warning"
-    注意全局与成员 `ensuref/ensure()` 的区别
+    Note the difference between the global and member `ensuref/ensure()`
     
-    全局函数 `::ensuref/ensure()` 多用于 generator 和 validator 中，如果检查失败将统一返回 `_fail`．
+    The global functions `::ensuref/ensure()` are mostly used in generators and validators; if a check fails, they always return `_fail`.
     
-    成员函数 `InStream::ensuref/ensure()` 一般用于判断选手和参考程序的输出是否合法．当 `InStream` 为 `ouf` 时，返回 `_wa`；为 `inf`（一般不在 checker 中检查输入数据，这应当在 validator 中完成）或 `ans` 时，返回 `_fail`．详见 [Checker - 编写 readAns 函数](./checker.md#好的实现)．
+    The member functions `InStream::ensuref/ensure()` are generally used to check whether the output of the contestant or the reference solution is valid. When the `InStream` is `ouf`, they return `_wa`; when it is `inf` (input data is generally not checked in a checker; that should be done in the validator) or `ans`, they return `_fail`. See [Checker - Writing a readAns function](./checker.md#好的实现) for details.
 
-**本文主要翻译并综合自 [Testlib - Codeforces](https://codeforces.com/testlib) 系列．`testlib.h` 的 GitHub 存储库为 [MikeMirzayanov/testlib](https://github.com/MikeMirzayanov/testlib)．**
+**This article is mainly translated and compiled from the [Testlib - Codeforces](https://codeforces.com/testlib) series. The GitHub repository of `testlib.h` is [MikeMirzayanov/testlib](https://github.com/MikeMirzayanov/testlib).**
 
-[^1]: [issue 链接](https://github.com/MikeMirzayanov/testlib/issues/115#issuecomment-863414940)
+[^1]: [Link to the issue](https://github.com/MikeMirzayanov/testlib/issues/115#issuecomment-863414940)
