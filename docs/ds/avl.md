@@ -1,15 +1,15 @@
-AVL 树，是一种平衡的二叉搜索树．由于各种算法教材上对 AVL 的介绍十分冗长，造成了很多人对 AVL 树复杂、不实用的印象．但实际上，AVL 树的原理简单，实现也并不复杂．
+The AVL tree is a balanced binary search tree. Many algorithm textbooks introduce AVL trees at great length, which leaves many people with the impression that AVL trees are complicated and impractical. In fact, the idea behind an AVL tree is simple, and the implementation is not hard either.
 
-## 性质
+## Properties
 
-1.  空二叉树是一个 AVL 树
-2.  如果 T 是一棵 AVL 树，那么其左右子树也是 AVL 树，并且 $|h(ls) - h(rs)| \leq 1$，h 是其左右子树的高度
-3.  树高为 $O(\log n)$
+1.  An empty binary tree is an AVL tree
+2.  If T is an AVL tree, then its left and right subtrees are also AVL trees, and $|h(ls) - h(rs)| \leq 1$, where h is the height of the left/right subtree
+3.  The height of the tree is $O(\log n)$
 
-平衡因子：右子树高度 - 左子树高度
+Balance factor: height of the right subtree - height of the left subtree
 
-???+ note "树高的证明"
-    设 $f_n$ 为高度为 $n$ 的 AVL 树所包含的最少节点数，则有
+???+ note "Proof of the tree height"
+    Let $f_n$ be the minimum number of nodes in an AVL tree of height $n$. Then
     
     $$
     f_n=
@@ -20,41 +20,41 @@ AVL 树，是一种平衡的二叉搜索树．由于各种算法教材上对 AVL
     \end{cases}
     $$
     
-    根据常系数非齐次线性差分方程的解法，$\{f_n+1\}$ 是一个斐波那契数列．这里 $f_n$ 的通项为：
+    By the method for solving non-homogeneous linear difference equations with constant coefficients, $\{f_n+1\}$ is a Fibonacci sequence. The closed form of $f_n$ is:
     
     $$
     f_n=\frac{5+2\sqrt{5}}{5}\left(\frac{1+\sqrt{5}}{2}\right)^n+\frac{5-2\sqrt{5}}{5}\left(\frac{1-\sqrt{5}}{2}\right)^n-1
     $$
     
-    斐波那契数列以指数的速度增长，对于树高 $n$ 有：
+    The Fibonacci sequence grows exponentially, so for tree height $n$ we have:
     
     $$
     n<\log_{\frac{1+\sqrt{5}}{2}} (f_n+1)<\frac{3}{2}\log_2 (f_n+1)
     $$
     
-    因此 AVL 树的高度为 $O(\log f_n)$，这里的 $f_n$ 为结点数．
+    So the height of an AVL tree is $O(\log f_n)$, where $f_n$ is the number of nodes.
 
-## 过程
+## Process
 
-### 插入结点
+### Inserting a node
 
-与 BST（二叉搜索树）中类似，先进行一次失败的查找来确定插入的位置，插入节点后根据平衡因子来决定是否需要调整．
+As in a BST (binary search tree), first do an unsuccessful search to find where to insert. After inserting the node, use the balance factors to decide whether the tree needs to be adjusted.
 
-### 删除结点
+### Deleting a node
 
-删除和 BST 类似，将结点与后继交换后再删除．
+Deletion works like in a BST: swap the node with its successor, then delete it.
 
-删除会导致树高以及平衡因子变化，这时需要沿着被删除结点到根的路径来调整这种变化．
+Deletion can change tree heights and balance factors. We then fix these changes along the path from the deleted node to the root.
 
-### 平衡的维护
+### Keeping balance
 
-插入或删除节点后，可能会造成 AVL 树的性质 2 被破坏．因此，需要沿着从被插入/删除的节点到根的路径对树进行维护．如果对于某一个节点，性质 2 不再满足，由于我们只插入/删除了一个节点，对树高的影响不超过 1，因此该节点的平衡因子的绝对值至多为 2．由于对称性，我们在此只讨论左子树的高度比右子树大 2 的情况，即下图中 $h(B)-h(E)=2$．此时，还需要根据 $h(A)$ 和 $h(C)$ 的大小关系分两种情况讨论．需要注意的是，由于我们是自底向上维护平衡的，因此对节点 D 的所有后代来说，性质 2 仍然是被满足的．
+After inserting or deleting a node, property 2 of the AVL tree may be broken. So we need to fix the tree along the path from the inserted/deleted node to the root. Suppose property 2 no longer holds at some node. Since we only inserted/deleted one node, the height changes by at most 1, so the absolute value of that node's balance factor is at most 2. By symmetry, we only discuss the case where the left subtree is 2 higher than the right subtree, that is, $h(B)-h(E)=2$ in the figure below. We then split into two cases depending on how $h(A)$ compares with $h(C)$. Note that since we restore balance from the bottom up, property 2 still holds for all descendants of node D.
 
 ![](./images/avl1.svg)
 
-#### 情况一：A 点树高不小于 C 点树高
+#### Case 1: the height of A is not less than the height of C
 
-设 $h(E)=x$，则有
+Let $h(E)=x$. Then
 
 $$
 \begin{cases}
@@ -64,11 +64,11 @@ $$
 \end{cases}
 $$
 
-其中 $h(C)\geq x$ 是由于节点 B 满足性质 2，因此 $h(C)$ 和 $h(A)$ 的差不会超过 1．此时我们对节点 D 进行一次右旋操作（旋转操作与其它类型的平衡二叉搜索树相同），如下图所示．
+Here $h(C)\geq x$ holds because node B satisfies property 2, so $h(C)$ and $h(A)$ differ by at most 1. Now we do a right rotation at node D (rotations work the same as in other kinds of balanced binary search trees), as shown below.
 
 ![](./images/avl2.svg)
 
-显然节点 A、C、E 的高度不发生变化，并且有
+Clearly the heights of nodes A, C and E do not change, and
 
 $$
 \begin{cases}
@@ -78,11 +78,11 @@ $$
 \end{cases}
 $$
 
-因此旋转后的节点 B 和 D 也满足性质 2．
+So after the rotation, nodes B and D also satisfy property 2.
 
-#### 情况二：A 点树高小于 C 点树高
+#### Case 2: the height of A is less than the height of C
 
-设 $h(E)=x$，则与刚才同理，有
+Let $h(E)=x$. By the same reasoning as before,
 
 $$
 \begin{cases}
@@ -92,11 +92,11 @@ $$
 \end{cases}
 $$
 
-此时我们先对节点 B 进行一次左旋操作，再对节点 D 进行一次右旋操作，如下图所示．
+Now we first do a left rotation at node B, then a right rotation at node D, as shown below.
 
 ![](./images/avl3.svg)
 
-显然节点 A、E 的高度不发生变化，并且 B 的新右儿子和 D 的新左儿子分别为 C 原来的左右儿子，则有
+Clearly the heights of nodes A and E do not change. The new right child of B and the new left child of D are the old left and right children of C, respectively. So
 
 $$
 \begin{cases}
@@ -109,9 +109,9 @@ $$
 \end{cases}
 $$
 
-因此旋转后的节点 B、C、D 也满足性质 2．
+So after the rotations, nodes B, C and D also satisfy property 2.
 
-???+ note "维护平衡操作：伪代码"
+???+ note "Keeping balance: pseudocode"
     $$
     \begin{array}{ll}
     1 &  \textbf{function } \mathrm{MaintainBalance}(p) \\
@@ -131,23 +131,23 @@ $$
     \end{array}
     $$
 
-与其他平衡二叉搜索树相同，AVL 树中节点的高度、子树大小等信息需要在旋转时进行维护．
+As in other balanced binary search trees, information such as node heights and subtree sizes in an AVL tree must be updated during rotations.
 
-## 其他操作
+## Other operations
 
-AVL 树的其他操作（Predecessor、Successor、Select、Rank 等）与普通的二叉搜索树相同．
+Other AVL tree operations (Predecessor, Successor, Select, Rank, etc.) are the same as in an ordinary binary search tree.
 
-## 参考代码
+## Reference code
 
-下面的代码是用 AVL 树实现的 `Map`，即有序不可重映射：
+The code below implements a `Map` with an AVL tree, that is, an ordered map with unique keys:
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/ds/code/avl-tree/AvlTreeMap.hpp"
     ```
 
-## 其他资料
+## Further reading
 
-在 [AVL Tree Visualization](https://www.cs.usfca.edu/~galles/visualization/AVLtree.html) 可以观察 AVL 树维护平衡的过程．
+You can watch how an AVL tree keeps itself balanced at [AVL Tree Visualization](https://www.cs.usfca.edu/~galles/visualization/AVLtree.html).
 
-[维基百科 -- AVL 树](https://en.wikipedia.org/wiki/AVL_tree)
+[Wikipedia -- AVL tree](https://en.wikipedia.org/wiki/AVL_tree)

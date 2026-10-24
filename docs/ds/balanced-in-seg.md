@@ -1,43 +1,43 @@
 author: Dev-jqe, HeRaNO, huaruoji
 
-## 常见用途
+## Common uses
 
-在算法竞赛中，我们有时需要维护多维度信息．在这种时候，我们经常需要树套树来记录信息．当需要维护前驱，后继，第 $k$ 大，某个数的排名，或者插入删除的时候，我们通常需要使用平衡树来满足我们的需求，即线段树套平衡树．
+In competitive programming, we sometimes need to maintain information in several dimensions. In such cases we often need a tree-in-tree structure to store the information. When we need to support predecessor, successor, the $k$-th largest value, the rank of a value, or insertions and deletions, we usually use a balanced tree to meet these needs, that is, a segment tree with a balanced tree in each node.
 
-## 过程
+## Process
 
-我们以 **二逼平衡树** 为例，来解释实现原理．
+We use **Er-Bi Balanced Tree** (a classic problem) as an example to explain how it works.
 
-关于树套树的构建，我们对于外层线段树正常建树，对于线段树上的某一个节点，建立一棵平衡树，包含该节点所覆盖的序列．具体操作时我们可以将序列元素一个个插入，每经过一个线段树节点，就将该元素加入到该节点的平衡树中．
+To build the tree-in-tree, we build the outer segment tree as usual. For each node of the segment tree, we build a balanced tree that contains the part of the sequence covered by that node. In practice, we can insert the sequence elements one by one: for each segment tree node we pass through, we add the element to that node's balanced tree.
 
-操作一，求某区间中某值的排名：我们对于外层线段树正常操作，对于在某区间中的节点的平衡树，我们返回平衡树中比该值小的元素个数，合并区间时，我们将小的元素个数求和即可．最后将返回值 $+1$，即为某值在某区间中的排名．
+Operation 1, find the rank of a value in a range: we work on the outer segment tree as usual. For the balanced tree of each node inside the range, we return the number of elements smaller than the value. When merging ranges, we just add up these counts. Finally, add $1$ to the result to get the rank of the value in the range.
 
-操作二，求某区间中排名为 $k$ 的值：我们可以采用二分策略．因为一个元素可能存在多个，其排名为一区间，且有些元素原序列不存在．所以我们采取和操作一类似的思路，我们用小于该值的元素个数作为参考进行二分，即可得解．
+Operation 2, find the value with rank $k$ in a range: we can use binary search. An element may appear several times, so its rank is a range, and some values do not appear in the original sequence at all. So we use an idea similar to operation 1: binary search using the number of elements smaller than the value as the guide, and we get the answer.
 
-操作三，将某个数替换为另外一个数：我们只要在所有包含某数的平衡树中删除某数，然后再插入另外一个数即可．外层依旧正常线段树操作．
+Operation 3, replace one number with another: we just delete the old number from every balanced tree that contains it, then insert the new number. The outer segment tree is handled as usual.
 
-操作四，求某区间中某值的前驱：我们对于外层线段树正常操作，对于在某区间中的节点的平衡树，我们返回某值在该平衡树中的前驱，线段树的区间结果合并时，我们取最大值即可．
+Operation 4, find the predecessor of a value in a range: we work on the outer segment tree as usual. For the balanced tree of each node inside the range, we return the predecessor of the value in that balanced tree. When merging the results of segment tree ranges, we take the maximum.
 
-## 性质
+## Properties
 
-### 空间复杂度
+### Space complexity
 
-我们每个元素加入 $O(\log n)$ 个平衡树，所以空间复杂度为 $O((n + q)\log{n})$．
+Each element is added to $O(\log n)$ balanced trees, so the space complexity is $O((n + q)\log{n})$.
 
-### 时间复杂度
+### Time complexity
 
--   对于 1，3，4 操作，我们考虑我们在外层线段树上进行 $O(\log{n})$ 次操作，每次操作会在一个内层平衡树树上进行 $O(\log{n})$ 次操作，所以时间复杂度为 $O(\log^2{n})$．
--   对于 2 操作，多一个二分过程，为 $O(\log^3{n})$．
+-   For operations 1, 3 and 4: we do $O(\log{n})$ operations on the outer segment tree, and each one does $O(\log{n})$ work on an inner balanced tree, so the time complexity is $O(\log^2{n})$.
+-   Operation 2 adds a binary search on top, so it takes $O(\log^3{n})$.
 
-## 经典例题
+## Classic example problem
 
-[二逼平衡树](https://loj.ac/problem/106) 外层线段树，内层平衡树．
+[Er-Bi Balanced Tree](https://loj.ac/problem/106): segment tree outside, balanced tree inside.
 
-## 实现
+## Implementation
 
-平衡树部分代码请参考 [Splay](./splay.md) 等其他条目．
+For the balanced tree code, see [Splay](./splay.md) and other pages.
 
-操作一：
+Operation 1:
 
 ```cpp
 int vec_rank(int k, int l, int r, int x, int y, int t) {
@@ -53,7 +53,7 @@ int vec_rank(int k, int l, int r, int x, int y, int t) {
 }
 ```
 
-操作二：
+Operation 2:
 
 ```cpp
 int el = 0, er = 100000001, emid;
@@ -67,7 +67,7 @@ while (el != er) {
 printf("%d\n", el - 1);
 ```
 
-操作三：
+Operation 3:
 
 ```cpp
 void vec_chg(int k, int l, int r, int loc, int x) {
@@ -81,7 +81,7 @@ void vec_chg(int k, int l, int r, int loc, int x) {
 }
 ```
 
-操作四：
+Operation 4:
 
 ```cpp
 int vec_front(int k, int l, int r, int x, int y, int t) {
@@ -94,6 +94,6 @@ int vec_front(int k, int l, int r, int x, int y, int t) {
 }
 ```
 
-## 相关算法
+## Related algorithms
 
-面对多维度信息的题目时，如果题目没有要求强制在线，我们还可以考虑 [CDQ 分治](../misc/cdq-divide.md)，或者 [整体二分](../misc/parallel-binsearch.md) 等分治算法，来避免使用高级数据结构，减少代码实现难度．
+For problems with multi-dimensional information, if the problem does not force online processing, we can also consider divide-and-conquer algorithms such as [CDQ divide and conquer](../misc/cdq-divide.md) or [parallel binary search](../misc/parallel-binsearch.md). They avoid advanced data structures and make the code easier to write.

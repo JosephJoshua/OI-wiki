@@ -1,64 +1,64 @@
 author: HeRaNO, Xeonacid, AzurIce
 
-## 结构
+## Structure
 
-从二叉堆的结构说起，它是一棵二叉树，并且是完全二叉树，每个结点中存有一个元素（或者说，有个权值）．
+Let's start with the structure of a binary heap. It is a binary tree, and in fact a complete binary tree. Each node stores one element (in other words, a weight).
 
-堆性质：父亲的权值不小于儿子的权值（大根堆）．同样的，我们可以定义小根堆．本文以大根堆为例．
+Heap property: the weight of a parent is not less than the weights of its children (a max-heap). In the same way we can define a min-heap. This article uses a max-heap as the example.
 
-由堆性质，树根存的是最大值（getmax 操作就解决了）．
+By the heap property, the root stores the maximum value (so the getmax operation is solved).
 
-## 过程
+## Process
 
-### 插入操作
+### Insertion
 
-插入操作是指向二叉堆中插入一个元素，要保证插入后也是一棵完全二叉树．
+Insertion means adding an element to the binary heap, and the tree must still be a complete binary tree afterwards.
 
-最简单的方法就是，最下一层最右边的叶子之后插入．
+The simplest way is to insert after the rightmost leaf on the bottom level.
 
-如果最下一层已满，就新增一层．
+If the bottom level is full, start a new level.
 
-插入之后可能会不满足堆性质？
+But after insertion, the heap property may no longer hold.
 
-**向上调整**：如果这个结点的权值大于它父亲的权值，就交换，重复此过程直到不满足或者到根．
+**Sift up**: if the weight of this node is greater than the weight of its parent, swap them. Repeat until this no longer holds or we reach the root.
 
-可以证明，插入之后向上调整后，没有其他结点会不满足堆性质．
+It can be shown that after inserting and sifting up, no other node violates the heap property.
 
-向上调整的时间复杂度是 $O(\log n)$ 的．
+Sifting up takes $O(\log n)$ time.
 
-![二叉堆的插入操作](./images/binary_heap_insert.svg)
+![Insertion into a binary heap](./images/binary_heap_insert.svg)
 
-### 删除操作
+### Deletion
 
-删除操作指删除堆中最大的元素，即删除根结点．
+Deletion means removing the largest element of the heap, that is, removing the root.
 
-但是如果直接删除，则变成了两个堆，难以处理．
+But if we just remove it, we are left with two heaps, which is hard to deal with.
 
-所以不妨考虑插入操作的逆过程，设法将根结点移到最后一个结点，然后直接删掉．
+So let's think about doing insertion in reverse: try to move the root to the position of the last node, then simply delete it.
 
-然而实际上不好做，我们通常采用的方法是，把根结点和最后一个结点直接交换．
+That is not easy to do directly, so the usual approach is to swap the root with the last node.
 
-于是直接删掉（在最后一个结点处的）根结点，但是新的根结点可能不满足堆性质……
+Then we simply delete the root (now at the last node's position). But the new root may violate the heap property...
 
-**向下调整**：在该结点的儿子中，找一个最大的，与该结点交换，重复此过程直到底层．
+**Sift down**: among the children of this node, pick the largest one and swap it with this node. Repeat until we reach the bottom.
 
-可以证明，删除并向下调整后，没有其他结点不满足堆性质．
+It can be shown that after deleting and sifting down, no other node violates the heap property.
 
-时间复杂度 $O(\log n)$．
+The time complexity is $O(\log n)$.
 
-### 增加某个点的权值
+### Increasing the weight of a node
 
-很显然，直接修改后，向上调整一次即可，时间复杂度为 $O(\log n)$．
+Clearly, after changing the value directly, one sift-up is enough. The time complexity is $O(\log n)$.
 
-## 实现
+## Implementation
 
-我们发现，上面介绍的几种操作主要依赖于两个核心：向上调整和向下调整．
+Notice that the operations above mainly rely on two core steps: sift up and sift down.
 
-考虑使用一个序列 $h$ 来表示堆．$h_i$ 的两个儿子分别是 $h_{2i}$ 和 $h_{2i+1}$，$1$ 是根结点：
+We use a sequence $h$ to represent the heap. The two children of $h_i$ are $h_{2i}$ and $h_{2i+1}$, and $1$ is the root:
 
-![h 的堆结构](./images/binary-heap-array.svg)
+![The heap structure of h](./images/binary-heap-array.svg)
 
-参考代码：
+Reference code:
 
 ```cpp
 void up(int x) {
@@ -79,15 +79,15 @@ void down(int x) {
 }
 ```
 
-### 建堆
+### Building a heap
 
-考虑这么一个问题，从一个空的堆开始，插入 $n$ 个元素，不在乎顺序．
+Consider this problem: starting from an empty heap, insert $n$ elements, in any order.
 
-直接一个一个插入需要 $O(n \log n)$ 的时间，有没有更好的方法？
+Inserting them one by one takes $O(n \log n)$ time. Is there a better way?
 
-#### 方法一：向上调整
+#### Method 1: sift up
 
-从根开始，按 BFS 序进行．
+Start from the root and go in BFS order.
 
 ```cpp
 void build_heap_1() {
@@ -95,11 +95,11 @@ void build_heap_1() {
 }
 ```
 
-这个做法仍然相当于一个一个插入，只是把元素提前放在了数组里，可以改善常数．故而最坏情况下，算法时间复杂度满足的递推式为 $T(n) = T(n - 1) + \Theta(\log n)$，累加得 $T(n) = \Theta(n \log n)$．
+This is still the same as inserting one by one; the elements are just placed in the array beforehand, which improves the constant factor. So in the worst case, the running time satisfies the recurrence $T(n) = T(n - 1) + \Theta(\log n)$, and summing up gives $T(n) = \Theta(n \log n)$.
 
-#### 方法二：向下调整
+#### Method 2: sift down
 
-这时换一种思路，从叶子开始，逐个向下调整．
+Now try a different idea: start from the leaves and sift down each node one by one.
 
 ```cpp
 void build_heap_2() {
@@ -107,46 +107,46 @@ void build_heap_2() {
 }
 ```
 
-换一种理解方法，每次「合并」两个已经调整好的堆，这说明了正确性．
+Another way to see it: each step "merges" two heaps that are already valid. This shows that the method is correct.
 
-注意到叶节点无需调整，因此可从序列约 $n/2$ 的位置开始调整，可以改善常数．根据每次合并两个堆这一理解，可以写出算法时间复杂度的递推式 $T(n) = 2T(\dfrac{n}{2}) + O(\log n)$，由主定理可得 $T(n) = \Theta(n)$．
+Note that leaves do not need to be adjusted, so we can start from about position $n/2$ of the sequence, which improves the constant factor. Thinking of each step as merging two heaps, we get the recurrence $T(n) = 2T(\dfrac{n}{2}) + O(\log n)$ for the running time, and the master theorem gives $T(n) = \Theta(n)$.
 
-之所以能 $\Theta(n)$ 建堆，是因为堆性质很弱，二叉堆并不是唯一的．
+We can build a heap in $\Theta(n)$ because the heap property is weak: a binary heap for a given set of elements is not unique.
 
-要是像排序那样的强条件就难说了．
+With a strong condition like being sorted, it would be a different story.
 
-## 应用
+## Applications
 
-### 对顶堆
+### Two-heap technique
 
 ??? note "[SPOJ RMID2 - Running Median Again](https://www.spoj.com/problems/RMID2/)"
-    维护一个序列，支持两种操作：
+    Maintain a sequence that supports two operations:
     
-    1.  向序列中插入一个元素
-    2.  输出并删除当前序列的中位数（若序列长度为偶数，则输出较小的中位数）
+    1.  Insert an element into the sequence
+    2.  Print and delete the median of the current sequence (if the length is even, print the smaller median)
 
-这个问题可以被进一步抽象成：动态维护一个序列上第 $k$ 大的数，$k$ 值可能会发生变化．
+This problem can be generalized to: dynamically maintain the $k$-th largest number in a sequence, where the value of $k$ may change.
 
-对于此类问题，我们可以使用 **对顶堆** 这一技巧予以解决（可以避免写权值线段树或 BST 带来的繁琐）．
+For problems like this, we can use the **two-heap technique** (it saves the trouble of writing a value segment tree or a BST).
 
-对顶堆由一个大根堆与一个小根堆组成，小根堆维护大值即前 $k$ 大的值（包含第 k 个），大根堆维护小值即比第 $k$ 大数小的其他数．
+The two-heap structure consists of a max-heap and a min-heap. The min-heap holds the large values, that is, the top $k$ values (including the $k$-th). The max-heap holds the small values, that is, the numbers smaller than the $k$-th largest.
 
-这两个堆构成的数据结构支持以下操作：
+Together, the two heaps support the following operations:
 
--   维护：当小根堆的大小小于 $k$ 时，不断将大根堆堆顶元素取出并插入小根堆，直到小根堆的大小等于 $k$；当小根堆的大小大于 $k$ 时，不断将小根堆堆顶元素取出并插入大根堆，直到小根堆的大小等于 $k$；
--   插入元素：若插入的元素大于等于小根堆堆顶元素，则将其插入小根堆，否则将其插入大根堆，然后维护对顶堆；
--   查询第 $k$ 大元素：小根堆堆顶元素即为所求；
--   删除第 $k$ 大元素：删除小根堆堆顶元素，然后维护对顶堆；
--   $k$ 值 $+1/-1$：根据新的 $k$ 值直接维护对顶堆．
+-   Rebalance: while the min-heap has fewer than $k$ elements, keep moving the top of the max-heap into the min-heap until the min-heap has exactly $k$ elements; while the min-heap has more than $k$ elements, keep moving the top of the min-heap into the max-heap until the min-heap has exactly $k$ elements;
+-   Insert an element: if the new element is greater than or equal to the top of the min-heap, insert it into the min-heap, otherwise insert it into the max-heap; then rebalance;
+-   Query the $k$-th largest element: it is the top of the min-heap;
+-   Delete the $k$-th largest element: delete the top of the min-heap, then rebalance;
+-   Change $k$ by $+1/-1$: rebalance according to the new value of $k$.
 
-显然，查询第 $k$ 大元素的时间复杂度是 $O(1)$ 的．由于插入、删除或调整 $k$ 值后，小根堆的大小与期望的 $k$ 值最多相差 $1$，故每次维护最多只需对大根堆与小根堆中的元素进行一次调整，因此，这些操作的时间复杂度都是 $O(\log n)$ 的．
+Clearly, querying the $k$-th largest element takes $O(1)$ time. After an insertion, a deletion or a change of $k$, the size of the min-heap differs from the desired $k$ by at most $1$, so each rebalance moves at most one element between the max-heap and the min-heap. Therefore, all these operations take $O(\log n)$ time.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/ds/code/binary-heap/binary-heap_1.cpp"
     ```
 
-### 习题
+### Exercises
 
 -   [SPOJ RMID - Running Median](https://www.spoj.com/problems/RMID)
--   [洛谷 P1801 黑匣子](https://www.luogu.com.cn/problem/P1801)
+-   [Luogu P1801 Black Box](https://www.luogu.com.cn/problem/P1801)

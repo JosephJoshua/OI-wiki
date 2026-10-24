@@ -1,50 +1,50 @@
 author: Xarfa
 
-## 引入
+## Introduction
 
-划分树是一种来解决区间第 $K$ 大的一种数据结构，其常数、理解难度都要比主席树低很多．同时，划分树紧贴「第 $K$ 大」，所以是一种基于排序的一种数据结构．
+The partition tree is a data structure for finding the $K$-th largest value in a range. Both its constant factor and its difficulty to understand are much lower than those of a persistent segment tree. Since the partition tree is built around the "$K$-th largest", it is a data structure based on sorting.
 
-前置知识：[主席树](persistent-seg.md#主席树)
+Prerequisite: [persistent segment tree](persistent-seg.md#主席树)
 
-## 过程
+## Process
 
-### 建树
+### Building the tree
 
-划分树的建树比较简单，但是相对于其他树来说比较复杂．
+Building a partition tree is fairly simple, though more involved than building some other trees.
 
 ![](./images/dividing-1.svg)
 
-如图，每一层都有一个看似无序的数组．其实，每一个被红色标记的数字都是 **要分配到左儿子的**．而分配的规则是什么？就是与 **这一层的中位数** 做比较，如果小于等于中位数，则分到左边，否则分到右边．但是这里要注意一下：并不是严格的 **小于等于就分到左边，否则分到右边**．因为中位数可能有相同，而且与 $N$ 的奇偶有一定关系．下面的代码展示会有一个巧妙的运用，大家可以参照代码．
+As shown in the figure, each level has an array that looks unordered. In fact, every number marked in red **goes to the left child**. What is the rule? Compare it with **the median of this level**: if it is less than or equal to the median, it goes left; otherwise it goes right. But note: the rule is not strictly **less than or equal goes left, otherwise right**, because the median value may appear more than once, and it also depends on whether $N$ is odd or even. The code below shows a neat trick for this; refer to it.
 
-我们不可能每一次都对每一层排序，这样子不说常数，就算是理论复杂度也过不去．我们想，找中位数，一次排序就够了．为什么？比如，我们求 $l,r$ 的中位数，其实就是在排完序过后的 `num[mid]`．
+We cannot sort every level each time. That would be too slow, not just in its constant factor but even in theoretical complexity. To find medians, a single sort is enough. Why? For example, the median of $l,r$ is just `num[mid]` in the sorted array.
 
-两个关键数组：
+Two key arrays:
 
-tree\[log(N),N]: 也就是树，要存下所有的值，空间复杂度 $O(n\log n)$．
-toleft\[log(N),n]: 也就是每一层 1\~i 进入左儿子的数量，这里需要理解一下，这是一个前缀和．
+tree\[log(N),N]: the tree itself. It stores all the values, with space complexity $O(n\log n)$.
+toleft\[log(N),n]: for each level, the number of elements among 1\~i that go to the left child. Note that this is a prefix sum.
 
-???+ note "实现"
+???+ note "Implementation"
     ```pascal
-    procedure Build(left,right,deep:longint); // left,right 表示区间左右端点,deep是第几层
+    procedure Build(left,right,deep:longint); // left,right are the range endpoints, deep is the level
     var
-      i,mid,same,ls,rs,flag:longint; // 其中 flag 是用来平衡左右两边的数量的
+      i,mid,same,ls,rs,flag:longint; // flag is used to balance the counts on the two sides
     begin
-      if left=right then exit; // 到底层了
+      if left=right then exit; // reached the bottom
       mid:=(left+right) >> 1;
       same:=mid-left+1;
       for i:=left to right do 
         if tree[deep,i]<num[mid] then
           dec(same);
       
-      ls:=left; // 分配到左儿子的第一个指针
-      rs:=mid+1; // 分配到右儿子的第一个指针
+      ls:=left; // pointer to the next slot in the left child
+      rs:=mid+1; // pointer to the next slot in the right child
       for i:=left to right do
       begin
         flag:=0;
-        if (tree[deep,i]<num[mid])or((tree[deep,i]=num[mid])and(same>0)) then // 分配到左边的条件
+        if (tree[deep,i]<num[mid])or((tree[deep,i]=num[mid])and(same>0)) then // condition for going left
         begin
           flag:=1; tree[deep+1,ls]:=tree[deep,i]; inc(ls);
-          if tree[deep,i]=num[mid] then // 平衡左右个数
+          if tree[deep,i]=num[mid] then // balance the counts on the two sides
             dec(same);
         end
         else
@@ -53,91 +53,91 @@ toleft\[log(N),n]: 也就是每一层 1\~i 进入左儿子的数量，这里需�
         end;
         toleft[deep,i]:=toleft[deep,i-1]+flag;
       end;
-      Build(left,mid,deep+1); // 继续
+      Build(left,mid,deep+1); // continue
       Build(mid+1,right,deep+1);
     end;
     ```
 
-### 查询
+### Query
 
-那我们先扯一下主席树的内容．在用主席树求区间第 $K$ 小的时候，我们以 $K$ 为基准，向左就向左，向右要减去向左的值，在划分树中也是这样子的．
+First, a quick word about the persistent segment tree. When finding the $K$-th smallest value in a range with a persistent segment tree, we compare against $K$: going left, we just go left; going right, we subtract the count on the left. The partition tree works the same way.
 
-查询难理解的，在于 **区间缩小** 这种东西．下图，查询的是 $3$ 到 $7$, 那么下一层就只需要查询 $2$ 到 $3$ 了．当然，我们定义 $[\text{left},\text{right}]$ 为缩小后的区间（目标区间），$[l,r]$ 还是所在节点的区间．那为什么要标出目标区间呢？因为那是 **判定答案在左边还是右边的基准**．
+The hard part of the query is **shrinking the range**. In the figure below, we query $3$ to $7$, so on the next level we only need to query $2$ to $3$. We define $[\text{left},\text{right}]$ as the shrunken range (the target range), and $[l,r]$ is still the range of the current node. Why mark the target range? Because it is **what decides whether the answer is on the left or on the right**.
 
 ![](./images/dividing-2.svg)
 
-???+ note "实现"
+???+ note "Implementation"
     ```pascal
     function Query(left,right,k,l,r,deep:longint):longint;
     var
       mid,x,y,cnt,rx,ry:longint;
     begin
-      if left=right then // 写成 l=r 也无妨,因为目标区间也一定有答案
+      if left=right then // writing l=r is also fine, because the target range must contain the answer
         exit(tree[deep,left]);
       mid:=(l+r) >> 1;
-      x:=toleft[deep,left-1]-toleft[deep,l-1]; // l 到 left 的去左儿子的个数
-      y:=toleft[deep,right]-toleft[deep,l-1]; // l 到 right 的去左儿子的个数
-      ry:=right-l-y; rx:=left-l-x; // ry 是 l 到 right 去右儿子的个数,rx 则是 l 到 left 去右儿子的个数
-      cnt:=y-x; // left 到 right 左儿子的个数
-      if cnt>=k then // 主席树常识啦
-        Query:=Query(l+x,l+y-1,k,l,mid,deep+1) // l+x 就是缩小左边界,l+y-1 就是缩小右区间．对于上图来说,就是把节点 1 和 2 放弃了．
+      x:=toleft[deep,left-1]-toleft[deep,l-1]; // number going to the left child from l to left
+      y:=toleft[deep,right]-toleft[deep,l-1]; // number going to the left child from l to right
+      ry:=right-l-y; rx:=left-l-x; // ry is the number going to the right child from l to right, rx the number from l to left
+      cnt:=y-x; // number going to the left child from left to right
+      if cnt>=k then // standard persistent segment tree reasoning
+        Query:=Query(l+x,l+y-1,k,l,mid,deep+1) // l+x shrinks the left bound, l+y-1 shrinks the right bound. In the figure above, this drops nodes 1 and 2.
       else
-        Query:=Query(mid+rx+1,mid+ry+1,k-cnt,mid+1,r,deep+1); // 同样是缩小区间,只不过变成了右边而已．注意要将 k 减去 cnt．
+        Query:=Query(mid+rx+1,mid+ry+1,k-cnt,mid+1,r,deep+1); // also shrinking the range, just on the right side. Remember to subtract cnt from k.
     end;
     ```
 
-## 性质
+## Properties
 
-时间复杂度 : 一次查询只需要 $O(\log n)$，$m$ 次询问，就是 $O(m\log n)$．
+Time complexity: one query takes only $O(\log n)$, so $m$ queries take $O(m\log n)$.
 
-空间复杂度 : 只需要存储 $O(n\log n)$ 个数字．
+Space complexity: we only need to store $O(n\log n)$ numbers.
 
-亲测结果：主席树 :$1482 \text{ms}$、划分树 :$889 \text{ms}$．（非递归，常数比较小）
+Measured results: persistent segment tree: $1482 \text{ms}$, partition tree: $889 \text{ms}$. (Non-recursive, with a fairly small constant factor.)
 
-## 划分树的应用
+## Applications of the partition tree
 
-例题：[Luogu P3157\[CQOI2011\] 动态逆序对](https://www.luogu.com.cn/problem/P3157)
+Example problem: [Luogu P3157 [CQOI2011] Dynamic Inversions](https://www.luogu.com.cn/problem/P3157)
 
-> 题意简述：给定一个 $n$ 个元素的排列（$n\leq 10^5$），有 m 次询问（$m\leq 5\times 10^4$），每次删去排列中的一个数，求删去这个数之后排列的逆序对个数．
+> Problem summary: given a permutation of $n$ elements ($n\leq 10^5$) and m queries ($m\leq 5\times 10^4$), each query deletes one number from the permutation. After each deletion, output the number of inversions in the permutation.
 
-这题可以使用 CDQ 在 $\Theta(n\log^2n)$ 的时间及 $\Theta(n)$ 的空间内解决，并且 CDQ 的常数也很优秀．
+This problem can be solved with CDQ in $\Theta(n\log^2n)$ time and $\Theta(n)$ space, and CDQ also has a very good constant factor.
 
-如果这道题改为强制在线，则一般使用树状数组 + 主席树的树套树解法解决，时间复杂度为 $\Theta(n\log^2n)$，空间复杂度为 $\Theta(n\log^2n)$，常数略大，同样可以过此题．
+If the problem were forced online, it would usually be solved with a tree-in-tree, a Fenwick tree of persistent segment trees. The time complexity is $\Theta(n\log^2n)$ and the space complexity is $\Theta(n\log^2n)$. The constant factor is a bit large, but it also passes.
 
-而使用划分树的话就可以在 $\Theta(n\log^2n)$ 的时间及 $\Theta(n\log n)$ 的空间内在线解决本题，同时常数也比树套树解法少很多．（大致与 CDQ 相当．）
+With a partition tree, we can solve the problem online in $\Theta(n\log^2n)$ time and $\Theta(n\log n)$ space, with a much smaller constant factor than the tree-in-tree solution (roughly the same as CDQ).
 
-???+ warning "注意"
-    为了编程实现方便，本文依照位置的中间值将大数组划分为两个小数组，即下文中的划分树相当于是归并排序的过程，而非快速排序的过程．最顶层的大数组为有序数组，最底层为原数组．
+???+ warning "Note"
+    To make the implementation easier, this article splits a large array into two smaller arrays by the middle position. In other words, the partition tree below works like merge sort rather than quicksort. The large array at the top level is sorted, and the bottom level is the original array.
 
-对于每一个划分树中的节点，我们称他为右节点当且仅当他在下一层会被划分到右孩子，即原数组中位置比较靠后的那些数，相似的可以定义左节点．如果在建树的过程中将最顶层排为有序的，类似于归并排序求逆序对，可以发现一个数组的逆序对个数就是在每个左节点之前的右节点的个树和．
+For each node in the partition tree, we call it a right node if and only if it is sent to the right child on the next level, that is, it is one of the numbers that come later in the original array. Left nodes are defined similarly. If the top level is sorted when building the tree, then, just like counting inversions with merge sort, the number of inversions of the array is the total number of right nodes before each left node.
 
-再考虑删除操作．删除一个左节点会将整个数组的逆序对减少在他之前右结点的个数，而删除一个右节点会减少在他之后的左节点个数．那么可以考虑每次动态维护「每一个左节点之前的右结点个数」和「每一个右节点之后的左节点个数」．这可以使用树状数组简单维护．
+Now consider deletion. Deleting a left node decreases the number of inversions of the whole array by the number of right nodes before it, and deleting a right node decreases it by the number of left nodes after it. So we can dynamically maintain "the number of right nodes before each left node" and "the number of left nodes after each right node". This is easy to do with Fenwick trees.
 
-需要注意的是，在使用树状数组维护时只能计算在划分树中同一块内的贡献，而不能跳出块．对于树状数组来说有一个较为巧妙的处理方式．
+Note that when maintaining these with Fenwick trees, we may only count contributions inside the same block of the partition tree and must not leave the block. There is a fairly neat way to handle this with Fenwick trees.
 
-考虑划分树上每一块的下标范围肯定为 $[c\times 2^k+1,(c+1)\times 2^k]$ 的形式，列举如下（由于代码中不会涉及到划分树最底层的处理，因此只枚举到倒数第二层）：
+The index range of each block of the partition tree always has the form $[c\times 2^k+1,(c+1)\times 2^k]$, as listed below (the code never deals with the bottom level of the partition tree, so we only list up to the second-to-last level):
 
     [0001 0010] [0011 0100] [0101 0110] [0111 1000] [1001 1010] [1011 1100] [1101 1110] [1111 10000]  lev=1
     [0001 0010 0011 0100]   [0101 0110 0111 1000]   [1001 1010 1011 1100]   [1101 1110 1111 10000]    lev=2
     [0001 0010 0011 0100 0101 0110 0111 1000]       [1001 1010 1011 1100 1101 1110 1111 10000]        lev=3
     [0001 0010 0011 0100 0101 0110 0111 1000 1001 1010 1011 1100 1101 1110 1111 10000]                lev=4
 
-回忆一下树状数组的原理，在向上跳的时候，我们每次 `x += lowbit(x)`．如果在向上跳的时候可以保证不跳出块，就可以保证只会影响到块内元素的值．向上查询也类似．
+Recall how a Fenwick tree works: when jumping up, we do `x += lowbit(x)` each time. If we can make sure we never leave the block while jumping up, we only affect values inside the block. Queries work similarly.
 
-而如果要在向上跳的同时保证不跳出块，只需要保证在跳的时候满足 $lowbit(x)<2^{lev}$ 即可．
+To make sure we stay inside the block while jumping up, we only need $lowbit(x)<2^{lev}$ to hold at every jump.
 
-而向下跳则是完全不同的处理方式．每一块的下标如果使用 0-index 表示的话，即为 $[c\times 2^k,(c+1)\times 2^k)$ 的形式．那么，只需将某一个下标的值右位移 k，即可得出它在哪一块中．在向下跳的时候时刻判断是否跳出块即可．
+Jumping down is handled in a completely different way. With 0-indexing, the indices of each block have the form $[c\times 2^k,(c+1)\times 2^k)$. So shifting an index right by k tells us which block it is in. When jumping down, just check at every step whether we have left the block.
 
-需要注意的是，按这一方法实现的树状数组会访问到的最大下标是距离 n 最近的 2 的整次幂，因此数组下标不能开 n．
+Note that a Fenwick tree implemented this way may access indices up to the power of 2 closest to n, so the array size cannot be just n.
 
-由于需要在 $\log n$ 层修改，在第 $k$ 层修改的时间复杂度为 $\Theta(k)$，最终时间复杂度即为 $\Theta(n\log n+m\log^2n)$．
+Since we update on $\log n$ levels, and an update on level $k$ takes $\Theta(k)$ time, the final time complexity is $\Theta(n\log n+m\log^2n)$.
 
-附代码：
+Code:
 
 ```cpp
 --8<-- "docs/ds/code/dividing/dividing_1.cpp"
 ```
 
-## 后记
+## Afterword
 
-参考博文 :[传送门](https://blog.csdn.net/littlewhite520/article/details/70250722)．
+Reference blog post: [link](https://blog.csdn.net/littlewhite520/article/details/70250722).

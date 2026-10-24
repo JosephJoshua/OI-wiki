@@ -7,26 +7,26 @@ int main() {
   int t, x;
   cin >> t;
   while (t--) {
-    // 大根堆，维护前一半元素（存小值）
+    // max-heap, holds the first half of the elements (the smaller values)
     priority_queue<int, vector<int>, less<int>> a;
-    // 小根堆，维护后一半元素（存大值）
+    // min-heap, holds the second half of the elements (the larger values)
     priority_queue<int, vector<int>, greater<int>> b;
     while (cin >> x, x) {
-      // 若为查询并删除操作，输出并删除大根堆堆顶元素
-      // 因为这题要求输出中位数中较小者（偶数个数字会存在两个中位数候选）
-      // 这个和上面的第k大讲解有稍许出入，但如果理解了上面的，这个稍微变通下便可理清
+      // for a query-and-delete operation, print and remove the top of the max-heap
+      // because this problem asks for the smaller median (an even count has two median candidates)
+      // this differs slightly from the k-th largest explanation above, but once you understand that, a small adjustment makes this clear
       if (x == -1) {
         cout << a.top() << '\n';
         a.pop();
       }
-      // 若为插入操作，根据大根堆堆顶的元素值，选择合适的堆进行插入
+      // for an insert operation, pick the right heap based on the top of the max-heap
       else {
         if (a.empty() || x <= a.top())
           a.push(x);
         else
           b.push(x);
       }
-      // 对对顶堆进行调整
+      // rebalance the two heaps
       if (a.size() > (a.size() + b.size() + 1) / 2) {
         b.push(a.top());
         a.pop();

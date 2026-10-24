@@ -1,72 +1,72 @@
 author: Backl1ght, Tiphereth-A, Enter-tainer, Ir1d, ksyx, leoleoasd, Xeonacid, aaron20100919
 
-## 简介
+## Introduction
 
-分块套树状数组在特定条件下可以用来做一些树套树可以做的事情，但是相比起树套树，分块套树状数组代码编写更加简短，更加容易实现．
+Under certain conditions, sqrt decomposition with a Fenwick tree in each block can do some of the things that a tree-in-tree can do. Compared with a tree-in-tree, the code for sqrt decomposition plus Fenwick trees is shorter and easier to write.
 
-## 简单的例子
+## A simple example
 
-一个简单的例子就是二维平面中矩阵区域内点数的查询．
+A simple example is counting the points inside a rectangular region of a 2D plane.
 
-???+ note "矩形区域查询"
-    给出 $n$ 个二维平面中的点 $(x_i, y_i)$，其中 $1 \le i \le n, 1 \le x_i, y_i \le n, 1 \le n \le 10^5$, 要求实现以下中操作：
+???+ note "Rectangle query"
+    Given $n$ points $(x_i, y_i)$ in a 2D plane, where $1 \le i \le n, 1 \le x_i, y_i \le n, 1 \le n \le 10^5$, support the following operations:
     
-    1.  给出 $a, b, c, d$，询问以 $(a, b)$ 为左上角，$c, d$ 为右下角的矩形区域内点的个数．
-    2.  给出 $x, y$，将横坐标为 $x$ 的点的纵坐标改为 $y$．
+    1.  Given $a, b, c, d$, count the points inside the rectangle with top-left corner $(a, b)$ and bottom-right corner $c, d$.
+    2.  Given $x, y$, change the y-coordinate of the point with x-coordinate $x$ to $y$.
     
-    题目 **强制在线**，保证 $x_i \ne x_j(1 \le i, j \le n, i \ne j)$．
+    The problem is **forced online**, and it is guaranteed that $x_i \ne x_j(1 \le i, j \le n, i \ne j)$.
 
-对于操作 1，可以通过矩形容斥将其转化为 4 个二维偏序的查询去解决，然后因为强制在线，CDQ 分治之类的离线算法就解决不了，于是想到了树套树，比如树状数组套 Treap．这确实可以解决这个问题，但是代码太长了，也不是特别好实现．
+For operation 1, we can use inclusion–exclusion on the rectangle to turn it into 4 two-dimensional dominance (2D partial order) queries. Since the problem is forced online, offline algorithms such as CDQ divide and conquer cannot be used. So a tree-in-tree comes to mind, for example a Fenwick tree of Treaps. That does solve the problem, but the code is too long and not very easy to write.
 
-注意到，题目还额外保证了 $x_i \ne x_j(1 \le i, j \le n, i \ne j)$，这个时候就可以用分块套树状数组解决．
+Note that the problem also guarantees $x_i \ne x_j(1 \le i, j \le n, i \ne j)$. In this case we can use sqrt decomposition with Fenwick trees.
 
-### 初始化
+### Initialization
 
-首先，一个 $x$ 只对应一个 $y$，所以可以用一个数组记录这个映射关系，比如令 $Y_i$ 表示横坐标为 $i$ 的点的纵坐标．
+First, each $x$ corresponds to only one $y$, so we can store this mapping in an array. For example, let $Y_i$ be the y-coordinate of the point whose x-coordinate is $i$.
 
-然后，以 $\sqrt n$ 为块大小对横坐标进行分块．为每个块建一棵权值树状数组．记 $T_i$ 为第 $i$ 个块对应的树状数组，$T_{i, j}$ 表示块 $i$ 里纵坐标在 $(j - lowbit(j), j]$ 内的点的个数．
+Then split the x-coordinates into blocks of size $\sqrt n$. Build a value-indexed Fenwick tree for each block. Let $T_i$ be the Fenwick tree for block $i$, where $T_{i, j}$ is the number of points in block $i$ whose y-coordinate lies in $(j - lowbit(j), j]$.
 
-### 查询
+### Query
 
-对于操作 1，将其转化为 4 个二维偏序的查询．现在只需要解决给出 $a, b$，询问有多少个点满足 $1 \le x_i \le a, 1\le y_i \le b$．
+For operation 1, turn it into 4 two-dimensional dominance queries. Now we only need to solve: given $a, b$, count the points with $1 \le x_i \le a, 1\le y_i \le b$.
 
-现在要查询横坐标的范围为 $[1, a]$．因为查询范围最右边可能有一段不是完整的块，所以暴力扫一遍这个段，看是否满足 $Y_i \le b$，统计出这个段满足要求的点的个数．
+Now the range of x-coordinates to query is $[1, a]$. The rightmost part of the query range may not be a full block, so we scan that part by brute force, check whether $Y_i \le b$, and count the points there that satisfy the condition.
 
-现在就只需要处理完整的块．暴力扫一遍前面的块，查询每个块对应的树状数组中值小于 $b$ 的个数，累加到答案上．
+Now only the full blocks are left. Scan the earlier blocks by brute force, query each block's Fenwick tree for the number of values less than $b$, and add it to the answer.
 
-这就完事了？不，注意到处理完整的块的时候，其实相当于查询 $T$ 的前缀和，如果修改时也使用树状数组的技巧处理 $T$，那么查询时复杂度会更低．
+Is that it? Not quite. Notice that handling the full blocks is really a prefix-sum query over $T$. If we also use the Fenwick tree trick on $T$ when updating, queries become even faster.
 
-### 修改
+### Update
 
-普通的做法就先找到点 $x$ 所在的块，然后一减一加两个权值树状数组单点修改，再将 $Y_x$ 置为 $y$．
+The plain approach is to find the block that contains point $x$, do two point updates on the value-indexed Fenwick tree (one subtract and one add), then set $Y_x$ to $y$.
 
-如果用了上面说的优化，那就是对 $T$ 也走一个树状数组修改的流程，每次修改也是一减一加两个权值树状数组单点修改．
+With the optimization above, we also run a Fenwick tree update over $T$. Each update still consists of two point updates on value-indexed Fenwick trees, one subtract and one add.
 
-对上述步骤进行一定的改变，比如将一减一加改成只减，就是删点；改成只加，就是加点．但是必须要注意一个 $x$ 只能对应一个 $y$．
+With small changes to these steps, we can do more: subtract only, and it deletes a point; add only, and it inserts a point. But keep in mind that each $x$ can correspond to only one $y$.
 
-### 空间复杂度
+### Space complexity
 
-分块分了 $\sqrt n$ 个块，每个块一个树状数组 $O(n)$ 的空间，所以空间复杂度为 $O(n \sqrt n)$．
+There are $\sqrt n$ blocks, and each block has a Fenwick tree using $O(n)$ space, so the space complexity is $O(n \sqrt n)$.
 
-### 时间复杂度
+### Time complexity
 
-查询的话，遍历非完整块的段 $O(\sqrt n)$．然后，对 $T$ 走树状数组查询，每个经历到的 $T_i$ 也走树状数组查询，这一步是 $O(\log (\sqrt n) \log n)$ 的复杂度．所以查询的时间复杂度为 $O (\sqrt n + \log (\sqrt n) \log n)$．
+For a query, scanning the partial block takes $O(\sqrt n)$. Then we do a Fenwick tree query over $T$, and each $T_i$ we visit also does a Fenwick tree query, which takes $O(\log (\sqrt n) \log n)$. So a query takes $O (\sqrt n + \log (\sqrt n) \log n)$ time.
 
-修改和查询一样，复杂度为 $O (\sqrt n + \log (\sqrt n) \log n)$．
+An update is the same as a query, with complexity $O (\sqrt n + \log (\sqrt n) \log n)$.
 
-## 例题 1
+## Example problem 1
 
 ???+ note "[Intersection of Permutations](https://codeforces.com/problemset/problem/1093/E)"
-    给出两个排列 $a$ 和 $b$，要求实现以下两种操作：
+    Given two permutations $a$ and $b$, support the following two operations:
     
-    1.  给出 $l_a, r_a, l_b, r_b$，要求查询既出现在 $a[l_a ... r_a]$ 又出现在 $b[l_b ... r_b]$ 中的元素的个数．
-    2.  给出 $x, y$，$swap(b_x, b_y)$．
+    1.  Given $l_a, r_a, l_b, r_b$, count the elements that appear both in $a[l_a ... r_a]$ and in $b[l_b ... r_b]$.
+    2.  Given $x, y$, do $swap(b_x, b_y)$.
     
-    序列长度 $n$ 满足 $2 \le n \le 2 \cdot 10^5$，操作个数 $q$ 满足 $1 \le q \le 2 \cdot 10^5$．
+    The sequence length $n$ satisfies $2 \le n \le 2 \cdot 10^5$, and the number of operations $q$ satisfies $1 \le q \le 2 \cdot 10^5$.
 
-对于每个值 $i$，记 $x_i$ 是它在排列 $b$ 中的下标，$y_i$ 是它在排列 $a$ 中的下标．这样，操作一就变成了一个矩形区域内点的个数的询问，操作 2 可以看成两个修改操作．而且因为是排列，所以满足一个 $x$ 对应一个 $y$，所以这题可以用分块套树状数组来写．
+For each value $i$, let $x_i$ be its index in permutation $b$ and $y_i$ its index in permutation $a$. Then operation 1 becomes counting the points in a rectangle, and operation 2 can be seen as two updates. Since these are permutations, each $x$ corresponds to exactly one $y$, so this problem can be solved with sqrt decomposition plus Fenwick trees.
 
-??? note "参考代码（分块套树状数组 - 1s）"
+??? note "Reference code (sqrt decomposition + Fenwick tree - 1s)"
     ```cpp
     #include <cmath>
     #include <cstdio>
@@ -151,7 +151,7 @@ author: Backl1ght, Tiphereth-A, Enter-tainer, Ir1d, ksyx, leoleoasd, Xeonacid, a
     }
     ```
 
-??? note "参考代码（树状数组套 Treap—TLE）"
+??? note "Reference code (Fenwick tree of Treaps - TLE)"
     ```cpp
     #include <cstdio>
     #include <random>
@@ -296,24 +296,24 @@ author: Backl1ght, Tiphereth-A, Enter-tainer, Ir1d, ksyx, leoleoasd, Xeonacid, a
     }
     ```
 
-## 例题 2
+## Example problem 2
 
 ???+ note "[Complicated Computations](https://codeforces.com/contest/1436/problem/E)"
-    给出一个序列 $a$，将 $a$ 所有连续子序列的 MEX 构成的数组作为 $b$，问 $b$ 的 MEX．一个序列的 MEX 是序列中最小的没出现过的 **正整数**．
+    Given a sequence $a$, let $b$ be the array formed by the MEX values of all contiguous subarrays of $a$. Find the MEX of $b$. The MEX of a sequence is the smallest **positive integer** that does not appear in it.
     
-    序列的长度 $n$ 满足 $1 \le n \le 10^5$．
+    The length $n$ of the sequence satisfies $1 \le n \le 10^5$.
 
-**观察**：一个序列的 MEX 为 $mex$，当且仅当这个序列包含 $1$ 至 $mex-1$，但不包含 $mex$．
+**Observation**: a sequence has MEX $mex$ if and only if it contains $1$ to $mex-1$ but does not contain $mex$.
 
-依次判断是否存在 MEX 为 $1$ 至 $n+1$ 的连续子序列．如果没有 MEX 为 $i$ 的连续子序列，那么答案即为 $i$．如果都存在，那么答案为 $n + 2$．
+Check in turn whether there is a contiguous subarray with MEX $1$, $2$, ..., $n+1$. If there is no contiguous subarray with MEX $i$, the answer is $i$. If all of them exist, the answer is $n + 2$.
 
-在判断 $i$ 时，将序列视为由零或多个 $i$ 分隔的多个段．如果存在一个段，这个段中包含 $1$ 至 $i - 1$，但不包含 $i$，那么就说明存在值为 $i$ 的连续子序列．
+When checking $i$, view the sequence as several segments separated by zero or more occurrences of $i$. If some segment contains $1$ to $i - 1$ but not $i$, then there is a contiguous subarray with MEX $i$.
 
-用一个数组 $Y_j$ 记录上一个值为 $a_j$ 的元素的位置，以 $j$ 作为 $x$，$Y_j$ 作为 $y$，$a_j$ 作为 $z$．这样，计算段内是否包含 $1$ 至 $i - 1$ 就是一个三维偏序的问题．形式化的说，判断段 $[l, r]$ 的 MEX 值是否为 $i$，就是看满足 $l \le j \le r, Y_j \le l - 1, a_j \le i - 1$ 的点的个数是否为 $i-1$．
+Use an array $Y_j$ to store the position of the previous element with value $a_j$, and take $j$ as $x$, $Y_j$ as $y$, and $a_j$ as $z$. Then checking whether a segment contains $1$ to $i - 1$ becomes a 3D dominance (3D partial order) problem. Formally, checking whether segment $[l, r]$ has MEX $i$ means checking whether the number of points with $l \le j \le r, Y_j \le l - 1, a_j \le i - 1$ equals $i-1$.
 
-如果在判断完值为 $i$ 的元素之后再将对应的点插入，这时因为 $[l, r]$ 内只存在 $a_j \le i - 1$ 的元素，所以上述三维偏序问题就可以转换为二维偏序的问题．
+If we insert the points for value $i$ only after we finish checking $i$, then $[l, r]$ only contains elements with $a_j \le i - 1$, so the 3D dominance problem above reduces to a 2D dominance problem.
 
-??? note "参考代码（分块套树状数组 - 78ms）"
+??? note "Reference code (sqrt decomposition + Fenwick tree - 78ms)"
     ```cpp
     #include <cmath>
     #include <cstdio>
@@ -322,7 +322,7 @@ author: Backl1ght, Tiphereth-A, Enter-tainer, Ir1d, ksyx, leoleoasd, Xeonacid, a
     constexpr int N = 1e5 + 5;
     constexpr int M = 316 + 5;  // sqrt(N) + 5
     
-    // 分块
+    // sqrt decomposition
     int nn, b[N], block_size, block_cnt, block_id[N], L[N], R[N], T[M][N];
     
     void build(int n) {
@@ -344,14 +344,14 @@ author: Backl1ght, Tiphereth-A, Enter-tainer, Ir1d, ksyx, leoleoasd, Xeonacid, a
     
     int lb(int x) { return x & -x; }
     
-    // d = 1: 加点(p, v)
-    // d = -1: 删点(p, v)
+    // d = 1: add point (p, v)
+    // d = -1: delete point (p, v)
     void add(int p, int v, int d) {
       for (int i = block_id[p]; i <= block_cnt; i += lb(i))
         for (int j = v; j <= nn; j += lb(j)) T[i][j] += d;
     }
     
-    // 询问[1, r]内，纵坐标小于等于val的点有多少个
+    // count points in [1, r] with y-coordinate at most val
     int getsum(int p, int v) {
       if (!p) return 0;
       int res = 0;
@@ -363,14 +363,14 @@ author: Backl1ght, Tiphereth-A, Enter-tainer, Ir1d, ksyx, leoleoasd, Xeonacid, a
       return res;
     }
     
-    // 询问[l, r]内，纵坐标小于等于val的点有多少个
+    // count points in [l, r] with y-coordinate at most val
     int query(int l, int r, int val) {
       if (l > r) return -1;
       int res = getsum(r, val) - getsum(l - 1, val);
       return res;
     }
     
-    // 加点(p, v)
+    // add point (p, v)
     void update(int p, int v) {
       b[p] = v;
       add(p, v, 1);
@@ -382,13 +382,13 @@ author: Backl1ght, Tiphereth-A, Enter-tainer, Ir1d, ksyx, leoleoasd, Xeonacid, a
     int main() {
       scanf("%d", &n);
     
-      // 为了减少讨论，加了哨兵节点
-      // 因为树状数组添加的时候，为0可能会死循环，所以整体往右偏移一位
-      // a_1和a_{n+2}为哨兵节点
+      // sentinel nodes are added to reduce case analysis
+      // a Fenwick tree may loop forever when adding at 0, so everything is shifted right by one
+      // a_1 and a_{n+2} are sentinel nodes
       for (int i = 2; i <= n + 1; ++i) scanf("%d", &a[i]);
       for (int i = 2; i <= n + 1; ++i) g[a[i]].push_back(i);
     
-      // 分块
+      // sqrt decomposition
       build(n + 2);
     
       int ans = n + 2, lst, ok;
@@ -422,7 +422,7 @@ author: Backl1ght, Tiphereth-A, Enter-tainer, Ir1d, ksyx, leoleoasd, Xeonacid, a
     }
     ```
 
-??? note "参考代码（线段树套 Treap-468ms）"
+??? note "Reference code (segment tree of Treaps - 468ms)"
     ```cpp
     #include <cstdio>
     #include <random>
@@ -549,7 +549,7 @@ author: Backl1ght, Tiphereth-A, Enter-tainer, Ir1d, ksyx, leoleoasd, Xeonacid, a
       for (int i = 1; i <= n; ++i) scanf("%d", &a[i]);
       for (int i = 1; i <= n; ++i) g[a[i]].push_back(i);
     
-      // a_0 和 a_{n+1}为哨兵节点
+      // a_0 and a_{n+1} are sentinel nodes
       int ans = n + 2, lst, ok;
       for (int i = 1; i <= n + 1; ++i) {
         g[i].push_back(n + 1);

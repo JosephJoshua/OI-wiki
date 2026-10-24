@@ -1,97 +1,97 @@
 author: Ir1d, HeRaNO, Xeonacid
 
-## 简介
+## Introduction
 
-其实，分块是一种思想，而不是一种数据结构．
+Sqrt decomposition is really an idea, not a data structure.
 
-从 NOIP 到 NOI 到 IOI，各种难度的分块思想都有出现．
+The idea of sqrt decomposition shows up at every level of difficulty, from NOIP to NOI to IOI.
 
-分块的基本思想是，通过对原数据的适当划分，并在划分后的每一个块上预处理部分信息，从而较一般的暴力算法取得更优的时间复杂度．
+The basic idea of sqrt decomposition is to divide the original data in a suitable way and precompute some information for each block, which gives a better time complexity than plain brute force.
 
-分块的时间复杂度主要取决于分块的块长，一般可以通过均值不等式求出某个问题下的最优块长，以及相应的时间复杂度．
+The time complexity of sqrt decomposition mainly depends on the block length. Usually the AM-GM inequality gives the optimal block length for a problem and the corresponding time complexity.
 
-分块是一种很灵活的思想，相较于树状数组和线段树，分块的优点是通用性更好，可以维护很多树状数组和线段树无法维护的信息．
+Sqrt decomposition is a very flexible idea. Compared with Fenwick trees and segment trees, its advantage is that it is more general: it can maintain a lot of information that Fenwick trees and segment trees cannot.
 
-当然，分块的缺点是渐近意义的复杂度，相较于线段树和树状数组不够好．
+Of course, the drawback is that its asymptotic complexity is worse than that of segment trees and Fenwick trees.
 
-不过在大多数问题上，分块仍然是解决这些问题的一个不错选择．
+Still, for most problems, sqrt decomposition is a good choice.
 
-下面是几个例子．
+Here are a few examples.
 
-## 区间和
+## Range sum
 
-??? note "例题 [LibreOJ 6280 数列分块入门 4](https://loj.ac/problem/6280)"
-    给定一个长度为 $n$ 的序列 $\{a_i\}$，需要执行 $n$ 次操作．操作分为两种：
+??? note "Example problem [LibreOJ 6280 Intro to Sequence Sqrt Decomposition 4](https://loj.ac/problem/6280)"
+    Given a sequence $\{a_i\}$ of length $n$, perform $n$ operations. There are two kinds of operations:
     
-    1.  给 $a_l \sim a_r$ 之间的所有数加上 $x$；
-    2.  求 $\sum_{i=l}^r a_i$．
+    1.  Add $x$ to every number from $a_l$ to $a_r$;
+    2.  Compute $\sum_{i=l}^r a_i$.
     
         $1 \leq n \leq 5 \times 10^4$
 
-我们将序列按每 $s$ 个元素一块进行分块，并记录每块的区间和 $b_i$．
+We split the sequence into blocks of $s$ elements each and record the sum $b_i$ of each block.
 
 $$
 \underbrace{a_1, a_2, \ldots, a_s}_{b_1}, \underbrace{a_{s+1}, \ldots, a_{2s}}_{b_2}, \dots, \underbrace{a_{(s-1) \times s+1}, \dots, a_n}_{b_{\frac{n}{s}}}
 $$
 
-最后一个块可能是不完整的（因为 $n$ 很可能不是 $s$ 的倍数），但是这对于我们的讨论来说并没有太大影响．
+The last block may be incomplete (since $n$ is probably not a multiple of $s$), but this does not really matter for our discussion.
 
-首先看查询操作：
+First, the query operation:
 
--   若 $l$ 和 $r$ 在同一个块内，直接暴力求和即可，因为块长为 $s$，因此最坏复杂度为 $O(s)$．
--   若 $l$ 和 $r$ 不在同一个块内，则答案由三部分组成：以 $l$ 开头的不完整块，中间几个完整块，以 $r$ 结尾的不完整块．对于不完整的块，仍然采用上面暴力计算的方法，对于完整块，则直接利用已经求出的 $b_i$ 求和即可．这种情况下，最坏复杂度为 $O(\dfrac{n}{s}+s)$．
+-   If $l$ and $r$ are in the same block, just sum by brute force. Since the block length is $s$, the worst-case complexity is $O(s)$.
+-   If $l$ and $r$ are not in the same block, the answer has three parts: the incomplete block starting at $l$, several complete blocks in the middle, and the incomplete block ending at $r$. For the incomplete blocks, we still use brute force as above. For the complete blocks, we just add up the precomputed $b_i$. In this case, the worst-case complexity is $O(\dfrac{n}{s}+s)$.
 
-接下来是修改操作：
+Next, the update operation:
 
--   若 $l$ 和 $r$ 在同一个块内，直接暴力修改即可，因为块长为 $s$，因此最坏复杂度为 $O(s)$．
--   若 $l$ 和 $r$ 不在同一个块内，则需要修改三部分：以 $l$ 开头的不完整块，中间几个完整块，以 $r$ 结尾的不完整块．对于不完整的块，仍然是暴力修改每个元素的值（别忘了更新区间和 $b_i$），对于完整块，则直接修改 $b_i$ 即可．这种情况下，最坏复杂度和仍然为 $O(\dfrac{n}{s}+s)$．
+-   If $l$ and $r$ are in the same block, just update by brute force. Since the block length is $s$, the worst-case complexity is $O(s)$.
+-   If $l$ and $r$ are not in the same block, we need to update three parts: the incomplete block starting at $l$, several complete blocks in the middle, and the incomplete block ending at $r$. For the incomplete blocks, we still update each element by brute force (don't forget to update the block sum $b_i$). For the complete blocks, we just update $b_i$ directly. In this case, the worst-case complexity is still $O(\dfrac{n}{s}+s)$.
 
-利用均值不等式可知，当 $\dfrac{n}{s}=s$，即 $s=\sqrt n$ 时，单次操作的时间复杂度最优，为 $O(\sqrt n)$．
+By the AM-GM inequality, when $\dfrac{n}{s}=s$, that is, $s=\sqrt n$, a single operation has the best time complexity, $O(\sqrt n)$.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/ds/code/decompose/decompose_1.cpp"
     ```
 
-## 区间和 2
+## Range sum 2
 
-上一个做法的复杂度是 $\Omega(1) , O(\sqrt{n})$．
+The complexity of the previous method is $\Omega(1) , O(\sqrt{n})$.
 
-我们在这里介绍一种 $O(\sqrt{n}) - O(1)$ 的算法．
+Here we introduce an $O(\sqrt{n}) - O(1)$ algorithm.
 
-为了 $O(1)$ 询问，我们可以维护各种前缀和．
+To answer queries in $O(1)$, we can maintain various prefix sums.
 
-然而在有修改的情况下，不方便维护，只能维护单个块内的前缀和．
+However, with updates, they are hard to maintain, so we can only maintain prefix sums inside each block,
 
-以及整块作为一个单位的前缀和．
+plus prefix sums that treat each whole block as one unit.
 
-每次修改 $O(T+\frac{n}{T})$．
+Each update takes $O(T+\frac{n}{T})$.
 
-询问：涉及三部分，每部分都可以直接通过前缀和得到，时间复杂度 $O(1)$．
+Query: it involves three parts, and each part can be read directly from the prefix sums, so the time complexity is $O(1)$.
 
-## 对询问分块
+## Sqrt decomposition on queries
 
-同样的问题，现在序列长度为 $n$，有 $m$ 个操作．
+Same problem as before; now the sequence length is $n$ and there are $m$ operations.
 
-如果操作数量比较少，我们可以把操作记下来，在询问的时候加上这些操作的影响．
+If there are only a few operations, we can record them and add their effects when answering a query.
 
-假设最多记录 $T$ 个操作，则修改 $O(1)$，询问 $O(T)$．
+Suppose we record at most $T$ operations. Then an update takes $O(1)$ and a query takes $O(T)$.
 
-$T$ 个操作之后，重新计算前缀和，$O(n)$．
+After $T$ operations, recompute the prefix sums in $O(n)$.
 
-总复杂度：$O(mT+n\frac{m}{T})$．
+Total complexity: $O(mT+n\frac{m}{T})$.
 
-$T=\sqrt{n}$ 时，总复杂度 $O(m \sqrt{n})$．
+With $T=\sqrt{n}$, the total complexity is $O(m \sqrt{n})$.
 
-### 其他问题
+### Other problems
 
-分块思想也可以应用于其他整数相关问题：寻找零元素的数量、寻找第一个非零元素、计算满足某个性质的元素个数等等．
+The idea of sqrt decomposition can also be applied to other problems on integers: counting zero elements, finding the first non-zero element, counting elements that satisfy some property, and so on.
 
-还有一些问题可以通过分块来解决，例如维护一组允许添加或删除数字的集合，检查一个数是否属于这个集合，以及查找第 $k$ 大的数．要解决这个问题，必须将数字按递增顺序存储，并分割成多个块，每个块中包含 $\sqrt{n}$ 个数字．每次添加或删除一个数字时，必须通过在相邻块的边界移动数字来重新分块．
+Some other problems can also be solved with sqrt decomposition, for example maintaining a set of numbers that allows adding or deleting numbers, checking whether a number belongs to the set, and finding the $k$-th largest number. To solve this, we store the numbers in increasing order and split them into blocks, each containing $\sqrt{n}$ numbers. Every time a number is added or deleted, we must re-split the blocks by moving numbers across the boundaries of adjacent blocks.
 
-一种很有名的离线算法 [莫队算法](../misc/mo-algo.md)，也是基于分块思想实现的．
+The well-known offline algorithm [Mo's algorithm](../misc/mo-algo.md) is also based on the idea of sqrt decomposition.
 
-## 练习题
+## Exercises
 
 -   [UVa - 12003 - Array Transformer](https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=3154)
 -   [UVa - 11990 Dynamic Inversion](https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=3141)
@@ -103,4 +103,4 @@ $T=\sqrt{n}$ 时，总复杂度 $O(m \sqrt{n})$．
 -   [Codeforces - Powerful array](http://codeforces.com/problemset/problem/86/D)
 -   [SPOJ - DQUERY](https://www.spoj.com/problems/DQUERY)
 
-    **本页面主要译自博文 [Sqrt-декомпозиция](http://e-maxx.ru/algo/sqrt_decomposition) 与其英文翻译版 [Sqrt Decomposition](https://cp-algorithms.com/data_structures/sqrt_decomposition.html)．其中俄文版版权协议为 Public Domain + Leave a Link；英文版版权协议为 CC-BY-SA 4.0．**
+    **This page is mainly translated from the article [Sqrt-декомпозиция](http://e-maxx.ru/algo/sqrt_decomposition) and its English version [Sqrt Decomposition](https://cp-algorithms.com/data_structures/sqrt_decomposition.html). The Russian version is licensed under Public Domain + Leave a Link; the English version is licensed under CC-BY-SA 4.0.**

@@ -4,7 +4,7 @@
 using namespace std;
 constexpr int sqn = 1e3;
 
-struct node {  // 定义块状链表
+struct node {  // define the block list
   node* nxt;
   int size;
   char d[(sqn << 1) + 5];
@@ -17,12 +17,12 @@ struct node {  // 定义块状链表
 char inits[(int)1e6 + 5];
 int llen, q;
 
-void readch(char& ch) {  // 读入字符
+void readch(char& ch) {  // read a character
   do cin >> ch;
   while (!isalpha(ch));
 }
 
-void check(node* p) {  // 判断，记得要分裂
+void check(node* p) {  // check; remember to split
   if (p->size >= (sqn << 1)) {
     node* q = new node;
     for (int i = sqn; i < p->size; i++) q->pb(p->d[i]);
@@ -30,7 +30,7 @@ void check(node* p) {  // 判断，记得要分裂
   }
 }
 
-void insert(char c, int pos) {  // 元素插入，借助链表来理解
+void insert(char c, int pos) {  // insert an element; think of it like a linked list
   node* p = head;
   int tot, cnt;
   if (pos > llen++) {
@@ -45,7 +45,7 @@ void insert(char c, int pos) {  // 元素插入，借助链表来理解
   check(p);
 }
 
-char query(int pos) {  // 查询
+char query(int pos) {  // query
   node* p;
   int tot;
   for (p = head, tot = head->size; p != NULL && tot < pos;
