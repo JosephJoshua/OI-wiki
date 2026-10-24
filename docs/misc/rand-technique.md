@@ -505,7 +505,7 @@ This result looks completely natural, but a rigorous proof is not so easy.
 ???+ note "Proof idea"
     Imagine that each of the two graphs uses a 0/1 random number generator to decide whether each edge exists. $G_1$'s generator $T_1$ outputs 1 with probability $p$ each time, and $G_2$'s generator $T_2$ outputs 1 with probability $q$ each time. To build a graph, we just run the corresponding generator $\dfrac {n(n-1)}2$ times.
     
-    Now we merge the two generators into one. Consider a random number generator $T$ that outputs 0 with probability $q$, 1 with probability $p-q$, and 2 with probability $1-p$ each time. If we run this $T$ $\dfrac {n(n-1)}2$ times, we can build $G_1$ and $G_2$ at the same time. Specifically, if the output is 0, we consider the current edge to be absent from both $G_1$ and $G_2$; if the output is 1, the current edge is in $G_1$ only; if the output is 2, the current edge is in both $G_1$ and $G_2$.
+    Now we merge the two generators into one. Consider a random number generator $T$ that outputs 0 with probability $1-p$, 1 with probability $p-q$, and 2 with probability $q$ each time. If we run this $T$ $\dfrac {n(n-1)}2$ times, we can build $G_1$ and $G_2$ at the same time. Specifically, if the output is 0, we consider the current edge to be absent from both $G_1$ and $G_2$; if the output is 1, the current edge is in $G_1$ only; if the output is 2, the current edge is in both $G_1$ and $G_2$.
     
     It is easy to check that $G_1$ and $G_2$ generated this way match their definitions, and that in every instance, the edge set of $G_2$ is a subset of the edge set of $G_1$. So in every instance, $G_2$ has at least as many connected components as $G_1$, and naturally the expected values satisfy the same inequality.
 

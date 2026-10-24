@@ -123,7 +123,7 @@ The total time complexity of the whole divide and conquer process is $O(n\log n(
     ??? note "Solution idea"
         First, consider how to maintain the diameter of a set of vertices in a tree. We have the following corollary:
         
-        > Take a set $S$ and a single-vertex set $\{P\}$. If the diameter of $S$ is $(U,V)$, then the diameter of the vertex set $S\cap\{P\}$ can only be $(U,V)$, $(U,P)$ or $(V,P)$.
+        > Take a set $S$ and a single-vertex set $\{P\}$. If the diameter of $S$ is $(U,V)$, then the diameter of the vertex set $S\cup\{P\}$ can only be $(U,V)$, $(U,P)$ or $(V,P)$.
         
         Now consider the original problem. We maintain the set of black vertices, and for each vertex we keep the time intervals during which it is in the black set (to do this, just use a bucket to record the last time each vertex entered the black set).
         

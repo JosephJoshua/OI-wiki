@@ -476,7 +476,7 @@ Since all $n$-th roots of unity form the cyclic group $\langle\zeta_n\rangle$ un
     The cyclotomic field $\mathbf Q(\zeta_n)$ is the splitting field of the polynomial $x^n-1$ over the rational field $\mathbf Q$.
 
 ??? note "Proof"
-    Let $F$ be the splitting field of $x^n-1$ over $\mathbf Q$. Since $\mathbf Q(\zeta_n)$ contains all complex roots of $x^n-1$, we have $F\subseteq\mathbf Q(\zeta_n)$. Conversely, since $\zeta_n\in F$, we must have $\mathbf Q(\zeta_n)=F$. This shows $F=\mathbf Q(\zeta_n)$.
+    Let $F$ be the splitting field of $x^n-1$ over $\mathbf Q$. Since $\mathbf Q(\zeta_n)$ contains all complex roots of $x^n-1$, we have $F\subseteq\mathbf Q(\zeta_n)$. Conversely, since $\zeta_n\in F$, we must have $\mathbf Q(\zeta_n)\subseteq F$. This shows $F=\mathbf Q(\zeta_n)$.
 
 This can serve as an equivalent definition of a cyclotomic field. In fact, adjoining any primitive $n$-th root of unity to $\mathbf Q$ gives $\mathbf Q(\zeta_n)$.
 

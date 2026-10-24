@@ -681,7 +681,7 @@ We make the following comparisons:
 
 2.  Compare the $sum$ of cluster $compress(Z)$ with the $sum$ of the union of cluster $compress(Y)$, cluster $A$ and vertex $X$ (call it cluster $\beta$ for now). If the $sum$ of $compress(Z)$ is at least the latter, at least one centroid is in the subtree of $compress(Z)$, so we recurse into $compress(Z)$. (If they are equal, vertex $X$ is also a centroid and must be recorded.)
 
-3.  In the Rake Tree at the middle child of vertex $x$, take the smaller cluster with the largest $sum$. Compare its $sum$ with the $sum$ of the union of cluster $compress(Y)$, cluster $A$, vertex $X$ and the other smaller clusters (call it cluster $Y$ for now). If the $sum$ of that smaller cluster is at least the latter, at least one centroid is in the subtree of that smaller cluster, so we recurse into it. If they are equal, vertex $X$ is also a centroid and must be recorded.
+3.  In the Rake Tree at the middle child of vertex $x$, take the smaller cluster with the largest $sum$. Compare its $sum$ with the $sum$ of the union of cluster $compress(Y)$, cluster $A$, vertex $X$ and the other smaller clusters (call it cluster $\gamma$ for now). If the $sum$ of that smaller cluster is at least the latter, at least one centroid is in the subtree of that smaller cluster, so we recurse into it. If they are equal, vertex $X$ is also a centroid and must be recorded.
 
 4.  If none of the comparisons above recurses, vertex $X$ must be a centroid. Record it and stop.
 

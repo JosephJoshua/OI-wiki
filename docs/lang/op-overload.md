@@ -11,7 +11,7 @@ In C++, we can overload almost every available operator.
     
     Binary: `+`; `-`; `&` (bitwise AND); `[]` (subscript); `==`; `=` (assignment) and so on.
     
-    Others: `()` (function call); `""` (literal suffix[^ref1], since C++11); `new` (memory allocation); `,` (comma operator); `<=>` (three-way comparison[^ref2], since C++20) and so on.
+    Others: `()` (function call); `""` (literal suffix[^ref2], since C++11); `new` (memory allocation); `,` (comma operator); `<=>` (three-way comparison[^ref1], since C++20) and so on.
 
 ## Restrictions
 

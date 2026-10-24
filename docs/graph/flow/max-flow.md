@@ -433,11 +433,11 @@ Each phase of the MPM algorithm takes $O(V^2)$, because there are at most $V$ it
     
     **Lemma 1**: After each iteration, the distance from $s$ to every vertex does not decrease, that is, $level_{i+1}[v] \ge level_{i}[v]$.
     
-    **Proof**: Fix a phase $i$ and a vertex $v$. Consider any shortest path $P$ from $s$ to $v$ in $G_{i}^R$. The length of $P$ equals $level_{i}[v]$. Note that $G_{i}^R$ can only contain back edges and forward edges of $G_{i}^R$. If $P$ has no back edge of $G_{i}^R$, then $level_{i+1}[v] \ge level_{i}[v]$, because $P$ is also a path in $G_{i}^R$. Now suppose $P$ has at least one back edge, and the first such edge is $(u,w)$. Then $level_{i+1}[u] \ge level_{i}[u]$ (by the first case). The edge $(u,w)$ does not belong to $G_{i}^R$, so $(u,w)$ was affected by the augmenting path of the previous iteration. This means $level_{i}[u] = level_{i}[w]+1$. Also, $level_{i+1}[w] = level_{i+1}[u]+1$. From these two equations and $level_{i+1}[u] \ge level_{i}[u]$, we get $level_{i+1}[w] \ge level_{i}[w]+2$. The same idea applies to the rest of the path.
+    **Proof**: Fix a phase $i$ and a vertex $v$. Consider any shortest path $P$ from $s$ to $v$ in $G_{i+1}^R$. The length of $P$ equals $level_{i+1}[v]$. Note that $G_{i+1}^R$ can only contain back edges and forward edges of $G_{i}^R$. If $P$ has no back edge of $G_{i}^R$, then $level_{i+1}[v] \ge level_{i}[v]$, because $P$ is also a path in $G_{i}^R$. Now suppose $P$ has at least one back edge, and the first such edge is $(u,w)$. Then $level_{i+1}[u] \ge level_{i}[u]$ (by the first case). The edge $(u,w)$ does not belong to $G_{i}^R$, so $(u,w)$ was affected by the augmenting path of the previous iteration. This means $level_{i}[u] = level_{i}[w]+1$. Also, $level_{i+1}[w] = level_{i+1}[u]+1$. From these two equations and $level_{i+1}[u] \ge level_{i}[u]$, we get $level_{i+1}[w] \ge level_{i}[w]+2$. The same idea applies to the rest of the path.
     
     **Lemma 2**: $level_{i+1}[t] > level_{i}[t]$.
     
-    **Proof**: From Lemma 1, $level_{i+1}[t] \ge level_{i}[t]$. Suppose $level_{i+1}[t] = level_{i}[t]$. Note that $G_{i}^R$ can only contain back edges and forward edges of $G_{i}^R$. This means there is a shortest path in $G_{i}^R$ that was not blocked by the augmenting paths. This is a contradiction.
+    **Proof**: From Lemma 1, $level_{i+1}[t] \ge level_{i}[t]$. Suppose $level_{i+1}[t] = level_{i}[t]$. Note that $G_{i+1}^R$ can only contain back edges and forward edges of $G_{i}^R$. This means there is a shortest path in $G_{i}^R$ that was not blocked by the augmenting paths. This is a contradiction.
 
 #### Implementation
 

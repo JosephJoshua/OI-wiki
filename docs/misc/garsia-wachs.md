@@ -1,6 +1,6 @@
 ## Introduction
 
-The **Garsia–Wachs algorithm** is an efficient algorithm that a computer uses to build **optimal binary search trees** and **alphabetic Huffman codes** in **linear time**. It is named after Adriano Garsia and Michelle L. Wachs, who published the paper on it in 1977.
+The **Garsia–Wachs algorithm** is an efficient algorithm that a computer uses to build **optimal binary search trees** and **alphabetic Huffman codes** in **$O(n\log n)$ time**. It is named after Adriano Garsia and Michelle L. Wachs, who published the paper on it in 1977.
 
 ## Problem statement
 

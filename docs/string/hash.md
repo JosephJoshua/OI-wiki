@@ -248,7 +248,7 @@ $s_{12}$ and $!s_{12}$ are the two strings we want.
 ???+ note "[Example problem: BZOJ 3097 Hash Killer I](https://hydro.ac/p/bzoj-P3097)"
     Given a hash implemented with **natural overflow**, construct a string that breaks it.
 
-???+ note "[Example problem: BZOJ 3097 Hash Killer II](https://hydro.ac/p/bzoj-P3098)"
+???+ note "[Example problem: BZOJ 3098 Hash Killer II](https://hydro.ac/p/bzoj-P3098)"
     Given a hash implemented with a **large modulus**, construct a string that breaks it.
 
 ???+ note "[Example problem: Luogu U461211 String Hash (Strengthened Data)](https://www.luogu.com.cn/problem/U461211)"

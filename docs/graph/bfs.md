@@ -142,7 +142,7 @@ Similarly, we can define the BFS tree: during BFS, record for each node which no
 -   Find shortest paths from a start vertex to all other vertices in an unweighted graph.
 -   Find all connected components in $O(n+m)$ time. (Just start a BFS from every node not yet visited; each BFS clearly covers exactly one connected component.)
 -   If each move in a game is seen as an edge (a transition) in a state graph, BFS can find the minimum number of moves needed to get from one state to another.
--   Find the shortest cycle in a directed unweighted graph. (Start a BFS from every vertex. When we are about to reach a vertex visited earlier in that BFS, we know we have found a cycle. The shortest cycle of the graph is the average of the shortest cycles found by each BFS.)
+-   Find the shortest cycle in a directed unweighted graph. (Start a BFS from every vertex. When we are about to reach a vertex visited earlier in that BFS, we know we have found a cycle. The shortest cycle of the graph is the minimum of the shortest cycles found by each BFS.)
 -   Find the edges that lie on some shortest path between $(a, b)$. (Run BFS from a and from b to get two d arrays. Then for each edge $(u, v)$, if $d_a[u]+1+d_b[v]=d_a[b]$, the edge lies on a shortest path.)
 -   Find the vertices that lie on some shortest path between $(a, b)$. (Run BFS from a and from b to get two d arrays. Then for each vertex v, if $d_a[v]+d_b[v]=d_a[b]$, the vertex lies on some shortest path.)
 -   Find a shortest path of even length. (Build a new graph by splitting each vertex into two new vertices; each edge $(u, v)$ of the original graph becomes $((u, 0), (v, 1))$ and $((u, 1), (v, 0))$. Run BFS on the new graph; the shortest path between $(s, 0)$ and $(t, 0)$ is the answer.)

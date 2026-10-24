@@ -289,7 +289,7 @@ When a type is provided, the C++ standard requires macro constants for its maxim
     
     On 64-bit Windows, `int64_t` is usually `long long int`, while on 64-bit Linux it is usually `long int`. Since `std::max` requires both arguments to have the same type, this code fails to compile with GCC on 64-bit Linux, but compiles with MSVC on 64-bit Windows.
 
-In addition, since C++17, `<limits>` provides the class template `std::numeric_limits`, which lets you query properties of the arithmetic types, such as the maximum value, the minimum value, whether the type is an integer type, whether it is signed, and so on.
+In addition, `<limits>` (available since C++98) provides the class template `std::numeric_limits`, which lets you query properties of the arithmetic types, such as the maximum value, the minimum value, whether the type is an integer type, whether it is signed, and so on.
 
 ```cpp
 #include <cstdint>

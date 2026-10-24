@@ -78,7 +78,7 @@ Given a balanced bracket sequence $s$, we want to find its rank in lexicographic
 
 We count the number of bracket sequences $p$ that are lexicographically smaller than $s$.
 
-Suppose $p_i<s_i$ and $\forall 1\le j<i,p_j=s_i$. Clearly $p_i$ is an opening bracket and $s_i$ is a closing bracket. Enumerate $i$ (with $s_i$ a closing bracket), and suppose $p[1,i]$ has $k$ more opening brackets than closing brackets. Then we need to count the bracket sequences of length $|s|-i$ that have $k$ unmatched closing brackets and no unmatched opening brackets.
+Suppose $p_i<s_i$ and $\forall 1\le j<i,p_j=s_j$. Clearly $p_i$ is an opening bracket and $s_i$ is a closing bracket. Enumerate $i$ (with $s_i$ a closing bracket), and suppose $p[1,i]$ has $k$ more opening brackets than closing brackets. Then we need to count the bracket sequences of length $|s|-i$ that have $k$ unmatched closing brackets and no unmatched opening brackets.
 
 Let $f(i,j)$ be the number of bracket sequences of length $i$ that have $j$ unmatched closing brackets and no unmatched opening brackets.
 

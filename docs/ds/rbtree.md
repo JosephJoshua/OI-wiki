@@ -238,7 +238,7 @@ A 2-3-4 tree is a B-tree of order 4. Like ordinary B-trees, a 2-3-4 tree support
 
 ![2-3-4-tree-rbt-1](images/2-3-4-tree-rbt-1.svg)
 
-The figure below shows a red-black tree and its corresponding 2-3-4 tree. Moving each red node up to the left or right of its parent to form a B-tree node gives the corresponding 2-3-4 tree. Notice that the number of nodes in the red-black tree equals the number of nodes in the 2-3-4 tree.
+The figure below shows a red-black tree and its corresponding 2-3-4 tree. Moving each red node up to the left or right of its parent to form a B-tree node gives the corresponding 2-3-4 tree. Notice that the number of black nodes in the red-black tree equals the number of nodes in the 2-3-4 tree.
 
 ![2-3-4-tree-rbt](images/2-3-4-tree-rbt-2.svg)
 

@@ -4,7 +4,7 @@ A bitset is often used for decision and counting problems that ordinary data str
 
 ## Example problem [Ynoi2016 Falling into the Rabbit Hole](https://www.luogu.com.cn/problem/P4688)
 
-This problem fits exactly the pattern of Mo's algorithm with a bitset described above. It is not hard to think of storing, for each interval, all the values that appear in it in a bitset. The answer to a query is then the total length of all the intervals minus the number of elements in the union of the three, $\times 3$.
+This problem fits exactly the pattern of Mo's algorithm with a bitset described above. It is not hard to think of storing, for each interval, all the values that appear in it in a bitset. The answer to a query is then the total length of all the intervals minus the number of elements in the intersection of the three, $\times 3$.
 
 But using a bitset in Mo's algorithm also requires adjusting the algorithm to the properties of bitsets:
 

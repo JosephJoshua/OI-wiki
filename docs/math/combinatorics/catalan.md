@@ -1,6 +1,6 @@
 ## Introduction
 
-Catalan numbers show up in many counting problems. The Belgian mathematician Eugène Charles Catalan found this sequence in 1958 while studying the problem of counting bracket sequences, and the sequence is named after him. The Qing dynasty mathematician Minggatu had already found this sequence back in the 1730s.
+Catalan numbers show up in many counting problems. The Belgian mathematician Eugène Charles Catalan found this sequence in 1838 while studying the problem of counting bracket sequences, and the sequence is named after him. The Qing dynasty mathematician Minggatu had already found this sequence back in the 1730s.
 
 The Catalan numbers satisfy the following recurrence:
 

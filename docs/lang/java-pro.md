@@ -121,7 +121,7 @@ class Main {
 
 ### Basic operations
 
-Below, `this` stands for the current `BigIntger`:
+Below, `this` stands for the current `BigInteger`:
 
 |             Method             |               Description               |
 | :-------------------------: | :----------------------------: |
@@ -147,7 +147,7 @@ Below, `this` stands for the current `BigIntger`:
 |     `getLowestSetBit()`     |      returns the position of the rightmost `1` bit in the binary form of `this`     |
 | `compareTo(BigInteger val)` |      compares the values of `this` and `val`     |
 |         `toString()`        |      returns the decimal string form of `this`     |
-|    `toString(int radix)`    |  returns the string form of `this` in base `raidx` |
+|    `toString(int radix)`    |  returns the string form of `this` in base `radix` |
 
 Usage examples:
 
@@ -350,7 +350,7 @@ public class Main {
 
 ### Mathematical operations
 
-Below, `this` stands for the current `BigIntger`:
+Below, `this` stands for the current `BigInteger`:
 
 |                  Method                 |                Description                |
 | :----------------------------------: | :------------------------------: |
@@ -1504,7 +1504,7 @@ You can verify this with the following code:
 
 ### Arrays.binarySearch()
 
-`Arrays.binarySearch()` does a binary search over a contiguous range of an array. The array must be sorted. The time complexity is $O(\log_n)$. Its main overloads are:
+`Arrays.binarySearch()` does a binary search over a contiguous range of an array. The array must be sorted. The time complexity is $O(\log n)$. Its main overloads are:
 
 ```java
 import java.util.Arrays;
@@ -1579,7 +1579,7 @@ default void sort(Comparator<? super E> c) {
 
 ### Collections.binarySearch()
 
-`Collections.binarySearch()` does a binary search over a given range of a collection. It works the same as `Arrays.binarySearch()`.
+`Collections.binarySearch()` does a binary search over a sorted list. It works the same as `Arrays.binarySearch()`.
 
 ```java
 Collections.binarySearch(list, key);

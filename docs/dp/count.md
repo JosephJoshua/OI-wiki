@@ -91,4 +91,4 @@ Split $T$ into the part $T_1$ of elements greater than $\sqrt n$ and the part $T
 
 Split $n$ into two parts $A$ and $B$. Enumerating one of them determines the other. Count the $T_1$ with $\sum T_1 = A$ and the $T_2$ with $\sum T_2 = B$, multiply the two counts, and sum over all $A$ to get the final answer.
 
-When counting $T_1$, $M \le \sqrt n$, so computing $T_1$ with Solution 1 takes $\Theta(n^{3/2})$ time. Similarly, when counting $T_2$, $|T_2| \le \dfrac{\sum T_2}{\sqrt n} \le \dfrac{n}{\sqrt n} = \sqrt n$, so computing $T_2$ with Solution 2 also takes $\Theta(n^{3/2})$ time. So the total time complexity is $\Theta(n^{3/2})$.
+When counting $T_2$, $M \le \sqrt n$, so computing $T_2$ with Solution 1 takes $\Theta(n^{3/2})$ time. Similarly, when counting $T_1$, $|T_1| \le \dfrac{\sum T_1}{\sqrt n} \le \dfrac{n}{\sqrt n} = \sqrt n$, so computing $T_1$ with Solution 2 also takes $\Theta(n^{3/2})$ time. So the total time complexity is $\Theta(n^{3/2})$.
