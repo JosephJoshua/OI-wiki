@@ -49,14 +49,14 @@ class undirectedgraph : public graph<T> {
 // blossom / find_max_unweighted_matching
 template <typename T>
 vector<int> find_max_unweighted_matching(const undirectedgraph<T> &g) {
-  std::mt19937 rng(114514);  // 这里随机种子是无关紧要的
-  // 也可以用 chrono::steady_clock::now().time_since_epoch().count()
-  // 获取当前时间
-  vector<int> match(g.n, -1);   // 匹配
-  vector<int> aux(g.n, -1);     // 时间戳记
+  std::mt19937 rng(114514);  // the random seed does not matter here
+  // you can also use chrono::steady_clock::now().time_since_epoch().count()
+  // to get the current time
+  vector<int> match(g.n, -1);   // matching
+  vector<int> aux(g.n, -1);     // timestamp
   vector<int> label(g.n);       // "o" or "i"
-  vector<int> orig(g.n);        // 花根
-  vector<int> parent(g.n, -1);  // 父节点
+  vector<int> orig(g.n);        // blossom base
+  vector<int> parent(g.n, -1);  // parent node
   queue<int> q;
   int aux_time = -1;
 
@@ -64,14 +64,14 @@ vector<int> find_max_unweighted_matching(const undirectedgraph<T> &g) {
     aux_time++;
     while (true) {
       if (v != -1) {
-        if (aux[v] == aux_time) {  // 找到拜访过的点 也就是LCA
+        if (aux[v] == aux_time) {  // found a visited vertex, which is the LCA
           return v;
         }
         aux[v] = aux_time;
         if (match[v] == -1) {
           v = -1;
         } else {
-          v = orig[parent[match[v]]];  // 以匹配点的父节点继续寻找
+          v = orig[parent[match[v]]];  // continue from the parent of the matched vertex
         }
       }
       swap(v, u);
@@ -82,11 +82,11 @@ vector<int> find_max_unweighted_matching(const undirectedgraph<T> &g) {
     while (orig[v] != a) {
       parent[v] = u;
       u = match[v];
-      if (label[u] == 1) {  // 初始点设为"o" 找增广路
+      if (label[u] == 1) {  // set it to "o" and search for augmenting paths
         label[u] = 0;
         q.push(u);
       }
-      orig[v] = orig[u] = a;  // 缩花
+      orig[v] = orig[u] = a;  // shrink the blossom
       v = parent[u];
     }
   };  // blossom
@@ -108,7 +108,7 @@ vector<int> find_max_unweighted_matching(const undirectedgraph<T> &g) {
       q.pop();
     }
     q.push(root);
-    // 初始点设为 "o", 这里以"0"代替"o", "1"代替"i"
+    // the starting vertex is marked "o"; here "0" stands for "o", "1" for "i"
     label[root] = 0;
     while (!q.empty()) {
       int v = q.front();
@@ -116,21 +116,21 @@ vector<int> find_max_unweighted_matching(const undirectedgraph<T> &g) {
       for (int id : g.g[v]) {
         auto &e = g.edges[id];
         int u = e.from ^ e.to ^ v;
-        if (label[u] == -1) {  // 找到未拜访点
-          label[u] = 1;        // 标记 "i"
+        if (label[u] == -1) {  // found an unvisited vertex
+          label[u] = 1;        // mark it "i"
           parent[u] = v;
-          if (match[u] == -1) {  // 找到未匹配点
-            augment(u);          // 寻找增广路径
+          if (match[u] == -1) {  // found an unmatched vertex
+            augment(u);          // augment along the path
             return true;
           }
-          // 找到已匹配点 将与她匹配的点丢入queue 延伸交错树
+          // found a matched vertex; push its partner into the queue to extend the alternating tree
           label[match[u]] = 0;
           q.push(match[u]);
           continue;
         } else if (label[u] == 0 && orig[v] != orig[u]) {
-          // 找到已拜访点 且标记同为"o" 代表找到"花"
+          // found a visited vertex also marked "o", which means we found a "blossom"
           int a = lca(orig[v], orig[u]);
-          // 找LCA 然后缩花
+          // find the LCA, then shrink the blossom
           blossom(u, v, a);
           blossom(v, u, a);
         }
@@ -141,11 +141,11 @@ vector<int> find_max_unweighted_matching(const undirectedgraph<T> &g) {
 
   auto greedy = [&]() {
     vector<int> order(g.n);
-    // 随机打乱 order
+    // randomly shuffle order
     iota(order.begin(), order.end(), 0);
     shuffle(order.begin(), order.end(), rng);
 
-    // 将可以匹配的点匹配
+    // match the vertices that can be matched
     for (int i : order) {
       if (match[i] == -1) {
         for (auto id : g.g[i]) {
@@ -161,9 +161,9 @@ vector<int> find_max_unweighted_matching(const undirectedgraph<T> &g) {
     }
   };  // greedy
 
-  // 一开始先随机匹配
+  // start with a random matching
   greedy();
-  // 对未匹配点找增广路
+  // search for augmenting paths from unmatched vertices
   for (int i = 0; i < g.n; i++) {
     if (match[i] == -1) {
       bfs(i);

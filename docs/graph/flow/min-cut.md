@@ -1,30 +1,30 @@
-## 概念
+## Concepts
 
-### 割
+### Cut
 
-对于一个网络流图 $G=(V,E)$，其割的定义为一种 **点的划分方式**：将所有的点划分为 $S$ 和 $T=V-S$ 两个集合，其中源点 $s\in S$，汇点 $t\in T$．
+For a flow network $G=(V,E)$, a cut is defined as **a way to partition the vertices**: split all vertices into two sets $S$ and $T=V-S$, where the source $s\in S$ and the sink $t\in T$.
 
-### 割的容量
+### Capacity of a cut
 
-我们的定义割 $(S,T)$ 的容量 $c(S,T)$ 表示所有从 $S$ 到 $T$ 的边的容量之和，即 $c(S,T)=\sum_{u\in S,v\in T}c(u,v)$．当然我们也可以用 $c(s,t)$ 表示 $c(S,T)$．
+We define the capacity $c(S,T)$ of a cut $(S,T)$ as the total capacity of all edges going from $S$ to $T$, that is, $c(S,T)=\sum_{u\in S,v\in T}c(u,v)$. We may also write $c(s,t)$ for $c(S,T)$.
 
-### 最小割
+### Minimum cut
 
-最小割就是求得一个割 $(S,T)$ 使得割的容量 $c(S,T)$ 最小．
+The minimum cut problem asks for a cut $(S,T)$ whose capacity $c(S,T)$ is as small as possible.
 
-## 证明
+## Proof
 
-### 最大流最小割定理
+### Max-flow min-cut theorem
 
-参见 [最大流](max-flow.md) 页面最大流最小割定理一节．
+See the section on the max-flow min-cut theorem on the [maximum flow](max-flow.md) page.
 
-## 代码
+## Code
 
-### 最小割
+### Minimum cut
 
-通过 **最大流最小割定理**，我们可以直接得到如下代码：
+By the **max-flow min-cut theorem**, we directly get the following code:
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     #include <algorithm>
     #include <cstdio>
@@ -91,9 +91,9 @@
     }
     ```
 
-### 方案
+### Finding the cut
 
-我们可以通过从源点 $s$ 开始 DFS，每次走残量大于 $0$ 的边，找到所有 $S$ 点集内的点．
+Starting from the source $s$, run a DFS that only follows edges with residual capacity greater than $0$. This finds all vertices in the set $S$.
 
 ```cpp
 void dfs(int u) {
@@ -105,54 +105,54 @@ void dfs(int u) {
 }
 ```
 
-### 割边数量
+### Number of cut edges
 
-如果要求割边数量最小的割，直接把所有边的容量设成 $1$，求一遍最小割就好了．如果要求割边数量最小的最小割，那么有两种做法：
+If you want the cut with the fewest cut edges, just set the capacity of every edge to $1$ and find a minimum cut. If you want the minimum cut that has the fewest cut edges among all minimum cuts, there are two methods:
 
-1.  将所有边的容量 $c(u,v)$ 更新为 $c(u,v)(|E| + 1) + 1$，在新图上求最小割，就得到原图的最少割边最小割．新图最小割的容量除以 $|E| + 1$ 下取整即原图最小割，余数即割边数量．
+1.  Change the capacity of every edge from $c(u,v)$ to $c(u,v)(|E| + 1) + 1$ and find a minimum cut in the new graph. This gives the minimum cut of the original graph with the fewest cut edges. The capacity of the new graph's minimum cut divided by $|E| + 1$, rounded down, is the original minimum cut, and the remainder is the number of cut edges.
 
-    这相当于求以割的大小为第一关键字、割边数量为第二关键字的字典序最小割．因为系数 $|E| + 1$ 严格大于总边数，而割边数量不超过总边数，所以无论割边数量如何，都无法抵消割的大小的影响，求出的一定是原图最小割；在原图最小割的前提下，割边数量最小的将成为新图最小割．
+    This is the same as finding the lexicographically smallest cut, with the cut size as the first key and the number of cut edges as the second key. The factor $|E| + 1$ is strictly larger than the total number of edges, and the number of cut edges is at most the total number of edges. So no matter how many cut edges there are, they cannot outweigh the size of the cut, and the result must be a minimum cut of the original graph. Among the minimum cuts of the original graph, the one with the fewest cut edges becomes the minimum cut of the new graph.
 
-    注意，这一做法的正确性建立在所有边容量都是整数的前提下：只有这样，才能保证割边数量 $k\le|E|<|E|+1$ 不会进位到高位．若容量是有理数，可先乘以公分母化为整数；若容量是任意实数，或整型会溢出，则直接将容量取为二元组 $(c(u,v),1)$，加法按分量进行，比较用字典序即可，此时只依赖容量加减与比较的增广类算法（如 Dinic 算法等）都可以原样运行．
+    Note that this method is only correct when all edge capacities are integers: only then is it guaranteed that the number of cut edges $k\le|E|<|E|+1$ never carries over into the higher part. If the capacities are rational, first multiply by a common denominator to make them integers. If the capacities are arbitrary real numbers, or integers would overflow, use the pair $(c(u,v),1)$ as the capacity directly, add componentwise and compare lexicographically. Then any augmenting-path algorithm that only adds, subtracts and compares capacities (such as Dinic's algorithm) runs unchanged.
 
-2.  首先求出图的最大流，然后建新图：对 **残量图** 中的每条弧（即没有满流的边的正向弧，以及有流量的边的反向弧）连一条容量为 $\infty$ 的边，对每条满流的边连一条容量为 $1$ 的边，重新跑一遍最小割就可以得到最小割边数量．
+2.  First find the maximum flow of the graph, then build a new graph: for each arc in the **residual graph** (that is, the forward arc of each edge that is not saturated, and the reverse arc of each edge that carries flow), add an edge with capacity $\infty$; for each saturated edge, add an edge with capacity $1$. Running min cut again then gives the minimum number of cut edges.
 
-    新图最小割的割边一定不包含 $\infty$ 容量边，即没有残量弧从 $S$ 指向 $T$．所以，新图最小割中，原图的前向边都满流，反向边都没有流量，这说明它的容量等于最大流，也一定是原图最小割．反过来，原图任一最小割的前向边都满流，它在新图中的容量就是它的割边数量．所以新图最小割就是原图的最少割边最小割．
+    The cut edges of the new graph's minimum cut never include an edge of capacity $\infty$, which means no residual arc points from $S$ to $T$. So in the new graph's minimum cut, every forward edge of the original graph is saturated and every backward edge carries no flow. This shows its capacity equals the maximum flow, so it is also a minimum cut of the original graph. Conversely, every forward edge of any minimum cut of the original graph is saturated, so its capacity in the new graph is exactly its number of cut edges. Therefore the new graph's minimum cut is the minimum cut of the original graph with the fewest cut edges.
 
-    ??? warning "常见错误「只将未满流边容量设为 $\infty$」"
-        这种做法有一个常见的错误版本：求出最大流后，将满流边的容量设为 $1$、未满流边的容量设为 $\infty$，直接跑最小割．这种做法似乎符合直觉，但其实是错误的．反例如下图所示．
+    ??? warning "Common mistake: \"only set the capacity of unsaturated edges to $\infty$\""
+        There is a common wrong version of this method: after finding the maximum flow, set the capacity of saturated edges to $1$ and of unsaturated edges to $\infty$, then run min cut directly. This seems intuitive, but it is wrong. A counterexample is shown below.
         
         ![](images/min-cut-1.svg)
         
-        如图，最大流为 $16$（即 $s$ 的所有出边都满流），且最大流唯一，只有边 $A\to B$ 未满流．原图任一最小割的割边数量都是 $3$，但按错误版本重设容量后，新图最小割是 $2$，在 $S = \{s,x,y,B\}$ 处取得．这个割的容量是 $20$，并不是原图最小割：它的前向边 $s\to A$、$B\to t$ 虽然都满流，但有流量的边 $A\to B$ 从 $T$ 侧指回了 $S$ 侧，而错误版本没有排除这种情况．正确做法中，$A\to B$ 有流量，于是会连出容量为 $\infty$ 的反向边 $B\to A$，阻止了这个错误最小割的出现．
+        In the figure, the maximum flow is $16$ (all outgoing edges of $s$ are saturated), the maximum flow is unique, and only edge $A\to B$ is not saturated. Every minimum cut of the original graph has $3$ cut edges. But after resetting the capacities as in the wrong version, the new graph's minimum cut is $2$, reached at $S = \{s,x,y,B\}$. This cut has capacity $20$, so it is not a minimum cut of the original graph: its forward edges $s\to A$ and $B\to t$ are both saturated, but the edge $A\to B$, which carries flow, points from the $T$ side back to the $S$ side, and the wrong version does not rule this out. In the correct method, $A\to B$ carries flow, so a reverse edge $B\to A$ with capacity $\infty$ is added, which prevents this wrong minimum cut.
 
-## 问题模型 1
+## Problem model 1
 
-有 $n$ 个物品和两个集合 $A,B$，如果一个物品没有放入 $A$ 集合会花费 $a_i$，没有放入 $B$ 集合会花费 $b_i$；还有若干个形如 $u_i,v_i,w_i$ 限制条件，表示如果 $u_i$ 和 $v_i$ 同时不在一个集合会花费 $w_i$．每个物品必须且只能属于一个集合，求最小的代价．
+There are $n$ items and two sets $A,B$. If an item is not put into set $A$, it costs $a_i$; if it is not put into set $B$, it costs $b_i$. There are also several constraints of the form $u_i,v_i,w_i$, meaning that if $u_i$ and $v_i$ are not in the same set, it costs $w_i$. Each item must belong to exactly one set. Find the minimum cost.
 
-这是一个经典的 **二者选其一** 的最小割题目．我们对于每个集合设置源点 $s$ 和汇点 $t$，第 $i$ 个点由 $s$ 连一条容量为 $a_i$ 的边、向 $t$ 连一条容量为 $b_i$ 的边．对于限制条件 $u,v,w$，我们在 $u,v$ 之间连容量为 $w$ 的双向边．
+This is a classic **choose one of two** min cut problem. We create a source $s$ and a sink $t$, one for each set. For the $i$-th item, add an edge from $s$ with capacity $a_i$ and an edge to $t$ with capacity $b_i$. For a constraint $u,v,w$, add a bidirectional edge with capacity $w$ between $u$ and $v$.
 
-注意到当源点和汇点不相连时，代表这些点都选择了其中一个集合．如果将连向 $s$ 或 $t$ 的边割开，表示不放在 $A$ 或 $B$ 集合，如果把物品之间的边割开，表示这两个物品不放在同一个集合．
+When the source and sink are disconnected, every item has picked one of the sets. Cutting an edge to $s$ or $t$ means the item is not put into $A$ or $B$, respectively. Cutting an edge between two items means the two items are not in the same set.
 
-最小割就是最小花费．
+The minimum cut is the minimum cost.
 
-## 问题模型 2
+## Problem model 2
 
-最大权值闭合图，即给定一张有向图，每个点都有一个权值（可以为正或负或 $0$），你需要选择一个权值和最大的子图，使得子图中每个点的后继都在子图中．
+Maximum weight closure: given a directed graph where each vertex has a weight (positive, negative or $0$), choose a subgraph with the maximum total weight such that every successor of a vertex in the subgraph is also in the subgraph.
 
-做法：建立超级源点 $s$ 和超级汇点 $t$，若节点 $u$ 权值为正，则 $s$ 向 $u$ 连一条有向边，边权即为该点点权；若节点 $u$ 权值为负，则由 $u$ 向 $t$ 连一条有向边，边权即为该点点权的相反数．原图上所有边权改为 $\infty$．跑网络最大流，将所有正权值之和减去最大流，即为答案．
+Method: create a super source $s$ and a super sink $t$. If vertex $u$ has positive weight, add a directed edge from $s$ to $u$ whose weight is the vertex's weight. If vertex $u$ has negative weight, add a directed edge from $u$ to $t$ whose weight is the negative of the vertex's weight. Set the weights of all edges of the original graph to $\infty$. Run maximum flow; the sum of all positive weights minus the maximum flow is the answer.
 
-几个小结论来证明：
+A few small lemmas prove this:
 
-1.  每一个符合条件的子图都对应流量网络中的一个割．因为每一个割将网络分为两部分，与 $s$ 相连的那部分满足没有边指向另一部分，于是满足上述条件．这个命题是充要的．
-2.  最小割所去除的边必须与 $s$ 和 $t$ 其中一者相连．因为否则边权是 $\infty$，不可能成为最小割．
-3.  我们所选择的那部分子图，权值和 $=$ 所有正权值之和 $-$ 我们未选择的正权值点的权值之和 $+$ 我们选择的负权值点的权值之和．当我们不选择一个正权值点时，其与 $s$ 的连边会被断开；当我们选择一个负权值点时，其与 $t$ 的连边会被断开．断开的边的边权之和即为割的容量．于是上述式子转化为：权值和 $=$ 所有正权值之和 $-$ 割的容量．
-4.  于是得出结论，最大权值和 $=$ 所有正权值之和 $-$ 最小割 $=$ 所有正权值之和 $-$ 最大流．
+1.  Every valid subgraph corresponds to a cut in the flow network. Each cut splits the network into two parts, and the part connected to $s$ has no edge pointing to the other part, so it satisfies the condition above. This statement holds in both directions.
+2.  Each edge removed by the minimum cut must be connected to $s$ or $t$. Otherwise its weight is $\infty$, and it could not be part of a minimum cut.
+3.  For the chosen subgraph, total weight $=$ sum of all positive weights $-$ sum of weights of the positive vertices we did not choose $+$ sum of weights of the negative vertices we chose. When we do not choose a positive vertex, its edge to $s$ is cut; when we choose a negative vertex, its edge to $t$ is cut. The total weight of the cut edges is the capacity of the cut. So the formula becomes: total weight $=$ sum of all positive weights $-$ capacity of the cut.
+4.  So we conclude: maximum total weight $=$ sum of all positive weights $-$ minimum cut $=$ sum of all positive weights $-$ maximum flow.
 
-## 习题
+## Exercises
 
--   [「USACO 4.4」Pollutant Control](https://www.luogu.com.cn/problem/P1344)
--   [「USACO 5.4」Telecowmunication](https://www.luogu.com.cn/problem/P1345)
--   [「Luogu 1361」小 M 的作物](https://www.luogu.com.cn/problem/P1361)
--   [「SHOI 2007」善意的投票](https://www.luogu.com.cn/problem/P2057)
--   [太空飞行计划问题](https://www.luogu.com.cn/problem/P2762)
+-   [USACO 4.4 Pollutant Control](https://www.luogu.com.cn/problem/P1344)
+-   [USACO 5.4 Telecowmunication](https://www.luogu.com.cn/problem/P1345)
+-   [Luogu 1361 Little M's Crops](https://www.luogu.com.cn/problem/P1361)
+-   [SHOI 2007 Kind Voting](https://www.luogu.com.cn/problem/P2057)
+-   [Space Flight Planning Problem](https://www.luogu.com.cn/problem/P2762)

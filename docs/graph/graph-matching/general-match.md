@@ -1,57 +1,57 @@
 author: H-J-Granger, accelsao, Ir1d, Early0v0, Henry-ZHR, HeliumOI, AntiLeaf, ShizuhaAki, pukui
 
-## 带花树算法（Blossom Algorithm）
+## Blossom algorithm
 
-开花算法（Blossom Algorithm，也被称做带花树）可以解决一般图最大匹配问题（maximum cardinality matchings）．此算法由 Jack Edmonds 在 1961 年提出．
-经过一些修改后也可以解决一般图最大权匹配问题．
-此算法是第一个给出证明说最大匹配有多项式复杂度．
+The blossom algorithm (also known as the blossom tree algorithm) solves the maximum cardinality matching problem in general graphs. It was proposed by Jack Edmonds in 1961.
+With some modifications, it can also solve the maximum weight matching problem in general graphs.
+It was the first algorithm proven to find a maximum matching in polynomial time.
 
-一般图匹配和二分图匹配（bipartite matching）不同的是，图可能存在奇环．
+Unlike bipartite matching, a general graph may contain odd cycles.
 
 ![general-matching-1](./images/general-matching-1.png)
 
-以此图为例，若直接取反（匹配边和未匹配边对调），会使得取反后的 $M$ 不合法，某些点会出现在两条匹配上，而问题就出在奇环．
+Take this graph as an example. If we simply flip the path (swap matched and unmatched edges), the flipped $M$ is not valid: some vertices would be on two matched edges. The problem comes from the odd cycle.
 
-下面考虑一般图的增广算法．
-从二分图的角度出发，每次枚举一个未匹配点，设出发点为根，标记为 **「o」**，接下来交错标记 **「o」** 和 **「i」**，不难发现 **「i」** 到 **「o」** 这段边是匹配边．
+Now consider an augmenting algorithm for general graphs.
+Start from the bipartite case. Each time, pick an unmatched vertex as the root and mark it **"o"**. Then mark vertices alternately **"o"** and **"i"**. It is easy to see that each edge from an **"i"** vertex to an **"o"** vertex is a matched edge.
 
-假设当前点是 $v$，相邻点为 $u$，可以分为以下两种情况：
+Let the current vertex be $v$ and a neighbor be $u$. There are two cases:
 
-1.  $u$ 未拜访过，当 $u$ 是未匹配点，则找到增广路径，否则从 $u$ 的配偶找增广路．
-2.  $u$ 已拜访过，遇到标记「o」代表需要 **缩花**，否则代表遇到偶环，跳过．
+1.  $u$ has not been visited. If $u$ is unmatched, we have found an augmenting path; otherwise, continue searching for an augmenting path from $u$'s partner.
+2.  $u$ has been visited. If it is marked "o", we need to **shrink the blossom**; otherwise, we have found an even cycle and skip it.
 
-遇到偶环的情况，将他视为二分图解决，故可忽略．**缩花** 后，再新图中继续找增广路．
+An even cycle can be handled as in a bipartite graph, so we can ignore it. After **shrinking the blossom**, continue searching for an augmenting path in the new graph.
 
 ![general-matching-2](./images/general-matching-2.png)
 
-设原图为 $G$，**缩花** 后的图为 $G'$，我们只需要证明：
+Let the original graph be $G$ and the graph after **shrinking the blossom** be $G'$. We only need to prove:
 
-1.  若 $G$ 存在增广路，$G'$ 也存在．
-2.  若 $G'$ 存在增广路，$G$ 也存在．
+1.  If $G$ has an augmenting path, so does $G'$.
+2.  If $G'$ has an augmenting path, so does $G$.
 
 ![general-matching-3](./images/general-matching-3.png)
 
-设非树边（形成环的那条边）为 $(u,v)$，定义花根 $h=LCA(u,v)$．
-奇环是交替的，有且仅有 $h$ 的两条邻边类型相同，都是非匹配边．
-那么进入 $h$ 的树边肯定是匹配边，环上除了 $h$ 以外其他点往环外的边都是非匹配边．
+Let the non-tree edge (the edge that closes the cycle) be $(u,v)$, and define the blossom base $h=LCA(u,v)$.
+The odd cycle alternates, and exactly one vertex, $h$, has two incident cycle edges of the same type; both are unmatched edges.
+So the tree edge entering $h$ must be a matched edge, and every edge from a cycle vertex other than $h$ to outside the cycle is unmatched.
 
-观察可知，从环外的边出去有两种情况，顺时针或逆时针．
+We can see that leaving the cycle through an outside edge can happen in two ways: clockwise or counterclockwise.
 
 ![general-matching-4](./images/general-matching-4.png)
 
-于是 **缩花** 与 **不缩花** 都不影响正确性．
+So **shrinking** or **not shrinking** the blossom does not affect correctness.
 
-实作上找到 **花** 以后我们不需要真的 **缩花**，可以用数组纪录每个点在以哪个点为根的那朵花中．
+In the implementation, after finding a **blossom** we do not need to actually **shrink** it. We can use an array to record, for each vertex, the base of the blossom it belongs to.
 
-### 复杂度分析 Complexity Analysis
+### Complexity analysis
 
-每次找增广路，遍历所有边，遇到 **花** 会维护 **花** 上的点，$O(|E|^2)$．
+Each search for an augmenting path goes through all edges, and each time a **blossom** is found we maintain the vertices on it, giving $O(|E|^2)$.
 
-枚举所有未匹配点做增广路，总共 $O(|V||E|^2)$．
+We search for an augmenting path from every unmatched vertex, so the total is $O(|V||E|^2)$.
 
-### 参考代码
+### Reference code
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     // graph
     template <typename T>
@@ -96,11 +96,11 @@ author: H-J-Granger, accelsao, Ir1d, Early0v0, Henry-ZHR, HeliumOI, AntiLeaf, Sh
     template <typename T>
     vector<int> find_max_unweighted_matching(const undirectedgraph<T> &g) {
       std::mt19937 rng(std::random_device{}());
-      vector<int> match(g.n, -1);   // 匹配
-      vector<int> aux(g.n, -1);     // 时间戳记
-      vector<int> label(g.n);       // 「o」或「i」
-      vector<int> orig(g.n);        // 花根
-      vector<int> parent(g.n, -1);  // 父节点
+      vector<int> match(g.n, -1);   // matching
+      vector<int> aux(g.n, -1);     // timestamp
+      vector<int> label(g.n);       // "o" or "i"
+      vector<int> orig(g.n);        // blossom base
+      vector<int> parent(g.n, -1);  // parent node
       queue<int> q;
       int aux_time = -1;
     
@@ -108,14 +108,14 @@ author: H-J-Granger, accelsao, Ir1d, Early0v0, Henry-ZHR, HeliumOI, AntiLeaf, Sh
         aux_time++;
         while (true) {
           if (v != -1) {
-            if (aux[v] == aux_time) {  // 找到拜访过的点 也就是LCA
+            if (aux[v] == aux_time) {  // found a visited vertex, which is the LCA
               return v;
             }
             aux[v] = aux_time;
             if (match[v] == -1) {
               v = -1;
             } else {
-              v = orig[parent[match[v]]];  // 以匹配点的父节点继续寻找
+              v = orig[parent[match[v]]];  // continue from the parent of the matched vertex
             }
           }
           swap(v, u);
@@ -126,11 +126,11 @@ author: H-J-Granger, accelsao, Ir1d, Early0v0, Henry-ZHR, HeliumOI, AntiLeaf, Sh
         while (orig[v] != a) {
           parent[v] = u;
           u = match[v];
-          if (label[u] == 1) {  // 初始点设为「o」找增广路
+          if (label[u] == 1) {  // set it to "o" and search for augmenting paths from it
             label[u] = 0;
             q.push(u);
           }
-          orig[v] = orig[u] = a;  // 缩花
+          orig[v] = orig[u] = a;  // shrink the blossom
           v = parent[u];
         }
       };  // blossom
@@ -152,7 +152,7 @@ author: H-J-Granger, accelsao, Ir1d, Early0v0, Henry-ZHR, HeliumOI, AntiLeaf, Sh
           q.pop();
         }
         q.push(root);
-        // 初始点设为「o」，这里以「0」代替「o」，「1」代替「i」
+        // the starting vertex is marked "o"; here "0" stands for "o" and "1" for "i"
         label[root] = 0;
         while (!q.empty()) {
           int v = q.front();
@@ -160,21 +160,21 @@ author: H-J-Granger, accelsao, Ir1d, Early0v0, Henry-ZHR, HeliumOI, AntiLeaf, Sh
           for (int id : g.g[v]) {
             auto &e = g.edges[id];
             int u = e.from ^ e.to ^ v;
-            if (label[u] == -1) {  // 找到未拜访点
-              label[u] = 1;        // 标记「i」
+            if (label[u] == -1) {  // found an unvisited vertex
+              label[u] = 1;        // mark it "i"
               parent[u] = v;
-              if (match[u] == -1) {  // 找到未匹配点
-                augment(u);          // 寻找增广路径
+              if (match[u] == -1) {  // found an unmatched vertex
+                augment(u);          // augment along the path
                 return true;
               }
-              // 找到已匹配点 将与她匹配的点丢入queue 延伸交错树
+              // found a matched vertex; push its partner into the queue to extend the alternating tree
               label[match[u]] = 0;
               q.push(match[u]);
               continue;
             } else if (label[u] == 0 && orig[v] != orig[u]) {
-              // 找到已拜访点 且标记同为「o」代表找到「花」
+              // found a visited vertex also marked "o", which means we found a "blossom"
               int a = lca(orig[v], orig[u]);
-              // 找LCA 然后缩花
+              // find the LCA, then shrink the blossom
               blossom(u, v, a);
               blossom(v, u, a);
             }
@@ -185,11 +185,11 @@ author: H-J-Granger, accelsao, Ir1d, Early0v0, Henry-ZHR, HeliumOI, AntiLeaf, Sh
     
       auto greedy = [&]() {
         vector<int> order(g.n);
-        // 随机打乱 order
+        // randomly shuffle order
         iota(order.begin(), order.end(), 0);
         shuffle(order.begin(), order.end(), rng);
     
-        // 将可以匹配的点匹配
+        // match the vertices that can be matched
         for (int i : order) {
           if (match[i] == -1) {
             for (auto id : g.g[i]) {
@@ -205,9 +205,9 @@ author: H-J-Granger, accelsao, Ir1d, Early0v0, Henry-ZHR, HeliumOI, AntiLeaf, Sh
         }
       };  // greedy
     
-      // 一开始先随机匹配
+      // start with a random greedy matching
       greedy();
-      // 对未匹配点找增广路
+      // search for augmenting paths from unmatched vertices
       for (int i = 0; i < g.n; i++) {
         if (match[i] == -1) {
           bfs(i);
@@ -217,25 +217,25 @@ author: H-J-Granger, accelsao, Ir1d, Early0v0, Henry-ZHR, HeliumOI, AntiLeaf, Sh
     }
     ```
 
-??? note "[UOJ #79. 一般图最大匹配](https://uoj.ac/problem/79)"
+??? note "[UOJ #79. Maximum Matching in General Graphs](https://uoj.ac/problem/79)"
     ```cpp
     --8<-- "docs/graph/code/graph-matching/general-match/general-match_1.cpp"
     ```
 
-## 基于高斯消元的一般图匹配算法
+## A general matching algorithm based on Gaussian elimination
 
-???+ tip "提示"
-    在阅读以下内容前，你可能需要先阅读「线性代数」部分中关于矩阵的内容：
+???+ tip "Tip"
+    Before reading the following, you may want to read about matrices in the "Linear algebra" part:
     
-    -   [矩阵](../../math/linear-algebra/matrix.md)
-    -   [行列式](../../math/linear-algebra/determinant.md)
-    -   [高斯消元](../../math/numerical/gauss.md)
+    -   [Matrices](../../math/linear-algebra/matrix.md)
+    -   [Determinants](../../math/linear-algebra/determinant.md)
+    -   [Gaussian elimination](../../math/numerical/gauss.md)
 
-这一部分将介绍一种基于高斯消元的一般图匹配算法．与传统的带花树算法相比，它的优势在于更易于理解与编写，同时便于解决「最大匹配中的必须点」等问题；缺点在于常数比较大，因为高斯消元的 $O(n^3)$ 基本是跑满的，而带花树一般跑不满．
+This part introduces a general graph matching algorithm based on Gaussian elimination. Compared with the traditional blossom algorithm, it is easier to understand and to code, and it makes problems like "vertices that must be in every maximum matching" easy to solve. The downside is a larger constant factor, because the $O(n^3)$ of Gaussian elimination is almost always fully reached, while the blossom algorithm usually runs well below its bound.
 
-### 前置知识：Tutte 矩阵
+### Prerequisite: the Tutte matrix
 
-**定义**：对于一张 $n$ 个点的无向图 $G = (V, E)$，其 Tutte 矩阵 $\tilde{A}(G)$ 为一个 $n \times n$ 的矩阵，其中：
+**Definition**: for an undirected graph $G = (V, E)$ with $n$ vertices, its Tutte matrix $\tilde{A}(G)$ is an $n \times n$ matrix where:
 
 $$
 \tilde{A}(G)_{i,j} = \begin{cases}
@@ -245,67 +245,67 @@ x_{i,j}, & i<j,\; (v_i, v_j)\in E \\
 \end{cases}
 $$
 
-其中 $x_{i, j}$ 是一个变量，因此 $\tilde{A}(G)$ 中共有 $|E|$ 个变量．
+Here $x_{i, j}$ is a variable, so $\tilde{A}(G)$ has $|E|$ variables in total.
 
-在无歧义的情况下，以下将 $\tilde{A}(G)$ 简写为 $\tilde{A}$．
+When there is no ambiguity, we write $\tilde{A}$ for $\tilde{A}(G)$ below.
 
-**定理**（Tutte 定理）：$G$ 存在完美匹配当且仅当 $\det \tilde{A} \ne 0$．
+**Theorem** (Tutte's theorem): $G$ has a perfect matching if and only if $\det \tilde{A} \ne 0$.
 
-??? note "证明"
-    这里引入「偶环覆盖」的概念：一个无向图 $G$ 的偶环覆盖指用若干偶环（包括二元环）不重不漏地覆盖所有的点．
+??? note "Proof"
+    We introduce the notion of an "even cycle cover": an even cycle cover of an undirected graph $G$ is a set of even cycles (including 2-cycles) that covers every vertex exactly once.
     
-    易证 $G$ 存在完美匹配当且仅当 $G$ 存在偶环覆盖．
+    It is easy to show that $G$ has a perfect matching if and only if $G$ has an even cycle cover.
     
-    -   如果 $G$ 存在偶环覆盖，我们只需要在每个环都隔一条取一条边，就可以得到一个完美匹配．
-    -   如果 $G$ 存在完美匹配，我们只需要将匹配边对应的二元环取出，就可以得到一个偶环覆盖．
+    -   If $G$ has an even cycle cover, we just take every other edge of each cycle to get a perfect matching.
+    -   If $G$ has a perfect matching, we just take the 2-cycle for each matched edge to get an even cycle cover.
     
-    然后证明 $G$ 存在偶环覆盖当且仅当 $\tilde{A} \ne 0$．
+    Next we prove that $G$ has an even cycle cover if and only if $\tilde{A} \ne 0$.
     
-    考虑行列式的定义
+    Recall the definition of the determinant:
     
     $$
     \det A = \sum_{\pi} (-1)^{\pi} \prod_{i} A_{i, \pi_i}
     $$
     
-    其中 $\pi$ 是任意排列，$(-1)^{\pi}$ 表示若 $\pi$ 中的逆序对数为奇数，则取 $-1$，否则取 $1$．
+    Here $\pi$ ranges over all permutations, and $(-1)^{\pi}$ is $-1$ if $\pi$ has an odd number of inversions and $1$ otherwise.
     
-    不难看出每个排列都可以被看作 $G$ 的一个环覆盖．如果这个环覆盖中存在奇环，则将这个环翻转后的和一定为 $0$，因此只有偶环覆盖才能使行列式不为 $0$，证毕．
+    It is easy to see that each permutation can be viewed as a cycle cover of $G$. If this cycle cover has an odd cycle, then its term and the term with that cycle reversed always sum to $0$. So only even cycle covers can make the determinant nonzero. This completes the proof.
 
-**定理**：$\operatorname{rank}\tilde{A}$ 一定为偶数，并且 $G$ 的最大匹配的大小等于 $\operatorname{rank}\tilde{A}$ 的一半．
+**Theorem**: $\operatorname{rank}\tilde{A}$ is always even, and the size of a maximum matching of $G$ equals half of $\operatorname{rank}\tilde{A}$.
 
-??? note "证明"
-    反对称矩阵的秩只能是偶数；后者请读者自行思考．
+??? note "Proof"
+    The rank of a skew-symmetric matrix can only be even; the second part is left to the reader.
 
-实际应用中不可能带着 $|E|$ 个变量进行计算，不过可以取一个数域，例如取某个素数 $p$ 的剩余系 $\mathcal{Z}_p$，将变量分别随机替换为 $\mathcal{Z}_p$ 中的数，再进行计算．方便起见，在无歧义的情况下，以下用 $\tilde{A}$ 直接指代替换后的矩阵．
+In practice, we cannot compute with $|E|$ variables. Instead, we can pick a field, such as the residues $\mathcal{Z}_p$ modulo some prime $p$, randomly replace each variable with a number in $\mathcal{Z}_p$, and then compute. For convenience, when there is no ambiguity, $\tilde{A}$ below refers directly to the matrix after this substitution.
 
-**定理**：$\operatorname{rank}\tilde{A}$ 至多为 $G$ 的最大匹配大小的两倍，并且二者相等的概率至少为 $1 - \frac n p$．
+**Theorem**: $\operatorname{rank}\tilde{A}$ is at most twice the size of a maximum matching of $G$, and the two are equal with probability at least $1 - \frac n p$.
 
-考虑到一般图最大匹配中 $n$ 基本不会超过 $10^3$，实际中 $p$ 取 $10^9$ 数量级的素数就足够了．
+Since $n$ in general graph maximum matching problems is rarely more than $10^3$, a prime $p$ on the order of $10^9$ is enough in practice.
 
-由定理可知，如果只需要求最大匹配数，而无需匹配方案，那么只需要用一次高斯消元求出 $\operatorname{rank}\tilde{A}$ 即可，远比带花树简洁．不过如果需要输出方案，会稍微复杂一些，需要用到下面介绍的算法．
+By the theorem, if you only need the size of the maximum matching and not the matching itself, a single Gaussian elimination to compute $\operatorname{rank}\tilde{A}$ is enough, which is much simpler than the blossom algorithm. If you need to output the matching, it is a bit more complicated and needs the algorithm described below.
 
-### 构造完美匹配
+### Constructing a perfect matching
 
-由 Tutte 定理和上面的定理可知，如果 $G$ 存在完美匹配，那么 $\tilde{A}$ 有很大概率满秩．方便起见，以下叙述中均省略「有很大概率」．
+By Tutte's theorem and the theorem above, if $G$ has a perfect matching, then $\tilde{A}$ has full rank with high probability. For convenience, we omit "with high probability" in what follows.
 
-记 $G$ 中标号为 $i$ 的点为 $v_i$，进一步地我们有如下定理：
+Let $v_i$ be the vertex labeled $i$ in $G$. We further have the following theorem:
 
-**定理**：$\tilde{A}^{-1}_{j,i} \ne 0 \iff G - \{v_i, v_j\}$ 有完美匹配．
+**Theorem**: $\tilde{A}^{-1}_{j,i} \ne 0 \iff G - \{v_i, v_j\}$ has a perfect matching.
 
-???+ tip "逆矩阵与伴随矩阵"
-    对任意 $n$ 阶方阵 $A$，定义其伴随矩阵为 $A^*_{i, j} = (-1)^{i + j} M_{j, i}$，其中 $M_{j, i}$ 为删去第 $j$ 行第 $i$ 列的余子式．换言之，设 $A$ 的代数余子式矩阵为 $M$，则 $A^* = M^T$．
+???+ tip "Inverse matrix and adjugate matrix"
+    For any $n \times n$ square matrix $A$, its adjugate matrix is defined as $A^*_{i, j} = (-1)^{i + j} M_{j, i}$, where $M_{j, i}$ is the minor obtained by deleting row $j$ and column $i$. In other words, if $M$ is the cofactor matrix of $A$, then $A^* = M^T$.
     
-    **定理**：如果 $A$ 可逆，那么 $A^{-1} = \frac 1 {\det A} A^*$．
+    **Theorem**: if $A$ is invertible, then $A^{-1} = \frac 1 {\det A} A^*$.
     
-    所以这里的 $A^{-1}_{j, i} \ne 0 \iff M_{i, j} \ne 0$，也就是 $A$ 删去第 $i$ 行第 $j$ 列后的部分满秩．
+    So here $A^{-1}_{j, i} \ne 0 \iff M_{i, j} \ne 0$, that is, $A$ with row $i$ and column $j$ deleted has full rank.
 
-换言之，如果 $(v_i, v_j) \in E$，并且 $\tilde{A}^{-1}_{j, i} \ne 0$，就表明存在一个完美匹配方案包含 $(v_i, v_j)$ 这条边．以下将这种边称为 **可行边**．
+In other words, if $(v_i, v_j) \in E$ and $\tilde{A}^{-1}_{j, i} \ne 0$, then there is a perfect matching that contains the edge $(v_i, v_j)$. Below we call such edges **allowed edges**.
 
-由如上定理，对于一个有完美匹配的无向图 $G$，我们可以得到一个比较显然的暴力算法来寻找一组完美匹配：每次枚举 $i, j$，如果 $(v_i, v_j)$ 是一条可行边（连边存在，并且 $\tilde{A}^{-1}_{j, i} \ne 0$），就将 $(v_i, v_j)$ 加入匹配方案，并在 $G$ 中都删掉这两个点，再重新计算新的 $\tilde{A}^{-1}$．
+From the theorem above, for an undirected graph $G$ with a perfect matching, there is a fairly obvious brute-force algorithm to find a perfect matching: each time, enumerate $i, j$. If $(v_i, v_j)$ is an allowed edge (the edge exists and $\tilde{A}^{-1}_{j, i} \ne 0$), add $(v_i, v_j)$ to the matching, delete both vertices from $G$, and recompute the new $\tilde{A}^{-1}$.
 
-总共要做 $\frac n 2$ 轮，每轮都是 $O(n^3)$ 的，总的复杂度是 $O(n ^ 4)$，有点慢了．实际上我们在重新计算 $\tilde{A}^{-1}$ 时，不必每次都重新用高斯消元求逆矩阵，而是可以利用如下定理：
+This takes $\frac n 2$ rounds, each costing $O(n^3)$, for a total of $O(n ^ 4)$, which is a bit slow. In fact, when recomputing $\tilde{A}^{-1}$, we do not need to invert the matrix with Gaussian elimination every time. Instead, we can use the following theorem:
 
-**定理**（消去定理）：令
+**Theorem** (elimination theorem): let
 
 $$
 A = \begin{bmatrix}
@@ -317,20 +317,20 @@ A = \begin{bmatrix}
 \end{bmatrix}
 $$
 
-并且 $\hat a_{1, 1} \ne 0$, 那么就有
+and $\hat a_{1, 1} \ne 0$. Then
 
 $$
 B^{-1} = \hat B - \frac {\hat u \hat v^T} {\hat a_{1, 1}}
 $$
 
-定理中描述的是消去第一行第一列的情况．实际上，它可以非常显然地推广到消去任意一行一列的情况，因此我们只需在算法最开始计算一次 $\tilde{A}^{-1}$，后面每次删除两个点时，只需执行两次 $O(n^2)$ 的消去过程即可．
+The theorem describes eliminating the first row and first column. It clearly generalizes to eliminating any row and column. So we only need to compute $\tilde{A}^{-1}$ once at the start of the algorithm; after that, each time we delete two vertices, we just run the $O(n^2)$ elimination step twice.
 
-??? note "描述有些抽象，可以参考 C++ 代码"
+??? note "The description is a bit abstract; see the C++ code"
     ```cpp
-    void eliminate(int A[][MAXN], int r, int c) {  // 消去第 r 行第 c 列
-      row_marked[r] = col_marked[c] = true;        // 已经被消掉
+    void eliminate(int A[][MAXN], int r, int c) {  // eliminate row r and column c
+      row_marked[r] = col_marked[c] = true;        // already eliminated
     
-      int inv = quick_power(A[r][c], p - 2);  // 逆元
+      int inv = quick_power(A[r][c], p - 2);  // modular inverse
     
       for (int i = 1; i <= n; i++)
         if (!row_marked[i] && A[i][c]) {
@@ -343,30 +343,30 @@ $$
     }
     ```
 
-总共要做 $\frac n 2$ 轮，每轮复杂度为 $O(n^2)$，因此上述算法可以在 $O(n^3)$ 的时间内找到一组完美匹配．
+This takes $\frac n 2$ rounds, each costing $O(n^2)$, so the algorithm above finds a perfect matching in $O(n^3)$ time.
 
-### 构造最大匹配
+### Constructing a maximum matching
 
-我们刚刚已经解决了构造一组完美匹配的问题，但是求解问题时一般需要最大匹配．
+We have just solved the problem of constructing a perfect matching, but problems usually ask for a maximum matching.
 
-前面已经提到，$G$ 的最大匹配大小等于 $\operatorname{rank}\tilde{A}$ 的一半．如果我们能找到 $\tilde{A}$ 的一个最大满秩子方阵，那么对子方阵对应的导出子图求出一组完美匹配，即可找到 $G$ 的一组最大匹配．
+As mentioned above, the size of a maximum matching of $G$ equals half of $\operatorname{rank}\tilde{A}$. If we can find a maximum full-rank square submatrix of $\tilde{A}$, then finding a perfect matching in the induced subgraph corresponding to that submatrix gives a maximum matching of $G$.
 
-换一个角度考虑，如果 $G$ 有完美匹配，那么 $\tilde{A}$ 满秩，换言之，$\tilde{A}$ 是线性无关的．那么如果 $\tilde{A}$ 不是满秩的，我们可以求出 $\tilde{A}$ 的一组线性基，然后只保留线性基对应的行列，就可以得到 $\tilde{A}$ 的一个最大满秩子方阵．
+Looking at it another way, if $G$ has a perfect matching, then $\tilde{A}$ has full rank; in other words, the rows of $\tilde{A}$ are linearly independent. So if $\tilde{A}$ is not full rank, we can find a basis of $\tilde{A}$'s rows and keep only the rows and columns corresponding to that basis. This gives a maximum full-rank square submatrix of $\tilde{A}$.
 
-求出最大满秩子方阵之后，再用上面的算法找出导出子图的一组完美匹配，即可得到原图的一组最大匹配．注意由于高斯消元中可能会有行的交换，因此实现时要注意维护好点的编号．
+After finding the maximum full-rank square submatrix, use the algorithm above to find a perfect matching of the induced subgraph, which gives a maximum matching of the original graph. Note that Gaussian elimination may swap rows, so be careful to keep track of the vertex labels in the implementation.
 
-??? note "[UOJ #79. 一般图最大匹配](https://uoj.ac/problem/79)"
+??? note "[UOJ #79. Maximum Matching in General Graphs](https://uoj.ac/problem/79)"
     ```cpp
     --8<-- "docs/graph/code/graph-matching/general-match/general-match_2.cpp"
     ```
 
-## 习题
+## Exercises
 
--   [UOJ #79. 一般图最大匹配](https://uoj.ac/problem/79)
--   [UOJ#171.【WC2016】挑战 NPC](https://uoj.ac/problem/171)
+-   [UOJ #79. Maximum Matching in General Graphs](https://uoj.ac/problem/79)
+-   [UOJ #171. [WC2016] Challenge NPC](https://uoj.ac/problem/171)
 
-## 参考资料
+## References
 
 1.  Mucha M, Sankowski P.[Maximum matchings via Gaussian elimination](http://web.eecs.umich.edu/~pettie/matching/Mucha-Sankowski-maximum-matching-matrix-multiplication.pdf)
-2.  周子鑫，杨家齐《基于线性代数的一般图匹配》
-3.  ZYQN [《基于线性代数的一般图匹配算法》](https://oi.cyo.ng/wp-content/uploads/2017/02/maximum_matchings_via_gaussian_elimination.pdf)
+2.  Zhou Zixin, Yang Jiaqi, *General Graph Matching Based on Linear Algebra*
+3.  ZYQN, [*A General Graph Matching Algorithm Based on Linear Algebra*](https://oi.cyo.ng/wp-content/uploads/2017/02/maximum_matchings_via_gaussian_elimination.pdf)
