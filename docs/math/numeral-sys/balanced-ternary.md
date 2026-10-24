@@ -1,16 +1,16 @@
 author: Enter-tainer, Falicitas, HeRaNO, iamtwz, ImpleLee, Tiphereth-A, Xeonacid, Yanjun-Zhao
 
-## 定义
+## Definition
 
-平衡三进制，也称为对称三进制．这是一个广义进位系统．
+Balanced ternary, also called symmetric ternary, is a non-standard positional numeral system.
 
-正规的三进制的数字都是由 `0`,`1`,`2` 构成的，而平衡三进制的数字是由 `-1`,`0`,`1` 构成的．它的基数也是 `3`（因为有三个可能的值）．由于将 `-1` 写成数字不方便，我们将使用字母 `Z` 来代替 `-1`．
+Ordinary ternary numbers use the digits `0`, `1`, `2`, while balanced ternary uses the digits `-1`, `0`, `1`. Its base is also `3` (since there are three possible digit values). Since `-1` is awkward to write as a single digit, we use the letter `Z` in place of `-1`.
 
-## 解释
+## Explanation
 
-这里有几个例子：
+Here are a few examples:
 
-| 十进制 | 平衡三进制 | 十进制 | 平衡三进制 |
+| Decimal | Balanced ternary | Decimal | Balanced ternary |
 | --- | ----- | --- | ----- |
 | `0` | `0`   | `5` | `1ZZ` |
 | `1` | `1`   | `6` | `1Z0` |
@@ -18,9 +18,9 @@ author: Enter-tainer, Falicitas, HeRaNO, iamtwz, ImpleLee, Tiphereth-A, Xeonacid
 | `3` | `10`  | `8` | `10Z` |
 | `4` | `11`  | `9` | `100` |
 
-该数字系统的负数表示起来很容易：只需要将正数的数字倒转即可（`Z` 变成 `1`,`1` 变成 `Z`）．
+Negative numbers are easy to write in this system: just flip the digits of the positive number (`Z` becomes `1`, and `1` becomes `Z`).
 
-| 十进制  | 平衡三进制 |
+| Decimal  | Balanced ternary |
 | ---- | ----- |
 | `-1` | `Z`   |
 | `-2` | `Z1`  |
@@ -28,84 +28,84 @@ author: Enter-tainer, Falicitas, HeRaNO, iamtwz, ImpleLee, Tiphereth-A, Xeonacid
 | `-4` | `ZZ`  |
 | `-5` | `Z11` |
 
-很容易就可以看到，负数最高位是 `Z`，正数最高位是 `1`．
+It is easy to see that the leading digit of a negative number is `Z`, and the leading digit of a positive number is `1`.
 
-## 过程
+## Process
 
-在平衡三进制的转转换法中，需要先写出一个给定的数 `x` 在标准三进制中的表示．当 `x` 是用标准三进制表示时，其数字的每一位都是 `0`、`1` 或 `2`．从最低的数字开始迭代，我们可以先跳过任何的 `0` 和 `1`，但是如果遇到 `2` 就应该先将其变成 `Z`，下一位数字再加上 `1`．而遇到数字 `3` 则应该转换为 `0` 下一位数字再加上 `1`．
+To convert a number `x` to balanced ternary, first write it in standard ternary. In standard ternary every digit is `0`, `1` or `2`. Go through the digits starting from the lowest. Skip any `0` or `1`. If you see a `2`, turn it into `Z` and add `1` to the next digit. If you see a `3`, turn it into `0` and add `1` to the next digit.
 
-### 应用一
+### Example 1
 
-把 `64` 转换成平衡三进制．
+Convert `64` to balanced ternary.
 
-首先，我们用标准三进制数来重写这个数：
+First, write the number in standard ternary:
 
 $$
 \text 64_{10} = 02101_3
 $$
 
-让我们从对整个数影响最小的数字（最低位）进行处理：
+Process the digits starting from the one with the smallest effect on the number (the lowest digit):
 
--   `101` 被跳过（因为在平衡三进制中允许 `0` 和 `1`）；
--   `2` 变成了 `Z`，它左边的数字加 `1`，得到 `1Z101`；
--   `1` 被跳过，得到 `1Z101`．
+-   `101` is skipped (because `0` and `1` are allowed in balanced ternary);
+-   `2` becomes `Z`, and the digit to its left gets `1` added, giving `1Z101`;
+-   `1` is skipped, giving `1Z101`.
 
-最终的结果是 `1Z101`．
+The final result is `1Z101`.
 
-我们再把它转换回十进制：
+Let's convert it back to decimal:
 
 $$
 \texttt {1Z101}=81 \times 1 +27 \times (-1) + 9 \times 1 + 3 \times 0 + 1 \times 1 = 64_{10}
 $$
 
-### 应用二
+### Example 2
 
-把 `237` 转换成平衡三进制．
+Convert `237` to balanced ternary.
 
-首先，我们用标准三进制数来重写这个数：
+First, write the number in standard ternary:
 
 $$
 \text 237_{10} = 22210_3
 $$
 
--   `0` 和 `1` 被跳过（因为在平衡三进制中允许 `0` 和 `1`）；
--   `2` 变成 `Z`，左边的数字加 `1`，得到 `23Z10`；
--   `3` 变成 `0`，左边的数字加 `1`，得到 `30Z10`；
--   `3` 变成 `0`，左边的数字（默认是 `0`）加 `1`，得到 `100Z10`；
--   `1` 被跳过，得到 `100Z10`．
+-   `0` and `1` are skipped (because `0` and `1` are allowed in balanced ternary);
+-   `2` becomes `Z`, and the digit to its left gets `1` added, giving `23Z10`;
+-   `3` becomes `0`, and the digit to its left gets `1` added, giving `30Z10`;
+-   `3` becomes `0`, and the digit to its left (which is `0` by default) gets `1` added, giving `100Z10`;
+-   `1` is skipped, giving `100Z10`.
 
-最终的结果是 `100Z10`．
+The final result is `100Z10`.
 
-我们再把它转换回十进制：
+Let's convert it back to decimal:
 
 $$
 \texttt{100Z10} = 243 \cdot 1 + 81 \cdot 0 + 27 \cdot 0 + 9 \cdot (-1) + 3 \cdot 1 + 1 \cdot 0 = 237_{10}
 $$
 
-## 性质
+## Properties
 
-对于一个平衡三进制数 $X_3$ 来说，其可以按照每一位 $x_i$ 乘上对应的权值 $3^i$ 来唯一得到一个十进制数 $Y_{10}$．
+For a balanced ternary number $X_3$, multiplying each digit $x_i$ by its weight $3^i$ and adding up gives a unique decimal number $Y_{10}$.
 
-那对于一个十进制数 $Y_{10}$，是否 **唯一对应一个平衡三进制数** 呢？
+But does each decimal number $Y_{10}$ **correspond to exactly one balanced ternary number**?
 
-答案是肯定的，这种性质被叫做平衡三进制的唯一性．
+The answer is yes. This property is called the uniqueness of balanced ternary.
 
-???+ note "证明"
-    我们利用 **反证法** 来求证：
+???+ note "Proof"
+    We prove it **by contradiction**:
     
-    假设一个十进制数 $Y_{10}$，存在两个 **不同的平衡三进制数**  $A_3,B_3$ 转化成十进制时等于 $Y_{10}$，即证 $A_3 = B_3$．分情况讨论：
+    Suppose that for some decimal number $Y_{10}$ there are two **different balanced ternary numbers**  $A_3,B_3$ that both equal $Y_{10}$ when converted to decimal. We need to show $A_3 = B_3$. Consider the cases:
     
-    1.  当 $Y_{10}=0$，显然 $A_3 = B_3 = 0_3$，与假设矛盾．
-    2.  当 $Y_{10}>0$：
+    1.  If $Y_{10}=0$, clearly $A_3 = B_3 = 0_3$, which contradicts the assumption.
+    2.  If $Y_{10}>0$:
     
-        -   将 $A_3$，$B_3$ 的数位按低位到高位编号，记 $a_i$ 为 $A_3$ 的第 $i$ 位，$b_i$ 为 $B$ 的第 $i$ 位．在 $A_3,B_3$ 中，必存在 $i$ 使得 $a_i\neq b_i$．可以发现第 $i-1,i-2,\dots,0$ 位均与证明无关．因此，将 $A_3,B_3$ 按位右移 $i$ 位，得到 $A_3',B_3'$，原问题等价于证明 $A_3'=B_3'$．
-        -   对于 $A_3',B_3'$ 第 $0$ 位，$a_0 \neq b_0$．假设 $b_0 > a_0$（$a_0>b_0$ 时结果相同），易知 $b_0 - a_0 \in \{1,2\}$．$A_3'$ 的位 $i=1,2,3,\dots$ 对于 $A_3'$ 的值的贡献为 $S_1 = a_1 \times 3^1 + a_2 \times 3^2+ \dots$，$B_3'$ 的位 $i=1,2,3,\dots$ 对于 $B_3'$ 的值的贡献为 $S_2 = b_1 \times 3^1 + b_2 \times 3^2 + \dots$．由于 $A_3' = B_3'$，得 $S_1 - S_2 = b_0 - a_0$．$S_1,S_2$ 有公因子 $3$，而 $b_0 - a_0$ 不能被 $3$ 整除，与假设矛盾，因此 $A_3'\neq B_3'$
-    3.  当 $Y_{10}<0$，证法与 $Y_{10}>0$ 相同．
+        -   Number the digits of $A_3$ and $B_3$ from low to high. Let $a_i$ be the $i$-th digit of $A_3$ and $b_i$ the $i$-th digit of $B$. There must be some $i$ with $a_i\neq b_i$. Digits $i-1,i-2,\dots,0$ do not matter for the proof. So shift $A_3,B_3$ right by $i$ digits to get $A_3',B_3'$; the original problem is equivalent to proving $A_3'=B_3'$.
+        -   For digit $0$ of $A_3',B_3'$, $a_0 \neq b_0$. Assume $b_0 > a_0$ (the case $a_0>b_0$ is the same). Then clearly $b_0 - a_0 \in \{1,2\}$. The digits $i=1,2,3,\dots$ of $A_3'$ contribute $S_1 = a_1 \times 3^1 + a_2 \times 3^2+ \dots$ to its value, and the digits $i=1,2,3,\dots$ of $B_3'$ contribute $S_2 = b_1 \times 3^1 + b_2 \times 3^2 + \dots$ to its value. Since $A_3' = B_3'$, we get $S_1 - S_2 = b_0 - a_0$. $S_1,S_2$ share the factor $3$, but $b_0 - a_0$ is not divisible by $3$, which contradicts the assumption. So $A_3'\neq B_3'$
+    3.  If $Y_{10}<0$, the proof is the same as for $Y_{10}>0$.
     
-    故对于任意十进制 $Y_{10}$，均有唯一对应的平衡三进制 $X_3$．
+    Therefore every decimal number $Y_{10}$ corresponds to exactly one balanced ternary number $X_3$.
 
-## 练习题
+## Exercises
 
 [Topcoder SRM 604 PowerOfThree](https://archive.topcoder.com/ProblemStatement/pm/12917)
 
-**本页面部分内容译自博文 [Троичная сбалансированная система счисления](http://e-maxx.ru/algo/balanced_ternary) 与其英文翻译版 [Balanced Ternary](https://cp-algorithms.com/algebra/balanced-ternary.html)．其中俄文版版权协议为 Public Domain + Leave a Link；英文版版权协议为 CC-BY-SA 4.0．**
+**Parts of this page are translated from the article [Троичная сбалансированная система счисления](http://e-maxx.ru/algo/balanced_ternary) and its English translation [Balanced Ternary](https://cp-algorithms.com/algebra/balanced-ternary.html). The Russian version is licensed under Public Domain + Leave a Link; the English version is licensed under CC-BY-SA 4.0.**

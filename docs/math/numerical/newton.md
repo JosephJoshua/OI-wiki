@@ -1,46 +1,46 @@
 author: Marcythm, iamtwz, nutshellfool, sshwy, allenanswerzq, countercurrent-time, Enter-tainer, H-J-Granger, hly1204, Ir1d, Menci, NachtgeistW, SukkaW, Tiphereth-A, Xeonacid
 
-## 引入
+## Introduction
 
-本文介绍如何用牛顿迭代法（Newton's method for finding roots）求方程的近似解，该方法于 17 世纪由牛顿提出．
+This article shows how to find approximate solutions of equations with Newton's method for finding roots. The method was introduced by Newton in the 17th century.
 
-具体的任务是，对于在 $[a,b]$ 上连续且单调的函数 $f(x)$，求方程 $f(x)=0$ 的近似解．
+The task is: given a function $f(x)$ that is continuous and monotonic on $[a,b]$, find an approximate solution of the equation $f(x)=0$.
 
-## 解释
+## Explanation
 
-初始时我们从给定的 $f(x)$ 和一个近似解 $x_0$ 开始（初值的问题与 Newton 分形有关，可参考 3Blue1Brown 的 [牛顿分形](https://www.bilibili.com/video/BV1HQ4y1q78v)）．
+We start from the given $f(x)$ and an initial approximation $x_0$ (the choice of starting value is related to the Newton fractal; see 3Blue1Brown's video on [Newton's fractal](https://www.bilibili.com/video/BV1HQ4y1q78v)).
 
-假设我们目前的近似解是 $x_i$，我们画出与 $f(x)$ 切于点 $(x_i,f(x_i))$ 的直线 $l$，将 $l$ 与 $x$ 轴的交点横坐标记为 $x_{i+1}$，那么这就是一个更优的近似解．重复这个迭代的过程．
-根据导数的几何意义，可以得到如下关系：
+Suppose our current approximation is $x_i$. Draw the line $l$ tangent to $f(x)$ at the point $(x_i,f(x_i))$, and let $x_{i+1}$ be the x-coordinate where $l$ crosses the $x$-axis. This is a better approximation. Repeat this process.
+From the geometric meaning of the derivative, we get:
 
 $$
  f'(x_i) = \frac{f(x_i)}{x_{i} - x_{i+1}}
 $$
 
-整理后得到如下递推式：
+Rearranging gives the recurrence:
 
 $$
  x_{i+1} = x_i - \frac{f(x_i)}{f'(x_i)}
 $$
 
-直观地说，如果 $f(x)$ 比较平滑，那么随着迭代次数的增加，$x_i$ 会越来越逼近方程的解．
+Intuitively, if $f(x)$ is fairly smooth, then as the number of iterations grows, $x_i$ gets closer and closer to the solution of the equation.
 
-牛顿迭代法的收敛率是平方级别的，这意味着每次迭代后近似解的精确数位会翻倍．
-关于牛顿迭代法的收敛性证明可参考 [citizendium - Newton method Convergence analysis](http://en.citizendium.org/wiki/Newton%27s_method#Convergence_analysis)
+Newton's method converges quadratically, which means the number of correct digits roughly doubles with each iteration.
+For a proof of the convergence of Newton's method, see [citizendium - Newton method Convergence analysis](http://en.citizendium.org/wiki/Newton%27s_method#Convergence_analysis)
 
-当然牛顿迭代法也同样存在着缺陷，详情参考 [Xiaolin Wu - Roots of Equations 第 18 - 20 页分析](https://www.ece.mcmaster.ca/~xwu/part2.pdf)
+Of course, Newton's method also has weaknesses; for details see [Xiaolin Wu - Roots of Equations, analysis on pages 18 - 20](https://www.ece.mcmaster.ca/~xwu/part2.pdf)
 
-## 求解平方根
+## Square roots
 
-我们尝试用牛顿迭代法求解平方根．设 $f(x)=x^2-n$，这个方程的近似解就是 $\sqrt{n}$ 的近似值．于是我们得到
+Let us use Newton's method to compute square roots. Let $f(x)=x^2-n$. An approximate solution of this equation is an approximation of $\sqrt{n}$. This gives
 
 $$
 x_{i+1}=x_i-\frac{x_i^2-n}{2x_i}=\frac{x_i+\frac{n}{x_i}}{2}
 $$
 
-在实现的时候注意设置合适的精度．代码如下
+When implementing it, be careful to choose a suitable precision. The code is below.
 
-### 实现
+### Implementation
 
 === "C++"
     ```cpp
@@ -69,11 +69,11 @@ $$
         return x
     ```
 
-## 求解整数平方根
+## Integer square roots
 
-尽管我们可以调用 `sqrt()` 函数来获取平方根的值，但这里还是讲一下牛顿迭代法的变种算法，用于求不等式 $x^2\le n$ 的最大整数解．我们仍然考虑一个类似于牛顿迭代的过程，但需要在边界条件上稍作修改．如果 $x$ 在迭代的过程中上一次迭代值得近似解变小，而这一次迭代使得近似解变大，那么我们就不进行这次迭代，退出循环．
+Although we could call the `sqrt()` function to get the square root, here we describe a variant of Newton's method that finds the largest integer solution of the inequality $x^2\le n$. We still use a process similar to Newton's method, but with a small change in the stopping condition. If the previous iteration made the approximation smaller and this iteration would make it larger, we skip this iteration and exit the loop.
 
-### 实现
+### Implementation
 
 === "C++"
     ```cpp
@@ -104,13 +104,13 @@ $$
         return x
     ```
 
-## 高精度平方根
+## Big-number square roots
 
-最后考虑高精度的牛顿迭代法．迭代的方法是不变的，但这次我们需要关注初始时近似解的设置，即 $x_0$ 的值．由于需要应用高精度的数一般都非常大，因此不同的初始值对于算法效率的影响也很大．一个自然的想法就是考虑 $x_0=2^{\left\lfloor\frac{1}{2}\log_2n\right\rfloor}$，这样既可以快速计算出 $x_0$，又可以较为接近平方根的近似解．
+Finally, consider Newton's method with big numbers. The iteration is the same, but this time we need to pay attention to the initial approximation, that is, the value of $x_0$. Numbers that need arbitrary precision are usually very large, so the initial value has a big effect on efficiency. A natural choice is $x_0=2^{\left\lfloor\frac{1}{2}\log_2n\right\rfloor}$, which is fast to compute and fairly close to the square root.
 
-### 实现
+### Implementation
 
-给出 Java 代码的实现：
+Here is a Java implementation:
 
 ```java
 public static BigInteger isqrtNewton(BigInteger n) {
@@ -127,11 +127,11 @@ public static BigInteger isqrtNewton(BigInteger n) {
 }
 ```
 
-实践效果：在 $n=10^{1000}$ 的时候该算法的运行时间是 60 ms，如果我们不优化 $x_0$ 的值，直接从 $x_0=1$ 开始迭代，那么运行时间将增加到 120 ms．
+In practice: for $n=10^{1000}$ this algorithm runs in 60 ms. If we do not optimize $x_0$ and start from $x_0=1$, the running time goes up to 120 ms.
 
-## 习题
+## Exercises
 
 -   [UVa 10428 - The Roots](https://uva.onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=16&page=show_problem&problem=1369)
--   [LeetCode 69. x 的平方根](https://leetcode-cn.com/problems/sqrtx/)
+-   [LeetCode 69. Sqrt(x)](https://leetcode-cn.com/problems/sqrtx/)
 
-    **本页面主要译自博文 [Метод Ньютона (касательных) для поиска корней](http://e-maxx.ru/algo/roots_newton) 与其英文翻译版 [Newton's method for finding roots](https://cp-algorithms.com/num_methods/roots_newton.html)．其中俄文版版权协议为 Public Domain + Leave a Link；英文版版权协议为 CC-BY-SA 4.0．**
+    **This page is mainly translated from the article [Метод Ньютона (касательных) для поиска корней](http://e-maxx.ru/algo/roots_newton) and its English translation [Newton's method for finding roots](https://cp-algorithms.com/num_methods/roots_newton.html). The Russian version is licensed under Public Domain + Leave a Link; the English version is licensed under CC-BY-SA 4.0.**

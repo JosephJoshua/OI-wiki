@@ -1,12 +1,12 @@
 ???+ warning "Warning"
-    此处讨论的不是 [number system](https://en.wikipedia.org/wiki/Number#Classification)，数学中的数字系统（number system）指的是一类集合，如整数集 $\mathbf{Z}$、复数集 $\mathbf{C}$ 等．
+    This page is not about a [number system](https://en.wikipedia.org/wiki/Number#Classification). In mathematics, a number system means a kind of set, such as the set of integers $\mathbf{Z}$ or the set of complex numbers $\mathbf{C}$.
 
-**数字系统**（numeral system），又称 **记数系统**，指的是用以表示数字的书写系统，如 [印度–阿拉伯数字系统](https://en.wikipedia.org/wiki/Hindu%E2%80%93Arabic_numeral_system)、[罗马数字](https://en.wikipedia.org/wiki/Roman_numerals)、[苏州码子](https://en.wikipedia.org/wiki/Suzhou_numerals) 等．数字系统是我们给数做编码的工具．
+A **numeral system** is a writing system for representing numbers, such as the [Hindu–Arabic numeral system](https://en.wikipedia.org/wiki/Hindu%E2%80%93Arabic_numeral_system), [Roman numerals](https://en.wikipedia.org/wiki/Roman_numerals) and [Suzhou numerals](https://en.wikipedia.org/wiki/Suzhou_numerals). A numeral system is a tool for encoding numbers.
 
-一般来说，一个数字系统下的数字都是一串符号，同时有一套规则将这串符号和对应的数一一对应起来，例如罗马数字 $\text{XLII}$、二进制数 $101010_{(2)}$ 和十进制数 $42$ 均能对应到相同的数．
+In general, a numeral in a numeral system is a string of symbols, together with a set of rules that matches each string with the number it stands for. For example, the Roman numeral $\text{XLII}$, the binary number $101010_{(2)}$ and the decimal number $42$ all stand for the same number.
 
-算法竞赛中，我们一般只关注不同数字系统间的转化关系，详见 [进位制](./base.md)．
+In competitive programming, we usually only care about how to convert between different numeral systems. See [positional numeral systems](./base.md) for details.
 
-## 参考资料与注释
+## References and notes
 
 -   [Numeral system - Wikipedia](https://en.wikipedia.org/wiki/Numeral_system)

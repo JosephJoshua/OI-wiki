@@ -1,22 +1,22 @@
 author: StudyingFather, CCXXXI, Chrogeek, ChungZH, countercurrent-time, Early0v0, Enter-tainer, GavinZhengOI, Great-designer, H-J-Granger, henrytbtrue, HeRaNO, huayucaiji, iamtwz, Ir1d, ksyx, MegaOwIer, NachtgeistW, P-Y-Y, qwqAutomaton, shuzhouliu, shuzhouliu-bot, Siger Young, sshwy, SukkaW, Tiphereth-A, tsentau, WhenMelancholy, Xeonacid, Yukimaikoriya, Zhoier, zyj-111, qute-firefly-26710-zjyjoe-lg-592080
 
-## 引入
+## Introduction
 
-高斯消元法（Gaussian elimination）是求解线性方程组的经典算法，它在当代数学中有着重要的地位和价值，是线性代数课程教学的重要组成部分．
+Gaussian elimination is the classic algorithm for solving systems of linear equations. It plays an important role in modern mathematics and is a core part of any linear algebra course.
 
-高斯消元法通过行初等变换将增广矩阵化为行阶梯形，再通过回代求解方程组．高斯–约当消元法（Gauss–Jordan elimination）则进一步将主元化为 $1$，并消去主元所在列的其他非零元素，将增广矩阵化为行最简形．两种方法密切相关，但消元过程和最终得到的矩阵形式不同．
+Gaussian elimination uses elementary row operations to bring the augmented matrix into row echelon form, and then solves the system by back substitution. Gauss–Jordan elimination goes further: it scales each pivot to $1$ and clears all other non-zero entries in the pivot's column, bringing the augmented matrix into reduced row echelon form. The two methods are closely related, but they differ in the elimination steps and in the final form of the matrix.
 
-高斯消元法除了用于线性方程组求解外，还可以用于行列式计算、求矩阵的逆，以及其他计算机和工程方面．
+Besides solving linear systems, Gaussian elimination can also be used to compute determinants, find matrix inverses, and in many other computing and engineering tasks.
 
-## 消元法及高斯消元法思想
+## Elimination and the idea behind Gaussian elimination
 
-### 定义
+### Definition
 
-消元法是将方程组中的一方程的未知数用含有另一未知数的代数式表示，并将其带入到另一方程中，这就消去了一未知数，得到一解；或将方程组中的一方程倍乘某个常数加到另外一方程中去，也可达到消去一未知数的目的．消元法主要用于二元一次方程组的求解．
+Elimination means expressing one unknown in one equation in terms of another unknown and substituting it into another equation. This removes an unknown and lets you find one value. Alternatively, you can multiply one equation by a constant and add it to another equation, which also removes an unknown. Elimination is mainly used to solve systems of two linear equations in two unknowns.
 
-### 解释
+### Explanation
 
-例一：利用消元法求解二元一次线性方程组：
+Example 1: use elimination to solve the system of two linear equations in two unknowns:
 
 $$
 \begin{cases}
@@ -25,69 +25,69 @@ x-y&=100
 \end{cases}
 $$
 
-解：将方程组中两方程相加，消元 $y$ 可得：
+Solution: add the two equations to eliminate $y$:
 
 $$
 5x = 200
 $$
 
-解得：
+This gives:
 
 $$
 x = 40
 $$
 
-将 $x = 40$ 代入方程组中第二个方程可得：
+Substitute $x = 40$ into the second equation:
 
 $$
 y = -60
 $$
 
-### 消元法理论的核心
+### The core of elimination
 
-消元法理论的核心主要如下：
+The core rules of elimination are:
 
--   两方程互换，解不变；
+-   Swapping two equations does not change the solution;
 
--   一方程乘以非零数 $k$，解不变；
+-   Multiplying an equation by a non-zero number $k$ does not change the solution;
 
--   一方程乘以数 $k$ 加上另一方程，解不变．
+-   Adding $k$ times one equation to another does not change the solution.
 
-### 高斯消元法思想概念
+### The idea of Gaussian elimination
 
-德国数学家高斯对消元法进行了思考分析，得出了如下结论：
+The German mathematician Gauss studied elimination and came to the following conclusions:
 
--   在消元法中，参与计算和发生改变的是方程中各变量的系数；
+-   In elimination, what takes part in the computation and changes is the coefficients of the variables;
 
--   各变量并未参与计算，且没有发生改变；
+-   The variables themselves do not take part in the computation and do not change;
 
--   可以利用系数的位置表示变量，从而省略变量；
+-   The position of a coefficient can stand for its variable, so the variables can be left out;
 
--   在计算中将变量简化省略，方程的解不变．
+-   Leaving out the variables during the computation does not change the solution.
 
-高斯消元法利用这些思想，将方程组的增广矩阵通过行初等变换化为行阶梯形．如果出现系数全为 $0$ 而常数项非零的行，则方程组无解；否则，可以选取自由未知量，并通过回代求出其余未知量，得到方程组的通解．如果进一步消去主元上方的非零元素并将主元化为 $1$，得到行最简形，则使用的是高斯–约当消元法．
+Gaussian elimination uses these ideas to bring the augmented matrix of the system into row echelon form with elementary row operations. If some row has all coefficients equal to $0$ but a non-zero constant, the system has no solution. Otherwise, you can choose the free unknowns and find the other unknowns by back substitution, which gives the general solution. If you also clear the non-zero entries above each pivot and scale each pivot to $1$ to get the reduced row echelon form, you are using Gauss–Jordan elimination.
 
-## 高斯–约当消元五步骤法
+## The five steps of Gauss–Jordan elimination
 
-## 解释
+## Explanation
 
-下面将高斯–约当消元法求解有解的线性方程组的过程划分为五个步骤：
+Below, the process of solving a consistent linear system with Gauss–Jordan elimination is split into five steps:
 
-1.  增广矩阵行初等行变换为行最简形；
+1.  Reduce the augmented matrix to reduced row echelon form with elementary row operations;
 
-2.  还原线性方程组；
+2.  Rewrite it as a linear system;
 
-3.  求解第一个变量；
+3.  Solve for the first variable of each equation;
 
-4.  补充自由未知量；
+4.  Add the free unknowns;
 
-5.  列表示方程组通解．
+5.  Write the general solution in column form.
 
-利用实例进一步说明该算法的运作情况．
+Let us use an example to show how the algorithm works.
 
-## 过程
+## Process
 
-例二：利用高斯–约当消元法的五个步骤求解线性方程组：
+Example 2: solve the linear system using the five steps of Gauss–Jordan elimination:
 
 $$
 \begin{cases}
@@ -97,9 +97,9 @@ x_3+x_4&=-4 \\
 \end{cases}
 $$
 
-### 增广矩阵行（初等）变换为行最简形
+### Reduce the augmented matrix to reduced row echelon form
 
-所谓增广矩阵，即为方程组系数矩阵 $A$ 与常数列 $b$ 的并生成的新矩阵，即 $(A | b)$．使用增广矩阵可以省略变量，而用变量的系数位置表示变量．下面使用高斯–约当消元法将增广矩阵化为行最简形．增广矩阵中用竖线隔开了系数矩阵和常数列，代表了等于符号．
+The augmented matrix is the new matrix formed by joining the coefficient matrix $A$ of the system with the constant column $b$, written $(A | b)$. With the augmented matrix, the variables can be left out and represented by the positions of their coefficients. Below we use Gauss–Jordan elimination to bring the augmented matrix into reduced row echelon form. The vertical bar in the augmented matrix separates the coefficient matrix from the constant column and plays the role of the equals sign.
 
 $$
 \left(\begin{matrix}
@@ -128,7 +128,7 @@ $$
 \end{matrix} \right)
 $$
 
-化为行阶梯形
+This is now in row echelon form.
 
 $$
 \xrightarrow{\frac{r_1}{2}}
@@ -158,9 +158,9 @@ $$
 \end{matrix} \right)
 $$
 
-化为最简形
+This is now in reduced row echelon form.
 
-### 还原线性方程组
+### Rewrite as a linear system
 
 $$
 \begin{cases}
@@ -169,10 +169,10 @@ x_3+x_4 &= -4 \\
 \end{cases}
 $$
 
-???+ note "解释"
-    所谓的还原线性方程组，即是在行最简形的基础上，将之重新书写为线性方程组的形式，即将行最简形中各位置的系数重新赋予变量，中间的竖线还原为等号．
+???+ note "Explanation"
+    Rewriting as a linear system means taking the reduced row echelon form and writing it back as linear equations: give each coefficient back its variable, and turn the vertical bar back into an equals sign.
 
-### 求解第一个变量
+### Solve for the first variable
 
 $$
 \begin{cases}
@@ -181,10 +181,10 @@ x_3 = -x_4-4\notag
 \end{cases}
 $$
 
-???+ note "解释"
-    即是对于所还原的线性方程组而言，将方程组中每个方程的第一个变量，用其他量表达出来．如方程组两方程中的第一个变量 $x_1$ 和 $x_3$．
+???+ note "Explanation"
+    For the rewritten system, express the first variable of each equation in terms of the other quantities. Here these are $x_1$ and $x_3$, the first variables of the two equations.
 
-### 补充自由未知量
+### Add the free unknowns
 
 $$
 \begin{cases}
@@ -195,10 +195,10 @@ x_4 = x_4
 \end{cases}
 $$
 
-???+ note "解释"
-    第 3 步中，求解出变量 $x_1$ 和 $x_3$，从而说明了方程剩余的变量 $x_2$ 和 $x_4$ 不受方程组的约束，是自由未知量，可以取任意值，所以需要在第 3 步骤解得基础上进行解得补充，补充的方法为 $x_2 = x_2,x_4 = x_4$，这种解得补充方式符合自由未知量定义，并易于理解，因为是自由未知量而不受约束，所以只能自己等于自己．
+???+ note "Explanation"
+    Step 3 solved for $x_1$ and $x_3$. This shows that the remaining variables $x_2$ and $x_4$ are not constrained by the system. They are free unknowns and can take any value, so we add them to the solution from step 3 as $x_2 = x_2,x_4 = x_4$. This way of adding them matches the definition of a free unknown and is easy to understand: since a free unknown is not constrained, it can only be equal to itself.
 
-### 列表示方程组的通解
+### Write the general solution in column form
 
 $$
 \begin{aligned}
@@ -212,18 +212,18 @@ $$
 \end{aligned}
 $$
 
-其中 $C_1$ 和 $C_2$ 为任意常数．
+where $C_1$ and $C_2$ are arbitrary constants.
 
-???+ note "解释"
-    即在第 4 步的基础上，将解表达为列向量组合的表示形式，同时由于 $x_2$ 和 $x_4$ 是自由未知量，可以取任意值，所以在解得右边，令二者分别为任意常数 $C_1$ 和 $C_2$，即实现了对方程组的求解．
+???+ note "Explanation"
+    Starting from step 4, write the solution as a combination of column vectors. Since $x_2$ and $x_4$ are free unknowns and can take any value, replace them on the right-hand side with arbitrary constants $C_1$ and $C_2$. This completes the solution of the system.
 
-## 行列式计算
+## Computing determinants
 
-### 解释
+### Explanation
 
-$N \times N$ 方阵行列式（Determinant）可以理解为所有列向量所夹的几何体的有向体积．
+The determinant of an $N \times N$ square matrix can be thought of as the signed volume of the shape spanned by its column vectors.
 
-例如：
+For example:
 
 $$
 \begin{vmatrix}
@@ -237,59 +237,59 @@ $$
 2 & 1 \end{vmatrix} = -3
 $$
 
-行列式有公式
+The determinant is given by the formula
 
 $$
 \operatorname{det}(A)=\sum_{\sigma \in S_{n}} \operatorname{sgn}(\sigma) \prod_{i=1}^{n} a_{i, \sigma(i)}
 $$
 
-其中 $S_n$ 是指长度为 $n$ 的全排列的集合，$\sigma$ 就是一个全排列，如果 $\sigma$ 的逆序对对数为偶数，则 $\operatorname{sgn}(\sigma)=1$，否则 $\operatorname{sgn}(\sigma)=−1$．
+where $S_n$ is the set of all permutations of length $n$ and $\sigma$ is one permutation. If the number of inversions of $\sigma$ is even, then $\operatorname{sgn}(\sigma)=1$; otherwise $\operatorname{sgn}(\sigma)=−1$.
 
-通过体积概念理解行列式不变性是一个非常简单的办法：
+Thinking in terms of volume is a very simple way to understand how the determinant behaves:
 
--   矩阵转置，行列式不变；
+-   Transposing a matrix does not change the determinant;
 
--   矩阵行（列）交换，行列式取反；
+-   Swapping two rows (columns) negates the determinant;
 
--   矩阵行（列）相加或相减，行列式不变；
+-   Adding one row (column) to another or subtracting it does not change the determinant;
 
--   矩阵行（列）所有元素同时乘以数 $k$，行列式等比例变大．
+-   Multiplying every entry of a row (column) by a number $k$ scales the determinant by $k$.
 
-由此，对矩阵应用高斯消元，只做行交换和将一行的倍数加到另一行的操作，可以得到一个上三角矩阵，此矩阵的行列式由对角线元素之积所决定．其符号可由交换行的数量来确定（如果为奇数，则行列式的符号应颠倒）．因此，我们可以在 $O(n^3)$ 的复杂度下使用高斯消元法计算行列式．
+So if we apply Gaussian elimination to a matrix, using only row swaps and adding a multiple of one row to another, we get an upper triangular matrix whose determinant is the product of its diagonal entries. The sign is determined by the number of row swaps (if it is odd, flip the sign of the determinant). Therefore we can compute the determinant with Gaussian elimination in $O(n^3)$ time.
 
-注意，如果在某个时候，我们在当前列中找不到非零单元，则算法应停止并返回 0．
+Note that if at some point we cannot find a non-zero entry in the current column, the algorithm should stop and return 0.
 
-??? note "参考实现"
+??? note "Reference implementation"
     ```cpp
     --8<-- "docs/math/code/numerical/gauss/gauss_1.cpp:core"
     ```
 
-## 矩阵求逆
+## Matrix inverse
 
-对于方阵 $A$，若存在方阵 $A^{-1}$，使得 $A \times A^{-1} = A^{-1} \times A = I$，则称矩阵 $A$ 可逆，$A^{-1}$ 被称为它的逆矩阵．
+For a square matrix $A$, if there is a square matrix $A^{-1}$ such that $A \times A^{-1} = A^{-1} \times A = I$, then $A$ is invertible and $A^{-1}$ is its inverse.
 
-给出 $n$ 阶方阵 $A$，求解其逆矩阵的方法如下：
+Given an $n \times n$ matrix $A$, find its inverse as follows:
 
-1.  构造 $n \times 2n$ 的矩阵 $(A, I_n)$；
-2.  用高斯–约当消元法将其化简为行最简形 $(I_n, A^{-1})$，即可得到 $A$ 的逆矩阵 $A^{-1}$．如果最终行最简形的左半部分不是单位矩阵 $I_n$，则矩阵 $A$ 不可逆．
+1.  Build the $n \times 2n$ matrix $(A, I_n)$;
+2.  Use Gauss–Jordan elimination to reduce it to reduced row echelon form $(I_n, A^{-1})$, which gives the inverse $A^{-1}$ of $A$. If the left half of the final reduced row echelon form is not the identity matrix $I_n$, then $A$ is not invertible.
 
-该方法的正确性证明需要用到较多线性代数的知识，限于篇幅这里不再给出．感兴趣的读者可以自行查阅相关资料．
+Proving this method correct needs a fair amount of linear algebra, so we leave it out here. Interested readers can look it up.
 
-## 扩展高斯消元
+## Extended Gaussian elimination
 
-设 $A$ 是域 $\mathbb{F}$ 上的 $m \times n$ 矩阵，类似矩阵求逆的思路，构造 $m \times (m+n)$ 的矩阵 $(A \mid I_m)$，设 $A$ 的高斯消元结果为 $B$，有
+Let $A$ be an $m \times n$ matrix over a field $\mathbb{F}$. As with the matrix inverse, build the $m \times (m+n)$ matrix $(A \mid I_m)$. If $B$ is the result of Gaussian elimination on $A$, then
 
 $$
 (A \mid I_m) \longrightarrow (B \mid X), \qquad B = XA.
 $$
 
-此时 $m$ 阶可逆方阵 $X$ 记录了消元过程中的行变换．部分资料[^shoup]将其称为 **扩展高斯消元**（extended Gaussian elimination）．当 $A$ 为可逆方阵且 $B = I_n$ 时，则有 $X = A^{-1}$．
+Here the invertible $m \times m$ matrix $X$ records the row operations done during elimination. Some sources[^shoup] call this **extended Gaussian elimination**. When $A$ is an invertible square matrix and $B = I_n$, we have $X = A^{-1}$.
 
-设 $r = \operatorname{rank}(A)$．此时 $B$ 的前 $r$ 行非零，后 $m-r$ 行全为 $0$．利用 $B$ 和 $X$，可以同时求出 $A$ 的右核与左核的一组基．
+Let $r = \operatorname{rank}(A)$. Then the first $r$ rows of $B$ are non-zero and the last $m-r$ rows are all $0$. Using $B$ and $X$, we can find a basis of both the right kernel and the left kernel of $A$ at the same time.
 
-$A$ 的 **右核** 是齐次方程组 $Av = 0$ 的解空间，其中 $v \in \mathbb{F}^n$ 是列向量．由于 $X$ 可逆，$Av = 0$ 等价于 $Bv = 0$，所以可以直接得到右核的一组基．
+The **right kernel** of $A$ is the solution space of the homogeneous system $Av = 0$, where $v \in \mathbb{F}^n$ is a column vector. Since $X$ is invertible, $Av = 0$ is equivalent to $Bv = 0$, so we can read off a basis of the right kernel directly.
 
-设 $B$ 的主元列依次为 $p_1, p_2, \ldots, p_r$，非主元列（对应自由未知量）为 $q_1, q_2, \ldots, q_{n-r}$．对于每个 $1 \le j \le n-r$，令第 $q_j$ 个未知量为 $1$，其余自由未知量为 $0$，则得到一个解向量 $v^{(j)}$：
+Let the pivot columns of $B$ be $p_1, p_2, \ldots, p_r$ in order, and the non-pivot columns (corresponding to free unknowns) be $q_1, q_2, \ldots, q_{n-r}$. For each $1 \le j \le n-r$, set the $q_j$-th unknown to $1$ and the other free unknowns to $0$. This gives a solution vector $v^{(j)}$:
 
 $$
 v^{(j)}_{q_k} = \begin{cases}
@@ -300,21 +300,21 @@ v^{(j)}_{q_k} = \begin{cases}
 v^{(j)}_{p_i} = -B_{i,q_j} \quad (1 \le i \le r).
 $$
 
-这些向量线性无关，且张成整个右核，于是 $v^{(1)}, \ldots, v^{(n-r)}$ 构成右核的一组基，右核的维数为 $n-r$．[^mit-nullspace]
+These vectors are linearly independent and span the whole right kernel, so $v^{(1)}, \ldots, v^{(n-r)}$ form a basis of the right kernel, and the right kernel has dimension $n-r$.[^mit-nullspace]
 
-$A$ 的 **左核** 是满足 $u^TA = 0$ 的列向量 $u \in \mathbb{F}^m$ 构成的空间，也即 $A^T$ 的右核．记 $X$ 的第 $i$ 行为 $X_{i,*}$．由 $B = XA$ 可知对 $r < i \le m$ 都有
+The **left kernel** of $A$ is the space of column vectors $u \in \mathbb{F}^m$ with $u^TA = 0$, which is the right kernel of $A^T$. Let $X_{i,*}$ be row $i$ of $X$. From $B = XA$, for every $r < i \le m$ we have
 
 $$
 X_{i,*} A = B_{i,*} = 0.
 $$
 
-因此，$X$ 的后 $m-r$ 行转置后都属于 $A$ 的左核．又因为 $X$ 各行线性无关，而左核的维数为 $m-r$，所以这些行转置后恰好构成左核的一组基[^shoup][^mit-left-nullspace]．
+So the last $m-r$ rows of $X$, transposed, all lie in the left kernel of $A$. Also, the rows of $X$ are linearly independent and the left kernel has dimension $m-r$, so these transposed rows form exactly a basis of the left kernel[^shoup][^mit-left-nullspace].
 
-另外，如果只需求左核，则只将 $A$ 化为行阶梯形即可．
+Also, if you only need the left kernel, it is enough to reduce $A$ to row echelon form.
 
-## 高斯–约当消元法解异或方程组
+## Solving XOR systems with Gauss–Jordan elimination
 
-异或方程组是指形如
+A system of XOR equations is a system of the form
 
 $$
 \begin{cases}
@@ -324,26 +324,26 @@ a_{2,1}x_1 \oplus a_{2,2}x_2 \oplus \cdots \oplus a_{2,n}x_n &= b_2\\
 \end{cases}
 $$
 
-的方程组，其中 $\oplus$ 表示「按位异或」（即 `xor` 或 C++ 中的 `^`），且式中所有系数/常数（即 $a_{i,j}$ 与 $b_i$）均为 $0$ 或 $1$．
+where $\oplus$ means "bitwise XOR" (that is, `xor`, or `^` in C++), and all coefficients and constants ($a_{i,j}$ and $b_i$) are $0$ or $1$.
 
-由于「异或」符合交换律与结合律，故可以按照高斯消元法逐步消元求解．值得注意的是，我们在消元的时候应使用「异或消元」而非「加减消元」，且不需要进行乘除改变系数（因为系数均为 $0$ 和 $1$）．
+Since XOR is commutative and associative, we can solve the system step by step with Gaussian elimination. Note that during elimination we should "eliminate by XOR" instead of "eliminate by adding/subtracting", and we never need to multiply or divide to change coefficients (because all coefficients are $0$ or $1$).
 
-注意到异或方程组的增广矩阵是 $01$ 矩阵（矩阵中仅含有 $0$ 与 $1$），所以我们可以使用 C++ 中的 `std::bitset` 进行优化，将时间复杂度降为 $O(\dfrac{n^2m}{\omega})$，其中 $n$ 为元的个数，$m$ 为方程条数，$\omega$ 一般为 $32$（与机器有关）．
+The augmented matrix of an XOR system is a $01$ matrix (it contains only $0$ and $1$), so we can speed things up with C++'s `std::bitset`, bringing the time complexity down to $O(\dfrac{n^2m}{\omega})$, where $n$ is the number of unknowns, $m$ is the number of equations, and $\omega$ is usually $32$ (it depends on the machine).
 
-??? note "参考实现"
+??? note "Reference implementation"
     ```cpp
     --8<-- "docs/math/code/numerical/gauss/gauss_2.cpp:core"
     ```
 
-## 练习题
+## Exercises
 
--   [Codeforces - 巫师和赌注](http://codeforces.com/contest/167/problem/E)
--   [luogu - SDOI2010 外星千足虫](https://www.luogu.com.cn/problem/P2447)
+-   [Codeforces - Wizards and Bets](http://codeforces.com/contest/167/problem/E)
+-   [Luogu - SDOI2010 Alien Millipedes](https://www.luogu.com.cn/problem/P2447)
 
-## 参考资料与注释
+## References and notes
 
-[^shoup]: Victor Shoup.[A Computational Introduction to Number Theory and Algebra](https://www.shoup.net/ntb/ntb-v1.pdf). Cambridge University Press, 2005．
+[^shoup]: Victor Shoup.[A Computational Introduction to Number Theory and Algebra](https://www.shoup.net/ntb/ntb-v1.pdf). Cambridge University Press, 2005.
 
-[^mit-nullspace]: MIT OpenCourseWare.[Solving Ax = 0: Pivot Variables, Special Solutions](https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/dddb31dfe72d2e2e2fd09e74713b7775_MIT18_06SCF11_Ses1.7sum.pdf#page=2). 18.06SC Linear Algebra, Fall 2011．
+[^mit-nullspace]: MIT OpenCourseWare.[Solving Ax = 0: Pivot Variables, Special Solutions](https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/dddb31dfe72d2e2e2fd09e74713b7775_MIT18_06SCF11_Ses1.7sum.pdf#page=2). 18.06SC Linear Algebra, Fall 2011.
 
-[^mit-left-nullspace]: MIT OpenCourseWare.[The Four Fundamental Subspaces](https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/62a9db9eeab190694d40afe4734068ca_MIT18_06SCF11_Ses1.10sum.pdf#page=2). 18.06SC Linear Algebra, Fall 2011．
+[^mit-left-nullspace]: MIT OpenCourseWare.[The Four Fundamental Subspaces](https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/62a9db9eeab190694d40afe4734068ca_MIT18_06SCF11_Ses1.10sum.pdf#page=2). 18.06SC Linear Algebra, Fall 2011.

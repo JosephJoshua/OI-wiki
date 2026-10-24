@@ -1,24 +1,24 @@
-## 引入
+## Introduction
 
-本文介绍存储最简分数的数据结构以及其它相关概念．它们与 [连分数](./continued-fraction.md) 紧密相关，在算法竞赛中可以用于解决一系列数论问题，并可能作为某些题目的隐含背景出现．
+This article introduces data structures that store fractions in lowest terms, along with some related concepts. They are closely tied to [continued fractions](./continued-fraction.md). In competitive programming they help solve a range of number theory problems, and they sometimes appear as the hidden background of a problem.
 
-## Stern–Brocot 树
+## Stern–Brocot tree
 
-Stern–Brocot 树是一种维护分数的优雅的结构，包含所有不同的正有理数．这个结构分别由 Moritz Stern 在 1858 年和 Achille Brocot 在 1861 年独立发现．
+The Stern–Brocot tree is an elegant structure for working with fractions. It contains every distinct positive rational number. It was discovered independently by Moritz Stern in 1858 and by Achille Brocot in 1861.
 
-### 构造
+### Construction
 
-#### 逐层构造
+#### Level-by-level construction
 
-Stern–Brocot 树可以在迭代构造第 $k$ 阶 Stern–Brocot 序列（Stern–Brocot sequence of order $k$）的过程中得到．第 $0$ 阶 Stern–Brocot 序列由两个简单的分数组成：
+The Stern–Brocot tree can be obtained while iteratively building the Stern–Brocot sequence of order $k$. The Stern–Brocot sequence of order $0$ consists of two simple fractions:
 
 $$
 \frac{0}{1},\ \frac{1}{0}.
 $$
 
-此处的 $\dfrac{1}{0}$ 严格意义上并不算是有理分数，可以理解为表示 $\infty$ 的最简分数．
+Strictly speaking, $\dfrac{1}{0}$ here is not a rational fraction. You can think of it as the fraction in lowest terms that represents $\infty$.
 
-在第 $k$ 阶 Stern–Brocot 序列中相邻的两个分数 $\dfrac{a}{b}$ 和 $\dfrac{c}{d}$ 中间插入它们的中位分数（mediant）[^mediant]$\dfrac{a+c}{b+d}$，就得到第 $k+1$ 阶 Stern–Brocot 序列．尽管中位分数的定义本身允许分数的约分，但是在 Stern–Brocot 树的构造中，只需要直接将分子和分母分别相加即可，而不必担心约分的问题．由此，可以迭代地构造出所有阶的 Stern–Brocot 序列．前几次迭代的结果如下：
+Between every two adjacent fractions $\dfrac{a}{b}$ and $\dfrac{c}{d}$ of the Stern–Brocot sequence of order $k$, insert their mediant[^mediant] $\dfrac{a+c}{b+d}$. This gives the Stern–Brocot sequence of order $k+1$. The general definition of the mediant allows the fraction to be reduced, but when building the Stern–Brocot tree you simply add the numerators and add the denominators, with no need to worry about reducing. In this way, you can build the Stern–Brocot sequences of all orders one after another. The first few iterations look like this:
 
 $$
 \begin{array}{ccccccccc}
@@ -28,37 +28,37 @@ $$
 \end{array}
 $$
 
-将每次迭代中新添加的分数连结成树状结构，就得到了 Stern–Brocot 树．如下图所示：
+If you connect the fractions added in each iteration into a tree, you get the Stern–Brocot tree, as shown below:
 
 ![](./images/stern-brocot-tree.svg)
 
-第 $k$ 阶 Stern–Brocot 序列，不计左右端点，就是深度为 $k-1$ 的 Stern–Brocot 树的中序遍历．
+The Stern–Brocot sequence of order $k$, without its two endpoints, is exactly the in-order traversal of the Stern–Brocot tree of depth $k-1$.
 
-#### 三元组构造
+#### Construction with triples
 
-另一种等价的构造方式是以三元组
+An equivalent construction starts with the triple
 
 $$
 \left(\dfrac{0}{1},\dfrac{1}{1},\dfrac{1}{0}\right)
 $$
 
-作为根节点，且在每个节点
+as the root. Then, under every node
 
 $$
 \left(\dfrac{a}{b},\dfrac{p}{q},\dfrac{c}{d}\right)
 $$
 
-后都分别添加
+add the two nodes
 
 $$
 \left(\dfrac{a}{b},\dfrac{a+p}{b+q},\dfrac{p}{q}\right),\ \left(\dfrac{p}{q},\dfrac{p+c}{q+d},\dfrac{c}{d}\right)
 $$
 
-为左右子节点，就可以构造出整个 Stern–Brocot 树．Stern–Brocot 树的每个节点记录的三元组中，实际存储的分数是位于三元组中间的分数 $\dfrac{p}{q}$，而左右两个分数 $\dfrac{a}{b}$ 和 $\dfrac{c}{d}$ 是更早就出现过的分数．而且，考虑前一种构造就会发现，分数 $\dfrac{p}{q}$ 正是通过插入 $\dfrac{a}{b}$ 和 $\dfrac{c}{d}$ 的中位分数得到的．
+as its left and right children. This builds the whole Stern–Brocot tree. In the triple stored at each node, the fraction the node actually holds is the middle one, $\dfrac{p}{q}$. The left and right fractions $\dfrac{a}{b}$ and $\dfrac{c}{d}$ are fractions that appeared earlier. Also, comparing with the first construction, you can see that $\dfrac{p}{q}$ is exactly the mediant inserted between $\dfrac{a}{b}$ and $\dfrac{c}{d}$.
 
-#### 矩阵表示与 Stern–Brocot 数系
+#### Matrix representation and the Stern–Brocot number system
 
-三元组构造意味着每个 Stern–Brocot 树上的节点都对应着一个矩阵
+The triple construction means that every node of the Stern–Brocot tree corresponds to a matrix
 
 $$
 S = \begin{pmatrix}
@@ -67,7 +67,7 @@ a & c
 \end{pmatrix}.
 $$
 
-Stern–Brocot 树的根节点是单位矩阵 $I$，而向左子节点移动和向右子节点移动则分别对应将当前节点矩阵右乘以矩阵
+The root of the Stern–Brocot tree is the identity matrix $I$. Moving to the left child or to the right child corresponds to multiplying the current node's matrix on the right by
 
 $$
 L=\begin{pmatrix}
@@ -80,13 +80,13 @@ R=\begin{pmatrix}
 \end{pmatrix}.
 $$
 
-每个节点实际对应的分数就是 $f(S)=\dfrac{a+c}{b+d}$．每个节点的矩阵 $S$ 都可以写成一系列矩阵 $L$ 和 $R$ 的乘积，这也可以理解为是由 $L$ 和 $R$ 构成的字符串，表示了从根节点到达它的路径．将所有正的有理数唯一地表示为这样的字符串，这可以看作得到了正有理数的一种表示，故而也称作 **Stern–Brocot 数系**（Stern–Brocot number system）．
+The fraction a node actually represents is $f(S)=\dfrac{a+c}{b+d}$. Each node's matrix $S$ can be written as a product of matrices $L$ and $R$. You can also read this as a string made of $L$ and $R$ that describes the path from the root to the node. Every positive rational number has a unique such string, so this gives a way to represent positive rationals. It is called the **Stern–Brocot number system**.
 
-#### 建树实现
+#### Building the tree
 
-建树算法只需要模拟上述过程即可．下面是对前 $n$ 层的 Stern–Brocot 树做中序遍历的代码．
+To build the tree, just simulate the process above. The code below does an in-order traversal of the first $n$ levels of the Stern–Brocot tree.
 
-???+ example "建树"
+???+ example "Building the tree"
     === "C++"
         ```cpp
         --8<-- "docs/math/code/stern-brocot/tree-build.cpp:core"
@@ -97,25 +97,25 @@ $$
         --8<-- "docs/math/code/stern-brocot/tree-build.py:core"
         ```
 
-建树算法的复杂度是 $O(2^n)$ 的．
+Building the tree takes $O(2^n)$ time.
 
-### 性质
+### Properties
 
-接下来讨论 Stern–Brocot 树的性质．简而言之，Stern–Brocot 树是包含所有正的最简有理分数的 [二叉搜索树](../../ds/bst.md)，它也是分子和分母的 [堆](../../ds/binary-heap.md)，也是分母和分子构成的二元组的 [笛卡尔树](../../ds/cartesian-tree.md)．如果考虑前文的三元组构造中的左右端点形成的区间，则 Stern–Brocot 树也可以看作是 $[0,\infty]$ 上的 [线段树](../../ds/seg.md)．这些陈述可以通过如下的三条基本性质导出：
+Now we look at the properties of the Stern–Brocot tree. In short, the Stern–Brocot tree is a [binary search tree](../../ds/bst.md) containing all positive rational fractions in lowest terms. It is also a [heap](../../ds/binary-heap.md) on both numerators and denominators, and a [Cartesian tree](../../ds/cartesian-tree.md) on the pairs (denominator, numerator). If you consider the interval formed by the left and right endpoints in the triple construction, the Stern–Brocot tree can also be seen as a [segment tree](../../ds/seg.md) over $[0,\infty]$. All of these statements follow from the three basic properties below.
 
-#### 单调性
+#### Monotonicity
 
-在上面的构造中，每一层的分数都是单调递增的．为此只需要归纳证明．因为如果 $\dfrac{a}{b} < \dfrac{c}{d}$，那么必然有
+In the construction above, the fractions on each level are strictly increasing. This follows by induction, because if $\dfrac{a}{b} < \dfrac{c}{d}$, then we must have
 
 $$
 \dfrac{a}{b} < \dfrac{a+c}{b+d} < \dfrac{c}{d}.
 $$
 
-这一点可以通过消去不等式的分母得出．归纳起点是 $\dfrac{0}{1} < \dfrac{1}{0}$，单调性也显然成立．
+You can check this by clearing the denominators in the inequalities. The base case is $\dfrac{0}{1} < \dfrac{1}{0}$, where monotonicity clearly holds.
 
-#### 最简性
+#### Irreducibility
 
-在上面的构造中，每个分数都是最简分数．为此同样需要归纳证明上面的构造中，每一层相邻的分数 $\dfrac{a}{b}$ 和 $\dfrac{c}{d}$ 都满足等式
+In the construction above, every fraction is in lowest terms. Again we use induction, this time to show that on every level, each pair of adjacent fractions $\dfrac{a}{b}$ and $\dfrac{c}{d}$ satisfies
 
 $$
 bc-ad = \det\begin{pmatrix}
@@ -124,55 +124,55 @@ a & c
 \end{pmatrix} = 1.
 $$
 
-根节点处是单位矩阵，这显然成立．向下移动时，乘以的矩阵 $L$ 和 $R$ 的行列式都是 $1$，根据 [行列式](../linear-algebra/determinant.md) 的性质可知，在下一层同样成立
+At the root the matrix is the identity, so this clearly holds. When moving down, we multiply by $L$ or $R$, both of which have determinant $1$. By the properties of the [determinant](../linear-algebra/determinant.md), the equality also holds on the next level:
 
 $$
 \det\begin{pmatrix}b & b+d \\ a & a+c \end{pmatrix} = \det\begin{pmatrix}b+d & d \\ a+c & c\end{pmatrix} = 1.
 $$
 
-对于归纳起点 $\dfrac{0}{1}$ 和 $\dfrac{1}{0}$ 这也是显然的．由此，根据 [裴蜀定理](./bezouts.md)，必然可知每个分数的分子和分母都是互素的，即所有分数都是最简分数．
+For the base case $\dfrac{0}{1}$ and $\dfrac{1}{0}$ this is also obvious. So, by [Bézout's identity](./bezouts.md), the numerator and denominator of every fraction are coprime, which means every fraction is in lowest terms.
 
-#### 完全性
+#### Completeness
 
-最后，需要说明 Stern–Brocot 树包括了所有正的最简分数．因为前两条性质已经说明 Stern–Brocot 树是二叉搜索树，而任何正的最简分数 $\dfrac{p}{q}$ 必然位于 $\dfrac{0}{1}$ 和 $\dfrac{1}{0}$ 之间，根据二叉搜索树上做搜索的方法，二叉搜索树上没有 $\dfrac{p}{q}$ 的唯一可能性就是搜索过程无限长．下面将证明，对于任意正有理数 $\dfrac{p}{q}$，无限长的搜索过程是不可能的．
+Finally, we need to show that the Stern–Brocot tree contains every positive fraction in lowest terms. The first two properties show that the Stern–Brocot tree is a binary search tree. Any positive fraction $\dfrac{p}{q}$ in lowest terms lies between $\dfrac{0}{1}$ and $\dfrac{1}{0}$. If you search for it as in a binary search tree, the only way it can be missing from the tree is if the search goes on forever. We now show that for any positive rational $\dfrac{p}{q}$, the search cannot go on forever.
 
-设搜索过程中得到的 $\dfrac{p}{q}$ 的下界为 $\dfrac{a}{b}$，上界为 $\dfrac{c}{d}$．下界初始值为 $\dfrac{0}{1}$，上界初始值为 $\dfrac{1}{0}$，随后上下界通过 $\dfrac{a+c}{b+d}$ 和 $\dfrac{p}{q}$ 的比较结果逐步调整．若搜索过程无限长，则每一步都有
+During the search, let $\dfrac{a}{b}$ be the current lower bound of $\dfrac{p}{q}$ and $\dfrac{c}{d}$ the current upper bound. The lower bound starts at $\dfrac{0}{1}$ and the upper bound starts at $\dfrac{1}{0}$. After that, the bounds are updated step by step depending on how $\dfrac{a+c}{b+d}$ compares with $\dfrac{p}{q}$. If the search never ended, then at every step we would have
 
 $$
 \dfrac{a}{b} < \dfrac{p}{q} < \dfrac{c}{d},
 $$
 
-那么必然在无限步内都有
+so at every one of infinitely many steps we would have
 
 $$
 bp-aq \ge 1,\ cq-dp \ge 1.
 $$
 
-将两个不等式分别乘以 $(c+d)$ 和 $(a+b)$，就能够得到
+Multiplying the two inequalities by $(c+d)$ and $(a+b)$ respectively gives
 
 $$
 (c+d)(bp-aq) + (a+b)(cq-dp) \ge a+b+c+d.
 $$
 
-利用前面已经说明的等式 $bc-ad=1$ 可将上式化简为
+Using the equality $bc-ad=1$ shown above, this simplifies to
 
 $$
 p+q \ge a+b+c+d.
 $$
 
-然而，每次搜索更深入一层的时候，不等式右侧都严格地增加，而左侧保持不变，因此上述条件无法在无限步内成立．因此，搜索过程会在有限步内停止．
+However, each time the search goes one level deeper, the right-hand side strictly increases while the left-hand side stays the same. So this condition cannot hold for infinitely many steps, and the search must stop after a finite number of steps.
 
-### 查找分数
+### Finding a fraction
 
-在实际应用 Stern–Brocot 树的过程中，经常需要查询给定分数在 Stern–Brocot 树上的位置．
+When using the Stern–Brocot tree in practice, you often need to find where a given fraction is in the tree.
 
-#### 朴素算法
+#### Naive algorithm
 
-因为 Stern–Brocot 树是二叉搜索树，只需要通过比较当前分数和要寻找的分数的大小关系，就可以确定从根节点到给定分数的路径．将路径上向左子节点移动和向右子节点移动分别记作 $L$ 和 $R$，则每个路径就对应一个由 $L$ 和 $R$ 构成的字符串，这就是上文提到的有理数在 Stern–Brocot 数系中的表示．求得到达某个有理数的路径的过程就相当于求得该有理数在 Stern–Brocot 数系中的表示．
+Since the Stern–Brocot tree is a binary search tree, you can find the path from the root to a given fraction just by comparing the current fraction with the target. Write a move to the left child as $L$ and a move to the right child as $R$. Then each path corresponds to a string of $L$ and $R$, which is exactly the representation of the rational number in the Stern–Brocot number system mentioned above. Finding the path to a rational number is the same as finding its representation in the Stern–Brocot number system.
 
-朴素的分数查找算法的实现如下：
+The naive fraction-finding algorithm is implemented as follows:
 
-???+ example "朴素分数查找"
+???+ example "Naive fraction finding"
     === "C++"
         ```cpp
         --8<-- "docs/math/code/stern-brocot/fraction-finding-1.cpp:core"
@@ -183,17 +183,17 @@ $$
         --8<-- "docs/math/code/stern-brocot/fraction-finding-1.py:core"
         ```
 
-算法的复杂度是 $O(p+q)$ 的，因此在算法竞赛中并不实用．
+This algorithm runs in $O(p+q)$ time, so it is not practical in competitive programming.
 
-在 Stern–Brocot 数系中，每个正的无理数都对应着唯一的无限长的字符串．可以使用同样的算法构造出这个字符串．这个无限长的字符串的每个前缀都对应着一个有理的最简分数．将这些最简分数排成一列，数列中的分数的分母是严格递增的，而数列的极限就是该无理数．因此，Stern–Brocot 树可以用于找到某个无理数的任意精度的有理逼近．但是，应当注意的是，这个有理数数列和无理数之间的差距并非严格递减的．对于有理逼近的严格理论，应当参考连分数页面的 [丢番图逼近](./continued-fraction.md#丢番图逼近) 一节．在实际应用 Stern–Brocot 树寻找某个实数在分母不超过某范围的最佳逼近时，最后应当注意比较左右区间端点到该实数的距离．
+In the Stern–Brocot number system, every positive irrational number corresponds to a unique infinite string, which can be built with the same algorithm. Every prefix of this infinite string corresponds to a rational fraction in lowest terms. If you list these fractions in order, their denominators are strictly increasing, and the limit of the sequence is the irrational number. So the Stern–Brocot tree can be used to find rational approximations of an irrational number to any precision. Note, however, that the distance between this sequence of rationals and the irrational number is not strictly decreasing. For the rigorous theory of rational approximation, see the [Diophantine approximation](./continued-fraction.md#丢番图逼近) section of the continued fractions page. When you use the Stern–Brocot tree to find the best approximation of a real number with denominator below some bound, remember at the end to compare the distances from both endpoints of the interval to that real number.
 
-#### 快速算法
+#### Fast algorithm
 
-查找分数的朴素算法效率并不高，但是经过简单的优化就可以得到 $O(\log(p+q))$ 的快速查找算法．优化的关键是将连续的 $L$ 和 $R$ 合并处理．
+The naive fraction-finding algorithm is slow, but a simple optimization gives a fast $O(\log(p+q))$ algorithm. The key idea is to handle a run of consecutive $L$ moves or $R$ moves all at once.
 
-如果要查找的分数 $\dfrac{p}{q}$ 落入 $\dfrac{a}{b}$ 和 $\dfrac{c}{d}$ 之间，那么连续 $t$ 次向右移动时，右侧边界保持不动，而左侧边界移动到 $\dfrac{a+tc}{b+td}$ 处；反过来，连续 $t$ 次向左移动时，左侧边界保持不动，而右侧边界移动到 $\dfrac{ta+c}{tb+d}$ 处．因此，可以直接通过 $\dfrac{a+tc}{b+td}<\dfrac{p}{q}$ 或 $\dfrac{p}{q}<\dfrac{ta+c}{tb+d}$ 来确定向右和向左移动的次数．此处取严格不等号，是因为算法移动的是左右端点，而要寻找的分数是作为最后得到的端点的中位分数出现的．
+Suppose the target fraction $\dfrac{p}{q}$ lies between $\dfrac{a}{b}$ and $\dfrac{c}{d}$. After $t$ consecutive moves to the right, the right boundary stays the same and the left boundary moves to $\dfrac{a+tc}{b+td}$. Conversely, after $t$ consecutive moves to the left, the left boundary stays the same and the right boundary moves to $\dfrac{ta+c}{tb+d}$. So the number of right moves and left moves can be found directly from $\dfrac{a+tc}{b+td}<\dfrac{p}{q}$ or $\dfrac{p}{q}<\dfrac{ta+c}{tb+d}$. The inequalities are strict because the algorithm moves the left and right endpoints, and the target fraction shows up as the mediant of the final endpoints.
 
-???+ example "快速分数查找"
+???+ example "Fast fraction finding"
     === "C++"
         ```cpp
         --8<-- "docs/math/code/stern-brocot/fraction-finding-2.cpp:core"
@@ -204,45 +204,45 @@ $$
         --8<-- "docs/math/code/stern-brocot/fraction-finding-2.py:core"
         ```
 
-当前查找算法需要分数 $\dfrac{p}{q}$ 已知．如果目标分数未知，往往需要在每次向右或向左移动时，对移动次数进行倍增查找或者二分查找．此时，分数查找算法的复杂度是 $O(\log^2(p+q))$．
+This algorithm requires the fraction $\dfrac{p}{q}$ to be known. If the target fraction is unknown, you usually have to find the number of moves for each run of right or left moves by binary lifting or binary search. The fraction-finding algorithm then takes $O(\log^2(p+q))$ time.
 
-#### 基于连分数的算法
+#### Algorithm based on continued fractions
 
-对于分数已知的情形，可以利用连分数给出更为简单的算法．不妨假设首组移动是向右的；如果不然，则设首组向右移动的次数为零．向右、向左交替移动端点，将每组移动后的端点位置排列如下：
+When the fraction is known, continued fractions give an even simpler algorithm. Assume the first run of moves goes right; if not, say the first run of right moves has length zero. The endpoints are moved alternately right and left. List the endpoint positions after each run as follows:
 
 $$
 \dfrac{p_0}{q_0},~\dfrac{p_1}{q_1},~\dfrac{p_2}{q_2},~\cdots,~\dfrac{p_{n-2}}{q_{n-2}},~\dfrac{p_{n-1}}{q_{n-1}},~\dfrac{p_n}{q_n}.
 $$
 
-其中，偶数组移动是向右的，故而记录的是左端点的位置；奇数组移动是向左的，故而记录的是右端点的位置．在这一列端点前面再添加两个端点
+Here the even-numbered runs move right, so we record the left endpoint; the odd-numbered runs move left, so we record the right endpoint. Add two more endpoints in front of this list:
 
 $$
 \dfrac{p_{-2}}{q_{-2}}=\dfrac{0}{1},~\dfrac{p_{-1}}{q_{-1}}=\dfrac{1}{0}.
 $$
 
-设第 $k$ 组移动的次数为 $t_k$，那么根据上面得到的移动次数与端点位置之间的关系可知
+Let $t_k$ be the number of moves in run $k$. From the relation between the number of moves and the endpoint positions found above, we get
 
 $$
 \dfrac{p_k}{q_k} = \dfrac{t_kp_{k-1}+p_{k-2}}{t_kq_{k-1}+q_{k-2}}.
 $$
 
-根据连分数的 [递推关系](./continued-fraction.md#递推关系) 就可以知道，端点
+By the [recurrence](./continued-fraction.md#递推关系) for continued fractions, the endpoint is
 
 $$
 \dfrac{p_k}{q_k} = [t_0,t_1,\cdots,t_k].
 $$
 
-最后得到的连分数是
+The final continued fraction is
 
 $$
 \dfrac{p}{q} = \dfrac{p_n+p_{n-1}}{q_n+q_{n-1}} = [t_0,t_1,\cdots,t_{n-1},t_n,1].
 $$
 
-因此，在目标分数的末尾为一的 [连分数表示](./continued-fraction.md#简单连分数) 中，不计最后的一，前面的项就编码了 Stern–Brocot 树上自根节点到当前节点的路径．其中，偶数项（下标自 $0$ 开始）是向右子节点的边，奇数项是向左子节点的边．
+So, in the [continued fraction representation](./continued-fraction.md#简单连分数) of the target fraction that ends in one, the terms before the final one encode the path in the Stern–Brocot tree from the root to the node. The even-indexed terms (indices start at $0$) are edges to right children, and the odd-indexed terms are edges to left children.
 
-有理数的连分数表示可以通过辗转相除法求得，因此基于连分数表示的分数查找算法的复杂度是 $O(\log\min\{p,q\})$ 的．
+The continued fraction of a rational number can be computed with the Euclidean algorithm, so fraction finding based on continued fractions runs in $O(\log\min\{p,q\})$ time.
 
-???+ example "基于连分数的分数查找"
+???+ example "Fraction finding with continued fractions"
     === "C++"
         ```cpp
         --8<-- "docs/math/code/stern-brocot/fraction-finding-3.cpp:core"
@@ -253,67 +253,67 @@ $$
         --8<-- "docs/math/code/stern-brocot/fraction-finding-3.py:core"
         ```
 
-利用连分数表示，可以简单地表达出某个节点的父节点和子节点．对于节点 $[t_0,t_1,\cdots,t_n,1]$，它的父节点就是沿最后的移动方向少移动一步的节点：在 $t_n>1$ 时，父节点是 $[t_0,t_1,\cdots,t_n - 1,1]$；否则，父节点是 $[t_0,t_1,\cdots,t_{n-1},1]$．它的两个子节点则分别是 $[t_0,t_1,\cdots,t_n+1,1]$ 和 $[t_0,t_1,\cdots,t_n,1,1]$；两个节点哪个是左子节点，哪个是右子节点，需要根据 $n$ 的奇偶性判断．
+Continued fractions also make it easy to write down a node's parent and children. For the node $[t_0,t_1,\cdots,t_n,1]$, its parent is the node reached by making one fewer move in the last direction: if $t_n>1$, the parent is $[t_0,t_1,\cdots,t_n - 1,1]$; otherwise, the parent is $[t_0,t_1,\cdots,t_{n-1},1]$. Its two children are $[t_0,t_1,\cdots,t_n+1,1]$ and $[t_0,t_1,\cdots,t_n,1,1]$. Which one is the left child and which is the right child depends on the parity of $n$.
 
-## Calkin–Wilf 树
+## Calkin–Wilf tree
 
-另外一种更为简单的存储正有理分数的结构是 Calkin–Wilf 树．它通常如下所示：
+Another, even simpler structure for storing positive rational fractions is the Calkin–Wilf tree. It usually looks like this:
 
 ![pic](./images/calkin-wilf-tree.svg)
 
-树的根节点为 $\dfrac{1}{1}$．然后，对于分数 $\dfrac{p}{q}$ 所在的节点，其左右子节点分别为 $\dfrac{p}{p+q}$ 和 $\dfrac{p+q}{q}$．与 Stern–Brocot 树类似，它的每个分数都是最简分数，且包括全体正的最简分数各恰好一次．
+The root of the tree is $\dfrac{1}{1}$. For the node holding $\dfrac{p}{q}$, the left and right children are $\dfrac{p}{p+q}$ and $\dfrac{p+q}{q}$. As with the Stern–Brocot tree, every fraction in it is in lowest terms, and every positive fraction in lowest terms appears exactly once.
 
-### 与连分数的关系
+### Relation to continued fractions
 
-与 Stern–Brocot 树不同，Calkin–Wilf 树不是二叉搜索树，因此不能用于二分查找有理数．
+Unlike the Stern–Brocot tree, the Calkin–Wilf tree is not a binary search tree, so it cannot be used for binary search over rationals.
 
-在 Calkin–Wilf 树中，当 $p>q$ 时，分数 $\dfrac{p}{q}$ 的父节点为 $\dfrac{p-q}{q}$；当 $p<q$ 时，为 $\dfrac{p}{q-p}$．对于第一种情形，自 $\dfrac{p}{q}$ 出发，它是父节点的右子节点，可以一直通过父节点的右边向上移动，直到分子不再大于分母为止，此时节点存储的分数是 $\dfrac{p\bmod q}{q}$，本组移动的次数是 $\left\lfloor\dfrac{p}{q}\right\rfloor$；对于第二种情形，它是父节点的左子节点，可以一直通过父节点的左边向上移动，直到分母不再大于分子为止，此时节点存储的分数是 $\dfrac{p}{q\bmod p}$，本组移动的次数是 $\left\lfloor\dfrac{q}{p}\right\rfloor$．
+In the Calkin–Wilf tree, when $p>q$, the parent of $\dfrac{p}{q}$ is $\dfrac{p-q}{q}$; when $p<q$, it is $\dfrac{p}{q-p}$. In the first case, starting from $\dfrac{p}{q}$, the node is the right child of its parent. You can keep moving up through right-child edges until the numerator is no longer larger than the denominator. At that point the node holds $\dfrac{p\bmod q}{q}$, and this run has $\left\lfloor\dfrac{p}{q}\right\rfloor$ moves. In the second case, the node is the left child of its parent. You can keep moving up through left-child edges until the denominator is no longer larger than the numerator. At that point the node holds $\dfrac{p}{q\bmod p}$, and this run has $\left\lfloor\dfrac{q}{p}\right\rfloor$ moves.
 
-利用连分数的语言，设当前的节点存储的是某个连分数的余项 $s_k$，则沿父节点的右边向上移动 $\lfloor s_k\rfloor$ 次，到达分数 $\dfrac{1}{s_{k+1}}$，随后沿父节点的左边移动 $\lfloor s_{k+1}\rfloor$ 次，到达分数 $s_{k+2}$．因此，从节点 $s_0=\dfrac{p}{q}$ 开始向上到达根节点 $\dfrac{1}{1}$ 的路径由连分数 $[t_0,t_1,\cdots,t_n,1]$ 编码：除去最后的 $1$，偶数项（下标自 $0$ 开始）表示沿父节点的右边移动的次数，奇数项表示沿父节点的左边移动的次数．
+In the language of continued fractions, suppose the current node holds the complete quotient $s_k$ of some continued fraction. Moving up through right-child edges $\lfloor s_k\rfloor$ times reaches $\dfrac{1}{s_{k+1}}$, and then moving up through left-child edges $\lfloor s_{k+1}\rfloor$ times reaches $s_{k+2}$. So the path from the node $s_0=\dfrac{p}{q}$ up to the root $\dfrac{1}{1}$ is encoded by the continued fraction $[t_0,t_1,\cdots,t_n,1]$: ignoring the final $1$, the even-indexed terms (indices start at $0$) count moves up through right-child edges, and the odd-indexed terms count moves up through left-child edges.
 
-对于分数 $\dfrac{p}{q}=[t_0,t_1,\cdots,t_n,1]$ 所在的节点，它的父节点有如下表示：
+For the node holding $\dfrac{p}{q}=[t_0,t_1,\cdots,t_n,1]$, the parent is:
 
-1.  当 $t_0>0$ 时，它的父节点为 $\dfrac{p-q}{q}=[t_0 - 1, t_1, \cdots, t_n,1]$；
-2.  当 $t_0=0$ 且 $t_1>1$ 时，它的父节点为 $\dfrac{p}{q-p} = [0, t_1 - 1, t_2, \cdots, t_n,1]$；
-3.  当 $t_0=0$ 且 $t_1=1$ 时，它的父节点为 $\dfrac{p}{q-p} = [t_2, t_3, \cdots, t_n,1]$．
+1.  If $t_0>0$, the parent is $\dfrac{p-q}{q}=[t_0 - 1, t_1, \cdots, t_n,1]$;
+2.  If $t_0=0$ and $t_1>1$, the parent is $\dfrac{p}{q-p} = [0, t_1 - 1, t_2, \cdots, t_n,1]$;
+3.  If $t_0=0$ and $t_1=1$, the parent is $\dfrac{p}{q-p} = [t_2, t_3, \cdots, t_n,1]$.
 
-反过来，它的子节点则分别是 $\dfrac{p+q}{q}=[t_0+1,t_1,\cdots,t_n,1]$ 和 $\dfrac{p}{p+q}=[0,1,t_0,t_1,\cdots,t_n,1]$．对于第二个子节点的连分数表示，在 $t_0=0$ 时，应当理解为 $[0,1+t_1,t_2,\cdots,t_n,1]$．
+Going the other way, its children are $\dfrac{p+q}{q}=[t_0+1,t_1,\cdots,t_n,1]$ and $\dfrac{p}{p+q}=[0,1,t_0,t_1,\cdots,t_n,1]$. When $t_0=0$, the continued fraction of the second child should be read as $[0,1+t_1,t_2,\cdots,t_n,1]$.
 
-### 与 Stern–Brocot 树的关系
+### Relation to the Stern–Brocot tree
 
-同样和连分数建立起联系，Stern–Brocot 树中路径上节点呈现的是渐近分数的递归关系，而 Calkin–Wilf 树中路径上节点呈现的是余项的递归关系．同一个分数的连分数表示是一定的，因此它在 Calkin–Wilf 树上到达根节点的路径的编码和 Stern–Brocot 树的根节点到它的路径的编码是完全一样的．但是，由于路径的方向相反，所以虽然 Stern–Brocot 树和 Calkin–Wilf 树同一层存储的分数是一样的，但是位置并不相同．
+Both trees are linked to continued fractions: along a path in the Stern–Brocot tree, the nodes follow the recurrence of the convergents, while along a path in the Calkin–Wilf tree, the nodes follow the recurrence of the complete quotients. A fraction has a fixed continued fraction representation, so the code of its path up to the root in the Calkin–Wilf tree is exactly the same as the code of the path from the root down to it in the Stern–Brocot tree. However, because the paths go in opposite directions, the two trees store the same fractions on each level, but in different positions.
 
-如果对两个树分别做 [广度优先搜索](../../graph/bfs.md) 并依次对节点编号，根节点编号为 $1$，那么编号为 $v$ 的节点的左右子节点分别是 $2v$ 和 $2v+1$．从编号的二进制表示来看，除去起始的 $1$，从高位至低位每个 $1$ 均表示向右子节点移动，每个 $0$ 均表示向左子节点移动．Calkin–Wilf 树上，连分数 $[t_0,t_1,\cdots,t_n,1]$ 表示的有理数所在节点的编号是
+Run a [breadth-first search](../../graph/bfs.md) on each tree and number the nodes in order, with the root numbered $1$. Then the children of node $v$ are $2v$ and $2v+1$. In the binary representation of a node's number, ignoring the leading $1$, each $1$ from the high bits to the low bits means a move to the right child, and each $0$ means a move to the left child. In the Calkin–Wilf tree, the node holding the rational number with continued fraction $[t_0,t_1,\cdots,t_n,1]$ has number
 
 $$
 1\cdots \underbrace{0\cdots 0}_{t_3}\underbrace{1\cdots 1}_{t_2}\underbrace{0\cdots 0}_{t_1}\underbrace{1\cdots 1}_{t_0}.
 $$
 
-相应地，Stern–Brocot 树上，连分数 $[t_0,t_1,\cdots,t_n,1]$ 表示的有理数所在节点的编号是
+Correspondingly, in the Stern–Brocot tree, the node holding the rational number with continued fraction $[t_0,t_1,\cdots,t_n,1]$ has number
 
 $$
 1\underbrace{1\cdots 1}_{t_0}\underbrace{0\cdots 0}_{t_1}\underbrace{1\cdots 1}_{t_2}\underbrace{0\cdots 0}_{t_3}\cdots.
 $$
 
-删去初始的 $1$，余下的二进制位组成的编号，恰为同一层的顶点自左向右的编号（自 $0$ 开始）．此处的推导说明，Stern–Brocot 树和 Calkin–Wilf 树中同一层的分数的排列互为位逆序置换（bit-reversal permutation），即将下标的二进制位（补齐起始的 $0$）反转得到的 $0\sim (2^k-1)$ 上的置换．
+After removing the leading $1$, the remaining bits give exactly the position of the node within its level, counting from left to right starting at $0$. This shows that the orders of fractions on the same level of the Stern–Brocot tree and the Calkin–Wilf tree are bit-reversal permutations of each other, that is, the permutation of $0\sim (2^k-1)$ obtained by reversing the binary digits of the index (padded with leading $0$s).
 
-正因如此，Stern–Brocot 树上的节点有时会按照对应的 Calkin–Wilf 树上的节点编号，由此得到的编号如下图所示：
+Because of this, nodes of the Stern–Brocot tree are sometimes numbered by the numbers of the corresponding nodes in the Calkin–Wilf tree. The resulting numbering is shown below:
 
 ![pic](./images/stern-brocot-index.svg)
 
-这个编号可以递归地构造：根节点编号为 $1$，每次移动到左子节点时，就将编号首位的 $1$ 替换成 $10$，而移动到右子节点时，就将编号首位的 $1$ 替换成 $11$．对该编号自右向左解读就可以得到自根节点到该节点的路径．
+This numbering can be built recursively: the root has number $1$. Each time you move to the left child, replace the leading $1$ of the number with $10$; each time you move to the right child, replace the leading $1$ with $11$. Reading the number from right to left gives the path from the root to the node.
 
-### Stern 双原子序列
+### Stern's diatomic sequence
 
-将 Calkin–Wilf 树中的所有分数按照广度优先搜索的编号排列，或将 Stern–Brocot 树中的所有分数按照上图所示的编号排列，就得到如下序列：
+If you list all fractions of the Calkin–Wilf tree in breadth-first-search order, or all fractions of the Stern–Brocot tree in the numbering shown above, you get the following sequence:
 
 $$
 \dfrac{1}{1},~\dfrac{1}{2},~\dfrac{2}{1},~\dfrac{1}{3},~\dfrac{3}{2},~\dfrac{2}{3},~\dfrac{3}{1},~\dfrac{1}{4},~\dfrac{4}{3},~\dfrac{3}{5},~\dfrac{5}{2},\cdots.
 $$
 
-利用 Calkin–Wilf 树的构造过程，可以证明，该序列中相邻的两个分数，前一个的分母必然等于后一个的分子．将分子单独列出，就得到 Stern 双原子序列（Stern diatomic sequence，[OEIS A002487](https://oeis.org/A002487)），也称为 Stern–Brocot 序列（Stern–Brocot sequence）．上述序列的编号从 $1$ 开始，并补充规定第 $0$ 个数是 $0$．
+Using the construction of the Calkin–Wilf tree, one can show that for any two adjacent fractions in this sequence, the denominator of the first equals the numerator of the second. Listing just the numerators gives Stern's diatomic sequence ([OEIS A002487](https://oeis.org/A002487)), also called the Stern–Brocot sequence. The sequence above is indexed from $1$, and we additionally define the $0$-th term to be $0$.
 
-设 $a_n$ 是 Stern 双原子序列中第 $n$ 个数，那么，它满足如下递归关系：
+Let $a_n$ be the $n$-th term of Stern's diatomic sequence. It satisfies the recurrence:
 
 $$
 \begin{aligned}
@@ -322,11 +322,11 @@ a_{2n+1} &= a_n + a_{n+1}.
 \end{aligned}
 $$
 
-递归起点是 $a_0=0$ 和 $a_1=1$．要求得 Stern 双原子序列中 $a_n$ 的值，直接利用递归关系复杂度为 $O(\log^2n)$，并不优秀．更好的做法是，将它视为 Calkin–Wilf 树上编号为 $n$ 的分数的分子，利用上文描述的基于连分数的递归关系求解，复杂度为 $O(\log n)$．
+The base cases are $a_0=0$ and $a_1=1$. Computing $a_n$ directly with this recurrence takes $O(\log^2n)$ time, which is not great. A better way is to view $a_n$ as the numerator of the fraction numbered $n$ in the Calkin–Wilf tree and use the continued-fraction-based recurrence described above. This takes $O(\log n)$ time.
 
-## Farey 序列
+## Farey sequence
 
-Farey 序列与 Stern–Brocot 树有着极其相似的特征．记 **第 $n$ 阶 Farey 序列**（Farey sequence of order $n$）为 $F_n$．它表示把分母小于等于 $n$ 的所有位于 $[0,1]$ 之间的最简分数按大小顺序排列形成的序列：
+The Farey sequence is very similar to the Stern–Brocot tree. Let $F_n$ denote the **Farey sequence of order $n$**. It is the sequence of all fractions in lowest terms in $[0,1]$ with denominator at most $n$, sorted in increasing order:
 
 $$
 \begin{array}{lllllllllllll}
@@ -338,11 +338,11 @@ F_5=\bigg\{&\dfrac{0}{1},&\dfrac{1}{5},&\dfrac{1}{4},&\dfrac{1}{3},&\dfrac{2}{5}
 \end{array}
 $$
 
-根据 Farey 序列的定义，它自然满足单调性、最简性和完全性．如上所示，$F_k$ 相较于 $F_{k-1}$ 新添加的分数总是 $F_{k-1}$ 中相邻分数的中位分数．
+By definition, the Farey sequence is monotonic, irreducible and complete. As shown above, every fraction that $F_k$ adds compared with $F_{k-1}$ is always the mediant of two adjacent fractions in $F_{k-1}$.
 
-上文中构建 Stern–Brocot 树的算法同样适用于构建 Farey 序列．因为 Stern–Brocot 树中包括所有最简分数，因此只要将边界条件修改为对分母的限制就可以得到构造 Farey 序列的代码．可以将第 $n$ 阶 Farey 序列 $F_n$ 看作是第 $n$ 阶 Stern–Brocot 序列的子序列．
+The algorithm above for building the Stern–Brocot tree also works for building the Farey sequence. Since the Stern–Brocot tree contains all fractions in lowest terms, you only need to change the stopping condition to a limit on the denominator to get code that builds the Farey sequence. The Farey sequence of order $n$, $F_n$, can be seen as a subsequence of the Stern–Brocot sequence of order $n$.
 
-???+ example "构建 Farey 序列"
+???+ example "Building the Farey sequence"
     === "C++"
         ```cpp
         --8<-- "docs/math/code/stern-brocot/farey-build.cpp:core"
@@ -353,11 +353,11 @@ $$
         --8<-- "docs/math/code/stern-brocot/farey-build.py:core"
         ```
 
-直接构建 Farey 序列的复杂度是 $O(|F_n|)=O(n^2)$ 的．
+Building the Farey sequence directly takes $O(|F_n|)=O(n^2)$ time.
 
-### 序列长度与分数查找
+### Sequence length and finding fractions
 
-Farey 序列的长度可以递归求出．相较于 $F_{n-1}$，序列 $F_n$ 多出来的分数的分母都是 $n$，而分子不超过 $n$ 且与 $n$ 互素，因此有：
+The length of the Farey sequence can be found recursively. Compared with $F_{n-1}$, the new fractions in $F_n$ all have denominator $n$ and a numerator that is at most $n$ and coprime to $n$. So:
 
 $$
 \begin{aligned}
@@ -365,89 +365,89 @@ $$
 \end{aligned}
 $$
 
-此处的 $\varphi(n)$ 是 [欧拉函数](./euler-totient.md)．该式利用 [线性筛](./sieve.md#筛法求欧拉函数) 可以 $O(n)$ 求出，而利用 [杜教筛](./hyperbola.md#杜教筛) 可以将复杂度降到 $O(n^{2/3})$．
+Here $\varphi(n)$ is [Euler's totient function](./euler-totient.md). This sum can be computed in $O(n)$ with a [linear sieve](./sieve.md#筛法求欧拉函数), and the [Du's sieve](./hyperbola.md#杜教筛) brings it down to $O(n^{2/3})$.
 
-相较于直接求出序列的长度，更为常见的情景是需要求出序列 $F_n$ 中某一分数 $r=\dfrac{p}{q}$ 的编号．这相当于求值
+More often than the length itself, you need the index of some fraction $r=\dfrac{p}{q}$ in $F_n$. This means computing
 
 $$
 1 + \sum_{k = 1}^n\sum_{i=1}^{\lfloor rk\rfloor}[i\perp k] = 1 + \sum_{d=1}^n\mu(d)\sum_{j=1}^{\lfloor n/d\rfloor}\lfloor rj\rfloor.
 $$
 
-要得到右式，应用了 [莫比乌斯反演](./mobius.md)．线性筛和枚举因子结合，可以做到 $O(n)$ 预处理和 $O(n\log n)$ 询问；杜教筛和 [类欧几里得算法](./euclidean.md) 结合，可以做到 $O(n^{2/3})$ 预处理和 $O(\sqrt n\log n)$ 询问．
+The right-hand side comes from [Möbius inversion](./mobius.md). Combining a linear sieve with enumerating divisors gives $O(n)$ preprocessing and $O(n\log n)$ per query. Combining Du's sieve with the [floor-sum (Euclidean-like) algorithm](./euclidean.md) gives $O(n^{2/3})$ preprocessing and $O(\sqrt n\log n)$ per query.
 
-反过来，已知编号求解分数，需要对 $[0,1]$ 之间的实数进行二分，或者在 Stern–Brocot 树上进行 [二分](#快速算法)．前者可能受到浮点数精度限制，对分数编号的询问次数为 $O(\log V)$，其中 $V$ 是精度范围；后者不受浮点数精度限制，但是对分数编号的询问次数为 $O(\log^2n)$．
+Going the other way, to find the fraction with a given index, you can binary search over real numbers in $[0,1]$, or do a [binary search](#fast-algorithm) on the Stern–Brocot tree. The first may be limited by floating-point precision and makes $O(\log V)$ index queries, where $V$ is the precision range. The second has no precision issues but makes $O(\log^2n)$ index queries.
 
-### Farey 邻项
+### Farey neighbors
 
-如果分数 $\dfrac{a}{b}$ 和 $\dfrac{c}{d}$ 在某个 Farey 序列中相邻，就称它们为 **Farey 邻项**（Farey neighbors），也称为 Farey 对（Farey pair）．
+If the fractions $\dfrac{a}{b}$ and $\dfrac{c}{d}$ are adjacent in some Farey sequence, they are called **Farey neighbors**, also known as a Farey pair.
 
-设 $\dfrac{a}{b}<\dfrac{c}{d}$．从 Farey 序列的构造过程可知，两个相邻分数中后加入的分数必然是另一个分数与它先前的邻项的中位分数，因此 Farey 邻项在某一阶 Stern–Brocot 序列中也相邻，根据 [最简性](#最简性) 中证明的结论可知，必然也有
+Let $\dfrac{a}{b}<\dfrac{c}{d}$. From the way Farey sequences are built, of two adjacent fractions, the one added later must be the mediant of the other one and its earlier neighbor. So Farey neighbors are also adjacent in some Stern–Brocot sequence, and by the result proved in [Irreducibility](#irreducibility), we must have
 
 $$
 bc-ad=1.
 $$
 
-反过来，这也是两个最简真分数成为 Farey 邻项的充分条件．现在说明这一点．不妨设 $\dfrac{a}{b}$ 是两个分数中分母较大的，那么两个分数都会出现在 $F_b$ 中．设 $\dfrac{e}{f}$ 是序列 $F_b$ 中排在 $\dfrac{a}{b}$ 右侧的一项，按照已经说明的必要性可知，$be-af=1$．但是，[线性同余方程](./linear-equation.md)  $bx-ay=1$ 只有一组 $y\le b$ 的正整数解，故而必然有 $(e,f)=(c,d)$．
+Conversely, this condition is also sufficient for two proper fractions in lowest terms to be Farey neighbors. Here is why. Assume $\dfrac{a}{b}$ is the one with the larger denominator. Then both fractions appear in $F_b$. Let $\dfrac{e}{f}$ be the term right after $\dfrac{a}{b}$ in $F_b$. By the necessity already shown, $be-af=1$. But the [linear congruence equation](./linear-equation.md)  $bx-ay=1$ has only one positive integer solution with $y\le b$, so we must have $(e,f)=(c,d)$.
 
-其实，因为下一个会出现在两者之间的最简分数必然是 $\dfrac{a+c}{b+d}$，所以 $\dfrac{a}{b}$ 和 $\dfrac{c}{d}$ 在第 $\max\{b,d\}$ 到第 $(b+d-1)$ 阶 Farey 序列中都是相邻的．
+In fact, the next fraction in lowest terms to appear between them must be $\dfrac{a+c}{b+d}$, so $\dfrac{a}{b}$ and $\dfrac{c}{d}$ are adjacent in every Farey sequence of order $\max\{b,d\}$ through $(b+d-1)$.
 
-分母不超过 $9$ 的 Farey 邻项关系如下图所示：
+The figure below shows the Farey neighbor relation for denominators up to $9$:
 
 ![](./images/farey-diagram-ford-circle.svg)
 
-图中的圆称为 [Ford 圆](https://en.wikipedia.org/wiki/Ford_circle)：对于每个 $[0,1]$ 内的最简分数 $\dfrac{p}{q}$，都以 $\left(\dfrac{p}{q},\dfrac{1}{2q^2}\right)$ 为圆心、以 $\dfrac{1}{2q^2}$ 为半径绘制一个圆．图示说明，两个分数对应的 Ford 圆只能相切或相离，且两圆相切，当且仅当两分数是 Farey 邻项．而且，对于图中相切的任何两个圆，总存在唯一的第三个圆和两圆都相切．这第三个圆对应的分数就是两个圆对应的分数的中位分数．
+The circles in the figure are called [Ford circles](https://en.wikipedia.org/wiki/Ford_circle): for every fraction $\dfrac{p}{q}$ in lowest terms in $[0,1]$, draw a circle centered at $\left(\dfrac{p}{q},\dfrac{1}{2q^2}\right)$ with radius $\dfrac{1}{2q^2}$. The figure shows that the Ford circles of two fractions can only be tangent or disjoint, and two circles are tangent if and only if the two fractions are Farey neighbors. Moreover, for any two tangent circles in the figure, there is exactly one third circle tangent to both. The fraction of this third circle is the mediant of the fractions of the two circles.
 
-要验证相切的圆总是对应着 Farey 邻项，可以直接计算两圆心的距离：
+To check that tangent circles always correspond to Farey neighbors, compute the distance between the two centers directly:
 
 $$
 \left(\dfrac{a}{b}-\dfrac{c}{d}\right)^2 + \left(\dfrac{1}{2b^2}-\dfrac{1}{2d^2}\right)^2 = \left(\dfrac{1}{2b^2}+\dfrac{1}{2d^2}\right)^2+\frac{(bc-ad)^2-1}{b^2d^2}.
 $$
 
-因为两个最简分数并不相同，所以 $|bc-ad|\ge 1$，故而两圆只能相切或相离．而且，两圆相切，当且仅当 $|bc-ad|=1$，这就等价于两分数是 Farey 邻项．
+Since the two fractions in lowest terms are different, $|bc-ad|\ge 1$, so the two circles can only be tangent or disjoint. Also, they are tangent if and only if $|bc-ad|=1$, which is the same as the two fractions being Farey neighbors.
 
-最后，要计算 Farey 邻项的数目．除了 $\left(\dfrac{0}{1},\dfrac{1}{1}\right)$，其余 Farey 邻项的分母都不相同．不妨设 $\dfrac{p}{q}$ 是其中分母较大的那个，则另一个分数必然可以从二元一次不定方程
+Finally, let us count the Farey neighbors. Apart from $\left(\dfrac{0}{1},\dfrac{1}{1}\right)$, every pair of Farey neighbors has different denominators. Let $\dfrac{p}{q}$ be the one with the larger denominator. Then the other fraction must be a solution of the linear Diophantine equation
 
 $$
 qx-py=\pm 1
 $$
 
-中解得．两个方程各恰有一组满足 $y<q$ 的正整数解，分别对应位于 $\dfrac{p}{q}$ 左右两侧的邻项．因而，每个位于 $(0,1)$ 内的真分数都有两个分母小于它的分母的 Farey 邻项，再加上 $\dfrac{0}{1}$ 和 $\dfrac{1}{1}$，这说明序列 $F_n$ 中共计 $(2|F_n|-3)$ 对 Farey 邻项．
+Each of the two equations has exactly one positive integer solution with $y<q$, giving the neighbors on the left and on the right of $\dfrac{p}{q}$. So every proper fraction in $(0,1)$ has two Farey neighbors with smaller denominators. Adding in $\dfrac{0}{1}$ and $\dfrac{1}{1}$, this shows that $F_n$ has $(2|F_n|-3)$ pairs of Farey neighbors in total.
 
-当然，在这个过程中找到的分数 $\dfrac{a}{b}<\dfrac{c}{d}$ 就是在序列中插入 $\dfrac{p}{q}$ 时它的左右邻项．因此，它们本就是 Farey 邻项且 $\dfrac{p}{q}$ 是它们的中位分数．设 $\dfrac{p}{q}=[t_0,t_1,\cdots,t_n,1]$，则这两个分母更小的 Farey 邻项就分别是 $[t_0,t_1,\cdots,t_n]$ 和 $[t_0,t_1,\cdots,t_{n-1}]$．
+Of course, the fractions $\dfrac{a}{b}<\dfrac{c}{d}$ found this way are exactly the left and right neighbors of $\dfrac{p}{q}$ at the moment it is inserted into the sequence. So they are themselves Farey neighbors, and $\dfrac{p}{q}$ is their mediant. If $\dfrac{p}{q}=[t_0,t_1,\cdots,t_n,1]$, then these two Farey neighbors with smaller denominators are $[t_0,t_1,\cdots,t_n]$ and $[t_0,t_1,\cdots,t_{n-1}]$.
 
-要计算当前分数 $\dfrac{p}{q}$ 的其它 Farey 邻项，只需要利用 [扩展欧几里得算法](./bezouts.md#两个变量的情形) 求出所有符合条件的解即可．
+To find the other Farey neighbors of $\dfrac{p}{q}$, use the [extended Euclidean algorithm](./bezouts.md#两个变量的情形) to find all valid solutions.
 
-### 递推关系
+### Recurrence
 
-Farey 序列有一个简洁的递推关系，可以自左向右地顺序求出第 $n$ 阶 Farey 序列的全部分数．
+The Farey sequence has a neat recurrence that produces all fractions of the Farey sequence of order $n$ in order from left to right.
 
-首先，前面的分析指出，在 $F_n$ 中，新添加的项 $\dfrac{p}{n}$ 总是左右相邻两个分数的中位分数．其实，这个关系对于 $F_n$ 中（除了两端点）所有分数都成立．设 $\dfrac{a}{b}<\dfrac{p}{q}<\dfrac{c}{d}$，根据 Farey 邻项的充要条件，总是有
+First, the analysis above shows that in $F_n$, a newly added term $\dfrac{p}{n}$ is always the mediant of its left and right neighbors. In fact, this holds for every fraction in $F_n$ (except the two endpoints). Let $\dfrac{a}{b}<\dfrac{p}{q}<\dfrac{c}{d}$. By the necessary and sufficient condition for Farey neighbors, we always have
 
 $$
 bp-aq = 1 = cq-dp \iff \frac{p}{q} = \dfrac{a+c}{b+d}.
 $$
 
-不过，对于一般的情形，分数 $\dfrac{a+c}{b+d}$ 可能需要约分．
+In general, though, the fraction $\dfrac{a+c}{b+d}$ may need to be reduced.
 
-利用这个观察就可以构建如下的递推关系．设 $\dfrac{a}{b}$ 和 $\dfrac{p}{q}$ 是已知的，要求出第三个分数 $\dfrac{c}{d}$ 的值．此时，存在 $k$ 使得
+This observation leads to the following recurrence. Suppose $\dfrac{a}{b}$ and $\dfrac{p}{q}$ are known, and we want the third fraction $\dfrac{c}{d}$. There exists $k$ such that
 
 $$
 a+c = kp,\ b+d=kq
 $$
 
-成立．因为差值
+holds. The difference
 
 $$
 \frac{kp-a}{kq-b} - \dfrac{p}{q} = \dfrac{bp-aq}{q(kq-b)} = \dfrac{1}{q(kq-b)}
 $$
 
-随着 $k$ 增加而减小，且紧邻着 $\dfrac{p}{q}$ 的应该是所有满足 $kq-b\le n$ 的分数中该差值最小的那个，因而，必然有
+decreases as $k$ grows, and the fraction right after $\dfrac{p}{q}$ should be the one with the smallest difference among all fractions with $kq-b\le n$. Therefore, we must have
 
 $$
 k = \left\lfloor\dfrac{n+b}{q}\right\rfloor.
 $$
 
-可以验证这样得到的分数必然在 $F_n$ 中．因此，$F_n$ 中的分数的分子和分母满足递推关系：
+One can check that the fraction obtained this way is always in $F_n$. So the numerators and denominators of the fractions in $F_n$ satisfy the recurrence:
 
 $$
 \begin{aligned}
@@ -456,32 +456,32 @@ q_k &= \left\lfloor\frac{n + q_{k-2}}{q_{k-1}}\right\rfloor q_{k-1} - q_{k-2}.
 \end{aligned}
 $$
 
-递推起点是 $(p_0,q_0)=(0,1)$ 和 $(p_1,q_1)=(1,n)$．
+The starting values are $(p_0,q_0)=(0,1)$ and $(p_1,q_1)=(1,n)$.
 
-## 习题
+## Exercises
 
-以本文材料为背景的题目：
+Problems based on the material in this article:
 
--   [LOJ 6685. 迷宫](https://loj.ac/p/6685)
+-   [LOJ 6685. Maze](https://loj.ac/p/6685)
 -   [UVa 10077. The Stern-Brocot Number System](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=33&page=show_problem&problem=1018)
--   [Luogu P8058. \[BalkanOI2003\] Farey 序列](https://www.luogu.com.cn/problem/P8058)
+-   [Luogu P8058. \[BalkanOI2003\] Farey Sequence](https://www.luogu.com.cn/problem/P8058)
 -   [UVa 12995. Farey Sequence](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=862&page=show_problem&problem=4878)
 -   [UVa 10408. Farey Sequences](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=16&page=show_problem&problem=1349)
 -   [UVa 12438. Farey Polygon](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=279&page=show_problem&problem=3869)
 -   [AtCoder ARC123F. Insert Addition](https://atcoder.jp/contests/arc123/tasks/arc123_f)
 
-需要在 Stern–Brocot 树上作二分的题目：
+Problems that need binary search on the Stern–Brocot tree:
 
 -   [AtCoder ABC333G. Nearest Fraction](https://atcoder.jp/contests/abc333/tasks/abc333_g)
 -   [SPOJ DIVCNT1 - Counting Divisors](https://www.spoj.com/problems/DIVCNT1/)
 -   [SPOJ AFS3 - Amazing Factor Sequence (hard)](https://www.spoj.com/problems/AFS3/)
 
-## 参考资料与注释
+## References and notes
 
 -   [Stern–Brocot tree - Wikipedia](https://en.wikipedia.org/wiki/Stern%E2%80%93Brocot_tree)
 -   [Calkin–Wilf tree - Wikipedia](https://en.wikipedia.org/wiki/Calkin%E2%80%93Wilf_tree)
 -   [Farey sequence - Wikipedia](https://en.wikipedia.org/wiki/Farey_sequence)
 
-**本页面部分内容译自博文 [Дерево Штерна-Броко. Ряд Фарея](http://e-maxx.ru/algo/stern_brocot_farey) 与其英文翻译版 [The Stern-Brocot Tree and Farey Sequences](https://cp-algorithms.com/others/stern_brocot_tree_farey_sequences.html)．其中俄文版版权协议为 Public Domain + Leave a Link；英文版版权协议为 CC-BY-SA 4.0．本页面另有部分内容译自博文 [Continued fractions](https://cp-algorithms.com/algebra/continued-fractions.html)，版权协议为 CC-BY-SA 4.0．内容均有改动．**
+**Parts of this page are translated from the article [Дерево Штерна-Броко. Ряд Фарея](http://e-maxx.ru/algo/stern_brocot_farey) and its English translation [The Stern-Brocot Tree and Farey Sequences](https://cp-algorithms.com/others/stern_brocot_tree_farey_sequences.html). The Russian version is licensed under Public Domain + Leave a Link; the English version is licensed under CC-BY-SA 4.0. Other parts of this page are translated from the article [Continued fractions](https://cp-algorithms.com/algebra/continued-fractions.html), licensed under CC-BY-SA 4.0. All content has been modified.**
 
-[^mediant]: 译名来自张明尧、张凡翻译的《具体数学》第 4.5 节．
+[^mediant]: The Chinese term for "mediant" used in the original page follows the Chinese translation of *Concrete Mathematics* by Zhang Mingyao and Zhang Fan, Section 4.5.

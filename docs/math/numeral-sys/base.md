@@ -1,10 +1,10 @@
 author: c-forrest, Enter-tainer, hhc0001, Ir1d, KingMario, ksyx, Lutra-Fs, MegaOwIer, niujiaxing, StudyingFather, Tiphereth-A, TOMWT-qwq, ZnPdCo
 
-**进位制**，又称 **进位系统**（carry system）、**进制系统**、**位置记法**（positional notation）、**位值记数法**（place-value notation）、**位置数值系统**（positional numeral system），是一种能用有限种符号表示所有自然数的数字系统．一种进位制可以使用的符号数目称为 **基数**（radix）或 **底数**（base），基数为 $n$ 的进位制称为 $n$ 进制（$n>1$），例如我们最常用的十进制，通常只使用 `0, 1, 2, 3, 4, 5, 6, 7, 8, 9` 这十个符号来记数．进位指的是「当一个数字的某一位达到基数时，将其置为 0 并使高一位的数加一」的操作．
+A **positional numeral system**, also called a **carry system**, **base system**, **positional notation** or **place-value notation**, is a numeral system that can represent every natural number with a finite set of symbols. The number of symbols a system uses is called its **radix** or **base**. A system with base $n$ is called base-$n$ ($n>1$). For example, the decimal system we use every day normally uses just the ten symbols `0, 1, 2, 3, 4, 5, 6, 7, 8, 9`. A carry is the operation "when a digit reaches the base, set it to 0 and add one to the next higher digit".
 
-一般地，我们常将一个 $n$ 进制的数记作 $(a_k\cdots a_1a_0)_n$、$(a_k\cdots a_1a_0)_{(n)}$、${a_k\cdots a_1a_0}_{(n)}$、${a_k\cdots a_1a_0}_{n}$ 等．若基数隐含在上下文中我们也可以省略下标．注意此处的 $a_k\cdots a_1a_0$ 并不是 $k+1$ 个数的乘积，而是一串序列．
+In general, a base-$n$ number is written as $(a_k\cdots a_1a_0)_n$, $(a_k\cdots a_1a_0)_{(n)}$, ${a_k\cdots a_1a_0}_{(n)}$, ${a_k\cdots a_1a_0}_{n}$ and so on. If the base is clear from context, the subscript can be dropped. Note that $a_k\cdots a_1a_0$ here is not a product of $k+1$ numbers but a sequence of digits.
 
-对于 $k$ 进制数 $a_n\cdots a_1a_0$，其表示的值为 $a_nk^n+\cdots+a_1k^1+a_0k^0=\sum_{i=0}^n a_ik^i$；对一个数 $m$，设其 $k$ 进制下的表示为 $a_n\cdots a_1a_0$，则有：
+A base-$k$ number $a_n\cdots a_1a_0$ has the value $a_nk^n+\cdots+a_1k^1+a_0k^0=\sum_{i=0}^n a_ik^i$. For a number $m$ whose base-$k$ representation is $a_n\cdots a_1a_0$, we have:
 
 $$
 \begin{array}{cc}
@@ -15,26 +15,26 @@ $$
 \end{array}
 $$
 
-其中 $f(x)=\lfloor x\rfloor$．
+where $f(x)=\lfloor x\rfloor$.
 
-数 $n$ 在 $k$ 进制下表示的长度为 $\lceil\log_k (n+1)\rceil$．
+The base-$k$ representation of $n$ has length $\lceil\log_k (n+1)\rceil$.
 
-我们一般通过添加小数点「$.$」来表示小数[^note4]、添加负号「$-$」来表示负数、在小数末尾的一段上添加上划线表示无限循环小数等．为了方便阅读，我们可以每隔若干数位添加间隔符号（如空格、$,$、`'` 等），如 $12~345$ 表示 $12345$．
+We usually write fractions with a radix point "$.$"[^note4], negative numbers with a minus sign "$-$", and repeating decimals with a bar over the repeating part. To make long numbers easier to read, we can insert a separator every few digits (such as a space, $,$, or `'`); for example, $12~345$ means $12345$.
 
-在计算机中，比较常用的进位制有二进制、八进制和十六进制．
+In computing, the most common bases are binary, octal and hexadecimal.
 
-## 不同进位制间的转换
+## Converting between bases
 
-### 十进制转其他进制
+### From decimal to other bases
 
-这里以二进制为例来演示，其他进制的原理与其类似．
+We use binary as the example here; other bases work the same way.
 
-整数部分，把十进制数不断执行除 $2$ 操作，直至商数为 $0$，之后从下到上，取所有余数的数字，即为二进制的整数部分数字．小数部分，则用其乘 $2$，取其整数部分的结果，再用计算后的小数部分依此重复计算，算到小数部分全为 $0$ 为止，之后从上到下，取所有计算后整数部分的数字，即为二进制的小数部分数字．
+For the integer part, keep dividing the decimal number by $2$ until the quotient is $0$. Then read all the remainders from bottom to top; these are the digits of the binary integer part. For the fractional part, multiply it by $2$ and take the integer part of the result. Repeat with the new fractional part until the fractional part becomes $0$. Then read all the integer parts from top to bottom; these are the digits of the binary fractional part.
 
-???+ example "例子"
-    将 $35.25$ 转化为二进制数．
+???+ example "Example"
+    Convert $35.25$ to binary.
     
-    整数部分：
+    Integer part:
     
     $$
     \begin{aligned}
@@ -47,7 +47,7 @@ $$
     \end{aligned}
     $$
     
-    小数部分：
+    Fractional part:
     
     $$
     \begin{aligned}
@@ -56,19 +56,19 @@ $$
     \end{aligned}
     $$
     
-    即 $35.25 = (100011.01)_2$．
+    So $35.25 = (100011.01)_2$.
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     --8<-- "docs/math/code/base/base_1.cpp:from_dec"
     ```
 
-### 其他进制转十进制
+### From other bases to decimal
 
-还是以二进制为例．二进制数转换为十进制数，只需将每个位的值，乘以 $2^i$ 次即可，其中 $i$ 为当前位的位数，个位的位数为 $0$．
+Again we use binary as the example. To convert a binary number to decimal, multiply each digit by $2^i$ and add them up, where $i$ is the position of the digit, and the ones digit has position $0$.
 
-???+ example "例子"
-    将 $(11010.01)_{2}$ 转换为十进制数．
+???+ example "Example"
+    Convert $(11010.01)_{2}$ to decimal.
     
     $$
     \begin{aligned}
@@ -78,64 +78,64 @@ $$
     \end{aligned}
     $$
     
-    即 $(11010.01)_2 = (26.25)_{10}$．
+    So $(11010.01)_2 = (26.25)_{10}$.
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     --8<-- "docs/math/code/base/base_1.cpp:to_dec"
     ```
 
-### 二进制/八进制/十六进制间的相互转换
+### Converting between binary, octal and hexadecimal
 
-一个八进制位可以用 3 个二进制位来表示（因为 $2^3 = 8$），一个十六进制位可以用 4 个二进制位来表示（$2^4 = 16$），反之同理．
+One octal digit can be written as 3 binary digits (because $2^3 = 8$), and one hexadecimal digit can be written as 4 binary digits ($2^4 = 16$). The reverse works the same way.
 
-## 补数法
+## Method of complements
 
-另请参阅：[反码与补码](../bit.md#整数与位序列)
+See also: [ones' complement and two's complement](../bit.md#整数与位序列)
 
-**补数法**（method of complements）是用正数表示负数，使得可以用和正数加法相同的算法/电路/机械结构来计算减法的方法．补数法广泛用于计算器和计算机的设计中，用以简化结构．
+The **method of complements** represents negative numbers using positive numbers, so that subtraction can be done with the same algorithm, circuit or mechanism as addition of positive numbers. It is widely used in the design of calculators and computers to simplify their structure.
 
-对 $b$ 进制下 $n$ 位数 $a$，其 **数基补数**（radix complement，称为 $b$ 的补数）是 $b^n-a$，其 **缩减数基补数**（diminished radix complement，称为 $b-1$ 的补数，简称 **减补数**）是 $b^n-1-a$．在二进制下，数基补数叫做 $2$ 的补数（two's complement），又叫做 **补码**；缩减数基补数叫做 $1$ 的补数（ones' complement），又叫做 **反码**；在十进制下，数基补数又叫做 $10$ 的补数（ten's complement），缩减数基补数又叫做 $9$ 的补数（nine's complement）；其他进制以此类推．
+For an $n$-digit base-$b$ number $a$, its **radix complement** (called the $b$'s complement) is $b^n-a$, and its **diminished radix complement** (called the $(b-1)$'s complement) is $b^n-1-a$. In binary, the radix complement is called the two's complement, and the diminished radix complement is called the ones' complement. In decimal, the radix complement is called the ten's complement, and the diminished radix complement is called the nine's complement. Other bases follow the same pattern.
 
-对 $b$ 进制下的 $n$ 位数 $x,y$，当计算 $x-y$ 时，我们有如下方法（若结果超过 $n$ 位，则舍弃高位）：
+For $n$-digit base-$b$ numbers $x,y$, we can compute $x-y$ in the following ways (if the result has more than $n$ digits, drop the high digits):
 
-1.  考虑 $x$ 的减补数 $x'=b^n-1-x$，计算 $x'+y=b^n-1-x+y$，则该结果的减补数即为答案．
-2.  考虑 $y$ 的减补数 $y'=b^n-1-y$，计算 $x+y'=b^n-1+x-y$，直接加一即为答案．
-3.  考虑 $x$ 的数基补数 $x'=b^n-x$，计算 $x'+y=b^n-x+y$，则该结果的数基补数即为答案．
-4.  考虑 $y$ 的数基补数 $y'=b^n-y$，计算 $x+y'=b^n+x-y$，此即为答案．
+1.  Take the diminished radix complement of $x$, $x'=b^n-1-x$, and compute $x'+y=b^n-1-x+y$. The diminished radix complement of this result is the answer.
+2.  Take the diminished radix complement of $y$, $y'=b^n-1-y$, and compute $x+y'=b^n-1+x-y$. Adding one gives the answer.
+3.  Take the radix complement of $x$, $x'=b^n-x$, and compute $x'+y=b^n-x+y$. The radix complement of this result is the answer.
+4.  Take the radix complement of $y$, $y'=b^n-y$, and compute $x+y'=b^n+x-y$. This is the answer.
 
-另外，对 $k$ 进制下的数，我们设 $d=k-1$，则 $\cdots dd=:\overline{d}=\sum_{i=0}^{\infty} dk^i=-1$，所以对 $n$ 位数 $x$，设其数基补数在 $k$ 进制下的表示为 $a_{n-1}\cdots a_1a_0$，则 $\overline{d}a_{n-1}\cdots a_1a_0$ 即为 $\sum_{i=0}^{n-1}a_ik^i+\sum_{i=n}^{\infty} dk^i=k^n-x+(-k^n)=-x$．这种「无限位的数」的思想可以推广为 [**$p$ 进数**](https://en.wikipedia.org/wiki/P-adic_number)（$p$-adic number）．
+Also, for base-$k$ numbers, let $d=k-1$. Then $\cdots dd=:\overline{d}=\sum_{i=0}^{\infty} dk^i=-1$. So for an $n$-digit number $x$ whose radix complement has base-$k$ representation $a_{n-1}\cdots a_1a_0$, the expression $\overline{d}a_{n-1}\cdots a_1a_0$ equals $\sum_{i=0}^{n-1}a_ik^i+\sum_{i=n}^{\infty} dk^i=k^n-x+(-k^n)=-x$. This idea of "numbers with infinitely many digits" can be generalized to [**$p$-adic numbers**](https://en.wikipedia.org/wiki/P-adic_number).
 
-此外，我们有一个关于补数和无限循环小数的有趣定理：
+There is also an interesting theorem about complements and repeating decimals:
 
-???+ note "Midy 定理"
-    设 $a$ 是正整数，$p$ 是正素数，$a/p$ 在 $b$ 进制下的表示为 $0.\overline{a_1a_2\cdots a_l}$，其中 $l$ 为（最短）循环节长度．若 $l$ 是偶数[^note5]，设 $l=2k$，则 $a_1a_2\cdots a_k$ 是 $a_{k+1}a_{k+2}\cdots a_{2k}$ 的减补数，即：
+???+ note "Midy's theorem"
+    Let $a$ be a positive integer and $p$ a positive prime, and let the base-$b$ representation of $a/p$ be $0.\overline{a_1a_2\cdots a_l}$, where $l$ is the (shortest) period length. If $l$ is even[^note5], say $l=2k$, then $a_1a_2\cdots a_k$ is the diminished radix complement of $a_{k+1}a_{k+2}\cdots a_{2k}$, that is:
     
-    -   $a_i+a_{i+k}=b$，
-    -   $a_1a_2\cdots a_k+a_{k+1}a_{k+2}\cdots a_{2k}=b^k-1$．
+    -   $a_i+a_{i+k}=b$,
+    -   $a_1a_2\cdots a_k+a_{k+1}a_{k+2}\cdots a_{2k}=b^k-1$.
     
-    进一步，若 $l$ 有非平凡因子 $k$，设 $l=nk$，则 $\sum_{i=0}^{n-1}a_{ik+1}a_{ik+2}\cdots a_{(i+1)k}$ 是 $b^k-1$ 的倍数．
+    More generally, if $l$ has a nontrivial factor $k$, say $l=nk$, then $\sum_{i=0}^{n-1}a_{ik+1}a_{ik+2}\cdots a_{(i+1)k}$ is a multiple of $b^k-1$.
 
-??? example "例子"
-    对于 $1/19=0.\overline{052~631~578~947~368~421}=0.\overline{032~745}_{(8)}$，我们有：
+??? example "Example"
+    For $1/19=0.\overline{052~631~578~947~368~421}=0.\overline{032~745}_{(8)}$, we have:
     
-    -   $052~631~578+947~368~421=999~999~999$，
-    -   $052+631+578+947+368+421=3\times 999$，
-    -   $032_{(8)}+745_{(8)}=777_{(8)}$，
-    -   $03_{(8)}+27_{(8)}+45_{(8)}=77_{(8)}$．
+    -   $052~631~578+947~368~421=999~999~999$,
+    -   $052+631+578+947+368+421=3\times 999$,
+    -   $032_{(8)}+745_{(8)}=777_{(8)}$,
+    -   $03_{(8)}+27_{(8)}+45_{(8)}=77_{(8)}$.
 
-??? note "证明"
-    对定理中的 $a,b,p,l,n,k$，不难发现 $1\leq a<p$，$b>1$ 且 $(a,p)=(b,p)=1$．
+??? note "Proof"
+    For $a,b,p,l,n,k$ as in the theorem, it is easy to see that $1\leq a<p$, $b>1$ and $(a,p)=(b,p)=1$.
     
-    对整数 $0\leq i<l$，令 $f(i)=b^i\cdot a/p-\lfloor b^i\cdot a/p\rfloor$，我们有
+    For integers $0\leq i<l$, let $f(i)=b^i\cdot a/p-\lfloor b^i\cdot a/p\rfloor$. Then
     
     $$
     0<f(i)=0.\overline{a_{i+1}a_{i+2}\cdots a_{nk}a_1a_2\cdots a_i}<1 \implies 0<pf(i)<p.
     $$
     
-    注意到 $pf(i)\in\mathbf{N}_+$ 且 $pf(i)\equiv ab^i\pmod p$，因此 $pf(i)=ab^i\bmod p$．
+    Note that $pf(i)\in\mathbf{N}_+$ and $pf(i)\equiv ab^i\pmod p$, so $pf(i)=ab^i\bmod p$.
     
-    令 $S_n=\sum_{i=0}^{n-1}f(ik)=\sum_{i=0}^{n-1}0.\overline{a_{ik+1}a_{ik+2}\cdots a_{nk}a_1a_2\cdots a_{ik}}$，我们可以在各个小数间「交换」若干位（例如 $0.\overline{{\color{Orchid}{14}}{\color{RoyalBlue}{28}}{\color{YellowGreen}{57}}}+0.\overline{{\color{RoyalBlue}{28}}{\color{YellowGreen}{57}}{\color{Orchid}{14}}}+0.\overline{{\color{YellowGreen}{57}}{\color{Orchid}{14}}{\color{RoyalBlue}{28}}}=0.\overline{\color{Orchid}{141414}}+0.\overline{\color{RoyalBlue}{282828}}+0.\overline{\color{YellowGreen}{575757}}=0.\overline{\color{Orchid}{14}}+0.\overline{\color{RoyalBlue}{28}}+0.\overline{\color{YellowGreen}{57}}=14/99+28/99+57/99=1$），则
+    Let $S_n=\sum_{i=0}^{n-1}f(ik)=\sum_{i=0}^{n-1}0.\overline{a_{ik+1}a_{ik+2}\cdots a_{nk}a_1a_2\cdots a_{ik}}$. We can "swap" digit blocks between these fractions (for example, $0.\overline{{\color{Orchid}{14}}{\color{RoyalBlue}{28}}{\color{YellowGreen}{57}}}+0.\overline{{\color{RoyalBlue}{28}}{\color{YellowGreen}{57}}{\color{Orchid}{14}}}+0.\overline{{\color{YellowGreen}{57}}{\color{Orchid}{14}}{\color{RoyalBlue}{28}}}=0.\overline{\color{Orchid}{141414}}+0.\overline{\color{RoyalBlue}{282828}}+0.\overline{\color{YellowGreen}{575757}}=0.\overline{\color{Orchid}{14}}+0.\overline{\color{RoyalBlue}{28}}+0.\overline{\color{YellowGreen}{57}}=14/99+28/99+57/99=1$), so
     
     $$
     \begin{aligned}
@@ -144,53 +144,53 @@ $$
     \end{aligned}
     $$
     
-    进而
+    and therefore
     
     $$
     pS_n=p\sum_{i=0}^{n-1}a_{ik+1}a_{ik+2}\cdots a_{(i+1)k}/\left(b^k-1\right)= \sum_{i=0}^{n-1} \left(ab^{ik}\bmod p\right),
     $$
     
-    因此
+    which gives
     
     $$
     \sum_{i=0}^{n-1}a_{ik+1}a_{ik+2}\cdots a_{(i+1)k}=\left(b^k-1\right)\frac{\sum_{i=0}^{n-1} \left(ab^{ik}\bmod p\right)}{p}.
     $$
     
-    若 $p\mid \left(b^k-1\right)$，注意到
+    If $p\mid \left(b^k-1\right)$, note that
     
     $$
     \left(b^k-1\right)a/p=a_1a_2\cdots a_k.\overline{a_{k+1}a_{k+2}\cdots a_{nk}a_1a_2\cdots a_k}-0.\overline{a_{1}a_{2}\cdots a_{nk}},
     $$
     
-    则有 $a_{k+1}a_{k+2}\cdots a_{nk}a_1a_2\cdots a_k=a_{1}a_{2}\cdots a_{nk}$，进而 $a_1a_2\cdots a_k=a_{k+1}a_{k+2}\cdots a_{2k}=\dots=a_{(n-1)k+1}a_{(n-1)k+2}\cdots a_{nk}$，即 $0.\overline{a_1a_2\cdots a_l}=0.\overline{a_1a_2\cdots a_k}$，这与 $l$ 的定义矛盾，因此 $p\nmid \left(b^k-1\right)$．
+    so $a_{k+1}a_{k+2}\cdots a_{nk}a_1a_2\cdots a_k=a_{1}a_{2}\cdots a_{nk}$, and hence $a_1a_2\cdots a_k=a_{k+1}a_{k+2}\cdots a_{2k}=\dots=a_{(n-1)k+1}a_{(n-1)k+2}\cdots a_{nk}$, that is, $0.\overline{a_1a_2\cdots a_l}=0.\overline{a_1a_2\cdots a_k}$. This contradicts the definition of $l$, so $p\nmid \left(b^k-1\right)$.
     
-    故存在正整数 $c=\dfrac{\sum_{i=0}^{n-1} \left(ab^{ik}\bmod p\right)}{p}$，使得
+    Therefore there is a positive integer $c=\dfrac{\sum_{i=0}^{n-1} \left(ab^{ik}\bmod p\right)}{p}$ such that
     
     $$
     \sum_{i=0}^{n-1}a_{ik+1}a_{ik+2}\cdots a_{(i+1)k}=c\left(b^k-1\right).
     $$
 
-???+ note "推论"
-    对上述的 $b,n,k,p$，有
+???+ note "Corollary"
+    For $b,n,k,p$ as above,
     
     $$
     \sum_{i=0}^{n-1} b^{ik}\equiv 0\pmod p.
     $$
 
-## 广义进制系统
+## Generalized numeral systems
 
-标准的进制系统中，基数 $b$ 总是一个固定的正数，每个数位在 $b$ 种不同的符号中选取，用以表示一个非负数（不考虑小数点和负号）．实际上仍有许多记数系统和进制系统有类似的特征，但不完全符合进制系统的规定，我们把这样的记数系统称为 **广义进制系统** 或 **非标准进制系统**（Non-standard positional numeral systems）．下面介绍几种常见的广义进制系统．
+In a standard positional system, the base $b$ is always a fixed positive number, and each digit is chosen from $b$ different symbols to represent a non-negative number (ignoring the radix point and minus sign). In fact, many numeral systems share similar features but do not fully follow these rules. We call them **generalized numeral systems** or **non-standard positional numeral systems**. Below are some common ones.
 
-### 双射记数系统
+### Bijective numeration
 
-标准的进制系统并不能和其表示的数字建立双射，如 $1$、$01$、$001$ 表示的数是相同的[^note1]，而 **双射记数系统**（bijective numeral system）可以和其表示的数字建立双射．
+A standard positional system is not a bijection with the numbers it represents; for example, $1$, $01$ and $001$ all represent the same number[^note1]. A **bijective numeral system**, on the other hand, is a bijection with the numbers it represents.
 
-双射 $k$ 进制（$k\geq 1$）使用数集 $\{1,2,\dots,k\}$ 来唯一表示一个数，规则如下：
+Bijective base-$k$ ($k\geq 1$) uses the digit set $\{1,2,\dots,k\}$ to represent each number uniquely, by these rules:
 
-1.  用空串表示 $0$；
-2.  用非空串 $a_n\cdots a_1a_0$ 表示数 $a_nk^n+\cdots+a_1k^1+a_0k^0=\sum_{i=0}^n a_ik^i$．
+1.  The empty string represents $0$;
+2.  A non-empty string $a_n\cdots a_1a_0$ represents $a_nk^n+\cdots+a_1k^1+a_0k^0=\sum_{i=0}^n a_ik^i$.
 
-对一个正数 $m$，设其双射 $k$ 进制下的表示为 $a_n\cdots a_1a_0$，则有：
+For a positive number $m$ whose bijective base-$k$ representation is $a_n\cdots a_1a_0$, we have:
 
 $$
 \begin{array}{cc}
@@ -201,71 +201,71 @@ $$
 \end{array}
 $$
 
-其中 $f(x)=\lceil x\rceil-1$．
+where $f(x)=\lceil x\rceil-1$.
 
-例如 Microsoft Excel 的列标签采用的就是双射 $26$ 进制．
+For example, Microsoft Excel's column labels use bijective base-$26$.
 
-在双射记数系统下，我们有 [一进制](https://en.wikipedia.org/wiki/Unary_numeral_system)，一进制下的非空串只由 $1$ 构成，串的长度即为其表示的数．
+Bijective numeration includes the [unary system](https://en.wikipedia.org/wiki/Unary_numeral_system). In unary, a non-empty string consists only of $1$s, and its length is the number it represents.
 
-类似 [补数法](#补数法) 下的叙述，在 $k>1$ 的双射 $k$ 进制下，我们设 $d=k-1$，则 $\cdots dd=:\overline{d}=\sum_{i=0}^{\infty} dk^i=-1$，进而 $\overline{d}k=0$，所以设 $x$ 在双射 $k$ 进制下的表示为 $a_{n-1}\cdots a_1a_0$，则 $\overline{d}ka_{n-1}\cdots a_1a_0$ 即为 $-x$．
+Similar to the discussion under [method of complements](#method-of-complements), in bijective base-$k$ with $k>1$, let $d=k-1$. Then $\cdots dd=:\overline{d}=\sum_{i=0}^{\infty} dk^i=-1$, and so $\overline{d}k=0$. So if the bijective base-$k$ representation of $x$ is $a_{n-1}\cdots a_1a_0$, then $\overline{d}ka_{n-1}\cdots a_1a_0$ represents $-x$.
 
-下面是双射 $k$ 进制数的一些性质：
+Here are some properties of bijective base-$k$ numbers:
 
--   长度为 $l\geq 0$ 的数共有 $k^l$ 种．
--   $k\geq 2$ 时，数 $n$ 在双射 $k$ 进制下表示的长度为 $\lfloor\log_k (n+1)(k-1)\rfloor$．
--   $k\geq 2$ 时，若一个数 $n$ 在 $k$ 进制下的表示中不含 $0$，则其在 $k$ 进制下的表示和在双射 $k$ 进制下的表示相同．
+-   There are $k^l$ numbers of length $l\geq 0$.
+-   For $k\geq 2$, the bijective base-$k$ representation of $n$ has length $\lfloor\log_k (n+1)(k-1)\rfloor$.
+-   For $k\geq 2$, if the base-$k$ representation of $n$ contains no $0$, then its base-$k$ and bijective base-$k$ representations are the same.
 
-双射 $k$ 进制转十进制和 $k$ 进制转十进制的代码相同，下面是十进制转双射 $k$ 进制的参考实现
+Converting bijective base-$k$ to decimal uses the same code as converting base-$k$ to decimal. Below is a reference implementation for converting decimal to bijective base-$k$.
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     --8<-- "docs/math/code/base/base_1.cpp:from_dec_bi"
     ```
 
-### 有符号位数进制
+### Signed-digit representation
 
-有的进位制系统允许数位中出现负数，例如 [平衡三进制](./balanced-ternary.md)．
+Some positional systems allow negative digits, such as [balanced ternary](./balanced-ternary.md).
 
-### Gray 码
+### Gray code
 
-主条目：[格雷码](./gray-code.md)
+Main article: [Gray code](./gray-code.md)
 
-Gray 码又叫 **循环二进制码** 或 **反射二进制码**（reflected binary code，RBC），是一种特殊的二进制数字系统，常用于数据校验中．
+Gray code, also called **cyclic binary code** or **reflected binary code** (RBC), is a special binary numeral system often used for error checking.
 
-### 非正基数进制
+### Non-positive bases
 
-我们知道对于 $k$ 进制数 $a_n\cdots a_1a_0$，其表示的值为 $\sum_{i=0}^n a_ik^i$，我们稍加修改即可定义 $-k$ 进制数 ${a_n\cdots a_1a_0}_{(-k)}$ 表示 $\sum_{i=0}^n a_i(-k)^i$，其中 $a_n,\dots,a_1,a_0\in \{0,1,\dots,k-1\}$．例如 $12345_{(-10)}=8265_{(10)}$．这种进制系统叫做 [**负底数进制**](https://en.wikipedia.org/wiki/Negative_base)（negative-base system）．
+We know that a base-$k$ number $a_n\cdots a_1a_0$ has the value $\sum_{i=0}^n a_ik^i$. With a small change, we can define a base-$(-k)$ number ${a_n\cdots a_1a_0}_{(-k)}$ to mean $\sum_{i=0}^n a_i(-k)^i$, where $a_n,\dots,a_1,a_0\in \{0,1,\dots,k-1\}$. For example, $12345_{(-10)}=8265_{(10)}$. This is called a [**negative-base system**](https://en.wikipedia.org/wiki/Negative_base).
 
-类似地，我们也可以定义 [**复底数进制**](https://en.wikipedia.org/wiki/Complex-base_system)（complex-base system），如 [**$2\mathrm{i}$ 进制**](https://en.wikipedia.org/wiki/Quater-imaginary_base)（quater-imaginary base、quater-imaginary numeral system），我们还可以定义 [**非整数进位制**](https://en.wikipedia.org/wiki/Non-integer_base_of_numeration)（non-integer base of numeration）用于表示实数的 **$\beta$ 展开**（$\beta$-expansion）等．
+Similarly, we can define a [**complex-base system**](https://en.wikipedia.org/wiki/Complex-base_system), such as the [**base-$2\mathrm{i}$ system**](https://en.wikipedia.org/wiki/Quater-imaginary_base) (quater-imaginary base, quater-imaginary numeral system). We can also define a [**non-integer base of numeration**](https://en.wikipedia.org/wiki/Non-integer_base_of_numeration) to represent real numbers as **$\beta$-expansions**, and so on.
 
-### 混合基数进制
+### Mixed radix
 
-标准的进制系统中，每一个数位对应的基数都是固定的，而混合基数进制允许每一个数位对应不同的基数．混合基数进制系统最常见的应用就是计时：小时采用 $24$ 进制，分钟和秒采用 $60$ 进制．
+In a standard positional system, every digit has the same base. A mixed-radix system lets each digit have a different base. The most common use of mixed radix is timekeeping: hours use base $24$, while minutes and seconds use base $60$.
 
-$a_n\cdots a_1a_0$ 在 $b$ 进制下表示的数为 $\sum_{i=0}^n a_ib^i$，而在混合基数进制下，其表示的数为 $\sum_{i=0}^n a_i\prod_{j=0}^{i-1}b_j$，其中 $b_j$ 为 $a_j$ 对应的基数．
+In base $b$, $a_n\cdots a_1a_0$ represents $\sum_{i=0}^n a_ib^i$. In a mixed-radix system, it represents $\sum_{i=0}^n a_i\prod_{j=0}^{i-1}b_j$, where $b_j$ is the base of digit $a_j$.
 
-在算法竞赛中，最常见的混合基数进制系统是 [**阶乘进制**](https://en.wikipedia.org/wiki/Factorial_number_system)（factorial number system），其中的数可以记作 ${a_n\cdots a_1a_0}_{~!}$，其表示的数为 $\sum_{i=0}^na_i i!$[^note2]．阶乘进制在算法竞赛中的应用可参见 [Lehmer 码/Cantor 展开](../permutation.md#排名)．
+In competitive programming, the most common mixed-radix system is the [**factorial number system**](https://en.wikipedia.org/wiki/Factorial_number_system). A number in it can be written ${a_n\cdots a_1a_0}_{~!}$ and represents $\sum_{i=0}^na_i i!$[^note2]. For its uses in competitive programming, see [Lehmer code / Cantor expansion](../permutation.md#排名).
 
-???+ note "实现（十进制转阶乘进制）"
+???+ note "Implementation (decimal to factorial base)"
     ```cpp
     --8<-- "docs/math/code/base/base_1.cpp:from_dec_factorial"
     ```
 
-???+ note "实现（阶乘进制转十进制）"
+???+ note "Implementation (factorial base to decimal)"
     ```cpp
     --8<-- "docs/math/code/base/base_1.cpp:to_dec_factorial"
     ```
 
-## C++ 中的实现
+## Implementation in C++
 
-对于非负数，C++ 中用 `<前缀><数位><后缀>` 表示一个整数字面量，其中 `<数位>` 和 `<后缀>` 均可以为空．`<后缀>` 用于表示字面量的类型，如 `u` 或 `U` 表示该字面量为 `unsigned`、`l` 或 `L` 表示该字面量为 `long` 等．对于 `<前缀>`：
+For non-negative numbers, C++ writes an integer literal as `<prefix><digits><suffix>`, where `<digits>` and `<suffix>` may both be empty. `<suffix>` gives the type of the literal; for example, `u` or `U` means the literal is `unsigned`, and `l` or `L` means it is `long`. For `<prefix>`:
 
--   当 `<前缀>` 为 `0x` 或 `0X` 时表示十六进制字面量，此时 `<数位>` 中的字符只能在 `0, 1, 2, 3, 4, 5, 6, 7, 8, 9, a, A, b, B, c, C, d, D, e, E, f, F` 中选取．例如 `0x1234ABCD` 为 $\text{1234ABCD}_{(16)}=305~441~741$；
--   当 `<前缀>` 为 `0` 时表示八进制字面量，此时 `<数位>` 中的字符只能在 `0, 1, 2, 3, 4, 5, 6, 7` 中选取．例如 `01234567` 为 $1234567_{(8)}=342391$；[^note3]
--   当 `<前缀>` 为 `1`、`2`、`3`、`4`、`5`、`6`、`7`、`8` 或 `9` 时表示十进制字面量，此时 `<数位>` 中的字符只能在 `0, 1, 2, 3, 4, 5, 6, 7, 8, 9` 中选取；
--   C++14 起，当 `<前缀>` 为 `0b` 或 `0B` 时表示二进制字面量，此时 `<数位>` 中的字符只能在 `0, 1` 中选取．例如 `0b11001010` 为 $11001010_{(2)}=202$．
+-   If `<prefix>` is `0x` or `0X`, the literal is hexadecimal, and the characters in `<digits>` must be chosen from `0, 1, 2, 3, 4, 5, 6, 7, 8, 9, a, A, b, B, c, C, d, D, e, E, f, F`. For example, `0x1234ABCD` is $\text{1234ABCD}_{(16)}=305~441~741$;
+-   If `<prefix>` is `0`, the literal is octal, and the characters in `<digits>` must be chosen from `0, 1, 2, 3, 4, 5, 6, 7`. For example, `01234567` is $1234567_{(8)}=342391$;[^note3]
+-   If `<prefix>` is `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8` or `9`, the literal is decimal, and the characters in `<digits>` must be chosen from `0, 1, 2, 3, 4, 5, 6, 7, 8, 9`;
+-   Since C++14, if `<prefix>` is `0b` or `0B`, the literal is binary, and the characters in `<digits>` must be chosen from `0, 1`. For example, `0b11001010` is $11001010_{(2)}=202$.
 
-## 参考资料与注释
+## References and notes
 
 -   [Positional notation - Wikipedia](https://en.wikipedia.org/wiki/Positional_notation)
 -   [Method of complements - Wikipedia](https://en.wikipedia.org/wiki/Method_of_complements)
@@ -274,12 +274,12 @@ $a_n\cdots a_1a_0$ 在 $b$ 进制下表示的数为 $\sum_{i=0}^n a_ib^i$，而�
 -   [Midy's theorem - Wikipedia](https://en.wikipedia.org/wiki/Midy%27s_theorem)
 -   [N3472 - Binary Literals in the C++ Core Language](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2012/n3472.pdf)
 
-[^note1]: 我们把最高的非 $0$ 位之前的 $0$ 称为 [**前导零**](https://en.wikipedia.org/wiki/Leading_zero)（leading zero）．类似地，我们可以定义 [**后导零**](https://en.wikipedia.org/wiki/Trailing_zero)（trailing zero）．
+[^note1]: The zeros before the highest non-zero digit are called [**leading zeros**](https://en.wikipedia.org/wiki/Leading_zero). Similarly, we can define [**trailing zeros**](https://en.wikipedia.org/wiki/Trailing_zero).
 
-[^note2]: $a_i$ 对应的基数是 $i+1$，$0\leq a_i\leq i$．注意到 $(n+1)!-n!=n\cdot n!$，所以数在阶乘进制下的表示在去除前导零的情况下是唯一的．
+[^note2]: The base of $a_i$ is $i+1$, and $0\leq a_i\leq i$. Note that $(n+1)!-n!=n\cdot n!$, so the factorial-base representation of a number is unique once leading zeros are removed.
 
-[^note3]: `0` 是八进制字面量．
+[^note3]: `0` itself is an octal literal.
 
-[^note4]: 有的地区使用「$,$」表示小数点．
+[^note4]: Some regions use "$,$" as the decimal point.
 
-[^note5]: 当 $a=1$ 时，在十进制下满足该条件的素数序列是 [A028416](https://oeis.org/A028416)．
+[^note5]: For $a=1$, the primes satisfying this condition in decimal form the sequence [A028416](https://oeis.org/A028416).

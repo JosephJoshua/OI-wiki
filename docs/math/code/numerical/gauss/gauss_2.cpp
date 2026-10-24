@@ -4,10 +4,10 @@
 #include <vector>
 
 // --8<-- [start:core]
-std::bitset<1010> matrix[2010];  // 增广矩阵，0 位置为常数
+std::bitset<1010> matrix[2010];  // augmented matrix; position 0 holds the constant term
 
-// n 为未知数个数，m 为方程个数，返回方程组的解
-// 多解 / 无解返回空的 vector
+// n is the number of unknowns, m is the number of equations; returns the solution
+// returns an empty vector if there are infinitely many solutions or none
 std::vector<bool> GaussJordanElimination(int n, int m) {
   for (int i = 1; i <= n; i++) {
     int cur = i;
@@ -17,7 +17,7 @@ std::vector<bool> GaussJordanElimination(int n, int m) {
     for (int j = 1; j <= m; j++)
       if (i != j && matrix[j].test(i)) matrix[j] ^= matrix[i];
   }
-  // 剩余行的系数均为 0，常数项为 1 时无解
+  // the remaining rows have all coefficients 0; no solution if a constant term is 1
   for (int i = n + 1; i <= m; i++)
     if (matrix[i].test(0)) return std::vector<bool>(0);
   std::vector<bool> ans(n + 1);
