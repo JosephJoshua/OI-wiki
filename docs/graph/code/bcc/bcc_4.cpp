@@ -15,7 +15,7 @@ int hd[N], tot;
 
 void add(int u, int v) { e[++tot] = {v, hd[u]}, hd[u] = tot; }
 
-void uadd(int u, int v) { add(u, v), add(v, u); }  // 链式前向星
+void uadd(int u, int v) { add(u, v), add(v, u); }  // linked forward star (edge list)
 
 using ll = long long;
 #define P(x, y) ((ll)min(x, y) * N + (ll)max(x, y))
@@ -32,44 +32,44 @@ struct hash {
     v1[y].push_back(x), v2[y].push_back(0);
     return v2[y].back();
   }
-} re, be;  // 用 vector 实现 hash 表，因为本题时空限制均比较紧
+} re, be;  // hash table built on vectors, since both time and memory limits are tight
 
-// re 判断是否有重边，be 记录边是不是桥
+// re: checks for multi-edges; be: marks whether an edge is a bridge
 
 // #define P(x, y) {min(x, y), max(x, y)}
 // using pii = pair<int, int>;
-// map<pii, int> re, be; // 不紧时可以用 map 实现 hash 表
+// map<pii, int> re, be; // if limits are loose, a map works as the hash table
 
-int dep[N], bz[N], sum[N];  // 记录深度、差分值、子树查分和
-int vis[N], fa[N];          // 记录是否访问过，分组编号
+int dep[N], bz[N], sum[N];  // depth, difference value, subtree sum of differences
+int vis[N], fa[N];          // visited flag, group id
 
-void dfs(int x, int pre) {  // 计算每个点的深度和单点查分
-  if (dep[x] < dep[pre]) bz[x]++, bz[pre]--;  // 回到祖先，更改差分值
+void dfs(int x, int pre) {  // compute each vertex's depth and its difference value
+  if (dep[x] < dep[pre]) bz[x]++, bz[pre]--;  // edge back to an ancestor: update difference values
   if (dep[x]) return;
   dep[x] = dep[pre] + 1;
   for (int i = hd[x]; i; i = e[i].nt) dfs(e[i].to, x);
 }
 
-int dfs2(int x, int pre) {  // 处理子树查分
+int dfs2(int x, int pre) {  // compute subtree sums of differences
   if (vis[x] == 1) return sum[x];
   vis[x] = 1, sum[x] = bz[x];
   for (int i = hd[x]; i; i = e[i].nt) {
     int v = e[i].to;
     if (dep[v] > dep[x] && !vis[v]) sum[x] += dfs2(v, x);
   }
-  if (sum[x] == 0 && re[P(x, pre)] == 1) be[P(x, pre)] = 1;  // 记录桥
+  if (sum[x] == 0 && re[P(x, pre)] == 1) be[P(x, pre)] = 1;  // mark bridge
   return sum[x];
 }
 
 int cnt;
 vector<int> ans[N];
 
-void dfs3(int x) {  // 计算双连通分量
+void dfs3(int x) {  // compute biconnected components
   if (fa[x]) return;
   ans[cnt].push_back(x), fa[x] = cnt;
   for (int i = hd[x]; i; i = e[i].nt) {
     int v = e[i].to;
-    if (be[P(x, v)] != 1) dfs3(v);  // 不是桥，递归处理子树
+    if (be[P(x, v)] != 1) dfs3(v);  // not a bridge: recurse into the subtree
   }
 }
 

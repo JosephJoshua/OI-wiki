@@ -1,58 +1,58 @@
 /*
-洛谷 P3388 【模板】割点（割顶）
+Luogu P3388 [Template] Cut Vertices (Articulation Points)
 */
 #include <iostream>
 #include <vector>
 using namespace std;
-int n, m;  // n：点数 m：边数
+int n, m;  // n: number of vertices, m: number of edges
 int dfn[100001], low[100001], idx, res;
-// dfn：记录每个点的时间戳
-// low：能不经过父亲到达最小的编号，idx：时间戳，res：答案数量
-bool vis[100001], flag[100001];  // flag: 答案 vis：标记是否重复
-vector<int> edge[100001];        // 存图用的
+// dfn: timestamp of each vertex
+// low: smallest timestamp reachable without going through the parent; idx: timestamp counter; res: number of answers
+bool vis[100001], flag[100001];  // flag: answer; vis: visited mark
+vector<int> edge[100001];        // adjacency lists
 
-void Tarjan(int u, int fa) {  // u 当前点的编号，fa 自己爸爸的编号
-  vis[u] = true;              // 标记
-  low[u] = dfn[u] = ++idx;    // 打上时间戳
-  int child = 0;              // 每一个点儿子数量
-  for (const auto &v : edge[u]) {  // 访问这个点的所有邻居 （C++11）
+void Tarjan(int u, int fa) {  // u: current vertex, fa: its parent
+  vis[u] = true;              // mark
+  low[u] = dfn[u] = ++idx;    // assign timestamp
+  int child = 0;              // number of children of this vertex
+  for (const auto &v : edge[u]) {  // visit all neighbors of this vertex (C++11)
     if (!vis[v]) {
-      child++;                       // 多了一个儿子
-      Tarjan(v, u);                  // 继续
-      low[u] = min(low[u], low[v]);  // 更新能到的最小节点编号
-      if (fa != u && low[v] >= dfn[u] && !flag[u]) {  // 主要代码
-        // 如果不是自己，且不通过父亲返回的最小点符合割点的要求，并且没有被标记过
-        // 要求即为：删了父亲连不上去了，即为最多连到父亲
+      child++;                       // one more child
+      Tarjan(v, u);                  // recurse
+      low[u] = min(low[u], low[v]);  // update the smallest reachable timestamp
+      if (fa != u && low[v] >= dfn[u] && !flag[u]) {  // main logic
+        // if u is not the root, the smallest vertex reachable from v without the parent meets the cut-vertex condition, and u is not marked yet
+        // the condition: without u, v cannot reach above u, i.e. it reaches at most u
         flag[u] = true;
-        res++;  // 记录答案
+        res++;  // count the answer
       }
     } else if (v != fa) {
-      // 如果这个点不是自己的父亲，更新能到的最小节点编号
+      // if v is not the parent, update the smallest reachable timestamp
       low[u] = min(low[u], dfn[v]);
     }
   }
-  // 主要代码，自己的话需要 2 个儿子才可以
+  // main logic: the root needs at least 2 children
   if (fa == u && child >= 2 && !flag[u]) {
     flag[u] = true;
-    res++;  // 记录答案
+    res++;  // count the answer
   }
 }
 
 int main() {
-  cin >> n >> m;                  // 读入数据
-  for (int i = 1; i <= m; i++) {  // 注意点是从 1 开始的
+  cin >> n >> m;                  // read input
+  for (int i = 1; i <= m; i++) {  // note: vertices are numbered from 1
     int x, y;
     cin >> x >> y;
     edge[x].push_back(y);
     edge[y].push_back(x);
-  }  // 使用 vector 存图
-  for (int i = 1; i <= n; i++)  // 因为 Tarjan 图不一定连通
+  }  // store the graph with vectors
+  for (int i = 1; i <= n; i++)  // the graph may be disconnected
     if (!vis[i]) {
-      idx = 0;       // 时间戳初始为 0
-      Tarjan(i, i);  // 从第 i 个点开始，父亲为自己
+      idx = 0;       // reset the timestamp to 0
+      Tarjan(i, i);  // start from vertex i, with itself as parent
     }
   cout << res << endl;
   for (int i = 1; i <= n; i++)
-    if (flag[i]) cout << i << " ";  // 输出结果
+    if (flag[i]) cout << i << " ";  // print the result
   return 0;
 }

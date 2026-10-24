@@ -1,49 +1,49 @@
 author: Ir1d, greyqz, yjl9903, partychicken, ChungZH, qq1010903229, Marcythm, Acfboy, shenshuaijie, Craneplayz
 
-## 引入
+## Introduction
 
-DFS 全称是 [Depth First Search](https://en.wikipedia.org/wiki/Depth-first_search)，中文名是深度优先搜索，是一种用于遍历或搜索树或图的算法．所谓深度优先，就是说每次都尝试向更深的节点走．
+DFS stands for [Depth First Search](https://en.wikipedia.org/wiki/Depth-first_search). It is an algorithm for traversing or searching trees and graphs. "Depth first" means that we always try to go to a deeper node next.
 
-该算法讲解时常常与 BFS 并列，但两者除了都能遍历图的连通块以外，用途完全不同，很少有能混用两种算法的情况．
+It is often taught alongside BFS. But apart from both being able to traverse the connected components of a graph, the two have completely different uses, and there are few situations where you can use either one.
 
-DFS 常常用来指代用递归函数实现的搜索，但实际上两者并不一样．有关该类搜索思想请参阅 [DFS（搜索）](../search/dfs.md).
+The term DFS is often used for any search written as a recursive function, but the two are actually not the same. For that kind of search, see [DFS (search)](../search/dfs.md).
 
-## 过程
+## Process
 
-DFS 最显著的特征在于其 **递归调用自身**．同时与 BFS 类似，DFS 会对其访问过的点打上访问标记，在遍历图时跳过已打过标记的点，以确保 **每个点仅访问一次**．符合以上两条规则的函数，便是广义上的 DFS．
+The most notable feature of DFS is that it **calls itself recursively**. Also, like BFS, DFS marks the vertices it has visited and skips marked vertices while traversing the graph, so that **each vertex is visited only once**. Any function that follows these two rules is a DFS in the broad sense.
 
-具体地说，DFS 大致结构如下：
+Concretely, DFS has roughly the following structure:
 
-    DFS(v) // v 可以是图中的一个顶点，也可以是抽象的概念，如 dp 状态等．
-      在 v 上打访问标记
-      for u in v 的相邻节点
-        if u 没有打过访问标记 then
+    DFS(v) // v can be a vertex of the graph, or something abstract, such as a DP state.
+      mark v as visited
+      for u in neighbors of v
+        if u is not marked as visited then
           DFS(u)
         end
       end
     end
 
-以上代码只包含了 DFS 必需的主要结构．实际的 DFS 会在以上代码基础上加入一些代码，利用 DFS 性质进行其他操作．
+The code above contains only the main structure every DFS needs. A real DFS adds more code on top of it to do other work using the properties of DFS.
 
-## 性质
+## Properties
 
-该算法通常的时间复杂度为 $O(n+m)$，空间复杂度为 $O(n)$，其中 $n$ 表示点数，$m$ 表示边数．注意空间复杂度包含了栈空间，栈空间的空间复杂度是 $O(n)$ 的．在平均 $O(1)$ 遍历一条边的条件下才能达到此时间复杂度，例如用前向星或邻接表存储图；如果用邻接矩阵则不一定能达到此复杂度．
+The algorithm usually runs in $O(n+m)$ time and $O(n)$ space, where $n$ is the number of vertices and $m$ the number of edges. Note that the space includes the stack, which takes $O(n)$ space. This time complexity is only achieved when each edge can be traversed in $O(1)$ on average, for example when the graph is stored as a forward star or an adjacency list; with an adjacency matrix this complexity may not be achieved.
 
-> 备注：目前大部分算法竞赛（包括 NOIP、大部分省选以及 CCF 举办的各项赛事）都支持 **无限栈空间**，即：栈空间不单独限制，但总内存空间仍然受题面限制．但大部分操作系统会对栈空间做额外的限制，因此在本地调试时需要一些方式来取消栈空间限制．
+> Note: most programming contests today (including NOIP, most provincial team selections, and all contests run by CCF) support **unlimited stack space**: the stack is not limited separately, but total memory is still limited by the problem statement. However, most operating systems put an extra limit on stack space, so when debugging locally you need some way to lift the stack limit.
 >
-> -   在 Windows 上，通常的方法是在 **编译选项** 中加入 `-Wl,--stack=1000000000`，表示将栈空间限制设置为 1000000000 字节．
-> -   在 Linux 上，通常的方法是在运行程序前 **在终端内** 执行 `ulimit -s unlimited`，表示栈空间无限．每个终端只需执行一次，对之后每次程序运行都有效．
+> -   On Windows, the usual way is to add `-Wl,--stack=1000000000` to the **compile options**, which sets the stack limit to 1000000000 bytes.
+> -   On Linux, the usual way is to run `ulimit -s unlimited` **in the terminal** before running the program, which makes the stack unlimited. You only need to run it once per terminal; it applies to every later run of the program.
 
-## 实现
+## Implementation
 
-### 栈实现
+### Stack-based implementation
 
-DFS 可以使用 [栈（Stack）](../ds/stack.md) 为遍历中节点的暂存容器来实现；这与用 [队列（Queue）](../ds/queue.md) 实现的 BFS 形成高度对应．
+DFS can be implemented with a [stack](../ds/stack.md) as the temporary container for nodes during traversal; this closely mirrors BFS implemented with a [queue](../ds/queue.md).
 
 === "C++"
     ```cpp
-    vector<vector<int>> adj;  // 邻接表
-    vector<bool> vis;         // 记录节点是否已经遍历
+    vector<vector<int>> adj;  // adjacency list
+    vector<bool> vis;         // whether each node has been visited
     
     void dfs(int s) {
       stack<int> st;
@@ -56,7 +56,7 @@ DFS 可以使用 [栈（Stack）](../ds/stack.md) 为遍历中节点的暂存容
     
         for (int v : adj[u]) {
           if (!vis[v]) {
-            vis[v] = true;  // 确保栈里没有重复元素
+            vis[v] = true;  // make sure the stack has no duplicate elements
             st.push(v);
           }
         }
@@ -66,35 +66,35 @@ DFS 可以使用 [栈（Stack）](../ds/stack.md) 为遍历中节点的暂存容
 
 === "Python"
     ```python
-    # adj : List[List[int]] 邻接表
-    # vis : List[bool] 记录节点是否已经遍历
+    # adj : List[List[int]] adjacency list
+    # vis : List[bool] whether each node has been visited
     
     
     def dfs(s: int) -> None:
-        stack = [s]  # 用列表来模拟栈，把起点加入栈中
-        vis[s] = True  # 起点被遍历
+        stack = [s]  # simulate a stack with a list; push the start
+        vis[s] = True  # the start is visited
     
-        while stack:  # 当栈非空时继续执行
+        while stack:  # keep going while the stack is not empty
             u = (
                 stack.pop()
-            )  # 拿取并丢弃掉最后一个元素（栈顶的元素），可以理解为走到u这个元素
+            )  # take and remove the last element (the top of the stack); think of it as walking to u
     
-            for v in adj[u]:  # 对于与u相邻的每个元素v
-                if not vis[v]:  # 如果v在此前没有走过
-                    vis[v] = True  # 确保栈里没有重复元素
-                    stack.append(v)  # 把v加入栈中
+            for v in adj[u]:  # for each element v adjacent to u
+                if not vis[v]:  # if v has not been visited before
+                    vis[v] = True  # make sure the stack has no duplicate elements
+                    stack.append(v)  # push v onto the stack
     ```
 
-### 递归实现
+### Recursive implementation
 
-函数在递归调用时的求值如同对栈的添加和删除元素的顺序，故函数调用所占据的虚拟地址被称为函数调用栈（Call Stack），DFS 可用递归的方式实现．
+Evaluating recursive function calls follows the same order as pushing and popping elements of a stack, which is why the memory used by function calls is called the call stack. So DFS can be implemented with recursion.
 
-以 [邻接表（Adjacency List）](./save.md#邻接表) 作为图的存储方式：
+Using an [adjacency list](./save.md#邻接表) to store the graph:
 
 === "C++"
     ```cpp
-    vector<vector<int>> adj;  // 邻接表
-    vector<bool> vis;         // 记录节点是否已经遍历
+    vector<vector<int>> adj;  // adjacency list
+    vector<bool> vis;         // whether each node has been visited
     
     void dfs(const int u) {
       vis[u] = true;
@@ -105,8 +105,8 @@ DFS 可以使用 [栈（Stack）](../ds/stack.md) 为遍历中节点的暂存容
 
 === "Python"
     ```python
-    # adj : List[List[int]] 邻接表
-    # vis : List[bool] 记录节点是否已经遍历
+    # adj : List[List[int]] adjacency list
+    # vis : List[bool] whether each node has been visited
     
     
     def dfs(u: int) -> None:
@@ -116,7 +116,7 @@ DFS 可以使用 [栈（Stack）](../ds/stack.md) 为遍历中节点的暂存容
                 dfs(v)
     ```
 
-以 [链式前向星](./save.md#链式前向星) 为例：
+Using a [linked forward star](./save.md#链式前向星) as an example:
 
 === "C++"
     ```cpp
@@ -153,26 +153,26 @@ DFS 可以使用 [栈（Stack）](../ds/stack.md) 为遍历中节点的暂存容
             i = e[i].x
     ```
 
-### DFS 序列
+### DFS order
 
-DFS 序列是指 DFS 调用过程中访问的节点编号的序列．
+The DFS order is the sequence of node indices in the order the DFS visits them.
 
-我们发现，每个子树都对应 DFS 序列中的连续一段（一段区间）．
+Notice that every subtree corresponds to a contiguous segment (an interval) of the DFS order.
 
-### 括号序列
+### Bracket sequence
 
-DFS 进入某个节点的时候记录一个左括号 `(`，退出某个节点的时候记录一个右括号 `)`．
+When the DFS enters a node, record an opening bracket `(`; when it leaves a node, record a closing bracket `)`.
 
-每个节点会出现两次．相邻两个节点的深度相差 1．
+Each node appears twice. The depths of two adjacent nodes differ by 1.
 
-### 一般图上 DFS
+### DFS on general graphs
 
-对于非连通图，只能访问到起点所在的连通分量．
+For a disconnected graph, DFS only reaches the connected component containing the start.
 
-对于连通图，DFS 序列通常不唯一．
+For a connected graph, the DFS order is usually not unique.
 
-注：树的 DFS 序列也是不唯一的．
+Note: the DFS order of a tree is not unique either.
 
-在 DFS 过程中，通过记录每个节点从哪个点访问而来，可以建立一个树结构，称为 DFS 树．DFS 树是原图的一个生成树．
+During DFS, by recording for each node which node it was reached from, we can build a tree structure called the DFS tree. The DFS tree is a spanning tree of the original graph.
 
-[DFS 树](./scc.md#dfs-生成树) 有很多性质，比如可以用来求 [强连通分量](./scc.md)．
+The [DFS tree](./scc.md#dfs-生成树) has many properties; for example, it can be used to find [strongly connected components](./scc.md).

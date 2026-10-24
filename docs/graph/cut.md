@@ -1,42 +1,42 @@
 author: Ir1d, sshwy, GavinZhengOI, Planet6174, ouuan, Marcythm, ylxmf2005, 0xis-cn
 
-相关阅读：[双连通分量](./bcc.md)
+Related reading: [Biconnected components](./bcc.md)
 
-割点和桥更严谨的定义参见 [图论相关概念](./concept.md)．
+For more rigorous definitions of cut vertices and bridges, see [basic graph theory concepts](./concept.md).
 
-## 割点
+## Cut vertices
 
-> 对于一个无向图，如果把一个点删除后这个图的极大连通分量数增加了，那么这个点就是这个图的割点（又称割顶）．
+> In an undirected graph, if deleting a vertex increases the number of maximal connected components, that vertex is a cut vertex (also called an articulation point) of the graph.
 
-### 过程
+### Process
 
-如果我们尝试删除每个点，并且判断这个图的连通性，那么复杂度会特别的高．所以要介绍一个常用的算法：Tarjan．
+If we try deleting each vertex in turn and checking the graph's connectivity, the complexity is very high. So we introduce a commonly used algorithm: Tarjan's algorithm.
 
-首先，我们上一个图：
+First, here is a graph:
 
 ![](./images/cut1.svg)
 
-很容易的看出割点是 2，而且这个图仅有这一个割点．
+It is easy to see that the cut vertex is 2, and it is the only cut vertex in this graph.
 
-首先，我们按照 DFS 序给他打上时间戳（访问的顺序）．
+First, we assign each vertex a timestamp (its visiting order) in DFS order.
 
 ![](./images/cut2.svg)
 
-这些信息被我们保存在一个叫做 `dfn` 的数组中．
+We store this in an array called `dfn`.
 
-还需要另外一个数组 `low`，用它来存储不经过其父亲能到达的最小的时间戳．
+We also need another array `low`, which stores the smallest timestamp a vertex can reach without going through its parent.
 
-例如 `low[2]` 是 1，`low[5]` 和 `low[6]` 是 3．
+For example, `low[2]` is 1, and `low[5]` and `low[6]` are 3.
 
-然后我们开始 DFS，我们判断某个点是否是割点的根据是：对于某个顶点 $u$，如果存在至少一个顶点 $v$（$u$ 的儿子），使得 $low_v \geq dfn_u$，即不能回到祖先，那么 $u$ 点为割点．
+Then we run the DFS. We decide whether a vertex is a cut vertex as follows: for a vertex $u$, if there is at least one vertex $v$ (a child of $u$) with $low_v \geq dfn_u$, that is, $v$ cannot get back to an ancestor, then $u$ is a cut vertex.
 
-此根据惟独不适用于搜索的起始点，其需要特殊考虑：若该点不是割点，则其他路径亦能到达全部结点，因此从起始点只「向下搜了一次」，即在搜索树内仅有一个子结点．如果在搜索树内有两个及以上的儿子，那么他一定是割点了（设想上图从 2 开始搜索，搜索树内应有两个子结点：3 或 4 及 5 或 6）．如果只有一个儿子，那么把它删掉，不会有任何的影响．比如下面这个图，此处形成了一个环．
+This rule does not apply to the starting vertex of the search, which needs special handling. If the start is not a cut vertex, every other vertex can be reached by other paths, so from the start we only "search downward once", that is, it has only one child in the search tree. If it has two or more children in the search tree, it must be a cut vertex (imagine searching the graph above starting from 2: the search tree should have two children, 3 or 4 and 5 or 6). If it has only one child, deleting it has no effect. For example, in the graph below, the vertices form a cycle.
 
 ![](./images/cut3.svg)
 
-我们在访问 1 的儿子时候，假设先 DFS 到了 2，然后标记用过，然后递归往下，来到了 4，4 又来到了 3，当递归回溯的时候，会发现 3 已经被访问过了，所以不是割点．
+When visiting the children of 1, suppose the DFS reaches 2 first, marks it as used, and recurses down to 4, and from 4 to 3. When the recursion backtracks, we find that 3 has already been visited, so 1 is not a cut vertex.
 
-更新 `low` 的伪代码如下：
+The pseudocode for updating `low` is:
 
 $$
 \begin{array}{ll}
@@ -47,36 +47,36 @@ $$
 \end{array}
 $$
 
-### 例题
+### Example problem
 
-[洛谷 P3388【模板】割点（割顶）](https://www.luogu.com.cn/problem/P3388)
+[Luogu P3388 [Template] Cut Vertices (Articulation Points)](https://www.luogu.com.cn/problem/P3388)
 
-??? note "例题代码"
+??? note "Example code"
     ```cpp
     --8<-- "docs/graph/code/cut/cut_1.cpp"
     ```
 
-## 割边（无重边时）
+## Bridges (without multiple edges)
 
-和割点差不多，叫做桥．
+Bridges are much like cut vertices.
 
-> 对于一个无向图，如果删掉一条边后图中的连通分量数增加了，则称这条边为桥或者割边．严谨来说，就是：假设有连通图 $G=\{V,E\}$，$e$ 是其中一条边（即 $e \in E$），如果 $G-e$ 是不连通的，则边 $e$ 是图 $G$ 的一条割边（桥）．
+> In an undirected graph, if deleting an edge increases the number of connected components, that edge is called a bridge or cut edge. More rigorously: let $G=\{V,E\}$ be a connected graph and $e$ one of its edges ($e \in E$). If $G-e$ is disconnected, then $e$ is a bridge (cut edge) of $G$.
 
-比如说，下图中，
+For example, in the graph below,
 
-![割边示例图](./images/bridge1.svg)
+![Bridge example](./images/bridge1.svg)
 
-红色的边就是割边．
+the red edge is a bridge.
 
-### 过程
+### Process
 
-和割点差不多，只要改一处：$low_v>dfn_u$ 就可以了，而且不需要考虑根节点的问题．
+It is almost the same as for cut vertices, with one change: use $low_v>dfn_u$. Also, there is no need to handle the root specially.
 
-割边是和是不是根节点没关系的，原来我们求割点的时候是指点 $v$ 是不可能不经过父节点 $u$ 为回到祖先节点（包括父节点），所以顶点 $u$ 是割点．如果 $low_v=dfn_u$ 表示还可以回到父节点，如果顶点 $v$ 不能回到祖先也没有另外一条回到父亲的路，那么 $u-v$ 这条边就是割边．
+Whether an edge is a bridge has nothing to do with the root. For cut vertices, the condition meant that $v$ cannot get back to an ancestor (including the parent) without going through its parent $u$, so $u$ is a cut vertex. If $low_v=dfn_u$, $v$ can still get back to its parent. If $v$ can neither get back to an ancestor nor has another route back to its parent, then the edge $u-v$ is a bridge.
 
-### 实现
+### Implementation
 
-下面代码实现了对 **无重边** 的无向图求割边，其中，当 `isbridge[x]` 为真时，`(father[x],x)` 为一条割边．
+The code below finds the bridges of an undirected graph **without multiple edges**. When `isbridge[x]` is true, `(father[x],x)` is a bridge.
 
 === "C++"
     ```cpp
@@ -131,19 +131,19 @@ $$
                 low[u] = min(low[u], dfn[v])
     ```
 
-## 割边（有重边时）
+## Bridges (with multiple edges)
 
-然而，上述无重边时的做法在有重边的无向图上是有问题的．
+However, the method above for graphs without multiple edges goes wrong on undirected graphs with multiple edges.
 
-因为两节点间可能不止有一条边，此时它们都不会是桥．
+There may be more than one edge between two vertices, and then none of those edges is a bridge.
 
-### 过程
+### Process
 
-一种思路是将参数 `fa` 改为刚刚走过的边的编号（每条边的编号一致）即可，即将「不用父节点更新」改为「不用来时的边更新」．
+One idea is to change the parameter `fa` to the id of the edge we just came along (both directions of an edge share one id). That is, change "don't update using the parent" to "don't update using the edge we came from".
 
-另一种更简单的思路是设立一个标记判断是否已有一条边抵达父节点，标记后再访问到父节点时正常更新．
+A simpler idea is to keep a flag recording whether one edge to the parent has already been seen. After the flag is set, any further visit to the parent updates as usual.
 
-下面代码实现了对可能 **有重边** 的无向图求割边．
+The code below finds the bridges of an undirected graph that may have **multiple edges**.
 
 === "C++"
     ```cpp
@@ -175,12 +175,12 @@ $$
     }
     ```
 
-## 练习
+## Exercises
 
--   [P3388【模板】割点（割顶）](https://www.luogu.com.cn/problem/P3388)
+-   [P3388 [Template] Cut Vertices (Articulation Points)](https://www.luogu.com.cn/problem/P3388)
 -   [POJ2117 Electricity](http://poj.org/problem?id=2117)
 -   [HDU4738 Caocao's Bridges](https://acm.hdu.edu.cn/showproblem.php?pid=4738)
 -   [HDU2460 Network](https://acm.hdu.edu.cn/showproblem.php?pid=2460)
 -   [POJ1523 SPF](http://poj.org/problem?id=1523)
 
-Tarjan 算法还有许多用途，常用的例如求强连通分量，缩点，还有求 2-SAT 的用途等．
+Tarjan's algorithm has many other uses, such as finding strongly connected components, condensing SCCs, and solving 2-SAT.

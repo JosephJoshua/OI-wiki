@@ -68,12 +68,12 @@ bool check() {
 
   fail_u = 0;
   for (int v = 1; v <= n; v++) {
-    // 同一组共用一次标记，mark[w] == v 表示 w 与当前的 v 相邻
+    // one marking per group; mark[w] == v means w is adjacent to the current v
     for (int w : G[v]) mark[w] = v;
     for (int u : bucket[v]) {
       for (int w : G[u]) {
         if (rnk[w] > rnk[v] && mark[w] != v) {
-          // 记录序列中最靠后的失败点及对应的两个邻点
+          // record the last failing vertex in the order and its two neighbors
           if (!fail_u || rnk[u] > rnk[fail_u]) {
             fail_u = u;
             fail_v = v;
@@ -90,9 +90,9 @@ bool check() {
 // --8<-- [end:core]
 
 vector<int> find_cycle() {
-  // 对 MCS 序列中最靠后的失败点 u，令 v = f(u)，w 为检查失败的邻点
-  // v、w 之间存在一条内部不经过 u 及其邻点的路径
-  // 取最短路径，再接上 u，就得到一个无弦环
+  // For the last failing vertex u in the MCS order, let v = f(u) and w be the neighbor that failed the check
+  // there is a path between v and w whose inner vertices avoid u and its neighbors
+  // take the shortest such path and add u to get a chordless cycle
   vector<bool> blocked(n + 1, false);
   blocked[fail_u] = true;
   for (int v : G[fail_u]) blocked[v] = true;

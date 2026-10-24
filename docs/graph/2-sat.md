@@ -1,74 +1,74 @@
 author: chu-yuehan
 
-SAT 是适定性（Satisfiability）问题的简称．一般形式为 k - 适定性问题，简称 k-SAT．而当 $k>2$ 时该问题为 NP 完全的．所以我们只研究 $k=2$ 的情况．
+SAT is short for the satisfiability problem. Its general form is the k-satisfiability problem, or k-SAT for short. For $k>2$ the problem is NP-complete, so we only study the case $k=2$.
 
-## 定义
+## Definition
 
-2-SAT，简单的说就是给出 $n$ 个布尔方程，每个方程和两个变量相关，如 $a \vee b$，表示变量 $a, b$ 至少满足一个．然后判断是否存在可行方案，显然可能有多种选择方案，一般题中只需要求出一种即可．另外，$\neg a$ 表示 $a$ 取反．
+Put simply, in 2-SAT you are given $n$ Boolean clauses. Each clause involves two variables, for example $a \vee b$, which means at least one of $a$ and $b$ must hold. You need to decide whether some assignment satisfies them all. There may be many valid assignments; problems usually ask for just one. Also, $\neg a$ means the negation of $a$.
 
-## 解决思路
+## Approach
 
-???+ example "[洛谷 P4782「模板」2-SAT](https://www.luogu.com.cn/problem/P4782)"
-    有 $n$ 个布尔变量 $x_1\sim x_n$，另有 $m$ 个需要满足的条件，每个条件的形式都是「$x_i$ 为 `true`/`false` 或 $x_j$ 为 `true`/`false`」．比如「$x_1$ 为真或 $x_3$ 为假」、「$x_7$ 为假或 $x_2$ 为假」．
+???+ example "[Luogu P4782 [Template] 2-SAT](https://www.luogu.com.cn/problem/P4782)"
+    There are $n$ Boolean variables $x_1\sim x_n$ and $m$ conditions to satisfy. Each condition has the form "$x_i$ is `true`/`false` or $x_j$ is `true`/`false`". For example, "$x_1$ is true or $x_3$ is false", or "$x_7$ is false or $x_2$ is false".
     
-    2-SAT 问题的目标是给每个变量赋值使得所有条件得到满足．
+    The goal of 2-SAT is to assign a value to every variable so that all conditions are satisfied.
 
-使用布尔方程表示上述问题．设 $a$ 表示 $x_a$ 为真（$\neg a$ 就表示 $x_a$ 为假）．如果有个人提出的要求分别是 $a$ 和 $b$，即 $(a \vee b)$（变量 $a, b$ 至少满足一个）．对这些变量关系建有向图，则把 $a$ 成立或不成立用图中的点表示，$\neg a\to b$ $\neg b\to a$，表示 $a$  **不成立** 则 $b$  **一定成立**；同理，$b$  **不成立** 则 $a$  **一定成立**．建图之后，我们就可以使用缩点算法来求解 2-SAT 问题了．
+We describe the problem with Boolean clauses. Let $a$ mean "$x_a$ is true" (so $\neg a$ means "$x_a$ is false"). Suppose someone's requirement is $a$ or $b$, that is, $(a \vee b)$ (at least one of $a, b$ holds). We build a directed graph on these variables: each of "$a$ holds" and "$a$ does not hold" is a vertex. We add the edges $\neg a\to b$ and $\neg b\to a$, meaning that if $a$ is **false**, then $b$ **must be true**; likewise, if $b$ is **false**, then $a$ **must be true**. Once the graph is built, we can solve 2-SAT with an SCC condensation algorithm.
 
-|         原式         |                建图               |
+|         Clause         |                Edges               |
 | :----------------: | :-----------------------------: |
-|   $\neg a \vee b$  | $a \to b$ 和 $\neg b \to \neg a$ |
-|     $a \vee b$     | $\neg a \to b$ 和 $\neg b \to a$ |
-| $\neg a\vee\neg b$ | $a \to \neg b$ 和 $b \to \neg a$ |
+|   $\neg a \vee b$  | $a \to b$ and $\neg b \to \neg a$ |
+|     $a \vee b$     | $\neg a \to b$ and $\neg b \to a$ |
+| $\neg a\vee\neg b$ | $a \to \neg b$ and $b \to \neg a$ |
 
-许多 2-SAT 问题都需要找出如 $a$  **不成立**，则 $b$  **成立** 的关系．
+Many 2-SAT problems come down to finding relations like "if $a$ is **false**, then $b$ is **true**".
 
-## 求解
+## Solving
 
-思考如果两点在同一强连通分量里有什么含义．根据前文边的逻辑意义可知：若两点在同一强连通分量内，则这两点代表的条件 **要么都满足，要么都不满足**．
+Think about what it means for two vertices to be in the same strongly connected component. From the logical meaning of the edges above: if two vertices are in the same SCC, then the conditions they stand for are **either both satisfied or both unsatisfied**.
 
-建图后我们使用 [Tarjan 算法找 SCC](./scc.md)，判断对于任意布尔变量 $a$，表示 $a$ 成立的点和表示 $a$ 不成立的点是否在同一个 SCC 中（同一条件不可能既满足又不满足，或既不满足又并非不满足），若有则输出无解，否则有解．
+After building the graph, we use [Tarjan's algorithm to find SCCs](./scc.md). For every Boolean variable $a$, we check whether the vertex for "$a$ holds" and the vertex for "$a$ does not hold" are in the same SCC (one condition cannot be both satisfied and unsatisfied). If this happens for any variable, there is no solution; otherwise a solution exists.
 
-输出方案时可以通过变量在图中的拓扑序确定该变量的取值．如果变量 $x$ 的拓扑序在 $\neg x$ 之后，那么取 $x$ 值为真．应用到 Tarjan 算法的缩点，即 $x$ 所在 SCC 编号在 $\neg x$ 之前时，取 $x$ 为真．因为 Tarjan 算法求强连通分量时使用了栈，如果跑完 Tarjan 缩点之后呈现出的拓扑序更大，在 Tarjan 会更晚被遍历到，就会更早地被弹出栈而缩点，分量编号会更小，所以 Tarjan 求得的 SCC 编号相当于 **反拓扑序**．
+To output an assignment, we decide each variable's value from the topological order of the graph. If $x$ comes after $\neg x$ in topological order, set $x$ to true. With Tarjan's condensation, this means: set $x$ to true when the SCC index of $x$ is smaller than that of $\neg x$. The reason is that Tarjan's algorithm uses a stack. A component that is later in topological order is reached later in the search, so it is popped from the stack and condensed earlier and gets a smaller index. So the SCC indices produced by Tarjan's algorithm form a **reverse topological order**.
 
-算法会把整张图遍历一遍，由于这张图 $n$ 和 $m$ 同阶，计算答案时复杂度为 $O(n)$，因此总复杂度为 $O(n)$．
+The algorithm traverses the whole graph once. Since $n$ and $m$ are of the same order in this graph, computing the answer takes $O(n)$, so the total complexity is $O(n)$.
 
-??? note "代码实现"
+??? note "Implementation"
     ```cpp
     --8<-- "docs/graph/code/2-sat/2-sat_3.cpp"
     ```
 
-## 例题
+## Example problems
 
-### 例题 1
+### Example problem 1
 
 ???+ example "[HDU3062 Party](https://acm.hdu.edu.cn/showproblem.php?pid=3062)"
-    有 $n$ 对夫妻被邀请参加一个聚会，因为场地的问题，每对夫妻中只有一人可以列席．在 $2n$ 个人中，某些人之间有着很大的矛盾（当然夫妻之间是没有矛盾的），有矛盾的两个人是不会同时出现在聚会上的．有没有可能会有 $n$ 个人同时列席？
+    $n$ couples are invited to a party. Because of limited space, only one person from each couple can attend. Among the $2n$ people, some pairs have serious conflicts (a husband and wife never conflict), and two people in conflict will never be at the party together. Is it possible for $n$ people to attend at the same time?
 
-按照上面的分析，如果 $a_1$ 中的丈夫和 $a_2$ 中的妻子不合，我们就把 $a_1$ 中的丈夫和 $a_2$ 中的丈夫连边，把 $a_2$ 中的妻子和 $a_1$ 中的妻子连边，然后缩点染色判断即可．
+Following the analysis above, if the husband of couple $a_1$ conflicts with the wife of couple $a_2$, we add an edge from the husband of $a_1$ to the husband of $a_2$, and an edge from the wife of $a_2$ to the wife of $a_1$. Then condense SCCs, color them, and check.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/graph/code/2-sat/2-sat_1.cpp"
     ```
 
-### 例题 2
+### Example problem 2
 
 ???+ example "[2018-2019 ACM-ICPC Asia Seoul Regional K TV Show Game](https://codeforces.com/gym/101987/problem/K)"
-    有 $k$ 盏灯，每盏灯是红色或者蓝色，但是初始的时候不知道灯的颜色．有 $n$ 个人，每个人选择三盏灯并猜灯的颜色．一个人猜对两盏灯或以上的颜色就可以获得奖品．判断是否存在一个灯的着色方案使得每个人都能领奖，若有则输出一种灯的着色方案．
+    There are $k$ lamps. Each lamp is red or blue, but the colors are unknown at the start. There are $n$ people; each picks three lamps and guesses their colors. A person who guesses at least two of the colors correctly wins a prize. Decide whether there is a coloring of the lamps such that everyone wins a prize, and if so, output one such coloring.
 
-根据 [伍昱 -《由对称性解 2-sat 问题》](https://github.com/OI-wiki/libs/blob/master/%E9%9B%86%E8%AE%AD%E9%98%9F%E5%8E%86%E5%B9%B4%E8%AE%BA%E6%96%87/%E5%9B%BD%E5%AE%B6%E9%9B%86%E8%AE%AD%E9%98%9F2003%E8%AE%BA%E6%96%87%E9%9B%86/%E4%BC%8D%E6%98%B1--%E7%94%B1%E5%AF%B9%E7%A7%B0%E6%80%A7%E8%A7%A32-SAT%E9%97%AE%E9%A2%98/%E4%BC%8D%E6%98%B1.ppt)，我们可以得出：如果要输出 2-SAT 问题的一个可行解，只需要在 tarjan 缩点后所得的 DAG 上自底向上地进行选择和删除．
+From [Wu Yu, "Solving 2-SAT Problems via Symmetry"](https://github.com/OI-wiki/libs/blob/master/%E9%9B%86%E8%AE%AD%E9%98%9F%E5%8E%86%E5%B9%B4%E8%AE%BA%E6%96%87/%E5%9B%BD%E5%AE%B6%E9%9B%86%E8%AE%AD%E9%98%9F2003%E8%AE%BA%E6%96%87%E9%9B%86/%E4%BC%8D%E6%98%B1--%E7%94%B1%E5%AF%B9%E7%A7%B0%E6%80%A7%E8%A7%A32-SAT%E9%97%AE%E9%A2%98/%E4%BC%8D%E6%98%B1.ppt), we get the following: to output a valid solution of a 2-SAT problem, we only need to choose and delete vertices bottom-up on the DAG obtained by Tarjan's condensation.
 
-具体实现的时候，可以通过构造 DAG 的反图后在反图上进行拓扑排序实现；也可以根据 tarjan 缩点后，所属连通块编号越小，节点越靠近叶子节点这一性质，优先对所属连通块编号小的节点进行选择．
+There are two ways to implement this. One is to build the reverse graph of the DAG and topologically sort it. The other uses a property of Tarjan's condensation: the smaller a vertex's component index, the closer it is to the leaves. So we can choose vertices with smaller component indices first.
 
-下面给出第二种实现方法的代码．
+Below is code for the second method.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/graph/code/2-sat/2-sat_2.cpp"
     ```
 
-## 习题
+## Exercises
 
--   [洛谷 P5782 和平委员会](https://www.luogu.com.cn/problem/P5782)
+-   [Luogu P5782 Peace Committee](https://www.luogu.com.cn/problem/P5782)
 -   [POJ3683 Priest John's Busiest Day](http://poj.org/problem?id=3683)

@@ -1,345 +1,345 @@
-本页面概述了图论中的一些概念，这些概念并不全是在 OI 中常见的，对于 OIer 来说，只需掌握本页面中的基础部分即可，如果在学习中碰到了不懂的概念，可以再来查阅．
+This page gives an overview of some concepts in graph theory. Not all of them are common in OI. OI contestants only need to master the basic parts of this page; if you meet a concept you don't understand while studying, you can come back and look it up.
 
 ??? warning "Warning"
-    图论相关定义在不同教材中往往会有所不同，遇到的时候需根据上下文加以判断．
+    Definitions in graph theory often differ between textbooks. When you meet one, judge its meaning from the context.
 
-## 图
+## Graph
 
-**图 (graph)** 是一个二元组 $G=(V(G), E(G))$．其中 $V(G)$ 是非空集，称为 **点集 (vertex set)**，对于 $V$ 中的每个元素，我们称其为 **顶点 (vertex)** 或 **节点 (node)**，简称 **点**；$E(G)$ 为 $V(G)$ 各结点之间边的集合，称为 **边集 (edge set)**．
+A **graph** is a pair $G=(V(G), E(G))$. Here $V(G)$ is a non-empty set called the **vertex set**; each element of $V$ is called a **vertex** or **node**. $E(G)$ is the set of edges between the vertices of $V(G)$, called the **edge set**.
 
-常用 $G=(V,E)$ 表示图．
+A graph is usually written $G=(V,E)$.
 
-当 $V,E$ 都是有限集合时，称 $G$ 为 **有限图**．
+If both $V$ and $E$ are finite, $G$ is called a **finite graph**.
 
-当 $V$ 或 $E$ 是无限集合时，称 $G$ 为 **无限图**．
+If $V$ or $E$ is infinite, $G$ is called an **infinite graph**.
 
-图有多种，包括 **无向图 (undirected graph)**，**有向图 (directed graph)**，**混合图 (mixed graph)** 等．
+There are several kinds of graphs, including **undirected graphs**, **directed graphs**, **mixed graphs** and so on.
 
-若 $G$ 为无向图，则 $E$ 中的每个元素为一个无序二元组 $(u, v)$，称作 **无向边 (undirected edge)**，简称 **边 (edge)**，其中 $u, v \in V$．设 $e = (u, v)$，则 $u$ 和 $v$ 称为 $e$ 的 **端点 (endpoint)**．
+If $G$ is an undirected graph, each element of $E$ is an unordered pair $(u, v)$ with $u, v \in V$, called an **undirected edge**, or simply an **edge**. For $e = (u, v)$, $u$ and $v$ are called the **endpoints** of $e$.
 
-若 $G$ 为有向图，则 $E$ 中的每一个元素为一个有序二元组 $(u, v)$，有时也写作 $u \to v$，称作 **有向边 (directed edge)** 或 **弧 (arc)**，在不引起混淆的情况下也可以称作 **边 (edge)**．设 $e = u \to v$，则此时 $u$ 称为 $e$ 的 **起点 (tail)**，$v$ 称为 $e$ 的 **终点 (head)**，起点和终点也称为 $e$ 的 **端点 (endpoint)**．并称 $u$ 是 $v$ 的直接前驱，$v$ 是 $u$ 的直接后继．
+If $G$ is a directed graph, each element of $E$ is an ordered pair $(u, v)$, sometimes written $u \to v$, called a **directed edge** or **arc**; when there is no risk of confusion it can also be called an **edge**. For $e = u \to v$, $u$ is called the **tail** of $e$ and $v$ the **head** of $e$; the tail and head are also called the **endpoints** of $e$. We also say $u$ is a direct predecessor of $v$, and $v$ is a direct successor of $u$.
 
-???+ note "为什么起点是 tail，终点是 head？"
-    边通常用箭头表示，而箭头是从「尾」指向「头」的．
+???+ note "Why is the start the tail and the end the head?"
+    Edges are usually drawn as arrows, and an arrow points from its "tail" to its "head".
 
-若 $G$ 为混合图，则 $E$ 中既有 **有向边**，又有 **无向边**．
+If $G$ is a mixed graph, $E$ contains both **directed edges** and **undirected edges**.
 
-若 $G$ 的每条边 $e_k=(u_k,v_k)$ 都被赋予一个数作为该边的 **权**，则称 $G$ 为 **赋权图**．如果这些权都是正实数，就称 $G$ 为 **正权图**．
+If each edge $e_k=(u_k,v_k)$ of $G$ is assigned a number as its **weight**, $G$ is called a **weighted graph**. If all weights are positive reals, $G$ is called a **positively weighted graph**.
 
-图 $G$ 的点数 $\left| V(G) \right|$ 也被称作图 $G$ 的 **阶 (order)**．
+The number of vertices $\left| V(G) \right|$ of a graph $G$ is also called the **order** of $G$.
 
-形象地说，图是由若干点以及连接点与点的边构成的．
+Informally, a graph consists of some vertices and edges connecting pairs of vertices.
 
-## 相邻
+## Adjacency
 
-在无向图 $G = (V, E)$ 中，若点 $v$ 是边 $e$ 的一个端点，则称 $v$ 和 $e$ 是 **关联的 (incident)** 或 **相邻的 (adjacent)**．对于两顶点 $u$ 和 $v$，若存在边 $(u, v)$，则称 $u$ 和 $v$ 是 **相邻的 (adjacent)**．
+In an undirected graph $G = (V, E)$, if vertex $v$ is an endpoint of edge $e$, then $v$ and $e$ are said to be **incident** (or **adjacent**). Two vertices $u$ and $v$ are **adjacent** if the edge $(u, v)$ exists.
 
-一个顶点 $v \in V$ 的 **邻域 (neighborhood)** 是所有与之相邻的顶点所构成的集合，记作 $N(v)$．
+The **neighborhood** of a vertex $v \in V$ is the set of all vertices adjacent to it, written $N(v)$.
 
-一个点集 $S$ 的邻域是所有与 $S$ 中至少一个点相邻的点所构成的集合，记作 $N(S)$，即：
+The neighborhood of a vertex set $S$ is the set of all vertices adjacent to at least one vertex in $S$, written $N(S)$, that is:
 
 $$
 N(S) = \bigcup_{v \in S} N(v)
 $$
 
-## 简单图
+## Simple graphs
 
-**自环 (loop)**：对 $E$ 中的边 $e = (u, v)$，若 $u = v$，则 $e$ 被称作一个自环．
+**Loop**: an edge $e = (u, v)$ in $E$ with $u = v$ is called a loop (self-loop).
 
-**重边 (multiple edge)**：若 $E$ 中存在两个完全相同的元素（边）$e_1, e_2$，则它们被称作（一组）重边．
+**Multiple edges**: if $E$ contains two identical elements (edges) $e_1, e_2$, they are called (a group of) multiple edges.
 
-**简单图 (simple graph)**：若一个图中没有自环和重边，它被称为简单图．具有至少两个顶点的简单无向图中一定存在度相同的结点．（[鸽巢原理](../math/combinatorics/drawer-principle.md)）
+**Simple graph**: a graph with no loops and no multiple edges is called a simple graph. Any simple undirected graph with at least two vertices has two vertices of the same degree ([pigeonhole principle](../math/combinatorics/drawer-principle.md)).
 
-如果一张图中有自环或重边，则称它为 **多重图 (multigraph)**．
-
-??? warning "Warning"
-    在无向图中 $(u, v)$ 和 $(v, u)$ 算一组重边，而在有向图中，$u \to v$ 和 $v \to u$ 不为重边．
+A graph with loops or multiple edges is called a **multigraph**.
 
 ??? warning "Warning"
-    在题目中，如果没有特殊说明，是可以存在自环和重边的，在做题时需特殊考虑．
+    In an undirected graph, $(u, v)$ and $(v, u)$ count as multiple edges, but in a directed graph, $u \to v$ and $v \to u$ are not multiple edges.
 
-## 度数
+??? warning "Warning"
+    In problems, unless stated otherwise, loops and multiple edges may exist, and you need to handle them specially.
 
-与一个顶点 $v$ 关联的边的条数称作该顶点的 **度 (degree)**，记作 $d(v)$．特别地，对于边 $(v, v)$，则每条这样的边要对 $d(v)$ 产生 $2$ 的贡献．
+## Degree
 
-对于无向简单图，有 $d(v) = \left| N(v) \right|$．
+The number of edges incident to a vertex $v$ is called its **degree**, written $d(v)$. In particular, each edge $(v, v)$ contributes $2$ to $d(v)$.
 
-握手定理（又称图论基本定理）：对于任何无向图 $G = (V, E)$，有 $\sum_{v \in V} d(v) = 2 \left| E \right|$．
+For a simple undirected graph, $d(v) = \left| N(v) \right|$.
 
-推论：在任意图中，度数为奇数的点必然有偶数个．
+Handshaking lemma (also called the fundamental theorem of graph theory): for every undirected graph $G = (V, E)$, $\sum_{v \in V} d(v) = 2 \left| E \right|$.
 
-若 $d(v) = 0$，则称 $v$ 为 **孤立点 (isolated vertex)**．
+Corollary: every graph has an even number of vertices of odd degree.
 
-若 $d(v) = 1$，则称 $v$ 为 **叶节点 (leaf vertex)**/**悬挂点 (pendant vertex)**．
+If $d(v) = 0$, $v$ is called an **isolated vertex**.
 
-若 $2 \mid d(v)$，则称 $v$ 为 **偶点 (even vertex)**．
+If $d(v) = 1$, $v$ is called a **leaf vertex**/**pendant vertex**.
 
-若 $2 \nmid d(v)$，则称 $v$ 为 **奇点 (odd vertex)**．图中奇点的个数是偶数．
+If $2 \mid d(v)$, $v$ is called an **even vertex**.
 
-若 $d(v) = \left| V \right| - 1$，则称 $v$ 为 **支配点 (universal vertex)**．
+If $2 \nmid d(v)$, $v$ is called an **odd vertex**. The number of odd vertices in a graph is even.
 
-对一张图，所有节点的度数的最小值称为 $G$ 的 **最小度 (minimum degree)**，记作 $\delta (G)$；最大值称为 **最大度 (maximum degree)**，记作 $\Delta (G)$．即：$\delta (G) = \min_{v \in G} d(v)$，$\Delta (G) = \max_{v \in G} d(v)$．
+If $d(v) = \left| V \right| - 1$, $v$ is called a **universal vertex**.
 
-在有向图 $G = (V, E)$ 中，以一个顶点 $v$ 为起点的边的条数称为该顶点的 **出度 (out-degree)**，记作 $d^+(v)$．以一个顶点 $v$ 为终点的边的条数称为该节点的 **入度 (in-degree)**，记作 $d^-(v)$．显然 $d^+(v)+d^-(v)=d(v)$．
+For a graph, the minimum degree over all vertices is called the **minimum degree** of $G$, written $\delta (G)$; the maximum is called the **maximum degree**, written $\Delta (G)$. That is: $\delta (G) = \min_{v \in G} d(v)$, $\Delta (G) = \max_{v \in G} d(v)$.
 
-对于任何有向图 $G = (V, E)$，有：
+In a directed graph $G = (V, E)$, the number of edges with tail $v$ is called the **out-degree** of $v$, written $d^+(v)$. The number of edges with head $v$ is called the **in-degree** of $v$, written $d^-(v)$. Clearly $d^+(v)+d^-(v)=d(v)$.
+
+For every directed graph $G = (V, E)$:
 
 $$
 \sum_{v \in V} d^+(v) = \sum_{v \in V} d^-(v) = \left| E \right|
 $$
 
-若对一张无向图 $G = (V, E)$，每个顶点的度数都是一个固定的常数 $k$，则称 $G$ 为 **$k$- 正则图 ($k$-regular graph)**．
+If every vertex of an undirected graph $G = (V, E)$ has the same constant degree $k$, $G$ is called a **$k$-regular graph**.
 
-如果给定一个序列 a，可以找到一个图 G，以其为度数列，则称 a 是 **可图化** 的．
+If, for a given sequence a, there is a graph G with a as its degree sequence, a is called **graphic**.
 
-如果给定一个序列 a，可以找到一个简单图 G，以其为度数列，则称 a 是 **可简单图化** 的．
+If, for a given sequence a, there is a simple graph G with a as its degree sequence, a is called **simple-graphic** (realizable by a simple graph).
 
-## 路径
+## Paths
 
-**途径 (walk)**：途径是连接一连串顶点的边的序列，可以为有限或无限长度．形式化地说，一条有限途径 $w$ 是一个边的序列 $e_1, e_2, \ldots, e_k$，使得存在一个顶点序列 $v_0, v_1, \ldots, v_k$ 满足 $e_i = (v_{i-1}, v_i)$，其中 $i \in [1, k]$．这样的途径可以简写为 $v_0 \to v_1 \to v_2 \to \cdots \to v_k$．通常来说，边的数量 $k$ 被称作这条途径的 **长度**（如果边是带权的，长度通常指途径上的边权之和，题目中也可能另有定义）．
+**Walk**: a walk is a sequence of edges joining a sequence of vertices; it can be finite or infinite. Formally, a finite walk $w$ is a sequence of edges $e_1, e_2, \ldots, e_k$ such that there is a vertex sequence $v_0, v_1, \ldots, v_k$ with $e_i = (v_{i-1}, v_i)$ for $i \in [1, k]$. Such a walk can be written $v_0 \to v_1 \to v_2 \to \cdots \to v_k$. Usually the number of edges $k$ is called the **length** of the walk (if edges are weighted, the length usually means the sum of edge weights along the walk; a problem may also define it differently).
 
-**迹 (trail)**：对于一条途径 $w$，若 $e_1, e_2, \ldots, e_k$ 两两互不相同，则称 $w$ 是一条迹．
+**Trail**: a walk $w$ is a trail if $e_1, e_2, \ldots, e_k$ are pairwise distinct.
 
-**路径 (path)**（又称 **简单路径 (simple path)**）：对于一条迹 $w$，若其连接的点的序列中点两两不同，则称 $w$ 是一条路径．
+**Path** (also called a **simple path**): a trail $w$ is a path if the vertices in its vertex sequence are pairwise distinct.
 
-**回路 (circuit)**：对于一条迹 $w$，若 $v_0 = v_k$，则称 $w$ 是一条回路．
+**Circuit**: a trail $w$ is a circuit if $v_0 = v_k$.
 
-**环/圈 (cycle)**（又称 **简单回路/简单环 (simple circuit)**）：对于一条回路 $w$，若 $v_0 = v_k$ 是点序列中唯一重复出现的点对，则称 $w$ 是一个环．
-
-??? warning "Warning"
-    关于路径的定义在不同地方可能有所不同，如，「路径」可能指本文中的「途径」，「环」可能指本文中的「回路」．如果在题目中看到类似的词汇，且没有「简单路径」/「非简单路径」（即本文中的「途径」）等特殊说明，最好询问一下具体指什么．
-
-## 子图
-
-对一张图 $G = (V, E)$，若存在另一张图 $H = (V', E')$ 满足 $V' \subseteq V$ 且 $E' \subseteq E$，则称 $H$ 是 $G$ 的 **子图 (subgraph)**，记作 $H \subseteq G$．
-
-若对 $H \subseteq G$，满足 $\forall u, v \in V'$，只要 $(u, v) \in E$，均有 $(u, v) \in E'$，则称 $H$ 是 $G$ 的 **导出子图/诱导子图 (induced subgraph)**．
-
-容易发现，一个图的导出子图仅由子图的点集决定，因此点集为 $V'$($V' \subseteq V$) 的导出子图称为 $V'$ 导出的子图，记作 $G \left[ V' \right]$．
-
-若 $H \subseteq G$ 满足 $V' = V$，则称 $H$ 为 $G$ 的 **生成子图/支撑子图 (spanning subgraph)**．
-
-显然，$G$ 是自身的子图，支撑子图，导出子图；[无边图](#特殊的图) 是 $G$ 的支撑子图．原图 $G$ 和无边图都是 $G$ 的平凡子图．
-
-如果一张无向图 $G$ 的某个生成子图 $F$ 为 $k$- 正则图，则称 $F$ 为 $G$ 的一个 **$k$- 因子 ($k$-factor)**．
-
-如果有向图 $G = (V, E)$ 的导出子图 $H = G \left[ V^\ast \right]$ 满足 $\forall v \in V^\ast, (v, u) \in E$，有 $u \in V^\ast$，则称 $H$ 为 $G$ 的一个 **闭合子图 (closed subgraph)**．
-
-## 连通
-
-### 无向图
-
-对于一张无向图 $G = (V, E)$，对于 $u, v \in V$，若存在一条途径使得 $v_0 = u, v_k = v$，则称 $u$ 和 $v$ 是 **连通的 (connected)**．由定义，任意一个顶点和自身连通，任意一条边的两个端点连通．
-
-若无向图 $G = (V, E)$，满足其中任意两个顶点均连通，则称 $G$ 是 **连通图 (connected graph)**，$G$ 的这一性质称作 **连通性 (connectivity)**．
-
-若 $H$ 是 $G$ 的一个连通子图，且不存在 $F$ 满足 $H\subsetneq F \subseteq G$ 且 $F$ 为连通图，则 $H$ 是 $G$ 的一个 **连通块/连通分量 (connected component)**（极大连通子图）．
-
-### 有向图
-
-对于一张有向图 $G = (V, E)$，对于 $u, v \in V$，若存在一条途径使得 $v_0 = u, v_k = v$，则称 $u$  **可达**  $v$．由定义，任意一个顶点可达自身，任意一条边的起点可达终点．（无向图中的连通也可以视作双向可达．）
-
-若一张有向图的节点两两互相可达，则称这张图是 **强连通的 (strongly connected)**．
-
-若一张有向图的边替换为无向边后可以得到一张连通图，则称原来这张有向图是 **弱连通的 (weakly connected)**．
-
-与连通分量类似，也有 **弱连通分量 (weakly connected component)**（极大弱连通子图）和 **强连通分量 (strongly connected component)**（极大强连通子图）．
-
-相关算法请参见 [强连通分量](./scc.md)．
-
-### 割
-
-相关算法请参见 [割点和桥](./cut.md) 以及 [双连通分量](./bcc.md)．
-
-在本部分中，有向图的「连通」一般指「强连通」．
-
-对于连通图 $G = (V, E)$，若 $V'\subseteq V$ 且 $G\left[V\setminus V'\right]$（即从 $G$ 中删去 $V'$ 中的点）不是连通图，则 $V'$ 是图 $G$ 的一个 **点割集 (vertex cut/separating set)**．大小为一的点割集又被称作 **割点 (cut vertex)**．
-
-对于连通图 $G = (V, E)$ 和整数 $k$，若 $|V|\ge k+1$ 且 $G$ 不存在大小为 $k-1$ 的点割集，则称图 $G$ 是 **$k$- 点连通的 ($k$-vertex-connected)**，而使得上式成立的最大的 $k$ 被称作图 $G$ 的 **点连通度 (vertex connectivity)**，记作 $\kappa(G)$．（对于非完全图，点连通度即为最小点割集的大小，而完全图 $K_n$ 的点连通度为 $n-1$．）
-
-对于图 $G = (V, E)$ 以及 $u, v\in V$ 满足 $u\ne v$，$u$ 和 $v$ 不相邻，$u$ 可达 $v$，若 $V'\subseteq V$，$u, v\notin V'$，且在 $G\left[V\setminus V'\right]$ 中 $u$ 和 $v$ 不连通，则 $V'$ 被称作 $u$ 到 $v$ 的点割集．$u$ 到 $v$ 的最小点割集的大小被称作 $u$ 到 $v$ 的 **局部点连通度 (local connectivity)**，记作 $\kappa(u, v)$．
-
-还可以在边上作类似的定义：
-
-对于连通图 $G = (V, E)$，若 $E'\subseteq E$ 且 $G' = (V, E\setminus E')$（即从 $G$ 中删去 $E'$ 中的边）不是连通图，则 $E'$ 是图 $G$ 的一个 **边割集 (edge cut)**．大小为一的边割集又被称作 **桥 (bridge)**．
-
-对于连通图 $G = (V, E)$ 和整数 $k$，若 $G$ 不存在大小为 $k-1$ 的边割集，则称图 $G$ 是 **$k$- 边连通的 ($k$-edge-connected)**，而使得上式成立的最大的 $k$ 被称作图 $G$ 的 **边连通度 (edge connectivity)**，记作 $\lambda(G)$．（对于任何图，边连通度即为最小边割集的大小．）
-
-对于图 $G = (V, E)$ 以及 $u, v\in V$ 满足 $u\ne v$，$u$ 可达 $v$，若 $E'\subseteq E$，且在 $G'=(V, E\setminus E')$ 中 $u$ 和 $v$ 不连通，则 $E'$ 被称作 $u$ 到 $v$ 的边割集．$u$ 到 $v$ 的最小边割集的大小被称作 $u$ 到 $v$ 的 **局部边连通度 (local edge-connectivity)**，记作 $\lambda(u, v)$．
-
-**点双连通 (biconnected)** 几乎与 $2$- 点连通完全一致，除了一条边连接两个点构成的图，它是点双连通的，但不是 $2$- 点连通的．换句话说，没有割点的连通图是点双连通的．
-
-**边双连通 ($2$-edge-connected)** 与 $2$- 边双连通完全一致．换句话说，没有桥的连通图是边双连通的．
-
-与连通分量类似，也有 **点双连通分量 (biconnected component)**（极大点双连通子图）和 **边双连通分量 ($2$-edge-connected component)**（极大边双连通子图）．
-
-**Whitney 定理**：对任意的图 $G$，有 $\kappa(G)\le \lambda(G)\le \delta(G)$．（不等式中的三项分别为点连通度、边连通度、最小度．）
-
-## 稀疏图/稠密图
-
-若一张图的边数远小于其点数的平方，那么它是一张 **稀疏图 (sparse graph)**．
-
-若一张图的边数接近其点数的平方，那么它是一张 **稠密图 (dense graph)**．
-
-这两个概念并没有严格的定义，一般用于讨论 [时间复杂度](../basic/complexity.md) 为 $O(|V|^2)$ 的算法与 $O(|E|)$ 的算法的效率差异（在稠密图上这两种算法效率相当，而在稀疏图上 $O(|E|)$ 的算法效率明显更高）．
-
-## 补图
-
-对于无向简单图 $G = (V, E)$，它的 **补图 (complement graph)** 指的是这样的一张图：记作 $\bar G$，满足 $V \left( \bar G \right) = V \left( G \right)$，且对任意节点对 $(u, v)$，$(u, v) \in E \left( \bar G \right)$ 当且仅当 $(u, v) \notin E \left( G \right)$．
-
-## 反图
-
-对于有向图 $G = (V, E)$，它的 **反图 (transpose graph)** 指的是点集不变，每条边反向得到的图，即：若 $G$ 的反图为 $G'=(V, E')$，则 $E'=\{(v, u)|(u, v)\in E\}$．
-
-## 特殊的图
-
-若无向简单图 $G$ 满足任意不同两点间均有边，则称 $G$ 为 **完全图 (complete graph)**，$n$ 阶完全图记作 $K_n$．若有向图 $G$ 满足任意不同两点间都有两条方向不同的边，则称 $G$ 为 **有向完全图 (complete digraph)**．
-
-边集为空的图称为 **无边图 (edgeless graph)**、**空图 (empty graph)** 或 **零图 (null graph)**，$n$ 阶无边图记作 $\overline{K}_n$ 或 $N_n$．$N_n$ 与 $K_n$ 互为补图．
+**Cycle** (also called a **simple circuit**): a circuit $w$ is a cycle if $v_0 = v_k$ is the only repeated pair in its vertex sequence.
 
 ??? warning "Warning"
-    **零图 (null graph)** 也可指 **零阶图 (order-zero graph)** $K_0$，即点集与边集均为空的图．
+    Definitions of paths may vary from place to place. For example, "path" may mean what this page calls a "walk", and "cycle" may mean what this page calls a "circuit". If you see such words in a problem with no clarification such as "simple path"/"non-simple path" (the latter being a "walk" here), it is best to ask what exactly is meant.
 
-若有向简单图 $G$ 满足任意不同两点间都有恰好一条边（单向），则称 $G$ 为 **竞赛图 (tournament graph)**．
+## Subgraphs
 
-若无向简单图 $G = \left( V, E \right)$ 的所有边恰好构成一个圈，则称 $G$ 为 **环图/圈图 (cycle graph)**，$n$($n \geq 3$) 阶圈图记作 $C_n$．易知，一张图为圈图的充分必要条件是，它是 $2$- 正则连通图．
+For a graph $G = (V, E)$, if another graph $H = (V', E')$ satisfies $V' \subseteq V$ and $E' \subseteq E$, then $H$ is a **subgraph** of $G$, written $H \subseteq G$.
 
-若无向简单图 $G = \left( V, E \right)$ 满足，存在一个点 $v$ 为支配点，其余点之间没有边相连，则称 $G$ 为 **星图/菊花图 (star graph)**，$n + 1$($n \geq 1$) 阶星图记作 $S_n$．
+If $H \subseteq G$ satisfies: for $\forall u, v \in V'$, whenever $(u, v) \in E$, also $(u, v) \in E'$, then $H$ is an **induced subgraph** of $G$.
 
-若无向简单图 $G = \left( V, E \right)$ 满足，存在一个点 $v$ 为支配点，其它点之间构成一个圈，则称 $G$ 为 **轮图 (wheel graph)**，$n + 1$($n \geq 3$) 阶轮图记作 $W_n$．
+It is easy to see that an induced subgraph is determined by its vertex set alone. So the induced subgraph with vertex set $V'$ ($V' \subseteq V$) is called the subgraph induced by $V'$, written $G \left[ V' \right]$.
 
-若无向简单图 $G = \left( V, E \right)$ 的所有边恰好构成一条简单路径，则称 $G$ 为 **链 (chain/path graph)**，$n$ 阶的链记作 $P_n$．易知，一条链由一个圈图删去一条边而得．
+If $H \subseteq G$ satisfies $V' = V$, $H$ is called a **spanning subgraph** of $G$.
 
-如果一张无向连通图不含环，则称它是一棵 **树 (tree)**．相关内容详见 [树基础](./tree-basic.md)．
+Clearly, $G$ is a subgraph, a spanning subgraph and an induced subgraph of itself; the [edgeless graph](#special-graphs) is a spanning subgraph of $G$. The graph $G$ itself and the edgeless graph are both trivial subgraphs of $G$.
 
-如果一张无向连通图包含恰好一个环，则称它是一棵 **基环树 (pseudotree)**．
+If a spanning subgraph $F$ of an undirected graph $G$ is $k$-regular, $F$ is called a **$k$-factor** of $G$.
 
-如果一张有向弱连通图每个点的入度都为 $1$，则称它是一棵 **基环外向树**．
+If an induced subgraph $H = G \left[ V^\ast \right]$ of a directed graph $G = (V, E)$ satisfies: for $\forall v \in V^\ast, (v, u) \in E$, we have $u \in V^\ast$, then $H$ is called a **closed subgraph** of $G$.
 
-如果一张有向弱连通图每个点的出度都为 $1$，则称它是一棵 **基环内向树**．
+## Connectivity
 
-多棵树可以组成一个 **森林 (forest)**，多棵基环树可以组成 **基环森林 (pseudoforest)**，多棵基环外向树可以组成 **基环外向树森林**，多棵基环内向树可以组成 **基环内向森林 (functional graph)**．
+### Undirected graphs
 
-如果一张无向连通图的每条边最多在一个环内，则称它是一棵 **仙人掌 (cactus)**．多棵仙人掌可以组成 **沙漠**．
+In an undirected graph $G = (V, E)$, two vertices $u, v \in V$ are **connected** if there is a walk with $v_0 = u, v_k = v$. By definition, every vertex is connected to itself, and the two endpoints of any edge are connected.
 
-如果一张图的点集可以被分为两部分，每一部分的内部都没有连边，那么这张图是一张 **二分图 (bipartite graph)**．如果二分图中任何两个不在同一部分的点之间都有连边，那么这张图是一张 **完全二分图 (complete bipartite graph/biclique)**，一张两部分分别有 $n$ 个点和 $m$ 个点的完全二分图记作 $K_{n, m}$．相关内容详见 [二分图](./bi-graph.md)．
+If any two vertices of an undirected graph $G = (V, E)$ are connected, $G$ is called a **connected graph**, and this property of $G$ is called **connectivity**.
 
-如果一张图可以画在一个平面上，且没有两条边在非端点处相交，那么这张图是一张 **平面图 (planar graph)**．对于简单连通平面图 $G=(V, E)$ 且 $V\ge 3$，$|E|\le 3|V|-6$．  
-**Kuratowski 定理**：一张图是平面图当且仅当其不存在与 $K_5$ 或 $K_{3, 3}$ **同胚 (homeomorphism)** 的子图．其中图 $G$ 和图 $G'$ 同胚指的是两图均可通过在边上新增若干度为 $2$ 的顶点[^ref1]的方式变为相同的图．
+If $H$ is a connected subgraph of $G$ and there is no connected graph $F$ with $H\subsetneq F \subseteq G$, then $H$ is a **connected component** of $G$ (a maximal connected subgraph).
 
-## 同构
+### Directed graphs
 
-两个图 $G$ 和 $H$，如果存在一个双射 $f : V(G) \to V(H)$，且满足 $(u,v)\in E(G)$，当且仅当 $(f(u),f(v))\in E(H)$，则我们称 $f$ 为 $G$ 到 $H$ 的一个 **同构 (isomorphism)**，且图 $G$ 与图 $H$ 是 **同构的 (isomorphic)**，记作 $G \cong H$．
+In a directed graph $G = (V, E)$, for $u, v \in V$, if there is a walk with $v_0 = u, v_k = v$, we say $u$ **can reach** $v$. By definition, every vertex can reach itself, and the tail of any edge can reach its head. (Connectivity in undirected graphs can be seen as reachability in both directions.)
 
-从定义可知，若 $G \cong H$，必须满足：
+If every pair of vertices in a directed graph can reach each other, the graph is **strongly connected**.
+
+If replacing all edges of a directed graph with undirected edges gives a connected graph, the directed graph is **weakly connected**.
+
+Similar to connected components, there are **weakly connected components** (maximal weakly connected subgraphs) and **strongly connected components** (maximal strongly connected subgraphs).
+
+For related algorithms, see [strongly connected components](./scc.md).
+
+### Cuts
+
+For related algorithms, see [cut vertices and bridges](./cut.md) and [biconnected components](./bcc.md).
+
+In this part, "connected" for directed graphs usually means "strongly connected".
+
+For a connected graph $G = (V, E)$, if $V'\subseteq V$ and $G\left[V\setminus V'\right]$ (that is, $G$ with the vertices of $V'$ deleted) is not connected, then $V'$ is a **vertex cut/separating set** of $G$. A vertex cut of size one is called a **cut vertex**.
+
+For a connected graph $G = (V, E)$ and an integer $k$, if $|V|\ge k+1$ and $G$ has no vertex cut of size $k-1$, $G$ is called **$k$-vertex-connected**, and the largest $k$ for which this holds is called the **vertex connectivity** of $G$, written $\kappa(G)$. (For a non-complete graph, the vertex connectivity is the size of a minimum vertex cut; for the complete graph $K_n$ it is $n-1$.)
+
+For a graph $G = (V, E)$ and $u, v\in V$ with $u\ne v$, $u$ and $v$ not adjacent, and $u$ able to reach $v$: if $V'\subseteq V$, $u, v\notin V'$, and $u$ and $v$ are not connected in $G\left[V\setminus V'\right]$, then $V'$ is called a vertex cut from $u$ to $v$. The size of a minimum vertex cut from $u$ to $v$ is called the **local connectivity** from $u$ to $v$, written $\kappa(u, v)$.
+
+Similar definitions can be made for edges:
+
+For a connected graph $G = (V, E)$, if $E'\subseteq E$ and $G' = (V, E\setminus E')$ (that is, $G$ with the edges of $E'$ deleted) is not connected, then $E'$ is an **edge cut** of $G$. An edge cut of size one is called a **bridge**.
+
+For a connected graph $G = (V, E)$ and an integer $k$, if $G$ has no edge cut of size $k-1$, $G$ is called **$k$-edge-connected**, and the largest $k$ for which this holds is called the **edge connectivity** of $G$, written $\lambda(G)$. (For every graph, the edge connectivity is the size of a minimum edge cut.)
+
+For a graph $G = (V, E)$ and $u, v\in V$ with $u\ne v$ and $u$ able to reach $v$: if $E'\subseteq E$ and $u$ and $v$ are not connected in $G'=(V, E\setminus E')$, then $E'$ is called an edge cut from $u$ to $v$. The size of a minimum edge cut from $u$ to $v$ is called the **local edge-connectivity** from $u$ to $v$, written $\lambda(u, v)$.
+
+**Biconnected** (vertex-biconnected) is almost exactly the same as $2$-vertex-connected, except for the graph made of two vertices joined by one edge: it is biconnected but not $2$-vertex-connected. In other words, a connected graph with no cut vertex is biconnected.
+
+**Edge-biconnected ($2$-edge-connected)** is exactly the same as $2$-edge-connected. In other words, a connected graph with no bridge is edge-biconnected.
+
+Similar to connected components, there are **biconnected components** (maximal biconnected subgraphs) and **$2$-edge-connected components** (maximal edge-biconnected subgraphs).
+
+**Whitney's theorem**: for every graph $G$, $\kappa(G)\le \lambda(G)\le \delta(G)$. (The three terms are the vertex connectivity, the edge connectivity and the minimum degree.)
+
+## Sparse and dense graphs
+
+A graph whose number of edges is much smaller than the square of its number of vertices is a **sparse graph**.
+
+A graph whose number of edges is close to the square of its number of vertices is a **dense graph**.
+
+These two notions have no strict definition. They are mostly used when comparing the efficiency of algorithms with [time complexity](../basic/complexity.md) $O(|V|^2)$ and $O(|E|)$ (on dense graphs the two are about equally fast, while on sparse graphs the $O(|E|)$ algorithm is clearly faster).
+
+## Complement graph
+
+For a simple undirected graph $G = (V, E)$, its **complement graph**, written $\bar G$, is the graph with $V \left( \bar G \right) = V \left( G \right)$ such that for every pair of vertices $(u, v)$, $(u, v) \in E \left( \bar G \right)$ if and only if $(u, v) \notin E \left( G \right)$.
+
+## Transpose graph
+
+For a directed graph $G = (V, E)$, its **transpose graph** (reverse graph) has the same vertex set with every edge reversed. That is, if the transpose of $G$ is $G'=(V, E')$, then $E'=\{(v, u)|(u, v)\in E\}$.
+
+## Special graphs
+
+If a simple undirected graph $G$ has an edge between every two distinct vertices, $G$ is called a **complete graph**; the complete graph of order $n$ is written $K_n$. If a directed graph $G$ has two edges in opposite directions between every two distinct vertices, $G$ is called a **complete digraph**.
+
+A graph with an empty edge set is called an **edgeless graph**, **empty graph** or **null graph**; the edgeless graph of order $n$ is written $\overline{K}_n$ or $N_n$. $N_n$ and $K_n$ are complements of each other.
+
+??? warning "Warning"
+    **Null graph** can also mean the **order-zero graph** $K_0$, that is, the graph whose vertex set and edge set are both empty.
+
+If a simple directed graph $G$ has exactly one edge (in one direction) between every two distinct vertices, $G$ is called a **tournament graph**.
+
+If all edges of a simple undirected graph $G = \left( V, E \right)$ form exactly one cycle, $G$ is called a **cycle graph**; the cycle graph of order $n$ ($n \geq 3$) is written $C_n$. It is easy to see that a graph is a cycle graph if and only if it is a connected $2$-regular graph.
+
+If a simple undirected graph $G = \left( V, E \right)$ has a universal vertex $v$ and no edges among the other vertices, $G$ is called a **star graph**; the star graph of order $n + 1$ ($n \geq 1$) is written $S_n$.
+
+If a simple undirected graph $G = \left( V, E \right)$ has a universal vertex $v$ and the other vertices form a cycle, $G$ is called a **wheel graph**; the wheel graph of order $n + 1$ ($n \geq 3$) is written $W_n$.
+
+If all edges of a simple undirected graph $G = \left( V, E \right)$ form exactly one simple path, $G$ is called a **chain/path graph**; the path graph of order $n$ is written $P_n$. It is easy to see that a path graph is a cycle graph with one edge deleted.
+
+A connected undirected graph with no cycle is called a **tree**. See [tree basics](./tree-basic.md) for more.
+
+A connected undirected graph with exactly one cycle is called a **pseudotree** (unicyclic graph).
+
+A weakly connected directed graph in which every vertex has in-degree $1$ is called an **out-pseudotree** (outward-directed pseudotree).
+
+A weakly connected directed graph in which every vertex has out-degree $1$ is called an **in-pseudotree** (inward-directed pseudotree).
+
+Several trees form a **forest**, several pseudotrees form a **pseudoforest**, several out-pseudotrees form an **out-pseudotree forest**, and several in-pseudotrees form an **in-pseudotree forest (functional graph)**.
+
+A connected undirected graph in which every edge lies on at most one cycle is called a **cactus**. Several cacti form a **desert**.
+
+If the vertex set of a graph can be split into two parts with no edges inside either part, the graph is a **bipartite graph**. If every two vertices in different parts of a bipartite graph are joined by an edge, it is a **complete bipartite graph/biclique**; the complete bipartite graph with parts of sizes $n$ and $m$ is written $K_{n, m}$. See [bipartite graphs](./bi-graph.md) for more.
+
+If a graph can be drawn in the plane with no two edges crossing except at endpoints, it is a **planar graph**. For a simple connected planar graph $G=(V, E)$ with $V\ge 3$, $|E|\le 3|V|-6$.  
+**Kuratowski's theorem**: a graph is planar if and only if it has no subgraph **homeomorphic** to $K_5$ or $K_{3, 3}$. Graphs $G$ and $G'$ are homeomorphic if both can be turned into the same graph by adding some vertices of degree $2$ on edges[^ref1].
+
+## Isomorphism
+
+For two graphs $G$ and $H$, if there is a bijection $f : V(G) \to V(H)$ such that $(u,v)\in E(G)$ if and only if $(f(u),f(v))\in E(H)$, then $f$ is called an **isomorphism** from $G$ to $H$, and $G$ and $H$ are **isomorphic**, written $G \cong H$.
+
+From the definition, if $G \cong H$, then:
 
 -   $|V(G)|=|V(H)|,|E(G)|=|E(H)|$
--   $G$ 和 $H$ 结点度的非增序列相同
--   $G$ 和 $H$ 存在同构的导出子图
+-   $G$ and $H$ have the same non-increasing degree sequence
+-   $G$ and $H$ have isomorphic induced subgraphs
 
-## 无向简单图的二元运算
+## Binary operations on simple undirected graphs
 
-对于无向简单图，我们可以定义如下二元运算：
+For simple undirected graphs, we can define the following binary operations:
 
-**交 (intersection)**：图 $G = \left( V_1, E_1 \right), H = \left( V_2, E_2 \right)$ 的交定义成图 $G \cap H = \left( V_1 \cap V_2, E_1 \cap E_2 \right)$．
+**Intersection**: the intersection of graphs $G = \left( V_1, E_1 \right), H = \left( V_2, E_2 \right)$ is the graph $G \cap H = \left( V_1 \cap V_2, E_1 \cap E_2 \right)$.
 
-容易证明两个无向简单图的交还是无向简单图．
+It is easy to prove that the intersection of two simple undirected graphs is again a simple undirected graph.
 
-**并 (union)**：图 $G = \left( V_1, E_1 \right), H = \left( V_2, E_2 \right)$ 的并定义成图 $G \cup H = \left( V_1 \cup V_2, E_1 \cup E_2 \right)$．
+**Union**: the union of graphs $G = \left( V_1, E_1 \right), H = \left( V_2, E_2 \right)$ is the graph $G \cup H = \left( V_1 \cup V_2, E_1 \cup E_2 \right)$.
 
-**和 (sum)/直和 (direct sum)**：对于 $G = \left( V_1, E_1 \right), H = \left( V_2, E_2 \right)$，任意构造 $H' \cong H$ 使得 $V \left( H' \right) \cap V_1 = \varnothing$($H'$ 可以等于 $H$)．此时与 $G \cup H'$ 同构的任何图称为 $G$ 和 $H$ 的和/直和/不交并，记作 $G + H$ 或 $G \oplus H$．
+**Sum/direct sum**: for $G = \left( V_1, E_1 \right), H = \left( V_2, E_2 \right)$, construct any $H' \cong H$ with $V \left( H' \right) \cap V_1 = \varnothing$ ($H'$ may equal $H$). Then any graph isomorphic to $G \cup H'$ is called the sum/direct sum/disjoint union of $G$ and $H$, written $G + H$ or $G \oplus H$.
 
-若 $G$ 与 $H$ 的点集本身不相交，则 $G \cup H = G + H$．
+If the vertex sets of $G$ and $H$ are already disjoint, then $G \cup H = G + H$.
 
-比如，森林可以定义成若干棵树的和．
+For example, a forest can be defined as the sum of several trees.
 
-???+ note "并与和的区别"
-    可以理解为，「并」会让两张图中「名字相同」的点、边合并，而「和」则不会．
+???+ note "Union vs. sum"
+    Think of it this way: "union" merges vertices and edges with "the same name" in the two graphs, while "sum" does not.
 
-## 特殊的点集/边集
+## Special vertex sets and edge sets
 
-### 支配集
+### Dominating set
 
-对于无向图 $G=(V, E)$，若 $V'\subseteq V$ 且 $\forall v\in(V\setminus V')$ 存在边 $(u, v)\in E$ 满足 $u\in V'$，则 $V'$ 是图 $G$ 的一个 **支配集 (dominating set)**．
+For an undirected graph $G=(V, E)$, if $V'\subseteq V$ and $\forall v\in(V\setminus V')$ there is an edge $(u, v)\in E$ with $u\in V'$, then $V'$ is a **dominating set** of $G$.
 
-无向图 $G$ 最小的支配集的大小记作 $\gamma(G)$．求一张图的最小支配集是 [NP 困难](../misc/cc-basic.md#np-hard) 的．
+The size of a minimum dominating set of an undirected graph $G$ is written $\gamma(G)$. Finding a minimum dominating set is [NP-hard](../misc/cc-basic.md#np-hard).
 
-对于有向图 $G=(V, E)$，若 $V'\subseteq V$ 且 $\forall v\in(V\setminus V')$ 存在边 $(u, v)\in E$ 满足 $u\in V'$，则 $V'$ 是图 $G$ 的一个 **出 - 支配集 (out-dominating set)**．类似地，可以定义有向图的 **入 - 支配集 (in-dominating set)**．
+For a directed graph $G=(V, E)$, if $V'\subseteq V$ and $\forall v\in(V\setminus V')$ there is an edge $(u, v)\in E$ with $u\in V'$, then $V'$ is an **out-dominating set** of $G$. Similarly, we can define an **in-dominating set** of a directed graph.
 
-有向图 $G$ 最小的出 - 支配集大小记作 $\gamma^+(G)$，最小的入 - 支配集大小记作 $\gamma^-(G)$．
+The size of a minimum out-dominating set of a directed graph $G$ is written $\gamma^+(G)$, and that of a minimum in-dominating set is written $\gamma^-(G)$.
 
-### 边支配集
+### Edge dominating set
 
-对于图 $G=(V, E)$，若 $E'\subseteq E$ 且 $\forall e\in(E\setminus E')$ 存在 $E'$ 中的边与其有公共点，则称 $E'$ 是图 $G$ 的一个 **边支配集 (edge dominating set)**．
+For a graph $G=(V, E)$, if $E'\subseteq E$ and $\forall e\in(E\setminus E')$ shares an endpoint with some edge in $E'$, then $E'$ is an **edge dominating set** of $G$.
 
-求一张图的最小边支配集是 [NP 困难](../misc/cc-basic.md#np-hard) 的．
+Finding a minimum edge dominating set is [NP-hard](../misc/cc-basic.md#np-hard).
 
-### 独立集
+### Independent set
 
-对于图 $G=(V, E)$，若 $V'\subseteq V$ 且 $V'$ 中任意两点都不相邻，则 $V'$ 是图 $G$ 的一个 **独立集 (independent set)**．
+For a graph $G=(V, E)$, if $V'\subseteq V$ and no two vertices of $V'$ are adjacent, then $V'$ is an **independent set** of $G$.
 
-图 $G$ 最大的独立集的大小记作 $\alpha(G)$．求一张图的最大独立集是 [NP 困难](../misc/cc-basic.md#np-hard) 的．
+The size of a maximum independent set of $G$ is written $\alpha(G)$. Finding a maximum independent set is [NP-hard](../misc/cc-basic.md#np-hard).
 
-### 匹配
+### Matching
 
-对于图 $G=(V, E)$，若 $E'\subseteq E$ 且 $E'$ 中任意两条不同的边都没有公共的端点，且 $E'$ 中任意一条边都不是自环，则 $E'$ 是图 $G$ 的一个 **匹配 (matching)**，也可以叫作 **边独立集 (independent edge set)**．如果一个点是匹配中某条边的一个端点，则称这个点是 **被匹配的 (matched)/饱和的 (saturated)**，否则称这个点是 **不被匹配的 (unmatched)**．
+For a graph $G=(V, E)$, if $E'\subseteq E$, no two distinct edges of $E'$ share an endpoint, and no edge of $E'$ is a loop, then $E'$ is a **matching** of $G$, also called an **independent edge set**. A vertex that is an endpoint of some edge in the matching is called **matched/saturated**; otherwise it is called **unmatched**.
 
-边数最多的匹配被称作一张图的 **最大匹配 (maximum-cardinality matching)**．图 $G$ 的最大匹配的大小记作 $\nu(G)$．
+A matching with the most edges is called a **maximum-cardinality matching** of the graph. The size of a maximum matching of $G$ is written $\nu(G)$.
 
-如果边带权，那么权重之和最大的匹配被称作一张图的 **最大权匹配 (maximum-weight matching)**．
+If edges are weighted, a matching with the largest total weight is called a **maximum-weight matching**.
 
-如果一个匹配在加入任何一条边后都不再是一个匹配，那么这个匹配是一个 **极大匹配 (maximal matching)**．最大的极大匹配就是最大匹配，任何最大匹配都是极大匹配．极大匹配一定是边支配集，但边支配集不一定是匹配．最小极大匹配和最小边支配集大小相等，但最小边支配集不一定是匹配．求最小极大匹配是 NP 困难的．
+If a matching stops being a matching after adding any edge, it is a **maximal matching**. The largest maximal matching is a maximum matching, and every maximum matching is maximal. A maximal matching is always an edge dominating set, but an edge dominating set is not necessarily a matching. A minimum maximal matching and a minimum edge dominating set have the same size, but a minimum edge dominating set is not necessarily a matching. Finding a minimum maximal matching is NP-hard.
 
-如果在一个匹配中所有点都是被匹配的，那么这个匹配是一个 **完美匹配 (perfect matching)**．如果在一个匹配中只有一个点不被匹配，那么这个匹配是一个 **准完美匹配 (near-perfect matching)**．
+If all vertices are matched in a matching, it is a **perfect matching**. If exactly one vertex is unmatched, it is a **near-perfect matching**.
 
-求一张普通图或二分图的匹配或完美匹配个数都是 [#P 完全](../misc/cc-basic.md#p_1) 的．
+Counting matchings or perfect matchings of a general graph or a bipartite graph is [#P-complete](../misc/cc-basic.md#p_1).
 
-对于一个匹配 $M$，若一条路径以非匹配点为起点，每相邻两条边的其中一条在匹配中而另一条不在匹配中，则这条路径被称作一条 **交替路径 (alternating path)**；一条在非匹配点终止的交替路径，被称作一条 **增广路径 (augmenting path)**．
+For a matching $M$, a path that starts at an unmatched vertex and whose consecutive edges alternate between being in the matching and not in the matching is called an **alternating path**; an alternating path that ends at an unmatched vertex is called an **augmenting path**.
 
-**托特定理**：$n$ 阶无向图 $G$ 有完美匹配当且仅当对于任意的 $V' \subset V(G)$，$p_{\text{odd}}(G-V')\leq |V'|$，其中 $p_{\text{odd}}$ 表示奇数阶连通分支数．
+**Tutte's theorem**: an undirected graph $G$ of order $n$ has a perfect matching if and only if for every $V' \subset V(G)$, $p_{\text{odd}}(G-V')\leq |V'|$, where $p_{\text{odd}}$ is the number of connected components of odd order.
 
-**托特定理（推论）**：任何无桥 3 - 正则图都有完美匹配．
+**Tutte's theorem (corollary)**: every bridgeless 3-regular graph has a perfect matching.
 
-### 点覆盖
+### Vertex cover
 
-对于图 $G=(V, E)$，若 $V'\subseteq V$ 且 $\forall e\in E$ 满足 $e$ 的至少一个端点在 $V'$ 中，则称 $V'$ 是图 $G$ 的一个 **点覆盖 (vertex cover)**．
+For a graph $G=(V, E)$, if $V'\subseteq V$ and $\forall e\in E$, $e$ has at least one endpoint in $V'$, then $V'$ is a **vertex cover** of $G$.
 
-点覆盖集必为支配集，但极小点覆盖集不一定是极小支配集．
+A vertex cover is always a dominating set, but a minimal vertex cover is not necessarily a minimal dominating set.
 
-一个点集是点覆盖的充要条件是其补集是独立集，因此最小点覆盖的补集是最大独立集．求一张图的最小点覆盖是 [NP 困难](../misc/cc-basic.md#np-hard) 的．
+A vertex set is a vertex cover if and only if its complement is an independent set, so the complement of a minimum vertex cover is a maximum independent set. Finding a minimum vertex cover is [NP-hard](../misc/cc-basic.md#np-hard).
 
-一张图的任何一个匹配的大小都不超过其任何一个点覆盖的大小．完全二分图 $K_{n, m}$ 的最大匹配和最小点覆盖大小都为 $\min(n, m)$．
+The size of any matching in a graph is at most the size of any vertex cover. For the complete bipartite graph $K_{n, m}$, the maximum matching and the minimum vertex cover both have size $\min(n, m)$.
 
-### 边覆盖
+### Edge cover
 
-对于图 $G=(V, E)$，若 $E'\subseteq E$ 且 $\forall v\in V$ 满足 $v$ 与 $E'$ 中的至少一条边相邻，则称 $E'$ 是图 $G$ 的一个 **边覆盖 (edge cover)**．
+For a graph $G=(V, E)$, if $E'\subseteq E$ and $\forall v\in V$, $v$ is incident to at least one edge of $E'$, then $E'$ is an **edge cover** of $G$.
 
-最小边覆盖的大小记作 $\rho(G)$，可以由最大匹配贪心扩展求得：对于所有非匹配点，将其一条邻边加入最大匹配中，即得到了一个最小边覆盖．
+The size of a minimum edge cover is written $\rho(G)$. It can be found by greedily extending a maximum matching: for every unmatched vertex, add one of its incident edges to the maximum matching, and the result is a minimum edge cover.
 
-最大匹配也可以由最小边覆盖求得：对于最小边覆盖中每对有公共点的边删去其中一条．
+A maximum matching can also be found from a minimum edge cover: for each pair of edges in the minimum edge cover that share a vertex, delete one of them.
 
-一张图的最小边覆盖的大小加上最大匹配的大小等于图的点数，即 $\rho(G)+\nu(G)=|V(G)|$．
+The size of a minimum edge cover plus the size of a maximum matching equals the number of vertices, that is, $\rho(G)+\nu(G)=|V(G)|$.
 
-一张图的最大匹配的大小不超过最小边覆盖的大小，即 $\nu(G)\le\rho(G)$．特别地，完美匹配一定是一个最小边覆盖，这也是上式取到等号的唯一情况．
+The size of a maximum matching is at most the size of a minimum edge cover, that is, $\nu(G)\le\rho(G)$. In particular, a perfect matching is always a minimum edge cover, and this is the only case where equality holds.
 
-一张图的任何一个独立集的大小都不超过其任何一个边覆盖的大小．完全二分图 $K_{n, m}$ 的最大独立集和最小边覆盖大小都为 $\max(n, m)$．
+The size of any independent set in a graph is at most the size of any edge cover. For the complete bipartite graph $K_{n, m}$, the maximum independent set and the minimum edge cover both have size $\max(n, m)$.
 
-### 团
+### Clique
 
-对于图 $G=(V, E)$，若 $V'\subseteq V$ 且 $V'$ 中任意两个不同的顶点都相邻，则 $V'$ 是图 $G$ 的一个 **团 (clique)**．团的导出子图是完全图．
+For a graph $G=(V, E)$, if $V'\subseteq V$ and any two distinct vertices of $V'$ are adjacent, then $V'$ is a **clique** of $G$. The induced subgraph of a clique is a complete graph.
 
-如果一个团在加入任何一个顶点后都不再是一个团，则这个团是一个 **极大团 (maximal clique)**．
+If a clique stops being a clique after adding any vertex, it is a **maximal clique**.
 
-一张图的最大团的大小记作 $\omega(G)$，最大团的大小等于其补图最大独立集的大小，即 $\omega(G)=\alpha(\bar{G})$．求一张图的最大团是 [NP 困难](../misc/cc-basic.md#np-hard) 的．
+The size of a maximum clique of a graph is written $\omega(G)$; it equals the size of a maximum independent set of the complement graph, that is, $\omega(G)=\alpha(\bar{G})$. Finding a maximum clique is [NP-hard](../misc/cc-basic.md#np-hard).
 
-## 参考资料
+## References
 
-[OI 中转站 - 图论概念梳理](https://yhx-12243.github.io/OI-transit/memos/14.html)
+[OI Transit - Overview of graph theory concepts](https://yhx-12243.github.io/OI-transit/memos/14.html)
 
-[Wikipedia](https://en.wikipedia.org/wiki/Glossary_of_graph_theory_terms)（以及相关概念的对应词条）
+[Wikipedia](https://en.wikipedia.org/wiki/Glossary_of_graph_theory_terms) (and the articles for the related concepts)
 
-离散数学（修订版），田文成 周禄新 编著，天津文学出版社，P184-187
+Discrete Mathematics (revised edition), by Tian Wencheng and Zhou Luxin, Tianjin Literature Publishing House, pp. 184-187
 
-戴一奇，胡冠章，陈卫．图论与代数结构 \[M]. 北京：清华大学出版社，1995.
+Dai Yiqi, Hu Guanzhang, Chen Wei. Graph Theory and Algebraic Structures \[M]. Beijing: Tsinghua University Press, 1995.
 
-[^ref1]: 该操作又叫细分（subdivision）．
+[^ref1]: This operation is also called subdivision.

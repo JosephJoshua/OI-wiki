@@ -1,55 +1,55 @@
 author: jifbt, Mayuri0v0
 
-## 定义
+## Definition
 
-以下内容的定义，请参见 [图论相关概念](./concept.md)：
+For definitions of the following, see [basic graph theory concepts](./concept.md):
 
--   边连通度、边割集；
--   点连通度、点割集；
--   团．
+-   edge connectivity, edge cut;
+-   vertex connectivity, vertex cut;
+-   clique.
 
-## 性质
+## Properties
 
-### Whitney 不等式
+### Whitney's inequality
 
-**Whitney 不等式**（1932）给出了点连通度 $\kappa$、边连通度 $\lambda$ 和最小度 $\delta$ 之间的关系：
+**Whitney's inequality** (1932) relates the vertex connectivity $\kappa$, the edge connectivity $\lambda$ and the minimum degree $\delta$:
 
 $$
 \kappa \le \lambda \le \delta
 $$
 
-???+ note "证明"
-    直觉上，如果有一个大小为 $\lambda$ 的边割集，其中每一条边任选一个端点，就可以得到一个大小为 $\lambda$ 的点割集，所以第一个不等式成立．
+???+ note "Proof"
+    Intuitively, given an edge cut of size $\lambda$, picking one endpoint of each of its edges gives a vertex cut of size $\lambda$, so the first inequality holds.
     
-    与度最小的结点（如有多个，任选一个）相邻的所有边构成大小为 $\delta$ 的边割集，所以第二个不等式也成立．
+    All edges incident to a vertex of minimum degree (pick any one if there are several) form an edge cut of size $\delta$, so the second inequality also holds.
 
-这个不等式不能改进；换言之，对每个满足它的三元组，均可以找出满足这个三元组的图．
+This inequality cannot be improved: for every triple satisfying it, there is a graph with exactly those values.
 
-???+ note "构造"
-    把两个大小为 $\delta + 1$ 的团用 $\lambda$ 条边连起来，使两个团分别有 $\lambda$ 和 $\kappa$ 个不同的结点被连在这些边上．
+???+ note "Construction"
+    Connect two cliques of size $\delta + 1$ with $\lambda$ edges, so that $\lambda$ distinct vertices of one clique and $\kappa$ distinct vertices of the other are attached to these edges.
 
-### Menger 定理
+### Menger's theorem
 
-由 [最大流最小割定理](./flow/min-cut.md)（又名 Ford–Fulkerson 定理）可推出，两点间的不相交（指两两没有公共边）路径的最大数量等于割集的最小大小（这个推论又叫 **Menger 定理**——译者注）．
+The [max-flow min-cut theorem](./flow/min-cut.md) (also called the Ford–Fulkerson theorem) implies that the maximum number of disjoint paths (pairwise sharing no edge) between two vertices equals the minimum size of a cut between them (this corollary is also called **Menger's theorem** — translator's note).
 
-## 计算
+## Computation
 
-以下图的边权均为 $1$．
+All graphs below have edge weights $1$.
 
-### 用最大流计算边连通度
+### Edge connectivity via maximum flow
 
-枚举点对 $(s, t)$，以 $s$ 为源点，$t$ 为汇点跑边权为 $1$ 的最大流．需要 $O(n^2)$ 次最大流，如果使用 Edmonds–Karp 算法，复杂度为 $O(|V|^3 |E|^2)$．使用 Dinic 算法可以更优，复杂度为 $O(|V|^2 |E| \min(|V|^{2/3}, |E|^{1/2}))$．
+Enumerate pairs $(s, t)$ and run a maximum flow with edge weights $1$ from source $s$ to sink $t$. This needs $O(n^2)$ maximum flows; with the Edmonds–Karp algorithm the complexity is $O(|V|^3 |E|^2)$. Dinic's algorithm does better, with complexity $O(|V|^2 |E| \min(|V|^{2/3}, |E|^{1/2}))$.
 
-### 全局最小割
+### Global minimum cut
 
-使用 [Stoer–Wagner 算法](./stoer-wagner.md) 只需跑一次无源汇最小割即可．复杂度为 $O(|V||E| + |V|^{2}\log|V|)$，一般可近似看作 $O(|V|^3)$．
+With the [Stoer–Wagner algorithm](./stoer-wagner.md), a single run of a minimum cut without a fixed source and sink is enough. The complexity is $O(|V||E| + |V|^{2}\log|V|)$, usually treated as roughly $O(|V|^3)$.
 
-### 点连通度
+### Vertex connectivity
 
-仍然枚举点对，这次把每个非源汇的点 $x$ 拆成两个点 $x_1$ 和 $x_2$，并连边 $(x_1, x_2)$．把原图中所有边 $(u, v)$ 换成两条边 $(u_2, v_1)$ 和 $(v_2, u_1)$．此时最大流等于 $s$、$t$ 之间的最小点割集大小（又称局部点连通度）．复杂度与用最大流计算边连通度相同．
+Again enumerate pairs of vertices. This time split each vertex $x$ other than the source and sink into two vertices $x_1$ and $x_2$, and add an edge $(x_1, x_2)$. Replace every edge $(u, v)$ of the original graph with two edges $(u_2, v_1)$ and $(v_2, u_1)$. The maximum flow then equals the size of a minimum vertex cut between $s$ and $t$ (also called the local vertex connectivity). The complexity is the same as computing edge connectivity via maximum flow.
 
-**本页面译自博文 [Рёберная связность. Свойства и нахождение](http://e-maxx.ru/algo/rib_connectivity)、[Вершинная связность. Свойства и нахождение](http://e-maxx.ru/algo/vertex_connectivity) 与其英文翻译版 [Edge connectivity/Vertex connectivity](https://cp-algorithms.com/graph/edge_vertex_connectivity.html)．其中俄文版版权协议为 Public Domain + Leave a Link；英文版版权协议为 CC-BY-SA 4.0．**
+**This page is translated from the posts [Рёберная связность. Свойства и нахождение](http://e-maxx.ru/algo/rib_connectivity) and [Вершинная связность. Свойства и нахождение](http://e-maxx.ru/algo/vertex_connectivity) and their English translation [Edge connectivity/Vertex connectivity](https://cp-algorithms.com/graph/edge_vertex_connectivity.html). The Russian version is licensed under Public Domain + Leave a Link; the English version is licensed under CC-BY-SA 4.0.**
 
-## 延伸阅读
+## Further reading
 
--   论文 [*Connectivity Algorithms*](https://www.cse.msu.edu/~cse835/Papers/Graph_connectivity_revised.pdf) 介绍了近年来连通度计算算法的进展．感兴趣的读者可以自行浏览．
+-   The paper [*Connectivity Algorithms*](https://www.cse.msu.edu/~cse835/Papers/Graph_connectivity_revised.pdf) surveys recent progress in algorithms for computing connectivity. Interested readers can take a look.

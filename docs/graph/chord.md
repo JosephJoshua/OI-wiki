@@ -1,193 +1,193 @@
-弦图是一种特殊的图，很多在一般图上的 NP-Hard 问题在弦图上都有优秀的线性时间复杂度算法．
+A chordal graph is a special kind of graph. Many problems that are NP-hard on general graphs have excellent linear-time algorithms on chordal graphs.
 
-## 一些定义与性质
+## Some definitions and properties
 
-**子图**：点集和边集均为原图点集和边集子集的图．
+**Subgraph**: a graph whose vertex set and edge set are subsets of the original graph's vertex set and edge set.
 
-**导出子图（诱导子图）**：点集为原图点集子集，边集为所有满足 **两个端点均在选定点集中** 的图．
+**Induced subgraph**: a graph whose vertex set is a subset of the original vertex set, and whose edge set consists of all edges **with both endpoints in the chosen vertex set**.
 
-**团**：完全子图．
+**Clique**: a complete subgraph.
 
-**极大团**：不是其他团子图的图．
+**Maximal clique**: a clique that is not a subgraph of any other clique.
 
-**最大团**：点数最大的团．
+**Maximum clique**: a clique with the most vertices.
 
-**团数**：最大团的点数，记为 $\omega(G)$．
+**Clique number**: the number of vertices in a maximum clique, written $\omega(G)$.
 
-**最小染色**：用最少的颜色给点染色使得所有边连接的两点颜色不同．
+**Minimum coloring**: coloring the vertices with as few colors as possible so that the two endpoints of every edge have different colors.
 
-**色数**：最小染色的颜色数，记为 $\chi(G)$．
+**Chromatic number**: the number of colors in a minimum coloring, written $\chi(G)$.
 
-**最大独立集**：最大的点集使得点集中任意两点都没有边直接相连．该集合的大小记为 $\alpha(G)$．
+**Maximum independent set**: a largest vertex set in which no two vertices are joined by an edge. Its size is written $\alpha(G)$.
 
-**最小团覆盖**：用最少的团覆盖所有的点．使用团的数量记为 $\kappa(G)$．
+**Minimum clique cover**: covering all vertices with as few cliques as possible. The number of cliques used is written $\kappa(G)$.
 
-**弦**：连接环中不相邻两点的边．
+**Chord**: an edge joining two non-adjacent vertices of a cycle.
 
-**弦图**：任意长度大于 $3$ 的环都有一个弦的图称为弦图．
+**Chordal graph**: a graph in which every cycle of length greater than $3$ has a chord.
 
-**Lemma 1**：团数 $\omega(G)\le \chi(G)$ 色数
+**Lemma 1**: clique number $\omega(G)\le \chi(G)$ chromatic number
 
-证明：考虑单独对最大团的导出子图进行染色，至少需要 $\omega(G)$ 种颜色．
+Proof: coloring just the induced subgraph of a maximum clique already needs at least $\omega(G)$ colors.
 
-**Lemma 2**：最大独立集数 $\alpha(G)\le \kappa(G)$ 最小团覆盖数
+**Lemma 2**: maximum independent set size $\alpha(G)\le \kappa(G)$ minimum clique cover size
 
-证明：每个团中至多选择一个点．
+Proof: each clique contains at most one vertex of the independent set.
 
-**Lemma 3**：弦图的任意导出子图一定是弦图．
+**Lemma 3**: every induced subgraph of a chordal graph is a chordal graph.
 
-证明：如果弦图有导出子图不是弦图，说明在这个导出子图上存在大于 $3$ 的无弦环，则无论原图如何（怎么加边）都不会使得原图是弦图，矛盾．
+Proof: if some induced subgraph of a chordal graph were not chordal, it would contain a chordless cycle of length greater than $3$. Then no matter what the rest of the original graph looks like (however edges are added), the original graph could not be chordal, a contradiction.
 
-**Lemma 4**：弦图的任意导出子图一定不可能是一个点数大于 $3$ 的环．
+**Lemma 4**: no induced subgraph of a chordal graph can be a cycle with more than $3$ vertices.
 
-证明：一个点数大于 $3$ 的环不是弦图，用以上定理即可．
+Proof: a cycle with more than $3$ vertices is not chordal; apply the lemma above.
 
-## 弦图的判定
+## Recognizing chordal graphs
 
-### 问题描述
+### Problem statement
 
-给定一个无向图，判断其是否为弦图．
+Given an undirected graph, decide whether it is chordal.
 
-### 点割集
+### Vertex separators
 
-对于图 $G$ 上的两点 $u,v$，定义这两点间的 **点割集** 为满足删除这一集合后，$u,v$ 两点之间不连通．如果关于 $u,v$ 两点间的一个点割集的任意子集都不是点割集，则称这个点割集为 **极小点割集**．
+For two vertices $u,v$ of a graph $G$, a **vertex separator** of $u,v$ is a set of vertices whose deletion disconnects $u$ from $v$. If no proper subset of a vertex separator of $u,v$ is a vertex separator, it is called a **minimal vertex separator**.
 
-**Lemma 5**：图关于 $u,v$ 的极小点割集将原图分成了若干个连通块，设包含 $u$ 的连通块为 $V_1$，包含 $v$ 的连通块为 $V_2$，则对于极小点割集上的任意一点 $a$，$N(a)$ 一定包含 $V_1$ 和 $V_2$ 中的点．
+**Lemma 5**: a minimal vertex separator of $u,v$ splits the graph into several connected components. Let $V_1$ be the component containing $u$ and $V_2$ the component containing $v$. Then for every vertex $a$ in the minimal separator, $N(a)$ contains vertices from both $V_1$ and $V_2$.
 
-证明：若 $N(a)$ 只包含 $V_1$ 或 $V_2$ 中的至多一个连通块中的点，从点割集中删去 $a$ 点，仍不连通，则原点割集不是最小点割集．
+Proof: if $N(a)$ contains vertices from at most one of $V_1$ and $V_2$, then removing $a$ from the separator still leaves $u,v$ disconnected, so the original separator was not minimal.
 
-**Lemma 6**：弦图上任意两点间的极小点割集的导出子图一定为一个团．
+**Lemma 6**: in a chordal graph, the induced subgraph of any minimal vertex separator between two vertices is a clique.
 
-证明：极小点割集大小 $\le 1$ 时，导出子图一定为一个团．
+Proof: if the minimal separator has size $\le 1$, its induced subgraph is trivially a clique.
 
-否则，设极小点割集上有两点为 $x,y$，由 **Lemma 5** 得，$N(x)$ 中有 $V_1,V_2$ 中的点，设为 $x_1,x_2$，同样的，设 $y_1,y_2$，注意，可能有 $x_1=y_1,x_2=y_2$．
+Otherwise, let $x,y$ be two vertices of the minimal separator. By **Lemma 5**, $N(x)$ contains vertices from $V_1$ and $V_2$; call them $x_1,x_2$. Similarly define $y_1,y_2$. Note that $x_1=y_1,x_2=y_2$ is possible.
 
-由于 $V_1,V_2$ 均为连通块，则在 $x_1,y_1$ 和 $x_2,y_2$ 两个点对之间存在最短路径．设 $x,y$ 在 $V_1,V_2$ 内部的最短路为 $x-x_1\sim y_1-y,x-x_2\sim y_2-y$，则图上存在一个环 $x-x_1\sim y_1-y-y_2\sim x_2-x$，该环的大小一定 $\ge 4$，根据弦图的定义，此时该环上一定存在一条弦．
+Since $V_1$ and $V_2$ are both connected, there are shortest paths between $x_1,y_1$ and between $x_2,y_2$. Let the shortest paths from $x$ to $y$ through $V_1$ and $V_2$ be $x-x_1\sim y_1-y,x-x_2\sim y_2-y$. Then the graph contains the cycle $x-x_1\sim y_1-y-y_2\sim x_2-x$, whose length is $\ge 4$. By the definition of a chordal graph, this cycle has a chord.
 
-若这条弦连接了 $V_1,V_2$ 两个连通块，则点集不是点割集．若这条弦连接了单个连通块内部的两个点或一个连通块内部的一个点和一个点割集上的点，都不满足最短路的性质．所以这条弦只能连接 $x,y$ 两点．
+If the chord joined $V_1$ and $V_2$, the set would not be a separator. If the chord joined two vertices inside one component, or a vertex inside a component and a vertex of the separator, it would contradict the paths being shortest. So the chord can only join $x$ and $y$.
 
-由此，可证弦图中每个极小点割集中的两点都有边直接相连，故性质得证．
+Hence any two vertices of a minimal separator in a chordal graph are joined by an edge, which proves the property.
 
-### 单纯点
+### Simplicial vertices
 
-设 $N(x)$ 表示与点 $x$ 相邻的点集．若点集 $\{x\}+N(x)$ 的导出子图为一个团，则称点 $x$ 为单纯点．
+Let $N(x)$ be the set of vertices adjacent to $x$. If the induced subgraph of $\{x\}+N(x)$ is a clique, $x$ is called a simplicial vertex.
 
-**Lemma 7**：任何一个弦图都至少有一个单纯点，不是完全图的弦图至少有两个不相邻的单纯点．
+**Lemma 7**: every chordal graph has at least one simplicial vertex, and every chordal graph that is not complete has at least two non-adjacent simplicial vertices.
 
-证明：数学归纳法．单独考虑每一连通块．
+Proof: by induction. Consider each connected component separately.
 
-归纳基底：当图与完全图同构时，图上任意一点都是单纯点．当图的点数 $\le 3$ 时，引理成立．
+Base case: if the graph is isomorphic to a complete graph, every vertex is simplicial. If the graph has $\le 3$ vertices, the lemma holds.
 
-若图上的点数 $\ge 4$ 且图不为完全图，可知必然存在 $u,v$ 使得 $(u,v)\notin E$．设 $I$ 是图关于 $u,v$ 的极小点割集．设 $A,B$ 分别是删去 $I$ 后的导出子图上 $u,v$ 所在的连通块．由于问题的对称性，我们只考虑 $A$ 一侧的情况，设 $L=A+I$．若 $L$ 为完全图，则 $u$ 为单纯点；若不是，因为 $L$ 是原图的导出子图，一定也是弦图，所以有两个不相邻的单纯点，因为 $I$ 是一个团，其上两点都相邻，所以 $A$ 中一定有一个单纯点．该单纯点扩展到全图也为单纯点．
+If the graph has $\ge 4$ vertices and is not complete, there must be $u,v$ with $(u,v)\notin E$. Let $I$ be a minimal vertex separator of $u,v$. Let $A,B$ be the components containing $u$ and $v$ in the induced subgraph after deleting $I$. By symmetry we only consider the side of $A$. Let $L=A+I$. If $L$ is complete, then $u$ is simplicial. Otherwise, since $L$ is an induced subgraph of the original graph, it is also chordal and so has two non-adjacent simplicial vertices. Since $I$ is a clique, any two of its vertices are adjacent, so $A$ must contain a simplicial vertex. That vertex is also simplicial in the whole graph.
 
-由于每次将整个图分成若干个连通块证明，大小一定减小，且都满足性质，故归纳成立．
+Each step splits the graph into several connected components, whose sizes are strictly smaller and which all satisfy the property, so the induction holds.
 
-### 完美消除序列
+### Perfect elimination ordering
 
-令 $n=|V|$，完美消除序列 $v_1,v_2,\ldots ,v_n$ 为 $1,2,\ldots ,n$ 的一个排列，满足 $v_i$ 在 $\{v_i,v_{i+1},\ldots ,v_n\}$ 的导出子图中为单纯点．
+Let $n=|V|$. A perfect elimination ordering $v_1,v_2,\ldots ,v_n$ is a permutation of $1,2,\ldots ,n$ such that $v_i$ is simplicial in the induced subgraph of $\{v_i,v_{i+1},\ldots ,v_n\}$.
 
-**Lemma 8**：一个无向图是弦图当且仅当其有一个完全消除序列．
+**Lemma 8**: an undirected graph is chordal if and only if it has a perfect elimination ordering.
 
-充分性：点数为 $1$ 的弦图有完全消除序列．由 **Lemma 3** 和 **Lemma 7**，点数为 $n$ 的弦图的完美消除序列可以由点数为 $n-1$ 的弦图的完美消除序列加上一个单纯点得到．
+Sufficiency: a chordal graph with $1$ vertex has a perfect elimination ordering. By **Lemma 3** and **Lemma 7**, a perfect elimination ordering of a chordal graph with $n$ vertices can be obtained from one of a chordal graph with $n-1$ vertices plus one simplicial vertex.
 
-必要性：假设有无向图存在结点数 $>3$ 的环且拥有完美消除序列，设在完美消除序列中出现的第一个环上的点为 $v$，设 $v$ 在环上与 $v_1,v_2$ 相连，则有完美消除序列的性质即单纯点的定义可得 $v_1,v_2$ 直接有边相连，矛盾．
+Necessity: suppose an undirected graph has a (chordless) cycle with $>3$ vertices and also has a perfect elimination ordering. Let $v$ be the first vertex of the cycle to appear in the ordering, and let $v_1,v_2$ be its neighbors on the cycle. By the property of the ordering, that is, the definition of a simplicial vertex, $v_1$ and $v_2$ are joined by an edge, a contradiction.
 
-### 朴素算法
+### Naive algorithm
 
-每次找到一个 **单纯点**  $v$，加入到完美消除序列中．
+Each time, find a **simplicial vertex** $v$ and append it to the perfect elimination ordering.
 
-将点 $v$ 与其相邻的边从图上删除．
+Delete $v$ and its incident edges from the graph.
 
-重复以上过程，若所有点都被删除，则原图是弦图且求得了一个完美消除序列；若图上不存在单纯点，则原图不是弦图．
+Repeat. If all vertices get deleted, the graph is chordal and we have found a perfect elimination ordering; if at some point no simplicial vertex exists, the graph is not chordal.
 
-时间复杂度 $O(n^4)$．
+The time complexity is $O(n^4)$.
 
-### MCS 算法
+### MCS algorithm
 
-**最大势算法**（Maximum Cardinality Search）是一种可以在 $O(n+m)$ 的时间复杂度内求出无向图的完美消除序列的方法．
+**Maximum Cardinality Search** (MCS) finds a perfect elimination ordering of an undirected graph in $O(n+m)$ time.
 
-逆序给结点编号，即按从 $n$ 到 $1$ 的顺序给点标号．
+We number the vertices in reverse, that is, assign labels from $n$ down to $1$.
 
-设 $label_x$ 表示第 $x$ 个点与多少个已经标号的点相邻，每次选择 $label$ 值最大的未标号结点进行标号．
+Let $label_x$ be the number of already-numbered vertices adjacent to vertex $x$. Each time, pick an unnumbered vertex with the largest $label$ and number it.
 
-用链表维护对于每个 $i$，满足 $label_x=i$ 的 $x$．
+Use linked lists to keep, for each $i$, the vertices $x$ with $label_x=i$.
 
-由于每条边对 $\sum_{i=1}^n label_i$ 的贡献最多是 $2$，时间复杂度 $O(n+m)$．
+Since each edge contributes at most $2$ to $\sum_{i=1}^n label_i$, the time complexity is $O(n+m)$.
 
-**正确性证明**：
+**Proof of correctness**:
 
-设 $\alpha(x)$ 为 $x$ 在这个序列中的位置．
-我们需要证明对于任何一个弦图，算法求出的序列一定是一个完美消除序列，即在序列中位于某个点后面且与这个点相连的所有点两两相连．
+Let $\alpha(x)$ be the position of $x$ in the ordering.
+We need to show that for every chordal graph, the ordering found by the algorithm is a perfect elimination ordering, that is, all vertices after a vertex in the ordering and adjacent to it are pairwise adjacent.
 
-**Lemma 9**：考虑三个点 $u,v,w$ 满足 $\alpha(u)<\alpha(v)<\alpha(w)$，如果 $uw$ 相连，$vw$ 不相连，则 $w$ 只给 $u$ 的 $label$ 贡献，不给 $v$ 贡献．为了让 $v$ 比 $u$ 先加入序列，需要一个 $x$ 满足 $\alpha(v)<\alpha(x)$ 且 $vx$ 相连，$ux$ 不相连，即 $x$ 只给 $v$ 贡献而不给 $u$ 贡献．
+**Lemma 9**: consider three vertices $u,v,w$ with $\alpha(u)<\alpha(v)<\alpha(w)$. If $uw$ is an edge and $vw$ is not, then $w$ contributes to the $label$ of $u$ but not of $v$. For $v$ to enter the ordering before $u$, there must be some $x$ with $\alpha(v)<\alpha(x)$ such that $vx$ is an edge and $ux$ is not, that is, $x$ contributes to $v$ but not to $u$.
 
-**Lemma 10**：任意一个弦图一定不存在一个序列 $v_0,v_1,\dots,v_k(k\ge 2)$ 满足下列性质：
+**Lemma 10**: no chordal graph has a sequence $v_0,v_1,\dots,v_k(k\ge 2)$ with all of the following properties:
 
-1.  $v_iv_j$ 相连当且仅当 $|i-j|=1$．
-2.  $\alpha(v_0)>\alpha(v_i)(i\in[1,k])$．
-3.  存在 $i\in[1,k-1]$，满足 $\alpha(v_i)<\alpha(v_{i+1})<\dots<\alpha(v_k)$ 且 $\alpha(v_i)<\alpha(v_{i-1})<\dots<\alpha(v_1)<\alpha(v_k)<\alpha(v_0)$．
+1.  $v_iv_j$ is an edge if and only if $|i-j|=1$.
+2.  $\alpha(v_0)>\alpha(v_i)(i\in[1,k])$.
+3.  There is $i\in[1,k-1]$ with $\alpha(v_i)<\alpha(v_{i+1})<\dots<\alpha(v_k)$ and $\alpha(v_i)<\alpha(v_{i-1})<\dots<\alpha(v_1)<\alpha(v_k)<\alpha(v_0)$.
 
-证明：
+Proof:
 
-由于 $\alpha(v_1)<\alpha(v_k)<\alpha(v_0)$，且 $v_1v_0$ 相连，$v_kv_0$ 不相连，所以由性质一，存在 $x$ 满足 $\alpha(v_k)<\alpha(x)$ 且 $v_kx$ 相连，$v_1x$ 不相连．
+Since $\alpha(v_1)<\alpha(v_k)<\alpha(v_0)$, $v_1v_0$ is an edge, and $v_kv_0$ is not, by Lemma 9 there is an $x$ with $\alpha(v_k)<\alpha(x)$ such that $v_kx$ is an edge and $v_1x$ is not.
 
-考虑最小的 $j\in(1,k]$ 满足 $v_jx$ 相连，我们可以推出 $v_0x$ 不相连，否则 $v_0v_1\cdots v_jx$ 构成了一个长度 $\ge 4$ 且无弦的环．
+Take the smallest $j\in(1,k]$ such that $v_jx$ is an edge. Then $v_0x$ is not an edge, otherwise $v_0v_1\cdots v_jx$ would form a chordless cycle of length $\ge 4$.
 
-如果 $x<v_0$，则 $v_0,v_1,\dots,v_j,x$ 也是一个满足性质的序列；如果 $v_0<x$ 则 $x,v_j,\dots,v_1,v_0$ 也是一个满足性质的序列．
+If $x<v_0$, then $v_0,v_1,\dots,v_j,x$ is also a sequence with these properties; if $v_0<x$, then $x,v_j,\dots,v_1,v_0$ is also such a sequence.
 
-在上面的推导中，我们扩大了 $\min(v_0,v_k)$，于是一直推下去，一定会产生矛盾．
+In this argument we increased $\min(v_0,v_k)$. Repeating it forever must eventually lead to a contradiction.
 
-**Theorem 1**：对于任何一个弦图，最大势算法求出的序列一定是一个完美消除序列．
+**Theorem 1**: for every chordal graph, the ordering found by maximum cardinality search is a perfect elimination ordering.
 
-证明：考虑任意三个点 $u,v,w$ 满足 $\alpha(u)<\alpha(v)<\alpha(w)$，我们需要证明若 $uv$ 相连，$uw$ 相连，则 $vw$ 一定相连．
+Proof: take any three vertices $u,v,w$ with $\alpha(u)<\alpha(v)<\alpha(w)$. We need to show that if $uv$ and $uw$ are edges, then $vw$ is an edge.
 
-考虑反证法，假设不相连，那么 $w,u,v$ 就是一个满足 **Lemma 10** 中性质的序列，我们证明了这样序列不存在，所以矛盾，$vw$ 相连．
+Suppose for contradiction it is not. Then $w,u,v$ is a sequence with the properties in **Lemma 10**, but we proved no such sequence exists. This is a contradiction, so $vw$ is an edge.
 
-???+ note "参考实现"
+???+ note "Reference implementation"
     ```cpp
     --8<-- "docs/graph/code/chord/chord_1.cpp:var"
     --8<-- "docs/graph/code/chord/chord_1.cpp:mcs"
     ```
 
-如果此时原图是弦图，此时求出的就是完美消除序列；但是由于原图可能不是弦图，此时求出的一定不是完美消除序列，所以问题转化为 **判断求出的序列是否是原图的完美消除序列**．
+If the graph is chordal, the ordering found is a perfect elimination ordering. But the graph may not be chordal, in which case the ordering is certainly not a perfect elimination ordering. So the problem becomes **checking whether the found ordering is a perfect elimination ordering of the graph**.
 
-### 判断一个序列是否是完美消除序列
+### Checking whether an ordering is a perfect elimination ordering
 
-#### 朴素算法
+#### Naive algorithm
 
-根据定义，依次判断完美消除序列 $v$ 上 $\{v_i,v_{i+1},\ldots ,v_n\}$ 中与 $v_i$ 相邻的点是否构成了一个团．时间复杂度 $O(nm)$．
+By definition, for each $v_i$ in the ordering $v$, check whether the vertices among $\{v_i,v_{i+1},\ldots ,v_n\}$ adjacent to $v_i$ form a clique. The time complexity is $O(nm)$.
 
-#### 优化后的算法
+#### Optimized algorithm
 
-设 $N^+(u)$ 为序列中位于 $u$ 之后且与 $u$ 相邻的点集，$f(u)$ 为其中在序列中最靠前的点．对于每个 $N^+(u)$ 非空的点 $u$，只需检查 $N^+(u)\setminus\{f(u)\}$ 中的每个点是否都与 $f(u)$ 相邻．
+Let $N^+(u)$ be the set of vertices adjacent to $u$ that come after $u$ in the ordering, and let $f(u)$ be the earliest of them in the ordering. For each vertex $u$ with non-empty $N^+(u)$, we only need to check that every vertex in $N^+(u)\setminus\{f(u)\}$ is adjacent to $f(u)$.
 
-这个条件显然是必要的．充分性可以按序列从后往前归纳：若后面的点均满足完美消除序列的要求，则 $N^+(f(u))$ 是一个团．检查通过时，$N^+(u)\setminus\{f(u)\}\subseteq N^+(f(u))$，且其中的点都与 $f(u)$ 相邻，所以 $N^+(u)$ 也是一个团．$N^+(u)$ 为空时无需检查．
+This condition is clearly necessary. Sufficiency follows by induction from the back of the ordering to the front: if all later vertices satisfy the perfect elimination requirement, then $N^+(f(u))$ is a clique. When the check passes, $N^+(u)\setminus\{f(u)\}\subseteq N^+(f(u))$ and all its vertices are adjacent to $f(u)$, so $N^+(u)$ is a clique too. When $N^+(u)$ is empty, nothing needs checking.
 
-先扫描邻接表求出每个点的 $f(u)$，并将 $f(u)$ 相同的点分为一组．处理 $f(u)=v$ 的这一组时，先将 $v$ 的所有邻点标记，再扫描组内每个点 $u$ 的邻接表，检查序列中位于 $v$ 之后的邻点是否都被标记．用顶点编号 $v$ 作为标记值，就不必在每组检查后清空标记数组．每个点至多属于一个组，每个点的邻接表在求 $f(u)$、设置标记和检查时各至多扫描一次，因此总时间复杂度为 $O(n+m)$．
+First scan the adjacency lists to compute $f(u)$ for each vertex, and group vertices with the same $f(u)$. To process the group with $f(u)=v$, first mark all neighbors of $v$, then scan the adjacency list of each $u$ in the group and check that all its neighbors after $v$ in the ordering are marked. Using the vertex id $v$ as the mark value means we never have to clear the mark array between groups. Each vertex belongs to at most one group, and each adjacency list is scanned at most once each for computing $f(u)$, setting marks and checking, so the total time complexity is $O(n+m)$.
 
-???+ note "参考实现"
+???+ note "Reference implementation"
     ```cpp
     --8<-- "docs/graph/code/chord/chord_1.cpp:var"
     --8<-- "docs/graph/code/chord/chord_1.cpp:core"
     ```
 
-至此，**弦图判定问题** 可以在 $O(n+m)$ 的时间复杂度内解决．
+So the **chordal graph recognition problem** can be solved in $O(n+m)$ time.
 
-## 弦图的极大团
+## Maximal cliques of a chordal graph
 
-令 $N(x)$ 为满足与 $x$ 直接有边相连且在完美消除序列上的 $x$ 之后的序列．则弦图的极大团一定为 $\{x\}+N(x)$．
+Let $N(x)$ be the set of vertices adjacent to $x$ that come after $x$ in the perfect elimination ordering. Then every maximal clique of a chordal graph has the form $\{x\}+N(x)$.
 
-证明：考虑弦图的一个极大团 $V$，其中的点在完美消除序列中出现的第一个点 $x$，一定有 $V\subseteq \{x\}+N(x)$，又因为 $V$ 是极大团，所以 $V=\{x\}+N(x)$．
+Proof: take a maximal clique $V$ of the chordal graph, and let $x$ be its first vertex in the perfect elimination ordering. Then $V\subseteq \{x\}+N(x)$, and since $V$ is maximal, $V=\{x\}+N(x)$.
 
-弦图最多有 $n$ 个极大团．求出弦图的每个极大团，可以判断每个 $\{x\}+N(x)$ 是否为极大团．
+A chordal graph has at most $n$ maximal cliques. To find all of them, we check whether each $\{x\}+N(x)$ is a maximal clique.
 
-设 $A=\{x\}+N(x),B=\{y\}+N(y)$，若 $A\subsetneqq B$，则 $A$ 不是极大团．此时在完美消除序列上显然有 $y$ 在 $x$ 前．
+Let $A=\{x\}+N(x),B=\{y\}+N(y)$. If $A\subsetneqq B$, then $A$ is not a maximal clique. In that case $y$ clearly comes before $x$ in the perfect elimination ordering.
 
-设 $nxt_x$ 表示 $N(x)$ 中在完美消除序列上最靠前的点，$y*$ 表示所有满足 $A\subseteq B$ 的 $y$ 中的最靠后的点．此时必然有 $nxt_{y*}=x$，否则 $y*$ 不是最靠后的，令 $y*=nxt_{y*}$ 仍然满足条件．
+Let $nxt_x$ be the earliest vertex of $N(x)$ in the perfect elimination ordering, and let $y*$ be the latest among all $y$ with $A\subseteq B$. Then $nxt_{y*}=x$ must hold; otherwise $y*$ would not be the latest, since $y*=nxt_{y*}$ would still satisfy the condition.
 
-$A\subsetneqq B$ 当且仅当 $|A|+1\le |B|$．
+$A\subsetneqq B$ if and only if $|A|+1\le |B|$.
 
-问题转化为判断是否存在 $y$，满足 $nxt_y=x$ 且 $|N(x)|+1\le |N(y)|$．时间复杂度 $O(n+m)$．
+The problem becomes checking whether some $y$ has $nxt_y=x$ and $|N(x)|+1\le |N(y)|$. The time complexity is $O(n+m)$.
 
 ```cpp
 for (int i = 1; i <= n; i++) {
@@ -206,25 +206,25 @@ for (int i = 1; i <= n; i++) {
 }
 ```
 
-## 弦图的色数/弦图的团数
+## Chromatic number / clique number of a chordal graph
 
-一种构造方法：按完美消除序列从后往前依次给每个点染色，给每个点染上可以染的最小颜色．时间复杂度 $O(m+n)$．
+One construction: go through the perfect elimination ordering from back to front and give each vertex the smallest color it can take. The time complexity is $O(m+n)$.
 
-正确性证明：设以上方法使用了 $t$ 种颜色，则 $t\ge \chi(G)$．由于团上每个点都是不同的颜色，所以 $t=\omega(G)$，由 **Lemma 1**，$t=\omega(G)\le \chi(G)$．综上，可得 $t=\chi(G)=\omega(G)$．
+Proof of correctness: suppose this method uses $t$ colors; then $t\ge \chi(G)$. Since all vertices of a clique get different colors, $t=\omega(G)$, and by **Lemma 1**, $t=\omega(G)\le \chi(G)$. Together, $t=\chi(G)=\omega(G)$.
 
-无需染色方案，只需求出弦图的色数/团数时，可以取 $|\{x\}+N(x)|$ 的最大值得到．
+If we only need the chromatic number / clique number and not the coloring itself, we can take the maximum of $|\{x\}+N(x)|$.
 
 ```cpp
 for (int i = 1; i <= n; i++) ans = max(ans, deg[i] + 1);
 ```
 
-## 弦图的最大独立集/最小团覆盖
+## Maximum independent set / minimum clique cover of a chordal graph
 
-最大独立集：完美消除序列从前往后，选择所有没有与已经选择的点有直接连边的点．
+Maximum independent set: go through the perfect elimination ordering from front to back, and pick every vertex that has no edge to an already picked vertex.
 
-最小团覆盖：设最大独立集为 $\{v_1,v_2,\ldots ,v_t\}$，则团的集合 $\{\{v_1+N(v_1)\},\{v_2+N(v_2)\},\ldots ,\{v_t+N(v_t)\} \}$ 为图的最小团覆盖．时间复杂度均为 $O(n+m)$．
+Minimum clique cover: if the maximum independent set is $\{v_1,v_2,\ldots ,v_t\}$, then the set of cliques $\{\{v_1+N(v_1)\},\{v_2+N(v_2)\},\ldots ,\{v_t+N(v_t)\} \}$ is a minimum clique cover of the graph. Both take $O(n+m)$ time.
 
-正确性证明：设以上方案独立集数和团覆盖数为 $t$，由定义得 $t\le \alpha(G),t\ge \kappa(G)$，由 **Lemma 2** 得，$\alpha(G)\le \kappa(G)$，所以 $t=\alpha(G)=\kappa(G)$．
+Proof of correctness: let $t$ be the size of the independent set and the clique cover above. By definition $t\le \alpha(G),t\ge \kappa(G)$, and by **Lemma 2**, $\alpha(G)\le \kappa(G)$, so $t=\alpha(G)=\kappa(G)$.
 
 ```cpp
 for (int i = 1; i <= n; i++)
@@ -235,22 +235,22 @@ for (int i = 1; i <= n; i++)
   }
 ```
 
-## 习题
+## Exercises
 
 [Library Checker - Chordal Graph Recognition](https://judge.yosupo.jp/problem/chordal_graph_recognition)
 
 [SPOJ FISHNET - Fishing Net](https://www.spoj.com/problems/FISHNET)
 
-[P3196\[HNOI2008\] 神奇的国度](https://www.luogu.com.cn/problem/P3196)
+[P3196\[HNOI2008\] The Magical Country](https://www.luogu.com.cn/problem/P3196)
 
-[P3852\[TJOI2007\] 小朋友](https://www.luogu.com.cn/problem/P3852)
+[P3852\[TJOI2007\] Children](https://www.luogu.com.cn/problem/P3852)
 
-## 参考资料
+## References
 
-[弦图相关](https://yhx-12243.github.io/OI-transit/memos/15.html)
+[On chordal graphs](https://yhx-12243.github.io/OI-transit/memos/15.html)
 
-[2009 WC 讲稿](https://github.com/hzwer/shareOI/blob/master/%E5%9B%BE%E8%AE%BA/%E5%BC%A6%E5%9B%BE%E4%B8%8E%E5%8C%BA%E9%97%B4%E5%9B%BE_%E9%99%88%E4%B8%B9%E7%90%A6.pptx)
+[2009 WC lecture slides](https://github.com/hzwer/shareOI/blob/master/%E5%9B%BE%E8%AE%BA/%E5%BC%A6%E5%9B%BE%E4%B8%8E%E5%8C%BA%E9%97%B4%E5%9B%BE_%E9%99%88%E4%B8%B9%E7%90%A6.pptx)
 
-[弦图总结 - 租酥雨](https://www.cnblogs.com/zhoushuyu/p/8716935.html)
+[Chordal graph summary - zhoushuyu](https://www.cnblogs.com/zhoushuyu/p/8716935.html)
 
 [R. E. Tarjan and M. Yannakakis, Simple linear-time algorithms to test chordality of graphs,test acyclicity of hypergraphs,and selectively reduce acyclic hypergraphs, SIAM J. Comput., 13 (1984), pp. 566–579.](https://dl.acm.org/doi/abs/10.1137/0213035)

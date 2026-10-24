@@ -1,51 +1,51 @@
 author: Ir1d, Anguei, hsfzLZH1
 
-## 定义
+## Definition
 
-**差分约束系统** 是一种特殊的 $n$ 元一次不等式组，它包含 $n$ 个变量 $x_1,x_2,\dots,x_n$ 以及 $m$ 个约束条件，每个约束条件是由两个其中的变量做差构成的，形如 $x_i-x_j\leq c_k$，其中 $1 \leq i, j \leq n, i \neq j, 1 \leq k \leq m$ 并且 $c_k$ 是常数（可以是非负数，也可以是负数）．我们要解决的问题是：求一组解 $x_1=a_1,x_2=a_2,\dots,x_n=a_n$，使得所有的约束条件得到满足，否则判断出无解．
+A **system of difference constraints** is a special system of linear inequalities in $n$ variables. It has $n$ variables $x_1,x_2,\dots,x_n$ and $m$ constraints. Each constraint is a difference of two of the variables, of the form $x_i-x_j\leq c_k$, where $1 \leq i, j \leq n, i \neq j, 1 \leq k \leq m$ and $c_k$ is a constant (it can be non-negative or negative). The task is to find a solution $x_1=a_1,x_2=a_2,\dots,x_n=a_n$ that satisfies all constraints, or to report that there is none.
 
-差分约束系统中的每个约束条件 $x_i-x_j\leq c_k$ 都可以变形成 $x_i\leq x_j+c_k$，这与单源最短路中的三角形不等式 $dist[y]\leq dist[x]+z$ 非常相似．因此，我们可以把每个变量 $x_i$ 看做图中的一个结点，对于每个约束条件 $x_i-x_j\leq c_k$，从结点 $j$ 向结点 $i$ 连一条长度为 $c_k$ 的有向边．
+Each constraint $x_i-x_j\leq c_k$ can be rewritten as $x_i\leq x_j+c_k$, which looks very much like the triangle inequality $dist[y]\leq dist[x]+z$ in single-source shortest paths. So we can treat each variable $x_i$ as a vertex of a graph, and for each constraint $x_i-x_j\leq c_k$ add a directed edge of length $c_k$ from vertex $j$ to vertex $i$.
 
-注意到，如果 $\{a_1,a_2,\dots,a_n\}$ 是该差分约束系统的一组解，那么对于任意的常数 $d$，$\{a_1+d,a_2+d,\dots,a_n+d\}$ 显然也是该差分约束系统的一组解，因为这样做差后 $d$ 刚好被消掉．
+Note that if $\{a_1,a_2,\dots,a_n\}$ is a solution of the system, then for any constant $d$, $\{a_1+d,a_2+d,\dots,a_n+d\}$ is clearly also a solution, because $d$ cancels out in each difference.
 
-## 过程
+## Process
 
-设 $dist[0]=0$ 并向每一个点连一条权重为 $0$ 边，跑单源最短路，若图中存在负环，则给定的差分约束系统无解，否则，$x_i=dist[i]$ 为该差分约束系统的一组解．
+Set $dist[0]=0$ and add an edge of weight $0$ from vertex 0 to every vertex, then run single-source shortest paths. If the graph has a negative cycle, the system has no solution; otherwise, $x_i=dist[i]$ is a solution.
 
-## 性质
+## Properties
 
-一般使用 Bellman–Ford 或队列优化的 Bellman–Ford（俗称 SPFA，在某些随机图跑得很快）判断图中是否存在负环，最坏时间复杂度为 $O(nm)$．
+We usually use Bellman–Ford or queue-optimized Bellman–Ford (commonly called SPFA, which runs fast on some random graphs) to check for negative cycles. The worst-case time complexity is $O(nm)$.
 
-## 常用变形技巧
+## Common transformation tricks
 
-### 例题 [luogu P1993 小 K 的农场](https://www.luogu.com.cn/problem/P1993)
+### Example problem [Luogu P1993 Little K's Farm](https://www.luogu.com.cn/problem/P1993)
 
-题目大意：求解差分约束系统，有 $m$ 条约束条件，每条都为形如 $x_a-x_b\geq c_k$，$x_a-x_b\leq c_k$ 或 $x_a=x_b$ 的形式，判断该差分约束系统有没有解．
+Problem summary: solve a system of difference constraints with $m$ constraints, each of the form $x_a-x_b\geq c_k$, $x_a-x_b\leq c_k$ or $x_a=x_b$, and decide whether the system has a solution.
 
-|         题意         |                      转化                     |               连边              |
+|         Constraint         |                      Rewritten                     |               Edges              |
 | :----------------: | :-----------------------------------------: | :---------------------------: |
 | $x_a - x_b \geq c$ |             $x_b - x_a \leq -c$             |        `add(a, b, -c);`       |
 | $x_a - x_b \leq c$ |              $x_a - x_b \leq c$             |        `add(b, a, c);`        |
 |     $x_a = x_b$    | $x_a - x_b \leq 0, \space x_b - x_a \leq 0$ | `add(b, a, 0), add(a, b, 0);` |
 
-跑判断负环，如果不存在负环，输出 `Yes`，否则输出 `No`．
+Run a negative cycle check. If there is no negative cycle, output `Yes`; otherwise output `No`.
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/graph/code/diff-constraints/diff-constraints_1.cpp"
     ```
 
-### 例题 [P4926\[1007\] 倍杀测量者](https://www.luogu.com.cn/problem/P4926)
+### Example problem [P4926\[1007\] The Multiple-Kill Measurer](https://www.luogu.com.cn/problem/P4926)
 
-不考虑二分等其他的东西，这里只论述差分系统 $\frac{x_i}{x_j}\leq c_k$ 的求解方法．
+Ignoring binary search and the other parts, here we only discuss how to solve a system of constraints of the form $\frac{x_i}{x_j}\leq c_k$.
 
-对每个 $x_i,x_j$ 和 $c_k$ 取一个 $\log$ 就可以把乘法变成加法运算，即 $\log x_i-\log x_j \leq \log c_k$，这样就可以用差分约束解决了．
+Taking the $\log$ of each $x_i,x_j$ and $c_k$ turns multiplication into addition: $\log x_i-\log x_j \leq \log c_k$. This can then be solved with difference constraints.
 
-## Bellman–Ford 判负环代码实现
+## Negative cycle detection with Bellman–Ford
 
-下面是用 Bellman–Ford 算法判断图中是否存在负环的代码实现，请在调用前先保证图是连通的．
+Below is code that uses the Bellman–Ford algorithm to check whether the graph has a negative cycle. Make sure the graph is connected before calling it.
 
-???+ note "实现"
+???+ note "Implementation"
     === "C++"
         ```cpp
         bool Bellman_Ford() {
@@ -87,11 +87,11 @@ author: Ir1d, Anguei, hsfzLZH1
             return True
         ```
 
-## 习题
+## Exercises
 
-[Usaco2006 Dec Wormholes 虫洞](https://loj.ac/problem/10085)
+[Usaco2006 Dec Wormholes](https://loj.ac/problem/10085)
 
-[「SCOI2011」糖果](https://loj.ac/problem/2436)
+[SCOI2011 Candy](https://loj.ac/problem/2436)
 
 [POJ 1364 King](http://poj.org/problem?id=1364)
 
