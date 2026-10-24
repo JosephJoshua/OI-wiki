@@ -1,40 +1,40 @@
 author: isdanni
 
-???+ warning "注意"
-    此章是选读内容，在阅读前请确定你对函数式编程（Functional Programming）有一定了解．
+???+ warning "Note"
+    This chapter is optional reading. Before reading it, make sure you have some familiarity with functional programming.
 
-## 简介
+## Overview
 
-**手指树**（Finger Tree）是一种 **纯函数式** 数据结构，由 Ralf Hinze 和 Ross Paterson 提出．
+A **finger tree** is a **purely functional** data structure proposed by Ralf Hinze and Ross Paterson.
 
-## 为什么需要手指树
+## Why finger trees
 
-在函数式编程中，列表是十分常见的数据类型．对于基于序列的操作，包括在两端添加和删除元素（双端队列操作），在任意节点插入、连接、删除，查找某个满足要求的元素，将序列拆分为子序列，几乎所有的函数型语言都支持．但是对于高效的更多操作，这些语言很难做到．即使有相对应的实现，通常也都非常复杂，实际很难使用．
+In functional programming, lists are a very common data type. Almost every functional language supports sequence-based operations such as adding and removing elements at both ends (deque operations), inserting, concatenating and deleting at arbitrary nodes, finding an element that meets some condition, and splitting a sequence into subsequences. But these languages struggle to do more of these operations efficiently. Even when matching implementations exist, they are usually very complicated and hard to use in practice.
 
-而指状树提供了一种纯函数式的序列数据结构，它可以在均摊常量时间（amortized constant time）内完成访问，添加到序列的前端和末尾等操作，以及在对数时间（logarithmic time）内完成串联和随机访问．除了良好的渐近运行时边界外，手指树还非常灵活：当与元素上的幺半群标记（[monoidal tag](https://en.wikipedia.org/wiki/Monoidal_category)）结合时，指状树可用于实现高效的随机访问序列、有序序列、间隔树和优先级队列．
+A finger tree provides a purely functional sequence data structure. It supports access and adding to the front and back of the sequence in amortized constant time, and concatenation and random access in logarithmic time. Besides good asymptotic running-time bounds, finger trees are also very flexible: combined with a [monoidal tag](https://en.wikipedia.org/wiki/Monoidal_category) on the elements, a finger tree can be used to implement efficient random-access sequences, ordered sequences, interval trees and priority queues.
 
-## 基本结构
+## Basic structure
 
-手指树在树的「手指」（叶子）的地方存储数据，访问时间为分摊常量．手指是一个可以访问部分数据结构的点．在命令式语言（imperative language）中，这被称做指针．在手指树中，「手指」是指向序列末端或叶节点的结构．手指树还在每个内部节点中存储对其后代应用一些关联操作的结果．存储在内部节点中的数据可用于提供除树类数据结构之外的功能．
+A finger tree stores data at the "fingers" (leaves) of the tree, with amortized constant access time. A finger is a point through which you can access part of a data structure. In imperative languages, this is called a pointer. In a finger tree, a "finger" is a structure pointing to the ends of the sequence, or to leaf nodes. A finger tree also stores, in each internal node, the result of applying some associative operation to its descendants. The data stored in internal nodes can be used to provide functionality beyond that of tree-like data structures.
 
-1.  手指树的深度由下到上计算．
-2.  手指树的第一级，即树的叶节点，仅包含值，深度为 $0$．第二级为深度 $1$．第三级为深度 $2$，依此类推．
-3.  离根越近，节点指向的原始树（在它是手指树之前的树）的子树越深．这样，沿着树向下工作就是从叶子到树的根，这与典型的树数据结构相反．为了获得这种的结构，我们必须确保原始树具有统一的深度．在声明节点对象时，必须通过子节点的类型进行参数化．深度为 $1$ 及以上的脊椎上的节点指向树，通过这种参数化，它们可以由嵌套节点表示．
+1.  The depth of a finger tree is counted from the bottom up.
+2.  The first level of a finger tree, the leaves, contains only values and has depth $0$. The second level has depth $1$, the third has depth $2$, and so on.
+3.  The closer a node is to the root, the deeper the subtree of the original tree (the tree before it became a finger tree) that it points to. So working down the tree means going from the leaves to the root of the original tree, which is the opposite of a typical tree data structure. To get this structure, we must make sure the original tree has uniform depth. When declaring the node type, it must be parameterized by the type of its children. Nodes on the spine at depth $1$ and above point to trees, and with this parameterization they can be represented as nested nodes.
 
-### 将一棵树变成手指树
+### Turning a tree into a finger tree
 
-???+ note "注释"
-    **2-3 树** 是一种树状数据结构，其中每个带有子节点（内部节点）的节点具有两个子节点（$2$ 节点）和一个数据元素或三个子节点（$3$ 节点）和两个数据元素．2-3 树是 $3$ 阶 B 树．树外部的节点（叶节点）没有子节点和一两个数据元素．
+???+ note "Note"
+    A **2-3 tree** is a tree data structure where every node with children (an internal node) has either two children (a $2$ node) and one data element, or three children (a $3$ node) and two data elements. A 2-3 tree is a B-tree of order $3$. Nodes on the outside of the tree (leaves) have no children and one or two data elements.
 
-我们将从平衡 2-3 树开始这个过程．为了使手指树正常工作，所有的叶节点需要是水平的．如下图所示（图片取自手指树论文）：
+We start this process with a balanced 2-3 tree. For a finger tree to work, all leaves need to be on the same level, as in the figure below (taken from the finger tree paper):
 
 ![](./images/finger-tree-1.png)
 
-手指是「一种结构，可以有效地访问靠近特定位置的树的节点．」要制作手指树，我们需要将手指放在树的左右两端，取树的最左边和最右边的内部节点并将它们拉起来，使树的其余部分悬在它们之间，这为我们提供了对序列末尾的均摊常量访问时间．
+A finger is "a structure that gives efficient access to nodes of a tree near a particular location." To make a finger tree, we put fingers at the left and right ends of the tree: we take the leftmost and rightmost internal nodes and pull them up, so that the rest of the tree hangs between them. This gives us amortized constant access time to the ends of the sequence.
 
 ![](./images/finger-tree-2.png)
 
-这种新的数据结构被称为手指树．手指树由沿其树脊（棕色线）分布的几层（下方蓝色框）组成：
+This new data structure is called a finger tree. A finger tree consists of several layers (the blue boxes below) along its spine (the brown line):
 
 ![](./images/finger-tree-3.png)
 
@@ -47,20 +47,20 @@ data Digit a = One a | Two a a | Three a a a | Four a a a a
 data Node a = Node2 a a | Node3 a a a
 ```
 
-示例中的数字是带有字母的节点．每个列表由树脊上每个节点的前缀或后缀划分．在转换后的 2-3 树中，顶层的数字列表似乎可以有两个或三个长度，而较低级别的长度只有一或两个．为了使手指树的某些应用程序能够如此高效地运行，手指树允许在每个级别上有 $1$ 到 $4$ 个子树．手指树的数字可以转换成一个列表，如：
+The digits in the example are the nodes with letters. Each list is split by the prefix or suffix of each node on the spine. In the transformed 2-3 tree, the digit lists at the top level can have length two or three, while lower levels have length only one or two. To let some applications of finger trees run efficiently, a finger tree allows $1$ to $4$ subtrees at each level. The digits of a finger tree can be turned into a list, like:
 
 ```haskell
 type Digit a = One a | Two a a | Three a a a | Four a a a a
 ```
 
-顶层具有类型 $a$ 的元素，下一层具有类型节点 $a$ 的元素，因为树脊和叶子之间的节点，这通常意味着树的第 $n$ 层具有元素类型为 $Node^{n}$ $a$，或 2-3 个深度为 $n$ 的树．这意味着 $n$ 个元素的序列由深度为 `Θ(log n)` 的树表示．距离最近端 $d$ 的元素存储在树中 `Θ(log d)` 深度处．
+The top level has elements of type $a$, and the next level has elements of type Node $a$, because of the nodes between the spine and the leaves. In general, this means level $n$ of the tree has elements of type $Node^{n}$ $a$, that is, 2-3 trees of depth $n$. So a sequence of $n$ elements is represented by a tree of depth `Θ(log n)`. An element at distance $d$ from the nearest end is stored at depth `Θ(log d)` in the tree.
 
-### 双向队列操作
+### Deque operations
 
-指状树也可以制作高效的双向队列．无论结构是否持久，所有操作都需要 `Θ(1)` 时间．它可以被看作是的隐式双端队列的扩展[^okasaki1999purely]：
+A finger tree also makes an efficient deque. Whether or not the structure is used persistently, all operations take `Θ(1)` time. It can be seen as an extension of the implicit deque[^okasaki1999purely]:
 
-1.  用 2-3 个节点替换对提供了足够的灵活性来支持有效的串联．（为了保持恒定时间的双端队列操作，必须将 Digit 扩展为四．）
-2.  用幺半群（monoid）注释内部节点允许有效的分裂．
+1.  Replacing pairs with 2-3 nodes gives enough flexibility to support efficient concatenation. (To keep deque operations constant-time, Digit must be extended to four.)
+2.  Annotating internal nodes with a monoid allows efficient splitting.
 
 ```haskell
 data ImplicitDeque a = Empty
@@ -70,11 +70,11 @@ data ImplicitDeque a = Empty
 data Digit a = One a | Two a a | Three a a a
 ```
 
-## 时间复杂度
+## Time complexity
 
-手指树提供了对树的「手指」（叶子）的分摊常量时间访问，这是存储数据的地方，以及在较小部分的大小中连接和拆分对数时间．它还在每个内部节点中存储对其后代应用一些关联操作的结果．存储在内部节点中的「摘要」数据可用于提供除树之外的数据结构的功能．
+A finger tree gives amortized constant-time access to the "fingers" (leaves) of the tree, where the data is stored, and concatenation and splitting in time logarithmic in the size of the smaller part. It also stores, in each internal node, the result of applying some associative operation to its descendants. The "summary" data stored in internal nodes can be used to provide functionality of data structures other than trees.
 
-| 操作                            | 手指树                    | 注释 2-3 树 (annotated 2-3 tree) | 列表（list）             | 向量（vector） |
+| Operation                     | Finger tree            | Annotated 2-3 tree            | List                 | Vector     |
 | ----------------------------- | ---------------------- | ----------------------------- | -------------------- | ---------- |
 | `cons`,`snoc`                 | $O(1)$                 | $O(\log n)$                   | $O(1)$/$O(n)$        | $O(n)$     |
 | `viewl`,`viewr`               | $O(1)$                 | $O(\log n)$                   | $O(1)$/$O(n)$        | $O(1)$     |
@@ -85,15 +85,15 @@ data Digit a = One a | Two a a | Three a a a
 | `fromList`,`toList`,`reverse` | $O(l)$/$O(l)$/$O(l)$   | $O(l)$                        | $O(1)$/$O(1)$/$O(n)$ | $O(n)$     |
 | `index`                       | $O(\log \min(n, l-n))$ | $O(\log n)$                   | $O(n)$               | $O(1)$     |
 
-## 应用
+## Applications
 
-指状树可用于建造其他树．例如，优先级队列可以通过树中子节点的最小优先级标记内部节点来实现，或者索引列表/数组可以通过节点的子节点中叶子的计数来标记节点来实现．其他应用包括随机访问序列（如下所述）、有序序列和区间树．
+Finger trees can be used to build other trees. For example, a priority queue can be implemented by labeling each internal node with the minimum priority among its children, and an indexed list/array can be implemented by labeling each node with the count of leaves under its children. Other applications include random-access sequences (described below), ordered sequences and interval trees.
 
-手指树可以提供平均 $O(1)$ 的推、反转、弹出，$O(\log n)$ 追加和拆分；并且可以适应索引或排序序列．和所有函数式数据结构一样，它本质上是持久的；也就是说，始终保留旧版本的树．
+A finger tree can provide amortized $O(1)$ push, reverse and pop, and $O(\log n)$ append and split, and it can be adapted to indexed or ordered sequences. Like all functional data structures, it is inherently persistent; that is, old versions of the tree are always kept.
 
-对于代码实现，Haskell 核心库中的有限序列 `Seq` 的实现使用了 2-3 手指树（[Data.Sequence](https://hackage.haskell.org/package/containers-0.6.5.1/docs/Data-Sequence.html)），OCaml 中 `BatFingerTree` 模块的 [实现](https://ocaml-batteries-team.github.io/batteries-included/hdoc2/BatFingerTree.html) 也使用了通用手指树数据结构．手指树可以使用或不使用惰性求值来实现，但惰性允许更简单的实现．
+For implementations, the finite sequence `Seq` in Haskell's core libraries uses 2-3 finger trees ([Data.Sequence](https://hackage.haskell.org/package/containers-0.6.5.1/docs/Data-Sequence.html)), and the [implementation](https://ocaml-batteries-team.github.io/batteries-included/hdoc2/BatFingerTree.html) of the `BatFingerTree` module in OCaml also uses a general finger tree data structure. Finger trees can be implemented with or without lazy evaluation, but laziness allows a simpler implementation.
 
-## 参考资料与拓展阅读
+## References and further reading
 
 1.  Ralf Hinze and Ross Paterson, "[Finger trees: a simple general-purpose data structure](http://www.staff.city.ac.uk/~ross/papers/FingerTree.html)", Journal of Functional Programming 16:2 (2006) pp 197-217.
 2.  [Finger Tree - Wikipedia](https://en.wikipedia.org/wiki/Finger_tree)

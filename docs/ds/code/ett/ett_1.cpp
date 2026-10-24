@@ -1,7 +1,7 @@
 /*
-虽然上文提到过块状链表实现 ETT
-在某些情况下可能较简单，但对于此题块状链表复杂度有可能无法通过而且实现较繁琐，所以这份代码采用
-FHQ Treap 实现。
+Although the text above mentions that implementing ETT with a block linked list
+can be simpler in some cases, for this problem a block linked list may be too slow and is tedious to write, so this code uses
+an FHQ Treap instead.
 */
 #include <iostream>
 #include <vector>
@@ -94,7 +94,7 @@ void add(long long x, long long v) {
   long long a, b, c;
   split(rt, rnk(s[x]) - 1, a, b);
   split(b, rnk(e[x]) - rnk(s[x]) + 1, b,
-        c);  // 这里 b 是我们要进行操作的子树的括号序列。
+        c);  // here b is the bracket sequence of the subtree we operate on.
   setTag(b, v);
   rt = merge(merge(a, b), c);
 }
@@ -113,9 +113,9 @@ void changeFa(long long x, long long y) {
   split(b, rnk(e[x]) - rnk(s[x]) + 1, b, c);
   a = merge(
       a,
-      c);  // 因为我们确定不了要设置为父亲的节点在括号序列中的哪边，所以先把两边合并。
+      c);  // we can't tell which side of the bracket sequence the new parent is on, so merge both sides first.
   split(a, rnk(s[y]), a, d);
-  rt = merge(merge(a, b), d);  // 把要进行操作的子树放在父亲括号序列的最前面。
+  rt = merge(merge(a, b), d);  // put the subtree we operate on at the very front of the parent's bracket sequence.
 }
 
 /*main function*/

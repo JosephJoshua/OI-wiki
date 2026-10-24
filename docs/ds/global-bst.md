@@ -1,38 +1,38 @@
-## 引入
+## Introduction
 
-前置知识：[树链剖分](../graph/hld.md)
+Prerequisites: [Heavy-light decomposition](../graph/hld.md)
 
-由于树链剖分的时间复杂度为 $O(n\log^2 n)$，而我们熟知的 LCT 虽然时间复杂度为 $O(n\log n)$，但常数较大，可能比树链剖分还慢．那么有什么既是 $O(n\log n)$ 的，常数又相对较小的方法呢？这个时候全局平衡二叉树就出现了．
+Heavy-light decomposition takes $O(n\log^2 n)$ time. The familiar LCT takes $O(n\log n)$ time, but its constant factor is large, and it may even be slower than heavy-light decomposition. So is there a method that is $O(n\log n)$ and also has a relatively small constant? This is where the global balanced binary tree comes in.
 
-全局平衡二叉树实际上是一个二叉树森林，其中的每棵二叉树维护一条重链．但是这个森林里的二叉树又互有联系，其中每个二叉树的根连向这个重链链头的父亲，就像 LCT 中一样．但全局平衡二叉树是静态树，区别于 LCT，建成后树的形态不变．
+A global balanced binary tree is actually a forest of binary trees, where each binary tree maintains one heavy path. But the binary trees in this forest are linked to each other: the root of each binary tree links to the parent of the top node of its heavy path, just like in an LCT. Unlike an LCT, though, the global balanced binary tree is a static tree: once built, its shape never changes.
 
-全局平衡二叉树是一种可以处理树上链修改/查询的数据结构，可以做到：
+A global balanced binary tree is a data structure for path updates/queries on a tree. It can do:
 
--   $O(\log n)$ 一条链整体修改．
--   $O(\log n)$ 一条链整体查询．
--   $O(\log n)$ 求最近公共祖先，子树修改，子树查询等，这些复杂度和重链剖分是一样的．
+-   Update a whole path in $O(\log n)$.
+-   Query a whole path in $O(\log n)$.
+-   Find the lowest common ancestor, update a subtree, query a subtree, etc. in $O(\log n)$; these complexities are the same as with heavy-light decomposition.
 
-## 主要性质
+## Main properties
 
-1.  全局平衡二叉树由很多棵二叉树通过轻边连起来组成，每一棵二叉树维护了原树的一条重链，其中序遍历的顺序就是这条重链深度单调递增的顺序．每个节点都仅出现在一棵二叉树中．
-2.  边分为重边和轻边，重边是包含在二叉树中的边，维护的时候就像正常维护二叉树一样，记录左右儿子和父节点．轻边从一棵二叉树的根节点指向它所对应的重链顶端节点的父节点．轻边维护的时候 "认父不认子"，即只能从子节点访问到父节点，不能反过来．注意，全局平衡二叉树中的边和原树中的边没有对应关系．
-3.  算上重边和轻边，全局平衡二叉树的高度是 $O(\log n)$ 级别的．这条是保证全局平衡二叉树时间复杂度的性质．
+1.  A global balanced binary tree consists of many binary trees linked by light edges. Each binary tree maintains one heavy path of the original tree, and its in-order traversal visits that heavy path in increasing order of depth. Each node appears in exactly one binary tree.
+2.  Edges are either heavy or light. Heavy edges are the edges inside the binary trees; we maintain them like a normal binary tree, recording left and right children and the parent. A light edge points from the root of a binary tree to the parent of the top node of its heavy path. Light edges are maintained "parent-only": you can go from the child to the parent but not the other way. Note that edges in the global balanced binary tree do not correspond to edges in the original tree.
+3.  Counting both heavy and light edges, the height of a global balanced binary tree is $O(\log n)$. This property is what guarantees the time complexity of the global balanced binary tree.
 
-下面是一个全局平衡二叉树建树的例子．第一张图是原树，以节点 1 为根节点．实线是重边．
+Below is an example of building a global balanced binary tree. The first figure is the original tree, rooted at node 1. Solid lines are heavy edges.
 
 ![global-bst-1](images/global-bst-1.svg)
 
-第二张图是建出来的全局平衡二叉树，其中虚线是轻边，实线是重边，每一棵二叉树用红圈表示．
+The second figure is the resulting global balanced binary tree. Dashed lines are light edges, solid lines are heavy edges, and each binary tree is circled in red.
 
 ![global-bst-2](images/global-bst-2.svg)
 
-## 建树
+## Building the tree
 
-首先是像普通重链剖分一样，一次 DFS 求出每个节点的重儿子．然后从根开始，找到根节点所在的重链，对于这些点的轻儿子递归建树，并连上轻边．然后我们需要给重链上的点建一棵二叉树．我们先把重链上的点存到数组里，求出每个点轻儿子的子树大小之和加一（即该点本身所贡献的 size）．然后我们按照这个求出这条重链的加权中点，把它作为二叉树的根，两边递归建树，并连上重边．
+First, as in ordinary heavy-light decomposition, one DFS finds the heavy child of each node. Then, starting from the root, we find the heavy path containing the root, recursively build trees for the light children of these nodes, and connect the light edges. Next we build a binary tree for the nodes on the heavy path. We store the heavy path's nodes in an array and compute, for each node, the total subtree size of its light children plus one (that is, the size contributed by the node itself). Using these weights, we find the weighted midpoint of the heavy path, make it the root of the binary tree, recursively build the two sides, and connect the heavy edges.
 
-代码如下：
+The code is as follows:
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     std::vector<int> G[N];
     int n, fa[N], son[N], sz[N];
@@ -48,7 +48,7 @@
     
     int b[N], bs[N], l[N], r[N], f[N], ss[N];
     
-    // 给b中[bl,br)内的点建二叉树，返回二叉树的根
+    // build a binary tree on the nodes in b[bl,br), return the root of the binary tree
     int cbuild(int bl, int br) {
       int x = bl, y = br;
       while (y - x > 1) {
@@ -58,9 +58,9 @@
         else
           y = mid;
       }
-      // 二分求出按bs加权的中点
+      // binary search for the midpoint weighted by bs
       y = b[x];
-      ss[y] = br - bl;  // ss：二叉树中重子树的大小
+      ss[y] = br - bl;  // ss: size of the heavy subtree in the binary tree
       if (bl < x) {
         l[y] = cbuild(bl, x);
         f[l[y]] = y;
@@ -78,29 +78,29 @@
         for (int v : G[y])
           if (v != son[y])
             f[build(v)] =
-                y;  // 递归建树并连轻边，注意要从二叉树的根连边，不是从儿子连边
+                y;  // recursively build and link light edges; link from the binary tree's root, not from the child
       while (y = son[y]);
       y = 0;
       do {
-        b[y++] = x;                              // 存放重链中的点
-        bs[y] = bs[y - 1] + sz[x] - sz[son[x]];  // bs：轻儿子size和+1，求前缀和
+        b[y++] = x;                              // store the nodes of the heavy path
+        bs[y] = bs[y - 1] + sz[x] - sz[son[x]];  // bs: prefix sums of (light children's size sum + 1)
       } while (x = son[x]);
       return cbuild(0, y);
     }
     ```
 
-由代码可以看出建树的时间复杂度是 $O(n\log n)$．接下来我们可以证明树高是 $O(\log n)$ 的：考虑从任意一个点跳父节点到根．跳轻边就相当于在原树中跳到另一条重链，由重链剖分的性质可得跳轻边最多 $O(\log n)$ 条；因为建二叉树的时候根节点找的是算轻儿子的加权中点，那么跳一次重边算上轻儿子的 size 至少翻倍，所以跳重边最多也是 $O(\log n)$ 条．整体树高就是 $O(\log n)$ 的．
+From the code, building takes $O(n\log n)$ time. Next we can prove that the tree height is $O(\log n)$: consider jumping from any node to the root via parents. Jumping a light edge means moving to another heavy path in the original tree, and by the properties of heavy-light decomposition we jump at most $O(\log n)$ light edges. When building a binary tree, the root is the weighted midpoint counting light children, so each jump along a heavy edge at least doubles the size (counting light children), so we jump at most $O(\log n)$ heavy edges too. So the overall tree height is $O(\log n)$.
 
-## 查询
+## Queries
 
-以上就是关于全局平衡二叉树的部分．剩下关于链修改和链查询的操作方法相对简单，只需要从要操作的点出发，一直跳跃到根节点．要操作某个点所在的重链上比它深度小的所有点，本质上等同于在这条重链的二叉树中操作目标节点左侧的所有节点．这些操作可以分解成一系列子树操作，与普通二叉树的维护方法类似，其中涉及到维护子树和以及打子树标记．在这一过程中，使用的是标记永久化．也可以用 pushdown 来打标记，用 pushup 维护子树和，不过这种方式可能相对复杂，因为通常情况下，处理二叉树是自上而下进行操作，但在这里，需要首先确定跳跃路径，然后再从上到下进行 pushdown，可能导致常数较大．
+That covers the global balanced binary tree itself. The remaining operations, path updates and path queries, are relatively simple: start from the target node and keep jumping up to the root. Operating on all nodes of a node's heavy path with smaller depth than it is essentially the same as operating on all nodes to the left of the target node in the binary tree of that heavy path. These operations can be broken into a series of subtree operations, handled like in an ordinary binary tree, which involves maintaining subtree sums and placing subtree tags. Here we use permanent tags (tags that are never pushed down). You could also place tags with pushdown and maintain subtree sums with pushup, but that may be more complicated: normally a binary tree is processed top-down, but here we must first find the jump path and then push down from top to bottom, which may lead to a large constant factor.
 
-代码如下：
+The code is as follows:
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
-    // a：子树加标记
-    // s：子树和（不算加标记的）
+    // a: subtree add tag
+    // s: subtree sum (not counting the add tags)
     int a[N], s[N];
     
     void add(int x) {
@@ -115,7 +115,7 @@
           s[x] -= ss[r[x]];
         }
         t = (x != l[f[x]]);
-        if (t && x != r[f[x]]) z = 0;  // 跳过轻边要清空
+        if (t && x != r[f[x]]) z = 0;  // reset after crossing a light edge
         x = f[x];
       }
     }
@@ -132,18 +132,18 @@
         }
         ret += 1ll * z * a[x];
         t = (x != l[f[x]]);
-        if (t && x != r[f[x]]) z = 0;  // 跳过轻边要清空
+        if (t && x != r[f[x]]) z = 0;  // reset after crossing a light edge
         x = f[x];
       }
       return ret;
     }
     ```
 
-此外，对于子树操作，就是要考虑轻儿子的，需要再维护一个包括轻儿子的子树和、子树标记，可以去做 "[P3384【模板】轻重链剖分](https://www.luogu.com.cn/problem/P3384)"．
+Also, subtree operations need to account for light children, so you need to additionally maintain a subtree sum and subtree tag that include light children. You can try "[P3384 [Template] Heavy-Light Decomposition](https://www.luogu.com.cn/problem/P3384)".
 
-## 例题
+## Example problems
 
-??? note "[P4751【模板】"动态 DP"& 动态树分治（加强版）](https://www.luogu.com.cn/problem/P4751)"
+??? note "[P4751 [Template] 'Dynamic DP' & Dynamic Tree Divide and Conquer (Enhanced Version)](https://www.luogu.com.cn/problem/P4751)"
     ```cpp
     #include <algorithm>
     #include <cstdio>
@@ -174,7 +174,7 @@
           }
         return ret;
       }
-    } matr1[MAXN + 5], matr2[MAXN + 5];  // 每个点维护两个矩阵
+    } matr1[MAXN + 5], matr2[MAXN + 5];  // each node maintains two matrices
     
     int root;
     int w[MAXN + 5], dep[MAXN + 5], son[MAXN + 5], siz[MAXN + 5], lsiz[MAXN + 5];
@@ -204,7 +204,7 @@
         siz[u] += siz[v];
         if (!son[u] || siz[son[u]] < siz[v]) son[u] = v;
       }
-      lsiz[u] = siz[u] - siz[son[u]];  // 轻儿子的siz和+1
+      lsiz[u] = siz[u] - siz[son[u]];  // sum of light children's siz + 1
     }
     
     void DFS2(int u, int fa) {
@@ -219,17 +219,17 @@
         int v = p->to;
         if (v == fa || v == son[u]) continue;
         DFS2(v, u);
-        f[u][0] += max(f[v][0], f[v][1]);  // f[][]就是正常的DP数组
+        f[u][0] += max(f[v][0], f[v][1]);  // f[][] is the normal DP array
         f[u][1] += f[v][0];
-        g[u][0] += max(f[v][0], f[v][1]);  // g[][]数组只统计了自己和轻儿子的信息
+        g[u][0] += max(f[v][0], f[v][1]);  // g[][] only counts the node itself and its light children
         g[u][1] += f[v][0];
       }
     }
     
     void PushUp(int u) {
-      matr2[u] = matr1[u];  // matr1是单点加上轻儿子的信息，matr2是区间信息
+      matr2[u] = matr1[u];  // matr1 is the single node plus light children's info; matr2 is the range info
       if (bstch[u][0]) matr2[u] = matr2[bstch[u][0]] * matr2[u];
-      // 注意转移的方向，但是如果我们的矩乘定义不同，可能方向也会不同
+      // mind the direction of the transition; with a different matrix product definition, the direction may differ
       if (bstch[u][1]) matr2[u] = matr2[u] * matr2[bstch[u][1]];
     }
     
@@ -242,13 +242,13 @@
       int tot = 0;
       for (int i = l; i <= r; i++) tot += lsiz[stk[i]];
       for (int i = l, sumn = lsiz[stk[l]]; i <= r; i++, sumn += lsiz[stk[i]])
-        if (sumn * 2 >= tot)  // 是重心了
+        if (sumn * 2 >= tot)  // this is the centroid
         {
           int lch = SBuild(l, i - 1), rch = SBuild(i + 1, r);
           bstch[stk[i]][0] = lch;
           bstch[stk[i]][1] = rch;
           trfa[lch] = trfa[rch] = stk[i];
-          PushUp(stk[i]);  // 将区间的信息统计上来
+          PushUp(stk[i]);  // gather the range information
           return stk[i];
         }
       return 0;
@@ -258,15 +258,15 @@
       for (int pos = u; pos; pos = son[pos]) vis[pos] = true;
       for (int pos = u; pos; pos = son[pos])
         for (edge *p = Adj[pos]; p != NULL; p = p->nxt)
-          if (!vis[p->to])  // 是轻儿子
+          if (!vis[p->to])  // it is a light child
           {
             int v = p->to, ret = Build(v);
-            trfa[ret] = pos;  // 轻儿子的treefa[]接上来
+            trfa[ret] = pos;  // hook up the light child's treefa[]
           }
       tp = 0;
-      for (int pos = u; pos; pos = son[pos]) stk[++tp] = pos;  // 把重链取出来
-      int ret = SBuild(1, tp);  // 对重链进行单独的SBuild(我猜是Special Build?)
-      return ret;               // 返回当前重链的二叉树的根
+      for (int pos = u; pos; pos = son[pos]) stk[++tp] = pos;  // extract the heavy path
+      int ret = SBuild(1, tp);  // run a separate SBuild on the heavy path (I guess it means Special Build?)
+      return ret;               // return the root of the current heavy path's binary tree
     }
     
     void Modify(int u, int val) {
@@ -316,20 +316,20 @@
         AddEdge(u, v);
       }
       DFS(1, -1);
-      // 求重儿子
+      // find heavy children
       DFS2(1, -1);
-      // 求初始的DP值，也可以在Build()里面求，但是这样写就和树剖的写法统一了
+      // compute the initial DP values; this could also be done inside Build(), but this way matches the HLD style
       for (int i = 1; i <= n; i++) {
         matr1[i].M[0][0] = matr1[i].M[0][1] = g[i][0];
-        matr1[i].M[1][0] = g[i][1], matr1[i].M[1][1] = -INF;  // 初始化矩阵
+        matr1[i].M[1][0] = g[i][1], matr1[i].M[1][1] = -INF;  // initialize the matrices
       }
-      root = Build(1);  // root即为根节点所在重链的重心
+      root = Build(1);  // root is the centroid of the heavy path containing the root node
       int lastans = 0;
       for (int i = 1; i <= m; i++) {
         u = read(), v = read();
-        u ^= lastans;  // 强制在线
+        u ^= lastans;  // forced online
         Modify(u, v);
-        lastans = getmx1(root);  // 直接取值
+        lastans = getmx1(root);  // read the answer directly
         if (lastans == 0)
           putchar('0');
         else
@@ -340,6 +340,6 @@
     }
     ```
 
-## 参考
+## References
 
-[P4211 \[LNOI2014\] LCA | 全局平衡二叉树](https://www.luogu.com.cn/blog/nederland/globalbst)
+[P4211 \[LNOI2014\] LCA | Global balanced binary tree](https://www.luogu.com.cn/blog/nederland/globalbst)

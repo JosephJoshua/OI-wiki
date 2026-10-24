@@ -1,10 +1,10 @@
-# 此代码仅作示意，因超时无法通过原题
+# This code is for illustration only; it exceeds the time limit on the original problem
 class Dsu:
     def __init__(self, size, m):
         self.id = size * 2
-        # 令 i 指向虚点 i + size_，所有虚点指向它自身
+        # make i point to virtual node i + size_; every virtual node points to itself
         self.pa = list(range(size, size * 2)) + list(range(size, size * 2 + m))
-        # size 的前半段其实没有使用，只是为了让下标计算更简单
+        # the first half of size is unused; it only makes index math simpler
         self.size = [1] * (size * 2 + m)
 
     def find(self, x):

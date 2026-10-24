@@ -10,7 +10,7 @@ struct dsu {
 
   explicit dsu(size_t size_)
       : pa(size_ * 2), size(size_ * 2, 1), sum(size_ * 2) {
-    // size 与 sum 的前半段其实没有使用，只是为了让下标计算更简单
+    // the first halves of size and sum are unused; they only make index math simpler
     iota(pa.begin(), pa.begin() + size_, size_);
     iota(pa.begin() + size_, pa.end(), size_);
     iota(sum.begin() + size_, sum.end(), 0);
@@ -39,7 +39,7 @@ struct dsu {
 int main() {
   size_t n, m, op, x, y;
   while (cin >> n >> m) {
-    dsu dsu(n + 1);  // 元素范围是 1..n
+    dsu dsu(n + 1);  // elements range over 1..n
     while (m--) {
       cin >> op;
       switch (op) {
