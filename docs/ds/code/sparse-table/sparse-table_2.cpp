@@ -8,7 +8,7 @@
 #endif
 using namespace std;
 
-// 使用内建函数计算 ⌊ log_2 x ⌋
+// use a builtin function to compute ⌊ log_2 x ⌋
 int lg2(int x) { return 31 - __builtin_clz(x); }
 
 template <typename T>

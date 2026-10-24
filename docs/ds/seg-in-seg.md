@@ -1,31 +1,31 @@
 author: Chrogeek, HeRaNO, Dev-XYS, Dev-jqe
 
-## 常见用途
+## Common uses
 
-在算法竞赛中，我们有时需要维护多维度信息．在这种时候，我们经常需要树套树来记录信息．
+In competitive programming we sometimes need to maintain information in several dimensions. In such cases we often use a tree of trees (nested trees) to store it.
 
-## 实现原理
+## How it works
 
-我们考虑用树套树如何实现在二维平面上进行单点修改，区域查询．我们考虑外层的线段树，最底层的 $1$ 到 $n$ 个节点的子树，分别代表第 $1$ 到第 $n$ 行的线段树．那么这些底层的节点对应的父节点，就代表其两个子节点的子树所在的一片区域．
+Let's see how a tree of trees supports point updates and rectangle queries on a 2D plane. Consider the outer segment tree. Its leaves $1$ to $n$ each hold a segment tree for row $1$ to row $n$. A parent of these leaves then stands for the region covered by the subtrees of its two children.
 
-## 性质
+## Properties
 
-### 空间复杂度
+### Space complexity
 
-通常情况下，我们不可能对于外层线段树的每一个结点都建立一棵子线段树，空间需求过大．树套树一般采取动态开点的策略．单次修改，我们会涉及到外层线段树的 $\log{n}$ 个节点，且对于每个节点的子树涉及 $\log{n}$ 个节点，所以单次修改产生的空间最多为 $\log^2{n}$．
+Usually we cannot build an inner segment tree for every node of the outer segment tree, because that needs too much memory. A tree of trees normally uses dynamically allocated nodes. A single update touches $\log{n}$ nodes of the outer segment tree, and for each of them touches $\log{n}$ nodes of its inner tree, so a single update creates at most $\log^2{n}$ new nodes.
 
-### 时间复杂度
+### Time complexity
 
-对于询问操作，我们考虑我们在外层线段树上进行 $\log{n}$ 次操作，每次操作会在一个内层线段树上进行 $\log{n}$ 次操作，所以时间复杂度为 $\log^2{n}$．
-修改操作，与询问操作复杂度相同，也为 $\log^2{n}$．
+For a query, we do $\log{n}$ operations on the outer segment tree, and each of them does $\log{n}$ operations on an inner segment tree, so the time complexity is $\log^2{n}$.
+An update has the same complexity as a query, also $\log^2{n}$.
 
-## 经典例题
+## Classic example problem
 
-[陌上花开](https://www.luogu.com.cn/problem/P3810) 将第一维排序处理，然后用树套树维护第二维和第三维．
+[Flowers Bloom on the Path (3D partial order)](https://www.luogu.com.cn/problem/P3810): sort by the first dimension, then use a tree of trees to handle the second and third dimensions.
 
-## 示例代码
+## Sample code
 
-第二维查询
+Query on the second dimension
 
 ```cpp
 int tree_query(int k, int l, int r, int x) {
@@ -38,7 +38,7 @@ int tree_query(int k, int l, int r, int x) {
 }
 ```
 
-第二维修改
+Update on the second dimension
 
 ```cpp
 void tree_insert(int &k, int l, int r, int x) {
@@ -53,7 +53,7 @@ void tree_insert(int &k, int l, int r, int x) {
 }
 ```
 
-第三维查询
+Query on the third dimension
 
 ```cpp
 int vec_query(int k, int l, int r, int x, int y) {
@@ -66,7 +66,7 @@ int vec_query(int k, int l, int r, int x, int y) {
 }
 ```
 
-第三维修改
+Update on the third dimension
 
 ```cpp
 void vec_insert(int &k, int l, int r, int loc) {
@@ -79,6 +79,6 @@ void vec_insert(int &k, int l, int r, int loc) {
 }
 ```
 
-## 相关算法
+## Related algorithms
 
-面对多维度信息的题目时，如果题目没有要求强制在线，我们还可以考虑 **CDQ 分治**，或者 **整体二分** 等分治算法，来避免使用高级数据结构，减少代码实现难度．
+For problems with multi-dimensional information, if the problem does not force online processing, you can also consider divide-and-conquer algorithms such as **CDQ divide and conquer** or **parallel binary search** to avoid advanced data structures and make the code easier to write.

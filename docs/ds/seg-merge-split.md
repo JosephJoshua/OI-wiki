@@ -1,31 +1,31 @@
 author: ChungZH, billchenchina, Chrogeek, Early0v0, ethan-enhe, HeRaNO, hsfzLZH1, iamtwz, Ir1d, konnyakuxzy, luoguojie, Marcythm, orzAtalod, StudyingFather, wy-luke, Xeonacid, CCXXXI, chenryang, chenzheAya, CJSoft, cjsoft, countercurrent-time, DawnMagnet, Enter-tainer, GavinZhengOI, Haohu Shen, Henry-ZHR, hjsjhn, hly1204, jaxvanyang, Jebearssica, kenlig, ksyx, megakite, Menci, moon-dim, NachtgeistW, onelittlechildawa, ouuan, shadowice1984, shawlleyw, shuzhouliu, SukkaW, Tiphereth-A, x2e6, Ycrpro, yifan0305, zeningc
 
-线段树的合并与分裂是线段树的常用技巧，常见于权值线段树维护可重集的场景．
+Merging and splitting segment trees are common segment tree techniques. They often appear when a value-domain segment tree maintains a multiset.
 
-例如，树上某些结点处有若干操作，如果需要自下而上地将子节点信息传递给亲节点，而单个结点处的信息又方便用线段树维护时，就可以应用线段树合并的技巧控制整体的复杂度．
+For example, suppose some tree nodes carry a number of operations, and we need to pass information from children up to their parents, bottom-up. If the information at a single node is easy to maintain with a segment tree, we can use segment tree merging to keep the overall complexity under control.
 
-## 线段树合并
+## Segment tree merging
 
-### 过程
+### How it works
 
-顾名思义，线段树合并是指建立一棵新的线段树，这棵线段树的每个节点都是两棵原线段树对应节点合并后的结果．它常常被用于维护树上或是图上的信息．
+As the name suggests, segment tree merging builds a new segment tree in which every node is the result of merging the corresponding nodes of two original segment trees. It is often used to maintain information on trees or graphs.
 
-显然，我们不可能真的每次建满一棵新的线段树，因此我们需要使用上文的动态开点线段树．
+Clearly, we cannot really build a full new segment tree every time, so we use the dynamically allocated segment tree described earlier.
 
-线段树合并的过程本质上相当暴力：
+The merging process is basically brute force:
 
-假设两棵线段树为 A 和 B，我们从 1 号节点开始递归合并．
+Say the two segment trees are A and B. We merge them recursively, starting from node 1.
 
-递归到某个节点时，如果 A 树或者 B 树上的对应节点为空，直接返回另一个树上对应节点，这里运用了动态开点线段树的特性．
+When the recursion reaches a node, if the corresponding node in tree A or tree B is empty, we simply return the corresponding node of the other tree. This uses a property of dynamically allocated segment trees.
 
-如果递归到叶子节点，我们合并两棵树上的对应节点．
+If the recursion reaches a leaf, we merge the corresponding nodes of the two trees.
 
-最后，根据子节点更新当前节点并且返回．
+Finally, we update the current node from its children and return it.
 
-???+ note "线段树合并的复杂度"
-    显然，对于两棵满的线段树，单次合并操作的复杂度是 $O(n)$ 的．但实际情况下使用的常常是权值线段树，所有需要合并的线段树的总点数和 $n$ 的规模相差并不大．并且合并时一般不会重复地合并某个线段树，所以我们最终增加的点数大致是 $n\log n$ 级别的．这样，合并所有线段树总的复杂度就是 $O(n\log n)$ 级别的．当然，在一些情况下，可并堆可能是更好的选择．
+???+ note "Complexity of segment tree merging"
+    Clearly, for two full segment trees, a single merge costs $O(n)$. In practice, though, we usually merge value-domain segment trees, and the total number of nodes in all trees to be merged is not much larger than $n$. Also, a merge usually does not merge the same tree again and again, so the total number of nodes we add is roughly $n\log n$. So the total cost of merging all the segment trees is about $O(n\log n)$. Of course, in some cases a mergeable heap may be a better choice.
 
-### 实现
+### Implementation
 
 ```cpp
 int merge(int a, int b, int l, int r) {
@@ -43,37 +43,37 @@ int merge(int a, int b, int l, int r) {
 }
 ```
 
-### 例题
+### Example problem
 
-???+ note "[luogu P4556 \[Vani 有约会\] 雨天的尾巴/【模板】线段树合并](https://www.luogu.com.cn/problem/P4556)"
-    ??? note "解题思路"
-        线段树合并模板题，用差分把树上修改转化为单点修改，然后向上 dfs 线段树合并统计答案即可．
+???+ note "[Luogu P4556 \[Vani's Date\] Rainy Day Tails / \[Template\] Segment Tree Merging](https://www.luogu.com.cn/problem/P4556)"
+    ??? note "Solution idea"
+        This is the template problem for segment tree merging. Use a difference array on the tree to turn path updates into point updates, then run a DFS upward, merging segment trees to compute the answers.
     
-    ??? note "参考代码"
+    ??? note "Reference code"
         ```cpp
         --8<-- "docs/ds/code/seg/seg-merge.cpp"
         ```
 
-## 线段树分裂
+## Segment tree splitting
 
-### 过程
+### How it works
 
-线段树分裂实质上是线段树合并的逆过程．线段树分裂只适用于有序的序列，无序的序列是没有意义的，常用在动态开点的权值线段树．
+Segment tree splitting is basically the reverse of segment tree merging. It only makes sense for ordered sequences, not unordered ones, and it is mostly used on dynamically allocated value-domain segment trees.
 
-注意当分裂和合并都存在时，我们在合并的时候必须回收节点，以避免分裂时会可能出现节点重复占用的问题．
+Note that when both splitting and merging are used, we must recycle nodes during merging. Otherwise the same node might end up used twice after a split.
 
-从一棵区间为 $[1,N]$ 的线段树中分裂出 $[l,r]$，建一棵新的树：
+To split $[l,r]$ out of a segment tree over $[1,N]$ into a new tree:
 
-从 1 号结点开始递归分裂，当节点不存在或者代表的区间 $[s,t]$ 与 $[l,r]$ 没有交集时直接回溯．
+Split recursively starting from node 1. If the node does not exist, or its interval $[s,t]$ does not intersect $[l,r]$, return immediately.
 
-当 $[s,t]$ 与 $[l,r]$ 有交集时需要开一个新结点．
+If $[s,t]$ intersects $[l,r]$, create a new node.
 
-当 $[s,t]$ 包含于 $[l,r]$ 时，需要将当前结点直接接到新的树下面，并把旧边断开．
+If $[s,t]$ is contained in $[l,r]$, attach the current node directly under the new tree and cut the old edge.
 
-???+ note "线段树分裂的复杂度"
-    可以发现被断开的边最多只会有 $\log n$ 条，所以最终每次分裂的时间复杂度就是 $O(\log⁡ n)$，相当于区间查询的复杂度．
+???+ note "Complexity of segment tree splitting"
+    At most $\log n$ edges are cut, so each split takes $O(\log⁡ n)$ time, the same as a range query.
 
-### 实现
+### Implementation
 
 ```cpp
 void split(int &p, int &q, int s, int t, int l, int r) {
@@ -93,29 +93,29 @@ void split(int &p, int &q, int s, int t, int l, int r) {
 }
 ```
 
-### 例题
+### Example problem
 
-???+ note "[P5494【模板】线段树分裂](https://www.luogu.com.cn/problem/P5494)"
-    ??? note "解题思路"
-        线段树分裂模板题，将 $[x,y]$ 分裂出来．
+???+ note "[P5494 \[Template\] Segment Tree Splitting](https://www.luogu.com.cn/problem/P5494)"
+    ??? note "Solution idea"
+        This is the template problem for segment tree splitting. Split out $[x,y]$.
         
-        -   将 $t$ 树合并入 $p$ 树：单次合并即可．
+        -   Merge tree $t$ into tree $p$: a single merge does it.
         
-        -   $p$ 树中插入 $x$ 个 $q$：单点修改．
+        -   Insert $x$ copies of $q$ into tree $p$: a point update.
         
-        -   查询 $[x,y]$ 中数的个数：区间求和．
+        -   Count the numbers in $[x,y]$: a range sum.
         
-        -   查询第 $k$ 小．
+        -   Find the $k$-th smallest.
     
-    ??? note "参考代码"
+    ??? note "Reference code"
         ```cpp
         --8<-- "docs/ds/code/seg/seg-split.cpp"
         ```
 
-## 习题
+## Exercises
 
--   [Luogu P4556 \[Vani 有约会\] 雨天的尾巴/【模板】线段树合并](https://www.luogu.com.cn/problem/P4556)
--   [Luogu P5494【模板】线段树分裂](https://www.luogu.com.cn/problem/P5494)
--   [Luogu P1600 天天爱跑步](https://www.luogu.com.cn/problem/P1600)
--   [Luogu P4577 \[FJOI2018\] 领导集团问题](https://www.luogu.com.cn/problem/P4577)
--   [Luogu P2824 \[HEOI2016/TJOI2016\] 排序](https://www.luogu.com.cn/problem/P2824)
+-   [Luogu P4556 \[Vani's Date\] Rainy Day Tails / \[Template\] Segment Tree Merging](https://www.luogu.com.cn/problem/P4556)
+-   [Luogu P5494 \[Template\] Segment Tree Splitting](https://www.luogu.com.cn/problem/P5494)
+-   [Luogu P1600 Running Every Day](https://www.luogu.com.cn/problem/P1600)
+-   [Luogu P4577 \[FJOI2018\] Leadership Group Problem](https://www.luogu.com.cn/problem/P4577)
+-   [Luogu P2824 \[HEOI2016/TJOI2016\] Sorting](https://www.luogu.com.cn/problem/P2824)

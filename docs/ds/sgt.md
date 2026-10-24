@@ -1,197 +1,197 @@
 author: Ir1d, 0xis-cn
 
-## 引入
+## Introduction
 
-**替罪羊树** 是一种依靠重构操作维持平衡的重量平衡树．替罪羊树会在插入、删除操作后，检测树是否发生失衡；如果失衡，将有针对性地进行重构以恢复平衡．
+A **scapegoat tree** is a weight-balanced tree that stays balanced by rebuilding. After each insertion or deletion, a scapegoat tree checks whether the tree has become unbalanced; if so, it rebuilds a chosen part of the tree to restore balance.
 
-一般地，替罪羊树不支持区间操作，且无法完全持久化；但它具有实现简单、常数较小的优点．
+In general, scapegoat trees do not support range operations and cannot be made fully persistent, but they are simple to implement and have a small constant factor.
 
-## 基本结构和操作
+## Basic structure and operations
 
-替罪羊树的核心操作是重构、插入和删除操作．
+The core operations of a scapegoat tree are rebuilding, insertion and deletion.
 
-### 节点信息
+### Node information
 
-替罪羊树需要存储以下信息，用于树的自平衡操作：
+A scapegoat tree stores the following information, used to keep the tree balanced:
 
--   树的结构信息：
-    -   `id`：已使用节点数目；
-    -   `rt`：根节点；
-    -   `lc[x]`，`rc[x]`：左、右子节点；
-    -   `tot[x]`：以 $x$ 为根的子树大小（每个节点计数为 $1$）[^tot-cnt]；
-    -   `tot_active`：整个树中未删除（即 `cnt[x] != 0`）的节点的数目．
+-   Tree structure:
+    -   `id`: the number of nodes used;
+    -   `rt`: the root;
+    -   `lc[x]`, `rc[x]`: the left and right children;
+    -   `tot[x]`: the size of the subtree rooted at $x$ (each node counts as $1$)[^tot-cnt];
+    -   `tot_active`: the number of nodes in the whole tree that are not deleted (that is, `cnt[x] != 0`).
 
-当使用替罪羊树实现平衡树时，还需要存储如下信息：
+When a scapegoat tree is used as a balanced binary search tree, it also stores the following:
 
--   平衡树的节点信息：
-    -   `val[x]`：节点存储的值；
-    -   `cnt[x]`：节点存储的值的计数（可能为 $0$）；
-    -   `sz[x]`：以 $x$ 为根的子树存储的值的计数之和．
+-   Node information for the balanced tree:
+    -   `val[x]`: the value stored at the node;
+    -   `cnt[x]`: the count of the value stored at the node (may be $0$);
+    -   `sz[x]`: the total count of values stored in the subtree rooted at $x$.
 
-为了维护节点信息，可以实现 `push_up` 操作：
+To maintain the node information, we can write a `push_up` operation:
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     ```cpp
     --8<-- "docs/ds/code/sgt/sgt.cpp:push-up"
     ```
 
-应注意 `tot[x]` 和 `sz[x]` 的更新方式的不同．
+Note that `tot[x]` and `sz[x]` are updated differently.
 
-### 重构操作
+### Rebuilding
 
-当树发生失衡时，需要对某个子树进行重构，使之尽可能平衡．重构分为两步：
+When the tree becomes unbalanced, we rebuild some subtree to make it as balanced as possible. Rebuilding has two steps:
 
--   对要重构的子树做中序遍历，将所有未删除节点存到序列中；
--   二分建树，即取中点为根，左右两侧递归地建子树，并更新节点信息．
+-   Do an in-order traversal of the subtree to be rebuilt and store all non-deleted nodes in a sequence;
+-   Build the tree by halving: take the middle element as the root, build the left and right subtrees recursively from the two sides, and update the node information.
 
-参考实现如下：
+The reference implementation is as follows:
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     ```cpp
     --8<-- "docs/ds/code/sgt/sgt.cpp:rebuild"
     ```
 
-建树时注意维护节点信息，包括叶子节点的信息．
+When building, remember to maintain the node information, including that of the leaves.
 
-单次重构的复杂度是 $\Theta(|T_x|)$ 的，因此如果每次插入、删除时都进行重构，复杂度将难以接受．替罪羊树的核心思想就在于对重构时机的选择，进而实现了 $O(\log n)$ 的均摊复杂度．
+A single rebuild costs $\Theta(|T_x|)$, so rebuilding on every insertion and deletion would be far too slow. The core idea of the scapegoat tree is choosing when to rebuild, which gives $O(\log n)$ amortized complexity.
 
-### 插入操作
+### Insertion
 
-插入操作时，可能会引起树的失衡．为了判断树的失衡，需要引入参数 $\alpha\in(0.5,1)$，通常的选择在 $0.7\sim 0.8$ 之间．
+An insertion may make the tree unbalanced. To decide whether the tree is unbalanced, we introduce a parameter $\alpha\in(0.5,1)$, usually chosen in the range $0.7\sim 0.8$.
 
-如果新插入的节点的深度超过了 $\lfloor\log_{1/\alpha}|T|\rfloor$，其中，$|T|$ 为更新后的树的大小，就需要在回溯时寻找失衡发生的节点并进行重构．此时，需要根据如下条件判断以 $x$ 为根的子树失衡：
+If the depth of the newly inserted node exceeds $\lfloor\log_{1/\alpha}|T|\rfloor$, where $|T|$ is the size of the tree after the update, then while returning up we look for the node where the imbalance happens and rebuild it. The subtree rooted at $x$ is considered unbalanced when
 
 $$
 \max\{|T_{\mathrm{left}(x)}|,|T_{\mathrm{right}(x)}|\} > \alpha\cdot |T_x|,
 $$
 
-其中，$\mathrm{left}(x)$ 和 $\mathrm{right}(x)$ 分别为 $x$ 的左、右子节点，$|T_x|$ 为以 $x$ 为根的子树大小．
+where $\mathrm{left}(x)$ and $\mathrm{right}(x)$ are the left and right children of $x$, and $|T_x|$ is the size of the subtree rooted at $x$.
 
-插入操作的具体步骤如下：
+An insertion works as follows:
 
--   首先利用二叉查找树的性质向下找到插入值的位置，下探时记录深度；
--   如果已经有节点，直接修改节点信息，否则新建节点；
--   自下而上回溯到根，更新节点信息；如果新建节点过深，还需要记录回溯过程中第一个（或任意一个）子树失衡的节点；
--   如果存在失衡节点，重构失衡节点的子树．
+-   First go down using the binary search tree property to find where the value goes, recording the depth on the way down;
+-   If a node with this value already exists, update its information directly; otherwise create a new node;
+-   Go back up to the root, updating node information; if the new node is too deep, also record the first (or any) node on the way up whose subtree is unbalanced;
+-   If there is an unbalanced node, rebuild its subtree.
 
-参考实现如下：
+The reference implementation is as follows:
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     ```cpp
     --8<-- "docs/ds/code/sgt/sgt.cpp:insert"
     ```
 
-注意，单次插入至多引起一次重构．如果没有新增节点或是新增节点并没有过深，又或是本次回溯过程中已经执行过重构，就不需要继续判断失衡了．多余的重构可能会导致效率损失[^insert-complexity]．回溯过程中的第一个失衡节点，就是所谓的「替罪羊」．
+Note that a single insertion causes at most one rebuild. If no node was added, or the new node is not too deep, or a rebuild has already happened on the way up, there is no need to keep checking for imbalance. Extra rebuilds may cost efficiency[^insert-complexity]. The first unbalanced node on the way up is the so-called "scapegoat".
 
-### 删除操作
+### Deletion
 
-删除操作的处理则非常简单．替罪羊树的删除策略是「懒删除」，即节点为空时，不移除节点，而是留待后续处理．
+Deletion is very simple. A scapegoat tree uses "lazy deletion": when a node becomes empty, it is not removed but left to be dealt with later.
 
-当然，如果树中空节点过多，树的访问效率会大大下降．因此，替罪羊树维护两个计数，整个树中未删除节点的数目和整个树实际使用的节点数目．对于选定的阈值[^threshold] $\alpha\in(0,1)$，当前者与后者的比值下降到 $\alpha$ 以下时，就对整个树做一次重构，重构时删除所有空节点．
+Of course, if the tree has too many empty nodes, accessing it becomes much slower. So the scapegoat tree keeps two counts: the number of non-deleted nodes in the whole tree, and the number of nodes the tree actually uses. For a chosen threshold[^threshold] $\alpha\in(0,1)$, when the ratio of the former to the latter drops below $\alpha$, the whole tree is rebuilt once, removing all empty nodes.
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     ```cpp
     --8<-- "docs/ds/code/sgt/sgt.cpp:remove"
     ```
 
-### 时间复杂度
+### Time complexity
 
-大小为 $n$ 的替罪羊树中，单次访问节点的时间复杂度是 $O(\log n)$ 的；$\Theta(n)$ 次插入和删除操作的时间复杂度也是均摊单次 $O(\log n)$ 的．
+In a scapegoat tree of size $n$, a single node access takes $O(\log n)$ time; $\Theta(n)$ insertions and deletions also take $O(\log n)$ amortized time each.
 
-本节对替罪羊树的时间复杂度仅做简要论证，详细证明请参考原论文．
+This section only gives a brief argument for the time complexity of the scapegoat tree; see the original paper for a detailed proof.
 
-??? note "替罪羊树的时间复杂度的论证"
-    由于采用懒删除的策略，未删除节点数目为 $n$ 的替罪羊树可能占用了 $\alpha^{-1}n$ 个节点．由于仅仅相差一个常数因子，本文在表述中并不区分替罪羊树的未删除节点数目和占用节点数目，而统一称为「树的大小」．
+??? note "Argument for the time complexity of the scapegoat tree"
+    Because of lazy deletion, a scapegoat tree with $n$ non-deleted nodes may occupy $\alpha^{-1}n$ nodes. Since these differ only by a constant factor, this article does not distinguish between the number of non-deleted nodes and the number of occupied nodes, and calls both "the size of the tree".
     
-    1.  **访问操作**：访问操作的复杂度得以保证，是因为大小为 $n$ 的替罪羊树的树高总是 $O(\log n)$ 的．
+    1.  **Access**: access complexity is guaranteed because a scapegoat tree of size $n$ always has height $O(\log n)$.
     
-        首先，区分两个概念：
+        First, distinguish two concepts:
     
-        -   $\alpha$‑重量平衡：所有节点处，左、右子节点的子树的大小均不超过该节点处子树的大小的 $\alpha$ 倍；
-        -   $\alpha$‑高度平衡：树的高度不超过 $\lfloor\log_{1/\alpha}|T|\rfloor$，其中，$|T|$ 为树的大小．
+        -   $\alpha$‑weight-balanced: at every node, the sizes of the subtrees of the left and right children are at most $\alpha$ times the size of the subtree at that node;
+        -   $\alpha$‑height-balanced: the height of the tree is at most $\lfloor\log_{1/\alpha}|T|\rfloor$, where $|T|$ is the size of the tree.
     
-        $\alpha$‑重量平衡可以推出 $\alpha$‑高度平衡，因为深度每增加一，子树大小就减少到不超过原来的 $\alpha$ 倍；反过来则不一定成立．更严格地说，每次操作结束后，替罪羊树都总是 $\alpha$‑高度平衡的[^hei-bal]，这就保证了访问操作的复杂度．
+        $\alpha$‑weight-balance implies $\alpha$‑height-balance, because each time the depth increases by one, the subtree size shrinks to at most $\alpha$ times what it was; the converse is not necessarily true. More precisely, after every operation, the scapegoat tree is always $\alpha$‑height-balanced[^hei-bal], which guarantees the access complexity.
     
-        只有插入操作会改变树的结构，所以只需要说明每次插入操作后，替罪羊树都仍是 $\alpha$‑高度平衡的．如果新插入的节点过深，造成了整个树不再 $\alpha$‑高度平衡，那么自该节点回溯至根时，至少会碰上一个节点，即「替罪羊」，它的子树不再 $\alpha$‑重量平衡．将其重构后，子树的高度将降低至少一，故而新插入的节点将不再过深．
-    2.  **插入操作**：插入操作的复杂度是均摊 $O(\log n)$ 的．
+        Only insertion changes the structure of the tree, so we only need to show that the scapegoat tree is still $\alpha$‑height-balanced after every insertion. If the newly inserted node is too deep, so that the whole tree is no longer $\alpha$‑height-balanced, then on the way from that node back to the root we meet at least one node, the "scapegoat", whose subtree is no longer $\alpha$‑weight-balanced. After rebuilding it, the height of that subtree drops by at least one, so the new node is no longer too deep.
+    2.  **Insertion**: insertion takes $O(\log n)$ amortized time.
     
-        设在某次插入操作后，节点 $x$ 处发生一次子树的重构，时间成本为 $\Theta(|T_x|)$．因为节点 $x$ 刚插入时，或者它刚刚经历了（自身或祖先节点的）上一次重构之后，它的左右子树至多只相差一个节点．而在这次重构之前，节点 $x$ 处必然成立
+        Suppose that after some insertion, the subtree at node $x$ is rebuilt, at a cost of $\Theta(|T_x|)$. When node $x$ was just inserted, or right after its previous rebuild (of itself or of an ancestor), its left and right subtrees differed by at most one node. And right before this rebuild, node $x$ must satisfy
     
         $$
         \max\{|T_{\mathrm{left}(x)}|,|T_{\mathrm{right}(x)}|\} > \alpha\cdot |T_x|.
         $$
     
-        这一条件保证左右子树的大小的差值至少为 $(2\alpha-1)|T_x|$．因而，这两次重构之间，子树 $T_x$ 中插入了 $\Omega(|T_x|)$ 个节点．
+        This condition guarantees that the sizes of the left and right subtrees differ by at least $(2\alpha-1)|T_x|$. So between these two rebuilds, $\Omega(|T_x|)$ nodes were inserted into subtree $T_x$.
     
-        利用摊还分析可知[^alternative-analysis]，如果每次插入节点时，都在（可能的重构前）自根到该节点的路径上的每个节点处增加 $\Theta(1)$ 的势能，那么到节点 $x$ 处子树重构前，必然已经在节点 $x$ 处累积了 $\Omega(|T_x|)$ 的势能，足以用于偿还 $x$ 处子树重构的成本 $\Theta(|T_x|)$．因为树的深度都是 $O(\log n)$ 的，所以单次插入增加的势能是 $O(\log n)$ 的；这说明，$\Theta(n)$ 次插入操作中势能增加的总和是 $O(n\log n)$ 的．由此，子树重构的总成本也是 $O(n\log n)$ 的，单次插入操作（含重构）的均摊时间复杂度就是 $O(\log n)$ 的．
+        By amortized analysis[^alternative-analysis]: if each insertion adds $\Theta(1)$ potential at every node on the path from the root to the inserted node (before any possible rebuild), then by the time the subtree at $x$ is rebuilt, $\Omega(|T_x|)$ potential has built up at node $x$, which is enough to pay for the cost $\Theta(|T_x|)$ of rebuilding the subtree at $x$. Since the tree depth is always $O(\log n)$, a single insertion adds $O(\log n)$ potential; so the total potential added by $\Theta(n)$ insertions is $O(n\log n)$. Therefore the total cost of rebuilding subtrees is also $O(n\log n)$, and a single insertion (including rebuilding) takes $O(\log n)$ amortized time.
     
-        注意，分析中没有假定在节点 $x$ 处的两次重构之间，子树 $T_x$ 内部没有发生其它的重构．因此，只要只重构满足失衡条件的节点处的子树，就能保证复杂度正确．
-    3.  **删除操作**：删除操作的复杂度也是均摊 $O(\log n)$ 的．
+        Note that the analysis does not assume that no other rebuilds happen inside subtree $T_x$ between the two rebuilds at node $x$. So as long as we only rebuild subtrees at nodes that meet the imbalance condition, the complexity is correct.
+    3.  **Deletion**: deletion also takes $O(\log n)$ amortized time.
     
-        删除引起的重构会导致整个树不含空节点．而某次删除引起重构之前，整个树中已经有 $\Theta(n)$ 个空节点，这意味着至少进行了 $\Theta(n)$ 次删除操作．因为每次删除操作的寻址的复杂度是 $O(\log n)$ 的，且单次重构的复杂度是 $\Theta(n)$，所以这 $\Theta(n)$ 次删除操作的实际时间成本为
+        A rebuild caused by deletion leaves the whole tree with no empty nodes. Before some deletion causes a rebuild, the tree already has $\Theta(n)$ empty nodes, which means at least $\Theta(n)$ deletions have been done. Each deletion takes $O(\log n)$ to locate its node, and a single rebuild costs $\Theta(n)$, so the actual total cost of these $\Theta(n)$ deletions is
     
         $$
         \Theta(n)O(\log n)+\Theta(n)
         $$
     
-        的．故而，单次删除的均摊复杂度为 $O(\log n)$ 的．
+        So a single deletion takes $O(\log n)$ amortized time.
 
-## 平衡树操作
+## Balanced tree operations
 
-本节介绍用替罪羊树维护可重集的方法．
+This section shows how to maintain a multiset with a scapegoat tree.
 
-除上节介绍的操作外，其余操作均为平衡树的常见操作．但是，因为替罪羊树中可能存在空节点，这些操作也需要相应调整．
+Apart from the operations in the previous section, the other operations are the usual ones of a balanced binary search tree. But because a scapegoat tree may contain empty nodes, these operations need some adjustment.
 
-### 查询排名
+### Finding the rank
 
-利用二叉查找树的性质向下查找节点位置，过程中记录路径左侧存储的值的数目即可．
+Go down using the binary search tree property to find the node's position, and count the number of values stored on the left side of the path along the way.
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     ```cpp
     --8<-- "docs/ds/code/sgt/sgt.cpp:find-rank"
     ```
 
-### 根据排名查询值
+### Finding the value with a given rank
 
-利用节点记录的子树存储值的数目信息向下查找即可．注意可能存在计数为零的节点．
+Go down using the subtree value counts recorded at the nodes. Note that there may be nodes whose count is zero.
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     ```cpp
     --8<-- "docs/ds/code/sgt/sgt.cpp:find-kth"
     ```
 
-### 查询前驱、后继
+### Finding the predecessor and successor
 
-以上两种功能结合即可．
+Just combine the two operations above.
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     ```cpp
     --8<-- "docs/ds/code/sgt/sgt.cpp:pred-succ"
     ```
 
-如果想直接实现，应注意处理计数为零的节点．
+If you want to implement them directly, remember to handle nodes whose count is zero.
 
-### 参考实现
+### Reference implementation
 
-本节的最后，给出模板题 [普通平衡树](https://loj.ac/p/104) 的参考实现．
+To end this section, here is a reference implementation for the template problem [Ordinary Balanced Tree](https://loj.ac/p/104).
 
-??? example "参考实现"
+??? example "Reference implementation"
     ```cpp
     --8<-- "docs/ds/code/sgt/sgt.cpp:full-text"
     ```
 
-## 参考资料
+## References
 
 -   Galperin, Igal, and Ronald L. Rivest. "Scapegoat trees." Proceedings of the fourth annual ACM-SIAM Symposium on Discrete algorithms. 1993.
 -   [Scapegoat Tree - Wikipedia](https://en.wikipedia.org/wiki/Scapegoat_tree)
--   [替罪羊树 - riteme 的博客](https://riteme.site/blog/2016-4-6/scapegoat.html)
+-   [Scapegoat Tree - riteme's blog](https://riteme.site/blog/2016-4-6/scapegoat.html)
 
-[^tot-cnt]: 也可以只统计未删除节点数目，此时不再需要统计 `tot_active`，而需要统计所有占用节点数目 `tot_max`，代码相应调整即可．
+[^tot-cnt]: You can also count only the non-deleted nodes. Then you no longer need `tot_active`, but you need the number of all occupied nodes, `tot_max`, and the code changes accordingly.
 
-[^insert-complexity]: 根据后文的复杂度分析可知，这些效率损失仅意味着更大的常数因子，而复杂度依然是正确的．因为判断树深可能会涉及较多的浮点数对数运算，不判断树深只判断失衡的代码在某些数据中可能更快．
+[^insert-complexity]: By the complexity analysis below, this loss of efficiency only means a larger constant factor; the complexity is still correct. Since checking the tree depth may involve many floating-point logarithms, code that skips the depth check and only checks for imbalance may be faster on some data.
 
-[^threshold]: 不必与上文插入操作时选取的参数相同．尽管原论文做了这样的假定，但是选取不同的参数只会导致单次操作的复杂度中常数项的变化，整体复杂度依然是正确的．
+[^threshold]: It need not be the same as the parameter chosen for insertion above. Although the original paper makes this assumption, choosing a different parameter only changes the constant in the cost of a single operation; the overall complexity is still correct.
 
-[^hei-bal]: 按原文定义，$n$ 指未删除节点的数目，故而只能保证树高不超过 $\lfloor\log_{1/\alpha}n\rfloor+1$，这称为弱 $\alpha$‑高度平衡．此处没有细究该常数项的差异．
+[^hei-bal]: Under the original paper's definition, $n$ is the number of non-deleted nodes, so it can only guarantee that the height is at most $\lfloor\log_{1/\alpha}n\rfloor+1$. This is called weak $\alpha$‑height-balance. We do not look closely at this difference in the constant term here.
 
-[^alternative-analysis]: 有些文章会简单分析成 $\Omega(|T_x|)$ 次插入对应一次重构，故而均摊复杂度为 $\dfrac{\Omega(|T_x|)O(\log n)+\Theta(|T_x|)}{\Omega(|T_x|)} = O(\log n)$．这样的思路可以辅助理解均摊复杂度为什么正确，但并不严谨．这是因为，一次插入可能对应着多个祖先节点的重构，故而当节点 $x$ 发生重构时，子树内未引起重构的节点数目并不显然是 $\Omega(|T_x|)$ 的．
+[^alternative-analysis]: Some articles simply argue that $\Omega(|T_x|)$ insertions correspond to one rebuild, so the amortized complexity is $\dfrac{\Omega(|T_x|)O(\log n)+\Theta(|T_x|)}{\Omega(|T_x|)} = O(\log n)$. This helps explain why the amortized complexity is right, but it is not rigorous. The reason is that one insertion may correspond to rebuilds at several ancestors, so when node $x$ is rebuilt, it is not obvious that the number of nodes in its subtree that did not cause a rebuild is $\Omega(|T_x|)$.

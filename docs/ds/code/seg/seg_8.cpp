@@ -20,15 +20,15 @@ struct seg {
   int l, r, lson, rson;
 } t[N << 3];
 
-int ls(int u) {  // 左儿子
+int ls(int u) {  // left child
   return t[u].lson;
 }
 
-int rs(int u) {  // 右儿子
+int rs(int u) {  // right child
   return t[u].rson;
 }
 
-void build(int &u, int l, int r) {  // 动态开点建造入树
+void build(int &u, int l, int r) {  // build the "in" tree with dynamic nodes
   u = ++tot;
   t[u] = seg{l, r};
   if (l == r) {
@@ -42,7 +42,7 @@ void build(int &u, int l, int r) {  // 动态开点建造入树
   e[u].emplace_back(rs(u), 0);
 }
 
-void build2(int &u, int l, int r) {  // 动态开点建造出树
+void build2(int &u, int l, int r) {  // build the "out" tree with dynamic nodes
   if (l == r) {
     u = pos[l];
     return;
@@ -56,7 +56,7 @@ void build2(int &u, int l, int r) {  // 动态开点建造出树
   e[rs(u)].emplace_back(u, 0);
 }
 
-void add1(int u, int lr, int rr, int v, ll w) {  // 点向区间连边
+void add1(int u, int lr, int rr, int v, ll w) {  // add edges from a vertex to a range
   if (lr <= t[u].l && t[u].r <= rr) {
     e[v].emplace_back(u, w);
     return;
@@ -70,7 +70,7 @@ void add1(int u, int lr, int rr, int v, ll w) {  // 点向区间连边
   }
 }
 
-void add2(int u, int lr, int rr, int v, ll w) {  // 区间向点连边
+void add2(int u, int lr, int rr, int v, ll w) {  // add edges from a range to a vertex
   if (lr <= t[u].l && t[u].r <= rr) {
     e[u].emplace_back(v, w);
     return;
