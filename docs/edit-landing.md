@@ -1,18 +1,18 @@
 disqus:
 
-## 编辑前须知
+## Before you edit
 
-首先，感谢您愿意为 **OI Wiki** 做出自己的贡献．
+First of all, thank you for being willing to contribute to **OI Wiki**.
 
-不过在开始之前，我们需要您了解并熟知 [如何参与](./intro/htc.md) 和 [格式手册](./intro/format.md) 里的内容，以避免在编辑时产生不必要的麻烦．
+Before you start, please read and get familiar with [How to contribute](./intro/htc.md) and the [Format guide](./intro/format.md), so you can avoid unnecessary trouble while editing.
 
-在阅读完之后，请点击下方的按钮，然后开始编辑．
+When you have finished reading, click the button below to start editing.
 
-???+ note "敬请留意"
-    -   请您记得在文件头的 author 字段后方按照格式加上您的 GitHub ID；
-    -   根据 Issue [#3061](https://github.com/OI-wiki/OI-wiki/issues/3061)，现在您的更改将会视 Commit Message 质量以 Rebase 或 Squash 方式之一合并，且在 Squash 方式下您可能会是该 commit 的 author 而不是 committer，敬请留意．
+???+ note "Please note"
+    -   Remember to add your GitHub ID after the author field at the top of the file, following the format there;
+    -   According to Issue [#3061](https://github.com/OI-wiki/OI-wiki/issues/3061), your changes will now be merged by either Rebase or Squash, depending on the quality of your commit messages. Please note that with Squash, you may become the author of the commit rather than the committer.
 
-<a id="btn-startedit" style="padding: 0.75em 1.25em; display: inline-block; line-height: 1; text-decoration: none; white-space: nowrap; cursor: pointer; border: 1px solid #6190e8; border-radius: 5px; background-color: #6190e8; color: #fff; outline: none; font-size: 0.75em;">开始编辑</a>
+<a id="btn-startedit" style="padding: 0.75em 1.25em; display: inline-block; line-height: 1; text-decoration: none; white-space: nowrap; cursor: pointer; border: 1px solid #6190e8; border-radius: 5px; background-color: #6190e8; color: #fff; outline: none; font-size: 0.75em;">Start editing</a>
 
 <script>
     function getQueryVariable(name, dft)

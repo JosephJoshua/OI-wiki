@@ -1,42 +1,42 @@
 author: hyp1231, 383494
 
-## 引入
+## Introduction
 
-反演变换适用于题目中存在多个圆/直线之间的相切关系的情况．利用反演变换的性质，在反演空间求解问题，可以大幅简化计算．
+Inversion is useful when a problem involves tangency between several circles and/or lines. Using the properties of inversion, we can solve the problem in the inverted plane, which can greatly simplify the calculations.
 
-## 定义
+## Definition
 
-给定反演中心点 $O$ 和反演半径 $R$．若平面上点 $P$ 和 $P'$ 满足：
+Given a center of inversion $O$ and a radius of inversion $R$, if points $P$ and $P'$ in the plane satisfy:
 
--   点 $P'$ 在射线 $\overrightarrow{OP}$ 上
+-   point $P'$ lies on the ray $\overrightarrow{OP}$
 -   $|OP| \cdot |OP'| = R^2$
 
-则称点 $P$ 和点 $P'$ 互为反演点．
+then $P$ and $P'$ are called inverse points of each other.
 
-## 解释
+## Explanation
 
-下图所示即为平面上一点 $P$ 的反演：
+The figure below shows the inversion of a point $P$ in the plane:
 
 ![Inv1](./images/inverse1.png)
 
-## 性质
+## Properties
 
-1.  圆 $O$ 外的点的反演点在圆 $O$ 内，反之亦然；圆 $O$ 上的点的反演点为其自身．
+1.  A point outside circle $O$ inverts to a point inside circle $O$, and vice versa; a point on circle $O$ inverts to itself.
 
-2.  不过点 $O$ 的圆 $A$，其反演图形也是不过点 $O$ 的圆．
+2.  A circle $A$ that does not pass through point $O$ inverts to a circle that also does not pass through $O$.
 
     ![Inv2](./images/inverse2.png)
 
-    -   记圆 $A$ 半径为 $r_1$，其反演图形圆 $B$ 半径为 $r_2$，则有：
+    -   Let the radius of circle $A$ be $r_1$, and the radius of its image, circle $B$, be $r_2$. Then:
 
         $$
         r_2 = \frac{1}{2}\left(\frac{1}{|OA| - r_1} - \frac{1}{|OA| + r_1}\right) R^2
         $$
 
-    ???+ note "证明"
+    ???+ note "Proof"
         ![Inv3](./images/inverse3.png)
         
-        根据反演变换定义：
+        By the definition of inversion:
         
         $$
         \begin{aligned}
@@ -45,9 +45,9 @@ author: hyp1231, 383494
         \end{aligned}
         $$
         
-        消掉 $|OB|$，解方程即可．
+        Eliminate $|OB|$ and solve the equations.
 
-    -   记点 $O$ 坐标为 $(x_0, y_0)$，点 $A$ 坐标为 $x_1, y_1$，点 $B$ 坐标为 $x_2, y_2$，则有：
+    -   Let point $O$ have coordinates $(x_0, y_0)$, point $A$ have coordinates $x_1, y_1$, and point $B$ have coordinates $x_2, y_2$. Then:
 
         $$
         \begin{aligned}
@@ -56,33 +56,33 @@ author: hyp1231, 383494
         \end{aligned}
         $$
 
-        其中 $|OB|$ 可在上述求 $r_2$ 的过程中计算得到．
+        Here $|OB|$ can be obtained while computing $r_2$ above.
 
-3.  过点 $O$ 的圆 $A$，其反演图形是不过点 $O$ 的直线．因为圆 $A$ 上无限接近点 $O$ 的一点，其反演点离点 $O$ 无限远．
+3.  A circle $A$ that passes through point $O$ inverts to a line that does not pass through $O$. This is because a point on circle $A$ that gets arbitrarily close to $O$ inverts to a point arbitrarily far from $O$.
 
     ![Inv4](./images/inverse4.png)
 
-4.  两个图形相切且存在不为点 $O$ 的切点，则他们的反演图形也相切．
+4.  If two figures are tangent at a point other than $O$, their images under inversion are also tangent.
 
-## 例题
+## Example problem
 
-### [「ICPC 2013 杭州赛区」Problem of Apollonius](https://acm.hdu.edu.cn/showproblem.php?pid=4773)
+### [ICPC 2013 Hangzhou Regional — Problem of Apollonius](https://acm.hdu.edu.cn/showproblem.php?pid=4773)
 
-#### 题目大意
+#### Problem summary
 
-求过两圆外一点，且与两圆相切的所有的圆．
+Find all circles that pass through a given point outside two circles and are tangent to both circles.
 
-#### 解法
+#### Solution
 
-首先考虑解析几何解法，似乎很难求解．
+Solving this with analytic geometry looks very hard.
 
-考虑以需要经过的点为反演中心进行反演（反演半径任意），所求的圆的反演图形是一条直线（应用性质 $3$），且与题目给出两圆的反演图形（性质 $2$）相切（性质 $4$）．
+Instead, invert around the point the circle must pass through (any radius of inversion works). The image of each wanted circle is a line (Property $3$), and it is tangent (Property $4$) to the images of the two given circles (Property $2$).
 
-于是题目经过反演变换后转变为：求两圆的所有公切线．
+So after inversion, the problem becomes: find all common tangent lines of two circles.
 
-求出公切线后，反演回原平面即可．
+After finding the common tangents, invert them back to the original plane.
 
-??? note "示例代码"
+??? note "Sample code"
     ```cpp
     #include <algorithm>
     #include <cmath>
@@ -92,11 +92,11 @@ author: hyp1231, 383494
     #include <vector>
     using namespace std;
     
-    constexpr double EPS = 1e-8;   // 精度系数
+    constexpr double EPS = 1e-8;   // precision tolerance
     const double PI = acos(-1.0);  // π
     constexpr int N = 4;
     
-    // 点的定义
+    // point
     struct Point {
       double x, y;
     
@@ -105,43 +105,43 @@ author: hyp1231, 383494
       bool operator<(Point A) const { return x == A.x ? y < A.y : x < A.x; }
     };
     
-    // 向量的定义
+    // vector
     using Vector = Point;
     
-    // 向量加法
+    // vector addition
     Vector operator+(Vector A, Vector B) { return Vector(A.x + B.x, A.y + B.y); }
     
-    // 向量减法
+    // vector subtraction
     Vector operator-(Vector A, Vector B) { return Vector(A.x - B.x, A.y - B.y); }
     
-    // 向量数乘
+    // multiply a vector by a scalar
     Vector operator*(Vector A, double p) { return Vector(A.x * p, A.y * p); }
     
-    // 向量数除
+    // divide a vector by a scalar
     Vector operator/(Vector A, double p) { return Vector(A.x / p, A.y / p); }
     
-    // 与0的关系
+    // sign compared with 0
     int dcmp(double x) {
       if (fabs(x) < EPS) return 0;
       return x < 0 ? -1 : 1;
     }
     
-    // 向量点乘
+    // dot product
     double Dot(Vector A, Vector B) { return A.x * B.x + A.y * B.y; }
     
-    // 向量长度
+    // vector length
     double Length(Vector A) { return sqrt(Dot(A, A)); }
     
-    // 向量叉乘
+    // cross product
     double Cross(Vector A, Vector B) { return A.x * B.y - A.y * B.x; }
     
-    // 点在直线上投影
+    // projection of a point onto a line
     Point GetLineProjection(Point P, Point A, Point B) {
       Vector v = B - A;
       return A + v * (Dot(v, P - A) / Dot(v, v));
     }
     
-    // 圆
+    // circle
     struct Circle {
       Point c;
       double r;
@@ -150,12 +150,12 @@ author: hyp1231, 383494
     
       Circle(Point c, double r = 0) : c(c), r(r) {}
     
-      // 输入极角返回点坐标
+      // given a polar angle, return the point on the circle
       Point point(double a) { return Point(c.x + cos(a) * r, c.y + sin(a) * r); }
     };
     
-    // 两圆公切线 返回切线的条数，-1表示无穷多条切线
-    // a[i] 和 b[i] 分别是第i条切线在圆A和圆B上的切点
+    // common tangents of two circles; returns the number of tangents, -1 means infinitely many
+    // a[i] and b[i] are the tangent points of the i-th tangent on circle A and circle B
     int getTangents(Circle A, Circle B, Point* a, Point* b) {
       int cnt = 0;
       if (A.r < B.r) {
@@ -166,17 +166,17 @@ author: hyp1231, 383494
           (A.c.x - B.c.x) * (A.c.x - B.c.x) + (A.c.y - B.c.y) * (A.c.y - B.c.y);
       double rdiff = A.r - B.r;
       double rsum = A.r + B.r;
-      if (dcmp(d2 - rdiff * rdiff) < 0) return 0;  // 内含
+      if (dcmp(d2 - rdiff * rdiff) < 0) return 0;  // one circle inside the other
     
       double base = atan2(B.c.y - A.c.y, B.c.x - A.c.x);
-      if (dcmp(d2) == 0 && dcmp(A.r - B.r) == 0) return -1;  // 无限多条切线
-      if (dcmp(d2 - rdiff * rdiff) == 0) {  // 内切，一条切线
+      if (dcmp(d2) == 0 && dcmp(A.r - B.r) == 0) return -1;  // infinitely many tangents
+      if (dcmp(d2 - rdiff * rdiff) == 0) {  // internally tangent, one tangent
         a[cnt] = A.point(base);
         b[cnt] = B.point(base);
         ++cnt;
         return 1;
       }
-      // 有外公切线
+      // there are external common tangents
       double ang = acos(rdiff / sqrt(d2));
       a[cnt] = A.point(base + ang);
       b[cnt] = B.point(base + ang);
@@ -184,11 +184,11 @@ author: hyp1231, 383494
       a[cnt] = A.point(base - ang);
       b[cnt] = B.point(base - ang);
       ++cnt;
-      if (dcmp(d2 - rsum * rsum) == 0) {  // 一条内公切线
+      if (dcmp(d2 - rsum * rsum) == 0) {  // one internal common tangent
         a[cnt] = A.point(base);
         b[cnt] = B.point(PI + base);
         ++cnt;
-      } else if (dcmp(d2 - rsum * rsum) > 0) {  // 两条内公切线
+      } else if (dcmp(d2 - rsum * rsum) > 0) {  // two internal common tangents
         double ang = acos(rsum / sqrt(d2));
         a[cnt] = A.point(base + ang);
         b[cnt] = B.point(PI + base + ang);
@@ -200,7 +200,7 @@ author: hyp1231, 383494
       return cnt;
     }
     
-    // 点 O 在圆 A 外，求圆 A 的反演圆 B，R 是反演半径
+    // point O is outside circle A; find circle B, the inverse of circle A; R is the radius of inversion
     Circle Inversion_C2C(Point O, double R, Circle A) {
       double OA = Length(A.c - O);
       double RB = 0.5 * ((1 / (OA - A.r)) - (1 / (OA + A.r))) * R * R;
@@ -210,7 +210,7 @@ author: hyp1231, 383494
       return Circle(Point(Bx, By), RB);
     }
     
-    // 直线反演为过 O 点的圆 B，R 是反演半径
+    // invert a line into circle B through point O; R is the radius of inversion
     Circle Inversion_L2C(Point O, double R, Point A, Vector v) {
       Point P = GetLineProjection(O, A, A + v);
       double d = Length(O - P);
@@ -219,7 +219,7 @@ author: hyp1231, 383494
       return Circle(O + VB, RB);
     }
     
-    // 返回 true 如果 A B 两点在直线同侧
+    // returns true if points A and B are on the same side of the line
     bool theSameSideOfLine(Point A, Point B, Point S, Vector v) {
       return dcmp(Cross(A - S, v)) * dcmp(Cross(B - S, v)) > 0;
     }
@@ -253,14 +253,14 @@ author: hyp1231, 383494
     }
     ```
 
-## 练习
+## Exercises
 
-[「ICPC 2017 南宁赛区网络赛」Finding the Radius for an Inserted Circle](https://vjudge.net/problem/%E8%AE%A1%E8%92%9C%E5%AE%A2-A1283)
+[ICPC 2017 Nanning Regional Online Contest — Finding the Radius for an Inserted Circle](https://vjudge.net/problem/%E8%AE%A1%E8%92%9C%E5%AE%A2-A1283)
 
-[「CCPC 2017 网络赛」The Designer](https://acm.hdu.edu.cn/showproblem.php?pid=6158)
+[CCPC 2017 Online Contest — The Designer](https://acm.hdu.edu.cn/showproblem.php?pid=6158)
 
-## 参考资料与拓展阅读
+## References and further reading
 
 -   [Inversive geometry - Wikipedia](https://en.wikipedia.org/wiki/Inversive_geometry)
 
--   [圆的反演变换 - ACdreamers 的博客](https://blog.csdn.net/acdreamers/article/details/16966369)
+-   [Inversion of circles - ACdreamers's blog](https://blog.csdn.net/acdreamers/article/details/16966369)

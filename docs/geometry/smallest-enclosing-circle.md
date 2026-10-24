@@ -1,15 +1,15 @@
 author: Ir1d, Catreap, TianyiQ, Tiphereth-A, Enter-tainer, Henry-ZHR, HeRaNO, iamtwz, ksyx, ouuan, sshwy, Xeonacid, GWBailang553
 
-## 引入
+## Introduction
 
-对平面上的 $n~(n\ge 1)$ 个点 $P_1,P_2,\cdots,P_n$，找出一个半径最小的圆，使得所有点都不在圆外．这个圆称为这些点的 **最小覆盖圆**（Minimum Enclosing Circle，MEC）．
+Given $n~(n\ge 1)$ points $P_1,P_2,\cdots,P_n$ in the plane, find a circle with the smallest radius such that no point lies outside it. This circle is called the **minimum enclosing circle** (MEC) of the points.
 
-本文中，我们允许半径为 $0$ 的圆，即当所有点重合于一点 $P$ 时，我们认为这 $n$ 的点的最小覆盖圆为圆心为 $P$、半径为 $0$ 的圆．
+In this article we allow circles of radius $0$: when all points coincide at a single point $P$, we say the minimum enclosing circle of the $n$ points is the circle with center $P$ and radius $0$.
 
-不难发现最小覆盖圆是唯一的．
+It is not hard to see that the minimum enclosing circle is unique.
 
-??? note "证明"
-    假设存在两个不同的最小覆盖圆，其圆心分别为 $O_1,O_2$，半径均为 $r$．令 $M$ 为 $O_1O_2$ 的中点，则对任意点 $P$ 都有
+??? note "Proof"
+    Suppose there are two different minimum enclosing circles with centers $O_1,O_2$, both of radius $r$. Let $M$ be the midpoint of $O_1O_2$. Then for every point $P$,
     
     $$
     \begin{aligned}
@@ -18,65 +18,65 @@ author: Ir1d, Catreap, TianyiQ, Tiphereth-A, Enter-tainer, Henry-ZHR, HeRaNO, ia
     \end{aligned}
     $$
     
-    因此，以 $M$ 为圆心可以构造一个半径更小的覆盖圆，产生矛盾．
+    So we can build an enclosing circle with center $M$ and a smaller radius, a contradiction.
     
     ![](./images/smallest-enclosing-circle3.svg)
 
-## 过程
+## How it works
 
-求解最小圆覆盖问题的常见做法是基于 [随机增量法](random-incremental.md) 的 Welzl 算法[^welzl]．该算法的核心操作为：先将点随机打乱，再维护一个点集的最小覆盖圆，并依次向点集加入新点．虽然算法中包含三层循环，但其期望时间复杂度为 $O(n)$．
+The common way to solve the minimum enclosing circle problem is Welzl's algorithm[^welzl], which is based on the [randomized incremental method](random-incremental.md). Its core idea is: randomly shuffle the points first, then maintain the minimum enclosing circle of a point set while adding new points one by one. Although the algorithm has three nested loops, its expected time complexity is $O(n)$.
 
-### 加入一个点
+### Adding a point
 
-我们首先考虑向当前维护的点集中加入新点会发生什么．设当前圆 $C$ 是已处理点集的最小覆盖圆，现在加入点 $P$．
+First let's see what happens when we add a new point to the current set. Let the current circle $C$ be the minimum enclosing circle of the points processed so far, and now add point $P$.
 
--   如果 $P$ 在 $C$ 内部或圆周上，则 $C$ 仍然是最小覆盖圆．
--   如果 $P$ 在 $C$ 外部，此时 $P$ 一定在新最小覆盖圆的圆周上，因此可以将问题转化为：已知 $P$ 在圆周上，求最小覆盖圆的子问题．
+-   If $P$ is inside $C$ or on its boundary, $C$ is still the minimum enclosing circle.
+-   If $P$ is outside $C$, then $P$ must lie on the boundary of the new minimum enclosing circle. So the problem reduces to a subproblem: find the minimum enclosing circle given that $P$ is on its boundary.
 
-??? tip "为什么圆外的新点一定在新圆的圆周上"
-    设旧圆、新圆的圆心分别为 $O_0,O_1$，半径分别为 $r_0,r_1$，则 $r_0\le r_1$．假设 $P$ 严格位于新圆内部．对 $0<t<1$，考虑圆 $(O_t,r_t)$ 满足
+??? tip "Why a new point outside the circle must be on the boundary of the new circle"
+    Let the old and new circles have centers $O_0,O_1$ and radii $r_0,r_1$. Then $r_0\le r_1$. Suppose $P$ lies strictly inside the new circle. For $0<t<1$, consider the circle $(O_t,r_t)$ with
     
     $$
     O_t=(1-t)O_1+tO_0,\qquad r_t^2=(1-t)r_1^2+tr_0^2-t(1-t)|O_1-O_0|^2<r_1^2,
     $$
     
-    此时取充分小的 $t$ 使得 $P$ 仍在圆 $(O_t,r_t)$ 内．对任意点 $Q$，我们有
+    and choose $t$ small enough that $P$ is still inside circle $(O_t,r_t)$. For any point $Q$, we have
     
     $$
     |Q-O_t|^2-r_t^2=(1-t)(|Q-O_1|^2-r_1^2)+t(|Q-O_0|^2-r_0^2).
     $$
     
-    所以旧点集中的点仍能被圆 $(O_t,r_t)$ 覆盖，且原先同时固定在圆 $(O_0,r_0)$ 圆周与圆 $(O_1,r_1)$ 圆周上的点仍在圆 $(O_t,r_t)$ 的圆周上．由于 $P$ 在圆 $(O_t,r_t)$ 内，所以圆 $(O_t,r_t)$ 是合法的覆盖圆，但是我们有 $r_t<r_1$，与新圆最优矛盾．
+    So the old points are still covered by circle $(O_t,r_t)$, and points that were fixed on the boundaries of both $(O_0,r_0)$ and $(O_1,r_1)$ are still on the boundary of $(O_t,r_t)$. Since $P$ is inside $(O_t,r_t)$, the circle $(O_t,r_t)$ is a valid enclosing circle, but $r_t<r_1$, contradicting the optimality of the new circle.
     
     ![](./images/smallest-enclosing-circle4.svg)
 
-上述结论也适用于已经固定了一点或两点在圆周上时加入新点的情况．
+This result also holds when one or two points are already fixed on the boundary and a new point is added.
 
-### 三层循环
+### Three nested loops
 
-接下来我们考虑 Welzl 算法的主体．我们将输入点等概率随机打乱，仍记为 $P_1,P_2,\cdots,P_n$，并令 $S_i=\{P_1,\cdots,P_i\}$，$S_0=\varnothing$．维护当前圆 $C$，初始时圆心为 $P_1$、半径为 $0$，圆周上没有固定点．
+Now let's look at the main part of Welzl's algorithm. Randomly shuffle the input points uniformly, still calling them $P_1,P_2,\cdots,P_n$, and let $S_i=\{P_1,\cdots,P_i\}$, $S_0=\varnothing$. Maintain the current circle $C$; at the start, its center is $P_1$, its radius is $0$, and no point is fixed on its boundary.
 
-1.  （第一层循环）不固定圆周上的点：依次枚举 $i=2,\cdots,n$．若 $P_i$ 已在 $C$ 内则继续；否则在圆周上固定 $P_i$，重新求覆盖 $S_{i-1}$ 的最小圆．
-2.  （第二层循环）固定一个圆周点 $P_i$：先将 $C$ 设为以 $P_iP_1$ 为直径的圆，再依次枚举 $j=2,\cdots,i-1$．若 $P_j$ 已在 $C$ 内则继续；否则再在圆周上固定 $P_j$，重新求覆盖 $S_{j-1}$ 的最小圆．
-3.  （第三层循环）固定两个圆周点 $P_i,P_j$：先将 $C$ 设为以 $P_iP_j$ 为直径的圆，再依次枚举 $k=1,\cdots,j-1$．若 $P_k$ 已在 $C$ 内则继续；否则将 $C$ 更新为 $\triangle P_iP_jP_k$ 的外接圆．
+1.  (Outer loop) No point fixed on the boundary: enumerate $i=2,\cdots,n$ in order. If $P_i$ is already in $C$, continue; otherwise fix $P_i$ on the boundary and recompute the smallest circle covering $S_{i-1}$.
+2.  (Middle loop) One boundary point $P_i$ fixed: first set $C$ to the circle with diameter $P_iP_1$, then enumerate $j=2,\cdots,i-1$ in order. If $P_j$ is already in $C$, continue; otherwise also fix $P_j$ on the boundary and recompute the smallest circle covering $S_{j-1}$.
+3.  (Inner loop) Two boundary points $P_i,P_j$ fixed: first set $C$ to the circle with diameter $P_iP_j$, then enumerate $k=1,\cdots,j-1$ in order. If $P_k$ is already in $C$, continue; otherwise update $C$ to the circumcircle of $\triangle P_iP_jP_k$.
 
-这里「在圆内」均包含圆周，每一行中的当前圆都是满足相应约束的 **最小圆**．第三层循环结束时覆盖了 $S_{j-1}$，再加上圆周上的 $P_j$，恰好得到第二层循环所需的答案；第二层循环结束时，同理得到第一层循环所需的答案．内层循环的可行性由外层循环保证，而且不难发现第三层循环更新时，三个点 $P_iP_jP_k$ 不会共线，所以该算法是正确的．
+Here "in the circle" always includes the boundary, and the current circle at each step is the **smallest circle** satisfying the corresponding constraints. When the inner loop ends, the circle covers $S_{j-1}$, and with $P_j$ on its boundary, it is exactly the answer the middle loop needs; likewise, when the middle loop ends, we get the answer the outer loop needs. The outer loops guarantee that the inner loops are feasible, and it is not hard to see that when the inner loop updates the circle, the three points $P_iP_jP_k$ are never collinear. So the algorithm is correct.
 
-??? tip "第三层循环更新最小圆时，为什么三点不会共线"
-    由于 $P_j$ 曾在经过 $P_i$ 的圆外，因此 $P_i\ne P_j$．若 $P_i,P_j,P_k$ 共线，且 $P_k$ 在当前圆 $C$ 外，则 $P_k$ 必须在线段 $P_iP_j$ 之外．接下来分两种情况讨论：
+??? tip "Why the three points are never collinear when the inner loop updates the smallest circle"
+    Since $P_j$ was once outside a circle passing through $P_i$, we have $P_i\ne P_j$. If $P_i,P_j,P_k$ are collinear and $P_k$ is outside the current circle $C$, then $P_k$ must lie outside segment $P_iP_j$. There are two cases:
     
-    -   若 $P_j$ 位于 $P_i,P_k$ 之间，则第二层循环枚举到 $P_j$ 时，当前最小圆经过 $P_i$，且覆盖 $S_{j-1}$ 中的 $P_k$，因此也覆盖线段 $P_iP_k$ 上的 $P_j$．这与 $P_j$ 触发第三层循环矛盾．
-    -   若 $P_i$ 位于 $P_j,P_k$ 之间，则第一层循环枚举到 $P_i$ 时，当前最小圆覆盖 $S_{i-1}$ 中的 $P_j,P_k$，因此也覆盖线段 $P_jP_k$ 上的 $P_i$．这与 $P_i$ 触发第二层循环矛盾．
+    -   If $P_j$ lies between $P_i$ and $P_k$: when the middle loop reached $P_j$, the current smallest circle passed through $P_i$ and covered $P_k \in S_{j-1}$, so it also covered $P_j$ on segment $P_iP_k$. This contradicts $P_j$ triggering the inner loop.
+    -   If $P_i$ lies between $P_j$ and $P_k$: when the outer loop reached $P_i$, the current smallest circle covered $P_j,P_k \in S_{i-1}$, so it also covered $P_i$ on segment $P_jP_k$. This contradicts $P_i$ triggering the middle loop.
     
     ![](./images/smallest-enclosing-circle5.svg)
 
-### 计算外接圆
+### Computing the circumcircle
 
-Welzl 算法涉及的计算几何操作较为常规，主要涉及判定点与圆的位置关系、以两点为直径的圆以及过三点的外接圆这三种，前两种我们略去不表，重点关注一下第三种操作．
+The geometric operations in Welzl's algorithm are fairly standard. There are three: testing whether a point is in a circle, the circle with two given points as diameter, and the circumcircle of three points. We skip the first two and focus on the third.
 
-给定三个不共线点 $A=(x_A,y_A), B=(x_B,y_B), C=(x_C,y_C)$，它们的外接圆圆心是线段 $AB$ 与 $AC$ 的垂直平分线交点，可以使用 [求两条直线的交点](./2d.md#求两条直线的交点) 中的方法计算．
+Given three non-collinear points $A=(x_A,y_A), B=(x_B,y_B), C=(x_C,y_C)$, their circumcenter is the intersection of the perpendicular bisectors of segments $AB$ and $AC$. You can compute it with the method in [Intersection point of two lines](./2d.md#求两条直线的交点).
 
-也可以直接列方程求解．设外心 $O=(x,y)$，则
+You can also set up equations and solve them directly. Let the circumcenter be $O=(x,y)$. Then
 
 $$
 \begin{cases}
@@ -85,7 +85,7 @@ $$
 \end{cases}
 $$
 
-令
+Let
 
 $$
 \begin{aligned}
@@ -94,84 +94,84 @@ A_2&=2(x_C-x_A),&B_2&=2(y_C-y_A),&C_2&=x_C^2+y_C^2-x_A^2-y_A^2,
 \end{aligned}
 $$
 
-则有
+Then
 
 $$
 x=\frac{C_1B_2-C_2B_1}{A_1B_2-A_2B_1},\quad y=\frac{A_1C_2-A_2C_1}{A_1B_2-A_2B_1}.
 $$
 
-求出圆心后，取 $r=|O-A|$ 即可．分母 $A_1B_2-A_2B_1$ 非零对应三点不共线．三点接近共线时，该方法的浮点误差可能被放大，实际使用中需要特别留意．
+After finding the center, take $r=|O-A|$. A nonzero denominator $A_1B_2-A_2B_1$ means the three points are not collinear. When the three points are nearly collinear, the floating-point error of this method can be amplified, so be careful in practice.
 
-### 示例
+### Example
 
-设点 $P_1=(-2,0)$、$P_2=(2,0)$、$P_3=(0,1)$、$P_4=(0,3)$．记 $C_i$ 为处理完前 $i$ 个点后的最小覆盖圆，下图展示外层循环的结果．蓝色实线表示当前圆，灰色虚线表示更新前的圆，橙色实心点表示本轮加入的点，灰色空心点表示尚未加入的点．
+Let $P_1=(-2,0)$, $P_2=(2,0)$, $P_3=(0,1)$, $P_4=(0,3)$. Let $C_i$ be the minimum enclosing circle after processing the first $i$ points. The figure below shows the results of the outer loop. The solid blue line is the current circle, the dashed gray line is the circle before the update, the solid orange point is the point added in this round, and hollow gray points are points not yet added.
 
 ![](./images/smallest-enclosing-circle1.svg)
 
-初始时半径为 $0$．加入 $P_2$ 后，当前覆盖圆以 $P_1P_2$ 为直径．$P_3$ 在圆内，所以加入它时圆不变．$P_4$ 位于圆外，必须重新计算．重算完成后，圆心为 $(0,5/6)$、半径为 $13/6$，$P_1,P_2,P_4$ 在圆周上，$P_3$ 在圆内．
+At the start, the radius is $0$. After adding $P_2$, the current enclosing circle has $P_1P_2$ as its diameter. $P_3$ is inside the circle, so adding it changes nothing. $P_4$ is outside the circle, so we must recompute. After recomputing, the center is $(0,5/6)$ and the radius is $13/6$; $P_1,P_2,P_4$ are on the boundary and $P_3$ is inside.
 
-下面展开 $i=4$ 时的重算过程．橙色点表示当前检查的点，紫色外圈标记本层循环固定的圆周点，其集合记为 $R$．蓝色实线与灰色虚线分别表示当前圆与上一步的圆．
+Below we expand the recomputation for $i=4$. The orange point is the point being checked, and points with a purple outer ring are the boundary points fixed in this loop; their set is called $R$. The solid blue and dashed gray lines are the current circle and the circle from the previous step.
 
 ![](./images/smallest-enclosing-circle2.svg)
 
-1.  $P_4$ 在旧圆 $C_3$ 外，进入第二层循环．
-2.  固定 $P_4$，先取以 $P_4P_1$ 为直径的圆．检查到 $j=2$ 时，发现 $P_2$ 在这个圆外，进入第三层循环．
-3.  固定 $P_4,P_2$，将当前圆设为以 $P_4P_2$ 为直径的圆．检查到 $k=1$ 时，发现 $P_1$ 仍在圆外．
-4.  更新为 $\triangle P_4P_2P_1$ 的外接圆，完成第三层循环．回到第二层循环后，$j=3$ 对应的 $P_3$ 已在圆内，因此跳过，得到 $C_4$．
+1.  $P_4$ is outside the old circle $C_3$, so we enter the middle loop.
+2.  Fix $P_4$ and first take the circle with diameter $P_4P_1$. When checking $j=2$, we find $P_2$ is outside this circle, so we enter the inner loop.
+3.  Fix $P_4,P_2$ and set the current circle to the one with diameter $P_4P_2$. When checking $k=1$, we find $P_1$ is still outside.
+4.  Update to the circumcircle of $\triangle P_4P_2P_1$, which finishes the inner loop. Back in the middle loop, $P_3$ (for $j=3$) is already in the circle, so it is skipped, and we get $C_4$.
 
-重算中的临时圆只需满足当前子问题的约束，因此不一定覆盖上一层已经处理过的全部点．例如，第二幅子图中的圆尚未覆盖 $P_2$，第三幅子图中的圆尚未覆盖 $P_1$，这正是进入下一层或更新外接圆的原因．
+The temporary circles during recomputation only need to satisfy the constraints of the current subproblem, so they do not necessarily cover all points the outer level has already processed. For example, the circle in the second subfigure does not yet cover $P_2$, and the circle in the third subfigure does not yet cover $P_1$. That is exactly why we go into the next level or update to the circumcircle.
 
-### 复杂度分析
+### Complexity analysis
 
-从流程来看，该算法的最坏时间复杂度上界为 $O(n^3)$，但随机打乱可以降低进入内层循环的概率，使期望时间复杂度降为 $O(n)$．
+From the structure, the worst-case time complexity of the algorithm is bounded by $O(n^3)$. But the random shuffle lowers the probability of entering the inner loops, bringing the expected time complexity down to $O(n)$.
 
-最小覆盖圆可以由至多三个点确定：只有一个不同点时半径为 $0$，否则，最小覆盖圆由一对直径端点或三个不共线的点确定．固定一个圆周点后，只需再用至多两个点即可确定最优解．
+The minimum enclosing circle is determined by at most three points: if there is only one distinct point, the radius is $0$; otherwise, the circle is determined by a pair of diameter endpoints or by three non-collinear points. With one boundary point fixed, at most two more points are needed to determine the optimal solution.
 
-??? tip "固定一个圆周点后，为什么至多还需要两个点"
-    将固定点平移到原点．设圆心向量为 $\vec{u}$，则该圆的半径为 $|\vec{u}|$．点 $x$ 被覆盖的条件等价于
+??? tip "Why at most two more points are needed after fixing one boundary point"
+    Translate the fixed point to the origin. Let the center vector be $\vec{u}$; then the radius of the circle is $|\vec{u}|$. A point $x$ is covered if and only if
     
     $$
     |\vec{x}-\vec{u}|^2\le |\vec{u}|^2\iff 2\vec{u}\cdot \vec{x}\ge |\vec{x}|^2.
     $$
     
-    除原点外的每个点都会对圆心施加一个半平面约束，可行圆心落在这些 [半平面的交](./half-plane.md) 中，而最优圆心是其中离原点最近的点．在二维空间中，保留至多两条起作用的约束就能保持这个最近点不变．[^note1]因此，除了固定点，至多再保留两个输入点就足以保持最优解不变．
+    Each point other than the origin puts a half-plane constraint on the center. Feasible centers lie in the [intersection of these half-planes](./half-plane.md), and the optimal center is the feasible point closest to the origin. In 2D, keeping at most two active constraints is enough to keep this closest point unchanged.[^note1] So besides the fixed point, keeping at most two more input points is enough to keep the optimal solution unchanged.
     
-    下图中，蓝色区域 $H$ 表示所有可行圆心，橙色点 $\vec{u}_*$ 是其中离原点最近的点．去掉灰色边界对应的约束，都不会改变最优圆心．
+    In the figure below, the blue region $H$ is the set of all feasible centers, and the orange point $\vec{u}_*$ is the one closest to the origin. Removing the constraints of the gray boundaries does not change the optimal center.
     
     ![](./images/smallest-enclosing-circle6.svg)
 
-因此，删除后会改变最优圆的点一定属于任意一组这样的确定点．不固定圆周点时，这种点至多有三个；固定一个圆周点时，这种点至多有两个．
+Therefore, any point whose removal would change the optimal circle must belong to every such set of determining points. With no boundary point fixed, there are at most three such points; with one boundary point fixed, there are at most two.
 
-现在进行逆向分析．先固定 $P_i$ 和第二层循环某一步的无序点集 $S_j$．由于初始顺序是随机的，所以 $P_j$ 相当于是从 $S_j$ 中等概率选取的一点．只有删除 $P_j$ 会改变受约束最优圆时，加入 $P_j$ 才会触发第三层循环，所以触发概率至多为 $\min(1,2/j)$．第三层扫描需要 $O(j)$ 时间，故整个第二层循环的期望用时为
+Now we do a backward analysis. First fix $P_i$ and the unordered point set $S_j$ at some step of the middle loop. Since the initial order is random, $P_j$ is equally likely to be any point of $S_j$. Adding $P_j$ triggers the inner loop only if removing $P_j$ would change the constrained optimal circle, so the probability of triggering is at most $\min(1,2/j)$. The inner scan takes $O(j)$ time, so the expected time of the whole middle loop is
 
 $$
 O(1)+\sum_{j=2}^{i-1}\left(O(1)+\frac{2}{j}\cdot O(j)\right)=O(i).
 $$
 
-类似地，固定第一层的无序点集 $S_i$，触发第二层重算的点至多有三个，概率至多为 $\min(1,3/i)$．固定该点以后，之前各点的相对顺序仍然是随机的，因此这次重算的条件期望用时为 $O(i)$．加上每次判定的开销以及最初打乱的开销，总期望时间复杂度为
+Similarly, fix the unordered point set $S_i$ of the outer loop. At most three points trigger a recomputation in the middle loop, so the probability is at most $\min(1,3/i)$. After fixing that point, the relative order of the earlier points is still random, so the conditional expected time of this recomputation is $O(i)$. Adding the cost of each test and of the initial shuffle, the total expected time complexity is
 
 $$
 O(n)+\sum_{i=2}^{n}\left(O(1)+\min\left(1,\frac{3}{i}\right)\cdot O(i)\right)=O(n).
 $$
 
-## 例题
+## Example problem
 
-???+ note "[洛谷 P1742 最小圆覆盖](https://www.luogu.com.cn/problem/P1742)"
-    给出 $N$ 个点，求包含所有点的最小圆，输出圆的半径和圆心坐标．
+???+ note "[Luogu P1742 Minimum Enclosing Circle](https://www.luogu.com.cn/problem/P1742)"
+    Given $N$ points, find the smallest circle containing all of them, and output its radius and the coordinates of its center.
 
-下面的实现直接维护圆心与半径，使用 `std::shuffle` 打乱点的顺序．三层循环分别对应前文的零个、一个、两个固定圆周点的子问题，`geto` 用于求三个点的外心．
+The implementation below maintains the center and radius directly, and uses `std::shuffle` to shuffle the points. The three loops correspond to the subproblems above with zero, one and two fixed boundary points, and `geto` computes the circumcenter of three points.
 
-??? note "参考实现"
+??? note "Reference implementation"
     ```cpp
     --8<-- "docs/geometry/code/smallest-enclosing-circle/smallest-enclosing-circle_1.cpp"
     ```
 
-## 练习
+## Exercises
 
--   [「POI 2011」WYK-Plot](https://www.luogu.com.cn/problem/P3517)
+-   [POI 2011 WYK-Plot](https://www.luogu.com.cn/problem/P3517)
 -   [Library Checker - Minimum Enclosing Circle](https://judge.yosupo.jp/problem/minimum_enclosing_circle)
 
-## 参考资料与注释
+## References and notes
 
 -   [Smallest-circle problem - Wikipedia](https://en.wikipedia.org/wiki/Smallest-circle_problem)
 -   [Minimum Enclosing Circle - Algorithms for Competitive Programming](https://cp-algorithms.com/geometry/enclosing-circle.html)
@@ -179,4 +179,4 @@ $$
 
 [^welzl]: Welzl, E. (1991). Smallest enclosing disks (balls and ellipsoids). In: Maurer, H. (eds) New Results and New Trends in Computer Science. Lecture Notes in Computer Science, vol 555. Springer, Berlin, Heidelberg.
 
-[^note1]: 参见 [线性规划](../math/linear-programming.md) 相关内容．
+[^note1]: See [Linear programming](../math/linear-programming.md) for details.

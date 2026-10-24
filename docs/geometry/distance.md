@@ -1,40 +1,40 @@
 author: Chrogeek, frank-xjh, ChungZH, hsfzLZH1, Marcythm, Planet6174, partychicken, i-Yirannn
 
-## 欧氏距离
+## Euclidean distance
 
-### 二维空间
+### Two-dimensional space
 
-#### 定义
+#### Definition
 
-欧氏距离，一般也称作欧几里得距离．在平面直角坐标系中，设点 $A,B$ 的坐标分别为 $A(x_1,y_1),B(x_2,y_2)$，则两点间的欧氏距离为：
+The Euclidean distance is the ordinary straight-line distance. In a Cartesian coordinate system, let points $A,B$ have coordinates $A(x_1,y_1),B(x_2,y_2)$. Then the Euclidean distance between them is:
 
 $$
 \left | AB \right | = \sqrt{\left ( x_2 - x_1 \right )^2 + \left ( y_2 - y_1 \right )^2}
 $$
 
-#### 解释
+#### Explanation
 
-举个例子，若在平面直角坐标系中，有两点 $A(6,5),B(2,2)$，通过公式，我们很容易得到 $A,B$ 两点间的欧氏距离：
+For example, if a Cartesian coordinate system has two points $A(6,5),B(2,2)$, the formula easily gives the Euclidean distance between $A$ and $B$:
 
 $$
 \left | AB \right | = \sqrt{\left ( 2 - 6 \right )^2 + \left ( 2 - 5 \right )^2} = \sqrt{4^2+3^2} = 5
 $$
 
-除此之外，$P(x,y)$ 到原点的欧氏距离可以用公式表示为：
+Also, the Euclidean distance from $P(x,y)$ to the origin is:
 
 $$
 |P| = \sqrt{x^2+y^2}
 $$
 
-### n 维空间
+### n-dimensional space
 
-#### 引入
+#### Introduction
 
-那么，三维空间中两点的欧氏距离公式呢？我们来观察下图．
+What about the Euclidean distance between two points in 3D space? Look at the figure below.
 
 ![dis-3-dimensional](./images/distance-0.png)
 
-我们很容易发现，在 $\triangle ADC$ 中，$\angle ADC = 90^\circ$；在 $\triangle ACB$ 中，$\angle ACB = 90^\circ$．
+We can easily see that in $\triangle ADC$, $\angle ADC = 90^\circ$, and in $\triangle ACB$, $\angle ACB = 90^\circ$.
 
 $$
 \begin{aligned}
@@ -43,9 +43,9 @@ $$
 \end{aligned}
 $$
 
-#### 定义
+#### Definition
 
-由此可得，三维空间中欧氏距离的距离公式为：
+So the formula for the Euclidean distance in 3D space is:
 
 $$
 \begin{gathered}
@@ -54,11 +54,11 @@ $$
 \end{gathered}
 $$
 
-#### 解释
+#### Explanation
 
-[NOIP2017 提高组 奶酪](https://uoj.ac/problem/332) 就运用了这一知识，可以作为欧氏距离的例题．
+[NOIP2017 Senior Group — Cheese](https://uoj.ac/problem/332) uses this idea and can serve as an example problem for Euclidean distance.
 
-以此类推，我们就得到了 $n$ 维空间中欧氏距离的距离公式：对于 $\vec A(x_{11}, x_{12}, \cdots,x_{1n}) ,~ \vec B(x_{21}, x_{22}, \cdots,x_{2n})$，有
+Continuing in the same way, we get the formula for the Euclidean distance in $n$-dimensional space: for $\vec A(x_{11}, x_{12}, \cdots,x_{1n}) ,~ \vec B(x_{21}, x_{22}, \cdots,x_{2n})$,
 
 $$
 \begin{aligned}
@@ -67,37 +67,37 @@ $$
 \end{aligned}
 $$
 
-欧氏距离虽然很有用，但也有明显的缺点．两个整点计算其欧氏距离时，往往答案是浮点型，会存在一定误差．
+The Euclidean distance is very useful, but it also has a clear drawback: the distance between two lattice points is often a floating-point number, which brings some error.
 
-## 曼哈顿距离
+## Manhattan distance
 
-### 定义
+### Definition
 
-在二维空间内，两个点之间的曼哈顿距离（Manhattan distance）为它们横坐标之差的绝对值与纵坐标之差的绝对值之和．设点 $A(x_1,y_1),B(x_2,y_2)$，则 $A,B$ 之间的曼哈顿距离用公式可以表示为：
+In 2D space, the Manhattan distance between two points is the absolute difference of their x-coordinates plus the absolute difference of their y-coordinates. For points $A(x_1,y_1),B(x_2,y_2)$, the Manhattan distance between $A$ and $B$ is:
 
 $$
 d(A,B) = |x_1 - x_2| + |y_1 - y_2|
 $$
 
-### 解释
+### Explanation
 
-观察下图：
+Look at the figure below:
 
 ![manhattan-dis-diff](./images/distance-1.png)
 
-在 $A,B$ 间，黄线、橙线都表示曼哈顿距离，而红线、蓝线表示等价的曼哈顿距离，绿线表示欧氏距离．
+Between $A$ and $B$, the yellow and orange lines both show the Manhattan distance, the red and blue lines show equivalent Manhattan distances, and the green line shows the Euclidean distance.
 
-同样的例子，在下图中 $A,B$ 的坐标分别为 $A(25,20),B(10,10)$．
+Using the same example as before, in the figure below $A$ and $B$ have coordinates $A(25,20),B(10,10)$.
 
 ![manhattan-dis](./images/distance-2.svg)
 
-通过公式，我们很容易得到 $A,B$ 两点间的曼哈顿距离：
+The formula easily gives the Manhattan distance between $A$ and $B$:
 
 $$
 d(A,B) = |20 - 10| + |25 - 10| = 10 + 15 = 25
 $$
 
-经过推导，我们得到 $n$ 维空间的曼哈顿距离公式为：
+By the same reasoning, the Manhattan distance in $n$-dimensional space is:
 
 $$
 \begin{aligned}
@@ -106,28 +106,28 @@ d(A,B) &= |x_1 - y_1| + |x_2 - y_2| + \cdot \cdot \cdot + |x_n - y_n|\\
 \end{aligned}
 $$
 
-### 性质
+### Properties
 
-除了公式之外，曼哈顿距离还具有以下数学性质：
+Besides the formula, the Manhattan distance has the following mathematical properties:
 
--   非负性：曼哈顿距离是一个非负数，即 $d(i,j)\geq 0$．
--   统一性：一个点到自身的曼哈顿距离为 $0$，即 $d(i,i) = 0$．
--   对称性：$A$ 到 $B$ 与 $B$ 到 $A$ 的曼哈顿距离相等，即 $d(i,j) = d(j,i)$．
--   三角不等式：从点 $i$ 到 $j$ 的直接距离不会大于途经的任何其它点 $k$ 的距离，即 $d(i,j)\leq d(i,k)+d(k,j)$．
+-   Non-negativity: the Manhattan distance is a non-negative number, that is, $d(i,j)\geq 0$.
+-   Identity: the Manhattan distance from a point to itself is $0$, that is, $d(i,i) = 0$.
+-   Symmetry: the Manhattan distance from $A$ to $B$ equals that from $B$ to $A$, that is, $d(i,j) = d(j,i)$.
+-   Triangle inequality: the direct distance from point $i$ to $j$ is never larger than the distance via any other point $k$, that is, $d(i,j)\leq d(i,k)+d(k,j)$.
 
-### 例题
+### Example problem
 
-[P5098「USACO04OPEN」Cave Cows 3](https://www.luogu.com.cn/problem/P5098)
+[P5098 USACO04OPEN Cave Cows 3](https://www.luogu.com.cn/problem/P5098)
 
-根据题意，对于式子 $|x_1-x_2|+|y_1-y_2|$，我们可以假设 $x_1 - x_2 \geq 0$，根据 $y_1 - y_2$ 的符号分成两种情况：
+For the expression $|x_1-x_2|+|y_1-y_2|$ in the problem, we may assume $x_1 - x_2 \geq 0$, and split into two cases by the sign of $y_1 - y_2$:
 
 -   $(y_1 - y_2 \geq 0)\rightarrow |x_1-x_2|+|y_1-y_2|=x_1 + y_1 - (x_2 + y_2)$
 
 -   $(y_1 - y_2 < 0)\rightarrow |x_1-x_2|+|y_1-y_2|=x_1 - y_1 - (x_2 - y_2)$
 
-只要分别求出 $x+y, x-y$ 的最大值和最小值即能得出答案．
+So we just need the maximum and minimum of $x+y$ and of $x-y$ to get the answer.
 
-??? note "参考代码"
+??? note "Reference code"
     === "C++"
         ```cpp
         #include <algorithm>
@@ -163,21 +163,21 @@ $$
         print(max(maxx - minx, maxy - miny))
         ```
 
-其实还有第二种做法，那就是把曼哈顿距离转化为切比雪夫距离求解，最后部分会讲到．
+There is actually a second approach: convert the Manhattan distance into a Chebyshev distance. We cover it in the last part.
 
-## 切比雪夫距离
+## Chebyshev distance
 
-### 定义
+### Definition
 
-切比雪夫距离（Chebyshev distance）是向量空间中的一种度量，二个点之间的距离定义为其各坐标数值差的最大值．[^ref1]
+The Chebyshev distance is a metric on a vector space, where the distance between two points is the largest difference among their coordinates.[^ref1]
 
-在二维空间内，两个点之间的切比雪夫距离为它们横坐标之差的绝对值与纵坐标之差的绝对值的最大值．设点 $A(x_1,y_1),B(x_2,y_2)$，则 $A,B$ 之间的切比雪夫距离用公式可以表示为：
+In 2D space, the Chebyshev distance between two points is the larger of the absolute difference of their x-coordinates and the absolute difference of their y-coordinates. For points $A(x_1,y_1),B(x_2,y_2)$, the Chebyshev distance between $A$ and $B$ is:
 
 $$
 d(A,B) = \max(|x_1 - x_2|, |y_1 - y_2|)
 $$
 
-$n$ 维空间中切比雪夫距离的距离公式可以表示为：
+In $n$-dimensional space, the Chebyshev distance is:
 
 $$
 \begin{aligned}
@@ -185,9 +185,9 @@ d(x,y) &= \max\begin{Bmatrix} |x_1 - y_1|,|x_2 - y_2|,\cdot \cdot \cdot,|x_n - y
 &= \max\begin{Bmatrix} |x_i - y_i|\end{Bmatrix}(i \in [1, n])\end{aligned}
 $$
 
-### 解释
+### Explanation
 
-仍然是这个例子，下图中 $A,B$ 的坐标分别为 $A(25,20),B(10,10)$．
+With the same example again, in the figure below $A$ and $B$ have coordinates $A(25,20),B(10,10)$.
 
 ![Chebyshev-dis](./images/distance-2.svg)
 
@@ -195,15 +195,15 @@ $$
 d(A,B) = \max(|20 - 10|, |25 - 10|) = \max(10, 15) = 15
 $$
 
-## 曼哈顿距离与切比雪夫距离的相互转化
+## Converting between Manhattan and Chebyshev distance
 
-### 过程
+### How it works
 
-首先，我们考虑画出平面直角坐标系上所有到原点的曼哈顿距离为 $1$ 的点．
+First, let's draw all points in the Cartesian plane whose Manhattan distance to the origin is $1$.
 
-通过公式，我们很容易得到方程 $|x| + |y| = 1$．
+From the formula, we get the equation $|x| + |y| = 1$.
 
-将绝对值展开，得到 $4$ 个 一次函数，分别是：
+Expanding the absolute values gives $4$ linear functions:
 
 $$
 \begin{aligned}
@@ -214,17 +214,17 @@ $$
 \end{aligned}
 $$
 
-将这 $4$ 个函数画到平面直角坐标系上，得到一个边长为 $\sqrt{2}$ 的正方形，如下图所示：
+Drawing these $4$ functions in the plane gives a square with side length $\sqrt{2}$, as shown below:
 
 ![dis-diff-square-1](./images/distance-3.svg)
 
-正方形边界上所有的点到原点的 曼哈顿距离 都是 $1$．
+Every point on the boundary of this square has Manhattan distance $1$ to the origin.
 
-同理，我们再考虑画出平面直角坐标系上所有到原点的 切比雪夫距离 为 $1$ 的点．
+Similarly, let's draw all points in the plane whose Chebyshev distance to the origin is $1$.
 
-通过公式，我们知道 $\max(|x|,|y|)=1$．
+From the formula, we know $\max(|x|,|y|)=1$.
 
-我们将式子展开，也同样可以得到 $4$ 条线段，分别是：
+Expanding this also gives $4$ line segments:
 
 $$
 \begin{aligned}
@@ -235,25 +235,25 @@ $$
 \end{aligned}
 $$
 
-画到平面直角坐标系上，可以得到一个边长为 $2$ 的正方形，如下图所示：
+Drawing them in the plane gives a square with side length $2$, as shown below:
 
 ![dis-diff-square-2](./images/distance-4.svg)
 
-正方形边界上所有的点到原点的切比雪夫距离都是 $1$．
+Every point on the boundary of this square has Chebyshev distance $1$ to the origin.
 
-将这两幅图对比，我们会神奇地发现：
+Comparing the two figures, we make a surprising discovery:
 
-这 $2$ 个正方形是相似图形．
+The $2$ squares are similar figures.
 
-### 证明
+### Proof
 
-所以，曼哈顿距离与切比雪夫距离之间会不会有联系呢？
+So is there a connection between the Manhattan distance and the Chebyshev distance?
 
-接下来我们简略证明一下：
+Let's sketch a proof:
 
-假设 $A(x_1,y_1),B(x_2,y_2)$，
+Let $A(x_1,y_1),B(x_2,y_2)$.
 
-我们把曼哈顿距离中的绝对值拆开，能够得到四个值，这四个值中的最大值是两个非负数之和，即曼哈顿距离．则 $A,B$ 两点的曼哈顿距离为：
+If we expand the absolute values in the Manhattan distance, we get four values. The largest of them is the sum of two non-negative numbers, which is exactly the Manhattan distance. So the Manhattan distance between $A$ and $B$ is:
 
 $$
 \begin{aligned}
@@ -263,11 +263,11 @@ d(A,B)&=|x_1 - x_2| + |y_1 - y_2|\\
 \end{aligned}
 $$
 
-我们很容易发现，这就是 $(x_1 + y_1,x_1 - y_1), (x_2 + y_2,x_2 - y_2)$ 两点之间的切比雪夫距离．
+We can easily see that this is the Chebyshev distance between the points $(x_1 + y_1,x_1 - y_1)$ and $(x_2 + y_2,x_2 - y_2)$.
 
-所以将每一个点 $(x,y)$ 转化为 $(x + y, x - y)$，新坐标系下的切比雪夫距离即为原坐标系下的曼哈顿距离．
+So if we map every point $(x,y)$ to $(x + y, x - y)$, the Chebyshev distance in the new coordinate system equals the Manhattan distance in the original one.
 
-同理，$A,B$ 两点的切比雪夫距离为：
+Similarly, the Chebyshev distance between $A$ and $B$ is:
 
 $$
 \begin{aligned}
@@ -276,33 +276,33 @@ d(A,B)&=\max\begin{Bmatrix} |x_1 - x_2|,|y_1 - y_2|\end{Bmatrix}\\
 \end{aligned}
 $$
 
-而这就是 $(\dfrac{x_1 + y_1}{2},\dfrac{x_1 - y_1}{2}), (\dfrac{x_2 + y_2}{2},\dfrac{x_2 - y_2}{2})$ 两点之间的曼哈顿距离．
+And this is the Manhattan distance between the points $(\dfrac{x_1 + y_1}{2},\dfrac{x_1 - y_1}{2})$ and $(\dfrac{x_2 + y_2}{2},\dfrac{x_2 - y_2}{2})$.
 
-所以将每一个点 $(x,y)$ 转化为 $(\dfrac{x + y}{2},\dfrac{x - y}{2})$，新坐标系下的曼哈顿距离即为原坐标系下的切比雪夫距离．
+So if we map every point $(x,y)$ to $(\dfrac{x + y}{2},\dfrac{x - y}{2})$, the Manhattan distance in the new coordinate system equals the Chebyshev distance in the original one.
 
-### 结论
+### Conclusion
 
--   曼哈顿坐标系是通过切比雪夫坐标系旋转 $45^\circ$ 后，再缩小到原来的一半得到的．
--   将一个点 $(x,y)$ 的坐标变为 $(x + y, x - y)$ 后，原坐标系中的曼哈顿距离等于新坐标系中的切比雪夫距离．
--   将一个点 $(x,y)$ 的坐标变为 $(\dfrac{x + y}{2},\dfrac{x - y}{2})$ 后，原坐标系中的切比雪夫距离等于新坐标系中的曼哈顿距离．
+-   The Manhattan coordinate system is obtained by rotating the Chebyshev coordinate system by $45^\circ$ and then scaling it down to half its size.
+-   After changing each point $(x,y)$ to $(x + y, x - y)$, the Manhattan distance in the original system equals the Chebyshev distance in the new system.
+-   After changing each point $(x,y)$ to $(\dfrac{x + y}{2},\dfrac{x - y}{2})$, the Chebyshev distance in the original system equals the Manhattan distance in the new system.
 
-碰到求切比雪夫距离或曼哈顿距离的题目时，我们往往可以相互转化来求解．两种距离在不同的题目中有不同的优缺点，应该灵活运用．
+When a problem asks for Chebyshev or Manhattan distances, we can often convert one into the other to solve it. Each distance has its own strengths and weaknesses in different problems, so use them flexibly.
 
-### 例题
+### Example problems
 
-[P4648「IOI2007」pairs 动物对数](https://www.luogu.com.cn/problem/P4648)（曼哈顿距离转切比雪夫距离）
+[P4648 IOI2007 Pairs](https://www.luogu.com.cn/problem/P4648) (Manhattan distance to Chebyshev distance)
 
-[P3964「TJOI2013」松鼠聚会](https://www.luogu.com.cn/problem/P3964)（切比雪夫距离转曼哈顿距离）
+[P3964 TJOI2013 Squirrel Party](https://www.luogu.com.cn/problem/P3964) (Chebyshev distance to Manhattan distance)
 
-最后给出 [P5098「USACO04OPEN」Cave Cows 3](https://www.luogu.com.cn/problem/P5098) 的第二种解法：
+Finally, here is the second solution to [P5098 USACO04OPEN Cave Cows 3](https://www.luogu.com.cn/problem/P5098):
 
-我们考虑将题目所求的曼哈顿距离转化为切比雪夫距离，即把每个点的坐标 $(x,y)$ 变为 $(x + y, x - y)$．
+We convert the Manhattan distance asked for in the problem into a Chebyshev distance, that is, change each point's coordinates $(x,y)$ to $(x + y, x - y)$.
 
-所求的答案就变为 $\max\limits_{i,j\in n}\begin{Bmatrix} \max\begin{Bmatrix} |x_i - x_j|,|y_i - y_j|\end{Bmatrix}\end{Bmatrix}$．
+The answer then becomes $\max\limits_{i,j\in n}\begin{Bmatrix} \max\begin{Bmatrix} |x_i - x_j|,|y_i - y_j|\end{Bmatrix}\end{Bmatrix}$.
 
-现要使得横坐标之差和纵坐标之差最大，只需要预处理出 $x,y$ 的最大值和最小值即可．
+To maximize the difference of x-coordinates and the difference of y-coordinates, we only need to precompute the maximum and minimum of $x$ and $y$.
 
-??? note "参考代码"
+??? note "Reference code"
     === "C++"
         ```cpp
         #include <algorithm>
@@ -341,26 +341,26 @@ $$
         print(max(maxx - minx, maxy - miny))
         ```
 
-对比两份代码，我们又能够发现，两种不同的思路，写出来的代码却是完全等价的，是不是很神奇呢？当然，更高深的东西需要大家另行研究．
+Comparing the two programs, we find that two different ideas lead to code that is completely equivalent. Isn't that neat? Of course, deeper topics are left for you to explore on your own.
 
-## 闵可夫斯基距离
+## Minkowski distance
 
-我们定义 $n$ 维空间中两点 $X(x_1, x_2, \dots, x_n)$，$Y(y_1, y_2, \dots, y_n)$ 之间的闵可夫斯基距离为：
+For two points $X(x_1, x_2, \dots, x_n)$ and $Y(y_1, y_2, \dots, y_n)$ in $n$-dimensional space, we define the Minkowski distance between them as:
 
 $$
 D(X, Y) = \left(\sum_{i=1}^n \left\vert x_i - y_i \right\vert ^p\right)^{\frac{1}{p}}.
 $$
 
-特别的：
+In particular:
 
-1.  当 $p=1$ 时，$D(X, Y) = \sum_{i=1}^n \left\vert x_i - y_i \right\vert$ 即为曼哈顿距离；
-2.  当 $p=2$ 时，$D(X, Y) = \left(\sum_{i=1}^n (x_i - y_i)^2\right)^{1/2}$ 即为欧几里得距离；
-3.  当 $p \to \infty$ 时，$D(X, Y) = \lim_{p \to \infty}\left(\sum_{i=1}^n \left\vert x_i - y_i \right\vert ^p\right) ^{1/p} = \max\limits_{i=1}^n \left\vert x_i - y_i \right\vert$ 即为切比雪夫距离．
+1.  When $p=1$, $D(X, Y) = \sum_{i=1}^n \left\vert x_i - y_i \right\vert$ is the Manhattan distance;
+2.  When $p=2$, $D(X, Y) = \left(\sum_{i=1}^n (x_i - y_i)^2\right)^{1/2}$ is the Euclidean distance;
+3.  When $p \to \infty$, $D(X, Y) = \lim_{p \to \infty}\left(\sum_{i=1}^n \left\vert x_i - y_i \right\vert ^p\right) ^{1/p} = \max\limits_{i=1}^n \left\vert x_i - y_i \right\vert$ is the Chebyshev distance.
 
-注意：当 $p \ge 1$ 时，闵可夫斯基距离才是度量，具体证明参见 [Minkowski distance - Wikipedia](https://en.wikipedia.org/wiki/Minkowski_distance)．
+Note: the Minkowski distance is a metric only when $p \ge 1$. For the proof, see [Minkowski distance - Wikipedia](https://en.wikipedia.org/wiki/Minkowski_distance).
 
-## 参考资料与链接
+## References and links
 
-1.  [浅谈三种常见的距离算法](https://www.luogu.com.cn/blog/xuxing/Distance-Algorithm)，感谢作者 xuxing 的授权．
+1.  [A brief look at three common distance metrics](https://www.luogu.com.cn/blog/xuxing/Distance-Algorithm). Thanks to the author xuxing for permission.
 
-[^ref1]: [切比雪夫距离 - 维基百科，自由的百科全书](https://zh.wikipedia.org/wiki/%E5%88%87%E6%AF%94%E9%9B%AA%E5%A4%AB%E8%B7%9D%E7%A6%BB)
+[^ref1]: [Chebyshev distance - Wikipedia (Chinese)](https://zh.wikipedia.org/wiki/%E5%88%87%E6%AF%94%E9%9B%AA%E5%A4%AB%E8%B7%9D%E7%A6%BB)

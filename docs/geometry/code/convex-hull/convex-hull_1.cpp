@@ -22,12 +22,12 @@ struct Point {
     return {a.x - b.x, a.y - b.y};
   }
 
-  // 点乘
+  // dot product
   friend T operator*(const Point &a, const Point &b) {
     return a.x * b.x + a.y * b.y;
   }
 
-  // 叉乘
+  // cross product
   friend T operator^(const Point &a, const Point &b) {
     return a.x * b.y - a.y * b.x;
   }

@@ -1,14 +1,14 @@
-## 引入
+## Introduction
 
-给定 $n$ 个二维平面上的点，求一组欧几里得距离最近的点对．
+Given $n$ points in the 2D plane, find a pair of points with the smallest Euclidean distance.
 
-下面我们介绍一种时间复杂度为 $O(n\log n)$ 的分治算法来解决这个问题．该算法在 1975 年由 [Franco P. Preparata](https://en.wikipedia.org/wiki/Franco_P._Preparata) 提出，Preparata 和 [Michael Ian Shamos](https://en.wikipedia.org/wiki/Michael_Ian_Shamos) 证明了该算法在决策树模型下是最优的．
+Below we introduce a divide and conquer algorithm with time complexity $O(n\log n)$ for this problem. It was proposed by [Franco P. Preparata](https://en.wikipedia.org/wiki/Franco_P._Preparata) in 1975, and Preparata and [Michael Ian Shamos](https://en.wikipedia.org/wiki/Michael_Ian_Shamos) proved that it is optimal in the decision tree model.
 
-## 过程
+## How it works
 
-与常规的分治算法一样，我们将这个有 $n$ 个点的集合拆分成两个大小相同的集合 $S_1, S_2$，并不断递归下去．但是我们遇到了一个难题：如何合并？即如何求出一个点在 $S_1$ 中，另一个点在 $S_2$ 中的最近点对？这里我们先假设合并操作的时间复杂度为 $O(n)$，可知算法总复杂度为 $T(n) = 2T(\frac{n}{2}) + O(n) = O(n\log n)$．
+As in a usual divide and conquer algorithm, we split the set of $n$ points into two sets $S_1, S_2$ of equal size, and keep recursing. But we run into a hard question: how do we merge? That is, how do we find the closest pair with one point in $S_1$ and the other in $S_2$? Suppose for now that merging takes $O(n)$ time. Then the total complexity is $T(n) = 2T(\frac{n}{2}) + O(n) = O(n\log n)$.
 
-我们先将所有点按照 $x_i$ 为第一关键字、$y_i$ 为第二关键字排序，并以点 $p_m (m = \lfloor \frac{n}{2} \rfloor)$ 为分界点，拆分点集为 $A_1,A_2$：
+First sort all points with $x_i$ as the first key and $y_i$ as the second key, and use point $p_m (m = \lfloor \frac{n}{2} \rfloor)$ as the dividing point to split the points into $A_1,A_2$:
 
 $$
 \begin{aligned}
@@ -17,102 +17,102 @@ A_2 &= \{p_i \ \big | \ i = m + 1 \ldots n-1 \}
 \end{aligned}
 $$
 
-并递归下去，求出两点集各自内部的最近点对，设距离为 $h_1,h_2$，取较小值设为 $h$．
+Recurse to find the closest pair inside each of the two sets. Let their distances be $h_1,h_2$, and let $h$ be the smaller one.
 
-现在该合并了！我们试图找到这样的一组点对，其中一个属于 $A_1$，另一个属于 $A_2$，且二者距离小于 $h$．因此我们将所有横坐标与 $x_m$ 的差小于 $h$ 的点放入集合 $B$：
+Now it's time to merge! We want to find a pair of points, one in $A_1$ and the other in $A_2$, whose distance is less than $h$. So we put every point whose x-coordinate differs from $x_m$ by less than $h$ into a set $B$:
 
 $$
 B = \{ p_i \ \big | \ \lvert x_i - x_m \rvert < h \}
 $$
 
-结合图像，直线 $m$ 将点分成了两部分．$m$ 左侧为 $A_1$ 点集，右侧为 $A_2$ 点集．
+In the figure, line $m$ splits the points into two parts: $A_1$ on the left of $m$ and $A_2$ on the right.
 
-再根据 $B = \{ p_i \ \big | \ \lvert x_i - x_m \rvert < h \}$ 规则，得到绿色点组成的 $B$ 点集．![nearest-points1](./images/nearest-points1.png)
+Then by the rule $B = \{ p_i \ \big | \ \lvert x_i - x_m \rvert < h \}$, we get the set $B$ made of the green points. ![nearest-points1](./images/nearest-points1.png)
 
-对于 $B$ 中的每个点 $p_i$，我们当前目标是找到一个同样在 $B$ 中、且到其距离小于 $h$ 的点．为了避免两个点之间互相考虑，我们只考虑那些纵坐标小于 $y_i$ 的点．显然对于一个合法的点 $p_j$，$y_i - y_j$ 必须小于 $h$．于是我们获得了一个集合 $C(p_i)$：
+For each point $p_i$ in $B$, our goal is to find a point that is also in $B$ and is at distance less than $h$ from it. To avoid considering each pair twice, we only look at points with y-coordinate less than $y_i$. Clearly, for a valid point $p_j$, $y_i - y_j$ must be less than $h$. So we get a set $C(p_i)$:
 
 $$
 C(p_i) = \{ p_j\ \big |\ p_j \in B,\ y_i - h < y_j \le y_i \}
 $$
 
-在点集 $B$ 中选一点 $p_i$，根据 $C(p_i) = \{ p_j\ \big |\ p_j \in B,\ y_i - h < y_j \le y_i \}$ 的规则，得到了由红色方框内的黄色点组成的 $C$ 点集．
+Pick a point $p_i$ in $B$. By the rule $C(p_i) = \{ p_j\ \big |\ p_j \in B,\ y_i - h < y_j \le y_i \}$, we get the set $C$ made of the yellow points inside the red box.
 
 ![nearest-points2](./images/nearest-points2.png)
 
-如果我们将 $B$ 中的点按照 $y_i$ 排序，$C(p_i)$ 将很容易得到，即紧邻 $p_i$ 的连续几个点．
+If we sort the points in $B$ by $y_i$, $C(p_i)$ is easy to get: it is a few consecutive points right next to $p_i$.
 
-由此我们得到了合并的步骤：
+This gives us the merge steps:
 
-1.  构建集合 $B$．
-2.  将 $B$ 中的点按照 $y_i$ 排序．通常做法是 $O(n\log n)$，但是我们可以改变策略优化到 $O(n)$（下文讲解）．
-3.  对于每个 $p_i \in B$ 考虑 $p_j \in C(p_i)$，对于每对 $(p_i,p_j)$ 计算距离并更新答案（当前所处集合的最近点对）．
+1.  Build the set $B$.
+2.  Sort the points in $B$ by $y_i$. The usual way takes $O(n\log n)$, but we can change the strategy to make it $O(n)$ (explained below).
+3.  For each $p_i \in B$, consider each $p_j \in C(p_i)$; for each pair $(p_i,p_j)$, compute the distance and update the answer (the closest pair of the current set).
 
-注意到我们上文提到了两次排序，因为点坐标全程不变，第一次排序可以只在分治开始前进行一次．我们令每次递归返回当前点集按 $y_i$ 排序的结果，对于第二次排序，上层直接使用下层的两个分别排序过的点集归并即可．
+Note that we sort twice above. Since the point coordinates never change, the first sort only needs to be done once, before the divide and conquer starts. For the second sort, we let each recursive call return its points sorted by $y_i$; the upper level then simply merges the two sorted sets returned by the lower level.
 
-似乎这个算法仍然不优，$|C(p_i)|$ 将处于 $O(n)$ 数量级，导致总复杂度不对．其实不然，其最大大小为 $7$，我们给出它的证明：
+It may still seem that the algorithm is not efficient enough: $|C(p_i)|$ could be of order $O(n)$, which would ruin the total complexity. In fact it cannot: its size is at most $7$. Here is the proof:
 
-## 复杂度证明
+## Proof of the complexity
 
-我们已经了解到，$C(p_i)$ 中的所有点的纵坐标都在 $(y_i-h,y_i]$ 范围内；且 $C(p_i)$ 中的所有点，和 $p_i$ 本身，横坐标都在 $(x_m-h,x_m+h)$ 范围内．这构成了一个 $2h \times h$ 的矩形．
+We already know that all points in $C(p_i)$ have y-coordinates in the range $(y_i-h,y_i]$, and that all points in $C(p_i)$, together with $p_i$ itself, have x-coordinates in $(x_m-h,x_m+h)$. This forms a $2h \times h$ rectangle.
 
-我们再将这个矩形拆分为两个 $h \times h$ 的正方形，不考虑 $p_i$，其中一个正方形中的点为 $C(p_i) \cap A_1$，另一个为 $C(p_i) \cap A_2$，且两个正方形内的任意两点间距离大于 $h$．（因为它们来自同一下层递归）
+Split this rectangle into two $h \times h$ squares. Ignoring $p_i$, the points in one square are $C(p_i) \cap A_1$ and the points in the other are $C(p_i) \cap A_2$, and any two points within the same square are at distance at least $h$ (because they come from the same lower-level recursive call).
 
-我们将一个 $h \times h$ 的正方形拆分为四个 $\frac{h}{2} \times \frac{h}{2}$ 的小正方形．可以发现，每个小正方形中最多有 $1$ 个点：因为该小正方形中任意两点最大距离是对角线的长度，即 $\frac{h}{\sqrt 2}$，该数小于 $h$．
+Split each $h \times h$ square into four small $\frac{h}{2} \times \frac{h}{2}$ squares. Each small square contains at most $1$ point: the largest distance between two points in a small square is its diagonal, $\frac{h}{\sqrt 2}$, which is less than $h$.
 
 ![nearest-points3](./images/nearest-points3.png)
 
-由此，每个正方形中最多有 $4$ 个点，矩形中最多有 $8$ 个点，去掉 $p_i$ 本身，$\max(C(p_i))=7$．
+So each square has at most $4$ points, and the rectangle has at most $8$ points. Removing $p_i$ itself, $\max(C(p_i))=7$.
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     ```cpp
     --8<-- "docs/geometry/code/nearest-points/nearest-points_1.cpp"
     ```
 
-## 推广：平面最小周长三角形
+## Generalization: minimum-perimeter triangle in the plane
 
-上述算法有趣地推广到这个问题：在给定的一组点中，选择三个点，使得它们两两的距离之和最小．
+The algorithm above generalizes nicely to this problem: among a given set of points, choose three points so that the sum of their pairwise distances is as small as possible.
 
-算法大体保持不变，每次尝试找到一个比当前答案周长 $d$ 更小的三角形，将所有横坐标与 $x_m$ 的差小于 $\frac{d}{2}$ 的点放入集合 $B$，尝试更新答案．（周长为 $d$ 的三角形的最长边小于 $\frac{d}{2}$）
+The algorithm stays mostly the same. Each time, we try to find a triangle with a smaller perimeter than the current answer $d$: put every point whose x-coordinate differs from $x_m$ by less than $\frac{d}{2}$ into the set $B$, and try to update the answer. (The longest side of a triangle with perimeter $d$ is less than $\frac{d}{2}$.)
 
-## 非分治算法
+## Non-divide-and-conquer algorithm
 
-其实，除了上面提到的分治算法，还有另一种时间复杂度同样是 $O(n \log n)$ 的非分治算法．
+Besides the divide and conquer algorithm above, there is also a non-divide-and-conquer algorithm with the same $O(n \log n)$ time complexity.
 
-我们可以考虑一种常见的统计序列的思想：对于每一个元素，将它和它的左边所有元素的贡献加入到答案中．平面最近点对问题同样可以使用这种思想．
+We can use a common idea for counting over a sequence: for each element, add the contribution of it paired with every element to its left. The closest pair problem can use this idea too.
 
-具体地，我们把所有点按照 $x_i$ 为第一关键字、$y_i$ 为第二关键字排序，并建立一个以 $y_i$ 为关键字的 multiset．对于每一个位置 $i$，我们执行以下操作：
+Specifically, sort all points with $x_i$ as the first key and $y_i$ as the second key, and build a multiset keyed by $y_i$. For each position $i$, do the following:
 
-1.  将所有满足 $x_i - x_j \ge d$ 的点从集合中删除．它们不会再对答案有贡献．
-2.  对于集合内满足 $\lvert y_i - y_j \rvert < d$ 的所有点，统计它们和 $p_i$ 的距离．
-3.  将 $p_i$ 插入到集合中．
+1.  Delete from the set all points with $x_i - x_j \ge d$. They can no longer contribute to the answer.
+2.  For every point in the set with $\lvert y_i - y_j \rvert < d$, compute its distance to $p_i$.
+3.  Insert $p_i$ into the set.
 
-由于每个点最多会被插入和删除一次，所以插入和删除点的时间复杂度为 $O(n \log n)$，而统计答案部分的时间复杂度证明与分治算法的时间复杂度证明方法类似，读者不妨一试．
+Each point is inserted and deleted at most once, so insertions and deletions take $O(n \log n)$ time in total. The proof of the time complexity of the counting part is similar to the proof for the divide and conquer algorithm; try it yourself.
 
-??? example "参考实现"
+??? example "Reference implementation"
     ```cpp
     --8<-- "docs/geometry/code/nearest-points/nearest-points_2.cpp"
     ```
 
-## 期望线性做法
+## Expected linear-time approach
 
-其实，除了上面提到的时间复杂度为 $O(n \log n)$ 的做法，还有一种 **期望** 复杂度为 $O(n)$ 的算法．
+Besides the $O(n \log n)$ approaches above, there is also an algorithm with **expected** complexity $O(n)$.
 
-首先将点对 [随机打乱](../misc/random.md#shuffle)，我们将维护前缀点集的答案．考虑从前 $i - 1$ 个点求出第 $i$ 个点的答案．
+First [randomly shuffle](../misc/random.md#shuffle) the points. We maintain the answer for each prefix of the points, and compute the answer for the first $i$ points from the answer for the first $i - 1$ points.
 
-记前 $i - 1$ 个点的最近点对距离为 $s$，我们将平面以 $s$ 为边长划分为若干个网格，并存下每个网格内的点（使用 [哈希表](../ds/hash.md)），然后检查第 $i$ 个点所在网格的周围九个网格中的所有点，并更新答案．注意到需检查的点的个数是 $O(1)$ 的，因为前 $i - 1$ 个点的最近点对距离为 $s$，从而每个网格不超过 $4$ 个点．
+Let $s$ be the closest-pair distance among the first $i - 1$ points. Divide the plane into a grid of cells with side length $s$, and store the points in each cell (using a [hash table](../ds/hash.md)). Then check all points in the nine cells around the cell containing point $i$, and update the answer. Only $O(1)$ points need to be checked: since the closest-pair distance among the first $i - 1$ points is $s$, each cell holds at most $4$ points.
 
-如果这一过程中，答案被更新，我们就重构网格图，否则不重构．在前 $i$ 个点中，最近点对包含 $i$ 的概率为 $O\left(\frac{1}{i}\right)$，而重构网格的代价为 $O(i)$，从而第 $i$ 个点的期望代价为 $O(1)$．于是对于 $n$ 个点，该算法期望为 $O(n)$．
+If the answer is updated during this step, rebuild the grid; otherwise don't. Among the first $i$ points, the probability that the closest pair includes point $i$ is $O\left(\frac{1}{i}\right)$, and rebuilding the grid costs $O(i)$, so the expected cost of point $i$ is $O(1)$. So for $n$ points, the algorithm runs in expected $O(n)$ time.
 
-## 习题
+## Exercises
 
--   [UVa 10245 "The Closest Pair Problem"\[难度：低\]](https://uva.onlinejudge.org/index.php?option=onlinejudge&page=show_problem&problem=1186)
--   [SPOJ #8725 CLOPPAIR "Closest Point Pair"\[难度：低\]](https://www.spoj.com/problems/CLOPPAIR/)
--   [CODEFORCES Team Olympiad Saratov - 2011 "Minimum amount"\[难度：中\]](http://codeforces.com/contest/120/problem/J)
--   [SPOJ #7029 CLOSEST "Closest Triple"\[难度：中\]](https://www.spoj.com/problems/CLOSEST/)
--   [Google Code Jam 2009 Final "Min Perimeter"\[难度：中\]](https://github.com/google/coding-competitions-archive/blob/main/codejam/2009/world_finals/min_perimeter/statement.pdf)
+-   [UVa 10245 "The Closest Pair Problem"\[Difficulty: Low\]](https://uva.onlinejudge.org/index.php?option=onlinejudge&page=show_problem&problem=1186)
+-   [SPOJ #8725 CLOPPAIR "Closest Point Pair"\[Difficulty: Low\]](https://www.spoj.com/problems/CLOPPAIR/)
+-   [CODEFORCES Team Olympiad Saratov - 2011 "Minimum amount"\[Difficulty: Medium\]](http://codeforces.com/contest/120/problem/J)
+-   [SPOJ #7029 CLOSEST "Closest Triple"\[Difficulty: Medium\]](https://www.spoj.com/problems/CLOSEST/)
+-   [Google Code Jam 2009 Final "Min Perimeter"\[Difficulty: Medium\]](https://github.com/google/coding-competitions-archive/blob/main/codejam/2009/world_finals/min_perimeter/statement.pdf)
 
-## 参考资料与拓展阅读
+## References and further reading
 
-**本页面中的分治算法部分主要译自博文 [Нахождение пары ближайших точек](http://e-maxx.ru/algo/nearest_points) 与其英文翻译版 [Finding the nearest pair of points](https://github.com/e-maxx-eng/e-maxx-eng/blob/master/src/geometry/nearest_points.md)．其中俄文版版权协议为 Public Domain + Leave a Link；英文版版权协议为 CC-BY-SA 4.0．**
+**The divide and conquer part of this page is mainly translated from the article [Нахождение пары ближайших точек](http://e-maxx.ru/algo/nearest_points) and its English translation [Finding the nearest pair of points](https://github.com/e-maxx-eng/e-maxx-eng/blob/master/src/geometry/nearest_points.md). The Russian version is licensed under Public Domain + Leave a Link; the English version is licensed under CC-BY-SA 4.0.**
 
-[知乎专栏：计算几何 - 最近点对问题](https://zhuanlan.zhihu.com/p/74905629)
+[Zhihu column: Computational geometry - the closest pair problem](https://zhuanlan.zhihu.com/p/74905629)

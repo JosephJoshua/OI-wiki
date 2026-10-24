@@ -1,35 +1,35 @@
-本页面将主要介绍旋转卡壳．
+This page mainly introduces rotating calipers.
 
-## 引入
+## Introduction
 
-旋转卡壳（Rotating Calipers，也称「旋转卡尺」）算法，在凸包算法的基础上，通过枚举凸包上某一条边的同时维护其他需要的点，能够在线性时间内求解如凸包直径、最小矩形覆盖等和凸包性质相关的问题．
+The rotating calipers algorithm builds on convex hull algorithms. It enumerates the edges of the convex hull while maintaining the other points it needs, and can solve problems related to convex hull properties, such as the diameter of a convex hull or the minimum-area enclosing rectangle, in linear time.
 
-???+ note "算法中文名称"
-    该算法比较常见的中文名是「旋转卡壳」．可以理解为：根据我们枚举的边，可以从每个维护的点画出一条或平行或垂直的直线，为了确保对于当前枚举的边的最优性，我们的任务就是使这些直线能将凸包正好卡住．而边通常是按照向某一方向旋转的顺序来枚举，所以整个过程就是在边「旋转」，边「卡壳」．
+???+ note "About the Chinese name"
+    The most common Chinese name of this algorithm is "xuanzhuan qiake", literally "rotating and clamping the shell". You can read it like this: for the edge we are enumerating, we can draw a line through each maintained point that is either parallel or perpendicular to that edge. To make sure the current edge is handled optimally, our task is to make these lines clamp the convex hull exactly. The edges are usually enumerated in order of rotating in one direction, so the whole process is "rotating" while "clamping".
     
-    其英文名「rotating calipers」的直译应为「旋转卡尺」，其中「calipers」的意思是「卡尺」．第一次提出该术语的论文[^ref1]原意为：使用一个可动态调整的「卡尺」夹住凸包后，绕凸包「旋转」该「卡尺」．
+    The English name "rotating calipers" refers to calipers, the measuring tool. The paper that first introduced the term[^ref1] meant: clamp the convex hull with an adjustable "caliper", then "rotate" that "caliper" around the hull.
 
-## 求凸包直径
+## Diameter of a convex hull
 
-???+ note "例题 1 :[Luogu P1452 Beauty Contest G](https://www.luogu.com.cn/problem/P1452)"
-    给定平面上 $n$ 个点，求所有点对之间的最长距离．（$2\leq n \leq 50000,|x|,|y| \leq 10^4$）
+???+ note "Example problem 1: [Luogu P1452 Beauty Contest G](https://www.luogu.com.cn/problem/P1452)"
+    Given $n$ points in the plane, find the largest distance between any pair of points. ($2\leq n \leq 50000,|x|,|y| \leq 10^4$)
 
-### 过程
+### How it works
 
-首先使用任何一种凸包算法求出给定所有点的凸包，有着最长距离的点对一定在凸包上．而由于凸包的形状，我们发现，逆时针地遍历凸包上的边，对于每条边都找到离这条边最远的点，那么这时随着边的转动，对应的最远点也在逆时针旋转，不会有反向的情况，这意味着我们可以在逆时针枚举凸包上的边时，记录并维护一个当前最远点，并不断计算、更新答案．
+First compute the convex hull of all given points with any convex hull algorithm; the pair with the largest distance must lie on the hull. Because of the shape of a convex hull, if we walk counterclockwise along its edges and find, for each edge, the point farthest from it, then as the edge turns, the corresponding farthest point also moves counterclockwise and never goes backward. This means that while enumerating the hull edges counterclockwise, we can keep track of the current farthest point and keep computing and updating the answer.
 
-求出凸包后的数组自然地是按照逆时针旋转的顺序排列，不过要记得提前将最左下角的 1 节点补到数组最后，这样在挨个枚举边 $(i,i+1)$ 时，才能把所有边都枚举到．
+After computing the hull, the array is naturally in counterclockwise order. Remember to append the bottom-left node 1 to the end of the array beforehand, so that enumerating edges $(i,i+1)$ one by one covers every edge.
 
 ![](images/rotating-calipers1.png)
 
-枚举过程中，对于每条边，都检查 $j+1$ 和边 $(i,i+1)$ 的距离是不是比 $j$ 更大，如果是就将 $j$ 加一，否则说明 $j$ 是此边的最优点．判断点到边的距离大小时可以用叉积分别算出两个三角形的面积（如图，黄、蓝两个同底三角形的面积）并直接比较．
+During the enumeration, for each edge, check whether point $j+1$ is farther from edge $(i,i+1)$ than $j$ is. If it is, increase $j$ by one; otherwise $j$ is the best point for this edge. To compare distances from points to the edge, compute the areas of the two triangles with the cross product (in the figure, the yellow and blue triangles with the same base) and compare them directly.
 
-### 实现
+### Implementation
 
-???+ note "核心代码"
+???+ note "Core code"
     === "C++"
         ```cpp
-        int sta[N], top;  // 将凸包上的节点编号存在栈里，第一个和最后一个节点编号相同
+        int sta[N], top;  // the indices of the hull nodes are stored in a stack; the first and last indices are the same
         
         ll pf(ll x) { return x * x; }
         
@@ -39,7 +39,7 @@
         
         ll mx;
         
-        void get_longest() {  // 求凸包直径
+        void get_longest() {  // diameter of the convex hull
           int j = 3;
           if (top < 4) {
             mx = dis(sta[1], sta[2]);
@@ -57,7 +57,7 @@
     === "Python"
         ```python
         sta = [0] * N
-        top = 0  # 将凸包上的节点编号存在栈里，第一个和最后一个节点编号相同
+        top = 0  # the indices of the hull nodes are stored in a stack; the first and last indices are the same
         
         
         def pf(x):
@@ -72,7 +72,7 @@
             return abs((a[q] - a[p]) * (a[y] - a[q]))
         
         
-        def get_longest():  # 求凸包直径
+        def get_longest():  # diameter of the convex hull
             j = 3
             if top < 4:
                 mx = dis(sta[1], sta[2])
@@ -85,29 +85,29 @@
                 mx = max(mx, max(dis(sta[i + 1], sta[j]), dis(sta[i], sta[j])))
         ```
 
-## 求最小矩形覆盖
+## Minimum-area enclosing rectangle
 
-[Luogu P3187 最小矩形覆盖](https://www.luogu.com.cn/problem/P3187)
+[Luogu P3187 Minimum Rectangle Cover](https://www.luogu.com.cn/problem/P3187)
 
-给定一些点的坐标，求能够覆盖所有点的最小面积的矩形．（$3\leq n \leq 50000$）
+Given the coordinates of some points, find the rectangle with the smallest area that covers all of them. ($3\leq n \leq 50000$)
 
-### 过程
+### How it works
 
-有了上一道题做铺垫，这道题比较直观的想法仍然是使用旋转卡壳法，不过这次要求的是面积，像上一题一样只维护一个最优点就只能找到一对距离最小的平行线，我们还需要确定矩形的左右边界．所以这次我们需要维护三个点：一个在所枚举的直线对面的点、两个在不同侧面的点．对面的最优点仍然是用叉积算面积来比较，此时比较面积就是在比较这个矩形的一个边长．侧面的最优点则是用点积来比较，因为比较点积就是比较投影的长度，左右两个投影长度相加可以代表这个矩形的另一个边长．这两个边长的最优性相互独立，因此找到三个最优点的位置就能够确定以当前边所在直线为矩阵的一条边时，能覆盖所有点的矩形最小面积．
+With the previous problem as groundwork, the natural idea here is again to use rotating calipers. But this time we want an area. Maintaining a single best point as in the previous problem only gives a pair of parallel lines with the smallest distance; we also need the left and right sides of the rectangle. So this time we maintain three points: one on the opposite side of the enumerated line, and two on the two lateral sides. The best opposite point is still compared by computing areas with the cross product; comparing these areas compares one side length of the rectangle. The best lateral points are compared with the dot product, since comparing dot products compares projection lengths, and the sum of the left and right projection lengths gives the other side length of the rectangle. The optimality of these two side lengths is independent, so finding the three best points determines the smallest area of a rectangle covering all points when one of its sides lies on the line of the current edge.
 
 ![](images/rotating-calipers2.png)
 
-最后统计答案时，如果题目没有要求将四个顶点都求出来，其实有一种较为巧妙的利用叉积和点积的方式直接算出矩阵的面积．设紫色部分面积的两倍为 $S$，最后的面积就是
+When computing the final answer, if the problem does not ask for all four vertices, there is a neat way to compute the area of the rectangle directly with cross and dot products. Let $S$ be twice the area of the purple region. Then the area is
 
 $$
 S\times (|\overrightarrow{AD}\cdot \overrightarrow{AB}|+|\overrightarrow{BC}\cdot \overrightarrow{BA}|-|\overrightarrow{AB}\cdot \overrightarrow{BA}|)/|\overrightarrow{AB}\cdot \overrightarrow{BA}|
 $$
 
-### 实现
+### Implementation
 
-必要的求凸包过程略去，这里贴出本题核心代码：
+We skip the necessary convex hull computation; here is the core code for this problem:
 
-???+ note "核心代码"
+???+ note "Core code"
     === "C++"
         ```cpp
         void get_biggest() {
@@ -160,13 +160,13 @@ $$
                 ans = min(ans, t1 * t2 / t3)
         ```
 
-## 练习
+## Exercises
 
 -   [POJ 3608. Bridge Across Islands](http://poj.org/problem?id=3608)
 -   [2011 ACM-ICPC World Finals, Problem K. Trash Removal](https://codeforces.com/gym/101175)
 -   [ICPC WF Moscow Invitational Contest - Online Mirror, Problem F. Framing Pictures](https://codeforces.com/contest/1578/problem/F)
 
-## 参考资料与注释
+## References and notes
 
 [^ref1]: Toussaint, Godfried T. (1983). "Solving geometric problems with the rotating calipers". Proc. MELECON '83, Athens. CiteSeerX 10.1.1.155.5671
 

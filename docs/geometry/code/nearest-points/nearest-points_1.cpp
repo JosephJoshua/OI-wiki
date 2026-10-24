@@ -11,10 +11,10 @@ struct point {
 
 int n, A, B;
 point a[N];
-// mindist 是最近距离的平方
+// mindist is the square of the smallest distance
 long long mindist;
 
-// 更新答案
+// update the answer
 void upd_ans(const point& a, const point& b) {
   long long dist =
       1LL * (a.x - b.x) * (a.x - b.x) + 1LL * (a.y - b.y) * (a.y - b.y);
@@ -25,22 +25,22 @@ void upd_ans(const point& a, const point& b) {
   }
 }
 
-// 使用 [l, r) 表示当前分治区间
+// [l, r) is the current divide-and-conquer range
 void DC(int l, int r) {
-  // 当前区间只有一个点，直接返回
+  // the current range has only one point, so return directly
   if (l + 1 == r) return;
 
   int m = (l + r) >> 1;
   int midx = a[m].x;
   DC(l, m);
   DC(m, r);
-  // 使用 std::inplace_merge() 进行归并排序
+  // use std::inplace_merge() for merge sort
   inplace_merge(a + l, a + m, a + r,
                 [&](point a, point b) { return a.y < b.y; });
 
   vector<point> t;
   for (int i = l; i < r; i++)
-    // 距离比较时注意平方，并且比较时不取等号
+    // compare squared distances, and use strict comparison (no equality)
     if (1LL * (a[i].x - midx) * (a[i].x - midx) < mindist) t.push_back(a[i]);
   for (int i = 0; i < t.size(); i++)
     for (int j = i + 1; j < t.size(); j++) {
@@ -55,7 +55,7 @@ void Solve() {
     scanf("%d %d", &a[i].x, &a[i].y);
     a[i].id = i;
   }
-  // 调用前先按横坐标排序
+  // sort by x-coordinate before calling
   sort(a, a + n, [&](point x, point y) { return x.x < y.x; });
   mindist = 9'000'000'000'000'000'000LL;
   DC(0, n);

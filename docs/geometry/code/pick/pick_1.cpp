@@ -8,10 +8,10 @@ struct node {
   int x, y;
 } p[MAXN];
 
-// 求最大公约数
+// greatest common divisor
 int gcd(int x, int y) { return y == 0 ? x : gcd(y, x % y); }
 
-// 求区域
+// compute the area
 int area(int a, int b) { return p[a].x * p[b].y - p[a].y * p[b].x; }
 
 int main() {

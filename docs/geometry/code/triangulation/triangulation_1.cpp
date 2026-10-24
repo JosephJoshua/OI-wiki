@@ -13,9 +13,9 @@ struct Point {
 };
 
 class Delaunay {
-  // 每条无向边由四个槽位组成
-  // 偶数槽位表示原图中的两个方向，奇数槽位表示对偶边
-  // 所有连接均存下标，避免迭代器失效
+  // each undirected edge consists of four slots
+  // even slots are the two directions in the original graph, odd slots are dual edges
+  // all links store indices, to avoid iterator invalidation
   struct Edge {
     int origin, next;
   };
@@ -24,7 +24,7 @@ class Delaunay {
   std::vector<Edge> edges;
   std::vector<int> free_edges;
 
-  // 使用相对容差近似判断符号
+  // use a relative tolerance to approximate the sign
   static int sign(data_t value, data_t scale) {
     const data_t tolerance =
         16 * std::numeric_limits<data_t>::epsilon() * scale;
@@ -37,7 +37,7 @@ class Delaunay {
     return sign(u - v, std::abs(u) + std::abs(v));
   }
 
-  // a、b、c 逆时针排列时，判断 d 是否在外接圆内
+  // with a, b, c in counterclockwise order, check whether d is inside their circumcircle
   static bool in_circle(const Point& a, const Point& b, const Point& c,
                         const Point& d) {
     data_t ax = a.x - d.x, ay = a.y - d.y;
@@ -49,7 +49,7 @@ class Delaunay {
     data_t ca1 = cx * ay, ca2 = cy * ax;
     data_t ab1 = ax * by, ab2 = ay * bx;
     data_t det = a2 * (bc1 - bc2) + b2 * (ca1 - ca2) + c2 * (ab1 - ab2);
-    // 在相减前累加绝对值，避免抵消后低估舍入误差
+    // accumulate absolute values before subtracting, so cancellation does not make us underestimate rounding error
     data_t scale = a2 * (std::abs(bc1) + std::abs(bc2)) +
                    b2 * (std::abs(ca1) + std::abs(ca2)) +
                    c2 * (std::abs(ab1) + std::abs(ab2));
@@ -64,12 +64,12 @@ class Delaunay {
 
   int dest(int e) const { return org(rev(e)); }
 
-  // 同一起点的边按逆时针方向组成循环链表
+  // edges with the same origin form a circular linked list in counterclockwise order
   int onext(int e) const { return edges[e].next; }
 
   int oprev(int e) const { return rot(onext(rot(e))); }
 
-  // 沿 e 左侧面的边界前进一条边
+  // move one edge forward along the boundary of the face to the left of e
   int lnext(int e) const { return rot(onext(rev(rot(e)))); }
 
   bool left_of(int v, int e) const {
@@ -96,7 +96,7 @@ class Delaunay {
     return e;
   }
 
-  // 交换两条边的后继，同时更新对偶图的连接
+  // swap the successors of two edges and update the links of the dual graph
   void splice(int a, int b) {
     int alpha = rot(onext(a)), beta = rot(onext(b));
     std::swap(edges[a].next, edges[b].next);
@@ -111,7 +111,7 @@ class Delaunay {
     free_edges.push_back(e);
   }
 
-  // 加入从 a 的终点到 b 的起点的边
+  // add an edge from the end of a to the start of b
   int connect(int a, int b) {
     int e = make_edge(dest(a), org(b));
     splice(e, lnext(a));
@@ -119,8 +119,8 @@ class Delaunay {
     return e;
   }
 
-  // 返回起于最左、最右顶点的凸包边，分别使外部面位于右侧、左侧
-  // 区间使用 [l, r)，递归只处理至少两个点的情况
+  // return the hull edges starting at the leftmost and rightmost vertices, with the outer face on the right and left respectively
+  // ranges are [l, r); the recursion only handles ranges with at least two points
   std::pair<int, int> divide(int l, int r) {
     if (r - l == 2) {
       int a = make_edge(l, l + 1);
@@ -130,7 +130,7 @@ class Delaunay {
       int a = make_edge(l, l + 1), b = make_edge(l + 1, l + 2);
       splice(rev(a), b);
       int turn = cross(p[l], p[l + 1], p[l + 2]);
-      if (turn == 0) return {a, rev(b)};  // 共线时只保留相邻点连边
+      if (turn == 0) return {a, rev(b)};  // if collinear, only connect adjacent points
       int c = connect(b, a);
       if (turn > 0) return {a, rev(b)};
       return {rev(c), c};
@@ -140,7 +140,7 @@ class Delaunay {
     auto left = divide(l, m), right = divide(m, r);
     int ldo = left.first, ldi = left.second;
     int rdi = right.first, rdo = right.second;
-    // 从递归返回的凸包边出发，沿凸包寻找下公切线
+    // starting from the hull edges returned by the recursion, walk along the hulls to find the lower common tangent
     while (true) {
       if (left_of(org(rdi), ldi)) {
         ldi = lnext(ldi);
@@ -150,12 +150,12 @@ class Delaunay {
         break;
       }
     }
-    int base = connect(rev(rdi), ldi);  // base 从右侧指向左侧
+    int base = connect(rev(rdi), ldi);  // base points from the right side to the left side
     if (org(ldi) == org(ldo)) ldo = rev(base);
     if (org(rdi) == org(rdo)) rdo = base;
 
     while (true) {
-      // 候选边来自有序的环形邻接表，只需访问当前边的前驱或后继
+      // candidate edges come from the ordered circular adjacency lists, so we only need the predecessor or successor of the current edge
       int lcand = onext(rev(base));
       if (right_of(dest(lcand), base)) {
         while (in_circle(p[dest(base)], p[org(base)], p[dest(lcand)],
@@ -176,7 +176,7 @@ class Delaunay {
       }
       bool lvalid = right_of(dest(lcand), base);
       bool rvalid = right_of(dest(rcand), base);
-      if (!lvalid && !rvalid) break;  // 已到达上公切线
+      if (!lvalid && !rvalid) break;  // reached the upper common tangent
       if (!lvalid || (rvalid && in_circle(p[dest(lcand)], p[org(lcand)],
                                           p[org(rcand)], p[dest(rcand)]))) {
         base = connect(rcand, rev(base));
@@ -188,7 +188,7 @@ class Delaunay {
   }
 
  public:
-  // 要求点互不重合，id 互不相同
+  // points must be distinct, and ids must be distinct
   void init(std::vector<Point> points) {
     p = std::move(points);
     edges.clear();
@@ -199,7 +199,7 @@ class Delaunay {
     if (p.size() >= 2) divide(0, (int)p.size());
   }
 
-  // 每条无向边只返回一次，端点编号为输入的原始 id
+  // each undirected edge is returned once; endpoints are labeled with the original input ids
   std::vector<std::pair<int, int>> getEdge() const {
     std::vector<std::pair<int, int>> result;
     for (int e = 0; e < (int)edges.size(); e += 4) {

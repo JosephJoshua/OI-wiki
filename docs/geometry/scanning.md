@@ -1,135 +1,135 @@
-## 引入
+## Introduction
 
-扫描线一般运用在图形上面，它和它的字面意思十分相似，就是一条线在整个图上扫来扫去，它一般被用来解决图形面积，周长，以及二维数点等问题．
+The sweep line is usually used on figures. It works just as its name suggests: a line sweeps across the whole figure. It is generally used for problems such as the area or perimeter of figures, and 2D point counting.
 
-## 二维矩形面积并问题
+## Area of a union of rectangles in 2D
 
-在二维坐标系上，给出多个矩形的左下以及右上坐标，求出所有矩形构成的图形的面积．
+In a 2D coordinate system, you are given the bottom-left and top-right corners of several rectangles. Find the area of the figure formed by all the rectangles.
 
-### 过程
+### How it works
 
-根据图片可知总面积可以直接暴力即可求出面积，如果数据大了怎么办？这时就需要讲到 **扫描线** 算法．
+From the picture, the total area can be found directly by brute force. But what if the input is large? This is where the **sweep line** algorithm comes in.
 
-现在假设我们有一根线，从下往上开始扫描：
+Now suppose we have a line that sweeps from bottom to top:
 
 ![](./images/scanning.svg)
 
-如图所示，把整个矩形分成如图各个颜色不同的小矩形，小矩形的高是扫过的距离，然而矩形的水平宽一直在变化．
+As the figure shows, the whole shape is cut into small rectangles of different colors. The height of each small rectangle is the distance swept, while the horizontal width keeps changing.
 
-给每一个矩形的上下边进行标记，下面的边标记为 1，上面的边标记为 -1．每遇到一个水平边时，让这条边（在横轴投影区间）的权值加上这条边的标记．
+Mark the bottom and top edges of each rectangle: a bottom edge gets mark 1 and a top edge gets mark -1. Whenever the line meets a horizontal edge, add the edge's mark to the weight of that edge (its projection interval on the horizontal axis).
 
 ???+ note "Note"
-    这个操作类似遍历括号序列：开括号加 1，闭括号减 1，「权值」对应当前位置的深度，「权值」是否大于 0，对应当前在不在括号里，也就是这段区间是否记入小矩形的宽度．
+    This is similar to walking through a bracket sequence: an opening bracket adds 1 and a closing bracket subtracts 1. The "weight" corresponds to the depth at the current position, and whether the "weight" is greater than 0 corresponds to whether we are currently inside brackets, that is, whether this interval counts toward the width of the small rectangle.
 
-小矩形（不一定只有一个）的宽度就是整个数轴上权值大于 0 的区间总长度．
+The width of the small rectangle(s) (there may be more than one) is the total length of the intervals on the axis whose weight is greater than 0.
 
-### 实现
+### Implementation
 
-用线段树维护矩形的长，也就是整个数轴上覆盖次数大于 0 的点．需求列举如下：
+Use a segment tree to maintain the width of the rectangles, that is, the points on the axis covered more than 0 times. The operations we need are:
 
--   一段区间权值加 1、减 1．
--   统计整个数轴上，区间权值大于 0 的「区间长度和」．
+-   Add 1 to or subtract 1 from the weight of a range.
+-   Find the "total length" of the intervals on the whole axis whose weight is greater than 0.
 
-如果你尝试直接用普通线段树模板来实现的话，也许会遇到些挫折．具体地，由于在区间加时，即使修改区间和节点管理区间重合，我们还是不能常数时间知道覆盖次数如何变化．这是因为我们不能直接知道：管理范围里有多长的区间会从 1 变成 0（从 0 变成 1）．
+If you try to do this directly with an ordinary segment tree template, you may run into trouble. Specifically, during a range add, even when the range being modified exactly matches the range a node manages, we still cannot tell in constant time how the coverage counts change. This is because we cannot directly know how much of the managed range will go from 1 to 0 (or from 0 to 1).
 
-这道题只需要朴素的分治就能实现：维护每个节点管理区间中「完全覆盖区间的次数 `v[]`」（类似不用下放的懒惰标记）和「已覆盖的长度 `w[]`」两个信息．
+This problem only needs plain divide and conquer: for each node's range, maintain two values, "the number of times the whole range is fully covered `v[]`" (like a lazy tag that never needs pushing down) and "the covered length `w[]`".
 
-需要 [离散化](../misc/discrete.md)．
+[Coordinate compression](../misc/discrete.md) is needed.
 
-??? note "[洛谷 P5490【模板】扫描线 & 矩形面积并](https://www.luogu.com.cn/problem/P5490) 参考代码"
+??? note "[Luogu P5490 [Template] Sweep Line & Area of Union of Rectangles](https://www.luogu.com.cn/problem/P5490) reference code"
     ```cpp
     --8<-- "docs/geometry/code/scanning/scanning_1.cpp"
     ```
 
-??? note "[「POJ 1151」Atlantis](http://poj.org/problem?id=1151) 参考代码"
+??? note "[POJ 1151 Atlantis](http://poj.org/problem?id=1151) reference code"
     ```cpp
     --8<-- "docs/geometry/code/scanning/scanning_2.cpp"
     ```
 
-### 练习
+### Exercises
 
--   [「POJ1177」Picture](http://poj.org/problem?id=1177)
--   [「POJ3832」Posters](http://poj.org/problem?id=3832)
--   [洛谷 P1856 \[IOI1998\] \[USACO5.5\] 矩形周长 Picture](https://www.luogu.com.cn/problem/P1856)
-    -   横边贡献就是覆盖长度变化量．
-    -   两个方向分别算一次可以避免竖直边的讨论．
-    -   操作排序时注意考虑两个矩形边重合的情况．
-    -   数据范围允许不用线段树，直接平方时间模拟．
+-   [POJ1177 Picture](http://poj.org/problem?id=1177)
+-   [POJ3832 Posters](http://poj.org/problem?id=3832)
+-   [Luogu P1856 \[IOI1998\] \[USACO5.5\] Picture (rectangle perimeter)](https://www.luogu.com.cn/problem/P1856)
+    -   The contribution of horizontal edges is the change in covered length.
+    -   Computing once in each direction avoids having to handle vertical edges.
+    -   When sorting operations, take care with the case where edges of two rectangles coincide.
+    -   The constraints allow skipping the segment tree and simulating directly in quadratic time.
 
-## B 维正交范围
+## B-dimensional orthogonal ranges
 
-B 维正交范围指在一个 B 维直角坐标系下，第 $i$ 维坐标在一个整数范围 $[l_i,r_i]$ 间，内部的点集．
+A B-dimensional orthogonal range is the set of points in a B-dimensional Cartesian coordinate system whose $i$-th coordinate lies in an integer range $[l_i,r_i]$ for every $i$.
 
-一般来说，一维正交范围简称区间，二维正交范围简称矩形，三维正交范围简称立方体（我们常说的二维数点就是二维正交范围）．
+In general, a 1D orthogonal range is called an interval, a 2D one a rectangle, and a 3D one a cuboid (the common "2D point counting" problem is about 2D orthogonal ranges).
 
-对于一个静态的二维问题，我们可以使用扫描线扫一维，数据结构维护另一维．
-在扫描线从左到右扫的过程中，会在数据结构维护的那一维上产生一些修改与查询．
-如果查询的信息可差分的话直接使用差分，否则需要使用分治．差分一般用树状数组和线段树维护，但因为树状数组好写而且常数小，所以大部分人会选择用树状数组来维护．分治一般是 CDQ 分治（但是这里不涉及分治）．
+For a static 2D problem, we can sweep one dimension with a sweep line and maintain the other dimension with a data structure.
+As the sweep line moves from left to right, it produces some updates and queries on the dimension maintained by the data structure.
+If the queried information can be split by differencing, use differencing directly; otherwise use divide and conquer. Differencing is usually maintained with a Fenwick tree or a segment tree, but since the Fenwick tree is easy to write and has a small constant factor, most people choose it. The divide and conquer is usually CDQ divide and conquer (which we don't cover here).
 
-另一种比较容易理解的看待问题的角度是站在序列角度，而不站在二维平面角度．如果我们这样看待问题，则扫描线实际上是枚举了右端点 $r=1\cdots n$，维护一个数据结构，支持查询对于当前的 $r$，给定一个值 $l$，$l$ 到 $r$ 的答案是什么．即扫描线扫询问右端点，数据结构维护所有左端点的答案，或者说遍历一维，数据结果维护另一维．
+Another, easier way to look at the problem is from the point of view of a sequence instead of the 2D plane. Seen this way, the sweep line enumerates the right endpoint $r=1\cdots n$ and maintains a data structure that answers: for the current $r$ and a given $l$, what is the answer for $l$ to $r$? That is, the sweep line goes over the right endpoints of the queries, and the data structure keeps the answers for all left endpoints; in other words, we iterate over one dimension and the data structure maintains the other.
 
-复杂度一般为 $O((n+m)\log n)$．
+The complexity is usually $O((n+m)\log n)$.
 
-## 二维数点
+## 2D point counting
 
-给一个长为 $n$ 的序列，有 $m$ 次查询，每次查区间 $[l,r]$ 中值在 $[x,y]$ 内的元素个数．
+Given a sequence of length $n$ and $m$ queries, each query asks how many elements in the range $[l,r]$ have values in $[x,y]$.
 
-这个问题就叫做二维数点．我们可以发现等价于我们要查询一个二维平面上矩形内的点的数量和．这里讲一下这个问题最简单的处理方法，扫描线 + 树状数组．
+This problem is called 2D point counting. It is equivalent to counting the points inside a rectangle in the 2D plane. Here we explain the simplest way to handle it: sweep line + Fenwick tree.
 
-很显然，这个问题是一个静态的二维问题，我们通过扫描线可以将静态的二维问题转换为动态的一维问题．维护动态的一维问题就使用数据结构维护序列，这里可以使用树状数组．
+Clearly this is a static 2D problem. With a sweep line, we can turn a static 2D problem into a dynamic 1D problem, and a dynamic 1D problem can be handled with a data structure over a sequence; here we can use a Fenwick tree.
 
-先将所有的询问离散化，用树状数组维护权值，对于每次询问的 $l$ 和 $r$，我们在枚举到 $l-1$ 时统计当前位于区间 $[x,y]$ 内的数的数量 $a$，继续向后枚举，枚举到 $r$ 时统计当前位于区间 $[x,y]$ 内的数的数量 $b$，$b-a$ 即为该次询问的答案．
+First compress all the queries, and use a Fenwick tree indexed by value. For each query with $l$ and $r$, when the enumeration reaches $l-1$, count the numbers currently in $[x,y]$, call it $a$; keep enumerating, and when it reaches $r$, count the numbers currently in $[x,y]$, call it $b$. Then $b-a$ is the answer to the query.
 
-### 例题
+### Example problems
 
-???+ note "[洛谷 P2163 \[SHOI2007\] 园丁的烦恼](https://www.luogu.com.cn/problem/P2163)"
-    首先离散化．设一个左下角为 $(0, 0)$，右上角为 $(x, y)$ 的矩形内包含 $ans_{x, y}$ 个点．则询问的答案可以被差分为 $ans_{c, d} - ans_{a - 1, d} - ans_{c, b - 1} + ans_{a - 1, b - 1}$．
+???+ note "[Luogu P2163 \[SHOI2007\] The Gardener's Trouble](https://www.luogu.com.cn/problem/P2163)"
+    First compress the coordinates. Let $ans_{x, y}$ be the number of points in the rectangle with bottom-left corner $(0, 0)$ and top-right corner $(x, y)$. Then the answer to a query can be split by differencing as $ans_{c, d} - ans_{a - 1, d} - ans_{c, b - 1} + ans_{a - 1, b - 1}$.
     
-    ??? note "代码"
+    ??? note "Code"
         ```cpp
         --8<-- "docs/geometry/code/scanning/scanning_3.cpp"
         ```
 
-???+ note "[洛谷 P1908 逆序对](https://www.luogu.com.cn/problem/P1908)"
-    没错，逆序对也可以用扫描线的思维来做．考虑将求逆序对的个数转化为从后向前枚举每个位置 $i$，求在区间 $[i+1,n]$ 中，大小在区间 $[0,a_i]$ 中的点的个数．题目中数据范围为 $10^9$，很显然要先进行离散化，我们可以考虑从后向前遍历数组，每次遍历到一个数时更新树状数组（线段树），之后统计当前一共有多少个数小于当前枚举的数，因为我们是从后向前遍历的，所以比当前值小的数的个数就是他的逆序对的个数，可以用树状数组或线段树进行单点修改和区间查询．
+???+ note "[Luogu P1908 Inversions](https://www.luogu.com.cn/problem/P1908)"
+    That's right, inversions can also be counted with the sweep line idea. Turn counting inversions into: enumerate each position $i$ from back to front, and count the points in the range $[i+1,n]$ whose values are in $[0,a_i]$. The values go up to $10^9$, so clearly we compress them first. We traverse the array from back to front; each time we reach a number, we update the Fenwick tree (or segment tree), then count how many numbers so far are smaller than the current one. Since we traverse from back to front, the count of smaller numbers is the number of inversions formed with this number. A Fenwick tree or segment tree with point updates and range queries does the job.
     
-    ??? note "代码"
+    ??? note "Code"
         ```cpp
         --8<-- "docs/geometry/code/scanning/scanning_4.cpp"
         ```
 
-???+ note "[洛谷 P1972 \[SDOI2009\] HH 的项链](https://www.luogu.com.cn/problem/P1972)"
-    简要题意：给定一个序列，多次询问区间 $[l,r]$ 中有多少种不同的数．
+???+ note "[Luogu P1972 \[SDOI2009\] HH's Necklace](https://www.luogu.com.cn/problem/P1972)"
+    Short statement: given a sequence, answer many queries asking how many distinct values are in the range $[l,r]$.
     
-    这类问题我们可以考虑推导性质，之后使用扫描线枚举所有右端点，数据结构维护每个左端点的答案的方法来实现，我们也可以将问题转换到二维平面上，变为一个矩形查询信息的问题．
+    For this kind of problem, we can derive some properties and then use a sweep line over all right endpoints, with a data structure maintaining the answer for each left endpoint. We can also move the problem to the 2D plane, where it becomes a rectangle query.
     
-    在本题中，我们设序列中 $a_i$ 上一次出现的位置为 $pre_i$，如果 $a_i$ 没有出现过，则 $pre_i = 0$．根据题意，如果一种数在区间中出现多次，只会产生一次贡献．不妨认为每种数产生贡献的位置是区间中第一次出现的位置，这时可以发现，产生的总贡献即为 $pre_x \le l - 1$ 的个数，反证法易证．
+    In this problem, let $pre_i$ be the position where $a_i$ last appeared before $i$; if $a_i$ has not appeared before, $pre_i = 0$. By the statement, a value that appears several times in the range only contributes once. Let's say each value contributes at its first occurrence in the range. Then the total contribution is the number of positions with $pre_x \le l - 1$, which is easy to prove by contradiction.
     
-    现在问题即为：给定一个序列 $pre$，多次查询区间 $[l,r]$ 中有多少个 $pre_i \le l - 1$．
+    Now the problem is: given a sequence $pre$, answer many queries asking how many $pre_i \le l - 1$ there are in the range $[l,r]$.
     
-    我们可以把 $pre_i$ 看成二维平面的点：$i$ 是横坐标，$pre_i$ 是纵坐标，问题就转化为了二维数点问题：每次询问左下角为 $(l,0)$，右上角为 $(r,l - 1)$ 的矩形中有几个点．
+    We can treat each $pre_i$ as a point in the 2D plane, with $i$ as the x-coordinate and $pre_i$ as the y-coordinate. The problem becomes 2D point counting: each query asks how many points lie in the rectangle with bottom-left corner $(l,0)$ and top-right corner $(r,l - 1)$.
     
-    注意到这个询问是可差分的，我们可以将询问差分为左下角为 $(0,0)$，右上角为 $(r,l - 1)$ 的矩形减去左下角为 $(0,0)$，右上角为 $(l - 1,l - 1)$ 的矩形有几个点，这样方便我们使用扫描线思想．
+    Note that the query can be split by differencing: the count in the rectangle from $(0,0)$ to $(r,l - 1)$ minus the count in the rectangle from $(0,0)$ to $(l - 1,l - 1)$. This makes it easy to apply the sweep line idea.
     
-    单次操作复杂度 $O(\log n)$，共有 $n$ 次加点操作和 $2m$ 次查询操作，总时间复杂度 $O((n + m) \log n)$．
+    Each operation costs $O(\log n)$. There are $n$ add-point operations and $2m$ query operations, so the total time complexity is $O((n + m) \log n)$.
     
-    ??? note "代码"
+    ??? note "Code"
         ```cpp
         --8<-- "docs/geometry/code/scanning/scanning_5.cpp"
         ```
 
-### 练习
+### Exercises
 
--   [洛谷 P8593「KDOI-02」一个弹的投](https://www.luogu.com.cn/problem/P8593) 逆序对的应用．
--   [AcWing 4709. 三元组](https://www.acwing.com/problem/content/4712/) 上题的弱化版，同样为逆序对的应用．
--   [洛谷 P8773 \[蓝桥杯 2022 省 A\] 选数异或](https://www.luogu.com.cn/problem/P8773) HH 的项链魔改版．
--   [洛谷 P8844 \[传智杯 #4 初赛\] 小卡与落叶](https://www.luogu.com.cn/problem/P8844) 树上问题转序列问题然后进行二维数点．
+-   [Luogu P8593 KDOI-02 A Bomb Throw](https://www.luogu.com.cn/problem/P8593) An application of inversions.
+-   [AcWing 4709. Triples](https://www.acwing.com/problem/content/4712/) A weaker version of the previous problem, also an application of inversions.
+-   [Luogu P8773 \[Lanqiao Cup 2022 Provincial A\] Choosing Numbers for XOR](https://www.luogu.com.cn/problem/P8773) A modified version of HH's Necklace.
+-   [Luogu P8844 \[Chuanzhi Cup #4 Preliminary\] Xiaoka and the Fallen Leaves](https://www.luogu.com.cn/problem/P8844) Turn a tree problem into a sequence problem, then do 2D point counting.
 
-总而言之，二维数点的主要思路就是数据结构维护一维，然后枚举另一维．
+In short, the main idea of 2D point counting is to maintain one dimension with a data structure and enumerate the other.
 
-## 参考资料
+## References
 
--   [cnblogs/Yang1208：扫描线讲解，动态开点版线段树](https://www.cnblogs.com/yangsongyi/p/8378629.html)
--   [csdn/riba2534：POJ1151 Atlantis 题解](https://blog.csdn.net/riba2534/article/details/76851233)
--   [csdn/刀刀狗 0102：POJ1151 Atlantis 题解](https://blog.csdn.net/winddreams/article/details/38495093)
--   [浅谈扫描线](https://www.luogu.com.cn/article/f8q5bmnz)
+-   [cnblogs/Yang1208: Sweep line explained, with a dynamically allocated segment tree](https://www.cnblogs.com/yangsongyi/p/8378629.html)
+-   [csdn/riba2534: POJ1151 Atlantis editorial](https://blog.csdn.net/riba2534/article/details/76851233)
+-   [csdn/Daodaogou0102: POJ1151 Atlantis editorial](https://blog.csdn.net/winddreams/article/details/38495093)
+-   [A brief look at the sweep line](https://www.luogu.com.cn/article/f8q5bmnz)

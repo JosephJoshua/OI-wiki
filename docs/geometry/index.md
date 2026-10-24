@@ -1,1 +1,1 @@
-利用计算机建立数学模型解决几何问题．
+Computational geometry uses computers to build mathematical models and solve geometry problems.
