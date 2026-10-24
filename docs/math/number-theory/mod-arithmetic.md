@@ -1,21 +1,21 @@
 author: 383494, buuzzing, c-forrest, cr4c1an, Emp7iness, Enter-tainer, Great-designer, HeRaNO, jifbt, Kaiser-Yang, Koishilll, ksyx, Marcythm, Qiu-Quanzhi, Saisyc, sshwy, StarryReverie, StudyingFather, Tiphereth-A, Xeonacid, xyf007
 
-算法竞赛中，数论部分的一个重要组成部分就是 **模算术**（modular arithmetic），也就是在某一模数下进行各种整数运算．除了基础的四则运算和求幂外，还可以方便地进行取对数、开各次方、求阶乘和组合数等运算．
+In competitive programming, one important part of number theory is **modular arithmetic**, that is, doing integer operations under a fixed modulus. Besides the four basic operations and exponentiation, you can also conveniently take logarithms, take roots of any degree, and compute factorials and binomial coefficients.
 
-模算术常见于各类问题中，而不仅仅局限于数论部分．很多问题的实际答案可能非常大，超过了常见的整型变量的存储范围．此时，为了避免引入大整数运算和输出长数字，题目常常要求对答案取模后输出．这就要求熟练掌握各类模算术技巧．
+Modular arithmetic shows up in all kinds of problems, not only in number theory. The real answer to many problems can be huge, far beyond the range of the usual integer types. To avoid big-integer arithmetic and printing long numbers, problems often ask you to print the answer modulo some number. So you need to be fluent with the various modular arithmetic techniques.
 
-## C/C++ 的整数除法和取模运算
+## Integer division and modulo in C/C++
 
-在 C/C++ 中，整数除法和取模运算，与数学上习惯的取模和除法不一致．
+In C/C++, integer division and the modulo operation do not match the usual mathematical conventions.
 
-对于所有标准版本的 C/C++，规定在整数除法中：
+For every standard version of C/C++, integer division is specified as follows:
 
-1.  当除数为 0 时，行为未定义；
-2.  否则 `(a / b) * b + a % b` 的运算结果与 `a` 相等．
+1.  If the divisor is 0, the behavior is undefined;
+2.  Otherwise, `(a / b) * b + a % b` equals `a`.
 
-也就是说，取模运算的符号取决于除法如何取整；而除法如何取整，这是实现定义的（由编译器决定）．
+In other words, the sign of the remainder depends on how division rounds; and how division rounds is implementation-defined (decided by the compiler).
 
-从 [C99](https://en.cppreference.com/w/c/language/operator_arithmetic) 和 [C++11](https://en.cppreference.com/w/cpp/language/operator_arithmetic) 标准版本起，规定 **商向零取整**（舍弃小数部分）；取模的符号就与被除数相同．从此，以下断言保证为真：
+Since the [C99](https://en.cppreference.com/w/c/language/operator_arithmetic) and [C++11](https://en.cppreference.com/w/cpp/language/operator_arithmetic) standards, **the quotient is rounded toward zero** (the fractional part is discarded); the remainder then has the same sign as the dividend. So from then on, the following assertions are guaranteed to hold:
 
 ```c
 assert(5 % 3 == 2);
@@ -24,90 +24,90 @@ assert(-5 % 3 == -2);
 assert(-5 % -3 == -2);
 ```
 
-## 模整数类
+## Modular integer class
 
-模算术可以看作是对某模数下的 [同余类](./basic.md#同余类与剩余系) 进行各种运算．如果用一个结构体来表示一个同余类，并且将同余类之间的加、减、乘等运算封装为结构体的方法或运算符重载，那么模算术就可以自然地实现为一个模整数类．下面给出一个简单的例子，它支持模数 $M < 2^{30}$ 下 $32$ 位带符号整数的加法、减法、乘法以及快速幂运算：
+Modular arithmetic can be viewed as doing operations on the [residue classes](./basic.md#同余类与剩余系) under some modulus. If you represent a residue class with a struct, and wrap addition, subtraction, multiplication and so on between residue classes as methods or operator overloads, modular arithmetic naturally becomes a modular integer class. Below is a simple example. It supports addition, subtraction, multiplication and fast exponentiation of $32$-bit signed integers under a modulus $M < 2^{30}$:
 
-???+ example "一个简单的模整数类"
+???+ example "A simple modular integer class"
     ```cpp
     --8<-- "docs/math/code/mod-arithmetic/mod-arithmetic.cpp:core"
     ```
 
-这个实现有意地减少了取模运算的次数，因为取模操作通常比普通的加、减、乘或比较运算要耗时得多．代码注释中提供了等价且更为直接的实现方式．这些简单优化的主要思路是，两个 $[0,M)$ 内的整数做加减运算时，结果一定落在区间 $(-M,2M)$ 内，因此可以通过一次加减法调整回区间 $[0,M)$．该实现中的取幂运算用到了 [快速幂](../binary-exponentiation.md#模意义下取幂) 的技巧．
+This implementation deliberately reduces the number of modulo operations, because taking a remainder is usually much slower than an ordinary addition, subtraction, multiplication or comparison. The code comments give equivalent, more direct implementations. The main idea of these simple optimizations is: when you add or subtract two integers in $[0,M)$, the result always lies in $(-M,2M)$, so a single addition or subtraction brings it back into $[0,M)$. Exponentiation in this implementation uses the [fast exponentiation](../binary-exponentiation.md#模意义下取幂) technique.
 
-除了这些基础运算外，还可以在各种模数下做如下运算：
+Besides these basic operations, you can also do the following under various moduli:
 
--   [逆元](./inverse.md)
--   [除法](./linear-equation.md)
--   [阶乘](./factorial.md)
--   [组合数](./lucas.md)
--   [开平方](./quad-residue.md#模意义下开平方)
--   [取对数](./discrete-logarithm.md)
--   [开方](./residue.md#模意义下开方)
+-   [Modular inverse](./inverse.md)
+-   [Division](./linear-equation.md)
+-   [Factorials](./factorial.md)
+-   [Binomial coefficients](./lucas.md)
+-   [Square roots](./quad-residue.md#模意义下开平方)
+-   [Logarithms](./discrete-logarithm.md)
+-   [Roots](./residue.md#模意义下开方)
 
-这些运算通常在素数模数下比较容易．对于合数模数，往往需要用到对应算法的扩展版本和 [中国剩余定理](./crt.md)．这些模意义下的运算大多可以看作求解某种同余方程．对于求解同余方程的一般方法，可以参考 [同余方程](./congruence-equation.md) 页面．
+These operations are usually easier when the modulus is prime. For a composite modulus, you often need an extended version of the corresponding algorithm together with the [Chinese remainder theorem](./crt.md). Most of these modular operations can be seen as solving some kind of congruence equation. For general methods of solving congruence equations, see the [congruence equations](./congruence-equation.md) page.
 
-## 相关算法
+## Related algorithms
 
-本节将介绍几种在模意义下优化取模、乘法和快速幂运算的方法．对于绝大多数题目来说，前文提供的简单实现已经足够高效．然而，当题目对算法常数有严格要求时，这些优化方法就可以发挥作用，通过减少不必要的计算和取模操作，进一步降低算法的时间开销．
+This section introduces several ways to speed up modulo, multiplication and fast exponentiation under a modulus. For the vast majority of problems, the simple implementation above is already fast enough. But when a problem is strict about constant factors, these techniques help: they avoid unnecessary computation and modulo operations, which further lowers the running time.
 
-### 快速乘
+### Fast multiplication
 
-在素性测试与质因数分解中，经常会遇到模数在 `long long` 范围内的乘法取模运算．为了避免运算中的整型溢出问题，本节介绍一种可以处理模数在 `long long` 范围内，不需要使用 `__int128` 且复杂度为 $O(1)$ 的「快速乘」．本算法要求测评系统中，`long double` 至少表示为 $80$ 位扩展精度浮点数[^long-double-80bit]．
+In primality testing and integer factorization, you often need to multiply modulo a number in the `long long` range. To avoid integer overflow during the computation, this section introduces a "fast multiplication" that handles moduli in the `long long` range, does not need `__int128`, and runs in $O(1)$. The algorithm requires that, on the judge, `long double` is at least an $80$-bit extended-precision floating-point type[^long-double-80bit].
 
-假设 $0 \le a, b < m$，要计算 $ab\bmod m$．注意到：
+Assume $0 \le a, b < m$ and we want $ab\bmod m$. Note that:
 
 $$
 ab\bmod m=ab-\left\lfloor \dfrac{ab}m \right\rfloor m.
 $$
 
-利用 `unsigned long long` 的自然溢出：
+Using the natural overflow of `unsigned long long`:
 
 $$
 ab\bmod m=ab-\left\lfloor \dfrac{ab}m \right\rfloor m=\left(ab-\left\lfloor \dfrac{ab}m \right\rfloor m\right)\bmod 2^{64}.
 $$
 
-只要能算出商 $\left\lfloor\dfrac{ab}m\right\rfloor$，最右侧表达式中的乘法和减法运算都可以使用 `unsigned long long` 直接计算．
+As long as we can compute the quotient $\left\lfloor\dfrac{ab}m\right\rfloor$, the multiplication and subtraction in the rightmost expression can be done directly with `unsigned long long`.
 
-接下来，只需要考虑如何计算 $\left\lfloor\dfrac {ab}m\right\rfloor$．解决方案是先使用 `long double` 算出 $\dfrac am$ 再乘上 $b$．既然使用了 `long double`，就无疑会有精度误差．假设 `long double` 表示为 $80$ 位扩展精度浮点数（即符号为 $1$ 位，指数为 $15$ 位，尾数为 $64$ 位），那么 `long double` 最多能精确表示的有效位数为 $64$[^floating-format]．所以 $\dfrac am$ 最差从第 $65$ 位开始出错，误差范围[^ld-mul-err]为 $\left(-2^{-64},2^{-64}\right)$．乘上 $b$ 这个 $64$ 位带符号整数，误差范围为 $(-0.5,0.5)$．为了简化后续讨论，可以先加一个 $0.5$ 再取整，最后的误差范围是 $\{0,1\}$．
+Next, we only need to work out how to compute $\left\lfloor\dfrac {ab}m\right\rfloor$. The solution is to first compute $\dfrac am$ with `long double` and then multiply by $b$. Since we use `long double`, there will certainly be rounding error. Assume `long double` is an $80$-bit extended-precision float (that is, $1$ sign bit, $15$ exponent bits and a $64$-bit significand). Then `long double` can represent at most $64$ significant bits exactly[^floating-format]. So in the worst case $\dfrac am$ goes wrong starting from bit $65$, and the error lies in[^ld-mul-err] $\left(-2^{-64},2^{-64}\right)$. After multiplying by $b$, a $64$-bit signed integer, the error lies in $(-0.5,0.5)$. To simplify the discussion, add $0.5$ before rounding down; then the final error is in $\{0,1\}$.
 
-最后，代入上式计算时，需要乘以 $-m$，所以最后的误差范围是 $\{0,-m\}$．因为 $m$ 在 `long long` 范围内，所以当结果 $r\in[0,m)$ 时，直接返回 $r$，否则返回 $r+m$．
+Finally, when we plug this into the formula above, we multiply by $-m$, so the final error is in $\{0,-m\}$. Since $m$ is in the `long long` range, if the result $r\in[0,m)$, return $r$ directly; otherwise return $r+m$.
 
-代码实现如下：
+The code is as follows:
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     ```cpp
     --8<-- "docs/math/code/mod-arithmetic/i64-mul.cpp:ld-mul"
     ```
 
-如今，绝大多数测评系统所配备的 C/C++ 编译器已支持 `__int128` 类型[^int128]，因此也可以直接将乘数类型提升至 `__int128` 后取模计算：
+Today, the C/C++ compilers on most judges support the `__int128` type[^int128], so you can also simply cast the factors to `__int128` and take the remainder:
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     ```cpp
     --8<-- "docs/math/code/mod-arithmetic/i64-mul.cpp:i128-mul"
     ```
 
-当然，`__int128` 的取模运算耗时并不少．如果需要进一步卡常，可以考虑接下来两节介绍的方法．
+Of course, taking a remainder of an `__int128` is not cheap either. If you need further constant-factor optimization, consider the methods in the next two sections.
 
-### Barrett 约减
+### Barrett reduction
 
-前文提到，除法和取模运算通常比其他四则运算更为耗时．为了减少取模运算的开销，有一些算法可以在不直接做取模的情况下得到相同的结果．本节要介绍的 Barrett 约减算法就是其中之一．
+As mentioned above, division and modulo are usually slower than the other arithmetic operations. To cut the cost of modulo operations, some algorithms get the same result without directly taking a remainder. Barrett reduction, introduced in this section, is one of them.
 
-设 $m$ 为固定模数，假设要对不同的 $a > 0$ 多次计算 $a\bmod m$．由带余除法可知
+Let $m$ be a fixed modulus, and suppose we need to compute $a\bmod m$ many times for different $a > 0$. By division with remainder,
 
 $$
 z = a\bmod m = a - \left\lfloor\dfrac{a}{m}\right\rfloor m.
 $$
 
-关键在于商数 $\left\lfloor\dfrac{a}{m}\right\rfloor$ 的计算．设 $R$ 是某个常数，就有[^floor-barrett]
+The key is computing the quotient $\left\lfloor\dfrac{a}{m}\right\rfloor$. Let $R$ be some constant; then[^floor-barrett]
 
 $$
 \left\lfloor\dfrac{a}{m}\right\rfloor = \left\lfloor a\dfrac{R}{m} / R\right\rfloor \approx \left\lfloor a\left\lfloor\dfrac{R}{m}\right\rfloor/R\right\rfloor.
 $$
 
-如果选取 $R = 2^k$，那么，右式中 $\left\lfloor\dfrac{R}{m}\right\rfloor$ 可以预处理，除以 $R$ 的操作可以通过移位运算进行．所以，用右式计算商数，仅需要一次乘法和一次移位操作．再代入 $a\bmod m$ 的表达式，就得到所求余数的估计 $z'$．
+If we choose $R = 2^k$, then $\left\lfloor\dfrac{R}{m}\right\rfloor$ on the right can be precomputed, and dividing by $R$ is just a shift. So computing the quotient with the right-hand side needs only one multiplication and one shift. Plugging it into the expression for $a\bmod m$ gives an estimate $z'$ of the remainder.
 
-现在分析这样做的误差．[取整函数](./basic.md#取整函数) 具有性质：对于 $x > y > 0$ 都有 $\lfloor x\rfloor - \lfloor y\rfloor \le \lceil x - y\rceil$．所以，误差
+Now let us analyze the error. The [floor function](./basic.md#取整函数) has the property that for $x > y > 0$, $\lfloor x\rfloor - \lfloor y\rfloor \le \lceil x - y\rceil$. So the error is
 
 $$
 \begin{aligned}
@@ -116,78 +116,78 @@ $$
 \end{aligned}
 $$
 
-只要 $a \le R$，误差 $\Delta$ 就不超过 $m$．由于 $z' \ge z$，所以估计值 $z'$ 只能是 $z$ 或 $z + m$．只要在得到估计值后，在 $z' \ge m$ 时再减去多余的 $m$，就可以保证答案正确．
+As long as $a \le R$, the error $\Delta$ is at most $m$. Since $z' \ge z$, the estimate $z'$ can only be $z$ or $z + m$. After getting the estimate, subtract the extra $m$ when $z' \ge m$, and the answer is guaranteed to be correct.
 
-在 Barrett 约减的计算过程中，仅使用了两次乘法、一次移位操作和至多两次减法，就完成了整数取模．但效率的提升并非毫无成本，实际上，Barrett 约减涉及的中间变量长度往往长于输入变量长度．容易发现，Barrett 约减中涉及的最长中间变量为 $a\left\lfloor\dfrac{R}{m}\right\rfloor$．设 $\ell(x)$ 为整数 $x$ 的二进制表示长度．那么，有
+Barrett reduction takes a remainder using only two multiplications, one shift and at most two subtractions. But the speedup is not free: the intermediate values in Barrett reduction are often longer than the input. It is easy to see that the longest intermediate value is $a\left\lfloor\dfrac{R}{m}\right\rfloor$. Let $\ell(x)$ be the length of the binary representation of an integer $x$. Then
 
 $$
 \ell\left(a\left\lfloor\dfrac{R}{m}\right\rfloor\right) \approx \ell(a) + \ell(R) - \ell(m).
 $$
 
-由于 $R$ 的选取需要满足条件 $a \le R$，这一长度至少为 $2\ell(a) - \ell(m)$．但是，需要取模时，一般都有 $\ell(m)\le\ell(a)$，因此，这一中间变量的长度可能大于输入长度 $\ell(a)$．例如，如果需要将 $64$ 位整数对 $32$ 位整数取模，实际上中间变量需要 $64 \times 2 - 32 = 96$ 位整数．
+Since $R$ must satisfy $a \le R$, this length is at least $2\ell(a) - \ell(m)$. But when we need a remainder at all, we usually have $\ell(m)\le\ell(a)$, so this intermediate value may be longer than the input length $\ell(a)$. For example, to reduce a $64$-bit integer modulo a $32$-bit integer, the intermediate value actually needs a $64 \times 2 - 32 = 96$-bit integer.
 
-Barrett 约减的一个应用场景就是计算乘积的余数 $ab\bmod m$．如果其中一个乘数固定，比如 $b$ 固定时，可以通过
+One use of Barrett reduction is computing the remainder of a product, $ab\bmod m$. If one factor is fixed, say $b$, you can estimate in the same way as above using
 
 $$
 ab\bmod m = ab - \left\lfloor a\left\lfloor\dfrac{bR}{m}\right\rfloor/R\right\rfloor m
 $$
 
-进行与上文类似的估计，只要预处理出 $\left\lfloor\dfrac{bR}{m}\right\rfloor$ 的值即可．这种 $b$ 固定的情形有时也称为 Shoup 模乘[^shoup]．
+as long as you precompute $\left\lfloor\dfrac{bR}{m}\right\rfloor$. This fixed-$b$ case is sometimes called Shoup modular multiplication[^shoup].
 
-更为常见的情形是 $a, b$ 都不固定．此时，需要首先计算 $ab$ 的值，再利用 Barrett 约减得到 $ab\bmod m$．例如，实现模意义下乘法时，需要对 $0 \le a,b < m$ 计算 $ab\bmod m$．此时，选取的 $R$ 需要满足 $ab \le R$．根据前文分析，计算过程涉及的最长中间变量长度为 $2\ell(ab)-\ell(m)$．当 $\ell(a)\approx\ell(b)\approx\ell(m)$ 时，该长度为 $3\ell(m)$．也就是说，如果要用 Barrett 约减实现 $32$ 位整数的模乘，中间变量需要 $96$ 位整数．这也是 Barrett 约减在算法竞赛中实际应用时的一个限制．
+The more common case is when neither $a$ nor $b$ is fixed. Then you first compute $ab$, and then use Barrett reduction to get $ab\bmod m$. For example, to implement modular multiplication you need $ab\bmod m$ for $0 \le a,b < m$. Here $R$ must satisfy $ab \le R$. By the analysis above, the longest intermediate value has length $2\ell(ab)-\ell(m)$. When $\ell(a)\approx\ell(b)\approx\ell(m)$, that is $3\ell(m)$. In other words, implementing $32$-bit modular multiplication with Barrett reduction needs $96$-bit intermediate integers. This is one limitation of Barrett reduction in practice in competitive programming.
 
-作为示例，利用 Barrett 约减实现 $32$ 位有符号整数模乘的参考实现如下：
+As an example, here is a reference implementation of $32$-bit signed modular multiplication using Barrett reduction:
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     ```cpp
     --8<-- "docs/math/code/mod-arithmetic/i32-mul.cpp:barrett"
     ```
 
-实现中需要用到 $128$ 位整数[^int128]．
+The implementation needs $128$-bit integers[^int128].
 
-### Montgomery 模乘
+### Montgomery multiplication
 
-Montgomery 模乘算法的功能和 Barrett 算法十分类似，它同样可以减少模整数运算过程中取模运算的开销．与前两个算法都是在近似计算商数不同，Montgomery 模乘将所有整数都映射到 Montgomery 空间上，而 Montgomery 空间中的运算相对容易，进而降低了整体计算成本．
+Montgomery multiplication serves much the same purpose as Barrett reduction: it also cuts the cost of modulo operations in modular integer arithmetic. Unlike the previous two algorithms, which both approximate the quotient, Montgomery multiplication maps all integers into Montgomery space, where operations are relatively cheap, which lowers the overall cost.
 
-设模数 $m$ 为奇数，并选取 $R = 2^k > m$．那么，同余类 $a \bmod m$ 对应的 Montgomery 形式就是
+Let the modulus $m$ be odd, and choose $R = 2^k > m$. Then the Montgomery form of the residue class $a \bmod m$ is
 
 $$
 aR\bmod m.
 $$
 
-因为 $R\perp m$，所以同余类 $a \bmod m$ 与它的 Montgomery 形式 $aR\bmod m$ 之间存在双射．因此，可以将整数转换为 Montgomery 形式后，进行若干模 $m$ 的运算，再将得到的 Montgomery 形式转换回整数，结果总是正确的．
+Since $R\perp m$, there is a bijection between the residue class $a \bmod m$ and its Montgomery form $aR\bmod m$. So you can convert integers into Montgomery form, do a number of operations modulo $m$, and then convert the resulting Montgomery form back to an integer; the result is always correct.
 
-利用 Montgomery 形式可以方便地进行很多模整数的运算．刚刚已经说明，比较两个同余类是否相同，只要比较它们的 Montgomery 形式．又因为
+Many modular integer operations are easy in Montgomery form. As just explained, to check whether two residue classes are equal, you only need to compare their Montgomery forms. Also, since
 
 $$
 (a\pm b)R\bmod m = ((aR\bmod m)\pm(bR\bmod m)) \bmod{m},
 $$
 
-所以同余类的加法、减法就对应它们的 Montgomery 形式的加法、减法．但是，要计算同余类的乘法，并不能直接将两个 Montgomery 形式相乘．因为
+adding and subtracting residue classes corresponds to adding and subtracting their Montgomery forms. However, to multiply residue classes, you cannot just multiply their Montgomery forms. Since
 
 $$
 (ab)R\bmod m =  ((aR\bmod m)(bR\bmod m)R^{-1}) \bmod{m},
 $$
 
-所以，计算两个 Montgomery 形式的乘法时，需要对它们的乘积 $x$ 作如下 **Montgomery 约减**（Montgomery reduction）操作：
+when multiplying two Montgomery forms, you need to apply the following **Montgomery reduction** to their product $x$:
 
 $$
 \operatorname{REDC}: x \mapsto xR^{-1}\bmod m.
 $$
 
-利用这一操作，乘积 $ab$ 的 Montgomery 形式就是 $\operatorname{REDC}((aR\bmod m)(bR\bmod m))$．Montgomery 约减操作是 Montgomery 模乘的核心操作：
+With this operation, the Montgomery form of the product $ab$ is $\operatorname{REDC}((aR\bmod m)(bR\bmod m))$. Montgomery reduction is the core operation of Montgomery multiplication:
 
--   将 $a$ 转换为它的 Montgomery 形式就是 $\operatorname{REDC}((a\bmod m)(R^2\bmod m))$．
--   将 $a$ 的 Montgomery 形式转换回 $a\bmod m$ 就是 $\operatorname{REDC}(aR\bmod m)$．
--   模逆元 $a^{-1}\bmod m$ 对应的 Montgomery 形式就是 $\operatorname{REDC}((aR\bmod m)^{-1}(R^3\bmod m))$．
+-   Converting $a$ to its Montgomery form is $\operatorname{REDC}((a\bmod m)(R^2\bmod m))$.
+-   Converting the Montgomery form of $a$ back to $a\bmod m$ is $\operatorname{REDC}(aR\bmod m)$.
+-   The Montgomery form of the modular inverse $a^{-1}\bmod m$ is $\operatorname{REDC}((aR\bmod m)^{-1}(R^3\bmod m))$.
 
-现在讨论 Montgomery 约减操作 $\operatorname{REDC}$ 的实现方法．在计算 $\operatorname{REDC}(x)$ 时，总是假定 $0 \le x < m^2$，这对于以上情形都是成立的．因为 $R\perp m$，所以由 [裴蜀定理](./bezouts.md)，存在整数 $R^{-1},m'$ 使得
+Now let us see how to implement the Montgomery reduction $\operatorname{REDC}$. When computing $\operatorname{REDC}(x)$, we always assume $0 \le x < m^2$, which holds in all the cases above. Since $R\perp m$, by [Bézout's identity](./bezouts.md) there exist integers $R^{-1},m'$ such that
 
 $$
 RR^{-1} + mm' = 1.
 $$
 
-所以，设 $q=\lfloor xm' / R\rfloor$，就有
+So, letting $q=\lfloor xm' / R\rfloor$, we have
 
 $$
 \begin{aligned}
@@ -195,61 +195,61 @@ xR^{-1} &= x\dfrac{1 - mm'}{R} \equiv \dfrac{x-xmm' + qmR}{R} = \dfrac{x - m(xm'
 \end{aligned}
 $$
 
-因为 $0 \le x < m^2 < mR$ 且 $0 \le xm'\bmod R < R$，所以
+Since $0 \le x < m^2 < mR$ and $0 \le xm'\bmod R < R$,
 
 $$
 -m < \dfrac{x - m(xm'\bmod R)}{R} < m.
 $$
 
-也就是说，这个商和 $xR^{-1}\bmod m$ 之间至多差一个 $m$．只要在商小于零时，再加上 $m$ 就可以得到 $\operatorname{REDC}(x)$．计算这个商，只需要两次整数乘法、一次整数减法和两次位操作（分别是对 $R=2^k$ 取模和做除法）．因此，Montgomery 约减操作可以高效进行．
+That is, this quotient differs from $xR^{-1}\bmod m$ by at most one $m$. If the quotient is negative, add $m$, and you get $\operatorname{REDC}(x)$. Computing this quotient takes only two integer multiplications, one integer subtraction and two bit operations (taking the remainder modulo $R=2^k$ and dividing by it). So Montgomery reduction is efficient.
 
-为了进行 Montgomery 模乘操作，需要预处理出一系列常数．首先，Montgomery 约减中会用到 $m' = m^{-1}\bmod R$，可以通过 [下文](#模-2-的幂次的整数类) 介绍的 Newton–Hensel 方法计算．其次，将不同操作归约为 Montgomery 约减操作时，还涉及诸如 $R^2\bmod m$ 这样的常数．为了得到它，需要计算一次 $R\bmod m$，将它与自身相加就得到 $2R\bmod m$．随后，将它看作 $2$ 的 Montgomery 形式，直接计算快速幂，就可以得到 $2^kR\bmod m = R^2\bmod m$．
+To use Montgomery multiplication, you need to precompute some constants. First, Montgomery reduction uses $m' = m^{-1}\bmod R$, which can be computed with the Newton–Hensel method described [below](#integers-modulo-a-power-of-2). Second, reducing the various operations to Montgomery reduction involves constants such as $R^2\bmod m$. To get it, compute $R\bmod m$ once and add it to itself to get $2R\bmod m$. Then treat this as the Montgomery form of $2$ and run fast exponentiation directly to get $2^kR\bmod m = R^2\bmod m$.
 
-作为示例，$32$ 位有符号整数的 Montgomery 模乘实现如下：
+As an example, here is Montgomery multiplication for $32$-bit signed integers:
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     ```cpp
     --8<-- "docs/math/code/mod-arithmetic/i32-mul.cpp:montgomery"
     ```
 
-相对于 Barrett 约减实现模意义下乘法，Montgomery 模乘的计算涉及转换、Montgomery 形式的乘法、逆转换等多个步骤．因此，只有在转换和逆转换之间的模运算次数足够多时，转换和逆转换的成本才可以摊平，进而获得较高的整体效率．但是，由于 Montgomery 模乘的实现过程中只涉及长度为 $2\ell(m)$ 的中间变量，所以实现起来更为灵活．例如，$32$ 位整数的模乘仅需要 $64$ 位整数的中间变量．所以，如果需要实现一个模整数类用于各种数论计算，Montgomery 模乘更为合适．
+Compared with modular multiplication via Barrett reduction, Montgomery multiplication involves several steps: conversion, multiplication in Montgomery form, and conversion back. So only when there are enough modular operations between the conversion and the conversion back does the cost of converting get amortized, giving good overall efficiency. However, Montgomery multiplication only needs intermediate values of length $2\ell(m)$, which makes it more flexible to implement. For example, $32$-bit modular multiplication needs only $64$-bit intermediate integers. So if you want a modular integer class for general number-theoretic computation, Montgomery multiplication is the better fit.
 
-### 模 2 的幂次的整数类
+### Integers modulo a power of 2
 
-本节讨论模数是 $2$ 的幂次时，模整数类的实现．在这一特殊情形中，除法和取模运算可以通过位操作实现，计算效率很高．Barrett 约减和 Montgomery 模乘都是利用了 $2^e$ 作为除数和模数时的这一特性来加速运算．特别地，当模数恰为 $2^{32}$ 和 $2^{64}$ 等特殊数字时，可以利用相应位长的无符号整数结合自然溢出实现模整数类，无需任何显式的取模运算．即使模数并非恰好如此，也可以转化为这些特殊模数的情形．例如模数为 $2^{58}$ 时，可以在模数 $2^{64}$ 下完成中间计算，最后再将结果对 $2^{58}$ 取模．除了取模方便外，模 $2^e$ 整数类的其他操作也有很多特殊实现．本节重点介绍逆元和取幂操作的实现方式．
+This section discusses implementing a modular integer class when the modulus is a power of $2$. In this special case, division and modulo can be done with bit operations, which is very fast. Barrett reduction and Montgomery multiplication both speed things up by exploiting exactly this property of $2^e$ as a divisor and modulus. In particular, when the modulus is exactly $2^{32}$ or $2^{64}$, you can implement the modular integer class with unsigned integers of that width and natural overflow, with no explicit modulo at all. Even if the modulus is not exactly one of these, you can reduce to these special moduli. For example, with modulus $2^{58}$, you can do the intermediate computation modulo $2^{64}$ and take the result modulo $2^{58}$ at the end. Besides easy reduction, other operations on integers modulo $2^e$ also have many special implementations. This section focuses on inversion and exponentiation.
 
-首先是取逆操作：给定奇数 $a$ 和模数 $m=2^e~(e > 2)$，需要求出 $a^{-1}\bmod m$．求逆元的常见方法包括扩展欧几里得算法和快速幂法．扩展欧几里得算法的过程涉及对一般模数取模；普通的快速幂法需要计算 $a^{\varphi(m)-1}\bmod{m}$，这需要 $\Theta(e)$ 次整数乘法．更为高效的方法是 [Newton–Hensel 方法](../poly/newton.md)．具体地，考虑应用如下结论：[^newton-hensel]
+First, inversion: given an odd $a$ and modulus $m=2^e~(e > 2)$, find $a^{-1}\bmod m$. Common ways to find inverses are the extended Euclidean algorithm and fast exponentiation. The extended Euclidean algorithm needs remainders modulo general numbers; plain fast exponentiation computes $a^{\varphi(m)-1}\bmod{m}$, which needs $\Theta(e)$ integer multiplications. A faster way is the [Newton–Hensel method](../poly/newton.md). Specifically, use the following fact:[^newton-hensel]
 
 $$
 ax \equiv 1 \pmod{2^e} \implies ax(2 - ax) \equiv 1\pmod{2^{2e}}.
 $$
 
-根据这一表达式，只要从 $x = 1$ 开始，反复应用 $x \gets x(2-ax)$，就可以在 $\lceil\log_2 e\rceil$ 次迭代后得到 $a^{-1}\bmod m$．
+By this formula, starting from $x = 1$ and repeatedly applying $x \gets x(2-ax)$, you get $a^{-1}\bmod m$ after $\lceil\log_2 e\rceil$ iterations.
 
-作为示例，模 $2^{32}$ 整数取逆操作参考实现如下：
+As an example, here is a reference implementation of inversion modulo $2^{32}$:
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     ```cpp
     --8<-- "docs/math/code/mod-arithmetic/mod-32-inv-pow.cpp:inv"
     ```
 
-接下来，讨论取幂操作：给定 $x,a,b$ 和模数 $m=2^e~(e > 2)$，需要求出 $xa^b\bmod m$，其中，$a$ 是奇数．根据对模 $2^e$ 整数乘法结构的 [分析](./primitive-root.md#递推公式) 可知，$a$ 总是可以写成 $\pm g^{\ell}$ 的形式[^mod-2-g]，且负号出现且仅出现在 $a\equiv 3\pmod 4$ 的情形．对于这种情况，可以将 $a$ 替换成 $-a$，并将最终结果再乘上 $(-1)^b$．因此，接下来不妨假设 $a\equiv 1\pmod 4$ 成立．此时，算法的核心想法是，将 $a$ 写成 $g^{L(a)}\bmod m$ 的形式，然后用 $xg^{bL(a)}\bmod m$ 计算所求的幂．
+Next, exponentiation: given $x,a,b$ and modulus $m=2^e~(e > 2)$, find $xa^b\bmod m$, where $a$ is odd. From the [analysis](./primitive-root.md#递推公式) of the multiplicative structure of integers modulo $2^e$, $a$ can always be written as $\pm g^{\ell}$[^mod-2-g], and the minus sign appears exactly when $a\equiv 3\pmod 4$. In that case, replace $a$ with $-a$ and multiply the final result by $(-1)^b$. So from now on we may assume $a\equiv 1\pmod 4$. The core idea of the algorithm is to write $a$ as $g^{L(a)}\bmod m$, and then compute the power as $xg^{bL(a)}\bmod m$.
 
-计算 $L(a)$ 就是计算离散对数 $\operatorname{ind}_ga$．注意到，只要 $a\equiv 1\pmod 4$，那么 $a$ 总能写成如下形式：
+Computing $L(a)$ means computing the discrete logarithm $\operatorname{ind}_ga$. Note that as long as $a\equiv 1\pmod 4$, $a$ can always be written as
 
 $$
 a \equiv (2^{e_1}+1)(2^{e_2}+1)\cdots(2^{e_s}+1) \pmod{m},
 $$
 
-其中，$1 < e_1 < e_2 < \cdots < e_s < e$．这是因为直接将这一乘积展开可以发现，$a$ 的二进制表示中等于 $1$ 的次低位就是第 $e_1$ 位（下标从 $0$ 开始），由此就可以递归地找到这一表示．根据离散对数的 [性质](./discrete-logarithm.md#性质) 可知，有
+where $1 < e_1 < e_2 < \cdots < e_s < e$. To see this, expand the product: the second-lowest $1$ bit in the binary representation of $a$ is exactly bit $e_1$ (indices start from $0$), and from this the representation can be found recursively. By the [properties](./discrete-logarithm.md#性质) of discrete logarithms,
 
 $$
 4L(a) \equiv 4L(2^{e_1}+1) + 4L(2^{e_2}+1) + \cdots + 4L(2^{e_s}+1) \pmod{m}. 
 $$
 
-由于离散对数的模数等于阶 $\delta_m(g)=2^{e-2}=m/4$，所以此处直接将整个同余式都乘以 $4$，以保证计算可以在模 $m$ 剩余类中进行．由此，只需要对 $1 < d < e$ 预处理出所有的 $4L(2^d+1)$，就可以快速计算 $4L(a)$ 的值．
+The discrete logarithm is taken modulo the order $\delta_m(g)=2^{e-2}=m/4$, so here the whole congruence is multiplied by $4$, so that the computation can be done modulo $m$. So once you precompute all $4L(2^d+1)$ for $1 < d < e$, you can quickly compute $4L(a)$.
 
-反过来，从 $L(a)$ 也很容易得到 $g^{L(a)}\bmod{m}$ 的值．根据 [二项式定理](../combinatorics/combination.md#二项式定理) 可知，对于 $1 < d < e$，都有
+Conversely, getting $g^{L(a)}\bmod{m}$ from $L(a)$ is also easy. By the [binomial theorem](../combinatorics/combination.md#二项式定理), for $1 < d < e$ we have
 
 $$
 \begin{aligned}
@@ -258,84 +258,84 @@ $$
 \end{aligned}
 $$
 
-所以，$\delta_m(2^d+1) = 2^{e-d}$．根据阶的性质可知
+so $\delta_m(2^d+1) = 2^{e-d}$. By the properties of the order,
 
 $$
 \delta_m(2^d+1) = \dfrac{\delta_m(g)}{\gcd(\delta_m(g), \operatorname{ind}_g(2^d+1))}.
 $$
 
-所以，$\gcd(\delta_m(g), \operatorname{ind}_g(2^d+1)) = 2^{d-2}$．这说明 $L(2^d+1) = \operatorname{ind}_g(2^d+1) = 2^{d-2}r$，其中，$2\nmid r$．所以，$4L(2^d+1)$ 的二进制表示中等于 $1$ 的最低位恰为第 $d$ 位（下标从 $0$ 开始）．因此，同样可以通过二进制表示递归地将 $4L(a)$ 分解为形如 $4L(2^d+1)$ 的和．由此，就可以得到 $a$ 的值．
+So $\gcd(\delta_m(g), \operatorname{ind}_g(2^d+1)) = 2^{d-2}$. This means $L(2^d+1) = \operatorname{ind}_g(2^d+1) = 2^{d-2}r$ with $2\nmid r$. So the lowest $1$ bit of $4L(2^d+1)$ is exactly bit $d$ (indices start from $0$). Hence, again using the binary representation, you can recursively split $4L(a)$ into a sum of terms of the form $4L(2^d+1)$. From this you get the value of $a$.
 
-具体实现时，有一些可以进一步优化的点．首先，将 $a$ 分解为乘积形式时，还是需要用到除法．更方便的是计算 $a^{-1}$ 的分解，即寻找 $1 < e_1 < e_2 < \cdots < e_s < e$ 使得
+In practice there are a few more optimizations. First, splitting $a$ into the product still needs division. It is more convenient to find the decomposition of $a^{-1}$, that is, to find $1 < e_1 < e_2 < \cdots < e_s < e$ such that
 
 $$
 a(2^{e_1}+1)(2^{e_2}+1)\cdots(2^{e_s}+1) \equiv 1 \pmod{m}
 $$
 
-成立．同样是通过寻找等于 $1$ 的次低位来确定 $e_1$，但是要在 $a^{-1}$ 中消去 $2^{e_1}+1$ 因子，只需要在 $a$ 上乘以 $2^{e_1}+1$ 即可，这可以通过位操作进行．又因为 $4L(a^{-1})=-4L(a)$，所以统计 $4L(a)$ 时，需要用减法代替加法．其次，对于特殊选择的基底 $g$，迭代无需进行到 $d = e-1$，而只要进行到 $d = \lceil e/2\rceil - 1$ 即可．为此，需要选择 $g$ 使得
+holds. You still find $e_1$ from the second-lowest $1$ bit, but to remove the factor $2^{e_1}+1$ from $a^{-1}$, you only need to multiply $a$ by $2^{e_1}+1$, which can be done with bit operations. Since $4L(a^{-1})=-4L(a)$, when accumulating $4L(a)$ you subtract instead of add. Second, for a specially chosen base $g$, the iteration does not need to go all the way to $d = e-1$; it can stop at $d = \lceil e/2\rceil - 1$. For this, choose $g$ such that
 
 $$
 4L(2^{\lceil e/2\rceil} + 1) = 2^{\lceil e/2\rceil}.
 $$
 
-对于 $d \ge e / 2$，都有
+For every $d \ge e / 2$,
 
 $$
 (2^d+1)^2 = 2^{2d} + 2^{d+1} + 1 \equiv 2^{d+1} + 1 \pmod{m}.
 $$
 
-所以，从 $d = \lceil e/2\rceil$ 开始归纳可知，$4L(2^d+1)=2^d$ 对于所有 $d \ge e/2$ 都成立．进而，只要 $e/2 \le e_1 < e_2 < \cdots < e_s < e$，就有
+So by induction starting from $d = \lceil e/2\rceil$, $4L(2^d+1)=2^d$ holds for all $d \ge e/2$. Then, as long as $e/2 \le e_1 < e_2 < \cdots < e_s < e$, we have
 
 $$
 (2^{e_1}+1)(2^{e_2}+1)\cdots(2^{e_s}+1) \equiv 1 + 2^{e_1} + 2^{e_2} + \cdots + 2^{e_s} \pmod{m}
 $$
 
-以及
+and
 
 $$
 4L((2^{e_1}+1)(2^{e_2}+1)\cdots(2^{e_s}+1)) = 2^{e_1} + 2^{e_2} + \cdots + 2^{e_s}.
 $$
 
-因此，处理完所有 $d < e/2$ 的二进制位后，可以直接得到剩余部分的离散对数，而无需逐位计算．应用第一个优化后，整个取幂操作只需要 $O(e)$ 次加减法和位操作以及 $1$ 次乘法操作；应用第二个优化后，可以省去约一半的加减法和位操作，但需要额外 $1$ 次乘法操作．
+So after handling all bits with $d < e/2$, you can read off the discrete logarithm of the remaining part directly, without going bit by bit. With the first optimization, the whole exponentiation needs only $O(e)$ additions, subtractions and bit operations plus $1$ multiplication; with the second, about half of the additions, subtractions and bit operations are saved, at the cost of $1$ extra multiplication.
 
-作为示例，模 $2^{32}$ 整数取幂操作参考实现如下：
+As an example, here is a reference implementation of exponentiation modulo $2^{32}$:
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     ```cpp
     --8<-- "docs/math/code/mod-arithmetic/mod-32-inv-pow.cpp:pow"
     ```
 
-离散对数的预处理可以通过 Pohlig–Hellman 算法进行，基底 $g$ 可以选择为
+The discrete logarithms can be precomputed with the Pohlig–Hellman algorithm, and the base $g$ can be chosen as
 
 $$
 5^{\operatorname{ind}_5(2^{\lceil e/2\rceil}+1)/2^{\lceil e/2\rceil - 2}}\bmod{2^e}.
 $$
 
-## 参考资料与注释
+## References and notes
 
 -   [Fast modular multiplication by orz - Codeforces](https://codeforces.com/blog/entry/96759)
 -   [Barrett Reduction - Wikipedia](https://en.wikipedia.org/wiki/Barrett_reduction)
 -   [Barrett Reduction - A41](https://encrypt.a41.io/primitives/modular-arithmetic/modular-reduction/barrett-reduction#cost-analysis-of-modular-multiplication)
--   [Barrett 约减原理及正确性证明 by Chen - 知乎专栏](https://zhuanlan.zhihu.com/p/690876166)
+-   [The principle of Barrett reduction and a proof of its correctness, by Chen - Zhihu (Chinese)](https://zhuanlan.zhihu.com/p/690876166)
 -   [Montgomery Multiplication - CP Algorithms](https://cp-algorithms.com/algebra/montgomery_multiplication.html)
--   [Montgomery 模乘 by Chen - 知乎专栏](https://zhuanlan.zhihu.com/p/645428404)
+-   [Montgomery multiplication, by Chen - Zhihu (Chinese)](https://zhuanlan.zhihu.com/p/645428404)
 -   [Binary Exponentiation by Factoring - CP Algorithms](https://cp-algorithms.com/algebra/factoring-exp.html)
 -   Barrett, Paul. "Implementing the Rivest Shamir and Adleman public key encryption algorithm on a standard digital signal processor." In Conference on the Theory and Application of Cryptographic Techniques, pp. 311-323. Berlin, Heidelberg: Springer Berlin Heidelberg, 1986.
 -   Becker, Hanno, Vincent Hwang, Matthias J. Kannwischer, Bo-Yin Yang, and Shang-Yi Yang. "Neon NTT: Faster Dilithium, Kyber, and Saber on Cortex-A72 and Apple M1." IACR Transactions on Cryptographic Hardware and Embedded Systems (2022): 221-244.
 -   Montgomery, Peter L. "Modular multiplication without trial division." Mathematics of computation 44, no. 170 (1985): 519-521.
 
-[^long-double-80bit]: 这适用于大多数 64 位系统上的 GCC 或 Clang 编译器．
+[^long-double-80bit]: This holds for GCC and Clang on most 64-bit systems.
 
-[^floating-format]: 参见 [Extended precision - Wikipedia](https://en.wikipedia.org/wiki/Extended_precision)．
+[^floating-format]: See [Extended precision - Wikipedia](https://en.wikipedia.org/wiki/Extended_precision).
 
-[^ld-mul-err]: 此处用到了条件 $a < m$，即 $a / m \in [0,1)$．
+[^ld-mul-err]: This uses the condition $a < m$, that is, $a / m \in [0,1)$.
 
-[^int128]: 在目前的主流编译环境中，只有 Windows 平台上的 MSVC 不支持 `__int128` 类型．若需要编写可在多平台上兼容的代码，可以通过宏 `_MSC_VER` 检测 MSVC 编译环境，并在该条件下包含 [`<intrin.h>`](https://learn.microsoft.com/en-us/cpp/intrinsics/x64-amd64-intrinsics-list?view=msvc-170) 头文件，利用其提供的内建函数（如 `_umul128` 等）来间接实现 128 位整数运算（仅在 64 位平台上可用）．
+[^int128]: Among today's mainstream compilers, only MSVC on Windows does not support `__int128`. If you need code that works on several platforms, you can detect MSVC with the `_MSC_VER` macro, include the [`<intrin.h>`](https://learn.microsoft.com/en-us/cpp/intrinsics/x64-amd64-intrinsics-list?view=msvc-170) header in that case, and use its intrinsics (such as `_umul128`) to implement 128-bit integer arithmetic indirectly (only available on 64-bit platforms).
 
-[^floor-barrett]: 此处 $\left\lfloor\dfrac{R}{m}\right\rfloor$ 也可以替换成 $\dfrac{R}{m}$ 的其他整数估计，例如上取整函数 $\left\lceil\dfrac{R}{m}\right\rceil$ 和四舍五入取整函数 $\left\lfloor\dfrac{R}{m}\right\rceil$ 等，只要相应地调整对估计值的误差修正步骤．
+[^floor-barrett]: Here $\left\lfloor\dfrac{R}{m}\right\rfloor$ can also be replaced by other integer estimates of $\dfrac{R}{m}$, such as the ceiling $\left\lceil\dfrac{R}{m}\right\rceil$ or rounding to nearest $\left\lfloor\dfrac{R}{m}\right\rceil$, as long as the error-correction step is adjusted accordingly.
 
-[^shoup]: Shoup 在他的数论计算库 [NTL](https://libntl.org/) 中实现了 Barrett 约减的这一扩展，因此得名．
+[^shoup]: Shoup implemented this extension of Barrett reduction in his number theory library [NTL](https://libntl.org/), hence the name.
 
-[^newton-hensel]: 直接验证：由 $ax \equiv 1 \pmod{2^e}$，可以设 $ax = 1 + \lambda 2^e$，那么就有 $ax(2-ax) = (1+\lambda 2^e)(1-\lambda 2^e) = 1 - \lambda^2 2^{2e} \equiv 1\pmod{2^{2e}}$．
+[^newton-hensel]: Direct check: from $ax \equiv 1 \pmod{2^e}$, write $ax = 1 + \lambda 2^e$; then $ax(2-ax) = (1+\lambda 2^e)(1-\lambda 2^e) = 1 - \lambda^2 2^{2e} \equiv 1\pmod{2^{2e}}$.
 
-[^mod-2-g]: 文中所引页面仅证明了 $g$ 可以取 $5$．实际上，完全重复该证明，可以说明 $g$ 可以取任何模 $8$ 余 $5$ 的整数．后文会讨论 $g$ 的选取方法．
+[^mod-2-g]: The page cited in the text only proves that $g$ can be $5$. In fact, repeating that proof word for word shows that $g$ can be any integer congruent to $5$ modulo $8$. How to choose $g$ is discussed later.

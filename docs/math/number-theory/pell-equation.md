@@ -1,36 +1,36 @@
-前置知识：[连分数](./continued-fraction.md)、[二次域](./quadratic.md)
+Prerequisites: [continued fractions](./continued-fraction.md), [quadratic fields](./quadratic.md)
 
-## 引入
+## Introduction
 
-本文讨论（广义）Pell 方程的求解．广义 Pell 方程是指关于 $x$ 和 $y$ 的不定方程
+This page discusses how to solve the (generalized) Pell equation. The generalized Pell equation is the Diophantine equation in $x$ and $y$
 
 $$
 x^2-Dy^2=N,
 $$
 
-其中，$D$ 是正整数且不是完全平方数[^not-square]，$N$ 是非零整数．狭义的 Pell 方程特指 $N=1$ 或 $N=\pm 1$ 的特殊情形，有时也包括 $N=\pm 4$ 的情形．广义 Pell 方程与在实二次整数环内寻找范数为 $N$ 的二次整数紧密相关，而常常称作（狭义）Pell 方程的这些情形可以看作是寻找实二次整数环内的单位数．
+where $D$ is a positive integer that is not a perfect square[^not-square], and $N$ is a nonzero integer. The Pell equation in the narrow sense refers to the special case $N=1$ or $N=\pm 1$, and sometimes also $N=\pm 4$. The generalized Pell equation is closely related to finding quadratic integers of norm $N$ in a real quadratic integer ring, and the cases often called the (narrow-sense) Pell equation can be seen as finding units in a real quadratic integer ring.
 
-当本文提及 Pell 方程时，特指 $N=1$ 的情形．相应地，$N=-1$ 的情形称为负 Pell 方程[^neg-pell]（negative Pell's equation）．
+When this page says "Pell equation", it means the case $N=1$. Correspondingly, the case $N=-1$ is called the negative Pell equation[^neg-pell] (negative Pell's equation).
 
-## 解的结构
+## Structure of the solutions
 
-广义 Pell 方程的整数解 $(x,y)$ 和二次整数 $x+y\sqrt{D}$ 联系密切，因此文献中 Pell 方程的解常常写作 $x+y\sqrt{D}$ 的形式．因为二次整数的范数
+Integer solutions $(x,y)$ of the generalized Pell equation are closely tied to the quadratic integer $x+y\sqrt{D}$, so in the literature solutions of the Pell equation are often written as $x+y\sqrt{D}$. Since the norm of a quadratic integer is
 
 $$
 N(x+y\sqrt{D}) = x^2-Dy^2,
 $$
 
-所以，广义 Pell 方程大致相当于在求解范数为 $N$ 的二次整数．但是，两者确实有细微的区别．当 $x$ 和 $y$ 都是整数时，$x+y\sqrt{D}$ 一定是二次整数；反过来，二次整数未必要求 $x$ 和 $y$ 都是整数——在 $D\equiv 1\pmod 4$ 的情形，$x$ 和 $y$ 还可以同时是半整数[^half-int]．
+the generalized Pell equation roughly amounts to finding quadratic integers of norm $N$. But there is a subtle difference. When $x$ and $y$ are both integers, $x+y\sqrt{D}$ is always a quadratic integer; conversely, a quadratic integer does not require $x$ and $y$ to be integers: when $D\equiv 1\pmod 4$, $x$ and $y$ can also both be half-integers[^half-int].
 
-这个区别在求解基本单位数时格外重要．因为二次整数环中的单位数是指范数为 $\pm 1$ 的二次整数．对于 $D\equiv 2,3\pmod 4$，要找到这样的单位数，只需要求解广义 Pell 方程在 $N=\pm 1$ 的情形即可；但是对于 $D\equiv 1\pmod 4$，还需要考虑 $N=\pm 4$ 的情形．[下文](#范数为-4-的情形) 会讨论单位数的求解方法．
+This difference matters a lot when finding the fundamental unit. A unit in a quadratic integer ring is a quadratic integer of norm $\pm 1$. For $D\equiv 2,3\pmod 4$, to find such units you only need to solve the generalized Pell equation with $N=\pm 1$; but for $D\equiv 1\pmod 4$, you also need to consider $N=\pm 4$. How to find units is discussed [below](#the-case-of-norm-4).
 
-要理解广义 Pell 方程解的结构，需要从 [Brahmagupta 恒等式](https://en.wikipedia.org/wiki/Brahmagupta%27s_identity) 入手：
+To understand the structure of solutions of the generalized Pell equation, start from [Brahmagupta's identity](https://en.wikipedia.org/wiki/Brahmagupta%27s_identity):
 
 $$
 (x_1^2-Dy_1^2)(x_2^2-Dy_2^2)=(x_1x_2+Dy_1y_2)^2-D(x_1y_2+x_2y_1)^2.
 $$
 
-它相当于二次整数的范数保持乘法，即
+It says that the norm of quadratic integers is multiplicative, that is,
 
 $$
 \begin{aligned}
@@ -39,63 +39,63 @@ N\left(x_1+y_1\sqrt{D}\right)N\left(x_2+y_2\sqrt{D}\right) &= N\left((x_1+y_1\sq
 \end{aligned}
 $$
 
-利用这一恒等式，可以利用方程 $x^2-Dy^2=N_1$ 和方程 $x^2-Dy^2=N_2$ 的整数解复合出方程 $x^2-Dy^2=N_1N_2$ 的整数解．当然，从二次整数的角度看，解的复合就是二次整数的乘法，这就体现了将 Pell 方程的解记作二次整数形式的方便之处．特别地，取 $N_1=N$ 和 $N_2=1$ 就可以发现，如果已知 $x^2-Dy^2=N$ 的一组解和相应的 Pell 方程 $x^2-Dy^2=1$ 的全体解，就可以得到 $x^2-Dy^2=N$ 更多的解．当然，这种方法未必能够生成全部的解．但是，这至少说明理解 Pell 方程的解的结构对理解广义 Pell 方程的解的结构有重要作用．
+With this identity, integer solutions of $x^2-Dy^2=N_1$ and of $x^2-Dy^2=N_2$ can be combined into an integer solution of $x^2-Dy^2=N_1N_2$. Of course, from the viewpoint of quadratic integers, combining solutions is just multiplying quadratic integers, which shows why it is convenient to write solutions of the Pell equation as quadratic integers. In particular, taking $N_1=N$ and $N_2=1$, we see that if we know one solution of $x^2-Dy^2=N$ and all solutions of the corresponding Pell equation $x^2-Dy^2=1$, we get more solutions of $x^2-Dy^2=N$. This method does not necessarily produce all solutions. But it at least shows that understanding the structure of the solutions of the Pell equation is important for understanding those of the generalized Pell equation.
 
-### Pell 方程
+### Pell equation
 
-方程 $x^2-Dy^2=1$ 的几何意义是实轴在 $x$ 轴、虚轴在 $y$ 轴的双曲线．双曲线上的每个点都唯一对应了 $x+y\sqrt{D}$ 的一个非零取值：双曲线的左支对应着 $x+y\sqrt{D}$ 的负值，右支则对应正值．而且，在每一支上，双曲线自下而上对应的 $x+y\sqrt{D}$ 的取值是严格递增的．二次整数的取值给 Pell 方程的解赋予了自然的顺序．
+Geometrically, the equation $x^2-Dy^2=1$ is a hyperbola whose real axis is the $x$-axis and whose imaginary axis is the $y$-axis. Each point on the hyperbola corresponds to exactly one nonzero value of $x+y\sqrt{D}$: the left branch corresponds to negative values of $x+y\sqrt{D}$, and the right branch to positive values. Moreover, on each branch, the value of $x+y\sqrt{D}$ strictly increases from bottom to top. So the value of the quadratic integer gives the solutions of the Pell equation a natural order.
 
-双曲线同时关于 $x$ 轴和 $y$ 轴对称，因此讨论 Pell 方程的解只需要考虑在第一象限内的那一段即可，其余解可以通过对称性获得．这相当于只考虑 $x+y\sqrt{D}>1$ 的解．如果方程除了 $(\pm 1,0)$ 之外还存在不平凡的解，那么一定在第一象限内存在 $x+y\sqrt{D}$ 取值最小的解 $(x_1,y_1)$，这也是第一象限内（不含坐标轴）横纵坐标都最小的整点，它称为 Pell 方程的基本解（fundamental solution）[^fundamental-solution]．根据前文的讨论，满足 $x_k+y_k\sqrt{D}=(x_1+y_1\sqrt{D})^k$ 的整数对 $(x_k,y_k)$ 都是 Pell 方程的解，而且都在第一象限．反过来，这也的确是 Pell 方程在第一象限内的全部解．再利用对称性，就可以得到如下结论：
+The hyperbola is symmetric about both the $x$-axis and the $y$-axis, so when discussing solutions of the Pell equation we only need the part in the first quadrant; the other solutions follow by symmetry. This amounts to only considering solutions with $x+y\sqrt{D}>1$. If the equation has nontrivial solutions other than $(\pm 1,0)$, then there must be a solution $(x_1,y_1)$ in the first quadrant with the smallest value of $x+y\sqrt{D}$. It is also the lattice point in the first quadrant (excluding the axes) with the smallest coordinates, and it is called the fundamental solution of the Pell equation[^fundamental-solution]. By the discussion above, every integer pair $(x_k,y_k)$ with $x_k+y_k\sqrt{D}=(x_1+y_1\sqrt{D})^k$ is a solution of the Pell equation, and all of them lie in the first quadrant. Conversely, these are indeed all the solutions of the Pell equation in the first quadrant. Using symmetry, we get the following result:
 
-???+ note "定理"
-    设 Pell 方程 $x^2-Dy^2=1$ 的基本解是 $(x_1,y_1)$．那么，它的全部解就是
+???+ note "Theorem"
+    Let $(x_1,y_1)$ be the fundamental solution of the Pell equation $x^2-Dy^2=1$. Then all its solutions are
     
     $$
     \{(x,y):x+y\sqrt{D}=\pm(x_1+y_1\sqrt{D})^k,k\in\mathbf Z\}.
     $$
 
-??? note "证明"
-    首先证明第一象限中不存在其他解．不妨设存在其他解 $x+y\sqrt{D}$ 且对于某个 $k\ge 0$ 有
+??? note "Proof"
+    First we show that there are no other solutions in the first quadrant. Suppose there is another solution $x+y\sqrt{D}$ and, for some $k\ge 0$,
     
     $$
     x_k+y_k\sqrt{D}< x+y\sqrt{D}< x_{k+1}+y_{k+1}\sqrt{D}.
     $$
     
-    几何意义上，这相当于说整点 $(x,y)$ 落入了双曲线上 $(x_k,y_k)$ 和 $(x_{k+1},y_{k+1})$ 之间（不含端点）．将不等式同时乘以 $x_k-y_k\sqrt{D}=(x_k+y_k\sqrt{D})^{-1}$ 就得到
+    Geometrically, this says that the lattice point $(x,y)$ lies on the hyperbola strictly between $(x_k,y_k)$ and $(x_{k+1},y_{k+1})$. Multiplying the inequality by $x_k-y_k\sqrt{D}=(x_k+y_k\sqrt{D})^{-1}$ gives
     
     $$
     1< (x+y\sqrt{D})(x_k-y_k\sqrt{D})=(xx_k-Dyy_k)+(x_ky-xy_k)\sqrt{D} < x_1+y_1\sqrt{D}.
     $$
     
-    根据前文提到的单调性，这个不等式就说明 $(xx_k-Dyy_k,x_ky-xy_k)$ 是位于 $(1,0)$ 和 $(x_1,y_1)$ 之间的整点．这与 $(x_1,y_1)$ 的选取矛盾．
+    By the monotonicity mentioned above, this inequality says that $(xx_k-Dyy_k,x_ky-xy_k)$ is a lattice point between $(1,0)$ and $(x_1,y_1)$. This contradicts the choice of $(x_1,y_1)$.
     
-    将第一象限的解扩展到整个平面时，指数 $k$ 取相反数（即整体取倒数）就是关于 $x$ 轴对称，整体取相反数则是关于原点对称．再加上 $k=0$ 时的平凡解，就得到 Pell 方程的全部解．
+    To extend the first-quadrant solutions to the whole plane: negating the exponent $k$ (that is, taking the reciprocal) reflects about the $x$-axis, and negating the whole value reflects about the origin. Adding the trivial solution for $k=0$, we get all solutions of the Pell equation.
 
-前文的讨论只是假设了基本解的存在．现在要说明的是，Pell 方程总是存在非平凡的解．
+The discussion so far simply assumed that the fundamental solution exists. Now we show that the Pell equation always has a nontrivial solution.
 
-???+ note "定理"
-    Pell 方程 $x^2-Dy^2=1$ 总是存在除了 $(\pm 1,0)$ 之外的整数解．
+???+ note "Theorem"
+    The Pell equation $x^2-Dy^2=1$ always has integer solutions other than $(\pm 1,0)$.
 
-??? note "证明"
-    首先，[Dirichlet 定理](./continued-fraction.md#用渐近分数逼近实数) 表明存在无数对正整数 $(x,y)$ 使得
+??? note "Proof"
+    First, [Dirichlet's theorem](./continued-fraction.md#用渐近分数逼近实数) says there are infinitely many pairs of positive integers $(x,y)$ such that
     
     $$
     \left|\dfrac{x}{y}-\sqrt{D}\right| \le \dfrac{1}{y^2}
     $$
     
-    成立，它们都满足不等式
+    holds, and they all satisfy the inequality
     
     $$
     |x^2-Dy^2|=y^2\left|\dfrac{x}{y}-\sqrt{D}\right|\left|\dfrac{x}{y}+\sqrt{D}\right| \le \dfrac{1}{y^2}+2\sqrt{D}<1+2\sqrt{D}.
     $$
     
-    因而，必然存在整数 $m\in(-1-2\sqrt{D},1+2\sqrt{D})$ 使得有无数对 $(x,y)$ 都满足 $x^2-Dy^2 = m$．将这些 $(x,y)$ 根据对 $m$ 的余数分类，就知道对某一对整数 $(x_0,y_0)$，一定存在无数对 $(x,y)$ 使得 $x\equiv x_0\pmod m$ 以及 $y\equiv y_0\pmod m$ 成立．任取满足这些条件的两对互异的 $(x_1,y_1)$ 和 $(x_2,y_2)$，则
+    So there must be an integer $m\in(-1-2\sqrt{D},1+2\sqrt{D})$ such that infinitely many pairs $(x,y)$ satisfy $x^2-Dy^2 = m$. Grouping these $(x,y)$ by their remainders modulo $m$, we see that for some pair of integers $(x_0,y_0)$, there are infinitely many pairs $(x,y)$ with $x\equiv x_0\pmod m$ and $y\equiv y_0\pmod m$. Pick any two distinct such pairs $(x_1,y_1)$ and $(x_2,y_2)$. Then
     
     $$
     \dfrac{x_1+y_1\sqrt{D}}{x_2+y_2\sqrt{D}}=\dfrac{x_1x_2-Dy_1y_2}{m}+\dfrac{x_2y_1-x_1y_2}{m}\sqrt{D}.
     $$
     
-    因为根据同余关系有
+    By the congruences we have
     
     $$
     \begin{aligned}
@@ -104,93 +104,93 @@ $$
     \end{aligned}
     $$
     
-    这说明上式右侧得到的是整数解．而且，因为 $(x_1,y_1)\neq(x_2,y_2)$，它并不平凡．这就说明 Pell 方程的确存在非平凡解．
+    which shows that the right-hand side above gives an integer solution. Moreover, since $(x_1,y_1)\neq(x_2,y_2)$, it is not trivial. So the Pell equation indeed has a nontrivial solution.
 
-当然，本节提供的是非构造性的证明，在下文讨论 Pell 方程的解法时，会直接利用连分数的渐近分数构造出 Pell 方程的解，因而提供了 Pell 方程存在非平凡解的另一种证明．另外，尽管本节得到的 Pell 方程解的结构与实二次整数环的单位数的结构是一致的，但是对于 $D\equiv 1\pmod 4$ 的情形，本节并没有完全解决相应的二次整数环的单位数的结构问题，下文将进一步讨论．
+Of course, this section gives a non-constructive proof. When we discuss how to solve the Pell equation below, we will construct its solutions directly from the convergents of a continued fraction, which gives another proof that nontrivial solutions exist. Also, although the structure of the Pell equation's solutions found in this section matches the structure of units of a real quadratic integer ring, for $D\equiv 1\pmod 4$ this section does not fully settle the structure of the units of the corresponding quadratic integer ring; this is discussed further below.
 
-### 广义 Pell 方程
+### Generalized Pell equation
 
-广义 Pell 方程 $x^2-Dy^2=N$ 的图像同样是平面上的双曲线，同样以 $x$ 轴和 $y$ 轴为对称轴．前文已经指出，方程 $x^2-Dy^2=N$ 的部分解可能只相差一个 Pell 方程解的因子，这意味着可以将方程 $x^2-Dy^2=N$ 的解划分为等价类．对于方程 $x^2-Dy^2=N$ 的两个解 $(x_1,y_1)$ 和 $(x_2,y_2)$，如果存在 Pell 方程的解 $(u,v)$ 使得 $x_2+y_2\sqrt{D}=(x_1+y_1\sqrt{D})(u+v\sqrt{D})$ 成立，那么称解 $(x_1,y_1)$ 和 $(x_2,y_2)$ 等价．两个解等价的充分必要条件是
+The graph of the generalized Pell equation $x^2-Dy^2=N$ is also a hyperbola in the plane, again symmetric about the $x$-axis and the $y$-axis. As pointed out above, some solutions of $x^2-Dy^2=N$ may differ only by a factor that is a solution of the Pell equation, so the solutions of $x^2-Dy^2=N$ can be split into equivalence classes. For two solutions $(x_1,y_1)$ and $(x_2,y_2)$ of $x^2-Dy^2=N$, if there is a solution $(u,v)$ of the Pell equation with $x_2+y_2\sqrt{D}=(x_1+y_1\sqrt{D})(u+v\sqrt{D})$, the solutions $(x_1,y_1)$ and $(x_2,y_2)$ are called equivalent. Two solutions are equivalent if and only if
 
 $$
 N\mid (x_1x_2-Dy_1y_2),\ N\mid (x_2y_1-x_1y_2).
 $$
 
-因为 Pell 方程的解相对容易求出，一个自然的想法是在上述的每个等价类中各求出一个解．只要知道这些解，就可以利用相应的 Pell 方程的解得到所要求的广义 Pell 方程的全部解．在广义 Pell 方程的解的等价类中，由于对称性，每个等价类都存在纵坐标 $y$ 非负但是尽可能小的解：如果这样的解唯一，它就称为该等价类的基本解；否则，该等价类必然有两个 $y$ 非负且最小的解，而且它们关于 $y$ 轴对称，此时选择 $x>0$ 的那个作为基本解．由此，求解广义 Pell 方程 $x^2-Dy^2=N$，就相当于求解它的基本解集 $U$．设它对应的 Pell 方程的基本解是 $(r,s)$，则广义 Pell 方程的全部解的集合是
+Since solutions of the Pell equation are relatively easy to find, a natural idea is to find one solution in each of the equivalence classes above. Once you know these, you can use the solutions of the corresponding Pell equation to get all solutions of the generalized Pell equation. By symmetry, each equivalence class of solutions has a solution whose $y$ coordinate is nonnegative and as small as possible: if this solution is unique, it is called the fundamental solution of that class; otherwise the class has exactly two solutions with the smallest nonnegative $y$, symmetric about the $y$-axis, and the one with $x>0$ is chosen as the fundamental solution. So solving the generalized Pell equation $x^2-Dy^2=N$ amounts to finding its set $U$ of fundamental solutions. Let $(r,s)$ be the fundamental solution of the corresponding Pell equation. Then the set of all solutions of the generalized Pell equation is
 
 $$
 \{(x,y):x+y\sqrt{D}=\pm(r+s\sqrt{D})^k(u+v\sqrt{D}),k\in\mathbf Z,u+v\sqrt{D}\in U\}.
 $$
 
-广义 Pell 方程的基本解必然是有限的．这是因为从上面的通解表达式可知，绝对值 $|u+v\sqrt{D}|$ 必然位于 $r-s\sqrt{D}$ 和 $r+s\sqrt{D}$ 之间．文末的参考文献中提供了关于基本解的坐标的范围的更严格的估计．当然，与 Pell 方程的情形不同，广义 Pell 方程可能没有解．
+The generalized Pell equation always has finitely many fundamental solutions. This is because, by the general solution formula above, the absolute value $|u+v\sqrt{D}|$ must lie between $r-s\sqrt{D}$ and $r+s\sqrt{D}$. The references at the end of the page give tighter bounds on the coordinates of the fundamental solutions. Of course, unlike the Pell equation, the generalized Pell equation may have no solution.
 
-利用广义 Pell 方程的一个解 $(u,v)$ 和 Pell 方程的基本解 $(r,s)$ 得到同一个等价类中的全部解的方法，除了利用解的复合之外，还可以利用如下递推关系
+Given one solution $(u,v)$ of the generalized Pell equation and the fundamental solution $(r,s)$ of the Pell equation, besides combining solutions, you can also get all solutions in the same equivalence class with the recurrence
 
 $$
 x_{k} = 2rx_{k-1} - x_{k-2},\ y_{k} = 2ry_{k-1} - y_{k-2},
 $$
 
-其中，$x_k+y_k\sqrt{D}=(r+s\sqrt{D})^k(u+v\sqrt{D})$．这是因为 $x_k$ 和 $y_k$ 都可以对某一对实数 $(A,B)$ 写成 $A(r+s\sqrt{D})^k+B(r-s\sqrt{D})^k$ 的形式，而根据 Vieta 定理，$r\pm s\sqrt{D}$ 是方程 $x^2-2rx+1=0$ 的两个实根，进而 $x_k$ 和 $y_k$ 都满足上述的二阶常系数递推关系．相较于解的复合，该递推公式有更少的乘法次数．
+where $x_k+y_k\sqrt{D}=(r+s\sqrt{D})^k(u+v\sqrt{D})$. This is because both $x_k$ and $y_k$ can be written as $A(r+s\sqrt{D})^k+B(r-s\sqrt{D})^k$ for some real pair $(A,B)$, and by Vieta's formulas $r\pm s\sqrt{D}$ are the two real roots of $x^2-2rx+1=0$, so $x_k$ and $y_k$ both satisfy the second-order linear recurrence above. Compared with combining solutions, this recurrence uses fewer multiplications.
 
-## 求解方法
+## How to solve
 
-Pell 方程和广义 Pell 方程的求解都可以基于连分数进行．
+Both the Pell equation and the generalized Pell equation can be solved with continued fractions.
 
-### PQa 算法
+### The PQa algorithm
 
-本文讨论的算法都基于 PQa 算法，它可以用于求出特定的二次无理数的连分数展开．
+All algorithms on this page are based on the PQa algorithm, which computes the continued fraction expansion of certain quadratic irrationals.
 
-设整数 $P_0,Q_0,D$ 满足 $Q_0\neq 0$，$D>0$ 且不是完全平方数，以及 $P_0^2\equiv D\pmod{Q_0}$．那么，二次无理数
+Let integers $P_0,Q_0,D$ satisfy $Q_0\neq 0$, $D>0$ not a perfect square, and $P_0^2\equiv D\pmod{Q_0}$. Then the continued fraction expansion $[a_0,a_1,\cdots]$ of the quadratic irrational
 
 $$
 \omega=\dfrac{P_0+\sqrt{D}}{Q_0}
 $$
 
-的连分数展开 $[a_0,a_1,\cdots]$ 可以通过如下 [递推公式](./continued-fraction.md#二次无理数) 求得：
+can be computed with the following [recurrence](./continued-fraction.md#二次无理数):
 
 $$
 a_k = \left\lfloor\dfrac{P_k+\sqrt{D}}{Q_k}\right\rfloor,\ P_{k+1} = a_kQ_k - P_k,\ Q_{k+1} = \dfrac{D-P_{k+1}^2}{Q_k}.
 $$
 
-进而，$\omega$ 的第 $k$ 个渐近分数的分子和分母 $A_k$ 和 $B_k$ 由如下 [递推公式](./continued-fraction.md#递推关系) 给出：
+Then the numerator $A_k$ and denominator $B_k$ of the $k$-th convergent of $\omega$ are given by the [recurrence](./continued-fraction.md#递推关系)
 
 $$
 A_k = a_kA_{k-1} + A_{k-2},\ B_k = a_kB_{k-1} + B_{k-2}
 $$
 
-且 $A_{-1} = 1$，$A_{-2}=0$，$B_{-1}=0$，$B_{-2}=1$．
+with $A_{-1} = 1$, $A_{-2}=0$, $B_{-1}=0$, $B_{-2}=1$.
 
-这些公式的正确性已经在连分数一文中得到证明．那里也说明了，因为二次无理数是 [循环连分数](./continued-fraction.md#二次无理数)，所以，三元组 $(P_k,Q_k,a_k)$ 最终将进入循环，算法总可以在有限步内终止．不妨设循环节的最小长度是 $\ell$，且循环的最早的起始位置是 $k_0$，则二次无理数的连分数展开可以写作
+These formulas are proved in the continued fractions article. It also shows that, because a quadratic irrational has a [periodic continued fraction](./continued-fraction.md#二次无理数), the triple $(P_k,Q_k,a_k)$ eventually becomes periodic, so the algorithm always ends in a finite number of steps. Let the minimal period length be $\ell$, and let the earliest start of the period be $k_0$. Then the continued fraction expansion of the quadratic irrational can be written as
 
 $$
 \omega=[a_0,\cdots,a_{k_0-1},\overline{a_{k_0},\cdots,a_{k_0+\ell-1}}].
 $$
 
-利用 PQa 算法解决 Pell 方程，需要建立如下结论：
+To solve the Pell equation with the PQa algorithm, we need the following result:
 
-???+ note "定理"
-    继续上述记号．设 $G_k=Q_0A_k-P_0B_k$，则整数对 $(G_{k-1},B_{k-1})$ 满足关系式
+???+ note "Theorem"
+    Keep the notation above. Let $G_k=Q_0A_k-P_0B_k$. Then the integer pair $(G_{k-1},B_{k-1})$ satisfies
     
     $$
     G_{k-1}^2-DB_{k-1}^2=(-1)^{k}Q_0Q_{k},
     $$
     
-    且它们的最大公因数 $\gcd(G_{k-1},B_{k-1})$ 整除 $Q_{k}$．
+    and their greatest common divisor $\gcd(G_{k-1},B_{k-1})$ divides $Q_{k}$.
 
-??? note "证明"
-    设 $\omega$ 的连分数展开中，第 $k$ 个余项（完全商）为 $\omega_{k}$，即
+??? note "Proof"
+    Let $\omega_{k}$ be the $k$-th remainder (complete quotient) in the continued fraction expansion of $\omega$, that is,
     
     $$
     \omega = [a_0,a_1,\cdots,a_{k-1},\omega_k] = \dfrac{\omega_k A_{k-1}+A_{k-2}}{\omega_k B_{k-1}+B_{k-2}}.
     $$
     
-    将 $\omega=(P_0+\sqrt{D})/Q_0$ 和 $\omega_k=(P_k+\sqrt{D})/Q_k$ 代入上式，就得到
+    Substituting $\omega=(P_0+\sqrt{D})/Q_0$ and $\omega_k=(P_k+\sqrt{D})/Q_k$ into this gives
     
     $$
     \dfrac{P_0+\sqrt{D}}{Q_0} = \dfrac{(P_k+\sqrt{D})A_{k-1}+Q_kA_{k-2}}{(P_k+\sqrt{D})B_{k-1}+Q_kB_{k-2}}.
     $$
     
-    消去左右两侧的分母并比较有理部分和无理部分的系数，再代入 $G_k$ 的表达式，就得到如下等式：
+    Clearing denominators on both sides, comparing the rational and irrational coefficients, and substituting the expression for $G_k$, we get:
     
     $$
     \begin{aligned}
@@ -199,7 +199,7 @@ $$
     \end{aligned}
     $$
     
-    因此，将一式乘以 $G_{k-1}$ 减去二式乘以 $B_{k-1}$，就有
+    So multiplying the first equation by $G_{k-1}$ and subtracting the second multiplied by $B_{k-1}$ gives
     
     $$
     \begin{aligned}
@@ -209,66 +209,66 @@ $$
     \end{aligned}
     $$
     
-    最后一步利用了渐近分数的 [差分公式](./continued-fraction.md#误差估计)．这就证明了第一个结论．
+    The last step uses the [difference formula](./continued-fraction.md#误差估计) for convergents. This proves the first claim.
     
-    为了证明第二个结论，将 $G_k$ 的表达式代入第一个结论，有
+    To prove the second claim, substitute the expression for $G_k$ into the first claim:
     
     $$
     (Q_0A_{k-1}-P_0B_{k-1})^2 - DB_{k-1}^2 = (-1)^kQ_0Q_k.
     $$
     
-    所以，利用 $Q_0\mid(P_0^2-D)$ 有
+    So, using $Q_0\mid(P_0^2-D)$, we get
     
     $$
     Q_0A_{k-1}^2 +\left(\dfrac{P_0^2-D}{Q_0}B_{k-1}- 2P_0A_{k-1}\right)B_{k-1} = (-1)^kQ_k.
     $$
     
-    故而，$\gcd(G_{k-1},B_{k-1}) = \gcd(Q_0A_{k-1},B_{k-1})$ 整除 $Q_k$．
+    Hence $\gcd(G_{k-1},B_{k-1}) = \gcd(Q_0A_{k-1},B_{k-1})$ divides $Q_k$.
 
-这个结论提供了一种寻找方程 $x^2-Dy^2=N$ 的解的方法．如果合理地选择 $Q_0>0$ 并选择 $P_0$ 为同余方程 $P_0^2\equiv D\pmod{Q_0}$ 的解，那么通过对 $(P_0+\sqrt{D})/Q_0$ 执行 PQa 算法，直到找到 $(-1)^kQ_0Q_{k}=N$，此时 $(G_{k-1},B_{k-1})$ 就成为原方程的一组解．而且，如果 $Q_k=\pm 1$，那么这样得到的解一定是本原解，也就是说 $G_{k-1}$ 和 $B_{k-1}$ 一定是互素的．
+This result gives a way to find solutions of $x^2-Dy^2=N$. If you choose $Q_0>0$ sensibly and choose $P_0$ as a solution of the congruence $P_0^2\equiv D\pmod{Q_0}$, then run the PQa algorithm on $(P_0+\sqrt{D})/Q_0$ until you find $(-1)^kQ_0Q_{k}=N$; at that point $(G_{k-1},B_{k-1})$ is a solution of the original equation. Moreover, if $Q_k=\pm 1$, the solution obtained this way is always primitive, that is, $G_{k-1}$ and $B_{k-1}$ are always coprime.
 
-这个思想是解决 Pell 方程和广义 Pell 方程的核心．理解了这一思想后，下面就着手处理算法的一些细节，并证明所有的解都可以通过该方式得到．
+This idea is the core of solving the Pell equation and the generalized Pell equation. With it in mind, we now work out some details of the algorithm and prove that every solution can be found this way.
 
-### Pell 方程
+### Pell equation
 
-要解决 Pell 方程 $x^2-Dy^2=1$，只需要对 $(P_0,Q_0,D)=(0,1,D)$ 运行 PQa 算法，直到出现 $(-1)^kQ_k=1$，此时 $(A_{k-1},B_{k-1})$ 就是 Pell 方程的一组解（因为 $G_{k-1}$ 此时就是 $A_{k-1}$）．当然，对于 Pell 方程，对该过程可以进行更精确的描述．
+To solve the Pell equation $x^2-Dy^2=1$, just run the PQa algorithm on $(P_0,Q_0,D)=(0,1,D)$ until $(-1)^kQ_k=1$; then $(A_{k-1},B_{k-1})$ is a solution of the Pell equation (because $G_{k-1}$ is then just $A_{k-1}$). Of course, for the Pell equation this process can be described more precisely.
 
-首先，解一定出现在循环节的末尾处．上述过程相当于对 $\sqrt{D}$ 做连分数展开．对此，已经有 [结论](./continued-fraction.md#纯循环连分数)：
+First, the solution always appears at the end of a period. The process above amounts to the continued fraction expansion of $\sqrt{D}$. For it, we already have the [result](./continued-fraction.md#纯循环连分数):
 
 $$
 \sqrt{D} = [\lfloor\sqrt{D}\rfloor,\overline{a_1,\cdots,a_{\ell-1},2\lfloor\sqrt{D}\rfloor}].
 $$
 
-此处，循环节长度为 $\ell$，且起始位置是第 $1$ 项（下标从 $0$ 开始）．而且，它的第 $\ell$ 个余项等于 $\lfloor\sqrt{D}\rfloor+\sqrt{D}$，这说明 $Q_{\ell}=1$．因此，如果 $\ell$ 是偶数，那么 $(A_{\ell-1},B_{\ell-1})$ 就是 Pell 方程的一组非平凡解；如果 $\ell$ 是奇数，那么 $(A_{2\ell-1},B_{2\ell-1})$ 就是 Pell 方程的一组非平凡解．
+Here the period length is $\ell$, and the period starts at term $1$ (indices start from $0$). Moreover, its $\ell$-th remainder equals $\lfloor\sqrt{D}\rfloor+\sqrt{D}$, which means $Q_{\ell}=1$. So if $\ell$ is even, $(A_{\ell-1},B_{\ell-1})$ is a nontrivial solution of the Pell equation; if $\ell$ is odd, $(A_{2\ell-1},B_{2\ell-1})$ is a nontrivial solution of the Pell equation.
 
-接下来要说明，刚刚得到的这组解一定是基本解．这个结论基于两点理由：第一，Pell 方程的所有正整数解 $(x,y)$ 对应的分数 $x/y$ 都出现在 $\sqrt{D}$ 的渐近分数中，这就保证了 $(x,y)$ 必定是 PQa 算法过程中的某个 $(A_k,B_k)$；第二，除了循环节末尾，不会再出现其他位置有 $Q_k=1$，因为 $A_k$ 和 $B_k$ 的递推关系保证了它们的大小随着下标增加而增加，所以最小的正整数解（即基本解）必然出现在刚刚指明的位置．这两点理由可以分别从如下的两条定理得出：
+Next we show that the solution just found is always the fundamental solution. There are two reasons. First, for every positive integer solution $(x,y)$ of the Pell equation, the fraction $x/y$ appears among the convergents of $\sqrt{D}$, which guarantees that $(x,y)$ is some $(A_k,B_k)$ in the PQa algorithm. Second, $Q_k=1$ does not occur anywhere other than at the end of a period, and since the recurrences for $A_k$ and $B_k$ make them grow with the index, the smallest positive integer solution (that is, the fundamental solution) must appear at the position just identified. These two reasons follow from the following two theorems:
 
-???+ note "定理"
-    设方程 $x^2-Dy^2=N$ 有正整数解 $(x,y)$，如果 $|N|<\sqrt{D}$，那么 $\dfrac{x}{y}$ 一定等于 $\sqrt{D}$ 的渐近分数．
+???+ note "Theorem"
+    Suppose $x^2-Dy^2=N$ has a positive integer solution $(x,y)$. If $|N|<\sqrt{D}$, then $\dfrac{x}{y}$ must be a convergent of $\sqrt{D}$.
 
-??? note "证明"
-    当 $N>0$ 时，因为 $x^2-Dy^2>0$，所以 $x>y\sqrt{D}$．故而，有
+??? note "Proof"
+    When $N>0$, since $x^2-Dy^2>0$, we have $x>y\sqrt{D}$. So
     
     $$
     \left|\dfrac{x}{y}-\sqrt{D}\right| = \dfrac{N}{y(x+y\sqrt{D})}<\dfrac{N}{2y^2\sqrt{D}}<\dfrac{1}{2y^2}.
     $$
     
-    根据 [Legendre 判别法](./continued-fraction.md#渐近分数的判定) 可知，$\dfrac{x}{y}$ 是 $\sqrt{D}$ 的渐近分数．
+    By [Legendre's criterion](./continued-fraction.md#渐近分数的判定), $\dfrac{x}{y}$ is a convergent of $\sqrt{D}$.
     
-    当 $N<0$ 时，$x>y\sqrt{D}$ 不再成立．所以，转而考虑方程 $y^2-\dfrac{1}{D}x^2=-\dfrac{N}{D}$ 的解．因为 $\dfrac{|N|}{D}<\sqrt{\dfrac{1}{D}}$，所以上面的论证依然成立．这说明 $\dfrac{y}{x}$ 是 $\dfrac{1}{\sqrt{D}}$ 的渐近分数．根据 [倒数定理](./continued-fraction.md#递推关系) 可知，$\dfrac{x}{y}$ 也是 $\sqrt{D}$ 的渐近分数．
+    When $N<0$, $x>y\sqrt{D}$ no longer holds. So consider instead solutions of $y^2-\dfrac{1}{D}x^2=-\dfrac{N}{D}$. Since $\dfrac{|N|}{D}<\sqrt{\dfrac{1}{D}}$, the argument above still works. This shows that $\dfrac{y}{x}$ is a convergent of $\dfrac{1}{\sqrt{D}}$. By the [reciprocal theorem](./continued-fraction.md#递推关系), $\dfrac{x}{y}$ is also a convergent of $\sqrt{D}$.
 
-???+ note "定理"
-    在对 $(P_0,Q_0,D)=(0,1,D)$ 运行上述 PQa 算法的过程中，$Q_k=1$ 必然推出 $\ell\mid k$．
+???+ note "Theorem"
+    When running the PQa algorithm above on $(P_0,Q_0,D)=(0,1,D)$, $Q_k=1$ implies $\ell\mid k$.
 
-??? note "证明"
-    在 $\sqrt{D}$ 的连分数展开中，除了第 $0$ 个余项，所有其他余项都是 [纯循环连分数](./continued-fraction.md#纯循环连分数)．设 $Q_k=1$．根据 Galois 的结论，必然有余项 $\omega_k=P_k+\sqrt{D}>1$，且它的共轭 $-1<P_k-\sqrt{D}<0$，这说明 $P_k=\lfloor\sqrt{D}\rfloor$．因此，余项 $\omega_k$ 就等于 $\omega_\ell$．但是，余项的重复意味着连分数的循环，如果 $k$ 不是 $\ell$ 的整数倍，就与 $\ell$ 是最小正周期相矛盾．所以，必然有 $\ell\mid k$．
+??? note "Proof"
+    In the continued fraction expansion of $\sqrt{D}$, every remainder except the $0$-th is a [purely periodic continued fraction](./continued-fraction.md#纯循环连分数). Suppose $Q_k=1$. By Galois's result, the remainder $\omega_k=P_k+\sqrt{D}>1$ and its conjugate satisfies $-1<P_k-\sqrt{D}<0$, so $P_k=\lfloor\sqrt{D}\rfloor$. Hence the remainder $\omega_k$ equals $\omega_\ell$. But a repeated remainder means the continued fraction repeats from there, so if $k$ is not a multiple of $\ell$, this contradicts $\ell$ being the minimal period. So $\ell\mid k$.
 
-综合本节的讨论可知，只要对 $\sqrt{D}$ 做连分数展开，亦即以 $(P_0,Q_0,D)=(0,1,D)$ 为起点做 PQa 算法，当首次得到 $Q_\ell=1$ 时，就到达了第一个循环节的末尾．此时，如果 $\ell$ 是偶数，那么 $(A_{\ell-1},B_{\ell-1})$ 就是 Pell 方程的基本解；否则，$(A_{2\ell-1},B_{2\ell-1})$ 是 Pell 方程的基本解．对于循环节长度 $\ell$ 为奇数的情形，并不需要继续 PQa 算法到两倍的循环节处，马上就会说明 $A_{2\ell-1}+B_{2\ell-1}\sqrt{D}=(A_{\ell-1}+B_{\ell-1}\sqrt{D})^2$，因而可以直接从 $(A_{\ell-1},B_{\ell-1})$ 直接计算出 Pell 方程的基本解．Pell 方程所有其他解都可以通过 Pell 方程的基本解计算．
+Putting this section together: just expand $\sqrt{D}$ as a continued fraction, that is, run the PQa algorithm starting from $(P_0,Q_0,D)=(0,1,D)$. The first time you get $Q_\ell=1$, you have reached the end of the first period. Then, if $\ell$ is even, $(A_{\ell-1},B_{\ell-1})$ is the fundamental solution of the Pell equation; otherwise $(A_{2\ell-1},B_{2\ell-1})$ is. When the period length $\ell$ is odd, you do not need to continue the PQa algorithm to twice the period: as shown shortly, $A_{2\ell-1}+B_{2\ell-1}\sqrt{D}=(A_{\ell-1}+B_{\ell-1}\sqrt{D})^2$, so the fundamental solution of the Pell equation can be computed directly from $(A_{\ell-1},B_{\ell-1})$. All other solutions of the Pell equation can be computed from the fundamental solution.
 
-??? example "示例"
-    1.  求解方程 $x^2-14y^2=1$．
+??? example "Examples"
+    1.  Solve $x^2-14y^2=1$.
     
-        对 $(P_0,Q_0,D)=(0,1,14)$ 运行 PQa 算法结果如下：（标红部分为第一个循环节）
+        Running the PQa algorithm on $(P_0,Q_0,D)=(0,1,14)$ gives: (the red part is the first period)
     
         | $k$ | $P$ | $Q$ |        $a$       |  $A$  |  $B$ |  $G$  | $G^2-DB^2$ |
         | :-: | :-: | :-: | :--------------: | :---: | :--: | :---: | :--------: |
@@ -279,10 +279,10 @@ $$
         | $4$ | $3$ | $1$ | $\color{red}{6}$ | $101$ | $27$ | $101$ |    $-5$    |
         | $5$ | $3$ | $5$ |        $1$       | $116$ | $31$ | $116$ |     $2$    |
     
-        循环节长度 $\ell=4$ 为偶数．方程的最小正整数解为 $(G_3,B_3)=(15,4)$．
-    2.  求解方程 $x^2-41y^2=1$．
+        The period length $\ell=4$ is even. The smallest positive integer solution is $(G_3,B_3)=(15,4)$.
+    2.  Solve $x^2-41y^2=1$.
     
-        对 $(P_0,Q_0,D)=(0,1,41)$ 运行 PQa 算法结果如下：（标红部分为第一个循环节）
+        Running the PQa algorithm on $(P_0,Q_0,D)=(0,1,41)$ gives: (the red part is the first period)
     
         | $k$ | $P$ | $Q$ |        $a$        |   $A$   |   $B$  |   $G$   | $G^2-DB^2$ |
         | :-: | :-: | :-: | :---------------: | :-----: | :----: | :-----: | :--------: |
@@ -295,152 +295,152 @@ $$
         | $6$ | $6$ | $1$ |        $12$       | $25414$ | $3969$ | $25414$ |    $-5$    |
         | $7$ | $6$ | $5$ |        $2$        | $52877$ | $8258$ | $52877$ |     $5$    |
     
-        循环节长度 $\ell=3$ 为奇数．方程的最小正整数解为 $(G_5,B_5)=(2049,320)$．它也可以通过 $(G_2,B_2)=(32,5)$ 计算得出：
+        The period length $\ell=3$ is odd. The smallest positive integer solution is $(G_5,B_5)=(2049,320)$. It can also be computed from $(G_2,B_2)=(32,5)$:
     
         $$
         (32+5\sqrt{41})^2=2049+320\sqrt{41}.
         $$
 
-### 负 Pell 方程
+### Negative Pell equation
 
-根据上一节的讨论可知，负 Pell 方程的解也必然对应于 $\sqrt{D}$ 的渐近分数，而且只能出现在 $(-1)^kQ_k=-1$ 处．这只能出现在循环节的末尾．因此，负 Pell 方程有解，当且仅当循环节长度 $\ell$ 是奇数．当解存在时，$(A_{\ell-1},B_{\ell-1})$ 就是负 Pell 方程的基本解．它的求解方法和上一节是一致的．
+By the previous section, solutions of the negative Pell equation must also correspond to convergents of $\sqrt{D}$, and can only appear where $(-1)^kQ_k=-1$. This can only happen at the end of a period. So the negative Pell equation has a solution if and only if the period length $\ell$ is odd. When a solution exists, $(A_{\ell-1},B_{\ell-1})$ is the fundamental solution of the negative Pell equation. It is found the same way as in the previous section.
 
-利用前文对于 Pell 方程解的结构的证明相仿的思路，可以证明如下结论：
+Using an argument similar to the earlier proof of the structure of the Pell equation's solutions, we can prove the following:
 
-???+ note "定理"
-    设方程 $x^2-Dy^2=-1$ 有解，且基本解是 $(x_1,y_1)$．那么，$x^2-Dy^2=\pm 1$ 的所有整数解都属于集合
+???+ note "Theorem"
+    Suppose $x^2-Dy^2=-1$ has a solution, and its fundamental solution is $(x_1,y_1)$. Then all integer solutions of $x^2-Dy^2=\pm 1$ belong to the set
     
     $$
     \{(x,y):x+y\sqrt{D}=\pm(x_1+y_1\sqrt{D})^k,k\in\mathbf Z\}.
     $$
     
-    特别地，满足 $x_2+y_2\sqrt{D}=(x_1+y_1\sqrt{D})^2$ 的整数解 $(x_2,y_2)$ 正是 $x^2-Dy^2=1$ 的基本解．
+    In particular, the integer solution $(x_2,y_2)$ with $x_2+y_2\sqrt{D}=(x_1+y_1\sqrt{D})^2$ is exactly the fundamental solution of $x^2-Dy^2=1$.
 
-??? note "证明"
-    由于对称性，只需要考虑正整数解，即 $x+y\sqrt{D}>1$ 的情形．但是由于 $x^2-Dy^2=\pm 1$ 是两段双曲线，所以 $x+y\sqrt{D}$ 无法和 $(x,y)$ 建立一一对应．为了处理这种困难，首先证明上述的 $(x_2,y_2)$ 是 $x^2-Dy^2=1$ 的基本解．
+??? note "Proof"
+    By symmetry, we only need positive integer solutions, that is, $x+y\sqrt{D}>1$. But since $x^2-Dy^2=\pm 1$ consists of two hyperbolas, $x+y\sqrt{D}$ is no longer in one-to-one correspondence with $(x,y)$. To deal with this, first prove that the $(x_2,y_2)$ above is the fundamental solution of $x^2-Dy^2=1$.
     
-    显然，$(x_2,y_2)$ 是 $x^2-Dy^2=1$ 的解．如果设 $(z,w)$ 是 $x^2-Dy^2=1$ 的基本解，那么必然有 $1<z+w\sqrt{D}\le x_2+y_2\sqrt{D}$．如果右侧的不等式不含有等号，那么将不等式同除以 $x_1+y_1\sqrt{D}$ 就得到 $-x_1+y_1\sqrt{D}<(z+w\sqrt{D})(-x_1+y_1\sqrt{D})<x_1+y_1\sqrt{D}$．将该不等式的中间项的表达式展开就能得到 $x'+y'\sqrt{D}$ 的形式，它的范数是 $-1$ 且 $(x',y')$ 也是整数解．将该不等式取倒数，就发现 $-x'+y'\sqrt{D}$ 同样落入 $-x_1+y_1\sqrt{D}$ 和 $x_1+y_1\sqrt{D}$ 之间．二次整数 $\pm x'+y'\sqrt{D}$ 互为倒数，必然有一个大于 $1$．但是 $1$ 和 $x_1+y_1\sqrt{D}$ 之间不应该再出现别的范数为 $-1$ 的二次整数，这与 $x_1+y_1\sqrt{D}$ 的最小性矛盾．所以，必然成立 $x_2+y_2\sqrt{D}=z+w\sqrt{D}$，即 $(x_2,y_2)$ 是方程 $x^2-Dy^2=1$ 的基本解．
+    Clearly $(x_2,y_2)$ is a solution of $x^2-Dy^2=1$. Let $(z,w)$ be the fundamental solution of $x^2-Dy^2=1$; then $1<z+w\sqrt{D}\le x_2+y_2\sqrt{D}$. If the right inequality is strict, dividing by $x_1+y_1\sqrt{D}$ gives $-x_1+y_1\sqrt{D}<(z+w\sqrt{D})(-x_1+y_1\sqrt{D})<x_1+y_1\sqrt{D}$. Expanding the middle term gives the form $x'+y'\sqrt{D}$, whose norm is $-1$, and $(x',y')$ is also an integer solution. Taking reciprocals of this inequality shows that $-x'+y'\sqrt{D}$ also lies between $-x_1+y_1\sqrt{D}$ and $x_1+y_1\sqrt{D}$. The quadratic integers $\pm x'+y'\sqrt{D}$ are reciprocals of each other, so one of them is greater than $1$. But no other quadratic integer of norm $-1$ should lie between $1$ and $x_1+y_1\sqrt{D}$, contradicting the minimality of $x_1+y_1\sqrt{D}$. So $x_2+y_2\sqrt{D}=z+w\sqrt{D}$ must hold, that is, $(x_2,y_2)$ is the fundamental solution of $x^2-Dy^2=1$.
     
-    基于此，如果出现方程 $x^2-Dy^2=\pm 1$ 的解 $(x,y)$ 不对应某个 $(x_1+y_1\sqrt{D})^k$，那么必然存在 $k$ 使得 $(x_1+y_1\sqrt{D})^{2k}<x+y\sqrt{D}<(x_1+y_1\sqrt{D})^{2k+2}$，消去因子 $(x_1+y_1\sqrt{D})^{2k+1}$，就说明存在位于 $-x_1+y_1\sqrt{D}$ 和 $x_1+y_1\sqrt{D}$ 之间的范数为 $\pm 1$ 的二次整数 $x'+y'\sqrt{D}\neq 1$．重复上一段利用倒数的论证可知，这与 $x_1+y_1\sqrt{D}$ 的最小性矛盾．因而原命题得证．
+    Based on this, if some solution $(x,y)$ of $x^2-Dy^2=\pm 1$ does not correspond to any $(x_1+y_1\sqrt{D})^k$, then there is a $k$ with $(x_1+y_1\sqrt{D})^{2k}<x+y\sqrt{D}<(x_1+y_1\sqrt{D})^{2k+2}$. Removing the factor $(x_1+y_1\sqrt{D})^{2k+1}$ shows that there is a quadratic integer $x'+y'\sqrt{D}\neq 1$ of norm $\pm 1$ between $-x_1+y_1\sqrt{D}$ and $x_1+y_1\sqrt{D}$. Repeating the reciprocal argument from the previous paragraph, this contradicts the minimality of $x_1+y_1\sqrt{D}$. This proves the claim.
 
-因为 $(A_{\ell-1},B_{\ell-1})$ 是负 Pell 方程的最小正整数解，而 $x^2-Dy^2=\pm 1$ 的所有正整数解都出现在集合
+Since $(A_{\ell-1},B_{\ell-1})$ is the smallest positive integer solution of the negative Pell equation, and all positive integer solutions of $x^2-Dy^2=\pm 1$ appear in the set
 
 $$
 \{(x,y):x+y\sqrt{D}=(A_{\ell-1}+B_{\ell-1}\sqrt{D})^k,k\in\mathbf N_+\}
 $$
 
-中，又因为这些正整数解必然对应 $\sqrt{D}$ 的在循环节末尾（前一位）处的渐近分数，而且渐近分数的分子和分母是严格单调递增的，所以对所有 $k\in\mathbf N_+$ 总是有
+and since these positive integer solutions must correspond to convergents of $\sqrt{D}$ at the end of a period (the position just before it), and the numerators and denominators of convergents are strictly increasing, for all $k\in\mathbf N_+$ we always have
 
 $$
 (A_{\ell-1}+B_{\ell-1}\sqrt{D})^k = A_{k\ell-1}+B_{k\ell-1}\sqrt{D}.
 $$
 
-在所有这些正整数解中，$k$ 为奇数时就是负 Pell 方程的解，$k$ 为偶数时就是 Pell 方程的解，两者交替出现．
+Among all these positive integer solutions, odd $k$ gives solutions of the negative Pell equation and even $k$ gives solutions of the Pell equation; the two alternate.
 
-判断负 Pell 方程是否有解，需要计算 $\sqrt{D}$ 连分数展开的循环节的长度，这并不容易计算，因此希望能够找到更简单的判断方法．但是，目前并没有条件简明、容易计算的判断方法[^solubility-neg-pell]．此处仅仅提供一个简单的结论．
+To decide whether the negative Pell equation has a solution, you need the period length of the continued fraction expansion of $\sqrt{D}$, which is not easy to compute, so one would like a simpler test. However, no simple, easy-to-compute criterion is currently known[^solubility-neg-pell]. Here we only give a simple result.
 
-???+ note "定理"
-    方程 $x^2-Dy^2=-1$ 有解，则 $4$ 不能整除 $D$ 且 $D$ 不含有 $4k+3$ 型的素因子．反过来，如果 $D=2$ 或 $D$ 是 $4k+1$ 型的素数，那么方程必然有解．
+???+ note "Theorem"
+    If $x^2-Dy^2=-1$ has a solution, then $4$ does not divide $D$ and $D$ has no prime factor of the form $4k+3$. Conversely, if $D=2$ or $D$ is a prime of the form $4k+1$, the equation must have a solution.
 
-??? note "证明"
-    首先，负 Pell 方程有解，就意味着 $-1$ 是 $D$ 的二次剩余，因而 $-1$ 也是 $D$ 的任意一个因子 $d$ 的二次剩余，故而 $d\neq 4$ 且 $d$ 不是 $4k+3$ 型素数．反过来，方程 $x^2-2y^2=-1$ 有非平凡解 $(1,1)$．剩下的就是 $D$ 是 $4k+1$ 型素数的情形．
+??? note "Proof"
+    First, if the negative Pell equation has a solution, then $-1$ is a quadratic residue modulo $D$, so $-1$ is also a quadratic residue modulo every divisor $d$ of $D$; hence $d\neq 4$ and $d$ is not a prime of the form $4k+3$. Conversely, $x^2-2y^2=-1$ has the nontrivial solution $(1,1)$. What remains is the case where $D$ is a prime of the form $4k+1$.
     
-    设 $D$ 是 $4k+1$ 型素数，要证明方程 $x^2-Dy^2=-1$ 有解．思路是通过 Pell 方程 $x^2-Dy^2=1$ 的基本解 $(u,v)$ 入手，构造出 $x^2-Dy^2=-1$ 的解 $(\alpha,\beta)$．如果 $u$ 是偶数，将 $u^2-Dv^2=1$ 两侧对 $4$ 取模，就得到 $v^2\equiv -1\pmod 4$，但是 $-1$ 并不是模 $4$ 的二次剩余．这个矛盾说明 $u$ 是奇数．考察等式 $Dv^2=u^2-1=(u+1)(u-1)$．因为 $u$ 是奇数，所以 $\gcd(u+1,u-1)=\gcd(u+1,2)=2$．根据这一事实，将 $Dv^2$ 的因子分给 $u+1$ 和 $u-1$，必然一个是 $2\alpha^2$，另一个是 $2D\beta^2$，其中，$\alpha$ 和 $\beta$ 是互素的正整数而且 $v=2\alpha\beta$．将 $u=\alpha^2+D\beta^2$ 和 $v=2\alpha\beta$ 代入 $u^2-Dv^2=1$ 就得到 $\alpha^2-D\beta^2=\pm 1$．因为 $(u,v)$ 是 Pell 方程的基本解而且 $(\alpha,\beta)$ 是比 $(u,v)$ 更小的正整数对，这个等式右侧不能是 $+1$，故而只能是 $-1$．这就证明 $x^2-Dy^2=-1$ 存在解 $(\alpha,\beta)$．
+    Let $D$ be a prime of the form $4k+1$; we want to show that $x^2-Dy^2=-1$ has a solution. The idea is to start from the fundamental solution $(u,v)$ of the Pell equation $x^2-Dy^2=1$ and construct a solution $(\alpha,\beta)$ of $x^2-Dy^2=-1$. If $u$ is even, taking $u^2-Dv^2=1$ modulo $4$ gives $v^2\equiv -1\pmod 4$, but $-1$ is not a quadratic residue modulo $4$. This contradiction shows $u$ is odd. Look at $Dv^2=u^2-1=(u+1)(u-1)$. Since $u$ is odd, $\gcd(u+1,u-1)=\gcd(u+1,2)=2$. So when the factors of $Dv^2$ are split between $u+1$ and $u-1$, one of them must be $2\alpha^2$ and the other $2D\beta^2$, where $\alpha$ and $\beta$ are coprime positive integers and $v=2\alpha\beta$. Substituting $u=\alpha^2+D\beta^2$ and $v=2\alpha\beta$ into $u^2-Dv^2=1$ gives $\alpha^2-D\beta^2=\pm 1$. Since $(u,v)$ is the fundamental solution of the Pell equation and $(\alpha,\beta)$ is a smaller positive integer pair, the right-hand side cannot be $+1$, so it must be $-1$. This proves that $x^2-Dy^2=-1$ has the solution $(\alpha,\beta)$.
 
-如果 $D$ 是合数，那么不含有 $4k+3$ 型素因子且没有平方因子也不能保证方程 $x^2-Dy^2=-1$ 有解，例如 $x^2-34y^2=-1$ 就没有解．
+If $D$ is composite, having no prime factor of the form $4k+3$ and no square factor still does not guarantee that $x^2-Dy^2=-1$ has a solution; for example, $x^2-34y^2=-1$ has no solution.
 
-??? example "示例"
-    利用上面的示例中的计算结果可知，方程 $x^2-14y^2=-1$ 无解，且方程 $x^2-41y^2=-1$ 的最小正整数解为 $(G_2,B_2)=(32,5)$．
+??? example "Example"
+    From the computations in the examples above, $x^2-14y^2=-1$ has no solution, and the smallest positive integer solution of $x^2-41y^2=-1$ is $(G_2,B_2)=(32,5)$.
 
-### 范数为 ±4 的情形
+### The case of norm ±4
 
-接下来讨论方程 $x^2-Dy^2=\pm 4$ 的解．此时，解的性态取决于 $D\bmod 4$ 的大小．
+Next we discuss solutions of $x^2-Dy^2=\pm 4$. Here the behavior of the solutions depends on $D\bmod 4$.
 
-有些情形是容易的．如果 $D\equiv 0\pmod 4$，那么 $x$ 是偶数，因而 $(x/2,y)$ 是方程 $u^2-(D/4)v^2=\pm 1$ 的解．其余的情形，必然有 $x,y$ 同时是奇数或者同时是偶数．如果 $x,y$ 同时是奇数，方程两侧对 $4$ 取模就得到 $D\equiv 1\pmod 4$．所以，如果 $D\equiv 2,3\pmod 4$，那么 $x,y$ 只能同时是偶数，因而 $(x/2,y/2)$ 是方程 $u^2-Dv^2=\pm 1$ 的解．因此，除了 $D\equiv 1\pmod 4$ 的情形，方程 $x^2-Dy^2=\pm 4$ 的解都可以通过相应的（负）Pell 方程的解得到．
+Some cases are easy. If $D\equiv 0\pmod 4$, then $x$ is even, so $(x/2,y)$ is a solution of $u^2-(D/4)v^2=\pm 1$. In the remaining cases, $x$ and $y$ must be both odd or both even. If $x$ and $y$ are both odd, taking the equation modulo $4$ gives $D\equiv 1\pmod 4$. So if $D\equiv 2,3\pmod 4$, $x$ and $y$ must both be even, and $(x/2,y/2)$ is a solution of $u^2-Dv^2=\pm 1$. Hence, except when $D\equiv 1\pmod 4$, solutions of $x^2-Dy^2=\pm 4$ can be obtained from solutions of the corresponding (negative) Pell equation.
 
-现在讨论 $D\equiv 1\pmod 4$ 的情形，它不能简单地转化为已经解决的情形．为了找到基本解，可以对 $(P_0,Q_0,D)=(1,2,D)$ 应用 PQa 算法，当首次得到 $Q_\ell=2$ 时，就到达了第一个循环节的末尾．如果循环节长度 $\ell$ 是偶数，那么 $(G_{\ell-1},B_{\ell-1})$ 就是方程 $x^2-Dy^2=4$ 的基本解；否则，$(G_{\ell-1},B_{\ell-1})$ 就是方程 $x^2-Dy^2=-4$ 的基本解．从 $(G_{\ell-1},B_{\ell-1})$ 出发，可以得到方程 $x^2-Dy^2=\pm 4$ 的所有解：
+Now consider $D\equiv 1\pmod 4$, which cannot simply be reduced to the cases already solved. To find the fundamental solution, apply the PQa algorithm to $(P_0,Q_0,D)=(1,2,D)$. The first time you get $Q_\ell=2$, you have reached the end of the first period. If the period length $\ell$ is even, $(G_{\ell-1},B_{\ell-1})$ is the fundamental solution of $x^2-Dy^2=4$; otherwise $(G_{\ell-1},B_{\ell-1})$ is the fundamental solution of $x^2-Dy^2=-4$. Starting from $(G_{\ell-1},B_{\ell-1})$, you get all solutions of $x^2-Dy^2=\pm 4$:
 
 $$
 \left\{(x,y):\dfrac{x+y\sqrt{D}}{2}=\pm\left(\dfrac{G_{\ell-1}+B_{\ell-1}\sqrt{D}}{2}\right)^k,k\in\mathbf Z\right\}.
 $$
 
-如果循环节长度 $\ell$ 是偶数，所有这些都是方程 $x^2-Dy^2=4$ 的解；否则，当 $k$ 是奇数时，$(x,y)$ 是方程 $x^2-Dy^2=-4$ 的解，而当 $k$ 是偶数时，$(x,y)$ 是方程 $x^2-Dy^2=4$ 的解．
+If the period length $\ell$ is even, all of these are solutions of $x^2-Dy^2=4$; otherwise, $(x,y)$ is a solution of $x^2-Dy^2=-4$ when $k$ is odd and of $x^2-Dy^2=4$ when $k$ is even.
 
-这个算法的正确性依赖于如下事实：
+The correctness of this algorithm relies on the following facts:
 
-???+ note "定理"
-    设方程 $x^2-Dy^2=\pm 4$ 有正整数解 $(x,y)$．如果 $D\equiv 1\pmod 4$，那么，$\dfrac{(x+y)/2}{y}$ 一定是 $\dfrac{1+\sqrt{D}}{2}$ 的渐近分数．
+???+ note "Theorem"
+    Suppose $x^2-Dy^2=\pm 4$ has a positive integer solution $(x,y)$. If $D\equiv 1\pmod 4$, then $\dfrac{(x+y)/2}{y}$ must be a convergent of $\dfrac{1+\sqrt{D}}{2}$.
 
-??? note "证明"
-    首先注意到，此时 $x,y$ 必然奇偶性相同，所以 $(x+y)/2$ 是整数．如果 $(x,y)$ 是方程 $x^2-Dy^2=4$ 的解，那么 $x>y\sqrt{D}>2y$，所以，
+??? note "Proof"
+    First note that here $x$ and $y$ must have the same parity, so $(x+y)/2$ is an integer. If $(x,y)$ is a solution of $x^2-Dy^2=4$, then $x>y\sqrt{D}>2y$, so
     
     $$
     \left|\dfrac{(x+y)/2}{y}-\dfrac{1+\sqrt{D}}{2}\right| = \dfrac{2}{y(x+y\sqrt{D})}<\dfrac{1}{2y^2}.
     $$
     
-    根据 [Legendre 判别法](./continued-fraction.md#渐近分数的判定) 可知，$\dfrac{(x+y)/2}{y}$ 是 $\dfrac{1+\sqrt{D}}{2}$ 的渐近分数．
+    By [Legendre's criterion](./continued-fraction.md#渐近分数的判定), $\dfrac{(x+y)/2}{y}$ is a convergent of $\dfrac{1+\sqrt{D}}{2}$.
     
-    如果 $(x,y)$ 是方程 $x^2-Dy^2=-4$ 的解，那么要建立上述不等式，只需要证明 $4y<x+y\sqrt{D}$．这至少对于除了 $D=5,13$ 之外的情形都成立．对于 $D=5,13$ 的情形，将 $x=\sqrt{Dy^2-4}$ 代入该不等式可知，它等价于 $2(\sqrt{D}-2)y^2>1$ 成立．除了 $(D,y)=(5,1)$ 之外，该不等式对于所有 $D=5,13$ 和正整数 $y$ 都成立．剩下的就是验证 $(D,y)=(5,1)$ 的情形，此时，方程 $x^2-5y^2=-4$ 的解是 $(x,y)=(1,1)$，需要验证的是 $\dfrac{1}{1}$ 是 $\dfrac{1+\sqrt{5}}{2}=[\overline{1}]$ 的渐近分数，而这是显然成立的．
+    If $(x,y)$ is a solution of $x^2-Dy^2=-4$, then to establish the inequality above, it suffices to show $4y<x+y\sqrt{D}$. This holds at least for all cases except $D=5,13$. For $D=5,13$, substituting $x=\sqrt{Dy^2-4}$ into the inequality shows it is equivalent to $2(\sqrt{D}-2)y^2>1$. Except for $(D,y)=(5,1)$, this inequality holds for $D=5,13$ and all positive integers $y$. What remains is $(D,y)=(5,1)$: here the solution of $x^2-5y^2=-4$ is $(x,y)=(1,1)$, and we need to check that $\dfrac{1}{1}$ is a convergent of $\dfrac{1+\sqrt{5}}{2}=[\overline{1}]$, which is obviously true.
 
-???+ note "定理"
-    设 $D$ 是正整数但不是完全平方数．二次无理数 $\omega=\dfrac{1+\sqrt{D}}{2}$ 的连分数展开具有形式
+???+ note "Theorem"
+    Let $D$ be a positive integer that is not a perfect square. The continued fraction expansion of the quadratic irrational $\omega=\dfrac{1+\sqrt{D}}{2}$ has the form
     
     $$
     \omega = [\lfloor\omega\rfloor,\overline{a_1,\cdots,a_{\ell-1},2\lfloor\omega\rfloor-1}],
     $$
     
-    其中，$\ell$ 为循环节长度，且 $a_k=a_{\ell-k}$ 对任何 $1\le k<\ell$ 都成立．
+    where $\ell$ is the period length, and $a_k=a_{\ell-k}$ for all $1\le k<\ell$.
 
-??? note "证明"
-    因为 $\lfloor\omega\rfloor-1+\omega>1$，而且它的共轭等于 $\lfloor\omega\rfloor - \omega$，位于 $-1$ 和 $0$ 之间，所以根据 [Galois 的结论](./continued-fraction.md#纯循环连分数) 可知，$\lfloor\omega\rfloor-1+\omega$ 是纯循环连分数，可以写成
+??? note "Proof"
+    Since $\lfloor\omega\rfloor-1+\omega>1$ and its conjugate equals $\lfloor\omega\rfloor - \omega$, which lies between $-1$ and $0$, by [Galois's result](./continued-fraction.md#纯循环连分数) $\lfloor\omega\rfloor-1+\omega$ is a purely periodic continued fraction and can be written as
     
     $$
     \lfloor\omega\rfloor-1+\omega = [\overline{2\lfloor\omega\rfloor-1,a_1,\cdots,a_{\ell-1}}].
     $$
     
-    而 Galois 关于倒数负共轭的结论说明
+    Galois's result on the negative reciprocal of the conjugate says
     
     $$
     \dfrac{1}{\omega-\lfloor\omega\rfloor} = [\overline{a_{\ell-1},\cdots,a_1,2\lfloor\omega\rfloor-1}].
     $$
     
-    因此，根据连分数的定义，有
+    So, by the definition of continued fractions,
     
     $$
     \lfloor\omega\rfloor-1+\omega = 2\lfloor\omega\rfloor-1 + \dfrac{1}{\dfrac{1}{\omega-\lfloor\omega\rfloor}} = [2\lfloor\omega\rfloor-1,\overline{a_{\ell-1},\cdots,a_1,2\lfloor\omega\rfloor-1}].
     $$
     
-    连分数展开的唯一性就说明 $a_k=a_{\ell-k}$ 对所有 $1\le k<\ell$ 都成立，因而要证明的展开式也成立．
+    Uniqueness of continued fraction expansions shows that $a_k=a_{\ell-k}$ for all $1\le k<\ell$, so the claimed expansion holds.
 
-???+ note "定理"
-    设 $D\equiv 1\pmod 4$．在对 $(P_0,Q_0,D)=(1,2,D)$ 运行上述 PQa 算法的过程中，$Q_k=2$ 必然推出 $\ell\mid k$．
+???+ note "Theorem"
+    Let $D\equiv 1\pmod 4$. When running the PQa algorithm above on $(P_0,Q_0,D)=(1,2,D)$, $Q_k=2$ implies $\ell\mid k$.
 
-??? note "证明"
-    在 $\dfrac{1+\sqrt{D}}{2}$ 的连分数展开中，除了第 $0$ 个余项，所有其他余项都是 [纯循环连分数](./continued-fraction.md#纯循环连分数)．设 $Q_k=2$．根据 Galois 的结论，必然有余项 $\omega_k=\dfrac{P_k+\sqrt{D}}{2}$ 的共轭 $-1<\dfrac{P_k-\sqrt{D}}{2}<0$，亦即 $\sqrt{D}-2<P_k<\sqrt{D}$．因为 PQa 算法中总有 $Q_k\mid P_k^2-D$（见 [算法正确性证明](./continued-fraction.md#二次无理数)），所以 $P_k$ 一定是奇数，这就说明 $P_k$ 取值唯一，即 $P_k=P_0+2(\lfloor\omega\rfloor-1)$，也就是说余项 $\omega_k=\omega_\ell$．但是，余项的重复意味着连分数的循环，如果 $k$ 不是 $\ell$ 的整数倍，就与 $\ell$ 是最小正周期相矛盾．所以，必然有 $\ell\mid k$．
+??? note "Proof"
+    In the continued fraction expansion of $\dfrac{1+\sqrt{D}}{2}$, every remainder except the $0$-th is a [purely periodic continued fraction](./continued-fraction.md#纯循环连分数). Suppose $Q_k=2$. By Galois's result, the conjugate of the remainder $\omega_k=\dfrac{P_k+\sqrt{D}}{2}$ satisfies $-1<\dfrac{P_k-\sqrt{D}}{2}<0$, that is, $\sqrt{D}-2<P_k<\sqrt{D}$. Since the PQa algorithm always has $Q_k\mid P_k^2-D$ (see the [proof of correctness](./continued-fraction.md#二次无理数)), $P_k$ must be odd, so $P_k$ is uniquely determined: $P_k=P_0+2(\lfloor\omega\rfloor-1)$. That is, the remainder $\omega_k=\omega_\ell$. But a repeated remainder means the continued fraction repeats from there, so if $k$ is not a multiple of $\ell$, this contradicts $\ell$ being the minimal period. So $\ell\mid k$.
 
-???+ note "定理"
-    设方程 $x^2-Dy^2=\pm 4$ 的最小正整数解为 $(x_1,y_1)$．那么，它的全部解就是
+???+ note "Theorem"
+    Let $(x_1,y_1)$ be the smallest positive integer solution of $x^2-Dy^2=\pm 4$. Then all its solutions are
     
     $$
     \left\{(x,y):\dfrac{x+y\sqrt{D}}{2}=\pm\left(\dfrac{x_1+y_1\sqrt{D}}{2}\right)^k,k\in\mathbf Z\right\}.
     $$
 
-??? note "证明"
-    根据对称性，只需要考虑正整数解 $(x,y)$ 即可．此处需要证明的只有集合中的实数对 $(x,y)$ 确实是方程 $x^2-Dy^2=\pm 4$ 的整数解．剩下的事情只需要复述对方程 $x^2-Dy^2=\pm 1$ 的解的结构的证明即可．
+??? note "Proof"
+    By symmetry, we only need positive integer solutions $(x,y)$. The only thing to prove here is that the real pairs $(x,y)$ in the set are indeed integer solutions of $x^2-Dy^2=\pm 4$. The rest just repeats the proof of the structure of solutions of $x^2-Dy^2=\pm 1$.
     
-    实际上要证明的是，对于方程 $x^2-Dy^2=\pm 4$ 的任何整数解 $(x_1,y_1)$ 和 $(x_2,y_2)$，如下定义的正实数对 $(x_3,y_3)$ 仍然是整数解：
+    What we actually need to show is that, for any integer solutions $(x_1,y_1)$ and $(x_2,y_2)$ of $x^2-Dy^2=\pm 4$, the positive real pair $(x_3,y_3)$ defined below is again an integer solution:
     
     $$
     \dfrac{x_3+y_3\sqrt{D}}{2} = \dfrac{x_1+y_1\sqrt{D}}{2}\dfrac{x_2+y_2\sqrt{D}}{2}.
     $$
     
-    展开右侧，比较有理项和无理项的系数可知
+    Expanding the right-hand side and comparing rational and irrational coefficients gives
     
     $$
     x_3=\dfrac{x_1x_2+Dy_1y_2}{2},\ y_3=\dfrac{x_1y_2+x_2y_1}{2}.
     $$
     
-    因为对 $i=1,2$ 有 $x_i\equiv x_i^2\equiv Dy_i^2\equiv Dy_i\pmod 2$，所以
+    Since $x_i\equiv x_i^2\equiv Dy_i^2\equiv Dy_i\pmod 2$ for $i=1,2$,
     
     $$
     \begin{aligned}
@@ -449,31 +449,31 @@ $$
     \end{aligned}
     $$
     
-    这说明 $x_3$ 和 $y_3$ 都是整数．再利用范数保持乘法的性质可知，$(x_3,y_3)$ 是 $x^2-Dy^2=\pm 4$ 的解．
+    So $x_3$ and $y_3$ are both integers. Since the norm is multiplicative, $(x_3,y_3)$ is a solution of $x^2-Dy^2=\pm 4$.
 
-综合这些事实，重复前文几节的论述，就可以说明用于解决方程 $x^2-Dy^2=\pm 4$ 的上述算法的正确性．这些结果说明，方程 $x^2-Dy^2=\pm 4$ 具有和方程 $x^2-Dy^2=\pm 1$ 类似的简单的解的结构：它的所有解都可以通过其最小正整数解表示出来，而无需求解其它方程．
+Putting these facts together and repeating the arguments of the previous sections proves that the algorithm above for $x^2-Dy^2=\pm 4$ is correct. These results show that $x^2-Dy^2=\pm 4$ has a simple solution structure like that of $x^2-Dy^2=\pm 1$: all its solutions can be expressed through its smallest positive integer solution, without solving any other equation.
 
-其实，方程 $x^2-Dy^2=\pm 1$ 的所有解都可以在方程 $x^2-Dy^2=\pm 4$ 的解中找到，因而从这个角度看，方程 $x^2-Dy^2=\pm 4$ 更为基础．显然，$(x,y)$ 是方程 $x^2-Dy^2=\pm 1$ 的解，当且仅当 $(2x,2y)$ 是方程 $x^2-Dy^2=\pm 4$ 的解．前文的分析指出，当 $D\equiv 2,3\pmod 4$ 时，方程 $x^2-Dy^2=\pm 4$ 的所有解都一定同为偶数，因而对应于 $x^2-Dy^2=\pm 1$ 的解．
+In fact, every solution of $x^2-Dy^2=\pm 1$ can be found among the solutions of $x^2-Dy^2=\pm 4$, so from this point of view $x^2-Dy^2=\pm 4$ is more fundamental. Clearly, $(x,y)$ is a solution of $x^2-Dy^2=\pm 1$ if and only if $(2x,2y)$ is a solution of $x^2-Dy^2=\pm 4$. The analysis above shows that when $D\equiv 2,3\pmod 4$, all solutions of $x^2-Dy^2=\pm 4$ are both even, so they correspond to solutions of $x^2-Dy^2=\pm 1$.
 
-当 $D\equiv 0\pmod 4$ 时，方程 $x^2-Dy^2=\pm 4$ 的解 $(x,y)$ 中，$x$ 一定是偶数，但是 $y$ 可能是奇数．如果在方程 $x^2-Dy^2=\pm 4$ 的最小正整数解 $(x_1,y_1)$ 中，$y_1$ 是偶数，那么在所有解中 $y$ 也一定是偶数，此时这些整数解和方程 $x^2-Dy^2=\pm 1$ 的整数解一一对应；但是，如果在最小整数解 $(x_1,y_1)$ 中，$y_1$ 是奇数，那么 $y_k$ 的奇偶性将和 $k$ 一致，交替变化，因而只有当 $k$ 是偶数时，才对应于方程 $x^2-Dy^2=\pm 1$ 的解．如果 $x^2-Dy^2=\pm 4$ 的最小正整数解中 $y_1$ 是奇数而且 $x_1+y_1\sqrt{D}$ 的范数是 $-4$，那么，对于这样的 $D$，$x^2-Dy^2=-4$ 有解，但是 $x^2-Dy^2=-1$ 无解．
+When $D\equiv 0\pmod 4$, in a solution $(x,y)$ of $x^2-Dy^2=\pm 4$, $x$ must be even, but $y$ may be odd. If $y_1$ is even in the smallest positive integer solution $(x_1,y_1)$ of $x^2-Dy^2=\pm 4$, then $y$ is even in all solutions, and these integer solutions correspond one-to-one to the integer solutions of $x^2-Dy^2=\pm 1$; but if $y_1$ is odd in the smallest solution $(x_1,y_1)$, the parity of $y_k$ follows that of $k$ and alternates, so only even $k$ gives solutions of $x^2-Dy^2=\pm 1$. If $y_1$ is odd in the smallest positive integer solution of $x^2-Dy^2=\pm 4$ and the norm of $x_1+y_1\sqrt{D}$ is $-4$, then for such $D$, $x^2-Dy^2=-4$ has a solution but $x^2-Dy^2=-1$ does not.
 
-当 $D\equiv 1\pmod 4$ 时，方程 $x^2-Dy^2=\pm 4$ 的解 $(x,y)$ 可能同时是奇数，也可能同时是偶数．如果最小正整数解 $(x_1,y_1)$ 已经同时是偶数，那么它的所有整数解也一定同时是偶数，所以总是对应于方程 $x^2-Dy^2=\pm 1$ 的整数解．如果最小正整数解 $(x_1,y_1)$ 同时是奇数，那么有如下结论：
+When $D\equiv 1\pmod 4$, a solution $(x,y)$ of $x^2-Dy^2=\pm 4$ may be both odd or both even. If the smallest positive integer solution $(x_1,y_1)$ is already both even, then all its integer solutions are also both even, so they always correspond to integer solutions of $x^2-Dy^2=\pm 1$. If the smallest positive integer solution $(x_1,y_1)$ is both odd, we have the following:
 
-???+ note "定理"
-    设方程 $x^2-Dy^2=\pm 4$ 的最小正整数解是 $(x_1,y_1)$．如果 $x_1$ 和 $y_1$ 同时是奇数，那么，$D\equiv 5\pmod 8$，且该方程的整数解 $(x,y)$ 同时是偶数，当且仅当
+???+ note "Theorem"
+    Let $(x_1,y_1)$ be the smallest positive integer solution of $x^2-Dy^2=\pm 4$. If $x_1$ and $y_1$ are both odd, then $D\equiv 5\pmod 8$, and an integer solution $(x,y)$ of the equation is both even if and only if
     
     $$
     \dfrac{x+y\sqrt{D}}{2} = \pm\left(\dfrac{x_1+y_1\sqrt{D}}{2}\right)^{3k},k\in\mathbf Z.
     $$
 
-??? note "证明"
-    等式 $x_1^2-Dy_1^2=\pm 4$ 的两边同时对 $8$ 取模，得到 $D\equiv 5\pmod 8$．要证明第二个结论，首先证明 $(x_3,y_3)$ 都是偶数，因为
+??? note "Proof"
+    Taking both sides of $x_1^2-Dy_1^2=\pm 4$ modulo $8$ gives $D\equiv 5\pmod 8$. To prove the second claim, first show that $(x_3,y_3)$ are both even. Since
     
     $$
     \dfrac{x_3+y_3\sqrt{D}}{2} = \left(\dfrac{x_1+y_1\sqrt{D}}{2}\right)^{3} = \dfrac{x_1^3+3Dx_1y_1^2}{8}+\dfrac{3x_1^2y_1+Dy_1^3}{8}\sqrt{D},
     $$
     
-    所以，只需要证明右侧是整数．因为奇数的平方模 $8$ 余 $1$，所以，有
+    we only need to show the right-hand side is an integer. Since the square of an odd number is $1$ modulo $8$,
     
     $$
     \begin{aligned}
@@ -482,37 +482,37 @@ $$
     \end{aligned}
     $$
     
-    这就说明了 $x_3,y_3$ 都是偶数．进而，对于所有 $k\in\mathbf Z$，都有
+    This shows that $x_3,y_3$ are both even. Then, for all $k\in\mathbf Z$,
     
     $$
     \dfrac{x+y\sqrt{D}}{2} = \pm\left(\dfrac{x_1+y_1\sqrt{D}}{2}\right)^{3k} = \pm\left(\dfrac{x_3+y_3\sqrt{D}}{2}\right)^k \in \mathbf Z[\sqrt{D}],
     $$
     
-    所以此时的 $(x,y)$ 都是偶数．反过来，对于 $r=1,2$，总有
+    so all such $(x,y)$ are even. Conversely, for $r=1,2$ we always have
     
     $$
     \pm\left(\dfrac{x_1+y_1\sqrt{D}}{2}\right)^{3k+r} = \pm\left(\dfrac{x_3+y_3\sqrt{D}}{2}\right)^k\left(\dfrac{x_r+y_r\sqrt{D}}{2}\right).
     $$
     
-    要证明相应的 $(x,y)$ 不是整数，只需要证明该式不是整数，也就是右侧的乘积中第二项不是整数．这在 $r=1$ 时，就是已知条件；在 $r=2$ 时，因为
+    To show the corresponding $(x,y)$ are not integers, it suffices to show this expression is not an integer, that is, the second factor in the product on the right is not an integer. For $r=1$, this is the hypothesis; for $r=2$, since
     
     $$
     \dfrac{x_2+y_2\sqrt{D}}{2} = \left(\dfrac{x_1+y_1\sqrt{D}}{2}\right)^2 = \dfrac{x_1^2+Dy_1^2}{4} + \dfrac{x_1y_1}{2}\sqrt{D},
     $$
     
-    而且 $x_1^2+Dy_1^2\equiv 1+1\times 1=2\pmod 4$，$x_1y_1\equiv 1\pmod 2$，所以该式也不是整数．这就证明了，只有幂次是 $3$ 的倍数的时候，相应的解才都是偶数．
+    and $x_1^2+Dy_1^2\equiv 1+1\times 1=2\pmod 4$, $x_1y_1\equiv 1\pmod 2$, this is not an integer either. This proves that the corresponding solutions are both even only when the exponent is a multiple of $3$.
 
-也就是说，方程 $x^2-Dy^2=\pm 4$ 的每三个解中就有一个同时是偶数，它对应着 $x^2-Dy^2=\pm 1$ 的整数解．这也说明，对于 $D\equiv 1\pmod 4$，方程 $x^2-Dy^2=-4$ 有解，当且仅当方程 $x^2-Dy^2=-1$ 有解．
+In other words, one out of every three solutions of $x^2-Dy^2=\pm 4$ is both even, and it corresponds to an integer solution of $x^2-Dy^2=\pm 1$. This also shows that for $D\equiv 1\pmod 4$, $x^2-Dy^2=-4$ has a solution if and only if $x^2-Dy^2=-1$ does.
 
-到目前为止的讨论，已经足够计算实二次整数环的基本单位数．设 $D$ 是正整数且不含平方因子．对于 $D\equiv 2,3\pmod 4$ 的情形，只需要求出 $x^2-Dy^2=\pm 1$ 的最小正整数解；而对于 $D\equiv 1\pmod 4$ 的情形，只需要求出 $x^2-Dy^2=\pm 4$ 的最小正整数解．当得到最小正整数解 $(x,y)$ 时，对于 $D\equiv 2,3\pmod 4$，基本单位数就是 $\pm x\pm y\sqrt{D}$；对于 $D\equiv 1\pmod 4$，基本单位数就是 $\dfrac{\pm x\pm y\sqrt{D}}{2}$．
+The discussion so far is enough to compute the fundamental unit of a real quadratic integer ring. Let $D$ be a square-free positive integer. For $D\equiv 2,3\pmod 4$, you only need the smallest positive integer solution of $x^2-Dy^2=\pm 1$; for $D\equiv 1\pmod 4$, you only need the smallest positive integer solution of $x^2-Dy^2=\pm 4$. Given the smallest positive integer solution $(x,y)$, for $D\equiv 2,3\pmod 4$ the fundamental unit is $\pm x\pm y\sqrt{D}$; for $D\equiv 1\pmod 4$ it is $\dfrac{\pm x\pm y\sqrt{D}}{2}$.
 
-??? example "示例"
-    1.  求解方程 $x^2-14y^2=\pm 4$．
+??? example "Examples"
+    1.  Solve $x^2-14y^2=\pm 4$.
     
-        利用前文的示例中的计算可知，方程 $x^2-14y^2=4$ 的最小正整数解为 $(30,8)$，方程 $x^2-14y^2=-4$ 无解．
-    2.  求解方程 $x^2-41y^2=\pm 4$．
+        From the computations in the earlier example, the smallest positive integer solution of $x^2-14y^2=4$ is $(30,8)$, and $x^2-14y^2=-4$ has no solution.
+    2.  Solve $x^2-41y^2=\pm 4$.
     
-        对 $(P_0,Q_0,D)=(1,2,41)$ 运行 PQa 算法结果如下：（标红部分为第一个循环节）
+        Running the PQa algorithm on $(P_0,Q_0,D)=(1,2,41)$ gives: (the red part is the first period)
     
         |  $k$ | $P$ | $Q$ |        $a$       |   $A$   |   $B$  |   $G$   | $G^2-DB^2$ |
         | :--: | :-: | :-: | :--------------: | :-----: | :----: | :-----: | :--------: |
@@ -529,16 +529,16 @@ $$
         | $10$ | $5$ | $2$ |        $5$       | $13507$ | $3649$ | $23365$ |    $-16$   |
         | $11$ | $5$ | $8$ |        $1$       | $15876$ | $4289$ | $27463$ |     $8$    |
     
-        循环节长度 $\ell=5$ 为奇数．方程 $x^2-41y^2=-4$ 的最小正整数解为 $(G_4,B_4)=(64,10)$，方程 $x^2-41y^2=4$ 的最小正整数解为 $(G_9,B_9)=(4098,640)$．它们之间有如下关系：
+        The period length $\ell=5$ is odd. The smallest positive integer solution of $x^2-41y^2=-4$ is $(G_4,B_4)=(64,10)$, and that of $x^2-41y^2=4$ is $(G_9,B_9)=(4098,640)$. They are related by:
     
         $$
         \dfrac{4098+640\sqrt{41}}{2} = \left(\dfrac{64+10\sqrt{41}}{2}\right)^2.
         $$
     
-        当然，因为 $D\equiv 1\pmod 8$，根据前文结论，此时方程 $x^2-41y^2=\pm 4$ 的最小正整数解一定都是偶数，且总是方程 $x^2-41y^2=\pm 1$ 的最小正整数解的 $2$ 倍，所以也可以直接利用前文的示例得出．
-    3.  求解方程 $x^2-13y^2=\pm 4$．
+        Of course, since $D\equiv 1\pmod 8$, by the result above the smallest positive integer solutions of $x^2-41y^2=\pm 4$ here are always even and are always $2$ times the smallest positive integer solutions of $x^2-41y^2=\pm 1$, so they also follow directly from the earlier example.
+    3.  Solve $x^2-13y^2=\pm 4$.
     
-        对 $(P_0,Q_0,D)=(1,2,13)$ 运行 PQa 算法结果如下：（标红部分为第一个循环节）
+        Running the PQa algorithm on $(P_0,Q_0,D)=(1,2,13)$ gives: (the red part is the first period)
     
         | $k$ | $P$ | $Q$ |        $a$       |  $A$ |  $B$ |  $G$  | $G^2-DB^2$ |
         | :-: | :-: | :-: | :--------------: | :--: | :--: | :---: | :--------: |
@@ -547,46 +547,46 @@ $$
         | $2$ | $3$ | $2$ |        $3$       | $23$ | $10$ |  $36$ |    $-4$    |
         | $3$ | $3$ | $2$ |        $3$       | $74$ | $33$ | $119$ |     $4$    |
     
-        循环节长度 $\ell=1$ 为奇数．方程 $x^2-13y^2=-4$ 的最小正整数解为 $(G_0,B_0)=(3,1)$，方程 $x^2-13y^2=4$ 的最小正整数解为 $(G_1,B_1)=(11,3)$．
+        The period length $\ell=1$ is odd. The smallest positive integer solution of $x^2-13y^2=-4$ is $(G_0,B_0)=(3,1)$, and that of $x^2-13y^2=4$ is $(G_1,B_1)=(11,3)$.
     
-        因为该方程的最小正整数解都是奇数，所以可以利用第三个循环节末尾处的数对 $(G_2,B_2)=(36,10)$ 得到相应的（负）Pell 方程 $x^2-13y^2=\pm 1$ 的最小正整数解 $(18,5)$．它也可以通过直接计算得到：
+        Since the smallest positive integer solutions of this equation are odd, we can use the pair $(G_2,B_2)=(36,10)$ at the end of the third period to get the smallest positive integer solution $(18,5)$ of the corresponding (negative) Pell equation $x^2-13y^2=\pm 1$. It can also be computed directly:
     
         $$
         \dfrac{36+10\sqrt{13}}{2}=\left(\dfrac{3+\sqrt{13}}{2}\right)^3.
         $$
     
-        而且，这是负 Pell 方程的解．相应的 Pell 方程的最小正整数解是 $(649,180)$．
-    4.  求解方程 $x^2-52y^2=\pm 4$．
+        Moreover, this is a solution of the negative Pell equation. The smallest positive integer solution of the corresponding Pell equation is $(649,180)$.
+    4.  Solve $x^2-52y^2=\pm 4$.
     
-        因为方程 $x^2-13y^2=\pm 1$ 的最小正整数解分别是 $(18,5)$ 和 $(649,180)$，所以方程 $x^2-52y^2=\pm 4$ 的最小正整数解分别是 $(36,10)$ 和 $(1298,360)$．
+        Since the smallest positive integer solutions of $x^2-13y^2=\pm 1$ are $(18,5)$ and $(649,180)$, the smallest positive integer solutions of $x^2-52y^2=\pm 4$ are $(36,10)$ and $(1298,360)$.
 
-### 一般情形
+### General case
 
-最后，讨论广义 Pell 方程的解法．
+Finally, we discuss how to solve the generalized Pell equation.
 
-对于 $|N|<\sqrt{D}$ 的情形有一个简单的解法．前文的结论说明方程 $x^2-Dy^2=N$ 的解 $(x,y)$ 一定满足 $\dfrac{x}{y}$ 等于 $\sqrt{D}$ 的某个渐近分数．而且，根据前文讨论的解的结构可知，每个基本解 $(x,y)$ 都满足 $x+y\sqrt{D}$ 小于等于相应的 Pell 方程 $x^2-Dy^2=1$ 的基本解 $x_1+y_1\sqrt{D}$．利用 PQa 算法中分母序列 $B_k$ 的单调性可知，广义 Pell 方程的这些基本解一定出现在相应的 Pell 方程的基本解出现之前．由此，只需要对 $(P_0,Q_0,D)=(0,1,D)$ 运行 PQa 算法，直到 $Q_{\ell'}=1$ 且 $\ell'$ 为偶数时为止，过程中对出现的每个 $(A_k,B_k)$ 检验是否存在整数 $f$ 使得
+For $|N|<\sqrt{D}$ there is a simple method. The results above show that for a solution $(x,y)$ of $x^2-Dy^2=N$, $\dfrac{x}{y}$ must equal some convergent of $\sqrt{D}$. Moreover, by the solution structure discussed above, every fundamental solution $(x,y)$ has $x+y\sqrt{D}$ at most the fundamental solution $x_1+y_1\sqrt{D}$ of the corresponding Pell equation $x^2-Dy^2=1$. Since the denominators $B_k$ in the PQa algorithm are monotonic, these fundamental solutions of the generalized Pell equation must appear before the fundamental solution of the corresponding Pell equation. So just run the PQa algorithm on $(P_0,Q_0,D)=(0,1,D)$ until $Q_{\ell'}=1$ with $\ell'$ even, and for each $(A_k,B_k)$ along the way, check whether there is an integer $f$ such that
 
 $$
 A_k^2-DB_k^2 = (-1)^{k+1}Q_{k+1} = N/f^2
 $$
 
-成立，如果成立，则记录 $(fA_{k},fB_{k})$ 是一个最小正整数解．这个过程记录的所有 $(fA_k,fB_k)$ 就是方程 $x^2-Dy^2=N$ 的全部最小正整数解．利用 $(A_{\ell'-1},B_{\ell'-1})$，即相应的 Pell 方程的基本解，就可以根据求出的这些最小正整数解，生成广义 Pell 方程的所有解．注意，取决于循环节长度 $\ell$ 是偶数还是奇数，上述的 $\ell'$ 可能是 $\ell$ 或是 $2\ell$．
+holds. If it does, record $(fA_{k},fB_{k})$ as a smallest positive integer solution. All the $(fA_k,fB_k)$ recorded this way are exactly all the smallest positive integer solutions of $x^2-Dy^2=N$. Using $(A_{\ell'-1},B_{\ell'-1})$, the fundamental solution of the corresponding Pell equation, you can generate all solutions of the generalized Pell equation from these smallest positive integer solutions. Note that, depending on whether the period length $\ell$ is even or odd, the $\ell'$ above may be $\ell$ or $2\ell$.
 
-对于更为一般的 $N$ 的情形，上述方法不再适用．首先，枚举 $N$ 的所有平方因子 $f^2$，设 $m=N/f^2$，并枚举同余方程 $z^2\equiv D\pmod{|m|}$ 的所有满足 $-|m|/2<z \le |m|/2$ 的解 $z$．然后，对 $(P_0,Q_0,D)=(z,|m|,D)$ 运行 PQa 算法，直到 $Q_k=\pm 1$ 或已经结束了一个循环节．在第二种情形下，与该组 $(f,z)$ 相关的方程的解并不存在．在第一种情形，需要进一步判断 $(-1)^kQ_k=N/|N|$ 与否．如果符号一致，那么 $(fG_{k-1},fB_{k-1})$ 就是方程 $x^2-Dy^2=N$ 的解．否则，它是方程 $x^2-Dy^2=-N$ 的解，而且当且仅当相应的负 Pell 方程的解存在时，才可以通过复合它与相应的负 Pell 方程的基本解来得到方程 $x^2-Dy^2=N$ 的解．当完成对所有组 $(f,z)$ 的遍历之后，就可以得到方程 $x^2-Dy^2=N$ 在每个解的等价类中各恰好一个解，且该解为该等价类中的基本解或最小正整数解．利用它们和相应的 Pell 方程的基本解，可以生成该方程的所有整数解．这一算法称为 **Lagrange–Matthews–Mollin 算法**．
+For more general $N$, the method above no longer works. First, enumerate every square factor $f^2$ of $N$, let $m=N/f^2$, and enumerate all solutions $z$ of the congruence $z^2\equiv D\pmod{|m|}$ with $-|m|/2<z \le |m|/2$. Then run the PQa algorithm on $(P_0,Q_0,D)=(z,|m|,D)$ until $Q_k=\pm 1$ or a full period has ended. In the second case, the equation has no solution associated with this $(f,z)$. In the first case, you further check whether $(-1)^kQ_k=N/|N|$. If the signs agree, $(fG_{k-1},fB_{k-1})$ is a solution of $x^2-Dy^2=N$. Otherwise it is a solution of $x^2-Dy^2=-N$, and you can get a solution of $x^2-Dy^2=N$ by combining it with the fundamental solution of the corresponding negative Pell equation, if and only if that negative Pell equation has a solution. After going through all pairs $(f,z)$, you get exactly one solution of $x^2-Dy^2=N$ in each equivalence class of solutions, and it is either the fundamental solution or the smallest positive integer solution of that class. Using these and the fundamental solution of the corresponding Pell equation, you can generate all integer solutions of the equation. This algorithm is called the **Lagrange–Matthews–Mollin algorithm**.
 
-该算法的正确性由如下定理保证：
+The correctness of this algorithm is guaranteed by the following theorem:
 
-???+ note "定理"
-    设方程 $x^2-Dy^2=N$ 有整数解 $(x,y)$ 且 $x\ge 0, y>0,\gcd(x,y)=1$．令 $Q_0=|N|$，则 $\gcd(Q_0,y)=1$．设 $P_0$ 是同余方程 $x\equiv -P_0y\pmod{Q_0}$ 的解且 $-Q_0/2<P_0\le Q_0/2$，并设整数 $X$ 使得 $x=Q_0X-P_0y$ 成立．那么，$P_0^2\equiv D\pmod{Q_0}$，$\dfrac{X}{y}$ 是 $\omega=\dfrac{P_0+\sqrt{D}}{Q_0}$ 的一个渐近分数 $\dfrac{A_{k-1}}{B_{k-1}}$，且 $Q_k=(-1)^k\dfrac{N}{|N|}$．
+???+ note "Theorem"
+    Suppose $x^2-Dy^2=N$ has an integer solution $(x,y)$ with $x\ge 0, y>0,\gcd(x,y)=1$. Let $Q_0=|N|$; then $\gcd(Q_0,y)=1$. Let $P_0$ be the solution of the congruence $x\equiv -P_0y\pmod{Q_0}$ with $-Q_0/2<P_0\le Q_0/2$, and let the integer $X$ satisfy $x=Q_0X-P_0y$. Then $P_0^2\equiv D\pmod{Q_0}$, $\dfrac{X}{y}$ is a convergent $\dfrac{A_{k-1}}{B_{k-1}}$ of $\omega=\dfrac{P_0+\sqrt{D}}{Q_0}$, and $Q_k=(-1)^k\dfrac{N}{|N|}$.
 
-??? note "证明"
-    利用 $x\equiv -P_0y\pmod{Q_0}$ 和 $x^2-Dy^2=N\equiv 0\pmod{Q_0}$，显然有 $P_0^2\equiv D\pmod{Q_0}$．因而，
+??? note "Proof"
+    From $x\equiv -P_0y\pmod{Q_0}$ and $x^2-Dy^2=N\equiv 0\pmod{Q_0}$, clearly $P_0^2\equiv D\pmod{Q_0}$. Hence
     
     $$
     P_0x+Dy\equiv -P_0^2y+Dy = (D-P_0^2)y\equiv 0\pmod{Q_0}.
     $$
     
-    由此，可以考察整系数矩阵
+    So we can consider the integer matrix
     
     $$
     \begin{pmatrix}P & R \\ Q & S\end{pmatrix}
@@ -594,46 +594,46 @@ $$
     \begin{pmatrix}X & \dfrac{P_0x+Dy}{Q_0} \\ y & x\end{pmatrix}.
     $$
     
-    它的行列式
+    Its determinant is
     
     $$
     PS-QR = \dfrac{x(x+P_0y)-y(P_0x+Dy)}{Q_0} = \dfrac{x^2-Dy^2}{Q_0} = \pm 1.
     $$
     
-    而且，设 $\zeta =\sqrt{D} > 1$，就有
+    Moreover, letting $\zeta =\sqrt{D} > 1$, we have
     
     $$
     \dfrac{P\zeta+R}{Q\zeta+S} = \dfrac{(x+P_0y)\sqrt{D}+(P_0x+Dy)}{(x+y\sqrt{D})Q_0} = \dfrac{P_0+\sqrt{D}}{Q_0} = \omega.
     $$
     
-    下面要证明 $\dfrac{P}{Q}$ 是 $\omega$ 的一个渐近分数．不妨设 $\dfrac{P}{Q}$ 有 [连分数展开](./continued-fraction.md#简单连分数)
+    Now we show that $\dfrac{P}{Q}$ is a convergent of $\omega$. Suppose $\dfrac{P}{Q}$ has the [continued fraction expansion](./continued-fraction.md#简单连分数)
     
     $$
     \dfrac{P}{Q} = [a_0,a_1,\cdots,a_k]
     $$
     
-    且 $PS-QR = (-1)^{k-1}$．如果设 $\dfrac{p_k}{q_k}$ 是它的第 $k$ 个渐近分数，那么 $(p_k,q_k)=(P,Q)$，且根据 [渐近分数的差分公式](./continued-fraction.md#误差估计) 可知，$p_kq_{k-1}-q_kp_{k-1}=(-1)^{k-1}$．这说明
+    with $PS-QR = (-1)^{k-1}$. Let $\dfrac{p_k}{q_k}$ be its $k$-th convergent; then $(p_k,q_k)=(P,Q)$, and by the [difference formula for convergents](./continued-fraction.md#误差估计), $p_kq_{k-1}-q_kp_{k-1}=(-1)^{k-1}$. This means
     
     $$
     p_k(S-q_{k-1}) = q_k(R-p_{k-1}).
     $$
     
-    分情况讨论：
+    Consider the cases:
     
-    -   如果 $S=0$，那么容易验证 $Q=R=1$，因而 $\omega=P+\zeta^{-1}=[P,\zeta]$，故而 $\dfrac{P}{Q}=P$ 是 $\omega$ 的第 $0$ 个渐近分数；
-    -   如果 $Q=S>0$，那么 $Q=S=1$ 且 $P-R=\pm 1$．此时，
-        -   如果 $P=R+1$，那么 $\omega=R+\dfrac{1}{1+\zeta^{-1}}=[R,1,\zeta]$，故而 $\dfrac{P}{Q}=\dfrac{R+1}{1}=[R,1]$ 是 $\omega$ 的第 $1$ 个渐近分数；
-        -   如果 $P=R-1$，那么 $\omega=R-1+\dfrac{1}{1+\zeta}=[R-1,\zeta-1]$，故而 $\dfrac{P}{Q}=R-1$ 是 $\omega$ 的第 $0$ 个渐近分数；
-    -   如果 $Q\neq S>0$，那么由于 $Q=q_k\mid(S-q_{k-1})$，总存在整数 $\kappa$ 使得 $S=\kappa q_k+q_{k-1}$ 和 $R=\kappa p_k+p_{k-1}$ 成立．因为 $q_k\ge q_{k-1}$ 且 $S>0$，所以 $\kappa\ge 0$．因而，$\omega=\dfrac{(\kappa+\zeta)p_k+p_{k-1}}{(\kappa+\zeta)q_k+q_{k-1}}=[a_0,a_1,\cdots,a_k,\kappa+\zeta]$，故而 $\dfrac{P}{Q}$ 是它的第 $k$ 个渐近分数．
+    -   If $S=0$, it is easy to check that $Q=R=1$, so $\omega=P+\zeta^{-1}=[P,\zeta]$, and $\dfrac{P}{Q}=P$ is the $0$-th convergent of $\omega$;
+    -   If $Q=S>0$, then $Q=S=1$ and $P-R=\pm 1$. In this case,
+        -   if $P=R+1$, then $\omega=R+\dfrac{1}{1+\zeta^{-1}}=[R,1,\zeta]$, so $\dfrac{P}{Q}=\dfrac{R+1}{1}=[R,1]$ is the $1$-st convergent of $\omega$;
+        -   if $P=R-1$, then $\omega=R-1+\dfrac{1}{1+\zeta}=[R-1,\zeta-1]$, so $\dfrac{P}{Q}=R-1$ is the $0$-th convergent of $\omega$;
+    -   If $Q\neq S>0$, then since $Q=q_k\mid(S-q_{k-1})$, there is always an integer $\kappa$ with $S=\kappa q_k+q_{k-1}$ and $R=\kappa p_k+p_{k-1}$. Since $q_k\ge q_{k-1}$ and $S>0$, $\kappa\ge 0$. So $\omega=\dfrac{(\kappa+\zeta)p_k+p_{k-1}}{(\kappa+\zeta)q_k+q_{k-1}}=[a_0,a_1,\cdots,a_k,\kappa+\zeta]$, and $\dfrac{P}{Q}$ is its $k$-th convergent.
     
-    综上所述，总有 $\dfrac{X}{y}$ 是 $\omega=\dfrac{P_0+\sqrt{D}}{Q_0}$ 的渐近分数，并按照 PQa 算法中的记号记作 $\dfrac{A_{k-1}}{B_{k-1}}$．因为 $A_{k-1}^2-DB_{k-1}^2=(-1)^kQ_0Q_k$，所以 $Q_k=(-1)^k\dfrac{N}{|N|}$．
+    In all cases, $\dfrac{X}{y}$ is a convergent of $\omega=\dfrac{P_0+\sqrt{D}}{Q_0}$, which in the notation of the PQa algorithm we write as $\dfrac{A_{k-1}}{B_{k-1}}$. Since $A_{k-1}^2-DB_{k-1}^2=(-1)^kQ_0Q_k$, we get $Q_k=(-1)^k\dfrac{N}{|N|}$.
 
-该定理保证了方程的所有正解都存在于相应的二次无理数的渐近分数中．因为利用 PQa 算法计算渐近分数时，只要进入循环节，就一定能保证渐近分数总是正的．所以，只要枚举所有定理条件所允许的二次无理数，计算它的渐近分数直到一个循环节内，就能够找到一个解．因为在同一个二次无理数的渐近分数中出现的两个解，一定是等价的，所以只要得到第一个满足 $(-1)^kQ_k=N/|N|$ 的解，就可以停止继续后面的计算．与前面的所有算法都不同的是，此处满足条件的 $k$ 可能出现在尚未进入循环节时．
+This theorem guarantees that all positive solutions of the equation appear among the convergents of the corresponding quadratic irrationals. When computing convergents with the PQa algorithm, once you are inside the period, the convergents are guaranteed to be positive. So by enumerating all quadratic irrationals allowed by the theorem's conditions and computing their convergents up to one period, you will find a solution. Since two solutions appearing among the convergents of the same quadratic irrational are always equivalent, you can stop as soon as you get the first solution with $(-1)^kQ_k=N/|N|$. Unlike all the earlier algorithms, here a suitable $k$ may appear before the period starts.
 
-??? example "示例"
-    1.  求解方程 $x^2-157y^2=12$．
+??? example "Examples"
+    1.  Solve $x^2-157y^2=12$.
     
-        因为 $12^2<157$，所以对 $(P_0,Q_0,D)=(0,1,157)$ 运行 PQa 算法结果如下：（标红部分为第一个循环节）
+        Since $12^2<157$, run the PQa algorithm on $(P_0,Q_0,D)=(0,1,157)$. The result is: (the red part is the first period)
     
         |  $k$ |  $P$ |  $Q$ |        $a$        |         $A$        |        $B$       |         $G$        | $G^2-DB^2$ |
         | :--: | :--: | :--: | :---------------: | :----------------: | :--------------: | :----------------: | :--------: |
@@ -674,7 +674,7 @@ $$
         | $34$ | $12$ |  $1$ |        $24$       | $1145518138660728$ | $91422300238489$ | $1145518138660728$ |    $-13$   |
         | $35$ | $12$ | $13$ |        $1$        | $1192216867392577$ | $95149264530709$ | $1192216867392577$ |    $12$    |
     
-        循环节长度 $\ell=17$ 为奇数，所以需要考察两个循环节内 $G_k^2-157B_k^2$ 与 $12$ 相差一个平方因子的情形，即 $k=1,9,13,19,23,31$ 的情形．它们对应的解就是下表中的 $(fG,fB)$：
+        The period length $\ell=17$ is odd, so within two periods we look for places where $G_k^2-157B_k^2$ differs from $12$ by a square factor, that is, $k=1,9,13,19,23,31$. The corresponding solutions are the $(fG,fB)$ in the table below:
     
         |  $k$ | $f$ |      $fG_k$      |      $fB_k$     |    $x$    |   $y$   |
         | :--: | :-: | :--------------: | :-------------: | :-------: | :-----: |
@@ -685,15 +685,15 @@ $$
         | $23$ | $1$ |   $26277068347$  |   $2097138361$  |  $-10663$ |  $851$  |
         | $31$ | $1$ | $21950079635497$ | $1751807067011$ |   $-13$   |   $1$   |
     
-        全体 $(fG,fB)$ 就是方程 $x^2-157y^2=12$ 的解集的所有等价类中的最小正整数解．要通过这些解得到全部解，可以利用相应的 Pell 方程的基本解 $(46698728731849,3726964292220)$．比如说，可以将它们转化为该等价类中的基本解 $(x,y)$，相应的解也一并列于上表中．
-    2.  求解方程 $x^2-157y^2=12$．
+        All the $(fG,fB)$ are the smallest positive integer solutions in all equivalence classes of the solution set of $x^2-157y^2=12$. To get all solutions from them, use the fundamental solution $(46698728731849,3726964292220)$ of the corresponding Pell equation. For example, you can turn them into the fundamental solutions $(x,y)$ of their equivalence classes; these are also listed in the table above.
+    2.  Solve $x^2-157y^2=12$.
     
-        这次利用 Lagrange–Matthews–Mollin 算法求解．首先，枚举 $N=12$ 的平方因子：
+        This time we use the Lagrange–Matthews–Mollin algorithm. First, enumerate the square factors of $N=12$:
     
-        -   $f^2=1^2$ 时，有 $m=12$，同余方程 $z^2\equiv 157\pmod{12}$ 有解 $z=\pm 1,\pm 5$；
-        -   $f^2=2^2$ 时，有 $m=3$，同余方程 $z^2\equiv 157\pmod{3}$ 有解 $z=\pm 1$．
+        -   For $f^2=1^2$, $m=12$, and the congruence $z^2\equiv 157\pmod{12}$ has solutions $z=\pm 1,\pm 5$;
+        -   For $f^2=2^2$, $m=3$, and the congruence $z^2\equiv 157\pmod{3}$ has solutions $z=\pm 1$.
     
-        对于所有可能的 $(f,z)$ 组合运行初始参数为 $(P_0,Q_0,D)=(z,|m|,D)$ 的 PQa 算法，并找到首个 $(-1)^kQ_k=1$ 的位置，对应的 $(fG_{k-1},fB_{k-1})$ 就是一组解．结果如下表所示：
+        For every possible pair $(f,z)$, run the PQa algorithm with initial parameters $(P_0,Q_0,D)=(z,|m|,D)$ and find the first position with $(-1)^kQ_k=1$; the corresponding $(fG_{k-1},fB_{k-1})$ is a solution. The results are shown below:
     
         | $f$ |  $z$ |  $m$ |  $k$ |    $fG_{k-1}$    |    $fB_{k-1}$   |
         | :-: | :--: | :--: | :--: | :--------------: | :-------------: |
@@ -704,12 +704,12 @@ $$
         | $2$ |  $1$ |  $3$ | $20$ |    $483790960$   |    $38610722$   |
         | $2$ | $-1$ |  $3$ | $14$ |     $579160$     |     $46222$     |
     
-        这就是前文列举的所有等价类中的最小正整数解，可以利用 Pell 方程的基本解将它们转化为基本解．
-    3.  求解方程 $x^2-79y^2=\pm 101$．
+        These are exactly the smallest positive integer solutions of all the equivalence classes listed above, and they can be turned into fundamental solutions using the fundamental solution of the Pell equation.
+    3.  Solve $x^2-79y^2=\pm 101$.
     
-        仍然使用 Lagrange–Matthews–Mollin 算法求解．因为 $N=101$ 是素数，所以一定有 $f=1$．此时，$m=101$，相应的同余方程 $z^2\equiv 79\pmod{101}$ 有解 $z=\pm 33$．
+        Again use the Lagrange–Matthews–Mollin algorithm. Since $N=101$ is prime, $f=1$. Then $m=101$, and the congruence $z^2\equiv 79\pmod{101}$ has solutions $z=\pm 33$.
     
-        对 $(P_0,Q_0,D)=(33,101,79)$ 运行 PQa 算法结果如下：（标红部分为第一个循环节）
+        Running the PQa algorithm on $(P_0,Q_0,D)=(33,101,79)$ gives: (the red part is the first period)
     
         | $k$ |  $P$  |  $Q$  |       $a$      |  $A$  |   $B$  |   $G$   | $G^2-DB^2$ |
         | :-: | :---: | :---: | :------------: | :---: | :----: | :-----: | :--------: |
@@ -724,31 +724,31 @@ $$
         | $8$ |  $4$  |  $9$  | $\color{red}1$ | $304$ |  $733$ |  $6515$ |   $-606$   |
         | $9$ |  $5$  |  $6$  |       $2$      | $805$ | $1941$ | $17252$ |    $505$   |
     
-        循环节长度 $\ell=6$ 为偶数．直到一个循环节结束，都不存在 $Q_k=\pm 1$，因而，该情形无解．相应地，对于 $(P_0,Q_0,D)=(-33,101,79)$ 运行 PQa 算法也可以观察到类似的情况．因此，该方程无解．
+        The period length $\ell=6$ is even. Up to the end of one period, $Q_k=\pm 1$ never occurs, so this case has no solution. Similarly, running the PQa algorithm on $(P_0,Q_0,D)=(-33,101,79)$ shows the same thing. So the equation has no solution.
 
-## 习题
+## Exercises
 
--   [LOJ 6687.「Project Euler 66」解方程](https://loj.ac/p/6687)
+-   [LOJ 6687. "Project Euler 66" Solving the Equation](https://loj.ac/p/6687)
 -   [SPOJ EQU2 - Yet Another Equation](https://www.spoj.com/problems/EQU2/)
 -   [SPOJ PELL2 - Pell (Mid pelling)](https://www.spoj.com/problems/PELL2/)
 -   [UVa 12909. Numeric Center](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=862&page=show_problem&problem=4774)
 -   [UVa 10241. Semi-triangular and also Square](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=14&page=show_problem&problem=1182)
 
-## 参考文献与注释
+## References and notes
 
 -   [Pell's equation - Wikipedia](https://en.wikipedia.org/wiki/Pell%27s_equation)
 -   [John P. Robertson - Solving the generalized Pell equation $x^2-Dy^2=N$](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=5ac34a344ee346855184ff949eeaed18685b155c)
 -   [Keith Matthews - The Diophantine Equation $x^2-Dy^2=N$,$D>0$](http://www.numbertheory.org/PDFS/patz5.pdf)
 -   [Existence of Solution to Pell’s Equation - Suryateja Gavva's Blog](https://surya-teja.com/2011/01/11/existence-of-solution-to-pells-equation/)
--   [Calculating the simple continued fraction of a quadratic irrational - Number Theory Web](http://www.numbertheory.org/php/surd.html)（PQa 算法）
--   [Solving the diophantine equation x2–Dy2 = N, D > 0 and not a perfect square, N ≠ 0 - Number Theory Web](http://www.numbertheory.org/php/patz.html)（Lagrange–Matthews–Mollin 算法）
+-   [Calculating the simple continued fraction of a quadratic irrational - Number Theory Web](http://www.numbertheory.org/php/surd.html) (PQa algorithm)
+-   [Solving the diophantine equation x2–Dy2 = N, D > 0 and not a perfect square, N ≠ 0 - Number Theory Web](http://www.numbertheory.org/php/patz.html) (Lagrange–Matthews–Mollin algorithm)
 
-[^not-square]: 当 $D$ 是完全平方数时，直接做因式分解可知，$(x+y\sqrt{D})(x-y\sqrt{D})=N$，因此所有解可以通过遍历 $N$ 的因数得知．特别地，当 $N=1$ 时，方程只有解 $(\pm 1,0)$；当 $N=-1$ 且 $D\neq 1$ 时，方程没有解．
+[^not-square]: When $D$ is a perfect square, factoring directly gives $(x+y\sqrt{D})(x-y\sqrt{D})=N$, so all solutions can be found by going through the divisors of $N$. In particular, when $N=1$ the equation has only the solutions $(\pm 1,0)$; when $N=-1$ and $D\neq 1$, it has no solution.
 
-[^neg-pell]: 有些中文文献也称它为第二型 Pell 方程．
+[^neg-pell]: Some Chinese literature also calls it the Pell equation of the second kind.
 
-[^half-int]: 即形如 $n+\dfrac12$ 且 $n\in\mathbf Z$ 的有理数．
+[^half-int]: That is, a rational number of the form $n+\dfrac12$ with $n\in\mathbf Z$.
 
-[^fundamental-solution]: 注意，Pell 方程中基本解的定义与实二次整数环中的基本单位数的定义并不一致．首先，部分实二次整数环中的基本单位数 $x+y\sqrt{D}$ 中的 $x,y$ 是半整数，因而并非 Pell 方程的解．其次，同一个实二次整数环的基本单位数有四个，但是基本解只有一个，因为基本解要求 $x,y$ 都是正数．
+[^fundamental-solution]: Note that the definition of the fundamental solution of the Pell equation does not match that of the fundamental unit of a real quadratic integer ring. First, in some real quadratic integer rings the $x,y$ in the fundamental unit $x+y\sqrt{D}$ are half-integers, so it is not a solution of the Pell equation. Second, a real quadratic integer ring has four fundamental units, but there is only one fundamental solution, because the fundamental solution requires $x,y$ to both be positive.
 
-[^solubility-neg-pell]: 一个较为实用的判断方法和工具在 [这里](http://www.numbertheory.org/php/hardy_williams.html) 及其参考文献．使得方程 $x^2-Dy^2=-1$ 有解的正整数 $D$ 的列表是 [OEIS A031396](https://oeis.org/A031396)．
+[^solubility-neg-pell]: A fairly practical test and tool can be found [here](http://www.numbertheory.org/php/hardy_williams.html) and in its references. The list of positive integers $D$ for which $x^2-Dy^2=-1$ has a solution is [OEIS A031396](https://oeis.org/A031396).
