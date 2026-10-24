@@ -1,36 +1,36 @@
-## 定义
+## Definition
 
-有些 [状压 DP](./state.md) 问题要求我们记录状态的连通性信息，这类问题一般被形象的称为插头 DP 或连通性状态压缩 DP．例如格点图的哈密顿路径计数，求棋盘的黑白染色方案满足相同颜色之间形成一个连通块的方案数，以及特定图的生成树计数等等．这些问题通常需要我们对状态的连通性进行编码，讨论状态转移过程中连通性的变化．
+Some [bitmask DP](./state.md) problems require us to record connectivity information in the state. Such problems are vividly called plug DP, or connectivity-based bitmask DP. Examples include counting Hamiltonian paths in a grid graph, counting black-and-white colorings of a board where cells of the same color form one connected block, and counting spanning trees of certain graphs. These problems usually require us to encode the connectivity of the state and to work out how the connectivity changes during transitions.
 
-## 引入
+## Introduction
 
-### 骨牌覆盖与轮廓线 DP
+### Domino tiling and contour line DP
 
-温故而知新，在开始学习插头 DP 之前，不妨先让我们回顾一个经典问题．
+Reviewing the old helps you learn the new. Before learning plug DP, let's look back at a classic problem.
 
-???+ note "例题 [「HDU 1400」Mondriaan’s Dream](https://acm.hdu.edu.cn/showproblem.php?pid=1400)"
-    题目大意：在 $N\times M$ 的棋盘内铺满 $1\times 2$ 或 $2\times 1$ 的多米诺骨牌，求方案数．
+???+ note "Example problem ['HDU 1400' Mondriaan’s Dream](https://acm.hdu.edu.cn/showproblem.php?pid=1400)"
+    Summary: Tile an $N\times M$ board completely with $1\times 2$ or $2\times 1$ dominoes. Count the number of ways.
 
-当 $n$ 或 $m$ 规模不大的时候，这类问题可以使用 [状压 DP](./state.md) 解决．逐行划分阶段，设 $dp(i,s)$ 表示当前已考虑过前 $i$ 行，且第 $i$ 行的状态为 $s$ 的方案数．这里的状态 $s$ 的每一位可以表示这个位置是否已被上一行覆盖．
+When $n$ or $m$ is small, this kind of problem can be solved with [bitmask DP](./state.md). Split the stages row by row: let $dp(i,s)$ be the number of ways when the first $i$ rows have been considered and the state of row $i$ is $s$. Here each bit of the state $s$ tells whether that position is already covered by the previous row.
 
 ![domino](./images/domino.svg)
 
-另一种划分阶段的方法是逐格 DP，或者称之为轮廓线 DP．$dp(i,j,s)$ 表示已经考虑到第 $i$ 行第 $j$ 列，且当前轮廓线上的状态为 $s$ 的方案数．
+Another way to split stages is cell-by-cell DP, also called contour line DP. $dp(i,j,s)$ is the number of ways when we have reached row $i$, column $j$, and the state on the current contour line is $s$.
 
-虽然逐格 DP 中我们的状态增加了一个维度，但是转移的时间复杂度减少为 $O(1)$，所以时间复杂度未变．我们用 $f_0$ 表示当前阶段的状态，用 $f_1$ 表示下一阶段的状态，$u = f_0(s)$ 表示当前枚举的函数值，那么有如下的状态转移方程：
+Although cell-by-cell DP adds one dimension to the state, each transition now takes only $O(1)$ time, so the overall time complexity stays the same. Let $f_0$ be the states of the current stage, $f_1$ the states of the next stage, and $u = f_0(s)$ the value currently being enumerated. Then the transitions are:
 
 ```cpp
-if (s >> j & 1) {       // 如果已被覆盖
-  f1[s ^ 1 << j] += u;  // 不放
-} else {                // 如果未被覆盖
-  if (j != m - 1 && (!(s >> j + 1 & 1))) f1[s ^ 1 << j + 1] += u;  // 横放
-  f1[s ^ 1 << j] += u;                                             // 竖放
+if (s >> j & 1) {       // if already covered
+  f1[s ^ 1 << j] += u;  // place nothing
+} else {                // if not covered
+  if (j != m - 1 && (!(s >> j + 1 & 1))) f1[s ^ 1 << j + 1] += u;  // place horizontally
+  f1[s ^ 1 << j] += u;                                             // place vertically
 }
 ```
 
-观察到这里不放和竖放的方程可以合并．
+Notice that the "place nothing" and "place vertically" transitions can be merged.
 
-??? note "实现"
+??? note "Implementation"
     ```cpp
     #include <algorithm>
     #include <iostream>
@@ -52,8 +52,8 @@ if (s >> j & 1) {       // 如果已被覆盖
     #define u f0[s]
             for (int s = 0; s < 1 << m; ++s)
               if (u) {
-                if (j != m - 1 && (!(s >> j & 3))) f1[s ^ 1 << j + 1] += u;  // 横放
-                f1[s ^ 1 << j] += u;  // 竖放或不放
+                if (j != m - 1 && (!(s >> j & 3))) f1[s ^ 1 << j + 1] += u;  // place horizontally
+                f1[s ^ 1 << j] += u;  // place vertically or place nothing
               }
           }
         }
@@ -62,73 +62,73 @@ if (s >> j & 1) {       // 如果已被覆盖
     }
     ```
 
-??? note "习题 [「SRM 671. Div 1 900」BearDestroys](https://archive.topcoder.com/ProblemStatement/pm/14069)"
-    题目大意：给定 $n\times m$ 的矩阵，每个格子有 `E` 或 `S`．
-    对于一个矩阵，有一个计分方案．按照行优先的规则扫描每个格子，如果这个格子之前被骨牌占据，则 skip．
-    否则尝试放多米诺骨牌．如果放骨牌的方向在矩阵外或被其他骨牌占据，则放置失败，切换另一种方案或 skip．
-    如果是 `E` 则优先放一个 $1\times 2$ 的骨牌，
-    如果是 `S` 则优先放一个 $2\times 1$ 的骨牌．
-    一个矩阵的得分为最后放的骨牌数．
-    问所有 $2^{nm}$ 种矩阵的得分的和．
+??? note "Exercise ['SRM 671. Div 1 900' BearDestroys](https://archive.topcoder.com/ProblemStatement/pm/14069)"
+    Summary: You are given an $n\times m$ matrix where each cell contains `E` or `S`.
+    Each matrix is scored as follows. Scan the cells in row-major order. If a cell is already covered by a domino, skip it.
+    Otherwise, try to place a domino. If the domino would go outside the matrix or onto another domino, the placement fails; then try the other direction, or skip.
+    If the cell is `E`, first try to place a $1\times 2$ domino;
+    if it is `S`, first try to place a $2\times 1$ domino.
+    The score of a matrix is the number of dominoes placed at the end.
+    Find the sum of the scores over all $2^{nm}$ matrices.
 
-### 术语
+### Terminology
 
-阶段：动态规划执行的顺序，后续阶段的结果只与前序阶段的结果有关（无后效性）．很多 DP 问题可以有多种划分阶段的方式．例如在背包问题中，我们通常既可以按照物品划分阶段，也可以按照背包容量划分阶段（外层循环先枚举什么）．而在多米诺骨牌问题中，我们可以按照行、列、格子以及对角线等特征划分阶段．
+Stage: the order in which the dynamic programming runs. The results of later stages depend only on the results of earlier stages (no aftereffects). Many DP problems can be split into stages in several ways. For example, in knapsack problems we can usually split stages either by item or by knapsack capacity (that is, which one the outer loop enumerates). In the domino problem, we can split stages by row, by column, by cell, by diagonal, and so on.
 
-轮廓线：已决策状态和未决策状态的分界线．
+Contour line: the boundary between the cells already decided and the cells not yet decided.
 
 ![contour line](./images/contour_line.svg)
 
-插头：一个格子某个方向的插头存在，表示这个格子在这个方向与相邻格子相连．
+Plug: if a cell has a plug in some direction, the cell is connected to its neighbor in that direction.
 
 ![plug](./images/plug.svg)
 
-## 路径模型
+## Path models
 
-### 多条回路
+### Multiple loops
 
-#### 例题
+#### Example problem
 
-???+ note "例题 [「HDU 1693」Eat the Trees](https://acm.hdu.edu.cn/showproblem.php?pid=1693)"
-    题目大意：求用若干条回路覆盖 $N\times M$ 棋盘的方案数，有些位置有障碍．
+???+ note "Example problem ['HDU 1693' Eat the Trees](https://acm.hdu.edu.cn/showproblem.php?pid=1693)"
+    Summary: Count the ways to cover an $N\times M$ board with any number of closed loops. Some cells are blocked.
 
-严格来说，多条回路问题并不属于插头 DP，因为我们只需要和上面的骨牌覆盖问题一样，记录插头是否存在，然后成对的合并和生成插头就可以了．
+Strictly speaking, the multiple-loop problem is not really plug DP. As in the domino tiling problem above, we only need to record whether each plug exists, and then merge and create plugs in pairs.
 
-注意对于一个宽度为 $m$ 的棋盘，轮廓线的宽度为 $m+1$，因为包含 $m$ 个上插头，和 $1$ 个左插头．注意，当一行迭代完成之后，最右边的左插头通常是不合法的状态，同时我们需要补上下一行第一个左插头，这需要我们调整当前轮廓线的状态，通常是所有状态进行左移，我们把这个操作称为滚动 `roll()`．
+Note that for a board of width $m$, the contour line has width $m+1$, because it contains $m$ up plugs and $1$ left plug. Also, after a row is finished, the rightmost left plug is usually an invalid state, and we need to add the first left plug of the next row. This requires adjusting the state of the current contour line, usually by shifting every state left. We call this operation rolling, `roll()`.
 
-??? note "例题代码"
+??? note "Example code"
     ```cpp
     --8<-- "docs/dp/code/plug/plug_1.cpp"
     ```
 
-#### 习题
+#### Exercises
 
-??? note "习题 [「ZOJ 3466」The Hive II](https://pintia.cn/problem-sets/91827364500/exam/problems/type/7?problemSetProblemId=91827368730)"
-    题目大意：同上题，但格子变成了六边形．
+??? note "Exercise ['ZOJ 3466' The Hive II](https://pintia.cn/problem-sets/91827364500/exam/problems/type/7?problemSetProblemId=91827368730)"
+    Summary: Same as the previous problem, but the cells are hexagons.
 
-### 一条回路
+### A single loop
 
-#### 例题
+#### Example problem
 
-???+ note "例题 [「Andrew Stankevich Contest 16 - Problem F」Pipe Layout](https://codeforces.com/gym/100220)"
-    题目大意：求用一条回路覆盖 $N\times M$ 棋盘的方案数．
+???+ note "Example problem ['Andrew Stankevich Contest 16 - Problem F' Pipe Layout](https://codeforces.com/gym/100220)"
+    Summary: Count the ways to cover an $N\times M$ board with exactly one closed loop.
 
-在上面的状态表示中我们每合并一组连通的插头，就会生成一条独立的回路，因而在本题中，我们还需要区分插头之间的连通性（出现了！）．这需要我们对状态进行额外的编码．
+With the state representation above, every time we merge a pair of connected plugs, we create a separate closed loop. So in this problem we also need to tell which plugs are connected to each other (here it is!). This requires an extra encoding of the state.
 
-#### 状态编码
+#### State encoding
 
-通常的编码方案有括号表示和最小表示，这里着重介绍泛用性更好的最小表示．我们用长度 $m+1$ 的整形数组，记录轮廓线上每个插头的状态，$0$ 表示没有插头，并约定连通的插头用相同的数字进行标记．
+Common encodings are the bracket representation and the minimal representation. Here we focus on the minimal representation, which is more general. We use an integer array of length $m+1$ to record the state of each plug on the contour line. $0$ means there is no plug, and connected plugs are marked with the same number.
 
-那么下面两组编码方式表示的是相同的状态：
+So the following two encodings represent the same state:
 
 -   `0 3 1 0 1 3`
 -   `0 1 2 0 2 1`
 
-我们将相同的状态都映射成字典序最小表示，例如在上例中的 `0 1 2 0 2 1` 就是一组最小表示．
+We map all equivalent states to the lexicographically smallest representation. For example, `0 1 2 0 2 1` above is a minimal representation.
 
-我们用 `b[]` 数组表示轮廓线上插头的状态．`bb[]` 表示在最小表示的编码的过程中，每个数字被映射到的最小数字．注意 $0$ 表示插头不存在，不能被映射成其他值．
+We use the array `b[]` for the plug states on the contour line. `bb[]` records, during minimal-representation encoding, the smallest number each number is mapped to. Note that $0$ means no plug exists and cannot be mapped to any other value.
 
-??? note "代码实现"
+??? note "Implementation"
     ```cpp
     int b[M + 1], bb[M + 1];
     
@@ -154,13 +154,13 @@ if (s >> j & 1) {       // 如果已被覆盖
     }
     ```
 
-我们注意到插头总是成对出现，成对消失的．因而 `0 1 2 0 1 2` 这样的状态是不合法的．合法的状态构成一组括号序列，实际中合法状态可能是非常稀疏的．
+Notice that plugs always appear in pairs and disappear in pairs. So a state like `0 1 2 0 1 2` is invalid. Valid states form a bracket sequence, and in practice valid states may be very sparse.
 
-#### 手写哈希
+#### Hand-written hash table
 
-在一些 [状压 DP](./state.md) 的问题中，合法的状态可能是稀疏的（例如本题），为了优化时空复杂度，我们可以使用哈希表存储合法的 DP 状态．对于 C++ 选手，我们可以使用 [std::unordered\_map](http://www.cplusplus.com/reference/unordered_map/unordered_map/)，当然也可以直接手写，这样可以灵活的将状态转移函数也封装于其中．
+In some [bitmask DP](./state.md) problems, valid states may be sparse (as in this problem). To improve time and space complexity, we can store the valid DP states in a hash table. C++ users can use [std::unordered\_map](http://www.cplusplus.com/reference/unordered_map/unordered_map/), or write one by hand, which lets us conveniently put the transition function inside it too.
 
-???+ note "代码实现"
+???+ note "Implementation"
     ```cpp
     constexpr int MaxSZ = 16796, Prime = 9973;
     
@@ -191,111 +191,111 @@ if (s >> j & 1) {       // 如果已被覆盖
     } H[2], *H0, *H1;
     ```
 
-上面的代码中：
+In the code above:
 
--   `MaxSZ` 表示合法状态的上界，可以估计，也可以预处理出较为精确的值．
--   `Prime` 一个小于 `MaxSZ` 的大素数．
--   `head[]` 表头节点的指针．
--   `next[]` 后续状态的指针．
--   `state[]` 节点的状态．
--   `key[]` 节点的关键字，在本题中是方案数．
--   `clear()` 初始化函数，和手写邻接表类似，我们只需要初始化表头节点的指针．
--   `push()` 状态转移函数，其中 `d` 是一个全局变量（偷懒），表示每次状态转移所带来的增量．如果找到的话就 `+=`，否则就创建一个状态为 `s`，关键字为 `d` 的新节点．
--   `roll()` 迭代完一整行之后，滚动轮廓线．
+-   `MaxSZ` is an upper bound on the number of valid states. You can estimate it, or precompute a more precise value.
+-   `Prime` is a large prime smaller than `MaxSZ`.
+-   `head[]` holds pointers to the head nodes of the lists.
+-   `next[]` holds pointers to the next states.
+-   `state[]` holds the state of each node.
+-   `key[]` holds the key of each node; in this problem it is the number of ways.
+-   `clear()` is the initialization function. As with a hand-written adjacency list, we only need to reset the head pointers.
+-   `push()` is the transition function, where `d` is a global variable (a shortcut) holding the increment of each transition. If the state is found, we do `+=`; otherwise we create a new node with state `s` and key `d`.
+-   `roll()` rolls the contour line after a whole row has been processed.
 
-关于哈希表的复杂度分析，以及开哈希和闭哈希的不同，可以参见 [《算法导论》](../contest/resources.md#书籍) 中关于散列表的相关章节．
+For the complexity analysis of hash tables and the difference between open and closed hashing, see the chapter on hash tables in [Introduction to Algorithms](../contest/resources.md#书籍).
 
-#### 状态转移
+#### Transitions
 
-???+ note "代码实现"
+???+ note "Implementation"
     ```cpp
     REP(ii, H0->sz) {
-      decode(H0->state[ii]);                  // 取出状态，并解码
-      d = H0->key[ii];                        // 得到增量 delta
-      int lt = b[j], up = b[j + 1];           // 左插头，上插头
-      bool dn = i != n - 1, rt = j != m - 1;  // 下插头，右插头
-      if (lt && up) {                         // 如果左、上均有插头
-        if (lt == up) {                       // 来自同一个连通块
+      decode(H0->state[ii]);                  // fetch the state and decode it
+      d = H0->key[ii];                        // get the increment delta
+      int lt = b[j], up = b[j + 1];           // left plug, up plug
+      bool dn = i != n - 1, rt = j != m - 1;  // down plug, right plug
+      if (lt && up) {                         // if both left and up plugs exist
+        if (lt == up) {                       // they come from the same component
           if (i == n - 1 &&
-              j == m - 1) {  // 只有在最后一个格子时，才能合并，封闭回路．
+              j == m - 1) {  // they may merge (closing the loop) only at the last cell.
             push(j, 0, 0);
           }
-        } else {  // 否则，必须合并这两个连通块，因为本题中需要回路覆盖
+        } else {  // otherwise we must merge the two components, since the problem needs a loop cover
           REP(i, m + 1) if (b[i] == lt) b[i] = up;
           push(j, 0, 0);
         }
-      } else if (lt || up) {  // 如果左、上之中有一个插头
-        int t = lt | up;      // 得到这个插头
-        if (dn) {             // 如果可以向下延伸
+      } else if (lt || up) {  // if exactly one of left and up has a plug
+        int t = lt | up;      // get that plug
+        if (dn) {             // if we can extend downward
           push(j, t, 0);
         }
-        if (rt) {  // 如果可以向右延伸
+        if (rt) {  // if we can extend to the right
           push(j, 0, t);
         }
-      } else {           // 如果左、上均没有插头
-        if (dn && rt) {  // 生成一对新插头
+      } else {           // if neither left nor up has a plug
+        if (dn && rt) {  // create a new pair of plugs
           push(j, m, m);
         }
       }
     }
     ```
 
-??? note "例题代码"
+??? note "Example code"
     ```cpp
     --8<-- "docs/dp/code/plug/plug_2.cpp"
     ```
 
-#### 习题
+#### Exercises
 
-??? note "习题 [「Ural 1519」Formula 1](https://acm.timus.ru/problem.aspx?space=1&num=1519)"
-    题目大意：求用一条回路覆盖 $N\times M$ 棋盘的方案数，有些位置有障碍．
+??? note "Exercise ['Ural 1519' Formula 1](https://acm.timus.ru/problem.aspx?space=1&num=1519)"
+    Summary: Count the ways to cover an $N\times M$ board with exactly one closed loop. Some cells are blocked.
 
-??? note "习题 [「USACO 5.4.4」Betsy's Tours](https://hydro.ac/d/USACO/p/USACO544)"
-    题目大意：一个 $N\times N$ 的方阵（$N\le 7$），求从左上角出发到左下角结束经过每个格子的路径总数．虽然是一条路径，但因为起点和终点固定，可以转化为一条回路问题．
+??? note "Exercise ['USACO 5.4.4' Betsy's Tours](https://hydro.ac/d/USACO/p/USACO544)"
+    Summary: Given an $N\times N$ grid ($N\le 7$), count the paths that start at the top-left corner, end at the bottom-left corner, and visit every cell. Although this is a single path, its start and end are fixed, so it can be turned into a single-loop problem.
 
-??? note "习题 [「POJ 1739」Tony's Tour](http://poj.org/problem?id=1739)"
-    题目大意：一个 $N\times M$ 的棋盘，求从左下角出发到右下角结束经过每个格子的路径总数，有些位置有障碍．
+??? note "Exercise ['POJ 1739' Tony's Tour](http://poj.org/problem?id=1739)"
+    Summary: Given an $N\times M$ board, count the paths that start at the bottom-left corner, end at the bottom-right corner, and visit every cell. Some cells are blocked.
 
-??? note "习题 [「USACO 6.1.1」Postal Vans](https://vjudge.net/problem/UVALive-2738)"
-    题目大意：求用一条有向回路覆盖 $4\times N$ 的棋盘的方案数，需要高精度．
+??? note "Exercise ['USACO 6.1.1' Postal Vans](https://vjudge.net/problem/UVALive-2738)"
+    Summary: Count the ways to cover a $4\times N$ board with one directed closed loop. Big-integer arithmetic is required.
 
-??? note "习题 [「HNOI 2007」神奇游乐园](https://www.luogu.com.cn/problem/P3190)"
-    题目大意：给定一个 $n\times m$ 的网格图，每格内有一个权值，求一个任意一个回路，最大化经过的权值和．
+??? note "Exercise ['HNOI 2007' Magical Amusement Park](https://www.luogu.com.cn/problem/P3190)"
+    Summary: Given an $n\times m$ grid graph with a weight in each cell, find any closed loop that maximizes the total weight of the cells it passes through.
 
-??? note "习题 [「ProjectEuler 393」Migrating ants](https://projecteuler.net/problem=393)"
-    题目大意：用多条回路覆盖 $n\times n$ 的方阵，每个有 $m$ 条回路的方案对答案的贡献是 $2^m$，求所有方案的贡献和．
+??? note "Exercise ['ProjectEuler 393' Migrating ants](https://projecteuler.net/problem=393)"
+    Summary: Cover an $n\times n$ grid with several closed loops. A cover with $m$ loops contributes $2^m$ to the answer. Find the total contribution of all covers.
 
-### 一条路径
+### A single path
 
-#### 例题
+#### Example problem
 
-???+ note "例题 [「ZOJ 3213」Beautiful Meadow](https://pintia.cn/problem-sets/91827364500/exam/problems/type/7?page=22&problemSetProblemId=91827367895)"
-    题目大意：一个 $N\times M$ 的方阵（$N,M\le 8$），每个格点有一个权值，求一段路径，最大化路径覆盖的格点的权值和．
+???+ note "Example problem ['ZOJ 3213' Beautiful Meadow](https://pintia.cn/problem-sets/91827364500/exam/problems/type/7?page=22&problemSetProblemId=91827367895)"
+    Summary: Given an $N\times M$ grid ($N,M\le 8$) where each cell has a weight, find a path that maximizes the total weight of the cells it covers.
 
-本题是标准的一条路径问题，在一条路径问题中，编码的状态中还会存在不能配对的独立插头．需要在状态转移函数中，额外讨论独立插头的生成、合并与消失的情况．独立插头的生成和消失对应着路径的一端，因而这类事件不会发生超过两次（一次生成一次消失，或者两次生成一次合并），否则最终结果一定会出现多个连通块．
+This is a standard single-path problem. In single-path problems, the encoded state may also contain independent plugs that have no partner. The transition function must additionally handle creating, merging and removing independent plugs. Creating or removing an independent plug corresponds to an endpoint of the path, so such events can happen at most twice (one creation and one removal, or two creations and one merge). Otherwise the final result would always contain several connected components.
 
-我们需要在状态中额外记录这类事件发生的总次数，可以将这个信息编码进状态里（注意，类似这样的额外信息在调整轮廓线的时候，不需要跟着滚动），当然也可以在 `hashTable` 数组的外面加维．下面的范例程序中我们选择后者．
+We need to record in the state the total number of times such events have happened. We can encode this into the state (note that extra information like this should not be rolled when the contour line is adjusted), or we can add an extra dimension outside the `hashTable` array. The sample program below does the latter.
 
-#### 状态转移
+#### Transitions
 
-???+ note "代码实现"
+???+ note "Implementation"
     ```cpp
     REP(i, n) {
       REP(j, m) {
-        checkMax(ans, A[i][j]);  // 需要单独处理一个格子的情况
-        if (!A[i][j]) continue;  // 如果有障碍，则跳过，注意这时状态数组不需要滚动
+        checkMax(ans, A[i][j]);  // the single-cell case needs separate handling
+        if (!A[i][j]) continue;  // skip obstacles; note the state array does not need to roll here
         swap(H0, H1);
         REP(c, 3)
-        H1[c].clear();  // c 表示生成和消失事件发生的总次数，最多不超过 2 次
+        H1[c].clear();  // c is the total number of creation and vanishing events, at most 2
         REP(c, 3) REP(ii, H0[c].sz) {
           decode(H0[c].state[ii]);
           d = H0[c].key[ii] + A[i][j];
           int lt = b[j], up = b[j + 1];
           bool dn = A[i + 1][j], rt = A[i][j + 1];
           if (lt && up) {
-            if (lt == up) {  // 在一条路径问题中，我们不能合并相同的插头．
+            if (lt == up) {  // in the single-path problem, we cannot merge the same pair of plugs.
               // Cannot deploy here...
-            } else {  // 有可能参与合并的两者中有独立插头，但是也可以用同样的代码片段处理
+            } else {  // one of the two merged plugs may be an independent plug, but the same code handles it
               REP(i, m + 1) if (b[i] == lt) b[i] = up;
               push(c, j, 0, 0);
             }
@@ -307,19 +307,19 @@ if (s >> j & 1) {       // 如果已被覆盖
             if (rt) {
               push(c, j, 0, t);
             }
-            // 一个插头消失的情况，如果是独立插头则意味着消失，如果是成对出现的插头则相当于生成了一个独立插头，
-            // 无论哪一类事件都需要将 c + 1．
+            // a plug vanishes: an independent plug simply disappears, while a paired plug turns its partner into an independent plug;
+            // either way, c must be increased by 1.
             if (c < 2) {
               push(c + 1, j, 0, 0);
             }
           } else {
             d -= A[i][j];
             H1[c].push(H0[c].state[ii]);
-            d += A[i][j];    // 跳过插头生成，本题中不要求全部覆盖
-            if (dn && rt) {  // 生成一对插头
+            d += A[i][j];    // skip plug creation; this problem does not require covering every cell
+            if (dn && rt) {  // create a pair of plugs
               push(c, j, m, m);
             }
-            if (c < 2) {  // 生成一个独立插头
+            if (c < 2) {  // create an independent plug
               if (dn) {
                 push(c + 1, j, m, 0);
               }
@@ -330,52 +330,52 @@ if (s >> j & 1) {       // 如果已被覆盖
           }
         }
       }
-      REP(c, 3) H1[c].roll();  // 一行结束，调整轮廓线
+      REP(c, 3) H1[c].roll();  // end of a row; shift the contour line
     }
     ```
 
-??? note "例题代码"
+??? note "Example code"
     ```cpp
     --8<-- "docs/dp/code/plug/plug_3.cpp"
     ```
 
-#### 习题
+#### Exercises
 
-??? note "习题 [「BZOJ 2310」ParkII](https://hydro.ac/p/bzoj-P2310)"
-    题目大意：$m\times n$ 的棋盘，每个格点有一个权值，求一条路径覆盖，最大化路径经过的点的权值和．
+??? note "Exercise ['BZOJ 2310' ParkII](https://hydro.ac/p/bzoj-P2310)"
+    Summary: Given an $m\times n$ board where each cell has a weight, find a path that maximizes the total weight of the cells it passes through.
 
-??? note "习题 [「NOI 2010 Day2」旅行路线](https://www.luogu.com.cn/problem/P1933)"
-    题目大意：$n\times m$ 的棋盘，棋盘的每个格子有一个 01 权值 T\[x]\[y]，要求寻找一个路径覆盖，满足：
+??? note "Exercise ['NOI 2010 Day2' Travel Route](https://www.luogu.com.cn/problem/P1933)"
+    Summary: Given an $n\times m$ board where each cell has a 0/1 weight T\[x]\[y], find a path covering the board such that:
     
-    -   第 i 个参观的格点 (x, y)，满足 T\[x]\[y]= L\[i]
-    -   路径的一端在棋盘的边界上
+    -   the i-th visited cell (x, y) satisfies T\[x]\[y]= L\[i];
+    -   one end of the path is on the border of the board.
     
-    求可行的方案数．
+    Count the number of valid ways.
 
-## 染色模型
+## Coloring models
 
-除了路径模型之外，还有一类常见的模型，需要我们对棋盘进行染色，相邻的相同颜色节点被视为连通．在路径类问题中，状态转移的时候我们枚举当前路径的方向，而在染色类问题中，我们枚举当前节点染何种颜色．在染色模型中，状态中处在相同连通性的节点可能不止两个．但总体来说依然大同小异．我们不妨来看一个经典的例题．
+Besides path models, another common kind of model asks us to color the board, where adjacent cells of the same color count as connected. In path problems, a transition enumerates the direction of the current path; in coloring problems, it enumerates which color the current cell gets. In coloring models, more than two cells in the state may belong to the same component. Overall, though, the ideas are much the same. Let's look at a classic example.
 
-### 例题「UVa 10572」Black & White
+### Example problem 'UVa 10572' Black & White
 
-???+ note "例题 [「UVa 10572」Black & White](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=24&page=show_problem&problem=1513)"
-    题目大意：在 $N\times M$ 的棋盘内对未染色的格点进行黑白染色，要求所有黑色区域和白色区域连通，且任意一个 $2\times 2$ 的子矩形内的颜色不能完全相同（例如下图中的情况非法），求合法的方案数，并构造一组合法的方案．
+???+ note "Example problem ['UVa 10572' Black & White](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=24&page=show_problem&problem=1513)"
+    Summary: On an $N\times M$ board, color the uncolored cells black or white so that all black cells are connected, all white cells are connected, and no $2\times 2$ subrectangle has all four cells the same color (for example, the case in the figure below is invalid). Count the valid colorings and construct one of them.
     
     ![black\_and\_white1](./images/black_and_white1.svg)
 
-### 状态编码
+### State encoding
 
-我们先考虑状态编码．不考虑连通性，那么就是 [SGU 197. Nice Patterns Strike Back](https://codeforces.com/problemsets/acmsguru/problem/99999/197)，不难用 [状压 DP](./state.md) 直接解决．现在我们需要在状态中同时体现颜色和连通性的信息，考察轮廓线上每个位置的状态，二进制的每 `Offset` 位描述轮廓线上的一个位置，因为只有黑白两种颜色，我们用最低位的奇偶性表示颜色，其余部分示连通性．
+First consider the state encoding. Without connectivity, this is just [SGU 197. Nice Patterns Strike Back](https://codeforces.com/problemsets/acmsguru/problem/99999/197), which bitmask DP solves directly without much trouble (see [bitmask DP](./state.md)). Now the state must hold both color and connectivity information. Look at the state of each position on the contour line: every `Offset` bits of the binary number describe one position on the contour line. Since there are only two colors, black and white, we use the parity of the lowest bit for the color and the remaining bits for connectivity.
 
-考虑第一行上面的节点，和第一列左侧节点，如果要避免特判的话，可以考虑引入第三种颜色区分它们，这里我们观察到这些边界状态的连通性信息一定为 0，所以不需要对第三种颜色再进行额外编码．
+For the cells above the first row and to the left of the first column, we could introduce a third color to tell them apart and avoid special cases. Here we notice that the connectivity information of these boundary states is always 0, so the third color needs no extra encoding.
 
-在路径问题中我们的轮廓线是由 $m$ 个上插头与 $1$ 个左插头组成的．本题中，由于我们还需要判断当前格点为右下角的 $2\times 2$ 子矩形是否合法，所以需要记录左上角格子的颜色，因此轮廓线的长度依然是 $m+1$．
+In path problems, the contour line consists of $m$ up plugs and $1$ left plug. In this problem, we also need to check whether the $2\times 2$ subrectangle whose bottom-right cell is the current cell is valid, so we need to record the color of the top-left cell. So the contour line still has length $m+1$.
 
-这样的编码方案中依然保留了很多冗余信息，（连通的区域颜色一定相同，且左上角的格子只需要颜色信息不需要连通性），但是因为已经用了哈希表和最小表示，对时间复杂度的影响不大，为了降低编程压力，就不再细化了．
+This encoding still keeps a lot of redundant information (connected regions always have the same color, and the top-left cell only needs its color, not its connectivity). But since we already use a hash table and the minimal representation, this has little effect on the time complexity. To keep the code simple, we don't refine it further.
 
-在最多情况下（例如第一行黑白相间），每个插头的连通性信息都不一样，因此我们需要 $4$ 位二进制位记录连通性，再加上颜色信息，本题的 `Offset` 为 $5$ 位．
+In the worst case (for example, when the first row alternates black and white), every plug has different connectivity information, so we need $4$ bits to record connectivity. Adding the color bit, `Offset` is $5$ bits in this problem.
 
-???+ note "代码实现"
+???+ note "Implementation"
     ```cpp
     constexpr int Offset = 5, Mask = (1 << Offset) - 1;
     int c[N + 2];
@@ -405,11 +405,11 @@ if (s >> j & 1) {       // 如果已被覆盖
     }
     ```
 
-### 手写哈希
+### Hand-written hash table
 
-因为需要构造任意一组方案，这里的哈希表我们需要添加一组域 `pre[]` 来记录每个状态在上一阶段的任意一个前驱．
+Since we need to construct one valid coloring, the hash table needs an extra field `pre[]` that records, for each state, any one of its predecessors in the previous stage.
 
-???+ note "代码实现"
+???+ note "Implementation"
     ```cpp
     constexpr int Prime = 9979, MaxSZ = 1 << 20;
     
@@ -444,11 +444,11 @@ if (s >> j & 1) {       // 如果已被覆盖
     hashTable<T_state, T_key> _H, H[N][N], *H0, *H1;
     ```
 
-### 方案构造
+### Constructing a solution
 
-有了上面的信息，我们就可以容易的构造方案了．首先遍历当前哈希表中的状态，如果连通块数目不超过 $2$，那么统计进方案数．如果方案数不为 $0$，我们倒序用 `pre` 数组构造出方案，注意每一行的末尾因为我们执行了 `Roll()` 操作，颜色需要取 `c[j+1]`．
+With the information above, constructing a solution is easy. First go through the states in the current hash table, and add those with at most $2$ connected components to the count. If the count is not $0$, use the `pre` array to build a solution backward. Note that because we perform `Roll()` at the end of each row, the color there must be taken from `c[j+1]`.
 
-???+ note "代码实现"
+???+ note "Implementation"
     ```cpp
     void print() {
       T_key z = 0;
@@ -477,46 +477,46 @@ if (s >> j & 1) {       // 如果已被覆盖
     }
     ```
 
-### 状态转移
+### Transitions
 
-我们记：
+We write:
 
--   `cc` 当前正在染色的格子的颜色
--   `lf` 左边格子的颜色
--   `up` 上边格子的颜色
--   `lu` 左上格子的颜色
+-   `cc` for the color of the cell being colored now;
+-   `lf` for the color of the cell to the left;
+-   `up` for the color of the cell above;
+-   `lu` for the color of the top-left cell.
 
-我们用 $-1$ 表示颜色不存在．接下来讨论状态转移，一共有三种情况，合并，继承与生成：
+We use $-1$ to mean the color does not exist. Now consider the transitions. There are three cases: merge, inherit, and create:
 
-???+ note "状态转移 - 代码"
+???+ note "Transitions - code"
     ```cpp
     void trans(int i, int j, int u, int cc) {
       decode(H0->state[u]);
       int lf = j ? c[j - 1] : -1, lu = b[j] ? c[j] : -1,
-          up = b[j + 1] ? c[j + 1] : -1;  // 没有颜色也是颜色的一种！
-      if (lf == cc && up == cc) {         // 合并
-        if (lu == cc) return;             // 2x2 子矩形相同的情况
+          up = b[j + 1] ? c[j + 1] : -1;  // no color also counts as a color!
+      if (lf == cc && up == cc) {         // merge
+        if (lu == cc) return;             // the 2x2 subrectangle has a single color
         int lf_b = b[j - 1], up_b = b[j + 1];
         REP(i, m + 1) if (b[i] == up_b) { b[i] = lf_b; }
         b[j] = lf_b;
-      } else if (lf == cc || up == cc) {  // 继承
+      } else if (lf == cc || up == cc) {  // inherit
         if (lf == cc)
           b[j] = b[j - 1];
         else
           b[j] = b[j + 1];
-      } else {                                             // 生成
-        if (i == n - 1 && j == m - 1 && lu == cc) return;  // 特判
+      } else {                                             // create
+        if (i == n - 1 && j == m - 1 && lu == cc) return;  // special case
         b[j] = m + 2;
       }
       c[j] = cc;
-      if (!ok(i, j, cc)) return;  // 判断是否会因生成封闭的连通块导致不合法
+      if (!ok(i, j, cc)) return;  // check whether forming a closed component makes it invalid
       H1->push(encode(), H0->key[u], u);
     }
     ```
 
-对于最后一种情况需要注意的是，如果已经生成了一个封闭的连通区域，那么我们不能再使用她的颜色染色，否则这种颜色会出现两个连通块．我们似乎需要额度记录这种事件，可以参考 [「ZOJ 3213」Beautiful Meadow](#例题_2) 中的做法，再开一维记录这个事件．不过利用本题的特殊性，我们也可以特判掉．
+For the last case, note that if a closed connected region has already been formed, we can no longer use its color, or that color would end up with two connected components. It seems we need to record such events separately; we could follow the approach in ['ZOJ 3213' Beautiful Meadow](#example-problem_2) and add another dimension to record this event. But using a special property of this problem, we can also handle it as a special case.
 
-???+ note "特判 - 代码"
+???+ note "Special case - code"
     ```cpp
     bool ok(int i, int j, int cc) {
       if (cc == c[j + 1]) return true;
@@ -524,80 +524,80 @@ if (s >> j & 1) {       // 如果已被覆盖
       if (!up) return true;
       int c1 = 0, c2 = 0;
       REP(i, m + 1) if (i != j + 1) {
-        if (b[i] == b[j + 1]) {  // 连通性相同，颜色一定相同
+        if (b[i] == b[j + 1]) {  // same connected component, so the color must be the same
           assert(c[i] == c[j + 1]);
         }
         if (c[i] == c[j + 1] && b[i] == b[j + 1]) ++c1;
         if (c[i] == c[j + 1]) ++c2;
       }
-      if (!c1) {               // 如果会生成新的封闭连通块
-        if (c2) return false;  // 如果轮廓线上还有相同的颜色
+      if (!c1) {               // if a new closed component would be formed
+        if (c2) return false;  // if the contour line still has the same color
         if (i < n - 1 || j < m - 2) return false;
       }
       return true;
     }
     ```
 
-进一步讨论连通块消失的情况．每当我们对一个格子进行染色后，如果没有其他格子与其上侧的格子连通，那么会形成一个封闭的连通块．这个事件仅在最后一行的最后两列时可以发生，否则后续为了不出现 $2\times 2$ 的同色连通块，这个颜色一定会再次出现，除了下面的情况：
+Now consider in more detail when a connected component disappears. Each time we color a cell, if no other cell is connected to the cell above it, a closed connected component is formed. This can only happen in the last two columns of the last row. Otherwise, to avoid a $2\times 2$ block of one color later, this color must appear again, except in the following case:
 
     2 2
     o#
     #o
 
-我们特判掉这种情况，这样在本题中，就可以偷懒不用记录之前是否已经生成了封闭的连通块了．
+We handle this case specially. Then, in this problem, we can take the shortcut of not recording whether a closed component has already been formed.
 
-??? note "例题代码"
+??? note "Example code"
     ```cpp
     --8<-- "docs/dp/code/plug/plug_4.cpp"
     ```
 
-### 习题
+### Exercises
 
-??? note "习题 [「Topcoder SRM 312. Div1 Hard」CheapestIsland](https://archive.topcoder.com/ProblemStatement/pm/6482)"
-    题目大意：给一个棋盘图，每个格子有权值，求权值之和最小的连通块．
+??? note "Exercise ['Topcoder SRM 312. Div1 Hard' CheapestIsland](https://archive.topcoder.com/ProblemStatement/pm/6482)"
+    Summary: Given a grid graph where each cell has a weight, find the connected component with the minimum total weight.
 
-??? note "习题 [「JLOI 2009」神秘的生物](https://www.luogu.com.cn/problem/P3886)"
-    题目大意：给一个棋盘图，每个格子有权值，求权值之和最大的连通块．
+??? note "Exercise ['JLOI 2009' Mysterious Creature](https://www.luogu.com.cn/problem/P3886)"
+    Summary: Given a grid graph where each cell has a weight, find the connected component with the maximum total weight.
 
-??? note "习题 [「AtCoder Beginner Contest 211. Problem E」Red Polyomino](https://atcoder.jp/contests/abc211/tasks/abc211_e)"
-    题目大意：给一个 $N\times N$ 大小的棋盘图，每个格子初始为黑色或白色．你可以从白色格子中挑选恰好 $K$ 个并将之染成红色，问有多少种染色方案满足红色格子形成一个连通块．
+??? note "Exercise ['AtCoder Beginner Contest 211. Problem E' Red Polyomino](https://atcoder.jp/contests/abc211/tasks/abc211_e)"
+    Summary: Given an $N\times N$ grid where each cell starts black or white, you may choose exactly $K$ white cells and paint them red. Count the ways in which the red cells form one connected component.
 
-## 图论模型
+## Graph theory models
 
-???+ note "例题 [「NOI 2007 Day2」生成树计数](https://www.luogu.com.cn/problem/P2109)"
-    题目大意：某类特殊图的生成树计数，每个节点恰好与其前 $k$ 个节点之间有边相连．
+???+ note "Example problem ['NOI 2007 Day2' Counting Spanning Trees](https://www.luogu.com.cn/problem/P2109)"
+    Summary: Count the spanning trees of a special kind of graph, where each vertex is connected by an edge to exactly the $k$ vertices before it.
 
-???+ note "例题 [「2015 ACM-ICPC Asia Shenyang Regional Contest - Problem E」Efficient Tree](https://acm.hdu.edu.cn/showproblem.php?pid=5513)"
-    题目大意：给出一个 $N\times M$ 的网格图，以及相邻四连通格子之间的边权．
-    对于一棵生成树，每个节点的得分为 1+\[有一条连向上的边]+\[有一条连向左的边]．
-    生成树的得分为所有节点的得分之积．
+???+ note "Example problem ['2015 ACM-ICPC Asia Shenyang Regional Contest - Problem E' Efficient Tree](https://acm.hdu.edu.cn/showproblem.php?pid=5513)"
+    Summary: You are given an $N\times M$ grid graph and the weights of the edges between 4-adjacent cells.
+    For a spanning tree, the score of each vertex is 1+\[it has an edge going up]+\[it has an edge going left].
+    The score of a spanning tree is the product of the scores of all its vertices.
     
-    你需要求出：最小生成树的边权和，以及所有最小生成树的得分之和．
-    （$n\le 800,m\le 7$）
+    You need to find the total edge weight of a minimum spanning tree, and the sum of the scores of all minimum spanning trees.
+    ($n\le 800,m\le 7$)
 
-## 实战篇
+## In practice
 
-### 例题
+### Example problem
 
-???+ note "例题 [「HDU 4113」Construct the Great Wall](https://acm.hdu.edu.cn/showproblem.php?pid=4113)"
-    题目大意：在 $N\times M$ 的棋盘内构造一组回路，分割所有的 `x` 和 `o`．
+???+ note "Example problem ['HDU 4113' Construct the Great Wall](https://acm.hdu.edu.cn/showproblem.php?pid=4113)"
+    Summary: On an $N\times M$ board, build a closed loop that separates all the `x` cells from all the `o` cells.
 
-有一类插头 DP 问题要求我们在棋盘上构造一组墙，以分割棋盘上的某些元素．不妨称之为修墙问题，这类问题既可视作染色模型，也可视作路径模型．
+Some plug DP problems ask us to build walls on the board to separate certain elements. Let's call them wall-building problems. They can be treated either as coloring models or as path models.
 
 ![greatwall](./images/greatwall.svg)
 
-在本题中，如果视作染色模型的话，不仅需要额外讨论染色区域的周长，还要判断在角上触碰而导致不合法的情况（图 2）．另外与 [「UVa 10572」Black & White](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=24&page=show_problem&problem=1513) 不同的是，本题中要求围墙为简单多边形，因而对于下面的回字形的情况，在本题中是不合法的．
+In this problem, if we treat it as a coloring model, we must not only handle the perimeter of the colored regions, but also detect invalid cases where regions touch at a corner (Figure 2). Also, unlike ['UVa 10572' Black & White](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=24&page=show_problem&problem=1513), this problem requires the wall to be a simple polygon, so the ring-shaped case below is invalid here.
 
     3 3
     ooo
     oxo
     ooo
 
-因而我们使用路径模型，转化为 [一条回路](#一条回路) 来处理．
+So we use the path model and turn it into a [single-loop](#a-single-loop) problem.
 
-我们沿着棋盘的交叉点进行 DP（因而长宽需要增加 $1$），每次转移时，需要保证所有的 `x` 在回路之外，`o` 在回路之内．因此我们还需要维护当前位置是否在回路内部．对于这个信息我们可以加维，也可以直接统计轮廓线上到这个位置之前出现下插头次数的奇偶性（射线法）．
+We run the DP over the grid points where the board lines cross (so the length and width each increase by $1$). In each transition, we must make sure every `x` is outside the loop and every `o` is inside it. So we also need to know whether the current position is inside the loop. We can add a dimension for this, or simply count the parity of the number of down plugs on the contour line before this position (the ray-casting method).
 
-??? note "例题代码"
+??? note "Example code"
     ```cpp
     #include <cstring>
     #include <iostream>
@@ -746,70 +746,70 @@ if (s >> j & 1) {       // 如果已被覆盖
     }
     ```
 
-### 习题
+### Exercises
 
-??? note "习题 [「SCOI 2011」地板](https://www.luogu.com.cn/problem/P3272)"
-    题目大意：$r\times c$ 的棋盘上有一些位置设置障碍，问使用 L 型的瓷砖铺满所有没有障碍的格子，有多少种方案．
+??? note "Exercise ['SCOI 2011' Floor](https://www.luogu.com.cn/problem/P3272)"
+    Summary: An $r\times c$ board has some blocked cells. Count the ways to cover all unblocked cells with L-shaped tiles.
 
-??? note "习题 [「HDU 4796」Winter's Coming](https://acm.hdu.edu.cn/showproblem.php?pid=4796)"
-    题目大意：在 $N\times M$ 的棋盘内对未染色的格点进行黑白灰染色，要求所有黑色区域和白色区域连通，且黑色区域与白色区域分别与棋盘的上下边界连通，且其中黑色区域与白色区域不能相邻．每个格子有对应的代价，求一组染色方案，最小化灰色区域的代价．
+??? note "Exercise ['HDU 4796' Winter's Coming](https://acm.hdu.edu.cn/showproblem.php?pid=4796)"
+    Summary: On an $N\times M$ board, color the uncolored cells black, white or gray. All black cells must be connected and all white cells must be connected; the black region and the white region must each touch both the top and bottom borders of the board; and the black region and the white region must not be adjacent. Each cell has a cost. Find a coloring that minimizes the total cost of the gray cells.
     
     ![4796](./images/4796.jpg)
 
-??? note "习题 [「ZOJ 2125」Rocket Mania](https://pintia.cn/problem-sets/91827364500/exam/problems/type/7?page=11&problemSetProblemId=91827365624)"
-    题目大意：$9\times6$ 的地图上每个格子里是一种管道（`-`,`T`,`L`,`+` 型或没有），可以把管道旋转 0°,90°,180°,270°, 问地图最多能有几行的右边界与第 X 行的左边界通过管道相连．
+??? note "Exercise ['ZOJ 2125' Rocket Mania](https://pintia.cn/problem-sets/91827364500/exam/problems/type/7?page=11&problemSetProblemId=91827365624)"
+    Summary: On a $9\times6$ map, each cell holds one kind of pipe (`-`, `T`, `L`, `+` shaped, or none). You may rotate each pipe by 0°, 90°, 180° or 270°. Find the maximum number of rows whose right border can be connected by pipes to the left border of row X.
 
-??? note "习题 [「ZOJ 2126」Rocket Mania Plus](https://pintia.cn/problem-sets/91827364500/exam/problems/type/7?page=11&problemSetProblemId=91827365625)"
-    题目大意：$9\times6$ 的地图上每个格子里是一种管道（`-`,`T`,`L`,`+` 型或没有），可以把管道旋转 0°,90°,180°,270°, 问地图最多能有几行的右边界与左边界通过管道相连．
+??? note "Exercise ['ZOJ 2126' Rocket Mania Plus](https://pintia.cn/problem-sets/91827364500/exam/problems/type/7?page=11&problemSetProblemId=91827365625)"
+    Summary: On a $9\times6$ map, each cell holds one kind of pipe (`-`, `T`, `L`, `+` shaped, or none). You may rotate each pipe by 0°, 90°, 180° or 270°. Find the maximum number of rows whose right border can be connected by pipes to the left border.
 
-??? note "习题 [「World Finals 2009/2010 Harbin」Channel](https://qoj.ac/problem/13134)"
-    题目大意：一张方格地图上用 `.` 表示空地、`#` 表示石头，找到最长的一条路径满足：
+??? note "Exercise ['World Finals 2009/2010 Harbin' Channel](https://qoj.ac/problem/13134)"
+    Summary: On a grid map, `.` is empty ground and `#` is rock. Find the longest path such that:
     
-    1.  起点在左上角，终点在右下角．
-    2.  不能经过石头．
-    3.  路径自身不能在八连通的意义下成环．（即包括拐角处也不能接触）
+    1.  It starts at the top-left corner and ends at the bottom-right corner.
+    2.  It does not pass through rock.
+    3.  The path does not touch itself in the 8-connected sense (that is, it may not touch itself even at corners).
 
-??? note "习题 [「HDU 3958」Tower Defence](https://acm.hdu.edu.cn/showproblem.php?pid=3958)"
-    题目大意：可以转化为求解一条从 $\mathit{S}$ 到 $\mathit{T}$ 的不能接触的最长路径，拐角处可以接触．
+??? note "Exercise ['HDU 3958' Tower Defence](https://acm.hdu.edu.cn/showproblem.php?pid=3958)"
+    Summary: It can be turned into finding the longest non-touching path from $\mathit{S}$ to $\mathit{T}$, where touching at corners is allowed.
 
-??? note "习题 [「UVa 10531」Maze Statistics](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=24&page=show_problem&problem=1472)"
-    题目大意：有一个 $N\times M$ 的图，每个格子有独立概率 $\mathit{p}$ 变成障碍物．你要从迷宫左上角走到迷宫右下角．求每个格子成为一个 **有解迷宫（即起点终点四联通）** 中的障碍物的概率．（$N \le 5$，$M \le 6$）
+??? note "Exercise ['UVa 10531' Maze Statistics](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=24&page=show_problem&problem=1472)"
+    Summary: There is an $N\times M$ grid, and each cell independently becomes an obstacle with probability $\mathit{p}$. You must walk from the top-left corner of the maze to the bottom-right corner. For each cell, find the probability that it is an obstacle in a **solvable maze (one where the start and end are 4-connected)**. ($N \le 5$, $M \le 6$)
 
-??? note "习题 [「Aizu 2452」Pipeline Plans](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2452)"
-    题目大意：现有一共 12 种图案的瓷砖，每种瓷砖数量给定．要求铺到一块可视为 $R\times C$ 网格图的矩形地板上，一个格子铺一块瓷砖，且左上角格子的中心与右下角格子的中心通过瓷砖图案上的线联通．$(2 \le R \times C \le 15)$
+??? note "Exercise ['Aizu 2452' Pipeline Plans](https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2452)"
+    Summary: There are 12 tile patterns, and the number of tiles of each pattern is given. Tile a rectangular floor that can be viewed as an $R\times C$ grid, one tile per cell, so that the center of the top-left cell and the center of the bottom-right cell are connected by the lines on the tile patterns. $(2 \le R \times C \le 15)$
     
     ![plug2](./images/plug2.png)
 
-??? note "习题 [「SDOI 2014」电路板](https://www.luogu.com.cn/problem/P3314)"
-    题目大意：一块 $N\times M$ 的电路板，上面有些位置是电线不能走的障碍，给定 $K$ 个格子对，要求每对格子都有电线相连，且电线之间互不相交（允许一条电路线从上边界进入当前格子，从左边界离开这个格子，另外一条电路线可以从下边界进入格子，从右边界出去）．视电线为无向边，求满足要求的最短电线长度和方案数．
+??? note "Exercise ['SDOI 2014' Circuit Board](https://www.luogu.com.cn/problem/P3314)"
+    Summary: An $N\times M$ circuit board has some cells that wires cannot pass through. Given $K$ pairs of cells, every pair must be connected by a wire, and wires must not cross each other (one wire may enter a cell through its top edge and leave through its left edge, while another wire enters through its bottom edge and leaves through its right edge). Treat wires as undirected edges. Find the minimum total wire length and the number of ways to achieve it.
 
-??? note "习题 [「SPOJ CAKE3」Delicious Cake](https://www.spoj.com/problems/CAKE3)"
-    题目大意：一块可视为 $N\times M$ 网格的蛋糕，现沿着格线将蛋糕切成数块，问有多少种不同的切割方法．切法相同当且仅当切成的每块蛋糕都形状相同且在同一位置上．（$\min(N,M) \le 5, \max(N,M) \le 130$）
+??? note "Exercise ['SPOJ CAKE3' Delicious Cake](https://www.spoj.com/problems/CAKE3)"
+    Summary: A cake can be viewed as an $N\times M$ grid. Cut it along the grid lines into several pieces. Count the different ways to cut it. Two ways are the same if and only if every resulting piece has the same shape and is in the same position. ($\min(N,M) \le 5, \max(N,M) \le 130$)
 
-## 本章注记
+## Chapter notes
 
-插头 DP 问题通常编码难度较大，讨论复杂，因而属于 OI/ACM 中相对较为 [偏门的领域](https://github.com/OI-wiki/libs/blob/master/topic/7-%E7%8E%8B%E5%A4%A9%E6%87%BF-%E8%AE%BA%E5%81%8F%E9%A2%98%E7%9A%84%E5%8D%B1%E5%AE%B3.ppt)．这方面最为经典的资料，当属 2008 年 [陈丹琦](https://www.cs.princeton.edu/~danqic/) 的集训队论文——[基于连通性状态压缩的动态规划问题](https://github.com/AngelKitty/review_the_national_post-graduate_entrance_examination/tree/master/books_and_notes/professional_courses/data_structures_and_algorithms/sources/%E5%9B%BD%E5%AE%B6%E9%9B%86%E8%AE%AD%E9%98%9F%E8%AE%BA%E6%96%87/%E5%9B%BD%E5%AE%B6%E9%9B%86%E8%AE%AD%E9%98%9F2008%E8%AE%BA%E6%96%87%E9%9B%86/%E9%99%88%E4%B8%B9%E7%90%A6%E3%80%8A%E5%9F%BA%E4%BA%8E%E8%BF%9E%E9%80%9A%E6%80%A7%E7%8A%B6%E6%80%81%E5%8E%8B%E7%BC%A9%E7%9A%84%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E9%97%AE%E9%A2%98%E3%80%8B)．其次，HDU 的 notonlysuccess 2011 年曾经在博客中连续写过两篇由浅入深的专题，也是不可多得的好资料，不过现在需要在 Web Archive 里考古．
+Plug DP problems are usually hard to code and involve many cases, so they are a relatively [niche area](https://github.com/OI-wiki/libs/blob/master/topic/7-%E7%8E%8B%E5%A4%A9%E6%87%BF-%E8%AE%BA%E5%81%8F%E9%A2%98%E7%9A%84%E5%8D%B1%E5%AE%B3.ppt) in OI/ACM. The most classic material on the subject is the 2008 national training team paper by [Danqi Chen](https://www.cs.princeton.edu/~danqic/), [Dynamic programming problems based on connectivity state compression](https://github.com/AngelKitty/review_the_national_post-graduate_entrance_examination/tree/master/books_and_notes/professional_courses/data_structures_and_algorithms/sources/%E5%9B%BD%E5%AE%B6%E9%9B%86%E8%AE%AD%E9%98%9F%E8%AE%BA%E6%96%87/%E5%9B%BD%E5%AE%B6%E9%9B%86%E8%AE%AD%E9%98%9F2008%E8%AE%BA%E6%96%87%E9%9B%86/%E9%99%88%E4%B8%B9%E7%90%A6%E3%80%8A%E5%9F%BA%E4%BA%8E%E8%BF%9E%E9%80%9A%E6%80%A7%E7%8A%B6%E6%80%81%E5%8E%8B%E7%BC%A9%E7%9A%84%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E9%97%AE%E9%A2%98%E3%80%8B) (Chinese). Next, notonlysuccess of HDU wrote two blog posts in 2011 that cover the topic step by step from easy to hard. They are also rare and valuable, but today you have to dig them up in the Web Archive.
 
--   [notonlysuccess，【专辑】插头 DP](https://web.archive.org/web/20110815044829/http://www.notonlysuccess.com/?p=625)
--   [notonlysuccess，【完全版】插头 DP](https://web.archive.org/web/20111007185146/http://www.notonlysuccess.com/?p=931)
+-   [notonlysuccess, [Collection] Plug DP (Chinese)](https://web.archive.org/web/20110815044829/http://www.notonlysuccess.com/?p=625)
+-   [notonlysuccess, [Complete edition] Plug DP (Chinese)](https://web.archive.org/web/20111007185146/http://www.notonlysuccess.com/?p=931)
 
-### 多米诺骨牌覆盖
+### Domino tiling
 
-[「HDU 1400」Mondriaan’s Dream](https://acm.hdu.edu.cn/showproblem.php?pid=1400) 也出现在 [《算法竞赛入门经典训练指南》](../contest/resources.md#书籍) 中，并作为《轮廓线上的动态规划》一节的例题．[多米诺骨牌覆盖（Domino tiling）](https://en.wikipedia.org/wiki/Domino_tiling) 是一组非常经典的数学问题，稍微修改其数据范围就可以得到不同难度，需要应用不同的算法解决的子问题．
+['HDU 1400' Mondriaan’s Dream](https://acm.hdu.edu.cn/showproblem.php?pid=1400) also appears in [Training Guide for Algorithm Competitions](../contest/resources.md#书籍), as an example problem in the section "Dynamic programming on contour lines". [Domino tiling](https://en.wikipedia.org/wiki/Domino_tiling) is a family of classic math problems. Changing the constraints slightly gives subproblems of different difficulty that need different algorithms.
 
-当限定 $m=2$ 时，多米诺骨牌覆盖等价于斐波那契数列．[《具体数学》](https://www.csie.ntu.edu.tw/~r97002/temp/Concrete%20Mathematics%202e.pdf) 中使用了该问题以引出斐波那契数列，并使用了多种方法得到其解析解．
+When $m=2$, domino tiling is equivalent to the Fibonacci sequence. [Concrete Mathematics](https://www.csie.ntu.edu.tw/~r97002/temp/Concrete%20Mathematics%202e.pdf) uses this problem to introduce the Fibonacci numbers and derives their closed form in several ways.
 
-当 $m\le 10,n\le 10^9$ 时，可以将转移方程预处理成矩阵形式，并使用 [矩阵乘法进行加速](http://www.matrix67.com/blog/archives/276)．
+When $m\le 10,n\le 10^9$, we can precompute the transitions as a matrix and [speed them up with matrix multiplication](http://www.matrix67.com/blog/archives/276).
 
 ![domino\_v2\_transform\_matrix](./images/domino_v2_transform_matrix.svg)
 
-当 $n,m\le 100$，可以用 [FKT Algorithm](https://en.wikipedia.org/wiki/FKT_algorithm) 计算其所对应平面图的完美匹配数．
+When $n,m\le 100$, we can use the [FKT Algorithm](https://en.wikipedia.org/wiki/FKT_algorithm) to count the perfect matchings of the corresponding planar graph.
 
--   [「51nod 1031」骨牌覆盖](https://www.51nod.com/Html/Challenge/Problem.html#problemId=1031)
--   [「51nod 1033」骨牌覆盖 V2](https://www.51nod.com/Html/Challenge/Problem.html#problemId=1033)|[「Vijos 1194」Domino](https://vijos.org/p/1194)
--   [「51nod 1034」骨牌覆盖 V3](https://www.51nod.com/Html/Challenge/Problem.html#problemId=1034)|[「Ural 1594」Aztec Treasure](https://acm.timus.ru/problem.aspx?space=1&num=1594)
+-   ['51nod 1031' Domino Tiling](https://www.51nod.com/Html/Challenge/Problem.html#problemId=1031)
+-   ['51nod 1033' Domino Tiling V2](https://www.51nod.com/Html/Challenge/Problem.html#problemId=1033)|['Vijos 1194' Domino](https://vijos.org/p/1194)
+-   ['51nod 1034' Domino Tiling V3](https://www.51nod.com/Html/Challenge/Problem.html#problemId=1034)|['Ural 1594' Aztec Treasure](https://acm.timus.ru/problem.aspx?space=1&num=1594)
 -   [Wolfram MathWorld, Chebyshev Polynomial of the Second Kind](https://mathworld.wolfram.com/ChebyshevPolynomialoftheSecondKind.html)
 
-### 一条路径
+### A single path
 
-「一条路径」是 [哈密顿路径（Hamiltonian Path）](https://en.wikipedia.org/wiki/Hamiltonian_path) 问题在 [格点图（Grid Graph）](https://mathworld.wolfram.com/GridGraph.html) 中的一种特殊情况．哈密顿路径的判定性问题是 [NP-complete](https://en.wikipedia.org/wiki/NP-completeness) 家族中的重要成员．
+The "single path" problem is a special case of the [Hamiltonian path](https://en.wikipedia.org/wiki/Hamiltonian_path) problem on a [grid graph](https://mathworld.wolfram.com/GridGraph.html). The decision version of the Hamiltonian path problem is an important member of the [NP-complete](https://en.wikipedia.org/wiki/NP-completeness) family.

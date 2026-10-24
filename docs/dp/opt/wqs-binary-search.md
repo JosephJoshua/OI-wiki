@@ -1,18 +1,18 @@
-## 引入
+## Introduction
 
-本文介绍利用 WQS 二分优化动态规划问题的方法．在不同的文章中，它也常称作带权二分、凸优化 DP、凸完全单调性 DP、Lagrange 乘子法等，在国外也称作 Aliens Trick．它最早由王钦石在《浅析一类二分方法》一文中总结．
+This article introduces how to optimize dynamic programming problems with WQS binary search. In different articles it is also called weighted binary search, convex optimization DP, convex totally monotone DP, the Lagrange multiplier method, and so on; outside China it is also known as the Aliens Trick. It was first summarized by Wang Qinshi in the paper "A Brief Analysis of a Class of Binary Search Methods".
 
-WQS 二分通常用于解决这样一类优化问题：它们带有数量限制，直接求解代价较高；但一旦去除这一限制，问题本身就变得容易得多．
+WQS binary search is usually used for a class of optimization problems that come with a count constraint. Solving them directly is expensive, but once the constraint is removed, the problem becomes much easier.
 
-比如，假设要解决的问题是，要从 $n$ 个物品中选取 $m$ 个，并最优化某个较复杂的目标函数．如果设从前 $i$ 个物品中选取 $j$ 个，目标函数的最优值为 $f(i,j)$，那么原问题的答案就是 $f(n,m)$．这类问题中，状态转移方程通常是二维的．直接实现该状态转移方程，时间复杂度是 $O(nm)$ 的，难以接受．
+For example, suppose the problem is to choose $m$ items out of $n$ and optimize some fairly complicated objective function. If $f(i,j)$ is the optimal objective value when choosing $j$ items from the first $i$ items, then the answer to the original problem is $f(n,m)$. In problems like this, the transition equation is usually two-dimensional. Implementing it directly takes $O(nm)$ time, which is too slow.
 
-进一步假设，没有数量限制的最优化问题容易解决．但是，选取到的最优数量未必满足原问题的数量限制．假设选取的物品过多．那么，就可以考虑在选取物品时，为每个选取到的物品都附加一个固定大小的惩罚 $k$（即「带权二分」中的「权」），仍然解没有数量限制的最优化问题．根据 $k$ 的取值不同，选取到的最优数量也会有所不同；而且，随着 $k$ 的变化，选取到的最优数量也是单调变化的．所以，可以通过二分，找到 $k$ 使得选取到的最优数量恰为 $m$．假设此时目标函数的最优值为 $f_k(n)$，那么，只要消除额外附加的惩罚造成的价值损失，就能得到原问题的答案 $f(n,m)=f_k(n)-km$．假设单次求解附加惩罚的问题的复杂度是 $O(T(n))$ 的，那么，算法的整体复杂度也就降低到了 $O(T(n)\log L)$，其中，$O(\log L)$ 是二分 $k$ 需要的次数．
+Now further suppose that the optimization problem without the count constraint is easy to solve. However, the optimal number of chosen items may not satisfy the count constraint of the original problem. Suppose too many items are chosen. Then we can add a fixed penalty $k$ to every chosen item (this is the "weight" in "weighted binary search") and still solve the problem without the count constraint. The optimal number of chosen items depends on $k$, and it changes monotonically as $k$ changes. So we can binary search for a $k$ that makes the optimal number of chosen items exactly $m$. If the optimal objective value is then $f_k(n)$, we just remove the loss caused by the extra penalty to get the answer to the original problem: $f(n,m)=f_k(n)-km$. If solving the penalized problem once takes $O(T(n))$ time, the whole algorithm takes $O(T(n)\log L)$ time, where $O(\log L)$ is the number of binary search steps on $k$.
 
-这就是 WQS 二分的基本想法．但是，这一想法能够行得通，前提是 $f(n,m)$ 关于 $m$ 是凸的．否则，可能不存在使得最优数量恰为 $m$ 的附加惩罚 $k$．这也是这种 DP 优化方法常常称为「凸优化 DP」或「凸完全单调性 DP」的原因．
+That is the basic idea of WQS binary search. But it only works if $f(n,m)$ is convex in $m$. Otherwise there may be no penalty $k$ that makes the optimal count exactly $m$. This is also why this DP optimization is often called "convex optimization DP" or "convex totally monotone DP".
 
-## 传统方法
+## The traditional method
 
-设非空集合 $X$ 为（有限的）决策空间，$f:X\rightarrow\mathbf R$ 为目标函数，且另有函数 $g:X\rightarrow\mathbf R^d$ 用于施加限制．需要求解的问题，可以看作是计算如下最优化问题的价值函数 $v(y)$ 在某处的取值：
+Let the nonempty set $X$ be the (finite) decision space, $f:X\rightarrow\mathbf R$ the objective function, and $g:X\rightarrow\mathbf R^d$ another function used to impose constraints. The problem we want to solve can be seen as evaluating, at some point, the value function $v(y)$ of the following optimization problem:
 
 $$
 \begin{aligned}
@@ -21,103 +21,103 @@ v(y)=\min_{x\in X}\;&f(x)\\
 \end{aligned}
 $$
 
-比如，对于前文提到的限制数量的问题，$X$ 可以理解为所有物品集合的子集族，$x\in X$ 是单个子集，$f(x)$ 是单个子集的价值函数，$g(x)$ 是子集 $x$ 中的元素个数．当然，$g(x)$ 并非只能是数量限制，后文提供了更为广泛的限制条件的例子．
+For example, for the count-constrained problem mentioned above, $X$ can be seen as the family of all subsets of the item set, $x\in X$ is one subset, $f(x)$ is the value of that subset, and $g(x)$ is the number of elements in subset $x$. Of course, $g(x)$ does not have to be a count constraint; later sections give examples of more general constraints.
 
-???+ info "约定"
-    为了行文方便，本文仅讨论最小化目标函数的问题．最大化目标函数的问题与之相仿，只是需要将本文中的（下）凸函数相应地替换成凹函数（或称上凸函数）．或者，可以通过添加负号，将最大化目标函数的问题，转化为最小化它的相反数的问题．
+???+ info "Convention"
+    For convenience, this article only discusses minimization problems. Maximization problems are similar; just replace the (downward) convex functions in this article with concave functions (also called upward convex functions). Alternatively, by adding a minus sign, a maximization problem can be turned into minimizing the negated objective.
 
-### 几何直观
+### Geometric intuition
 
-因为算法竞赛中遇到的大多数问题都是组合优化问题，决策空间 $X$ 通常没有良好的结构，所以，可以转而考察集合
+Most problems in competitive programming are combinatorial optimization problems, so the decision space $X$ usually has no nice structure. Instead, we can look at the set
 
 $$
 \mathcal D = \{(g(x),f(x))\in\mathbf R^d\times\mathbf R:x\in X\}.
 $$
 
-传统方法能够解决的主要是 $d=1$ 的情形，即只有一个限制的情形．下图提供了此时点集 $\mathcal D$ 的一种可能的图示．
+The traditional method mainly handles the case $d=1$, that is, a single constraint. The figure below shows one possible picture of the point set $\mathcal D$ in this case.
 
 ![](../images/wqs-binary-search/wqs-f-g-space.svg)
 
-图中的红点和蓝点是 $X$ 中所有可能的选择投影在平面 $(g(x),f(x))$ 上得到的集合 $\mathcal D$．于是，原问题所要求的就是横坐标为 $y$ 的那些点中，纵坐标的最小值 $v(y)$．当 $y$ 变动时，所有这样的点 $(y,v(y))$ 就构成了图中的红点的集合．
+The red and blue points in the figure form the set $\mathcal D$, obtained by projecting every possible choice in $X$ onto the plane $(g(x),f(x))$. The original problem then asks for $v(y)$, the minimum y-coordinate among the points whose x-coordinate is $y$. As $y$ varies, all such points $(y,v(y))$ form the set of red points in the figure.
 
-为了求得点 $(y,v(y))$ 的纵坐标，可以考虑用斜率为 $\lambda\in\mathbf R$ 的直线去切集合 $\mathcal D$．如图所示，当直线的斜率选取得恰当时，经过点 $(y,v(y))$ 的那条直线，是所有经过集合 $\mathcal D$ 中的点且斜率为 $\lambda$ 的直线中，截距 $f(x)-\lambda g(x)$ 最小的．将这一最小值记为
+To find the y-coordinate of the point $(y,v(y))$, we can cut the set $\mathcal D$ with a line of slope $\lambda\in\mathbf R$. As the figure shows, when the slope is chosen well, the line through $(y,v(y))$ has the smallest intercept $f(x)-\lambda g(x)$ among all lines of slope $\lambda$ that pass through a point of $\mathcal D$. Denote this minimum by
 
 $$
 h(\lambda) = \min_{x\in X}f(x)-\lambda g(x).
 $$
 
-那么，因为 $(y,v(y))$ 同样位于该直线上，就可以得到原问题的解
+Then, since $(y,v(y))$ also lies on this line, we get the solution of the original problem:
 
 $$
 v(y) = h(\lambda) + \lambda y.
 $$
 
-假设对于所有合理范围的 $\lambda$，上述函数 $h(\lambda)$ 都是容易求解的．这在算法竞赛中常常是成立的，因为它去掉了原问题中的限制条件．那么，现在面临的最为重要的两个问题，就是
+Suppose $h(\lambda)$ is easy to compute for every $\lambda$ in a reasonable range. This is often true in competitive programming, because it removes the constraint of the original problem. Then the two most important questions are:
 
-1.  是否存在这样的直线斜率 $\lambda$，使得它的截距最小值恰好取得在点 $(y,v(y))$ 处，以及
-2.  如果存在，如何找到这样的斜率 $\lambda$．
+1.  Is there a slope $\lambda$ such that the minimum intercept is attained exactly at the point $(y,v(y))$? And
+2.  If so, how do we find such a slope $\lambda$?
 
-第一个问题相对容易解决．因为当直线斜率 $\lambda$ 发生变化时，所有这些直线切出的集合（即它们对应的上半平面的交）必然是一个凸集．因此，这些直线能够经过某个点，当且仅当这个点在该凸集的下凸壳上．这等价于说，函数 $v(y)$ 是 [凸函数](./slope-trick.md#离散点集上的凸函数)．
+The first question is relatively easy. As the slope $\lambda$ changes, the region cut out by all these lines (that is, the intersection of their upper half-planes) is always a convex set. So these lines can pass through a point if and only if the point lies on the lower convex hull of that convex set. This is equivalent to saying that the function $v(y)$ is a [convex function](./slope-trick.md#离散点集上的凸函数).
 
-第二个问题则更为精细．因为所求点的横坐标已经知道是 $y$，所以，一个自然的思路是，计算 $h(\lambda)$ 时，顺便求出限制函数 $g(x)$ 在当前最优解 $x_\lambda$ 处的取值．比如，在前文提到的例子中，求解带惩罚的问题时，可以记录带惩罚的目标函数取得最优解时，选取的物品数量．然后，将 $g(x_\lambda)$ 与所期望的 $y$ 进行比较，并相应调整下次计算时的 $\lambda$ 的取值．这就是最为传统的 WQS 二分的方法．
+The second question is more subtle. Since we already know the x-coordinate of the target point is $y$, a natural idea is to also compute, while computing $h(\lambda)$, the value of the constraint function $g(x)$ at the current optimal solution $x_\lambda$. For example, in the example above, when solving the penalized problem, we can record how many items are chosen in the optimal solution of the penalized objective. Then we compare $g(x_\lambda)$ with the desired $y$ and adjust $\lambda$ for the next computation accordingly. This is the most traditional form of WQS binary search.
 
-总结一下，传统 WQS 二分的基本流程如下：
+To sum up, the basic process of traditional WQS binary search is:
 
-1.  初始时，选取一个 $\lambda$ 的合理的区间；
-2.  在当前的区间中选择一个 $\lambda$；
-3.  求解带惩罚的问题 $h(\lambda)=\min_{x\in X}f(x)-\lambda g(x)$，并记录它的最优解 $x_\lambda$ 处 $g(x)$ 的取值 $g(x_\lambda)$；
-4.  如果 $g(x_\lambda)=y$，就得到原问题的最优价值 $v(y)=h(\lambda)+\lambda y$，直接结束算法；
-5.  否则，根据 $g(x_\lambda)$ 与 $y$ 的大小关系，调整 $\lambda$ 的区间，并回到步骤 2．
+1.  At the start, choose a reasonable interval for $\lambda$;
+2.  Pick a $\lambda$ in the current interval;
+3.  Solve the penalized problem $h(\lambda)=\min_{x\in X}f(x)-\lambda g(x)$, and record the value $g(x_\lambda)$ of $g(x)$ at its optimal solution $x_\lambda$;
+4.  If $g(x_\lambda)=y$, we get the optimal value of the original problem $v(y)=h(\lambda)+\lambda y$ and stop;
+5.  Otherwise, adjust the interval of $\lambda$ according to whether $g(x_\lambda)$ is larger or smaller than $y$, and go back to step 2.
 
-这一基本流程已经足以解决一些问题，但并不完善．接下来，本文将讨论对这一基本流程的改进．
+This basic process is already enough for some problems, but it is not complete. Next, this article discusses improvements to it.
 
-### 共线情形的处理
+### Handling collinear points
 
-在应用基本流程时，首先遇到的问题就是共线情形无法正确处理．
+When applying the basic process, the first problem is that it cannot correctly handle collinear points.
 
-如果点集 $\mathcal D$ 的下凸壳上有三个及以上的红点共线，那么在上述基本流程中，可能无法正确地判断 $g(x_\lambda)$ 与 $y$ 的大小关系．比如，设共线的三个红点的横坐标分别为 $y_1,y_2,y_3$，且它们共线的直线的斜率为 $\lambda^*$．那么，要正确求解 $v(y_2)$，就必须保证算法终止时，最后计算的问题是 $h(\lambda^*)$，因为 $\lambda^*$ 是唯一一个最小化截距时能够经过点 $(y_2,v(y_2))$ 的直线的斜率．但是，在求解 $h(\lambda^*)$ 的过程中，记录的 $g(x_{\lambda^*})$ 可能是 $y_1,y_2,y_3$ 中的任意一个．如果记录到的 $g(x_{\lambda^*})$ 不等于 $y_2$，那么算法将错误地继续运行，并向着背离 $y_2$ 的方向调整 $\lambda$ 的区间，最终将得到错误的结果．
+If three or more red points on the lower convex hull of $\mathcal D$ are collinear, the basic process above may misjudge whether $g(x_\lambda)$ is larger or smaller than $y$. For example, let the x-coordinates of three collinear red points be $y_1,y_2,y_3$, and let the slope of the line through them be $\lambda^*$. To compute $v(y_2)$ correctly, the last problem solved when the algorithm stops must be $h(\lambda^*)$, because $\lambda^*$ is the only slope for which the minimum-intercept line passes through $(y_2,v(y_2))$. But when solving $h(\lambda^*)$, the recorded $g(x_{\lambda^*})$ may be any of $y_1,y_2,y_3$. If the recorded $g(x_{\lambda^*})$ is not $y_2$, the algorithm wrongly keeps going and moves the interval of $\lambda$ away from $y_2$, ending with a wrong result.
 
-为了解决共线的情形，一种处理方法是在记录最优解 $x_\lambda$ 对应的 $g(x_\lambda)$ 时，总是使之尽可能大（或尽可能小）．同时，将二分中的终止条件从寻找恰好满足 $g(x_\lambda)=y$ 的 $\lambda$ 改为寻找满足 $g(x_\lambda)\ge y$（或 $g(x_\lambda)\le y$）的最小（或最大）的 $\lambda$．在上一段的例子中，这相当于计算问题 $h(\lambda^*)$ 时，输出的 $g(x_{\lambda^*})$ 是 $y_3$．这就保证了算法终止时，最后计算的问题是 $h(\lambda^*)$．实现这一方法时，需要注意最后输出的不是 $h(\lambda)+\lambda g(x_{\lambda})$ 而是 $h(\lambda)+\lambda y$，因为记录的 $g(x_\lambda)$ 未必等于实际的限制 $y$．
+One way to handle collinear points is to always make the recorded $g(x_\lambda)$ of the optimal solution $x_\lambda$ as large as possible (or as small as possible). At the same time, change the stopping condition of the binary search: instead of looking for a $\lambda$ with exactly $g(x_\lambda)=y$, look for the smallest (or largest) $\lambda$ with $g(x_\lambda)\ge y$ (or $g(x_\lambda)\le y$). In the example of the previous paragraph, this means that when solving $h(\lambda^*)$, the output $g(x_{\lambda^*})$ is $y_3$. This guarantees that the last problem solved when the algorithm stops is $h(\lambda^*)$. When implementing this, note that the final output is not $h(\lambda)+\lambda g(x_{\lambda})$ but $h(\lambda)+\lambda y$, because the recorded $g(x_\lambda)$ is not necessarily equal to the actual constraint $y$.
 
-另一种处理方法是实数二分．如果问题涉及的数字都是整数，显然，WQS 二分中的斜率也是整数．在二分中引入实数，是为了保证错误地排除正确选项 $\lambda^*$ 时，可以通过小数部分调整回来，最终逼近正确答案 $\lambda^*$．例如，在上面的例子中，如果计算问题 $h(\lambda^*)$ 时，记录的 $g(x_{\lambda^*})$ 是 $y_1$，小于所希望的 $y_2$，那么，算法就会转而考虑区间 $(\lambda^*,\lambda_r]$，其中，$\lambda_r$ 是 $\lambda$ 所在区间的右端点．对于整数的情形，这一区间实际应该写作 $[\lambda^*+1,\lambda_r]$，这就排除了在后续算法中接近正确答案 $\lambda^*$ 的可能．但是，实数二分时，考虑的区间仍然是 $(\lambda^*,\lambda_r]$，而且，对于该区间中的 $\lambda$，求解 $h(\lambda)$ 时记录的 $g(x_\lambda)$ 总是不小于 $y_3$，从而严格大于 $y_2$ 的．因此，随着算法继续进行，会不断地舍去右半区间，从而，最终得到的 $\lambda$ 的范围可以保证在 $\lambda^*$ 附近．当然，因为已经知道所求的斜率是一个整数，实数二分终止时的精度不必太高，只要能保证二分的区间中只包含一个整数即可，这一整数就是要寻找的 $\lambda^*$．
+Another way is binary search over real numbers. If all numbers in the problem are integers, the slopes in WQS binary search are clearly integers too. Real numbers are introduced so that if the correct choice $\lambda^*$ is wrongly excluded, the fractional part can bring the search back, and it finally converges to the correct answer $\lambda^*$. For example, in the example above, if the recorded $g(x_{\lambda^*})$ when solving $h(\lambda^*)$ is $y_1$, which is smaller than the desired $y_2$, the algorithm then considers the interval $(\lambda^*,\lambda_r]$, where $\lambda_r$ is the right end of the current interval of $\lambda$. In the integer case, this interval would really be $[\lambda^*+1,\lambda_r]$, which rules out ever getting close to the correct answer $\lambda^*$ later. With real numbers, though, the interval is still $(\lambda^*,\lambda_r]$, and for any $\lambda$ in it, the recorded $g(x_\lambda)$ when solving $h(\lambda)$ is always at least $y_3$, and so strictly greater than $y_2$. So as the algorithm continues, it keeps discarding the right half, and the final range of $\lambda$ is guaranteed to be near $\lambda^*$. Of course, since we know the target slope is an integer, the real-number binary search does not need high precision when it stops: it only needs the interval to contain a single integer, and that integer is the $\lambda^*$ we want.
 
-正确地处理共线情形后，WQS 二分足以解决绝大多数算法竞赛会遇到的 WQS 二分的问题．但是，这一方法仍然存在一些不足之处：它无法处理 $g(x_\lambda)$ 难以记录的情形，也无法处理高维 WQS 二分中多个点共面的情形．本文将进一步考察最优化问题 $v(y)$ 的性质，并提出更为一般的处理方法．
+Once collinear points are handled correctly, WQS binary search can solve the vast majority of WQS binary search problems you will meet in competitive programming. But the method still has shortcomings: it cannot handle cases where $g(x_\lambda)$ is hard to record, nor cases in higher-dimensional WQS binary search where several points are coplanar. This article now looks further into the properties of the optimization problem $v(y)$ and proposes a more general approach.
 
-## 对偶方法
+## The dual method
 
-本节介绍一种 WQS 二分的实现方法，它只要求对于所有 $\lambda\in\mathbf R^d$，可以高效地计算
+This section introduces a way to implement WQS binary search that only requires that, for every $\lambda\in\mathbf R^d$, we can efficiently compute
 
 $$
 h(\lambda) = \min_{x\in X}f(x)-\lambda\cdot g(x)
 $$
 
-的取值，且原问题的最优价值 $v(y)$ 是关于 $y\in\mathbf R^d$ 的凸函数[^high-d-convex]．用一句话概括，本节将证明原问题的价值函数 $v(y)$ 就等于它的对偶问题的最优价值
+and that the optimal value $v(y)$ of the original problem is a convex function of $y\in\mathbf R^d$[^high-d-convex]. In one sentence, this section proves that the value function $v(y)$ of the original problem equals the optimal value of its dual problem
 
 $$
 v^\star(y) = \sup_{\lambda\in\mathbf R^d} h(\lambda)+\lambda\cdot y,
 $$
 
-而对偶问题的目标函数是关于 $\lambda\in\mathbf R^d$ 的凹函数，从而是单峰函数，可以通过 [三分法](../../basic/binary.md#ternary-search) 或 [黄金分割法](../../basic/binary.md#optimization-golden-section-search) 高效地求解，复杂度仍然是 $O(T(n)\log^d L)$ 的．这就完全地解决了传统 WQS 二分方法中记录 $g(x_\lambda)$ 的值可能会出现的问题，同时，允许将 WQS 二分的思想应用至高维的情形．
+and the objective function of the dual problem is concave in $\lambda\in\mathbf R^d$, hence unimodal. It can be solved efficiently with [ternary search](../../basic/binary.md#ternary-search) or [golden-section search](../../basic/binary.md#optimization-golden-section-search), and the complexity is still $O(T(n)\log^d L)$. This completely removes the problems that can arise from recording $g(x_\lambda)$ in the traditional WQS binary search method, and it also lets the idea of WQS binary search be applied in higher dimensions.
 
-另外，本节还说明，$g(x_\lambda)$ 的范围可以通过 $h(\lambda)$ 求得，而无需在求解 $h(\lambda)$ 时额外记录．例如，对于 $d=1$ 且问题只涉及整数的情形，可以证明 $g(x_\lambda)$ 的取值范围恰为
+This section also shows that the range of $g(x_\lambda)$ can be obtained from $h(\lambda)$, without recording anything extra while solving $h(\lambda)$. For example, when $d=1$ and the problem only involves integers, one can prove that the range of values of $g(x_\lambda)$ is exactly
 
 $$
 [h(\lambda-1)-h(\lambda),h(\lambda)-h(\lambda+1)].
 $$
 
-这实际上也对于不得不采取前文所述二分流程的题目，提供了又一种解决共线问题的方法．
+For problems that must use the binary search process described earlier, this actually gives yet another way to deal with collinear points.
 
-接下来，本节将用凸分析的理论证明这些结论成立．至于这些方法的具体应用，可以参考 [例题](#例题) 一节．
+Next, this section uses convex analysis to prove these claims. For concrete applications of these methods, see the [Example problems](#example-problems) section.
 
-### Lagrange 对偶
+### Lagrange duality
 
-考虑用 [Lagrange 乘子法](https://en.wikipedia.org/wiki/Lagrange_multiplier) 解决该问题．引入 Lagrange 乘子 $\lambda\in\mathbf R^d$，那么，Lagrangian 可以写作
+Consider solving the problem with the [Lagrange multiplier method](https://en.wikipedia.org/wiki/Lagrange_multiplier). Introduce the Lagrange multiplier $\lambda\in\mathbf R^d$. Then the Lagrangian can be written as
 
 $$
 L(x,\lambda,y) = f(x) - \lambda\cdot g(x)+\lambda\cdot y.
 $$
 
-因为只要 $g(x)-y$ 有一个分量非零，就可以让相应的 $\lambda$ 的分量趋于（正或负）无穷，所以有
+If any component of $g(x)-y$ is nonzero, we can send the corresponding component of $\lambda$ to (positive or negative) infinity, so
 
 $$
 \sup_{\lambda\in\mathbf R^d}L(x,\lambda,y)
@@ -127,7 +127,7 @@ f(x),&g(x)=y,\\
 \end{cases}
 $$
 
-这说明，原问题可以写作
+This shows that the original problem can be written as
 
 $$
 \begin{aligned}
@@ -135,7 +135,7 @@ v(y) &= \min_{x\in X}\sup_{\lambda\in\mathbf R^d}L(x,\lambda,y).
 \end{aligned}
 $$
 
-交换两次最值操作，就得到它的 [对偶问题](https://en.wikipedia.org/wiki/Duality_%28optimization%29)：
+Swapping the two extremum operations gives its [dual problem](https://en.wikipedia.org/wiki/Duality_%28optimization%29):
 
 $$
 \begin{aligned}
@@ -144,45 +144,45 @@ v^\star(y)&=\sup_{\lambda\in\mathbf R^d}\min_{x\in X}L(x,\lambda,y)\\
 \end{aligned}
 $$
 
-马上要说明的是，在 $v(y)$ 是关于 $y$ 的凸函数的条件下，强对偶（strong duality）成立，即 $v^\star(y)=v(y)$．
+We will show shortly that when $v(y)$ is a convex function of $y$, strong duality holds, that is, $v^\star(y)=v(y)$.
 
-### 凸共轭
+### Convex conjugate
 
-为了说明强对偶成立，需要引入凸共轭的概念．
+To show that strong duality holds, we need the concept of the convex conjugate.
 
-???+ abstract "凸共轭"
-    对于函数 $f:\mathbf R^d\rightarrow\mathbf R\cup\{\pm\infty\}$，它的 **凸共轭**（convex conjugate），或称 **Legendre–Fenchel 变换**（Legendre–Fenchel transformation），是指函数
+???+ abstract "Convex conjugate"
+    For a function $f:\mathbf R^d\rightarrow\mathbf R\cup\{\pm\infty\}$, its **convex conjugate**, also called the **Legendre–Fenchel transformation**, is the function
     
     $$
     f^*(x^*) = \sup_{x\in\mathbf R^d}x^*\cdot x - f(x).
     $$
 
-从变量 $x^*$ 的角度看，$f^*(x^*)$ 是一系列线性函数的上确界，所以，必然是 $\mathbf R^d$ 上的凸函数．
+As a function of $x^*$, $f^*(x^*)$ is the supremum of a family of linear functions, so it is always a convex function on $\mathbf R^d$.
 
-???+ info "超平面的「斜率向量」和「截距」"
-    本文所讨论的向量空间 $\mathbf R^{d+1}$ 中的超平面的方程都具有形式
+???+ info "The \"slope vector\" and \"intercept\" of a hyperplane"
+    Every hyperplane in the vector space $\mathbf R^{d+1}$ discussed in this article has an equation of the form
     
     $$
     y = k\cdot x + b.
     $$
     
-    也就是说，本文不会涉及平行于 $y$ 轴的超平面．为表述方便，本文并不严谨地将 $k$ 称为该超平面的「斜率向量」，$b$ 称为该超平面的「截距」．将这一超平面的方程写成更标准的形式，就是
+    That is, this article never deals with hyperplanes parallel to the $y$ axis. For convenience, and somewhat loosely, this article calls $k$ the "slope vector" of the hyperplane and $b$ its "intercept". Written in a more standard form, the equation of this hyperplane is
     
     $$
     k\cdot x - y = -b.
     $$
     
-    它的一个法向量是 $(k,-1)$．因此，所谓的斜率向量其实是将超平面的法向量归一化使得它的最后一个分量等于 $-1$ 时，所得到的法向量的前 $d$ 个分量．
+    One of its normal vectors is $(k,-1)$. So the so-called slope vector is just the first $d$ components of the normal vector, after normalizing it so that its last component equals $-1$.
 
-几何直观上，函数 $f(x)$ 的凸共轭描述的是，对于所有斜率向量为 $x^*$ 且与函数 $f(x)$ 的上境图
+Geometrically, the convex conjugate of $f(x)$ describes the following: among all hyperplanes with slope vector $x^*$ that intersect the epigraph of $f(x)$
 
 $$
 \operatorname{epi}f = \{(x,y)\in\mathbf R^d\times\mathbf R:f(x)\le y\}
 $$
 
-相交的超平面，截距 $f(x)-x^*\cdot x$ 的最小值就是 $-f^*(x^*)$．换句话说，函数 $f(x)$ 总在超平面 $y = x^*\cdot x-f^*(x^*)$ 上方，且与该平面切于点 $(x_0,f(x_0))$；当然，可能存在其余的切点．这样的超平面，称为 $f(x)$ 在 $x_0$ 处的 **支撑超平面**（supporting hyperplane）．函数 $f(x)$ 的一个支撑超平面的截距由它的斜率向量唯一确定，凸共轭就提供了这个从斜率向量到截距的映射．
+the minimum intercept $f(x)-x^*\cdot x$ is $-f^*(x^*)$. In other words, the function $f(x)$ always lies above the hyperplane $y = x^*\cdot x-f^*(x^*)$ and touches it at the point $(x_0,f(x_0))$; of course, there may be other points of contact. Such a hyperplane is called a **supporting hyperplane** of $f(x)$ at $x_0$. The intercept of a supporting hyperplane of $f(x)$ is uniquely determined by its slope vector, and the convex conjugate is exactly this map from slope vectors to intercepts.
 
-在集合 $X$ 上最小化 $f(x)-\lambda\cdot g(x)$ 就等价于在集合 $\{(y,v(y))\}$ 上最小化 $v(y)-\lambda\cdot y$：
+Minimizing $f(x)-\lambda\cdot g(x)$ over the set $X$ is equivalent to minimizing $v(y)-\lambda\cdot y$ over the set $\{(y,v(y))\}$:
 
 $$
 \begin{aligned}
@@ -192,201 +192,201 @@ $$
 \end{aligned}
 $$
 
-因此，有
+Therefore
 
 $$
 h(\lambda) = \min_{y\in g(X)}v(y) - \lambda\cdot y = -v^*(\lambda).
 $$
 
-这说明 $h(\lambda)$ 是关于 $\lambda\in\mathbf R^d$ 的凹函数．进而，有
+This shows that $h(\lambda)$ is a concave function of $\lambda\in\mathbf R^d$. Moreover,
 
 $$
 v^\star(y) = \sup_{\lambda\in\mathbf R^d}\lambda\cdot y-v^*(\lambda) = v^{**}(y).
 $$
 
-也就是说，对偶问题的价值函数 $v^{\star}(y)$ 是原问题的价值函数 $v(y)$ 的双重凸共轭，也称为 **双共轭**（biconjugate）．
+That is, the value function $v^{\star}(y)$ of the dual problem is the convex conjugate applied twice to the value function $v(y)$ of the original problem, also called the **biconjugate**.
 
-所以，问题转化为：什么样的函数 $v(y)$ 满足它的双共轭就等于它自身？这一问题的答案由如下定理给出：
+So the question becomes: which functions $v(y)$ are equal to their own biconjugate? The answer is given by the following theorem:
 
-???+ note "定理（Fenchel–Moreau）"
-    对于函数 $f:\mathbf R^d\rightarrow\mathbf R\cup\{\pm\infty\}$，它的双共轭等于它自身，即 $f^{**}=f$，当且仅当以下三个条件之一满足：
+???+ note "Theorem (Fenchel–Moreau)"
+    For a function $f:\mathbf R^d\rightarrow\mathbf R\cup\{\pm\infty\}$, its biconjugate equals itself, i.e. $f^{**}=f$, if and only if one of the following three conditions holds:
     
-    1.  $f(x)$ 是正常凸函数且 [下半连续](https://en.wikipedia.org/wiki/Semi-continuity)，
-    2.  $f(x)\equiv+\infty$，或
-    3.  $f(x)\equiv-\infty$．
+    1.  $f(x)$ is a proper convex function and is [lower semicontinuous](https://en.wikipedia.org/wiki/Semi-continuity),
+    2.  $f(x)\equiv+\infty$, or
+    3.  $f(x)\equiv-\infty$.
 
-??? note "证明"
-    一个函数是正常的（proper），当且仅当它从不取得 $-\infty$ 的值，且不永远取得 $+\infty$ 的值．
+??? note "Proof"
+    A function is proper if and only if it never takes the value $-\infty$ and is not identically $+\infty$.
     
-    对于非正常函数的情形，可以验证 $f(x)\equiv+\infty$ 和 $f(x)\equiv-\infty$ 互为共轭．除此之外，只要 $f(x)$ 在任何一点处取到 $-\infty$，必然有 $f^*(x^*)\equiv+\infty$．所以，满足 $f^{**}=f$ 的非正常函数只有这两种情形．下面的讨论仅限于正常函数．对于正常函数，下半连续且凸的条件等价于它的上境图是闭凸集．
+    For improper functions, one can check that $f(x)\equiv+\infty$ and $f(x)\equiv-\infty$ are conjugates of each other. Apart from these, if $f(x)$ takes the value $-\infty$ at any point, then necessarily $f^*(x^*)\equiv+\infty$. So these two are the only improper functions with $f^{**}=f$. The discussion below is limited to proper functions. For a proper function, being lower semicontinuous and convex is equivalent to its epigraph being a closed convex set.
     
-    这一条件的必要性是容易的．因为 $f=f^{**}$ 是 $f^*$ 的凸共轭，作为一系列线性函数的上确界，它的上境图必然是一系列闭凸集的交集，所以必然是闭凸集．这就说明，满足 $f^{**}=f$ 的正常函数必然是下半连续且凸的．
+    Necessity is easy. Since $f=f^{**}$ is the convex conjugate of $f^*$, it is the supremum of a family of linear functions, so its epigraph is an intersection of closed convex sets and hence a closed convex set. This shows that a proper function with $f^{**}=f$ must be lower semicontinuous and convex.
     
-    反过来，这些条件也是充分的．和其他强对偶定理的证明一样，证明可以分为两步．
+    Conversely, these conditions are also sufficient. As with the proofs of other strong duality theorems, the proof has two steps.
     
-    第一步，说明弱对偶成立，即 $f(x)\ge f^{**}(x)$．由凸共轭的定义可知，对于所有 $x,x^*\in\mathbf R^d$，都有
+    Step one: show weak duality, i.e. $f(x)\ge f^{**}(x)$. By the definition of the convex conjugate, for all $x,x^*\in\mathbf R^d$,
     
     $$
     f^*(x^*) \ge x^*\cdot x-f(x).
     $$
     
-    这就说明，对于所有 $x,x^*\in\mathbf R^d$，同样有
+    So for all $x,x^*\in\mathbf R^d$ we also have
     
     $$
     f(x) \ge x^*\cdot x-f^*(x^*).
     $$
     
-    对不等式右侧中的 $x^*$ 取上确界，就有 $f(x)\ge f^{**}(x)$．
+    Taking the supremum over $x^*$ on the right-hand side gives $f(x)\ge f^{**}(x)$.
     
-    第二步，利用 [超平面分离定理](https://en.wikipedia.org/wiki/Hyperplane_separation_theorem) 说明 $f(x)\le f^{**}(x)$．假设不然，存在 $x_0\in\mathbf R^d$ 使得 $f(x_0)>f^{**}(x_0)$ 成立．因为 $f(x)$ 的上境图 $\operatorname{epi}(f)$ 是闭凸集，而且单点集 $\{(x_0,f^{**}(x_0))\}$ 是紧凸集，所以，根据超平面分离定理，存在 $(\lambda,t)\in\mathbf R^d\times\mathbf R$ 和 $\alpha\in\mathbf R$ 使得对于所有 $x\in\operatorname{dom} f:=\{x\in\mathbf R^d:f(x)<+\infty\}$ 和所有 $y\ge f(x)$ 都有
+    Step two: use the [hyperplane separation theorem](https://en.wikipedia.org/wiki/Hyperplane_separation_theorem) to show $f(x)\le f^{**}(x)$. Suppose not: there is $x_0\in\mathbf R^d$ with $f(x_0)>f^{**}(x_0)$. The epigraph $\operatorname{epi}(f)$ of $f(x)$ is a closed convex set, and the single-point set $\{(x_0,f^{**}(x_0))\}$ is a compact convex set. So by the hyperplane separation theorem, there exist $(\lambda,t)\in\mathbf R^d\times\mathbf R$ and $\alpha\in\mathbf R$ such that for all $x\in\operatorname{dom} f:=\{x\in\mathbf R^d:f(x)<+\infty\}$ and all $y\ge f(x)$,
     
     $$
     \lambda\cdot x-ty <\alpha <\lambda\cdot x_0 - tf^{**}(x_0)
     $$
     
-    成立．因为 $y$ 可以选得任意大，所以必然有 $t\ge 0$．这又可以分为两种情形．
+    holds. Since $y$ can be chosen arbitrarily large, we must have $t\ge 0$. There are two cases.
     
-    首先，讨论 $t>0$ 的情形．此时，将不等式的各部分都同除以 $t$，并设 $\lambda'=t^{-1}\lambda$ 和 $\alpha'=t^{-1}\alpha$，就得到
+    First, the case $t>0$. Divide every part of the inequality by $t$ and set $\lambda'=t^{-1}\lambda$ and $\alpha'=t^{-1}\alpha$. This gives
     
     $$
     \lambda'\cdot x-y < \alpha'< \lambda'\cdot x_0-f^{**}(x_0).
     $$
     
-    对所有 $x\in\operatorname{dom} f$，令 $y=f(x)$，就都成立
+    For every $x\in\operatorname{dom} f$, setting $y=f(x)$ gives
     
     $$
     \alpha' > \lambda'\cdot x - f(x).
     $$
     
-    故而，对不等号右侧的 $x$ 取上确界，有
+    So, taking the supremum over $x$ on the right-hand side,
     
     $$
     \alpha' \ge \sup_{x\in\mathbf R^d}\lambda'\cdot x - f(x) = f^*(\lambda').
     $$
     
-    进而，有
+    Then
     
     $$
     f^{**}(x_0) < \lambda'\cdot x_0-f^*(\lambda') \le \sup_{x^*\in\mathbf R^d}x^*\cdot x_0-f^*(x^*) = f^{**}(x_0).
     $$
     
-    这一矛盾说明 $t>0$ 的情形并不成立．
+    This contradiction shows that the case $t>0$ is impossible.
     
-    最后，讨论 $t=0$ 的情形．事实上，将要说明的是，可以通过微扰，将它转化为 $t>0$ 的情形．任取 $\lambda_0\in\operatorname{dom}f^*$，根据凸共轭的定义可知，对于任何 $x\in\operatorname{dom}f$ 和 $y\ge f(x)$ 都有
+    Finally, the case $t=0$. In fact, we will show that a small perturbation turns it into the case $t>0$. Take any $\lambda_0\in\operatorname{dom}f^*$. By the definition of the convex conjugate, for any $x\in\operatorname{dom}f$ and $y\ge f(x)$,
     
     $$
     \lambda_0\cdot x-y\le f^*(\lambda_0).
     $$
     
-    因此，对于任意 $\varepsilon>0$，都有
+    So for any $\varepsilon>0$,
     
     $$
     (\lambda+\varepsilon\lambda_0)\cdot x - \varepsilon y<\alpha+\varepsilon f^*(\lambda_0).
     $$
     
-    同时，因为 $\alpha<\lambda\cdot x_0$，所以，对于充分小的 $\varepsilon>0$，又有
+    At the same time, since $\alpha<\lambda\cdot x_0$, for small enough $\varepsilon>0$ we also have
     
     $$
     \alpha+\varepsilon f^*(\lambda_0) < (\lambda+\varepsilon\lambda_0)\cdot x_0 - \varepsilon f^{**}(x_0).
     $$
     
-    因此，如果取 $\lambda'=\lambda+\varepsilon\lambda_0$，$t'=\varepsilon$ 和 $\alpha'=\alpha+\varepsilon f^*(\lambda_0)$，那么，就有
+    So if we take $\lambda'=\lambda+\varepsilon\lambda_0$, $t'=\varepsilon$ and $\alpha'=\alpha+\varepsilon f^*(\lambda_0)$, then
     
     $$
     \lambda'\cdot x-t'y <\alpha' <\lambda'\cdot x_0 - t'f^{**}(x_0).
     $$
     
-    这就又回到了前一种情形，仍然会导致矛盾．
+    This brings us back to the previous case, which still leads to a contradiction.
     
-    这一矛盾说明，并不存在满足 $f(x_0)>f^{**}(x_0)$ 的点 $x_0\in\mathbf R^d$．故而，总有 $f(x_0)\le f^{**}(x_0)$．
+    This contradiction shows that there is no point $x_0\in\mathbf R^d$ with $f(x_0)>f^{**}(x_0)$. So we always have $f(x_0)\le f^{**}(x_0)$.
     
-    结合这两步证明的结果，就得到 $f^{**}(x)=f(x)$ 成立．
+    Combining the two steps, we get $f^{**}(x)=f(x)$.
 
-因此，强对偶成立，当且仅当 $v(y)$ 是关于 $y\in\mathbf R^d$ 的凸函数[^other-conditions]．
+Therefore strong duality holds if and only if $v(y)$ is a convex function of $y\in\mathbf R^d$[^other-conditions].
 
-### 次梯度
+### Subgradients
 
-上一节说明了，带惩罚的问题的价值函数 $h(\lambda)$ 是原问题的价值函数 $v(y)$ 的凸共轭的相反数．因为凸共轭的定义实际上是一个含参数的最优化问题，所以它也成立类似 [包络定理](https://en.wikipedia.org/wiki/Envelope_theorem) 的结论．但是，因为凸函数并非处处可微的，所以需要首先将导数的定义推广到凸函数的情形．这就引出了次梯度的概念．
+The previous section showed that the value function $h(\lambda)$ of the penalized problem is the negative of the convex conjugate of the value function $v(y)$ of the original problem. Since the definition of the convex conjugate is really a parametric optimization problem, a result similar to the [envelope theorem](https://en.wikipedia.org/wiki/Envelope_theorem) also holds for it. But convex functions are not differentiable everywhere, so we first need to extend the definition of the derivative to convex functions. This leads to the concept of subgradients.
 
-???+ abstract "次梯度"
-    对于凸函数 $f:\mathbf R^d\rightarrow\mathbf R\cup\{\pm\infty\}$ 和 $x_0\in\operatorname{dom}f$，如果向量 $x^*\in\mathbf R^d$ 满足对于任何 $x\in\mathbf R^d$，都有
+???+ abstract "Subgradient"
+    For a convex function $f:\mathbf R^d\rightarrow\mathbf R\cup\{\pm\infty\}$ and $x_0\in\operatorname{dom}f$, if a vector $x^*\in\mathbf R^d$ satisfies, for every $x\in\mathbf R^d$,
     
     $$
     f(x) \ge f(x_0)+x^*\cdot(x-x_0),
     $$
     
-    那么，就称 $x^*$ 是 $f(x)$ 在 $x_0$ 处的一个 **次梯度**（subgradient）．函数 $f(x)$ 在 $x_0$ 处的全体次梯度的集合称为它在该处的 **次微分**（subdifferential），记作 $\partial f(x_0)$．
+    then $x^*$ is called a **subgradient** of $f(x)$ at $x_0$. The set of all subgradients of $f(x)$ at $x_0$ is called its **subdifferential** there, written $\partial f(x_0)$.
 
-几何直观上，凸函数 $f(x)$ 在 $x_0$ 处的次微分，就是它在该处的所有支撑超平面的斜率向量的集合．对于一维的情形，次微分
+Geometrically, the subdifferential of a convex function $f(x)$ at $x_0$ is the set of slope vectors of all its supporting hyperplanes at that point. In one dimension, the subdifferential is
 
 $$
 \partial f(x_0) = [\partial_-f(x_0),\partial_+f(x_0)],
 $$
 
-其中，$\partial_-f(x_0)$ 和 $\partial_+f(x_0)$ 分别是函数 $f(x)$ 在 $x_0$ 处的左右导数．进一步地，对于整数集上的凸函数 $f:\mathbf Z\rightarrow\mathbf R\cup\{\pm\infty\}$ 延拓而来的 $\tilde f(x)$，它在整数点 $x=k$ 处的左右导数就是左右两侧的一阶差分：
+where $\partial_-f(x_0)$ and $\partial_+f(x_0)$ are the left and right derivatives of $f(x)$ at $x_0$. Further, for the function $\tilde f(x)$ extended from a convex function on the integers $f:\mathbf Z\rightarrow\mathbf R\cup\{\pm\infty\}$, its left and right derivatives at an integer point $x=k$ are the first differences on the left and right:
 
 $$
 \partial\tilde f(k) = [f(k)-f(k-1),f(k+1)-f(k)]. 
 $$
 
-显然，凸函数 $f(x)$ 在点 $x_0$ 处可微，当且仅当它在该处的次微分 $\partial f(x_0)$ 是单点集．
+Clearly, a convex function $f(x)$ is differentiable at $x_0$ if and only if its subdifferential $\partial f(x_0)$ there is a single point.
 
-因为凸共轭提供了从支撑超平面的斜率向量到它的截距的映射，所以，利用凸共轭，可以判断一个斜率向量 $x^*$ 是否是凸函数 $f(x)$ 在给定点 $x$ 处的一个次梯度．
+Since the convex conjugate maps the slope vector of a supporting hyperplane to its intercept, we can use the convex conjugate to tell whether a slope vector $x^*$ is a subgradient of a convex function $f(x)$ at a given point $x$.
 
-???+ note "定理（凸共轭与次梯度）"
-    对于正常凸函数 $f:\mathbf R^d\rightarrow\mathbf R\cup\{\pm\infty\}$ 和任意 $x,x^*\in\mathbf R^d$，都有
+???+ note "Theorem (convex conjugates and subgradients)"
+    For a proper convex function $f:\mathbf R^d\rightarrow\mathbf R\cup\{\pm\infty\}$ and any $x,x^*\in\mathbf R^d$,
     
     $$
     x^*\in\partial f(x) \iff x^*\cdot x = f(x) + f^*(x^*).
     $$
     
-    进而，如果 $f$ 还是下半连续的，那么这两个条件都等价于 $x\in\partial f^*(x^*)$．
+    Moreover, if $f$ is also lower semicontinuous, both conditions are equivalent to $x\in\partial f^*(x^*)$.
 
-??? note "证明"
-    按照次梯度的定义，$x^*\in\partial f(x)$，当且仅当
+??? note "Proof"
+    By the definition of a subgradient, $x^*\in\partial f(x)$ if and only if
     
     $$
     f(x') \ge f(x) + x^*\cdot(x'-x),~\forall x'\in\mathbf R^d.
     $$
     
-    这等价于
+    This is equivalent to
     
     $$
     x^*\cdot x - f(x) \ge x^*\cdot x'-f(x'),~\forall x'\in\mathbf R^d.
     $$
     
-    这又等价于
+    This in turn is equivalent to
     
     $$
     x^*\cdot x - f(x) \ge \sup_{x'\in\mathbf R^d}x^*\cdot x'-f(x') = f^*(x^*).
     $$
     
-    但是，依据凸共轭的定义，总是有
+    But by the definition of the convex conjugate, we always have
     
     $$
     x^*\cdot x - f(x) \le f^*(x^*).
     $$
     
-    因此，前一式中的大于等于号实际上等价于等号，也就等价于下式
+    So the "greater than or equal" sign in the previous inequality is really an equality, which is equivalent to
     
     $$
     x^*\cdot x = f(x) + f^*(x^*).
     $$
     
-    这就完成了第一部分的证明．
+    This completes the proof of the first part.
     
-    对于 $f$ 是下半连续的正常凸函数的情形，依 Fenchel–Moreau 定理，有 $f^{**}=f$．因此，这两个条件等价于
+    When $f$ is a lower semicontinuous proper convex function, the Fenchel–Moreau theorem gives $f^{**}=f$. So both conditions are equivalent to
     
     $$
     x^*\cdot x = f^*(x^*) + f^{**}(x).
     $$
     
-    再次应用第一部分的结论，它们也就等价于 $x\in\partial f^*(x^*)$．
+    Applying the first part again, they are also equivalent to $x\in\partial f^*(x^*)$.
 
-这一结论说明，如果 $f^{**}=f$，那么凸共轭 $f^*$ 在 $x^*$ 处的次微分 $\partial f^{*}(x^*)$，恰好就是斜率向量为 $x^*$ 的支撑超平面与上境图 $\operatorname{epi}f$ 的交点的 $x$ 分量的集合．
+This result shows that if $f^{**}=f$, then the subdifferential $\partial f^{*}(x^*)$ of the convex conjugate $f^*$ at $x^*$ is exactly the set of $x$ components of the points where the supporting hyperplane with slope vector $x^*$ meets the epigraph $\operatorname{epi}f$.
 
-???+ note "推论"
-    对于下半连续的正常凸函数 $f:\mathbf R^d\rightarrow\mathbf R\cup\{\pm\infty\}$ 和任意 $x,x^*\in\mathbf R^d$，都有
+???+ note "Corollary"
+    For a lower semicontinuous proper convex function $f:\mathbf R^d\rightarrow\mathbf R\cup\{\pm\infty\}$ and any $x,x^*\in\mathbf R^d$,
     
     $$
     \begin{aligned}
@@ -395,87 +395,87 @@ $$
     \end{aligned}
     $$
 
-??? note "证明"
-    下面，证明第二个等式．第一个等式的证明与之类似．
+??? note "Proof"
+    We prove the second equality below. The proof of the first is similar.
     
-    按照凸共轭的定义，有
+    By the definition of the convex conjugate,
     
     $$
     f^*(x^*) = \sup_{y\in\mathbf R^d} x^*\cdot y - f(y),
     $$
     
-    所以，
+    so
     
     $$
     x \in \arg\max_{y\in\mathbf R^d} x^*\cdot y - f(y)
     $$
     
-    当且仅当 $f^*(x^*) = x^*\cdot x - f(x)$，而这一等式成立，又当且仅当 $x\in\partial f^*(x^*)$．这就证明了两个集合是相等的．
+    holds if and only if $f^*(x^*) = x^*\cdot x - f(x)$, and this equality holds if and only if $x\in\partial f^*(x^*)$. This proves that the two sets are equal.
 
-应用到本文的场景中，这一结论说明，求解问题
+Applied to our setting, this result says that when solving the problem
 
 $$
 h(\lambda) = \min_{x\in X}f(x)-\lambda\cdot g(x) = \min_{y\in g(X)}v(y) - \lambda\cdot y
 $$
 
-时，限制函数 $g(x)$ 在最优决策集合上的取值恰为 $\partial(-h(\lambda))$．对于 $d=1$ 且问题只涉及整数的情形，这一集合就是区间
+the values of the constraint function $g(x)$ over the set of optimal decisions are exactly $\partial(-h(\lambda))$. When $d=1$ and the problem only involves integers, this set is the interval
 
 $$
 [h(\lambda-1)-h(\lambda),h(\lambda)-h(\lambda+1)].
 $$
 
-对于连续的整数 $\lambda$，这些区间首尾相接，所以，如果用于二分，只需要计算一侧的端点即可．
+For consecutive integers $\lambda$, these intervals join end to end, so when using them in binary search, we only need to compute one endpoint.
 
-## 凸性证明
+## Proving convexity
 
-应用 WQS 二分的前提条件是价值函数的凸性．在算法竞赛中，可以通过打表、感性理解等方式猜测凸性成立．但是，严格地证明凸性成立，往往并不容易．本节结合如下经典题目，介绍算法竞赛中常见的证明凸性的方法．
+The precondition for applying WQS binary search is that the value function is convex. In competitive programming, you can guess that convexity holds by printing tables of values, by intuition, and so on. But proving convexity rigorously is often not easy. Using the classic problem below, this section introduces the common ways to prove convexity in competitive programming.
 
-???+ example "种树问题"
-    有 $n$ 个树坑，要种 $m$ 棵树．树不能栽种于相邻的两个坑．给定长度为 $n$ 的序列 $\{a_i\}$，表示在每个坑种树的收益，收益可正可负．求种完这 $m$ 棵树最大可能的收益和．
+???+ example "Tree planting problem"
+    There are $n$ pits, and $m$ trees must be planted. Trees cannot be planted in two adjacent pits. You are given a sequence $\{a_i\}$ of length $n$, the profit of planting a tree in each pit; profits may be positive or negative. Find the maximum possible total profit after planting all $m$ trees.
     
-    简言之，就是在长度为 $n$ 的链上，求解大小为 $m$ 的最大权独立集的问题．
+    In short, this is the problem of finding a maximum-weight independent set of size $m$ on a path of length $n$.
 
-这些方法粗略地可以分为四类：
+These methods can be roughly divided into four kinds:
 
--   归约为凸优化问题（包括 [线性规划](../../math/linear-programming.md) 等）的价值函数对参数的凸性，这包括建立 [费用流](../../graph/flow/min-cost.md) 模型等方法；
--   利用状态转移方程也可以归纳地证明凸性成立，过程中可能会用到一些 [保持凸性的变换](./slope-trick.md#凸函数的变换)；
--   对于区间分拆类型的问题，可以验证每段区间的成本函数满足 [四边形不等式](./quadrangle.md)；
--   最后，对于特殊的问题，也可以通过交换论证直接说明凸性成立．
+-   Reduce to the convexity of the value function of a convex optimization problem (such as [linear programming](../../math/linear-programming.md)) with respect to its parameters. This includes methods such as building a [min-cost flow](../../graph/flow/min-cost.md) model;
+-   Prove convexity by induction using the transition equations, possibly with some [convexity-preserving transformations](./slope-trick.md#凸函数的变换);
+-   For interval partition problems, check that the cost function of each interval satisfies the [quadrangle inequality](./quadrangle.md);
+-   Finally, for special problems, convexity can also be shown directly with an exchange argument.
 
-这些证明方法本身往往都同该问题的某种解法联系在一起．
+Each of these proof methods is usually tied to some way of solving the problem.
 
-### 归约为含参凸优化
+### Reducing to parametric convex optimization
 
-考虑如下形式的含参凸优化问题：
+Consider a parametric convex optimization problem of the form:
 
 $$
 v(y)=\inf_{x\in\mathcal D(y)} f(x,y).
 $$
 
-其中，目标函数 $f:\mathbf R^m\times\mathbf R^d\rightarrow\mathbf R\cup\{\pm\infty\}$ 对于每个 $y\in\mathbf R^d$ 都是关于 $x\in\mathbf R^m$ 的凸函数，而可行域 $\mathcal D:\mathbf R^d\rightarrow \mathcal P(\mathbf R^m)$ 是 $\mathbf R^d$ 上的集合值函数，且对于每个 $y\in\mathbf R^d$，集合 $\mathcal D(y)$ 都是凸集．这些条件保证了对于任意参数 $y\in\mathbf R^d$，这都是一个凸优化问题．
+Here the objective function $f:\mathbf R^m\times\mathbf R^d\rightarrow\mathbf R\cup\{\pm\infty\}$ is a convex function of $x\in\mathbf R^m$ for each $y\in\mathbf R^d$, and the feasible region $\mathcal D:\mathbf R^d\rightarrow \mathcal P(\mathbf R^m)$ is a set-valued function on $\mathbf R^d$ such that $\mathcal D(y)$ is a convex set for each $y\in\mathbf R^d$. These conditions ensure that for any parameter $y\in\mathbf R^d$, this is a convex optimization problem.
 
-???+ note "定理"
-    假设上述含参凸优化问题满足如下条件：
+???+ note "Theorem"
+    Suppose the parametric convex optimization problem above satisfies:
     
-    1.  目标函数 $f(x,y)$ 是关于 $(x,y)$ 的凸函数；
-    2.  可行域映射 $y\mapsto\mathcal D(y)$ 的图像 $\{(x,y):x\in\mathcal D(y)\}$ 是凸集．
+    1.  The objective function $f(x,y)$ is a convex function of $(x,y)$;
+    2.  The graph $\{(x,y):x\in\mathcal D(y)\}$ of the feasible-region map $y\mapsto\mathcal D(y)$ is a convex set.
     
-    如果对于任意 $y\in\mathbf R^d$，都有 $v(y)>-\infty$，那么，价值函数 $v(y)$ 是关于 $y$ 的正常凸函数．
+    If $v(y)>-\infty$ for every $y\in\mathbf R^d$, then the value function $v(y)$ is a proper convex function of $y$.
 
-??? note "证明"
-    对于任意 $y_1,y_2\in\mathbf R^d$ 和 $\alpha\in(0,1)$，需要证明
+??? note "Proof"
+    For any $y_1,y_2\in\mathbf R^d$ and $\alpha\in(0,1)$, we need to prove
     
     $$
     v(\alpha y_1+(1-\alpha)y_2) \le \alpha v(y_1) + (1-\alpha) v(y_2).
     $$
     
-    如果 $v(y_1)=+\infty$ 或 $v(y_2)=+\infty$，那么不等式的右侧就是 $+\infty$，不等式必然成立．否则，$v(y_1)$ 和 $v(y_2)$ 都是有限值．对于任意 $\varepsilon>0$ 和 $i=1,2$，都存在 $x_i\in\mathcal D(y_i)$ 使得 $f(x_i,y_i)< v(y_i)+\varepsilon$ 成立．利用映射 $\mathcal D$ 的图像的凸性可知
+    If $v(y_1)=+\infty$ or $v(y_2)=+\infty$, the right-hand side is $+\infty$ and the inequality holds trivially. Otherwise, $v(y_1)$ and $v(y_2)$ are both finite. For any $\varepsilon>0$ and $i=1,2$, there exists $x_i\in\mathcal D(y_i)$ with $f(x_i,y_i)< v(y_i)+\varepsilon$. By the convexity of the graph of the map $\mathcal D$,
     
     $$
     \alpha x_1+(1-\alpha)x_2 \in \mathcal D(\alpha y_1+(1-\alpha)y_2).
     $$
     
-    也就是说，$\alpha x_1+(1-\alpha)x_2$ 是参数为 $\alpha y_1+(1-\alpha)y_2$ 的最优化问题的一个可行解．利用最优化条件和目标函数的凸性可知
+    That is, $\alpha x_1+(1-\alpha)x_2$ is a feasible solution of the optimization problem with parameter $\alpha y_1+(1-\alpha)y_2$. By optimality and the convexity of the objective function,
     
     $$
     \begin{aligned}
@@ -486,49 +486,49 @@ $$
     \end{aligned}
     $$
     
-    因为 $\varepsilon$ 的选取是任意的，令 $\varepsilon\rightarrow 0$，就有
+    Since $\varepsilon$ was arbitrary, letting $\varepsilon\rightarrow 0$ gives
     
     $$
     v(\alpha y_1+(1-\alpha)y_2) \le \alpha v(y_1) + (1-\alpha) v(y_2).
     $$
     
-    因此，价值函数 $v(y)$ 的凸性成立．
+    So the value function $v(y)$ is convex.
 
-算法竞赛中，最为常见的凸优化问题就是线性规划问题．
+In competitive programming, the most common convex optimization problems are linear programs.
 
-???+ note "推论"
-    设 $c\in\mathbf R^n$，$A_1\in\mathbf R^{d_1\times n}$，$A_2\in\mathbf R^{d_2\times n}$，$y_1\in\mathbf R^{d_1}$，$y_2\in\mathbf R^{d_2}$．考虑如下含参线性规划问题：
+???+ note "Corollary"
+    Let $c\in\mathbf R^n$, $A_1\in\mathbf R^{d_1\times n}$, $A_2\in\mathbf R^{d_2\times n}$, $y_1\in\mathbf R^{d_1}$, $y_2\in\mathbf R^{d_2}$. Consider the following parametric linear program:
     
     $$
     v(y_1,y_2)=\min_{x\in\mathbf R^n} c\cdot x \text{ subject to }A_1x\le y_1,A_2x=y_2,x\ge 0.
     $$
     
-    那么，价值函数 $v(y_1,y_2)$ 是关于 $(y_1,y_2)$ 的凸函数．
+    Then the value function $v(y_1,y_2)$ is a convex function of $(y_1,y_2)$.
 
-无论是不等式约束，还是等式约束，线性规划的价值函数都是约束条件参数的凸函数．
+Whether the constraints are inequalities or equalities, the value function of a linear program is a convex function of the constraint parameters.
 
-很多图论问题都可以写成线性规划问题的形式：
+Many graph problems can be written as linear programs:
 
--   网络流问题：最大流、最小割、最小费用流；
--   无负环的最短路问题；
--   二分图的最大（权）匹配、最小点覆盖等问题；
--   一般图的最大（权）匹配问题；
--   最小生成树问题[^mst]．
+-   Network flow problems: maximum flow, minimum cut, min-cost flow;
+-   Shortest path problems without negative cycles;
+-   Maximum (weight) matching, minimum vertex cover and similar problems on bipartite graphs;
+-   Maximum (weight) matching on general graphs;
+-   The minimum spanning tree problem[^mst].
 
-因此，这些问题的价值函数都是这些问题的参数的凸（凹）函数．
+So the value functions of these problems are convex (or concave) functions of their parameters.
 
-???+ warning "整数约束"
-    利用图论模型为实际问题建模时，通常有隐含的整数限制，例如一条边只能选或不选、流量只能是整数等．因此，它们只能转化为整数线性规划（integer linear programming, ILP）问题而非线性规划（LP）问题．因为 ILP 问题并非凸优化问题，所以它的价值函数未必是该问题的参数的凸函数．将一个 ILP 问题中的整数约束松弛掉后就得到一个 LP 问题，但后者未必存在满足整数约束的最优解．因此，松弛整数约束后得到的 LP 的最优价值有可能严格优于相应的 ILP 问题，两者未必等价．
+???+ warning "Integer constraints"
+    When modeling real problems with graph models, there are usually hidden integer constraints, for example an edge is either chosen or not, or flows must be integers. So they can only be turned into integer linear programming (ILP) problems rather than linear programming (LP) problems. Since ILP problems are not convex optimization problems, their value functions are not necessarily convex in the parameters. Relaxing the integer constraints of an ILP gives an LP, but the LP may have no optimal solution that satisfies the integer constraints. So the optimal value of the relaxed LP may be strictly better than that of the ILP, and the two are not necessarily equivalent.
     
-    上文列举的那些图论问题，都可以写成一个 LP 问题而不需要施加整数约束；但对于其他的一些问题，例如一般图的最大独立集问题等，整数约束则是必要的．另外，即使一个图论问题可以写成 LP 的形式，在该问题引入额外的线性约束条件后，仍然可能会破坏相应的 ILP 问题和 LP 问题的等价性，从而这个带约束的图论问题不再能够写成线性规划的形式．
+    The graph problems listed above can all be written as LPs without integer constraints. For some other problems, such as maximum independent set on general graphs, the integer constraints are necessary. Also, even if a graph problem can be written as an LP, adding extra linear constraints to it may break the equivalence between the ILP and the LP, so the constrained graph problem can no longer be written as a linear program.
 
-例如，在费用流的语境下，有如下常见结论：
+For example, in the context of min-cost flow, there is a well-known result:
 
-???+ note "推论"
-    [最小费用流模型](../../graph/flow/min-cost.md) 中，最小费用 $v(m)$ 是流量 $m$ 的凸函数．
+???+ note "Corollary"
+    In the [min-cost flow model](../../graph/flow/min-cost.md), the minimum cost $v(m)$ is a convex function of the flow amount $m$.
 
-??? note "证明"
-    设有向图 $G=(V,E)$，边 $(i,j)$ 的容量为 $c_{ij}$，单位流量的费用为 $w_{ij}$，源点和汇点分别为 $s$ 和 $t$．记决策变量为 $\{f_{ij}\}$，其中，$f_{ij}$ 为边 $(i,j)\in E$ 的流量．那么，最小费用流可以写成如下线性规划问题：
+??? note "Proof"
+    Let $G=(V,E)$ be a directed graph, where edge $(i,j)$ has capacity $c_{ij}$ and cost $w_{ij}$ per unit of flow, and the source and sink are $s$ and $t$. Let the decision variables be $\{f_{ij}\}$, where $f_{ij}$ is the flow on edge $(i,j)\in E$. Then min-cost flow can be written as the following linear program:
     
     $$
     \begin{aligned}
@@ -544,75 +544,75 @@ $$
     \end{aligned}
     $$
     
-    因此，最小费用 $v(m)$ 是参数 $m$ 的凸函数．
+    So the minimum cost $v(m)$ is a convex function of the parameter $m$.
 
-算法竞赛中很多问题都可以归约为网络流等图论问题，从而都可以通过类似的方式建立价值函数的凸性．
+Many problems in competitive programming can be reduced to network flow or other graph problems, so the convexity of their value functions can be established in a similar way.
 
-利用这一方法，可以得到种树问题的第一个凸性证明：
+Using this method, we get the first convexity proof for the tree planting problem:
 
-??? example "凸性证明一"
-    种树问题的最大收益实际上可以通过如下最大费用最大流模型得出：
+??? example "Convexity proof 1"
+    The maximum profit of the tree planting problem can be obtained from the following maximum-cost maximum-flow model:
     
-    -   从源点 $s$ 出发，向结点 $r$，连接一条容量为 $m$、费用为 $0$ 的边；
-    -   从结点 $r$ 出发，向每个奇数结点 $i=1,3,\cdots,2\lceil n/2\rceil-1$ 连接一条容量为 $1$、费用为 $0$ 的边；
-    -   从每个偶数结点 $i=0,2,\cdots,2\lfloor n/2\rfloor$ 出发，向汇点 $t$ 连接一条容量为 $1$、费用为 $0$ 的边；
-    -   对于每个 $i=1,\cdots,n$，从 $i-1$ 和 $i$ 中的奇数结点出发，向偶数结点连接一条容量为 $1$、费用为 $a_i$ 的边．
+    -   From the source $s$, add an edge to vertex $r$ with capacity $m$ and cost $0$;
+    -   From vertex $r$, add an edge to each odd vertex $i=1,3,\cdots,2\lceil n/2\rceil-1$ with capacity $1$ and cost $0$;
+    -   From each even vertex $i=0,2,\cdots,2\lfloor n/2\rfloor$, add an edge to the sink $t$ with capacity $1$ and cost $0$;
+    -   For each $i=1,\cdots,n$, add an edge from the odd one of $i-1$ and $i$ to the even one, with capacity $1$ and cost $a_i$.
     
-    最终答案就是求得的最大费用．将这一图论模型转换为相应的线性规划问题（具体见上文推论的证明），那么，总流量 $m$ 将出现在表示边 $(s,r)$ 的流量限制的不等式中．由推论可知，最大费用 $v(m)$ 是流量 $m$ 的凹函数．
+    The final answer is the maximum cost found. If we convert this graph model into the corresponding linear program (see the proof of the corollary above for details), the total flow $m$ appears in the inequality that bounds the flow on edge $(s,r)$. By the corollary, the maximum cost $v(m)$ is a concave function of the flow amount $m$.
     
-    利用该费用流模型，可以通过模拟费用流或 [反悔贪心](../../basic/greedy.md#regret-approach) 的方法在 $O(n\log n)$ 的复杂度内解决该问题．
+    With this cost flow model, the problem can be solved in $O(n\log n)$ time by simulating cost flow or by [regret greedy](../../basic/greedy.md#regret-approach).
 
-### 利用状态转移方程
+### Using the transition equations
 
-尽管状态转移方程无法提供有效的计算方式，但是，它常常可以用于证明状态函数 $f(i,j)$ 对于参数 $j$ 具有凸性．具体地说，就是将 $f(i,\cdot)$ 这一函数视为 $i$ 处的状态，就可以将关于 $f(i,j)$ 的状态转移方程看作是关于 $f(i,\cdot)$ 的递推关系，从而可以归纳地证明每个 $f(i,\cdot)$ 都是凸函数．这类证明凸性的方法在 [Slope Trick 优化 DP](./slope-trick.md) 的场景中更为常见，该页面也讨论了常见的保持凸性的变换．
+Although the transition equations do not give an efficient way to compute the answer, they can often be used to prove that the state function $f(i,j)$ is convex in the parameter $j$. Specifically, if we treat the function $f(i,\cdot)$ as the state at $i$, then the transition equation for $f(i,j)$ can be viewed as a recurrence for $f(i,\cdot)$, and we can prove by induction that every $f(i,\cdot)$ is convex. This way of proving convexity is more common in the setting of [Slope Trick DP optimization](./slope-trick.md), and that page also discusses common convexity-preserving transformations.
 
-这一方法同样可以用于证明种树问题的凸性：
+This method can also prove convexity for the tree planting problem:
 
-??? example "凸性证明二"
-    设 $f(i,j)$ 为前 $i$ 个坑种 $j$ 棵树时的最大收益．考察如下状态转移方程：
+??? example "Convexity proof 2"
+    Let $f(i,j)$ be the maximum profit when $j$ trees are planted in the first $i$ pits. Consider the following transition equation:
     
     $$
     f(i,j) = \max\{f(i-1,j),f(i-2,j-1)+a_i\}.
     $$
     
-    将这一状态转移方程看作是函数 $f(i,\cdot)$ 的递推关系式．因为最值符号内涉及两个不同的函数，这并不能表达为卷积上确界的形式．但是，仍然可以通过归纳的方法证明函数 $f(i,\cdot)$ 是凹函数．
+    View this transition equation as a recurrence for the functions $f(i,\cdot)$. Since two different functions appear inside the max, it cannot be written as a supremal convolution. But we can still prove by induction that $f(i,\cdot)$ is concave.
     
-    实际上，需要归纳地证明如下两点：
+    In fact, we need to prove two things by induction:
     
-    -   $f(i,j)-f(i-2,j-1)$ 关于 $j$ 递减；
-    -   $f(i,j)-f(i-1,j)$ 关于 $j$ 递增．
+    -   $f(i,j)-f(i-2,j-1)$ is decreasing in $j$;
+    -   $f(i,j)-f(i-1,j)$ is increasing in $j$.
     
-    归纳起点是平凡的．假设它们对于所有 $i-1$ 及之前的自然数都成立，现在证明它对 $i$ 也成立．直接验证即可．
+    The base case is trivial. Suppose both hold for $i-1$ and all smaller natural numbers; we now prove them for $i$. We just check directly.
     
-    首先，由归纳假设，有
+    First, by the induction hypothesis,
     
     $$
     f(i-1,j) - f(i-2,j-1) = (f(i-1,j)-f(i-3,j-1)) - (f(i-2,j-1)-f(i-3,j-1))
     $$
     
-    关于 $j$ 递减．所以，有
+    is decreasing in $j$. So
     
     $$
     f(i,j) - f(i-2,j-1) = \max\{f(i-1,j) - f(i-2,j-1), a_i\}
     $$
     
-    关于 $j$ 递减，且
+    is decreasing in $j$, and
     
     $$
     f(i,j) - f(i-1,j) = \max\{0,a_i-(f(i-1,j) - f(i-2,j-1))\}
     $$
     
-    关于 $j$ 递增．这就完成了归纳．
+    is increasing in $j$. This completes the induction.
     
-    进而，有
+    Then
     
     $$
     f(i,j) - f(i,j-1) = (f(i,j)-f(i-2,j-1)) - (f(i,j-1) - f(i-1,j-1)) - (f(i-1,j-1) - f(i-2,j-1))
     $$
     
-    关于 $j$ 递减．这就说明 $f(i,j)$ 是关于 $j$ 的凹函数，从而，价值函数 $v(m)=f(n,m)$ 是关于 $m$ 的凹函数．
+    is decreasing in $j$. This shows $f(i,j)$ is a concave function of $j$, so the value function $v(m)=f(n,m)$ is a concave function of $m$.
     
-    这个证明的一个副产品是，对于任意 $i$，都存在 $p_i$ 使得
+    A by-product of this proof is that for every $i$, there is a $p_i$ such that
     
     $$
     f(i,j) =
@@ -622,11 +622,11 @@ $$
     \end{cases}
     $$
     
-    这说明，可以通过平衡树直接维护序列 $f(i,\cdot)$，复杂度是 $O(n\log^2n)$ 的．但是，好处是可以处理任意种树间隔的一般情形，且一次性地获得了所有 $v(m)$ 的值．
+    This means we can maintain the sequence $f(i,\cdot)$ directly with a balanced binary search tree, in $O(n\log^2n)$ time. The advantages are that it handles the general case with any spacing between trees, and that it gets all the values $v(m)$ at once.
 
-### 四边形不等式
+### Quadrangle inequality
 
-算法竞赛中，另一类常见的具有凸性的问题是 [区间分拆问题](./quadrangle.md#区间分拆问题)．该页面证明了，如果单个区间的成本函数满足四边形不等式，那么限制区间个数的区间分拆问题的最小成本是区间个数的凸函数．该页面同样提供了一些判断某个函数 $w(l,r)$ 是否满足四边形不等式的方法．最为直接的方法就是计算它的二阶混合差分：
+Another common kind of convex problem in competitive programming is the [interval partition problem](./quadrangle.md#区间分拆问题). That page proves that if the cost function of a single interval satisfies the quadrangle inequality, then the minimum cost of partitioning into a limited number of intervals is a convex function of the number of intervals. That page also gives some ways to check whether a function $w(l,r)$ satisfies the quadrangle inequality. The most direct way is to compute its second-order mixed difference:
 
 $$
 \begin{aligned}
@@ -635,98 +635,98 @@ $$
 \end{aligned}
 $$
 
-函数 $w(l,r)$ 满足四边形不等式，当且仅当 $\Delta_l \Delta_r w(l,r)$ 非正．直观上，满足四边形不等式的函数通常意味着，区间向两侧扩大——即左端点向左移动和右端点向右移动——具有某种协同效应．
+The function $w(l,r)$ satisfies the quadrangle inequality if and only if $\Delta_l \Delta_r w(l,r)$ is non-positive. Intuitively, a function satisfying the quadrangle inequality usually means that growing an interval on both sides (moving the left end left and the right end right) has some kind of synergy.
 
-种树问题同样可以看作是一个区间分拆问题，可以通过验证四边形不等式进行证明．
+The tree planting problem can also be viewed as an interval partition problem, and we can prove convexity by checking the quadrangle inequality.
 
-??? example "凸性证明三"
-    在种树的收益序列前添加一个 $a_0$，它可以是任何值．然后，种树问题就等价于将序列 $\{a_0,a_1,\cdots,a_n\}$ 分成 $m$ 段，且每段的收益函数为
+??? example "Convexity proof 3"
+    Add an $a_0$ in front of the profit sequence; it can be any value. Then the tree planting problem is equivalent to the interval partition problem of splitting the sequence $\{a_0,a_1,\cdots,a_n\}$ into $m$ segments, where the profit of each segment is
     
     $$
     w(l,r) = \max_{i\in[l+1,r]} a_i
     $$
     
-    的区间分拆问题．也就是说，每一段的收益是除去第一棵树外，其余树的收益的最大值——这就保证了间隔种树．
+    That is, the profit of each segment is the maximum profit among its trees other than the first one. This guarantees that trees are not adjacent.
     
-    因为这是最大化问题，需要验证「交叉大于包含」，即对于任意 $a<b<c<d$，都成立
+    Since this is a maximization problem, we need to check that "crossing is at least containing", that is, for any $a<b<c<d$,
     
     $$
     w(a,c)+w(b,d) \ge w(a,d)+w(b,c).
     $$
     
-    代入收益函数的表达式，并设
+    Substitute the profit function and let
     
     $$
     A = \max_{i\in[a+1,b]} a_i,~ B = \max_{i\in[b+1,c]} a_i,~ C = \max_{i\in[c+1,d]}a_i,
     $$
     
-    则要证明的不等式可以写作
+    Then the inequality to prove can be written as
     
     $$
     \max\{A,B\} + \max\{B,C\} \ge \max\{A,B,C\} + B.
     $$
     
-    注意到不等号左侧的两项 $\max\{A,B\}$ 和 $\max\{B,C\}$ 中较大的那个就等于 $\max\{A,B,C\}$，而它们中较小的那个总是不小于 $B$，因此该不等式成立．
+    Note that the larger of the two terms $\max\{A,B\}$ and $\max\{B,C\}$ on the left equals $\max\{A,B,C\}$, and the smaller one is always at least $B$. So the inequality holds.
     
-    将种树问题转化为区间分拆问题后，只需要用 ST 表等方式预处理区间最值，可以单次 $O(1)$ 地计算单个区间的成本，就可以套用区间分拆问题的算法在 $O(n\log n\log L)$ 或 $O(n(n+m))$ 的时间复杂度内解决该问题．该方法同样可以处理任意种树间隔的问题．
+    After turning the tree planting problem into an interval partition problem, we just precompute range maxima with a sparse table or similar, so the cost of any interval can be computed in $O(1)$. Then we can apply the algorithms for interval partition problems and solve it in $O(n\log n\log L)$ or $O(n(n+m))$ time. This method also handles any spacing between trees.
 
-### 交换论证
+### Exchange argument
 
-组合优化问题中，证明价值函数的凸性常常会用到交换论证（exchange argument）．具体地说，就是从参数为 $m-1$ 和 $m+1$ 的问题的最优解出发，通过交换部分元素，构造出参数为 $m$ 且价值不超过 $(v(m-1)+v(m+1))/2$ 的可行解，从而利用 $v(m)$ 的最优性来证明凸性的论证方法．相较于凸优化的情形，组合优化问题中并不存在自然地构造两个解的「中间形态」的方法，因此，交换论证的应用通常具有一定的技巧性．
+In combinatorial optimization, proving convexity of the value function often uses an exchange argument. Specifically, starting from optimal solutions for parameters $m-1$ and $m+1$, we swap some of their elements to build feasible solutions for parameter $m$ whose value is at most $(v(m-1)+v(m+1))/2$, and then use the optimality of $v(m)$ to prove convexity. Unlike convex optimization, combinatorial optimization has no natural way to build an "intermediate form" between two solutions, so applying an exchange argument usually takes some skill.
 
-???+ warning "「边际成本递增」并不一定导致凸性"
-    组合优化问题中，目标函数常常具有一些「边际成本递增」的性质，但是这并不必然导致凸性．一个典型的例子是 [\[IOI 2005\] Riv 河流](https://www.luogu.com.cn/problem/P3354)，该问题的链上版本是满足四边形不等式因而具有凸性的，但是树上版本存在凸性不成立的例子．
+???+ warning "\"Increasing marginal cost\" does not always imply convexity"
+    In combinatorial optimization, the objective function often has some kind of "increasing marginal cost" property, but that does not necessarily imply convexity. A typical example is [\[IOI 2005\] Riv Rivers](https://www.luogu.com.cn/problem/P3354). The path version of this problem satisfies the quadrangle inequality and is therefore convex, but the tree version has counterexamples where convexity fails.
     
-    用于刻画「边际成本递增」的一个常见性质是函数的超模性（supermodularity）．对于有限集合 $X$ 的子集族 $\mathcal PX$ 上的函数 $f:\mathcal PX\rightarrow\mathbf R$，如果它满足以下两条等价性质之一：
+    A common property that captures "increasing marginal cost" is supermodularity. A function $f:\mathcal PX\rightarrow\mathbf R$ on the family of subsets $\mathcal PX$ of a finite set $X$ is called **supermodular** if it satisfies either of the following two equivalent properties:
     
-    1.  （交叉小于包含）对于任何子集 $A,B\subseteq X$，都有 $f(A)+f(B) \le f(A\cup B) + f(A\cap B)$ 成立；
-    2.  （边际成本递增）对于任何子集 $A\subseteq B\subseteq X$ 以及 $x\in X\setminus B$，都有 $f(A\cup\{x\})-f(A)\le f(B\cup\{x\})-f(B)$ 成立；
+    1.  (Crossing is at most containing) For any subsets $A,B\subseteq X$, $f(A)+f(B) \le f(A\cup B) + f(A\cap B)$;
+    2.  (Increasing marginal cost) For any subsets $A\subseteq B\subseteq X$ and $x\in X\setminus B$, $f(A\cup\{x\})-f(A)\le f(B\cup\{x\})-f(B)$.
     
-    就称函数 $f$ 是 **超模的**（supermodular）．但是，超模函数作为目标函数的最优化问题中，价值函数
+    However, in an optimization problem with a supermodular objective, the value function
     
     $$
     v(m) = \min_{A\subseteq X} f(A) \text{ subject to }|A|=m
     $$
     
-    **未必** 是 $m$ 的凸函数．究其原因，就是从子集大小分别为 $m-1$ 和 $m+1$ 的最优解，一般来说是无法构造出子集大小为 $m$ 且满足前述价值函数大小关系的可行解的．
+    is **not necessarily** a convex function of $m$. The reason is that, in general, from optimal solutions of sizes $m-1$ and $m+1$ we cannot build feasible solutions of size $m$ that satisfy the required relation between the values.
 
-交换论证提供了种树问题凸性的又一种证明方式．
+The exchange argument gives yet another proof of convexity for the tree planting problem.
 
-??? example "凸性证明四"
-    利用交换论证．设种 $m-1$ 棵树和种 $m+1$ 棵树的最优方案分别由 $\{x_i^{(m-1)}\}\in\{0,1\}^n$ 和 $\{x_i^{(m+1)}\}\in\{0,1\}^n$ 给出，其中，取值为 $1$ 表示该坑位种了一棵树，取值为 $0$ 表示该坑位没有种树．定义序列 $\{z_i\}\in\{0,\pm 1\}^n$ 满足
+??? example "Convexity proof 4"
+    Use an exchange argument. Let the optimal plans for planting $m-1$ trees and $m+1$ trees be given by $\{x_i^{(m-1)}\}\in\{0,1\}^n$ and $\{x_i^{(m+1)}\}\in\{0,1\}^n$, where $1$ means a tree is planted in that pit and $0$ means it is not. Define the sequence $\{z_i\}\in\{0,\pm 1\}^n$ by
     
     $$
     z_i = x_i^{(m+1)} - x_i^{(m-1)},~i=1,\cdots,n.
     $$
     
-    这个序列标记了两个种树方案的差异．这一序列中取值为 $0$ 的位置表示该坑位要么在两个方案中都种了一棵树，要么在两个方案中都没有种树；而取值为 $-1$ 和 $+1$ 的位置则分别表示只在方案 $x^{(m-1)}$ 或只在方案 $x^{(m+1)}$ 中，该坑位种了一棵树．因为任何方案中都不能在相邻的坑位种树，所以有如下观察：
+    This sequence marks the differences between the two plans. A $0$ means the pit has a tree in both plans or in neither; $-1$ and $+1$ mean the pit has a tree only in plan $x^{(m-1)}$ or only in plan $x^{(m+1)}$, respectively. Since no plan may plant trees in adjacent pits, we observe:
     
-    -   连续的非零子段中，$z_i$ 的取值必然在 $\pm 1$ 之间相互交错；
-    -   极大的连续非零子段左右两侧的 $0$，必然表示在两个方案中都没有种树．
+    -   Within a run of consecutive nonzero values, $z_i$ must alternate between $\pm 1$;
+    -   The $0$s just to the left and right of a maximal nonzero run must mean that neither plan has a tree there.
     
-    因此，如果某个极大的连续非零子段中，$z_i$ 的和恰好为 $+1$，也就是说，在该段坑位中，方案 $x^{(m+1)}$ 比方案 $x^{(m-1)}$ 多种了一棵树，那么就可以在该段内交换两个方案的种树位置．这样，就得到了两个各种 $m$ 棵树的可行方案．因为没有改变两个方案中总的种树的位置和数量，只是将它们重新分配，所以总的收益不变，仍然是 $v(m-1)+v(m+1)$．但是，这两个种 $m$ 棵树的方案未必是最优的，因此，它们各自的收益不会超过 $v(m)$．这就证明了
+    So if the values $z_i$ in some maximal nonzero run sum to exactly $+1$, meaning plan $x^{(m+1)}$ plants one more tree than plan $x^{(m-1)}$ in those pits, we can swap the two plans' tree positions within that run. This gives two feasible plans with $m$ trees each. Since we did not change the overall set of positions and number of trees across the two plans, only redistributed them, the total profit is still $v(m-1)+v(m+1)$. But the two $m$-tree plans are not necessarily optimal, so each of their profits is at most $v(m)$. This proves
     
     $$
     v(m-1) + v(m+1) \le 2v(m),
     $$
     
-    也就是说，$v(m)$ 是关于 $m$ 的凹函数．
+    that is, $v(m)$ is a concave function of $m$.
     
-    现在，只剩下一个问题，就是和恰好为 $+1$ 的极大连续非零子段是否存在．因为是若干个交错的 $\pm 1$ 相加，一个连续非零子段的和只能是 $0$ 或 $\pm 1$．又因为所有这些极大连续非零子段的和等于 $2$，所以，一定存在至少两个和恰好为 $+1$ 的极大连续非零子段．这就完成了证明．
+    Only one question remains: does a maximal nonzero run with sum exactly $+1$ exist? Since a run is a sum of alternating $\pm 1$ values, the sum of a nonzero run can only be $0$ or $\pm 1$. And since the sums of all maximal nonzero runs add up to $2$, there must be at least two maximal nonzero runs with sum exactly $+1$. This completes the proof.
 
-## 例题
+## Example problems
 
-本节介绍几个不同场景下应用 WQS 二分方法的例题．
+This section presents several example problems that apply WQS binary search in different settings.
 
-### 模板题目
+### Template problem
 
-???+ example "[Luogu P1484 种树](https://www.luogu.com.cn/problem/P1484)"
-    有 $n$ 个树坑，**至多** 种 $m$ 棵树．树不能栽种于相邻的两个坑．给定长度为 $n$ 的序列 $\{a_i\}$，表示在每个坑种树的收益，收益可正可负．求最大可能的收益和．
+???+ example "[Luogu P1484 Planting Trees](https://www.luogu.com.cn/problem/P1484)"
+    There are $n$ pits, and **at most** $m$ trees are planted. Trees cannot be planted in two adjacent pits. You are given a sequence $\{a_i\}$ of length $n$, the profit of planting a tree in each pit; profits may be positive or negative. Find the maximum possible total profit.
 
-??? note "解答"
-    与前文讨论的种树问题稍有不同，本题要求至多种 $m$ 棵树，而非恰好种 $m$ 棵树．仍然用 $v(m)$ 表示前文讨论的种树问题的价值函数，本题的答案实际上是 $\tilde v(m)=\max_{k\le m}v(k)$．因为 $v(m)$ 是凹函数，也就是一个单峰函数，本题的答案相当于只保留 $v(m)$ 上升至峰顶的部分，然后函数会一直留在峰顶；这相当于仅仅保留切线斜率非负的部分．因此，本题与前文讨论的题目的唯一差别，就是 WQS 二分时，初始的斜率范围为 $[0,\max_ia_i]$ 而非 $[\min_ia_i,\max_ia_i]$．
+??? note "Solution"
+    This differs slightly from the tree planting problem discussed earlier: here we plant at most $m$ trees, not exactly $m$. Still writing $v(m)$ for the value function of the earlier tree planting problem, the answer here is actually $\tilde v(m)=\max_{k\le m}v(k)$. Since $v(m)$ is concave, i.e. unimodal, the answer here keeps only the part of $v(m)$ that rises to the peak, after which the function stays at the peak; this amounts to keeping only the part with non-negative tangent slope. So the only difference from the earlier problem is that in WQS binary search, the initial slope range is $[0,\max_ia_i]$ rather than $[\min_ia_i,\max_ia_i]$.
     
-    应用 WQS 二分的方法移除数量限制后，问题转化为计算链上最大权独立集，只是将原本的收益 $\{a_i\}$ 替换为了 $\{a_i+k\}$．这是经典的动态规划题目．可以设 $f(i,j)$ 为第 $i$ 个坑位选择种树（$j=1$）或不种树（$j=0$）时，前 $i$ 个树坑的子问题的最大收益．由此，可以写出状态转移方程为
+    After WQS binary search removes the count constraint, the problem becomes computing a maximum-weight independent set on a path, with the profits $\{a_i\}$ replaced by $\{a_i+k\}$. This is a classic DP problem. Let $f(i,j)$ be the maximum profit of the subproblem on the first $i$ pits, where pit $i$ has a tree ($j=1$) or not ($j=0$). The transition equations are
     
     $$
     \begin{aligned}
@@ -735,68 +735,68 @@ $$
     \end{aligned}
     $$
     
-    初始条件为 $f(0,0)=0$ 和 $f(0,1)=-\infty$，最终答案为 $\max\{f(n,0),f(n,1)\}$．单次计算复杂度为 $O(n)$，整体时间复杂度为 $O(n\log L)$，其中，$L=\max_i|a_i|$．
+    The initial conditions are $f(0,0)=0$ and $f(0,1)=-\infty$, and the final answer is $\max\{f(n,0),f(n,1)\}$. Each computation takes $O(n)$, so the total time complexity is $O(n\log L)$, where $L=\max_i|a_i|$.
     
-    参考实现如下：
+    Reference implementations:
     
-    === "传统方法"
+    === "Traditional method"
         ```cpp
         --8<-- "docs/dp/code/opt/wqs-binary-search/plant-tree-1.cpp"
         ```
     
-    === "对偶方法"
+    === "Dual method"
         ```cpp
         --8<-- "docs/dp/code/opt/wqs-binary-search/plant-tree-2.cpp"
         ```
 
-???+ example "[Luogu P2619 \[国家集训队\] Tree I](https://www.luogu.com.cn/problem/P2619)"
-    给定一张带权无向连通图，每条边是黑色或白色．求恰有 $m$ 条白边的生成树的最小权．
+???+ example "[Luogu P2619 \[National Training Team\] Tree I](https://www.luogu.com.cn/problem/P2619)"
+    Given a weighted connected undirected graph where each edge is black or white, find the minimum weight of a spanning tree with exactly $m$ white edges.
 
-??? note "解答"
-    首先，通过交换论证可以证明 $v(m)$ 是凸函数．不妨假设所有边的边权各不相同：那些存在两边边权相同的情形，可以通过微扰使之变为边权各不相同的情形；然后只要令微扰的幅度趋近于零，就可以证明函数的凸性在极限情形——也就是存在两边边权相同的情形——仍然成立．证明的关键在于如下引理：[^edge-swap]
+??? note "Solution"
+    First, an exchange argument proves that $v(m)$ is convex. We may assume all edge weights are distinct: if two edges have equal weight, a small perturbation makes all weights distinct; then letting the perturbation go to zero shows that convexity still holds in the limit, i.e. when some weights are equal. The key to the proof is the following lemma:[^edge-swap]
     
-    ???+ note "引理"
-        设 $S$ 和 $T$ 是无向连通图 $G=(V,E)$ 的两个生成树．对于任意 $e\in S\setminus T$，都存在至少一条边 $f\in T\setminus S$，使得 $S-e+f$ 和 $T-f+e$ 都是图 $G$ 的生成树．
+    ???+ note "Lemma"
+        Let $S$ and $T$ be two spanning trees of a connected undirected graph $G=(V,E)$. For any $e\in S\setminus T$, there is at least one edge $f\in T\setminus S$ such that both $S-e+f$ and $T-f+e$ are spanning trees of $G$.
     
-    ??? note "证明"
-        设 $e=(u,v)$，且 $P$ 是树 $T$ 中连接 $u$ 和 $v$ 的唯一一条路径．因为 $P+e$ 是图 $T+e$ 中唯一的环路，所以删掉 $P$ 中的任何一条边 $f$ 都可以使得 $T-f+e$ 是一棵生成树．与此同时，图 $S-e$ 是有两个连通分量的森林，它们的顶点集分别记作 $V_1$ 和 $V_2$，所以，只要选择边 $f\in P$ 使得 $f$ 连通了 $V_1$ 和 $V_2$，就能保证 $S-e+f$ 是一棵生成树．这样的边 $f$ 总是存在的，因为 $u$ 和 $v$ 分别属于 $V_1$ 和 $V_2$，而 $P$ 连接了 $u$ 和 $v$．而且，$f\notin S$，因为图 $S-e$ 中，$V_1$ 和 $V_2$ 并不是连通的．这就完成了证明．
+    ??? note "Proof"
+        Let $e=(u,v)$, and let $P$ be the unique path in tree $T$ connecting $u$ and $v$. Since $P+e$ is the only cycle in the graph $T+e$, removing any edge $f$ of $P$ makes $T-f+e$ a spanning tree. Meanwhile, the graph $S-e$ is a forest with two connected components; call their vertex sets $V_1$ and $V_2$. So as long as we choose $f\in P$ connecting $V_1$ and $V_2$, $S-e+f$ is a spanning tree. Such an edge $f$ always exists, because $u$ and $v$ are in $V_1$ and $V_2$ respectively, and $P$ connects $u$ and $v$. Moreover, $f\notin S$, because $V_1$ and $V_2$ are not connected in $S-e$. This completes the proof.
     
-    设 $T_{m-1}$ 和 $T_{m+1}$ 是白边数量分别为 $m-1$ 和 $m+1$ 的最小生成树．设 $e$ 是 $T_{m+1}\setminus T_{m-1}$ 的一条白边，对它应用上述引理可知，存在边 $f\in T_{m-1}\setminus T_{m+1}$，使得 $T'=T_{m+1}-e+f$ 和 $T''=T_{m-1}+e-f$ 都是生成树．因为只是交换了一对边，所以，树 $T'$ 和树 $T''$ 的边权和仍然是 $v(m-1)+v(m+1)$．进而，分两种情形讨论：
+    Let $T_{m-1}$ and $T_{m+1}$ be minimum spanning trees with $m-1$ and $m+1$ white edges. Let $e$ be a white edge in $T_{m+1}\setminus T_{m-1}$. Applying the lemma to it, there is an edge $f\in T_{m-1}\setminus T_{m+1}$ such that both $T'=T_{m+1}-e+f$ and $T''=T_{m-1}+e-f$ are spanning trees. Since we only swapped one pair of edges, the total edge weight of $T'$ and $T''$ is still $v(m-1)+v(m+1)$. There are two cases:
     
-    -   如果 $f$ 是一条黑边，那么，$T'$ 和 $T''$ 中的白边数量都是 $m$．它们各自的边权和都不会小于 $v(m)$．这就证明了 $2v(m)\le v(m-1)+v(m+1)$，故而 $v(m)$ 关于 $m$ 是凸的．
-    -   如果 $f$ 是一条白边，那么，$T'$ 和 $T''$ 的白边数量分别是 $m+1$ 和 $m-1$，所以它们的边权和分别不小于 $v(m+1)$ 和 $v(m-1)$．但是，上面已经说明，它们的边权和加在一起就等于 $v(m-1)+v(m+1)$．这说明，$T'$ 的边权和就等于 $v(m+1)$．将 $T'$ 与 $T_{m+1}$ 比较可知，$e$ 和 $f$ 的边权必然相等．这与假设矛盾，所以该情形并不成立．
+    -   If $f$ is a black edge, then $T'$ and $T''$ both have $m$ white edges. Neither has total weight less than $v(m)$. This proves $2v(m)\le v(m-1)+v(m+1)$, so $v(m)$ is convex in $m$.
+    -   If $f$ is a white edge, then $T'$ and $T''$ have $m+1$ and $m-1$ white edges, so their total weights are at least $v(m+1)$ and $v(m-1)$ respectively. But we showed above that their total weights add up to exactly $v(m-1)+v(m+1)$. So the total weight of $T'$ equals $v(m+1)$. Comparing $T'$ with $T_{m+1}$, the weights of $e$ and $f$ must be equal. This contradicts our assumption, so this case cannot happen.
     
-    这就证明了 $v(m)$ 是 $m$ 的凸函数．
+    This proves that $v(m)$ is a convex function of $m$.
     
-    建立了函数 $v(m)$ 的凸性后，就可以用 WQS 二分解决该问题．移除数量限制并将每条白边的权重都减去 $k$，并求解最小生成树问题．为此，可以应用 [Kruskal 算法](../../graph/mst.md#kruskal-算法)．利用并查集维护连通性，算法的复杂度就是 $O(E\log E+E\alpha(V))$，其中，$E$ 和 $V$ 分别为边数和顶点数，$\alpha(\cdot)$ 为反 Ackerman 函数．复杂度的主要部分 $O(E\log E)$ 是给边排序的复杂度，在本题中可以进一步优化．虽然在 WQS 二分的过程中需要多次计算最小生成树，但是每次只有白边的边权会整体加减一个数．所以，可以在预处理时给白边、黑边分别排序，然后每次计算最小生成树时，只需要将调整完权重后的白边和黑边归并到一起就可以了．这样，整体复杂度就降低到了 $O(E\log E+E\alpha(V)\log L)$，其中，$L$ 为边权的取值范围的长度．
+    Once convexity of $v(m)$ is established, we can solve the problem with WQS binary search. Remove the count constraint, subtract $k$ from the weight of every white edge, and solve the minimum spanning tree problem. For this we can use [Kruskal's algorithm](../../graph/mst.md#kruskal-算法). With DSU maintaining connectivity, the algorithm takes $O(E\log E+E\alpha(V))$ time, where $E$ and $V$ are the numbers of edges and vertices and $\alpha(\cdot)$ is the inverse Ackermann function. The main part, $O(E\log E)$, is sorting the edges, and it can be optimized further here. Although WQS binary search computes the minimum spanning tree many times, each time only the white edge weights shift by a common amount. So we can sort the white and black edges separately in preprocessing, and each MST computation only needs to merge the adjusted white edges with the black edges. This reduces the total complexity to $O(E\log E+E\alpha(V)\log L)$, where $L$ is the length of the range of edge weights.
     
-    参考实现如下：
+    Reference implementations:
     
-    === "传统方法"
+    === "Traditional method"
         ```cpp
         --8<-- "docs/dp/code/opt/wqs-binary-search/black-white-mst-1.cpp"
         ```
     
-    === "对偶方法"
+    === "Dual method"
         ```cpp
         --8<-- "docs/dp/code/opt/wqs-binary-search/black-white-mst-2.cpp"
         ```
 
-### 区间分拆问题
+### Interval partition problems
 
-???+ example "[Luogu P6246 \[IOI 2000\] 邮局 加强版 加强版](https://www.luogu.com.cn/problem/P6246)"
-    给定长度为 $n$ 且递增的正整数序列 $\{a_i\}$ 表示一条高速公路旁的 $n$ 个村庄的位置，需要修建 $m$ 个邮局．邮局位置的选择，需要最小化所有村庄与其最近邮局的距离之和．求这个最小值．
+???+ example "[Luogu P6246 \[IOI 2000\] Post Office, Enhanced Version of the Enhanced Version](https://www.luogu.com.cn/problem/P6246)"
+    An increasing sequence of $n$ positive integers $\{a_i\}$ gives the positions of $n$ villages along a highway, and $m$ post offices must be built. Choose the post office positions to minimize the sum of distances from each village to its nearest post office. Find this minimum.
 
-??? note "解答"
-    这是典型的 [区间分拆问题](./quadrangle.md#区间分拆问题)．二分队列的实现细节请参考该页面．
+??? note "Solution"
+    This is a typical [interval partition problem](./quadrangle.md#区间分拆问题). For the implementation details of the binary-search queue, see that page.
     
-    每个邮局服务离它最近的村庄，那么，这些村庄必然是高速公路旁连续的若干个村庄．所以，修建 $m$ 个邮局，就相当于将所有村庄划分为连续的 $m$ 段，并为每一段村庄修建一个成本最低的邮局．众所周知，邮局应当修建在村庄位置的中位数的位置．由此，可以写出区间 $[l,r]$ 的成本函数为
+    Each post office serves the villages closest to it, and these villages must be a group of consecutive villages along the highway. So building $m$ post offices is equivalent to splitting all villages into $m$ consecutive segments and building the cheapest post office for each segment. As is well known, a post office should be built at the median of the village positions. So the cost function of the interval $[l,r]$ is
     
     $$
     w(l,r) = \sum_{i=l}^r|a_i-a_{\lfloor(l+r)/2\rfloor}|.
     $$
     
-    它满足四边形不等式，因为它的二阶混合差分非正：
+    It satisfies the quadrangle inequality, because its second-order mixed difference is non-positive:
     
     $$
     \Delta_l\Delta_r w(l,r)
@@ -804,77 +804,77 @@ $$
     = a_{\lfloor(l+r+1)/2\rfloor}-a_{\lfloor(l+r+2)/2\rfloor} \le 0.
     $$
     
-    这说明，可以通过二分队列结合 WQS 二分的方法在 $O(n\log n\log L)$ 的复杂度内求解该问题．
+    So the problem can be solved in $O(n\log n\log L)$ time by combining the binary-search queue with WQS binary search.
     
-    参考实现如下：
+    Reference implementations:
     
-    === "传统方法"
+    === "Traditional method"
         ```cpp
         --8<-- "docs/dp/code/opt/wqs-binary-search/post-office-1.cpp"
         ```
     
-    === "对偶方法"
+    === "Dual method"
         ```cpp
         --8<-- "docs/dp/code/opt/wqs-binary-search/post-office-2.cpp"
         ```
 
-### 二维的限制条件
+### Two-dimensional constraints
 
 ???+ example "[Codeforces 739 E. Gosha is hunting](https://codeforces.com/problemset/problem/739/E)"
-    有 $n$ 只神奇宝贝，序列 $\{p_i\}$ 和 $\{q_i\}$ 分别表示用宝贝球和超级球抓到第 $i$ 只神奇宝贝的概率．可以向一个神奇宝贝扔一个宝贝球，或者扔一个超级球，或者两种球各扔一个，或者什么球都不扔．现有 $m_1$ 个宝贝球和 $m_2$ 个超级球，需要合理分配，并同时扔出．求抓到的神奇宝贝的期望数量的最大值．单次抓捕成功与否，与其它抓捕的结果无关．
+    There are $n$ Pokémon. The sequences $\{p_i\}$ and $\{q_i\}$ give the probabilities of catching the $i$-th Pokémon with a Poké Ball and with an Ultra Ball, respectively. For each Pokémon you may throw one Poké Ball, one Ultra Ball, one of each, or nothing. You have $m_1$ Poké Balls and $m_2$ Ultra Balls to distribute, and all balls are thrown at the same time. Find the maximum expected number of Pokémon caught. Whether one catch attempt succeeds is independent of all others.
     
-    更一般地，可以抽象为如下问题：
+    More generally, this can be abstracted as the following problem:
     
-    给定长度为 $n$ 的三个正实数序列 $\{A_i\},\{B_i\},\{C_i\}$，而且，对所有 $i=1,\cdots,n$ 都有 $C_i\le A_i+B_i$ 成立．求最优的下标集合 $X$ 和 $Y$ 满足 $|X|=m_1$ 和 $|Y|=m_2$ 且最大化
+    Given three sequences of positive reals $\{A_i\},\{B_i\},\{C_i\}$ of length $n$ with $C_i\le A_i+B_i$ for all $i=1,\cdots,n$, find optimal index sets $X$ and $Y$ with $|X|=m_1$ and $|Y|=m_2$ that maximize
     
     $$
     \sum_{i\in X\setminus Y}A_i + \sum_{i\in Y\setminus X}B_i + \sum_{i\in X\cap Y}C_i.
     $$
 
-??? note "解答"
-    原问题可以看作是这个更一般的问题在
+??? note "Solution"
+    The original problem is the special case of this more general problem with
     
     $$
     A_i = p_i,~ B_i = q_i,~ C_i = p_i+q_i-p_iq_i
     $$
     
-    时的特殊情形．因此，只需要讨论更一般的问题的解决方案就可以了．
+    So we only need to discuss how to solve the more general problem.
     
-    用 $v(m_1,m_2)$ 表示该问题的价值函数，需要证明它是关于 $(m_1,m_2)$ 的凹函数．考虑如下费用流模型：
+    Let $v(m_1,m_2)$ be the value function of this problem. We need to prove that it is a concave function of $(m_1,m_2)$. Consider the following cost flow model:
     
-    -   从源点 $s$ 出发，分别向结点 $x$ 和 $y$ 连一条边，容量分别为 $m_1$ 和 $m_2$，费用均为 $0$；
-    -   对于所有 $i=1,\cdots,n$，分别从结点 $x$ 和 $y$ 向结点 $i$ 连一条边，容量均为 $1$，费用分别为 $A_i$ 和 $B_i$；
-    -   对于所有 $i=1,\cdots,n$，从结点 $i$ 出发向汇点 $t$ 连两条边，容量均为 $1$，费用分别为 $0$ 和 $C_i-A_i-B_i$．
+    -   From the source $s$, add one edge to vertex $x$ and one to vertex $y$, with capacities $m_1$ and $m_2$ respectively, both with cost $0$;
+    -   For every $i=1,\cdots,n$, add an edge from vertex $x$ to vertex $i$ and one from vertex $y$ to vertex $i$, both with capacity $1$, with costs $A_i$ and $B_i$ respectively;
+    -   For every $i=1,\cdots,n$, add two edges from vertex $i$ to the sink $t$, both with capacity $1$, with costs $0$ and $C_i-A_i-B_i$ respectively.
     
-    问题的答案就是该费用流模型的最大费用最大流．条件 $C_i-A_i-B_i\le 0$ 保证了当流经结点 $i$ 的流量为 $1$ 时，会优先选择费用为 $0$ 的那条边流出．将这个费用流模型写成线性规划问题，那么，$m_1$ 和 $m_2$ 就会分别出现在表示边 $(s,x)$ 和边 $(s,y)$ 的流量限制的不等式中．因此，$v(m_1,m_2)$ 确实是 $(m_1,m_2)$ 的凹函数．
+    The answer is the maximum-cost maximum flow of this model. The condition $C_i-A_i-B_i\le 0$ ensures that when the flow through vertex $i$ is $1$, it leaves through the edge of cost $0$ first. If we write this cost flow model as a linear program, $m_1$ and $m_2$ appear in the inequalities bounding the flows on edges $(s,x)$ and $(s,y)$. So $v(m_1,m_2)$ is indeed a concave function of $(m_1,m_2)$.
     
-    为了应用 WQS 二分，需要考虑移除数量限制后的最优化问题．设 $k_1$ 和 $k_2$ 分别为将一个下标放入集合 $X$ 和 $Y$ 时获得的额外奖励．没有数量限制后，关于每个下标的决策都是独立的，因此，有
+    To apply WQS binary search, consider the optimization problem without the count constraints. Let $k_1$ and $k_2$ be the extra rewards for putting an index into set $X$ and set $Y$. Without count constraints, the decision for each index is independent, so
     
     $$
     h(k_1,k_2) = \sum_{i=1}^n\max\{0,A_i+k_1,B_i+k_2,C_i+k_1+k_2\}.
     $$
     
-    原问题的答案就由
+    The answer to the original problem is given by
     
     $$
     v(m_1,m_2) = \min_{k_1,k_2} h(k_1,k_2) - k_1m_1 - k_2m_2
     $$
     
-    给出．总的时间复杂度为 $O(n\log^2L)$，其中，$O(\log L)$ 为对单个维度二分的次数．
+    The total time complexity is $O(n\log^2L)$, where $O(\log L)$ is the number of binary search steps in one dimension.
     
-    抓捕神奇宝贝问题的参考实现如下：
+    Reference implementation for the Pokémon catching problem:
     
     ```cpp
     --8<-- "docs/dp/code/opt/wqs-binary-search/gosha-is-hunting.cpp"
     ```
 
-### 更广泛的限制条件
+### More general constraints
 
 ???+ example "[Codeforces 1661 F. Teleporters](https://codeforces.com/problemset/problem/1661/F)"
-    有 $n$ 条线段，它们的长度由序列 $\{a_i\}$ 给出．可以将它们任意切割为若干条整数长度的线段，目标是最小化所有线段长度平方的总和．求至少需要切割多少次，才能使这个平方和降到不超过 $V$．
+    There are $n$ segments whose lengths are given by the sequence $\{a_i\}$. You may cut them anywhere into several segments of integer length, and the goal is to minimize the sum of the squares of all segment lengths. Find the minimum number of cuts needed to bring this sum of squares down to at most $V$.
 
-??? note "解答"
-    设将长度为 $a$ 的线段切割 $m$ 次能得到的最小平方和为 $f(a,m)$．由于均值不等式，当两数之和一定时，两数之差越小，两数的平方和也越小．所以，切割之后得到的线段长度越均匀，总的长度平方和也就越小．但是由于整数约束的存在，最均匀的情形就是得到了 $a\bmod (m+1)$ 条长度为 $\lceil a/(m+1)\rceil$ 的线段和 $m+1-(a\bmod (m+1))$ 条长度为 $\lfloor a/(m+1)\rfloor$ 的线段．因此，有如下表达式：
+??? note "Solution"
+    Let $f(a,m)$ be the minimum sum of squares obtainable by cutting a segment of length $a$ $m$ times. By the AM–QM inequality, when the sum of two numbers is fixed, the smaller their difference, the smaller the sum of their squares. So the more even the resulting lengths, the smaller the total sum of squares. But because of the integer constraint, the most even case gives $a\bmod (m+1)$ segments of length $\lceil a/(m+1)\rceil$ and $m+1-(a\bmod (m+1))$ segments of length $\lfloor a/(m+1)\rfloor$. So we have the following expression:
     
     $$
     \begin{aligned}
@@ -883,9 +883,9 @@ $$
     \end{aligned}
     $$
     
-    第二步的等号成立，是因为 $\lceil a/(m+1)\rceil \neq \lfloor a/(m+1)\rfloor + 1$ 当且仅当 $a\bmod (m+1) = 0$．
+    The second equality holds because $\lceil a/(m+1)\rceil \neq \lfloor a/(m+1)\rfloor + 1$ if and only if $a\bmod (m+1) = 0$.
     
-    可以证明，函数 $f(a,m)$ 是关于 $m$ 的凸函数．为此，需要将它延拓到 $m\in\mathbf R_{+}$ 的情形．当 $\lfloor a/(m+1)\rfloor = q$ 时，有
+    We can prove that $f(a,m)$ is a convex function of $m$. To do so, extend it to $m\in\mathbf R_{+}$. When $\lfloor a/(m+1)\rfloor = q$,
     
     $$
     \begin{aligned}
@@ -894,75 +894,75 @@ $$
     \end{aligned}
     $$
     
-    这是斜率为 $-q(q+1)$ 的直线．因此，$f(a,m)$ 是分段线性函数，且斜率随着 $m$ 的增加而增加．这就说明了 $f(a,m)$ 是凸函数，它限制在整点上当然也是凸函数[^conv-int]．
+    This is a line with slope $-q(q+1)$. So $f(a,m)$ is piecewise linear, and its slope increases as $m$ increases. This shows that $f(a,m)$ is convex, and of course its restriction to integer points is convex too[^conv-int].
     
-    利用 $f(\cdot,\cdot)$，可以将所有线段总共切割 $m$ 次得到的最小平方和写作如下最优化问题的价值函数：
+    Using $f(\cdot,\cdot)$, the minimum sum of squares after a total of $m$ cuts over all segments can be written as the value function of the following optimization problem:
     
     $$
     v(m) = \min_{\{m_i\}}\sum_i f(a_i,m_i)\text{ subject to }\sum_i m_i=m,~m_i\in\mathbf N.
     $$
     
-    这是若干个凸函数的 [卷积下确界](./slope-trick.md#卷积下确界minkowski-和)，所以也是凸函数．如果题目要求的是 $v(m)$，那么，可以使用与之前的例题一致的方法求解，时间复杂度为 $O(n\log^2L)$；但是，本题求的是满足 $v(m)\le V$ 的最小的 $m$．利用 WQS 二分计算 $v(m)$ 再对 $m$ 二分的方法是行不通的，它的复杂度达到了 $O(n\log^3L)$．就本题而言，有如下两种处理方法．
+    This is the [infimal convolution](./slope-trick.md#卷积下确界minkowski-和) of several convex functions, so it is convex too. If the problem asked for $v(m)$, we could solve it the same way as the earlier examples in $O(n\log^2L)$ time. But this problem asks for the smallest $m$ with $v(m)\le V$. Computing $v(m)$ with WQS binary search and then binary searching on $m$ does not work: it takes $O(n\log^3L)$ time. For this problem, there are two approaches.
     
-    **方法一**：仍然二分斜率 $k$，但是二分的依据是对 $v(m)$ 上下界的估计．
+    **Approach 1**: Still binary search on the slope $k$, but base the decision on bounds for $v(m)$.
     
-    传统的 WQS 二分的方法中，对于给定的斜率 $k$，可以计算出相应的最优的 $m$ 的取值范围．因为这些 $(m,v(m))$ 共线，所以这相当于确定了 $v(m)$ 的取值范围．因此，可以直接二分斜率 $k$．得到斜率 $k$ 之后，可以利用直线方程
+    In traditional WQS binary search, for a given slope $k$, we can compute the range of optimal values of $m$. Since these points $(m,v(m))$ are collinear, this is the same as determining the range of $v(m)$. So we can binary search directly on the slope $k$. Once we have the slope $k$, we can use the line equation
     
     $$
     v(m) = h(k) + km
     $$
     
-    计算出最小的 $m$．整体复杂度为 $O(n\log^2L)$．
+    to compute the smallest $m$. The overall complexity is $O(n\log^2L)$.
     
-    为了确定 $v(m)$ 的取值范围，需要确定 $m$ 的取值范围．一种做法是，在计算 $h(k)$ 时记录相应的最大最优解，利用它可以计算相应的 $v(m)$ 的下界；另一种做法是，利用 $h(k)-h(k-1)$ 得到相应的 $m$ 的上界，进而得到相应的 $v(m)$ 的下界．参考实现中，采用的是第二种做法，它不依赖于问题的具体结构，无需特别处理．
+    To determine the range of $v(m)$, we need the range of $m$. One way is to record the largest optimal solution when computing $h(k)$, and use it to compute a lower bound on the corresponding $v(m)$. Another way is to use $h(k)-h(k-1)$ to get an upper bound on the corresponding $m$, and from that a lower bound on the corresponding $v(m)$. The reference implementation uses the second way, which does not depend on the specific structure of the problem and needs no special handling.
     
-    **方法二**：改写最优化问题，使得对偶问题的价值函数就是本问题的解．
+    **Approach 2**: Rewrite the optimization problem so that the value function of the dual problem is exactly the answer to this problem.
     
-    本问题可以直接看作是如下最优化问题：
+    This problem can be viewed directly as the following optimization problem:
     
     $$
     m(V) = \min_{\{m_i\}} \sum_i m_i \text{ subject to }\sum_i f(a_i,m_i) \le V.
     $$
     
-    本文的分析仍然适用于这一问题．故而，可以利用它的对偶问题求解所要求的 $m(V)$：
+    The analysis in this article still applies to this problem. So we can use its dual problem to find the required $m(V)$:
     
     $$
     m(V) = \max_{\lambda} \sum_i\min_{m_i}(m_i - \lambda f(a_i,m_i)) + \lambda V.
     $$
     
-    整体算法复杂度仍然是 $O(n\log^2L)$ 的．
+    The overall complexity is still $O(n\log^2L)$.
     
-    参考代码如下：
+    Reference code:
     
-    === "方法一"
-        代码仅做示意，为通过原题数据范围，需要 128 位整数，并调整二分初始区间为 $[0,10^{60}]$．
+    === "Approach 1"
+        This code is for illustration only. To pass the original constraints, you need 128-bit integers and must change the initial binary search interval to $[0,10^{60}]$.
         
         ```cpp
         --8<-- "docs/dp/code/opt/wqs-binary-search/teleporters-1.cpp"
         ```
     
-    === "方法二"
-        代码仅做示意，由于浮点数精度问题无法通过原题数据范围．
+    === "Approach 2"
+        This code is for illustration only. Because of floating-point precision issues, it cannot pass the original constraints.
         
         ```cpp
         --8<-- "docs/dp/code/opt/wqs-binary-search/teleporters-2.cpp"
         ```
 
-## 习题
+## Exercises
 
-最后，列举一些可以通过 WQS 二分解决的题目，以供练习：
+Finally, here are some problems that can be solved with WQS binary search, for practice:
 
--   [Luogu P1484 种树](https://www.luogu.com.cn/problem/P1484)
--   [Luogu P1792 \[国家集训队\] 种树](https://www.luogu.com.cn/problem/P1792)
--   [Luogu P2619 \[国家集训队\] Tree I](https://www.luogu.com.cn/problem/P2619)
--   [Luogu P3620 \[APIO/CTSC2007\] 数据备份](https://www.luogu.com.cn/problem/P3620)
--   [Luogu P4072 \[SDOI2016\] 征途](https://www.luogu.com.cn/problem/P4072)
--   [Luogu P4383 \[八省联考 2018\] 林克卡特树](https://www.luogu.com.cn/problem/P4383)
--   [Luogu P4983 忘情](https://www.luogu.com.cn/problem/P4983)
+-   [Luogu P1484 Planting Trees](https://www.luogu.com.cn/problem/P1484)
+-   [Luogu P1792 \[National Training Team\] Planting Trees](https://www.luogu.com.cn/problem/P1792)
+-   [Luogu P2619 \[National Training Team\] Tree I](https://www.luogu.com.cn/problem/P2619)
+-   [Luogu P3620 \[APIO/CTSC2007\] Data Backup](https://www.luogu.com.cn/problem/P3620)
+-   [Luogu P4072 \[SDOI2016\] Journey](https://www.luogu.com.cn/problem/P4072)
+-   [Luogu P4383 \[Eight-Province Joint Exam 2018\] Link-Cut Tree](https://www.luogu.com.cn/problem/P4383)
+-   [Luogu P4983 Forgetting](https://www.luogu.com.cn/problem/P4983)
 -   [Luogu P5308 \[COCI 2018/2019 #4\] Akvizna](https://www.luogu.com.cn/problem/P5308)
--   [Luogu P5633 最小度限制生成树](https://www.luogu.com.cn/problem/P5633)
+-   [Luogu P5633 Degree-Constrained Minimum Spanning Tree](https://www.luogu.com.cn/problem/P5633)
 -   [Luogu P5896 \[IOI 2016\] aliens](https://www.luogu.com.cn/problem/P5896)
--   [Luogu P6246 \[IOI 2000\] 邮局 加强版 加强版](https://www.luogu.com.cn/problem/P6246)
+-   [Luogu P6246 \[IOI 2000\] Post Office, Enhanced Version of the Enhanced Version](https://www.luogu.com.cn/problem/P6246)
 -   [AtCoder Beginner Contest 218 H - Red and Blue Lamps](https://atcoder.jp/contests/abc218/tasks/abc218_h)
 -   [AtCoder Beginner Contest 305 Ex - Shojin](https://atcoder.jp/contests/abc305/tasks/abc305_h)
 -   [AtCoder Regular Contest 164 E - Segment-Tree Optimization](https://atcoder.jp/contests/arc164/tasks/arc164_e)
@@ -976,12 +976,12 @@ $$
 -   [Codeforces 1799 F. Halve or Subtract](https://codeforces.com/problemset/problem/1799/F)
 -   [2019 Summer Petrozavodsk Camp H. Honorable Mention](https://codeforces.com/gym/102331/problem/H)
 
-## 参考资料与注释
+## References and notes
 
--   [王钦石《浅析一类二分方法》](https://github.com/hzwer/shareOI/blob/master/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/%E6%B5%85%E6%9E%90%E4%B8%80%E7%B1%BB%E4%BA%8C%E5%88%86%E6%96%B9%E6%B3%95_%E7%8E%8B%E9%92%A6%E7%9F%B3.pdf)
+-   [Wang Qinshi, "A Brief Analysis of a Class of Binary Search Methods" (Chinese)](https://github.com/hzwer/shareOI/blob/master/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/%E6%B5%85%E6%9E%90%E4%B8%80%E7%B1%BB%E4%BA%8C%E5%88%86%E6%96%B9%E6%B3%95_%E7%8E%8B%E9%92%A6%E7%9F%B3.pdf)
 -   [Theoretical grounds of lambda optimization by adamant - Codeforces blog](https://codeforces.com/blog/entry/98334)
--   [严谨的 WQS 二分方法 by YeahPotato - 洛谷博客](https://www.luogu.com.cn/article/vsffwrc3)
--   [【学习笔记】WQS 二分详解及常见理解误区解释 by ikrvxt - CSDN 博客](https://blog.csdn.net/Emm_Titan/article/details/124035796)
+-   [A rigorous WQS binary search method by YeahPotato - Luogu blog (Chinese)](https://www.luogu.com.cn/article/vsffwrc3)
+-   [[Study notes] WQS binary search explained, with common misunderstandings by ikrvxt - CSDN blog (Chinese)](https://blog.csdn.net/Emm_Titan/article/details/124035796)
 -   [Convex conjugate - Wikipedia](https://en.wikipedia.org/wiki/Convex_conjugate)
 -   [Fenchel–Moreau theorem - Wikipedia](https://en.wikipedia.org/wiki/Fenchel%E2%80%93Moreau_theorem)
 -   [Subderivative - Wikipedia](https://en.wikipedia.org/wiki/Subderivative)
@@ -990,12 +990,12 @@ $$
 -   Conforti, Michele, Gérard Cornuéjols, and Giacomo Zambelli. Integer programming. Springer International Publishing, 2014.
 -   Schrijver, Alexander. Combinatorial optimization: polyhedra and efficiency. Vol. 24, no. 2. Berlin: Springer, 2003.
 
-[^high-d-convex]: 实际问题中，$y$ 可能只能取到 $\mathbf R^d$ 中的有限多个格点．此处实际需要的条件是，原问题的解 $v(y)$ 可以延拓为 $\mathbf R^d$ 上的凸函数 $\tilde v:\mathbf R^d\rightarrow \mathbf R\cup\{\pm\infty\}$，也就是说 $v(y)$ 是 **可凸延拓的**（convex-extensible）．为行文方便，正文中仍然用 $v(y)$ 表示延拓后的函数．几何直观上，这相当于说点集 $\{(y,v(y))\}$ 全部都位于它们的凸包的下凸壳上．对于一维的情形，这一条件利用代数语言 [很容易刻画](./slope-trick.md#离散点集上的凸函数)；但是，对于高维的情形，这稍微有些复杂，[这份讲义](https://kzmurota.fpark.tmu.ac.jp/paper/HIMSummerSchool15Murota.pdf) 中提供了一些简单的充分条件．
+[^high-d-convex]: In real problems, $y$ may only take finitely many lattice points in $\mathbf R^d$. The condition actually needed here is that the solution $v(y)$ of the original problem can be extended to a convex function $\tilde v:\mathbf R^d\rightarrow \mathbf R\cup\{\pm\infty\}$ on $\mathbf R^d$, i.e. $v(y)$ is **convex-extensible**. For convenience, the main text still writes $v(y)$ for the extended function. Geometrically, this means all points $\{(y,v(y))\}$ lie on the lower hull of their convex hull. In one dimension, this condition is [easy to describe algebraically](./slope-trick.md#离散点集上的凸函数); in higher dimensions it is a bit more complicated, and [these lecture notes](https://kzmurota.fpark.tmu.ac.jp/paper/HIMSummerSchool15Murota.pdf) give some simple sufficient conditions.
 
-[^other-conditions]: 定理中提供的条件看似比凸函数更强一些，但是，对于算法竞赛能够遇到的情形，特别是 $X$ 为有限集合时，仅强调凸函数就已经足够．由离散集合上的正常凸函数 $v$ 延拓而来的函数 $\tilde v$ 必然是下半连续的凸函数，因为有限多个点的凸包必然是闭凸集，而所谓下半连续的凸函数，就等价于它的上境图是闭凸集．至于正常凸函数中的「正常」一词，只要 $v(y)$ 在至少一个点处取得有限值且是凸函数，就可以保证．
+[^other-conditions]: The conditions in the theorem look somewhat stronger than plain convexity, but for situations that arise in competitive programming, especially when $X$ is finite, convexity alone is enough. The function $\tilde v$ extended from a proper convex function $v$ on a discrete set is always a lower semicontinuous convex function, because the convex hull of finitely many points is a closed convex set, and a lower semicontinuous convex function is exactly one whose epigraph is a closed convex set. As for the word "proper" in "proper convex function", it is guaranteed as long as $v(y)$ is convex and takes a finite value at at least one point.
 
-[^mst]: 最小生成树问题有两种常见的写成线性规划问题的 [方法](https://math.arizona.edu/~glickenstein/math443f14/golari.pdf)：子回路消除模型（subtour-elimination formulation）和基于割集的模型（cut-based formulation）．只有前一种建模方式能够保证得到的线性规划问题和原问题是等价的．
+[^mst]: There are two common [ways](https://math.arizona.edu/~glickenstein/math443f14/golari.pdf) to write the minimum spanning tree problem as a linear program: the subtour-elimination formulation and the cut-based formulation. Only the first guarantees that the resulting linear program is equivalent to the original problem.
 
-[^edge-swap]: 这一引理对于一般的 [拟阵](../../math/matroid.md) 也是成立的．它称为 **对称基交换性质**（symmetric base-exchange property），相关资料可以参考 [Wikipedia 页面](https://en.wikipedia.org/wiki/Basis_of_a_matroid)．因此，本题关于凸性的结论可以推广到一般的拟阵上．
+[^edge-swap]: This lemma also holds for general [matroids](../../math/matroid.md). It is called the **symmetric base-exchange property**; see the [Wikipedia page](https://en.wikipedia.org/wiki/Basis_of_a_matroid) for more. So the convexity result for this problem generalizes to general matroids.
 
-[^conv-int]: 当然，$f(a,m)$ 和它限制在整点上得到的函数的凸包并不相同，因为 $f(a,m)$ 可能存在非整数位置处的极点．这说明，并不能将定义域为实数的 $f(a,m)$ 直接用于本题的最优化问题中．
+[^conv-int]: Of course, $f(a,m)$ is not the same as the convex hull of its restriction to integer points, because $f(a,m)$ may have breakpoints at non-integer positions. This shows that the real-domain function $f(a,m)$ cannot be used directly in the optimization problem of this problem.

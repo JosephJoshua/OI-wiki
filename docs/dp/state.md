@@ -1,51 +1,51 @@
-## 简介
+## Introduction
 
-状压 DP 是动态规划的一种，通过将状态集合转化为整数记录在 DP 状态中来实现状态转移的目的．
+Bitmask DP is a kind of dynamic programming. It encodes a set of states as an integer and stores that integer in the DP state, so that transitions can be made between such sets.
 
-为了达到更低的时间复杂度，通常需要寻找更低状态数的状态．大部分题目中会利用二元状态，用 $n$ 位二进制数表示 $n$ 个独立二元状态的情况．
+To get a lower time complexity, we usually look for a state design with fewer states. Most problems use binary states: an $n$-bit binary number describes $n$ independent two-valued states.
 
-使用状态压缩通常涉及位操作，关于基础位操作详见 [位操作](../math/bit.md) 页面．
+Bitmask DP usually involves bit operations. For the basics of bit operations, see the [Bit operations](../math/bit.md) page.
 
-## 例题 1
+## Example problem 1
 
-???+ note "[「SCOI2005」互不侵犯](https://loj.ac/problem/2153)"
-    在 $N\times N$ 的棋盘里面放 $K$ 个国王（$1 \leq N \leq 9, 1 \leq K \leq N \times N$），使他们互不攻击，共有多少种摆放方案．
+???+ note "['SCOI2005' Non-attacking Kings](https://loj.ac/problem/2153)"
+    Place $K$ kings on an $N\times N$ chessboard ($1 \leq N \leq 9, 1 \leq K \leq N \times N$) so that no two of them attack each other. How many ways are there to place them?
     
-    国王能攻击到它上下左右，以及左上左下右上右下八个方向上附近的各一个格子，共 $8$ 个格子．
+    A king attacks the one adjacent cell in each of the eight directions: up, down, left, right, up-left, down-left, up-right and down-right. That is $8$ cells in total.
 
-### 解释
+### Solution
 
-设 $f(i,j,l)$ 表示前 $i$ 行，第 $i$ 行的状态为 $j$，且棋盘上已经放置 $l$ 个国王时的合法方案数．
+Let $f(i,j,l)$ be the number of valid placements of the first $i$ rows, where the state of row $i$ is $j$ and $l$ kings have been placed on the board so far.
 
-对于编号为 $j$ 的状态，我们用二进制整数 $sit(j)$ 表示国王的放置情况，$sit(j)$ 的某个二进制位为 $0$ 表示对应位置不放国王，为 $1$ 表示在对应位置上放置国王；用 $sta(j)$ 表示该状态的国王个数，即二进制数 $sit(j)$ 中 $1$ 的个数．例如，如下图所示的状态可用二进制数 $100101$ 来表示（棋盘左边对应二进制低位），则有 $sit(j)=100101_{(2)}=37, sta(j)=3$．
+For the state numbered $j$, we use a binary integer $sit(j)$ to describe where the kings are. A bit of $sit(j)$ is $0$ if no king is placed at the corresponding position, and $1$ if a king is placed there. We use $sta(j)$ for the number of kings in this state, which is the number of $1$ bits in $sit(j)$. For example, the state in the figure below can be written as the binary number $100101$ (the left side of the board corresponds to the low bits), so $sit(j)=100101_{(2)}=37, sta(j)=3$.
 
 ![](./images/SCOI2005-互不侵犯.png)
 
-设当前行的状态为 $j$，上一行的状态为 $x$，可以得到下面的状态转移方程：$f(i,j,l) = \sum f(i-1,x,l-sta(j))$．
+Let the state of the current row be $j$ and the state of the previous row be $x$. We get the transition equation: $f(i,j,l) = \sum f(i-1,x,l-sta(j))$.
 
-设上一行的状态编号为 $x$，在保证当前行和上一行不冲突的前提下，枚举所有可能的 $x$ 进行转移，转移方程：
+Let the state number of the previous row be $x$. We enumerate every possible $x$ that does not conflict with the current row and make the transition:
 
 $$
 f(i,j,l) = \sum f(i-1,x,l-sta(j))
 $$
 
-### 实现
+### Implementation
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/dp/code/state/state_1.cpp"
     ```
 
-## 例题 2
+## Example problem 2
 
 ???+ note "[\[POI2004\] PRZ](https://www.luogu.com.cn/problem/P5911)"
-    有 $n$ 个人需要过桥，第 $i$ 的人的重量为 $w_i$，过桥用时为 $t_i$. 这些人过桥时会分成若干组，只有在某一组的所有人全部过桥后，其余的组才能过桥．桥最大承重为 $W$，问这些人全部过桥的最短时间．
+    $n$ people need to cross a bridge. Person $i$ weighs $w_i$ and takes $t_i$ time to cross. The people cross in several groups, and a group can only start after every person in the previous group has finished crossing. The bridge can hold at most $W$ weight. Find the minimum total time for everyone to cross.
     
-    $100\le W \le 400$，$1\le n\le 16$，$1\le t_i\le 50$，$10\le w_i\le 100$.
+    $100\le W \le 400$, $1\le n\le 16$, $1\le t_i\le 50$, $10\le w_i\le 100$.
 
-### 解释
+### Solution
 
-我们用 $S$ 表示所有人构成集合的一个子集，设 $t(S)$ 表示 $S$ 中人的最长过桥时间，$w(S)$ 表示 $S$ 中所有人的总重量，$f(S)$ 表示 $S$ 中所有人全部过桥的最短时间，则：
+Let $S$ be a subset of the set of all people. Let $t(S)$ be the longest crossing time among the people in $S$, $w(S)$ the total weight of the people in $S$, and $f(S)$ the minimum time for everyone in $S$ to cross. Then:
 
 $$
 \begin{cases}
@@ -54,17 +54,17 @@ $$
 \end{cases}
 $$
 
-需要注意的是这里不能直接枚举集合再判断是否为子集，而应使用 [子集枚举](../math/binary-set.md#遍历所有掩码的子掩码)，从而使时间复杂度为 $O(3^n)$.
+Note that you should not enumerate all sets and then check whether each one is a subset. Instead, use [submask enumeration](../math/binary-set.md#遍历所有掩码的子掩码), which makes the time complexity $O(3^n)$.
 
-### 实现
+### Implementation
 
-??? note "参考代码"
+??? note "Reference code"
     ```cpp
     --8<-- "docs/dp/code/state/state_2.cpp"
     ```
 
-## 习题
+## Exercises
 
--   [「NOI2001」炮兵阵地](https://loj.ac/problem/10173)
--   [「USACO06NOV」玉米田 Corn Fields](https://www.luogu.com.cn/problem/P1879)
--   [「九省联考 2018」一双木棋](https://loj.ac/problem/2471)
+-   ['NOI2001' Artillery Positions](https://loj.ac/problem/10173)
+-   ['USACO06NOV' Corn Fields](https://www.luogu.com.cn/problem/P1879)
+-   ['Nine-Province Joint Exam 2018' A Pair of Wooden Chess](https://loj.ac/problem/2471)
