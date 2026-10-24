@@ -1,62 +1,62 @@
-**计数 DP** 是一种利用类似 DP 的记忆化搜索方法（与在狭义上的 DP，即最优化问题有一定区别），用于解决计数（以及求和）问题．
+**Counting DP** uses a DP-like memoized search (somewhat different from DP in the narrow sense, i.e. optimization problems) to solve counting (and summation) problems.
 
-## 基础
+## Basics
 
-### 基本思想
+### Basic idea
 
-计数问题一般指求一个集合 $S$ 的大小，在 OI 中，$S$ 的大小有时会达到 $\Theta(n^n)$ 甚至 $\Theta(2^{n!})$ 的级别（当然，一般会对某一个固定的数取模），其中 $n$ 是问题规模，所以我们不能逐一求出 $S$ 的元素．
+A counting problem usually asks for the size of a set $S$. In OI, the size of $S$ can sometimes reach $\Theta(n^n)$ or even $\Theta(2^{n!})$ (usually taken modulo some fixed number, of course), where $n$ is the problem size. So we cannot list the elements of $S$ one by one.
 
-如果我们能够将 $S$ 分成若干无交的子集，那么 $S$ 的元素个数就等于这些部分的元素个数的和．如果这些子集的计数恰好与原问题类似，那么我们就可以通过类似动态规划的方法来解决．
+If we can split $S$ into several disjoint subsets, then the number of elements in $S$ equals the sum of the sizes of these parts. If counting these subsets happens to look like the original problem, we can solve it in a DP-like way.
 
-### 例题
+### Example problem
 
-???+ note "例题"
-    给定一个正整数 $n$，求有多少个把 $n$ 划分成 $k$ 个正整数的和的方案，位置调换视为不同的划分方案．
+???+ note "Example problem"
+    Given a positive integer $n$, count the ways to write $n$ as a sum of $k$ positive integers. Different orders count as different ways.
 
-需集合 $S_{n,k}$ 为形如 $(a_1, \dots, a_k)$ 的正整数组组成的集合，其中 $a_1 + \dots + a_k = n$．如果 $a_k$ 固定，则有如下推导：因为 $a_1 + a_2 + \dots + a_{k-1} + a_k = n$，所以 $a_1 + a_2 + \dots + a_{k-1} = n - a_k$．根据 $S_{n,k}$ 的定义，$(a_1, a_2, \dots, a_{k-1}) \in S_{n - a_k, k - 1}$．
+Let the set $S_{n,k}$ consist of tuples of positive integers $(a_1, \dots, a_k)$ with $a_1 + \dots + a_k = n$. If $a_k$ is fixed, we can derive: since $a_1 + a_2 + \dots + a_{k-1} + a_k = n$, we have $a_1 + a_2 + \dots + a_{k-1} = n - a_k$. By the definition of $S_{n,k}$, $(a_1, a_2, \dots, a_{k-1}) \in S_{n - a_k, k - 1}$.
 
-由于 $a_1, a_2, \dots, a_k$ 是正整数，所以 $a_k$ 的取值范围是 $[1, n - k + 1] \cap \mathbb Z$．因此，$S_{n,k}$ 可以按照 $a_k$ 被划分，分成 $n - k + 1$ 个子集，其中当 $a_k = i$ 时，这个子集为：
+Since $a_1, a_2, \dots, a_k$ are positive integers, $a_k$ ranges over $[1, n - k + 1] \cap \mathbb Z$. So $S_{n,k}$ can be split by $a_k$ into $n - k + 1$ subsets, where the subset for $a_k = i$ is:
 
 $$
 \{(L, i) \mid L \in S_{n-i,k-1}\}.
 $$
 
-这个子集的元素个数显然等于 $S_{n-i,k-1}$，由于 $i$ 的不同，这些子集两两无交．所以：
+The number of elements in this subset is clearly equal to that of $S_{n-i,k-1}$. Since the values of $i$ differ, these subsets are pairwise disjoint. So:
 
 $$
 |S_{n,k}| = \sum_{i=1}^{n-k+1} |S_{n-i,k-1}|.
 $$
 
-这样我们就可以使用类似 DP 的方法处理它：设 $f_{n,k}$ 为 $|S_{n,k}|$，则有状态转移方程：
+So we can handle it in a DP-like way: let $f_{n,k}$ be $|S_{n,k}|$. Then the state transition equation is:
 
 $$
 f_{n,k} = \sum_{i=1}^{n-k+1} f_{n-i,k-1}.
 $$
 
-这样就可以使用 DP 的方法求解了．
+Now it can be solved with DP.
 
-### 与最优化 DP 的异同
+### Similarities and differences with optimization DP
 
-可以发现，计数 DP 和最优化 DP 都是在一个范围 $\Omega$ 内求一个值（大小值、最优值），这个值通过将 $\Omega$ 中的所有元素做一次处理，再对处理值做一次整合得到．
+Notice that both counting DP and optimization DP compute a value (a size, or an optimal value) over a domain $\Omega$. This value is obtained by processing every element of $\Omega$ once and then combining the processed values.
 
-例如，对于 0-1 背包问题，$\Omega$ 中的元素为背包内的所有物品组成的集合，对于 $\Omega$ 中的一个方案 $S$，我们对 $S$ 做一次处理，处理得到的结果 $w(S)$ 为 $S$ 中物品的总价值，对所有得到的处理值，我们取最大值，得到问题的答案．
+For example, in the 0-1 knapsack problem, the elements of $\Omega$ are the sets of items put in the knapsack. For a choice $S$ in $\Omega$, we process $S$ to get $w(S)$, the total value of the items in $S$. Taking the maximum over all processed values gives the answer.
 
-对于计数问题，$\Omega$ 中的元素为要计算元素个数的集合 $S$，它的处理是把所有的 $S$ 中元素变为 $1$，然后将这些 $1$ 通过加法的方式汇总起来，因为每一个 $S$ 中元素都对应一个 $1$，所以这样得到的值就是 $S$ 中元素个数．
+For a counting problem, $\Omega$ is the set $S$ whose size we want. Processing turns every element of $S$ into $1$, and these $1$s are then combined by addition. Since each element of $S$ corresponds to one $1$, the result is the number of elements of $S$.
 
-当汇总操作为最大/最小值时，我们可以将 $\Omega$ 分成任意若干个部分，只需这些部分的并为 $\Omega$ 即可，无需无交的条件．而计数问题由于不满足这个条件，所以我们需要将 $\Omega$ 分成若干个部分，这些部分两两无交，这就是与最优化 DP 的区别．
+When the combining operation is max/min, we can split $\Omega$ into any number of parts, as long as their union is $\Omega$; they do not need to be disjoint. Counting does not allow this, so we need to split $\Omega$ into parts that are pairwise disjoint. This is the difference from optimization DP.
 
-## 例题
+## Example problem
 
-???+ note "例题"
-    给定一个正整数 $n$，求有多少个把 $n$ 划分成任意多个正整数的和的方案，位置调换视为 **相同** 的划分方案．
+???+ note "Example problem"
+    Given a positive integer $n$, count the ways to write $n$ as a sum of any number of positive integers. Different orders count as the **same** way.
 
-### 解法 1
+### Solution 1
 
-需要计算的集合的元素为满足其和为 $n$ 的正整数多重集．但是这样显然不好推．
+The elements of the set we need to count are multisets of positive integers whose sum is $n$. But this is clearly hard to work with directly.
 
-若一个多重集 $T$ 只包含 $\le M$ 的正整数，且 $T$ 中所有元素的和为 $n$，则称 $T \in S_{n, M}$．考虑 $M$ 出现的个数．可能为 $k \in \left[0, \left\lfloor \dfrac nM \right\rfloor\right] \cap \mathbb Z$．于是它可以被转移到 $S_{n - kM, M - 1}$．求和一下即可．复杂度是 $\Theta(n^2 \log n)$（$\log$ 来自于 $k$ 的范围导致的调和级数）．
+If a multiset $T$ contains only positive integers $\le M$ and the sum of all elements of $T$ is $n$, we say $T \in S_{n, M}$. Consider how many times $M$ appears. It can be $k \in \left[0, \left\lfloor \dfrac nM \right\rfloor\right] \cap \mathbb Z$. Then it transitions to $S_{n - kM, M - 1}$. Just sum these up. The complexity is $\Theta(n^2 \log n)$ (the $\log$ comes from the harmonic series caused by the range of $k$).
 
-但是这样还不够优秀．考虑下面所示的一个例子：
+But this is not good enough. Consider the example below:
 
 $$
 \begin{aligned}
@@ -69,26 +69,26 @@ f_{13, 3} &= f_{13, 2} + {\color{green}f_{10, 2} + f_{7, 2} + f_{4, 2} + f_{1, 2
 \end{aligned}
 $$
 
-等量代换得 $f_{11, 3} = f_{11, 2} + f_{8, 3}$，$f_{12, 3} = f_{12, 2} + f_{9, 3}$，$f_{13, 3} = f_{13, 2} + f_{10, 3}$．同理我们可以得到一个通用的状态转移方程：
+Substituting equal parts gives $f_{11, 3} = f_{11, 2} + f_{8, 3}$, $f_{12, 3} = f_{12, 2} + f_{9, 3}$, $f_{13, 3} = f_{13, 2} + f_{10, 3}$. In the same way we get a general state transition equation:
 
 $$
 f_{n, M} = f_{n, M - 1} + \begin{cases} f_{n - M, M} & n \ge M, \\ 0 & \text{otherwise}. \end{cases}
 $$
 
-此时，时间复杂度为 $\Theta(n^2)$．
+Now the time complexity is $\Theta(n^2)$.
 
-### 解法 2
+### Solution 2
 
-考虑到某一个正整数组成的多重集 $T$ 必然可以通过「将 $T$ 中每一个元素自增」、「在 $T$ 中加一个值为 $1$ 的元素」两个操作得到，并且不同的操作序列得到的结果是不同的．
+Any multiset $T$ of positive integers can be obtained using two operations: "increase every element of $T$ by one" and "add an element with value $1$ to $T$". Different sequences of operations give different results.
 
-这样对 $T$ 的转移可以变为对操作序列的转移．考虑将 $n$ 划分成 $m$ 个数的操作序列（所有的这些操作序列记作 $B_{n,m}$）中的最后一次操作，如果是 $1$ 操作，那么不会增加数，但是 $\sum T$ 增加了 $m$．为了使最终的 $\sum T = n$，原来的 $T$（记作 $T'$）的和需要为 $n-m$．所以 $B_{n,m} \to B_{n-m,m}$；如果是 $2$ 操作，那么会增加一个数，$\sum T$ 增加了 $1$．所以 $B_{n,m} \to B_{n-1,m-1}$．
+So transitions on $T$ can be turned into transitions on operation sequences. Consider the operation sequences that split $n$ into $m$ numbers (denote the set of all of them by $B_{n,m}$), and look at the last operation. If it is operation $1$, no number is added, but $\sum T$ increases by $m$. For the final $\sum T = n$, the previous $T$ (denoted $T'$) must have sum $n-m$. So $B_{n,m} \to B_{n-m,m}$. If it is operation $2$, one number is added and $\sum T$ increases by $1$. So $B_{n,m} \to B_{n-1,m-1}$.
 
-这样做的时间复杂度依旧是 $\Theta(n^2)$．
+The time complexity of this approach is still $\Theta(n^2)$.
 
-### 解法 3
+### Solution 3
 
-考虑将 $T$ 分为大于 $\sqrt n$ 的部分 $T_1$ 和小于等于 $\sqrt n$ 的部分 $T_2$．$T_2$ 可以使用解法 1 求出，而 $T_1$ 的数量可以通过略微修改解法 2 求出：考虑将两个操作变为「将 $T_1$ 中每一个元素自增」、「在 $T_1$ 中加一个值为 $\lfloor \sqrt n \rfloor + 1$ 的元素」．容易列出状态转移方程．
+Split $T$ into the part $T_1$ of elements greater than $\sqrt n$ and the part $T_2$ of elements less than or equal to $\sqrt n$. $T_2$ can be counted with Solution 1, and the number of $T_1$ can be counted by slightly modifying Solution 2: change the two operations to "increase every element of $T_1$ by one" and "add an element with value $\lfloor \sqrt n \rfloor + 1$ to $T_1$". The state transition equation is easy to write.
 
-将 $n$ 拆为 $A$ 和 $B$ 两部分．枚举其中一个即可得出另一个．将满足 $\sum T_1 = A$ 的 $T_1$ 个数和 $\sum T_2 = B$ 的 $T_2$ 个数求出，乘起来，对所有的 $A$ 求和便是最终结果．
+Split $n$ into two parts $A$ and $B$. Enumerating one of them determines the other. Count the $T_1$ with $\sum T_1 = A$ and the $T_2$ with $\sum T_2 = B$, multiply the two counts, and sum over all $A$ to get the final answer.
 
-由于在计算 $T_1$ 个数的过程中，$M \le \sqrt n$，所以我们利用解法 1 计算 $T_1$ 的时间复杂度为 $\Theta(n^{3/2})$．同样地，由于在计算 $T_2$ 个数的过程中，$|T_2| \le \dfrac{\sum T_2}{\sqrt n} \le \dfrac{n}{\sqrt n} = \sqrt n$，所以我们利用解法 2 计算 $T_2$ 的时间复杂度也是 $\Theta(n^{3/2})$．所以总时间复杂度为 $\Theta(n^{3/2})$．
+When counting $T_1$, $M \le \sqrt n$, so computing $T_1$ with Solution 1 takes $\Theta(n^{3/2})$ time. Similarly, when counting $T_2$, $|T_2| \le \dfrac{\sum T_2}{\sqrt n} \le \dfrac{n}{\sqrt n} = \sqrt n$, so computing $T_2$ with Solution 2 also takes $\Theta(n^{3/2})$ time. So the total time complexity is $\Theta(n^{3/2})$.

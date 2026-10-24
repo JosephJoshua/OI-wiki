@@ -1,51 +1,51 @@
-## 定义
+## Definition
 
-DAG 即 [有向无环图](../graph/dag.md)，一些实际问题中的二元关系都可使用 DAG 来建模，从而将这些问题转化为 DAG 上的最长（短）路问题．
+A DAG is a [directed acyclic graph](../graph/dag.md). Binary relations in many practical problems can be modeled with a DAG, which turns these problems into longest (or shortest) path problems on a DAG.
 
-## 解释
+## Explanation
 
-以这道题为例子，来分析一下 DAG 建模的过程．
+Let's use this problem as an example to walk through the process of modeling with a DAG.
 
-???+ note "例题 [UVa 437 巴比伦塔 The Tower of Babylon](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=24&page=show_problem&problem=378)"
-    有 $n (n\leqslant 30)$ 种砖块，已知三条边长，每种都有无穷多个．要求选一些立方体摞成一根尽量高的柱子（每个砖块可以自行选择一条边作为高），使得每个砖块的底面长宽分别严格小于它下方砖块的底面长宽，求塔的最大高度．
+???+ note "Example problem [UVa 437 The Tower of Babylon](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=24&page=show_problem&problem=378)"
+    There are $n (n\leqslant 30)$ kinds of blocks. For each kind, the three edge lengths are known, and there are infinitely many blocks of each kind. Choose some blocks and stack them into a column as tall as possible (each block can choose any one of its edges as its height), such that the length and width of each block's base are strictly smaller than those of the block below it. Find the maximum height of the tower.
 
-## 过程
+## Process
 
-### 建立 DAG
+### Building the DAG
 
-由于每个砖块的底面长宽分别严格小于它下方砖块的底面长宽，因此不难将这样一种关系作为建图的依据，而本题也就转化为最长路问题．
+Since the length and width of each block's base are strictly smaller than those of the block below it, it is natural to use this relation to build the graph, and the problem turns into a longest path problem.
 
-也就是说如果砖块 $j$ 能放在砖块 $i$ 上，那么 $i$ 和 $j$ 之间存在一条边 $(i, j)$，且边权就是砖块 $j$ 所选取的高．
+That is, if block $j$ can be placed on block $i$, there is an edge $(i, j)$ between $i$ and $j$, and its weight is the height chosen for block $j$.
 
-本题的另一个问题在于每个砖块的高有三种选法，怎样建图更合适呢？
+Another issue in this problem is that each block's height can be chosen in three ways. How should we build the graph?
 
-不妨将每个砖块拆解为三种堆叠方式，即将一个砖块分解为三个砖块，每一个拆解得到的砖块都选取不同的高．
+We can split each block into its three stacking orientations, that is, turn one block into three blocks, each with a different height.
 
-初始的起点是大地，大地的底面是无穷大的，则大地可达任意砖块，当然我们写程序时不必特意写上无穷大．
+The initial starting point is the ground. The ground's base is infinitely large, so every block can be placed on the ground. Of course, we do not need to write out infinity explicitly in the program.
 
-假设有两个砖块，三条边分别为 $31, 41, 59$ 和 $33, 83, 27$，那么整张 DAG 应该如下图所示．
+Suppose there are two blocks with edges $31, 41, 59$ and $33, 83, 27$. Then the whole DAG looks like the figure below.
 
 ![](./images/dag-babylon.png)
 
-图中蓝色实线框所表示的是一个砖块拆解得到的一组砖块，之所以用 $\{\}$ 表示底面边长，是因为砖块一旦选取了高，底面边长就是无序的．
+Each blue solid box in the figure is the group of blocks obtained by splitting one block. The base edge lengths are written with $\{\}$ because once a block's height is chosen, the order of its base edges does not matter.
 
-图中黄色虚线框表示的是重复计算部分，可以采用 [记忆化搜索](./memo.md) 的方法来避免重复计算．
+The yellow dashed boxes in the figure show repeated computations, which can be avoided with [memoized search](./memo.md).
 
-### 转移
+### Transitions
 
-题目要求的是塔的最大高度，已经转化为最长路问题，其起点上文已指出是大地，那么终点呢？显然终点已经自然确定，那就是某砖块上不能再搭别的砖块的时候．
+The problem asks for the maximum height of the tower, which has become a longest path problem. As noted above, the starting point is the ground. What about the end point? Clearly the end point is determined naturally: it is when no other block can be placed on top of the current block.
 
-下面我们开始考虑转移方程．
+Now let's work out the transition equation.
 
-设 $d(i,r)$ 表示第 $i$ 块砖块在最下面，且采取第 $r$ 种堆叠方式时的最大高度．那么有如下转移方程：
+Let $d(i,r)$ be the maximum height when block $i$ is at the bottom using the $r$-th stacking orientation. Then the transition equation is:
 
 $$
 d(i, r) = \max\left\{d(j, r') + h\right\}
 $$
 
-其中 $j$ 是所有那些在砖块 $i$ 以 $r$ 方式堆叠时可放上的砖块，$r'$ 对应 $j$ 此时的摆放方式，$h$ 对应砖块 $i$ 采用第 $r$ 种堆叠方式时的高度．
+Here $j$ ranges over all blocks that can be placed on block $i$ when it is stacked in orientation $r$, $r'$ is the corresponding orientation of $j$, and $h$ is the height of block $i$ in its $r$-th stacking orientation.
 
-??? note "实现"
+??? note "Implementation"
     ```cpp
     --8<-- "docs/dp/code/dag/dag_1.cpp"
     ```

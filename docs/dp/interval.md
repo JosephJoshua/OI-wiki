@@ -1,47 +1,47 @@
-## 定义
+## Definition
 
-区间类动态规划是线性动态规划的扩展，它在分阶段地划分问题时，与阶段中元素出现的顺序和由前一阶段的哪些元素合并而来有很大的关系．
+Interval DP is an extension of linear DP. When it splits a problem into stages, it depends heavily on the order in which elements appear within a stage and on which elements of the previous stage are merged to form them.
 
-令状态 $f(i,j)$ 表示将下标位置 $i$ 到 $j$ 的所有元素合并能获得的价值的最大值，那么 $f(i,j)=\max\{f(i,k)+f(k+1,j)+cost\}$，$cost$ 为将这两组元素合并起来的价值．
+Let the state $f(i,j)$ be the maximum value obtainable by merging all elements from index $i$ to $j$. Then $f(i,j)=\max\{f(i,k)+f(k+1,j)+cost\}$, where $cost$ is the value gained by merging these two groups of elements.
 
-## 性质
+## Properties
 
-区间 DP 有以下特点：
+Interval DP has the following features:
 
-**合并**：即将两个或多个部分进行整合，当然也可以反过来；
+**Merging**: combining two or more parts into one (or, of course, the reverse);
 
-**特征**：能将问题分解为能两两合并的形式；
+**Feature**: the problem can be broken down into a form where parts are merged two at a time;
 
-**求解**：对整个问题设最优值，枚举合并点，将问题分解为左右两个部分，最后合并两个部分的最优值得到原问题的最优值．
+**Solving**: define the optimal value for the whole problem, enumerate the merge point to split the problem into a left part and a right part, and finally merge the optimal values of the two parts to get the optimal value of the original problem.
 
-## 解释
+## Explanation
 
-### 例题
+### Example problem
 
-???+ note "[「NOI1995」石子合并](https://loj.ac/problem/10147)"
-    题目大意：在一个环上有 $n$ 个数 $a_1,a_2,\dots,a_n$，进行 $n-1$ 次合并操作，每次操作将相邻的两堆合并成一堆，能获得新的一堆中的石子数量的和的得分．你需要最大化你的得分．
+???+ note "[NOI1995 Merging Stones](https://loj.ac/problem/10147)"
+    Summary: there are $n$ numbers $a_1,a_2,\dots,a_n$ arranged in a circle. Perform $n-1$ merge operations. Each operation merges two adjacent piles into one, and you score the total number of stones in the new pile. Maximize your score.
 
-需要考虑不在环上，而在一条链上的情况．
+First consider the case where the piles are in a line rather than a circle.
 
-令 $f(i,j)$ 表示将区间 $[i,j]$ 内的所有石子合并到一起的最大得分．
+Let $f(i,j)$ be the maximum score for merging all the stones in the interval $[i,j]$ into one pile.
 
-写出 **状态转移方程**：$f(i,j)=\max\{f(i,k)+f(k+1,j)+\sum_{t=i}^{j} a_t \}~(i\le k<j)$
+Write down the **state transition equation**: $f(i,j)=\max\{f(i,k)+f(k+1,j)+\sum_{t=i}^{j} a_t \}~(i\le k<j)$
 
-令 $sum_i$ 表示 $a$ 数组的前缀和，状态转移方程变形为 $f(i,j)=\max\{f(i,k)+f(k+1,j)+sum_j-sum_{i-1} \}$．
+Let $sum_i$ be the prefix sums of the array $a$. The state transition equation becomes $f(i,j)=\max\{f(i,k)+f(k+1,j)+sum_j-sum_{i-1} \}$.
 
-### 怎样进行状态转移
+### How to do the state transitions
 
-由于计算 $f(i,j)$ 的值时需要知道所有 $f(i,k)$ 和 $f(k+1,j)$ 的值，而这两个中包含的元素的数量都小于 $f(i,j)$，所以我们以 $len=j-i+1$ 作为 DP 的阶段．首先从小到大枚举 $len$，然后枚举 $i$ 的值，根据 $len$ 和 $i$ 用公式计算出 $j$ 的值，然后枚举 $k$，时间复杂度为 $O(n^3)$
+Computing $f(i,j)$ requires all values of $f(i,k)$ and $f(k+1,j)$, and both of these contain fewer elements than $f(i,j)$. So we use $len=j-i+1$ as the stage of the DP. First enumerate $len$ from small to large, then enumerate $i$, compute $j$ from $len$ and $i$, and then enumerate $k$. The time complexity is $O(n^3)$
 
-### 怎样处理环
+### How to handle the circle
 
-题目中石子围成一个环，而不是一条链，怎么办呢？
+The stones in the problem form a circle, not a line. What should we do?
 
-**方法一**：由于石子围成一个环，我们可以枚举分开的位置，将这个环转化成一个链，由于要枚举 $n$ 次，最终的时间复杂度为 $O(n^4)$．
+**Method 1**: since the stones form a circle, we can enumerate where to cut it, turning the circle into a line. Since we enumerate $n$ times, the final time complexity is $O(n^4)$.
 
-**方法二**：我们将这条链延长两倍，变成 $2\times n$ 堆，其中第 $i$ 堆与第 $n+i$ 堆相同，用动态规划求解后，取 $f(1,n),f(2,n+1),\dots,f(n,2n-1)$ 中的最优值，即为最后的答案．时间复杂度 $O(n^3)$．
+**Method 2**: we double the length of the line, making $2\times n$ piles, where pile $i$ is the same as pile $n+i$. After solving with dynamic programming, take the best of $f(1,n),f(2,n+1),\dots,f(n,2n-1)$ as the final answer. The time complexity is $O(n^3)$.
 
-## 实现
+## Implementation
 
 === "C++"
     ```cpp
@@ -62,10 +62,10 @@
                 f[i][j] = max(f[i][j], f[i][k] + f[k + 1][j] + sum[j] - sum[i - 1])
     ```
 
-## 几道练习题
+## Practice problems
 
-[NOIP 2006 能量项链](https://www.luogu.com.cn/problem/P1063)
+[NOIP 2006 Energy Necklace](https://www.luogu.com.cn/problem/P1063)
 
-[NOIP 2007 矩阵取数游戏](https://www.luogu.com.cn/problem/P1005)
+[NOIP 2007 Matrix Number-Taking Game](https://www.luogu.com.cn/problem/P1005)
 
-[「IOI2000」邮局](https://www.luogu.com.cn/problem/P4767)
+[IOI2000 Post Office](https://www.luogu.com.cn/problem/P4767)

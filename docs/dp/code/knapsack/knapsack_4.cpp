@@ -10,13 +10,13 @@ int main() {
     t[x][++cnt[x]] = i, ts = max(ts, x);
   }
   // --8<-- [start:core]
-  for (int k = 1; k <= ts; k++)          // 循环每一组
-    for (int i = m; i >= 0; i--)         // 循环背包容量
-      for (int j = 1; j <= cnt[k]; j++)  // 循环该组的每一个物品
-        if (i >= w[t[k][j]])             // 背包容量充足
+  for (int k = 1; k <= ts; k++)          // loop over each group
+    for (int i = m; i >= 0; i--)         // loop over knapsack capacity
+      for (int j = 1; j <= cnt[k]; j++)  // loop over each item in the group
+        if (i >= w[t[k][j]])             // enough capacity left
           dp[i] =
               max(dp[i],
-                  dp[i - w[t[k][j]]] + c[t[k][j]]);  // 像0-1背包一样状态转移
+                  dp[i - w[t[k][j]]] + c[t[k][j]]);  // transition just like 0-1 knapsack
   // --8<-- [end:core]
   cout << dp[m] << '\n';
   return 0;

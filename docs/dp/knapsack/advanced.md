@@ -1,23 +1,23 @@
 author: Ir1d, sshwy, StudyingFather, Marcythm, partychicken, H-J-Granger, NachtgeistW, countercurrent-time, Enter-tainer, Tiphereth-A, weiranfu, greyqz, iamtwz, Konano, ksyx, ouuan, paigeman, wolfdan666, AngelKitty, CCXXXI, cjsoft, diauweb, Early0v0, ezoixx130, GekkaSaori, GoodCoder666, Henry-ZHR, HeRaNO, Link-cute, LovelyBuggies, LuoshuiTianyi, Makkiy, mgt, minghu6, odeinjul, oldoldtea, P-Y-Y, PotassiumWings, SamZhangQingChuan, shenshuaijie, Suyun514, weiyong1024, Xeonacid, xyf007, Alisahhh, Alphnia, c-forrest, cbw2007, dhbloo, fps5283, GavinZhengOI, Gesrua, hsfzLZH1, hydingsy, kenlig, kxccc, lychees, Menci, Peanut-Tang, PlanariaIce, sbofgayschool, shawlleyw, Siyuan, SukkaW, TianKong-y, tLLWtG, WAAutoMaton, x4Cx58x54, xk2013, zhb2000, zhufengning, hhc0001
 
-## 背包相关 trick
+## Knapsack tricks
 
-### 泛化物品的背包
+### Knapsack with generalized items
 
-这种背包，单个物品 $i$ 没有固定的费用和价值，它的价值是随着分配给它的费用而定．在背包容量为 $V$ 的背包问题中，当分配给物品 $i$ 的费用为 $v_i$ 时，能得到的价值就是 $h_i\left(v_i\right)$．
+In this kind of knapsack, a single item $i$ has no fixed cost and value. Its value depends on how much cost is assigned to it. In a knapsack problem with capacity $V$, when the cost assigned to item $i$ is $v_i$, the value obtained is $h_i\left(v_i\right)$.
 
-那么，我们枚举分配给第 $i$ 个物品的重量 $w'$，这时的物品价值将会是 $h_i(w')$，那么现在的价值就是 $f_{i - 1, w - w'} + h_i(w')$．所以此时状态转移的方程为 $f_{i, j} = \max \limits_{0 \le k \le j}(f_{i - 1, j - k} + h_i(k))$．实际上上面这一堆东西讲的就是 $(\max, +)$ 卷积．
+So we enumerate the weight $w'$ assigned to item $i$. The item's value is then $h_i(w')$, and the total value is $f_{i - 1, w - w'} + h_i(w')$. So the state transition equation is $f_{i, j} = \max \limits_{0 \le k \le j}(f_{i - 1, j - k} + h_i(k))$. All of this is really just $(\max, +)$ convolution.
 
-### 分组背包
+### Group knapsack
 
-???+ note "[「Luogu P1757」通天之分组背包](https://www.luogu.com.cn/problem/P1757)"
-    有 $n$ 件物品和一个大小为 $m$ 的背包，第 $i$ 个物品的价值为 $w_i$，体积为 $v_i$．同时，每个物品属于一个组，同组内最多只能选择一个物品．求背包能装载物品的最大总价值．
+???+ note "[Luogu P1757 Group Knapsack](https://www.luogu.com.cn/problem/P1757)"
+    There are $n$ items and a knapsack of size $m$. Item $i$ has value $w_i$ and volume $v_i$. Each item belongs to a group, and you can choose at most one item from each group. Find the maximum total value the knapsack can hold.
 
-这种题其实只是从「在所有物品中选择一件」变成了「从当前组中选择一件」，于是就对每一组进行一次 0-1 背包就可以了．
+This kind of problem just changes "choose one item from all items" into "choose one item from the current group", so we just run a 0-1 knapsack for each group.
 
-再说一说如何进行存储．我们可以将 $t_{k,i}$ 表示第 $k$ 组的第 $i$ 件物品的编号是多少，再用 $\mathit{cnt}_k$ 表示第 $k$ 组物品有多少个．
+Now about storage. Let $t_{k,i}$ be the index of the $i$-th item in group $k$, and let $\mathit{cnt}_k$ be the number of items in group $k$.
 
-#### 实现
+#### Implementation
 
 === "C++"
     ```cpp
@@ -26,150 +26,150 @@ author: Ir1d, sshwy, StudyingFather, Marcythm, partychicken, H-J-Granger, Nachtg
 
 === "Python"
     ```python
-    for k in range(1, ts + 1):  # 循环每一组
-        for i in range(m, -1, -1):  # 循环背包容量
-            for j in range(1, cnt[k] + 1):  # 循环该组的每一个物品
-                if i >= w[t[k][j]]:  # 背包容量充足
+    for k in range(1, ts + 1):  # loop over each group
+        for i in range(m, -1, -1):  # loop over knapsack capacity
+            for j in range(1, cnt[k] + 1):  # loop over each item in the group
+                if i >= w[t[k][j]]:  # enough capacity left
                     dp[i] = max(
                         dp[i], dp[i - w[t[k][j]]] + c[t[k][j]]
-                    )  # 像0-1背包一样状态转移
+                    )  # transition just like in 0-1 knapsack
     ```
 
-这里要注意：**一定不能搞错循环顺序**，这样才能保证正确性．
+Note here: **you must not get the loop order wrong**; only then is the result correct.
 
-### 回退背包
+### Rollback knapsack
 
-普通的 0-1 背包求方案数只需要直接 dp 即可，但是有时会遇到形如「其他物品都能选，只有几个物品不能选」的情况，而且通常是在同一组物品中多次出现不同的物品不能选，比如部分复杂的树上背包．这时直接 dp 可能会 TLE，所以需要引入回退背包来处理这种情况．
+Counting the number of ways in an ordinary 0-1 knapsack just needs a direct DP. But sometimes you meet cases like "all other items can be chosen, only a few items cannot", and usually different items are excluded many times within the same set of items, e.g. in some complex tree knapsacks. A direct DP may then TLE, so we introduce the rollback knapsack to handle this.
 
-注意到背包中物品是无序的：对于两个物品，先放哪个不会当前情况造成任何影响，可以认为 **每一个物品都是最后被放入的那个**．所以可以先把所有东西的 dp 预处理出来，然后把某一个物品的贡献撤销即可．即：
+Notice that items in a knapsack are unordered: for two items, which one is put in first has no effect on the current situation, so we can regard **every item as the last one put in**. So we can first precompute the DP over all items, and then undo the contribution of one item. That is:
 
 $$
 dp_j \gets dp_j - dp_{j - w_i}
 $$
 
-注意循环时从小到大执行，否则它对应的贡献方式就是完全背包的方式了．
+Note that the loop must run from small to large; otherwise the contribution would be undone in the way of the unbounded knapsack.
 
-## 背包杂项
+## Knapsack miscellany
 
-### 输出方案
+### Outputting the solution
 
-输出方案其实就是记录下来背包中的某一个状态是怎么推出来的．我们可以用 $g_{i,v}$ 表示第 $i$ 件物品占用空间为 $v$ 的时候是否选择了此物品．然后在转移时记录是选用了哪一种策略（选或不选）．输出时的伪代码：
+Outputting the solution just means recording how a certain state in the knapsack was derived. Let $g_{i,v}$ indicate whether item $i$ was chosen when the space used is $v$. Then during the transition, record which choice was made (take it or not). Pseudocode for the output:
 
 ```cpp
-int v = V;  // 记录当前的存储空间
+int v = V;  // current remaining capacity
 
-// 因为最后一件物品存储的是最终状态，所以从最后一件物品进行循环
-for (从最后一件循环至第一件) {
+// The last item stores the final state, so loop starting from the last item
+for (loop from the last item to the first) {
   if (g[i][v]) {
-    选了第 i 项物品;
-    v -= 第 i 项物品的重量;
+    item i was chosen;
+    v -= weight of item i;
   } else {
-    未选第 i 项物品;
+    item i was not chosen;
   }
 }
 ```
 
-### 求最优方案总数
+### Counting optimal solutions
 
-要求最优方案总数，我们要对 0-1 背包里的 $\mathit{dp}$ 数组的定义稍作修改，DP 状态 $f_{i,j}$ 为在只能放前 $i$ 个物品的情况下，容量为 $j$ 的背包「正好装满」所能达到的最大总价值．
+To count the optimal solutions, we slightly change the definition of the $\mathit{dp}$ array in the 0-1 knapsack: the DP state $f_{i,j}$ is the maximum total value when only the first $i$ items can be used and the knapsack of capacity $j$ is "exactly full".
 
-这样修改之后，每一种 DP 状态都可以用一个 $g_{i,j}$ 来表示方案数．
+After this change, each DP state can have a $g_{i,j}$ for the number of ways.
 
-$f_{i,j}$ 表示只考虑前 $i$ 个物品时背包体积「正好」是 $j$ 时的最大价值．
+$f_{i,j}$ is the maximum value when only the first $i$ items are considered and the volume used is "exactly" $j$.
 
-$g_{i,j}$ 表示只考虑前 $i$ 个物品时背包体积「正好」是 $j$ 时的方案数．
+$g_{i,j}$ is the number of ways when only the first $i$ items are considered and the volume used is "exactly" $j$.
 
-转移方程：
+Transition equations:
 
-如果 $f_{i,j} = f_{i-1,j}$ 且 $f_{i,j} \neq f_{i-1,j-v}+w$ 说明我们此时不选择把物品放入背包更优，方案数由 $g_{i-1,j}$ 转移过来，
+If $f_{i,j} = f_{i-1,j}$ and $f_{i,j} \neq f_{i-1,j-v}+w$, then not putting the item in is better, and the number of ways comes from $g_{i-1,j}$.
 
-如果 $f_{i,j} \neq f_{i-1,j}$ 且 $f_{i,j} = f_{i-1,j-v}+w$ 说明我们此时选择把物品放入背包更优，方案数由 $g_{i-1,j-v}$ 转移过来，
+If $f_{i,j} \neq f_{i-1,j}$ and $f_{i,j} = f_{i-1,j-v}+w$, then putting the item in is better, and the number of ways comes from $g_{i-1,j-v}$.
 
-如果 $f_{i,j} = f_{i-1,j}$ 且 $f_{i,j} = f_{i-1,j-v}+w$ 说明放入或不放入都能取得最优解，方案数由 $g_{i-1,j}$ 和 $g_{i-1,j-v}$ 转移过来．
+If $f_{i,j} = f_{i-1,j}$ and $f_{i,j} = f_{i-1,j-v}+w$, then both putting it in and not putting it in give an optimal solution, and the number of ways comes from both $g_{i-1,j}$ and $g_{i-1,j-v}$.
 
-初始条件：
+Initial conditions:
 
 ```cpp
 memset(f, 0xcf, sizeof(f));
-// 因为是求最大值，初始化为负无穷，避免没有装满而进行了转移
-// 若求最小值，则初始化为正无穷0x3f
+// We want the maximum, so initialize to negative infinity to avoid transitions from states that are not exactly full
+// For the minimum, initialize to positive infinity 0x3f instead
 f[0] = 0;
-g[0] = 1;  // 什么都不装是一种方案
+g[0] = 1;  // taking nothing counts as one way
 ```
 
-因为背包体积最大值有可能装不满，所以最优解不一定是 $f_{m}$．
+Since the knapsack may not be fillable to its maximum volume, the optimal solution is not necessarily $f_{m}$.
 
-最后我们通过找到最优解的价值，把 $g_{j}$ 数组里取到最优解的所有方案数相加即可．
+Finally, we find the value of the optimal solution and add up the counts in the $g_{j}$ array for all $j$ that achieve it.
 
-???+ note "实现"
+???+ note "Implementation"
     ```cpp
     for (int i = 0; i < N; i++) {
       for (int j = V; j >= v[i]; j--) {
         int tmp = std::max(dp[j], dp[j - v[i]] + w[i]);
         int c = 0;
-        if (tmp == dp[j]) c += cnt[j];                       // 如果从dp[j]转移
-        if (tmp == dp[j - v[i]] + w[i]) c += cnt[j - v[i]];  // 如果从dp[j-v[i]]转移
+        if (tmp == dp[j]) c += cnt[j];                       // if transitioning from dp[j]
+        if (tmp == dp[j - v[i]] + w[i]) c += cnt[j - v[i]];  // if transitioning from dp[j-v[i]]
         dp[j] = tmp;
         cnt[j] = c;
       }
     }
-    int max = 0;  // 寻找最优解
+    int max = 0;  // find the optimal value
     for (int i = 0; i <= V; i++) {
       max = std::max(max, dp[i]);
     }
     int res = 0;
     for (int i = 0; i <= V; i++) {
       if (dp[i] == max) {
-        res += cnt[i];  // 求和最优解方案数
+        res += cnt[i];  // sum the number of optimal solutions
       }
     }
     ```
 
-### 背包的第 k 优解
+### The k-th best solution of a knapsack
 
-普通的 0-1 背包是要求最优解，在普通的背包 DP 方法上稍作改动，增加一维用于记录当前状态下的前 k 优解，即可得到求 0-1 背包第 $k$ 优解的算法．
-具体来讲：$f_{i,j,k}$ 记录了前 $i$ 个物品中，选择的物品总体积为 $j$ 时，能够得到的第 $k$ 大的价值和．这个状态可以理解为将普通 0-1 背包只用记录一个数据的 $f_{i,j}$ 扩展为记录一个有序的优解序列．转移时，普通背包最优解的求法是 $f_{i,j}=\max(f_{i-1,j},f_{i-1,j-v_i}+w_i)$，现在我们则是要合并 $f_{i-1,j}$，$f_{i-1,j-v_i}+w_i$ 这两个大小为 $k$ 的递减序列，并保留合并后前 $k$ 大的价值记在 $f_{i,j}$ 里，这一步利用双指针法，复杂度是 $O(k)$ 的，整体时间复杂度为 $O(nmk)$．空间上，此方法与普通背包一样可以压缩掉第一维，复杂度是 $O(mk)$ 的．
+The ordinary 0-1 knapsack asks for the best solution. With a small change to the ordinary knapsack DP, adding one dimension to record the top k solutions for the current state, we get an algorithm for the $k$-th best solution of the 0-1 knapsack.
+Specifically: $f_{i,j,k}$ records the $k$-th largest total value among the first $i$ items when the total volume of chosen items is $j$. This state can be seen as extending $f_{i,j}$ of the ordinary 0-1 knapsack, which records only one value, into an ordered sequence of best values. For the transition, the ordinary knapsack computes the best value as $f_{i,j}=\max(f_{i-1,j},f_{i-1,j-v_i}+w_i)$. Now we instead merge the two decreasing sequences $f_{i-1,j}$ and $f_{i-1,j-v_i}+w_i$, each of size $k$, and keep the $k$ largest values of the merged result in $f_{i,j}$. This step uses the two-pointer technique and costs $O(k)$, so the overall time complexity is $O(nmk)$. For space, like the ordinary knapsack, this method can drop the first dimension, giving $O(mk)$.
 
-??? note "例题 [HDU 2639 Bone Collector II](https://acm.hdu.edu.cn/showproblem.php?pid=2639)"
-    求 0-1 背包的严格第 $k$ 优解．$n \leq 100,v \leq 1000,k \leq 30$
+??? note "Example problem [HDU 2639 Bone Collector II](https://acm.hdu.edu.cn/showproblem.php?pid=2639)"
+    Find the strict $k$-th best solution of a 0-1 knapsack. $n \leq 100,v \leq 1000,k \leq 30$
 
-??? note "实现"
+??? note "Implementation"
     ```cpp
     --8<-- "docs/dp/code/knapsack/knapsack_3.cpp:core"
     ```
 
-## 背包相关问题
+## Knapsack-related problems
 
-### 混合背包
+### Mixed knapsack
 
-混合背包就是将 01 背包、完全背包和多重背包混合起来，有的只能取一次，有的能取无限次，有的只能取 $k$ 次．
+The mixed knapsack combines the 0-1 knapsack, the unbounded knapsack and the bounded knapsack: some items can be taken only once, some any number of times, and some at most $k$ times.
 
-这种题目看起来很难，但是每一种物品的选择依然是独立的，因此可以判断当前物品是哪一种背包，然后使用这种背包的解决方案即可．
+This kind of problem looks hard, but the choice for each item is still independent. So we can check which kind of knapsack the current item belongs to and use the solution for that kind.
 
-#### 例题
+#### Example problem
 
-???+ note "[「Luogu P1833」樱花](https://www.luogu.com.cn/problem/P1833)"
-    有 $n$ 种樱花树和长度为 $T$ 的时间，有的樱花树只能看一遍，有的樱花树最多看 $A_{i}$ 遍，有的樱花树可以看无数遍．每棵樱花树都有一个美学值 $C_{i}$，求在 $T$ 的时间内看哪些樱花树能使美学值最高．
+???+ note "[Luogu P1833 Cherry Blossoms](https://www.luogu.com.cn/problem/P1833)"
+    There are $n$ kinds of cherry trees and $T$ units of time. Some cherry trees can be viewed only once, some at most $A_{i}$ times, and some any number of times. Each cherry tree has an aesthetic value $C_{i}$. Find which cherry trees to view within time $T$ to maximize the total aesthetic value.
 
-??? note "核心代码"
+??? note "Core code"
     ```cpp
     --8<-- "docs/dp/code/knapsack/knapsack_5.cpp:core"
     ```
 
-习题：[HDU 5410 CRB and His Birthday](https://acm.hdu.edu.cn/showproblem.php?pid=5410)
+Exercise: [HDU 5410 CRB and His Birthday](https://acm.hdu.edu.cn/showproblem.php?pid=5410)
 
-### 二维费用背包
+### Two-dimensional cost knapsack
 
-???+ note "[「Luogu P1855」榨取 kkksc03](https://www.luogu.com.cn/problem/P1855)"
-    有 $n$ 个任务需要完成，完成第 $i$ 个任务需要花费 $t_i$ 分钟，产生 $c_i$ 元的开支．
+???+ note "[Luogu P1855 Squeezing kkksc03](https://www.luogu.com.cn/problem/P1855)"
+    There are $n$ tasks to complete. Task $i$ takes $t_i$ minutes and costs $c_i$ yuan.
     
-    现在有 $T$ 分钟时间，$W$ 元钱来处理这些任务，求最多能完成多少任务．
+    You have $T$ minutes and $W$ yuan to handle these tasks. Find the maximum number of tasks you can complete.
 
-这道题是很明显的 0-1 背包问题，可是不同的是选一个物品会消耗两种费用（经费、时间），只需在状态中增加一维存放第二种费用即可．这时状态转移方程变为 $f_{i, j, k} = \max(f_{i - 1, j, k}, f_{i - 1, j - t_i, k - c_i} + w_i)$．本题的 $w_i$ 均是 $1$．
+This is clearly a 0-1 knapsack problem, except that choosing an item uses up two kinds of cost (money and time). We just add one more dimension to the state for the second cost. The state transition equation becomes $f_{i, j, k} = \max(f_{i - 1, j, k}, f_{i - 1, j - t_i, k - c_i} + w_i)$. In this problem all $w_i$ are $1$.
 
-这时候就要注意，再开一维存放物品编号就不合适了，因为容易 MLE．
+Note that here it is not a good idea to add yet another dimension for the item index, since that can easily cause MLE.
 
-#### 实现
+#### Implementation
 
 === "C++"
     ```cpp
@@ -179,20 +179,20 @@ g[0] = 1;  // 什么都不装是一种方案
 === "Python"
     ```python
     for k in range(1, n + 1):
-        for i in range(m, mi - 1, -1):  # 对经费进行一层枚举
-            for j in range(t, ti - 1, -1):  # 对时间进行一层枚举
+        for i in range(m, mi - 1, -1):  # enumerate the money
+            for j in range(t, ti - 1, -1):  # enumerate the time
                 dp[i][j] = max(dp[i][j], dp[i - mi][j - ti] + 1)
     ```
 
-### 有依赖的背包
+### Knapsack with dependencies
 
-???+ note "[「Luogu P1064」金明的预算方案](https://www.luogu.com.cn/problem/P1064)"
-    金明有 $n$ 元钱，想要买 $m$ 个物品，第 $i$ 件物品的价格为 $v_i$，重要度为 $p_i$．有些物品是从属于某个主件物品的附件，要买这个物品，必须购买它的主件．
+???+ note "[Luogu P1064 Jinming's Budget Plan](https://www.luogu.com.cn/problem/P1064)"
+    Jinming has $n$ yuan and wants to buy $m$ items. Item $i$ costs $v_i$ and has importance $p_i$. Some items are accessories of a main item; to buy such an item, you must also buy its main item.
     
-    目标是让所有购买的物品的 $v_i \times p_i$ 之和最大．
+    The goal is to maximize the sum of $v_i \times p_i$ over all purchased items.
 
-直接当成 [树上背包](../tree.md#树上背包) 处理即可．注意在最后将所有背包合并在一起．
+Just treat it as a [knapsack on a tree](../tree.md#树上背包). Remember to merge all the knapsacks together at the end.
 
-## 参考资料与注释
+## References and notes
 
--   [背包问题九讲 - 崔添翼](https://github.com/tianyicui/pack)．
+-   [Nine Lectures on Knapsack Problems - Cui Tianyi](https://github.com/tianyicui/pack).

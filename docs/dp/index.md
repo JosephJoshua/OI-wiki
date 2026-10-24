@@ -1,11 +1,11 @@
-本章将介绍动态规划（Dynamic Programming, DP）及其解决的问题、根据其设计的算法及优化．
+This chapter introduces dynamic programming (DP), the problems it solves, and the algorithms and optimizations designed around it.
 
-动态规划是一种通过把原问题分解为相对简单的子问题的方式求解复杂问题的方法．
+Dynamic programming is a method for solving complex problems by breaking the original problem into relatively simple subproblems.
 
-由于动态规划并不是某种具体的算法，而是一种解决特定问题的方法，因此它会出现在各式各样的数据结构中，与之相关的题目种类也更为繁杂．
+Since dynamic programming is not a specific algorithm but a method for solving certain kinds of problems, it appears together with all kinds of data structures, and the related problems are very varied.
 
-在 OI 中，计数等非最优化问题的递推解法也常被不规范地称作 DP，因此本章将它们一并列出．事实上，动态规划与其它类型的递推的确有很多相似之处，学习时可以注意它们之间的异同．
+In OI, recurrence-based solutions to non-optimization problems such as counting are also often loosely called DP, so this chapter covers them too. In fact, dynamic programming and other kinds of recurrences do have a lot in common, and it is worth paying attention to their similarities and differences as you learn.
 
-## 参考资料
+## References
 
-[动态规划 - 维基百科，自由的百科全书](https://zh.wikipedia.org/wiki/动态规划)
+[Dynamic programming - Wikipedia (Chinese)](https://zh.wikipedia.org/wiki/动态规划)

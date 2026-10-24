@@ -9,16 +9,16 @@ const int MAXN = 100;
 int T, a[MAXN + 1], h[MAXN + 1];
 int g[MAXN + 1], m, n;
 int nxt[1 << 16]
-       [4];  // 状态转移表：nxt[mask][ch] 表示 mask 状态下追加 ch 后的新状态
+       [4];  // transition table: nxt[mask][ch] is the new state after appending ch in state mask
 int f[1001]
-     [1 << 16];  // DP 数组：f[i][mask] 表示长度为 i，处于状态 mask 的方案数
+     [1 << 16];  // DP array: f[i][mask] is the number of ways with length i in state mask
 int ans[MAXN +
-        1];  // 最终答案：ans[i] 表示长度为 m 时，包含 i 个匹配位置的方案数
+        1];  // final answer: ans[i] is the number of ways of length m with i matched positions
 
 void add(int &x, int y) { x = (x + y) % MOD; }
 
-int calc(int mask, int x) {  // 给定当前 mask 状态和当前字符
-                             // x（0~3），返回新状态
+int calc(int mask, int x) {  // given the current state mask and current character
+                             // x (0~3), return the new state
   int res = 0;
   for (int i = 0; i < n; ++i) g[i + 1] = g[i] + ((mask >> i) & 1);
 
@@ -35,7 +35,7 @@ int calc(int mask, int x) {  // 给定当前 mask 状态和当前字符
   return res;
 }
 
-int popcount(int x) {  // 计算 mask 中有多少个 1（即匹配了多少位置）
+int popcount(int x) {  // count the 1s in mask (i.e. how many positions matched)
   int res = 0;
   while (x) {
     res += x & 1;

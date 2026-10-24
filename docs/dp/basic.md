@@ -1,13 +1,13 @@
 author: Ir1d, CBW2007, ChungZH, xhn16729, Xeonacid, tptpp, hsfzLZH1, ouuan, Marcythm, HeRaNO, greyqz, Chrogeek, partychicken, zhb2000, xyf007, Persdre, XiaoSuan250, hhc0001, ZhangZhanhaoxiang, Taoran\_01
 
-本页面主要介绍了动态规划的基本思想，以及动态规划中状态及状态转移方程的设计思路，帮助各位初学者对动态规划有一个初步的了解．
+This page introduces the basic ideas of dynamic programming and how to design states and state transition equations, to give beginners a first understanding of dynamic programming.
 
-本部分的其他页面，将介绍各种类型问题中动态规划模型的建立方法，以及一些动态规划的优化技巧．
+The other pages in this section show how to build DP models for various kinds of problems, as well as some DP optimization techniques.
 
-## 引入
+## Introduction
 
-???+ note "[\[IOI1994\] 数字三角形](https://www.luogu.com.cn/problem/P1216)"
-    给定一个 $r$ 行的数字三角形（$r \leq 1000$），需要找到一条从最高点到底部任意处结束的路径，使路径经过数字的和最大．每一步可以走到当前点左下方的点或右下方的点．
+???+ note "[\[IOI1994\] Number Triangle](https://www.luogu.com.cn/problem/P1216)"
+    Given a number triangle with $r$ rows ($r \leq 1000$), find a path that starts at the top and ends anywhere on the bottom row, such that the sum of the numbers on the path is as large as possible. At each step you can move to the number down-left or down-right of the current one.
     
     ```plain
             7 
@@ -17,82 +17,82 @@ author: Ir1d, CBW2007, ChungZH, xhn16729, Xeonacid, tptpp, hsfzLZH1, ouuan, Marc
     4   5   2   6   5 
     ```
     
-    在上面这个例子中，最优路径是 $7 \to 3 \to 8 \to 7 \to 5$．
+    In the example above, the best path is $7 \to 3 \to 8 \to 7 \to 5$.
 
-最简单粗暴的思路是尝试所有的路径．因为路径条数是 $O(2^r)$ 级别的，这样的做法无法接受．
+The most straightforward idea is to try every path. But the number of paths is $O(2^r)$, so this is not acceptable.
 
-注意到这样一个事实，一条最优的路径，它的每一步决策都是最优的．
+Notice this fact: in an optimal path, every single decision is optimal.
 
-以例题里提到的最优路径为例，只考虑前四步 $7 \to 3 \to 8 \to 7$，不存在一条从最顶端到 $4$ 行第 $2$ 个数的权值更大的路径．
+Take the optimal path from the example. Look only at the first four steps $7 \to 3 \to 8 \to 7$: there is no path from the top to the $2$-nd number of row $4$ with a larger sum.
 
-而对于每一个点，它的下一步决策只有两种：往左下角或者往右下角（如果存在）．因此只需要记录当前点的最大权值，用这个最大权值执行下一步决策，来更新后续点的最大权值．
+For each position, there are only two possible next moves: down-left or down-right (if they exist). So we only need to record the maximum sum for the current position, and use it when making the next move to update the maximum sums of the following positions.
 
-这样做还有一个好处：我们成功缩小了问题的规模，将一个问题分成了多个规模更小的问题．要想得到从顶端到第 $r$ 行的最优方案，只需要知道从顶端到第 $r-1$ 行的最优方案的信息就可以了．
+This has another benefit: we have reduced the size of the problem, splitting one problem into several smaller ones. To get the best path from the top to row $r$, we only need to know information about the best paths from the top to row $r-1$.
 
-这时候还存在一个问题：子问题间重叠的部分会有很多，同一个子问题可能会被重复访问多次，效率还是不高．解决这个问题的方法是把每个子问题的解存储下来，通过记忆化的方式限制访问顺序，确保每个子问题只被访问一次．
+One issue remains: subproblems overlap a lot, and the same subproblem may be visited many times, so this is still not efficient. The fix is to store the answer of each subproblem, and use memoization to control the order of visits, so that each subproblem is visited only once.
 
-上面就是动态规划的一些基本思路．下面将会更系统地介绍动态规划的思想．
+These are some of the basic ideas of dynamic programming. Below we introduce the ideas of dynamic programming more systematically.
 
-## 动态规划原理
+## Principles of dynamic programming
 
-能用动态规划解决的问题，需要满足三个条件：最优子结构，无后效性和子问题重叠．
+A problem that can be solved by dynamic programming must satisfy three conditions: optimal substructure, no aftereffects, and overlapping subproblems.
 
-### 最优子结构
+### Optimal substructure
 
-具有最优子结构也可能是适合用贪心的方法求解．
+A problem with optimal substructure may also be suitable for a greedy approach.
 
-注意要确保我们考察了最优解中用到的所有子问题．
+Make sure we consider all the subproblems used in the optimal solution.
 
-1.  证明问题最优解的第一个组成部分是做出一个选择；
-2.  对于一个给定问题，在其可能的第一步选择中，假定你已经知道哪种选择才会得到最优解．你现在并不关心这种选择具体是如何得到的，只是假定已经知道了这种选择；
-3.  给定可获得的最优解的选择后，确定这次选择会产生哪些子问题，以及如何最好地刻画子问题空间；
-4.  证明作为构成原问题最优解的组成部分，每个子问题的解就是它本身的最优解．方法是反证法，考虑加入某个子问题的解不是其自身的最优解，那么就可以从原问题的解中用该子问题的最优解替换掉当前的非最优解，从而得到原问题的一个更优的解，从而与原问题最优解的假设矛盾．
+1.  Show that the first part of an optimal solution to the problem is making a choice;
+2.  For a given problem, among its possible first choices, assume you already know which choice leads to an optimal solution. You do not care for now how this choice is found; you just assume you know it;
+3.  Given the choice that leads to an optimal solution, determine which subproblems this choice creates, and how best to describe the space of subproblems;
+4.  Show that, as parts of an optimal solution to the original problem, the solution of each subproblem is itself an optimal solution of that subproblem. Use proof by contradiction: suppose the solution of some subproblem is not optimal for that subproblem. Then we could replace this non-optimal solution with the optimal solution of the subproblem inside the solution to the original problem, getting a better solution to the original problem. This contradicts the assumption that the original solution was optimal.
 
-要保持子问题空间尽量简单，只在必要时扩展．
+Keep the subproblem space as simple as possible, and only extend it when necessary.
 
-最优子结构的不同体现在两个方面：
+Optimal substructure differs between problems in two ways:
 
-1.  原问题的最优解中涉及多少个子问题；
-2.  确定最优解使用哪些子问题时，需要考察多少种选择．
+1.  How many subproblems an optimal solution of the original problem involves;
+2.  How many choices we need to consider when deciding which subproblems an optimal solution uses.
 
-子问题图中每个定点对应一个子问题，而需要考察的选择对应关联至子问题顶点的边．
+In the subproblem graph, each vertex corresponds to a subproblem, and the choices to consider correspond to the edges incident to the subproblem vertices.
 
-### 无后效性
+### No aftereffects
 
-已经求解的子问题，不会再受到后续决策的影响．
+Once a subproblem is solved, its answer is not affected by later decisions.
 
-### 子问题重叠
+### Overlapping subproblems
 
-如果有大量的重叠子问题，我们可以用空间将这些子问题的解存储下来，避免重复求解相同的子问题，从而提升效率．
+If there are many overlapping subproblems, we can spend memory to store their answers, so that the same subproblem is never solved twice, which improves efficiency.
 
-### 基本思路
+### Basic approach
 
-对于一个能用动态规划解决的问题，一般采用如下思路解决：
+For a problem that can be solved by dynamic programming, the usual approach is:
 
-1.  将原问题划分为若干 **阶段**，每个阶段对应若干个子问题，提取这些子问题的特征（称之为 **状态**）；
-2.  寻找每一个状态的可能 **决策**，或者说是各状态间的相互转移方式（用数学的语言描述就是 **状态转移方程**）．
-3.  按顺序求解每一个阶段的问题．
+1.  Divide the original problem into several **stages**. Each stage corresponds to several subproblems. Extract the features of these subproblems (called **states**);
+2.  Find the possible **decisions** for each state, that is, how states transition to each other (in mathematical terms, the **state transition equation**).
+3.  Solve the problems of each stage in order.
 
-如果用图论的思想理解，我们建立一个 [有向无环图](../graph/dag.md)，每个状态对应图上一个节点，决策对应节点间的连边．这样问题就转变为了一个在 DAG 上寻找最长（短）路的问题（参见：[DAG 上的 DP](./dag.md)）．
+From a graph theory point of view, we build a [directed acyclic graph](../graph/dag.md) where each state is a vertex and each decision is an edge between vertices. The problem then becomes finding the longest (or shortest) path in a DAG (see: [DP on a DAG](./dag.md)).
 
-## 最长公共子序列
+## Longest common subsequence
 
-???+ note "最长公共子序列问题"
-    给定一个长度为 $n$ 的序列 $A$ 和一个 长度为 $m$ 的序列 $B$（$n,m \leq 5000$），求出一个最长的序列，使得该序列既是 $A$ 的子序列，也是 $B$ 的子序列．
+???+ note "Longest common subsequence problem"
+    Given a sequence $A$ of length $n$ and a sequence $B$ of length $m$ ($n,m \leq 5000$), find the longest sequence that is a subsequence of both $A$ and $B$.
 
-子序列的定义可以参考 [子序列](../string/basic.md)．一个简要的例子：字符串 `abcde` 与字符串 `acde` 的公共子序列有 `a`、`c`、`d`、`e`、`ac`、`ad`、`ae`、`cd`、`ce`、`de`、`acd`、`ade`、`ace`、`cde`、`acde`，最长公共子序列的长度是 4．
+For the definition of a subsequence, see [Subsequence](../string/basic.md). A short example: the common subsequences of the strings `abcde` and `acde` are `a`, `c`, `d`, `e`, `ac`, `ad`, `ae`, `cd`, `ce`, `de`, `acd`, `ade`, `ace`, `cde`, `acde`, and the length of the longest common subsequence is 4.
 
-设 $f(i,j)$ 表示只考虑 $A$ 的前 $i$ 个元素，$B$ 的前 $j$ 个元素时的最长公共子序列的长度，求这时的最长公共子序列的长度就是 **子问题**．$f(i,j)$ 就是我们所说的 **状态**，则 $f(n,m)$ 是最终要达到的状态，即为所求结果．
+Let $f(i,j)$ be the length of the longest common subsequence when only the first $i$ elements of $A$ and the first $j$ elements of $B$ are considered. Finding this length is a **subproblem**. $f(i,j)$ is what we call a **state**, and $f(n,m)$ is the final state, which is the answer we want.
 
-对于每个 $f(i,j)$，存在三种决策：如果 $A_i=B_j$，则可以将它接到公共子序列的末尾；另外两种决策分别是跳过 $A_i$ 或者 $B_j$．状态转移方程如下：
+For each $f(i,j)$, there are three decisions: if $A_i=B_j$, we can append it to the end of the common subsequence; the other two decisions are to skip $A_i$ or to skip $B_j$. The state transition equation is:
 
 $$
 f(i,j)=\begin{cases}f(i-1,j-1)+1&A_i=B_j\\\max(f(i-1,j),f(i,j-1))&A_i\ne B_j\end{cases}
 $$
 
-可参考 [SourceForge 的 LCS 交互网页](http://lcs-demo.sourceforge.net/) 来更好地理解 LCS 的实现过程．
+You can use the [interactive LCS page on SourceForge](http://lcs-demo.sourceforge.net/) to better understand how LCS is computed.
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     === "C++"
         ```cpp
         --8<-- "docs/dp/code/basic/lcs.cpp:core"
@@ -103,22 +103,22 @@ $$
         --8<-- "docs/dp/code/basic/lcs.py:core"
         ```
 
-该做法的时间复杂度为 $O(nm)$．
+The time complexity of this approach is $O(nm)$.
 
-另外，本题存在 $O\left(\dfrac{nm}{w}\right)$ 的算法[^ref1]．有兴趣的同学可以自行探索．
+There is also an $O\left(\dfrac{nm}{w}\right)$ algorithm for this problem[^ref1]. Interested readers can explore it on their own.
 
-## 最长不下降子序列
+## Longest non-decreasing subsequence
 
-???+ note "最长不下降子序列问题"
-    给定一个长度为 $n$ 的序列 $a$（$n \leq 5000$），求出一个最长的 $a$ 的子序列，满足该子序列的后一个元素不小于前一个元素．
+???+ note "Longest non-decreasing subsequence problem"
+    Given a sequence $a$ of length $n$ ($n \leq 5000$), find the longest subsequence of $a$ in which each element is not less than the one before it.
 
-### 算法一
+### Algorithm 1
 
-设 $f(i)$ 表示以 $a_i$ 为结尾的最长不下降子序列的长度，则所求为 $\max_{1 \leq i \leq n} f(i)$．
+Let $f(i)$ be the length of the longest non-decreasing subsequence ending at $a_i$. Then the answer is $\max_{1 \leq i \leq n} f(i)$.
 
-计算 $f(i)$ 时，尝试将 $a_i$ 接到其他的最长不下降子序列后面，以更新答案．于是可以写出这样的状态转移方程：$f(i)=\max_{1 \leq j < i,~a_j \leq a_i} (f(j)+1)$．
+When computing $f(i)$, try appending $a_i$ to other longest non-decreasing subsequences to update the answer. So we can write this state transition equation: $f(i)=\max_{1 \leq j < i,~a_j \leq a_i} (f(j)+1)$.
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     === "C++"
         ```cpp
         --8<-- "docs/dp/code/basic/lis-1.cpp:core"
@@ -129,30 +129,30 @@ $$
         --8<-- "docs/dp/code/basic/lis-1.py:core"
         ```
 
-容易发现该算法的时间复杂度为 $O(n^2)$．
+It is easy to see that this algorithm runs in $O(n^2)$ time.
 
-### 算法二
+### Algorithm 2
 
-当 $n$ 的范围扩大到 $n \leq 10^5$ 时，第一种做法就不够快了，下面给出了一个 $O(n \log n)$ 的做法．
+When the range of $n$ grows to $n \leq 10^5$, the first approach is no longer fast enough. Below is an $O(n \log n)$ approach.
 
-考虑之前定义的状态 $(i, l)$，表示序列以第 $i$ 个元素结尾的不下降子序列最长为 $l$．不同于以往按固定 $i$ 处理状态的方法，这里直接判断 $(i, l)$ 是否合法：
+Consider the state $(i, l)$ defined before, meaning the longest non-decreasing subsequence ending at the $i$-th element has length $l$. Instead of processing states with a fixed $i$ as before, here we directly decide whether $(i, l)$ is valid:
 
--   初始状态 $(1,1)$ 必然合法．
--   对于任意 $(i, l)$，如果存在 $j < i$ 且 $(j, l-1)$ 合法，同时 $a_j \le a_i$，则 $(i, l)$ 合法．
+-   The initial state $(1,1)$ is always valid.
+-   For any $(i, l)$, if there is $j < i$ such that $(j, l-1)$ is valid and $a_j \le a_i$, then $(i, l)$ is valid.
 
-最终，只需要找到合法状态中 $l$ 最大的 $(i,l)$，即可得到最长不下降子序列的长度．
+In the end, we just need to find the valid state $(i,l)$ with the largest $l$ to get the length of the longest non-decreasing subsequence.
 
-设原序列为 $a_1, \cdots, a_n$，定义数组 $d$，其中第 $x$ 位表示长度为 $x$ 的不下降子序列末尾元素的最小值．初始时序列为空．令 $i$ 从 $1$ 到 $n$ 遍历，依次求出前 $i$ 个元素的最长不下降子序列的长度．对于当前元素 $a_i$：
+Let the original sequence be $a_1, \cdots, a_n$. Define an array $d$ whose $x$-th entry is the smallest possible last element of a non-decreasing subsequence of length $x$. Initially the sequence is empty. Let $i$ go from $1$ to $n$, finding in turn the length of the longest non-decreasing subsequence of the first $i$ elements. For the current element $a_i$:
 
--   如果 $a_i$ 大于等于序列 $d$ 中最后一个元素，直接将元素 $a_i$ 插入到序列 $d$ 的末尾．
-    -   解释：若 $a_i$ 大于等于当前最长子序列的末尾元素，说明存在一个不下降子序列可以接上 $a_i$．不插入将破坏最优性．
--   如果 $a_i$ 严格小于 $d$ 中最后一个元素，找到 **第一个** 大于它的元素，并用 $a_i$ 替换它．
-    -   解释：若直接插在末尾，会破坏 $d$ 的单调性；替换操作可以保证每个长度的末尾元素尽可能小，从而为后续元素保留更多可能性．
-    -   优化：因为 $d$ 单调不减，可用二分查找直接找到元素的插入位置，将整体复杂度降低到 $O(n\log n)$ 而非暴力查找的 $O(n^2)$．
+-   If $a_i$ is greater than or equal to the last element of $d$, append $a_i$ directly to the end of $d$.
+    -   Explanation: if $a_i$ is greater than or equal to the last element of the current longest subsequence, there is a non-decreasing subsequence that $a_i$ can extend. Not appending it would break optimality.
+-   If $a_i$ is strictly less than the last element of $d$, find the **first** element greater than it, and replace that element with $a_i$.
+    -   Explanation: appending it at the end would break the monotonicity of $d$. Replacing keeps the last element for each length as small as possible, which leaves more options for later elements.
+    -   Optimization: since $d$ is non-decreasing, we can use binary search to find the position directly, bringing the overall complexity down to $O(n\log n)$ instead of $O(n^2)$ with a linear search.
 
-如果还要输出具体的最长不下降子序列，可以额外维护数组 $d'_x$，表示长度为 $x$ 的不下降子序列中末尾最小元素的位置（有多个可任选一个）．具体维护时，只需要在插入元素 $a_i$ 到 $d_x$ 时，同时更新 $d'_x$ 为 $i$ 即可．同时，需要记录 $i$ 的最优前驱 $p_i$ 为 $d'_{x-1}$．最终，从任意最大长度状态出发，沿前驱 $p_i$ 回溯，即可得到完整子序列．
+If you also need to output an actual longest non-decreasing subsequence, you can maintain an extra array $d'_x$: the position of the smallest last element among non-decreasing subsequences of length $x$ (if there are several, pick any one). To maintain it, whenever you put $a_i$ into $d_x$, also set $d'_x$ to $i$. At the same time, record the best predecessor of $i$ as $p_i = d'_{x-1}$. Finally, start from any state with the maximum length and follow the predecessors $p_i$ backward to get the full subsequence.
 
-???+ example "参考实现"
+???+ example "Reference implementation"
     === "C++"
         ```cpp
         --8<-- "docs/dp/code/basic/lis-2.cpp:core"
@@ -163,17 +163,17 @@ $$
         --8<-- "docs/dp/code/basic/lis-2.py:core"
         ```
 
-该算法的时间复杂度为 $O(n\log n)$．输出答案的时间复杂度为 $O(\textit{ans})$．
+This algorithm runs in $O(n\log n)$ time. Outputting the answer takes $O(\textit{ans})$ time.
 
-???+ tip "注意"
-    对于最长 **上升** 子序列问题，类似地，可以令 $d_i$ 表示所有长度为 $i$ 的最长上升子序列的末尾元素的最小值．
+???+ tip "Note"
+    For the longest **increasing** subsequence problem, similarly let $d_i$ be the smallest last element among all increasing subsequences of length $i$.
     
-    需要注意的是，在步骤 2 中，若 $a_i \leq d_{len}$，由于最长上升子序列中相邻元素不能相等，需要在 $d$ 序列中找到 **第一个**  **不小于**  $a_i$ 的元素，用 $a_i$ 替换之．
+    Note that in step 2, if $a_i \leq d_{len}$, since adjacent elements in an increasing subsequence cannot be equal, you need to find the **first** element in $d$ that is **not less than** $a_i$, and replace it with $a_i$.
     
-    在实现上（以 C++ 为例），需要将 `upper_bound` 函数改为 `lower_bound`．
+    In the implementation (taking C++ as an example), change the `upper_bound` function to `lower_bound`.
 
-## 参考资料与注释
+## References and notes
 
--   [最长不下降子序列 nlogn 算法详解 - lvmememe - 博客园](https://www.cnblogs.com/itlqs/p/5743114.html)
+-   [A detailed explanation of the n log n algorithm for the longest non-decreasing subsequence - lvmememe - cnblogs](https://www.cnblogs.com/itlqs/p/5743114.html)
 
-[^ref1]: [位运算求最长公共子序列 - -Wallace- - 博客园](https://www.cnblogs.com/-Wallace-/p/bit-lcs.html)
+[^ref1]: [Computing the longest common subsequence with bit operations - -Wallace- - cnblogs](https://www.cnblogs.com/-Wallace-/p/bit-lcs.html)
