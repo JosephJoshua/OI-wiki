@@ -1,155 +1,155 @@
 author: johnvp22, Ir1d
 
-## `string` 是什么
+## What `string` is
 
-`std::string` 是在标准库 `<string>`（注意不是 C 语言中的 `<string.h>` 库）中提供的一个类，本质上是 `std::basic_string<char>` 的别称．
+`std::string` is a class provided by the standard library header `<string>` (not the C library `<string.h>`). It is really an alias for `std::basic_string<char>`.
 
-## 为什么要使用 `string`
+## Why use `string`
 
-在 C 语言中，提供了字符串的操作，但只能通过字符数组的方式来实现字符串．而 `string` 则是一个简单的类，使用简单，在 OI 竞赛中被广泛使用．并且相较于其他 STL 容器，`string` 的常数可以算是非常优秀的，基本与字符数组不相上下．
+C does provide string operations, but strings can only be stored as character arrays. `string`, on the other hand, is a simple class that is easy to use, and it is widely used in OI. Compared with other STL containers, `string` also has a very good constant factor, about the same as a character array.
 
-### `string` 可以动态分配空间
+### `string` allocates memory dynamically
 
-和许多 STL 容器相同，`string` 能动态分配空间，这使得我们可以直接使用 `std::cin` 来输入，但其速度则同样较慢．这一点也同样让我们不必为内存而烦恼．
+Like many STL containers, `string` allocates memory dynamically. This lets us read it directly with `std::cin`, though that is also fairly slow. It also means we do not have to worry about memory.
 
-### `string` 重载了加法运算符和比较运算符
+### `string` overloads the addition and comparison operators
 
-`string` 的加法运算符可以直接拼接两个字符串或一个字符串和一个字符．和 `std::vector` 类似，`string` 重载了比较运算符，同样是按字典序比较的，所以我们可以直接调用 `std::sort` 对若干字符串进行排序．
+The addition operator of `string` joins two strings, or a string and a character, directly. Like `std::vector`, `string` overloads the comparison operators, which also compare in lexicographic order, so we can call `std::sort` directly to sort a number of strings.
 
-## 使用方法
+## Usage
 
-下面介绍 `string` 的基本操作，具体可看 [C++ 文档](https://zh.cppreference.com/w/cpp/string/basic_string)．
+Below are the basic operations of `string`. See the [C++ documentation](https://zh.cppreference.com/w/cpp/string/basic_string) for details.
 
-### 声明
+### Declaration
 
 ```cpp
 std::string s;
 ```
 
-### 转 char 数组
+### Converting to a char array
 
-在 C 语言里，也有很多字符串的函数，但是它们的参数都是 char 指针类型的，为了方便使用，`string` 有两个成员函数能够将自己转换为 char 指针——`data()`/`c_str()`（在 C++11 之前，`c_str()` 保证末尾有空字符，而 `data()` 不保证；C++11 后两者行为一致[^string1]），如：
-
-```cpp
-printf("%s", s);          // 不能保证编译通过，行为未定义
-printf("%s", s.data());   // C++11 前行为未定义，C++11 后正确输出
-printf("%s", s.c_str());  // 一定能够正确输出
-```
-
-### 获取长度
-
-很多函数都可以返回 string 的长度：
+C also has many string functions, but their parameters are all char pointers. For convenience, `string` has two member functions that convert it to a char pointer: `data()`/`c_str()` (before C++11, `c_str()` was guaranteed to end with a null character and `data()` was not; since C++11 they behave the same[^string1]). For example:
 
 ```cpp
-printf("s 的长度为 %zu", s.size());
-printf("s 的长度为 %zu", s.length());
-printf("s 的长度为 %zu", strlen(s.c_str()));
+printf("%s", s);          // not guaranteed to compile; undefined behavior
+printf("%s", s.data());   // undefined before C++11; prints correctly since C++11
+printf("%s", s.c_str());  // always prints correctly
 ```
 
-???+ note "这些函数的复杂度"
-    `strlen()` 的复杂度一定是与字符串长度线性相关的．
+### Getting the length
+
+Several functions return the length of a string:
+
+```cpp
+printf("length of s is %zu", s.size());
+printf("length of s is %zu", s.length());
+printf("length of s is %zu", strlen(s.c_str()));
+```
+
+???+ note "Complexity of these functions"
+    The complexity of `strlen()` is always linear in the length of the string.
     
-    `size()` 和 `length()` 的复杂度在 C++98 中没有指定，在 C++11 中被指定为常数复杂度．但在常见的编译器上，即便是 C++98，这两个函数的复杂度也是常数．
+    The complexity of `size()` and `length()` was not specified in C++98; C++11 specifies it as constant. But on common compilers these two functions take constant time even under C++98.
 
 ???+ warning "Warning"
-    这三个函数（以及下面将要提到的 `find` 函数）的返回值类型都是 `size_t`（`unsigned long`）．因此，这些返回值不支持直接与负数比较或运算，建议在需要时进行强制转换．
+    The return type of these three functions (and of the `find` function below) is `size_t` (`unsigned long`). So you should not compare these return values directly with negative numbers or do arithmetic with negative numbers. Cast them when needed.
 
-### 寻找某字符（串）第一次出现的位置
+### Finding the first occurrence of a character (or string)
 
-`find(str,pos)` 函数可以用来查找字符串中一个字符/字符串在 `pos`（含）之后第一次出现的位置（若不传参给 `pos` 则默认为 `0`）．如果没有出现，则返回 `string::npos`（被定义为 `-1`，但类型仍为 `size_t`/`unsigned long`）．
+`find(str,pos)` finds the first position at or after `pos` where a character/string occurs in the string (if `pos` is not given, it defaults to `0`). If there is no occurrence, it returns `string::npos` (defined as `-1`, but its type is still `size_t`/`unsigned long`).
 
-示例：
+Example:
 
 ```cpp
 string s = "OI Wiki", t = "OI", u = "i";
 int pos = 5;
-printf("字符 I 在 s 的 %lu 位置第一次出现\n", s.find('I'));
-printf("字符 a 在 s 的 %lu 位置第一次出现\n", s.find('a'));
-printf("字符 a 在 s 的 %d 位置第一次出现\n", s.find('a'));
-printf("字符串 t 在 s 的 %lu 位置第一次出现\n", s.find(t));
-printf("在 s 中自 pos 位置起字符串 u 第一次出现在 %lu 位置", s.find(u, pos));
+printf("character I first occurs in s at position %lu\n", s.find('I'));
+printf("character a first occurs in s at position %lu\n", s.find('a'));
+printf("character a first occurs in s at position %d\n", s.find('a'));
+printf("string t first occurs in s at position %lu\n", s.find(t));
+printf("starting from pos, string u first occurs in s at position %lu", s.find(u, pos));
 ```
 
-输出：
+Output:
 
 ```text
-字符 I 在 s 的 1 位置第一次出现
-字符 a 在 s 的 18446744073709551615 位置第一次出现 // 即为 size_t(-1)，具体数值与平台有关．
-字符 a 在 s 的 -1 位置第一次出现 // 强制转换为 int 类型则正常输出 -1
-字符串 t 在 s 的 0 位置第一次出现
-在 s 中自 pos 位置起字符串 u 第一次出现在 6 位置
+character I first occurs in s at position 1
+character a first occurs in s at position 18446744073709551615 // this is size_t(-1); the exact value depends on the platform.
+character a first occurs in s at position -1 // cast to int, it prints -1 as expected
+string t first occurs in s at position 0
+starting from pos, string u first occurs in s at position 6
 ```
 
-### 截取子串
+### Taking a substring
 
-`substr(pos, len)` 函数返回从 `pos` 位置开始截取最多 `len` 个字符组成的字符串（如果从 `pos` 开始的后缀长度不足 `len` 则截取这个后缀）．
+`substr(pos, len)` returns the string made of at most `len` characters starting at position `pos` (if the suffix starting at `pos` is shorter than `len`, it returns that suffix).
 
-示例：
+Example:
 
 ```cpp
 string s = "OI Wiki", t = "OI";
-printf("从字符串 s 的第四位开始的最多三个字符构成的子串是 %s\n",
+printf("the substring of at most three characters starting at the 4th character of s is %s\n",
        s.substr(3, 3).c_str());
-printf("从字符串 t 的第二位开始的最多三个字符构成的子串是 %s",
+printf("the substring of at most three characters starting at the 2nd character of t is %s",
        t.substr(1, 3).c_str());
 ```
 
-输出：
+Output:
 
 ```text
-从字符串 s 的第四位开始的最多三个字符构成的子串是 Wik
-从字符串 t 的第二位开始的最多三个字符构成的子串是 I
+the substring of at most three characters starting at the 4th character of s is Wik
+the substring of at most three characters starting at the 2nd character of t is I
 ```
 
-### 插入/删除字符（串）
+### Inserting/erasing characters (or strings)
 
-`insert(index,count,ch)` 和 `insert(index,str)` 是比较常见的插入函数．它们分别表示在 `index` 处连续插入 `count` 次字符串 `ch` 和插入字符串 `str`．
+`insert(index,count,ch)` and `insert(index,str)` are the common insertion functions. The first inserts the character `ch` `count` times in a row at `index`; the second inserts the string `str` at `index`.
 
-`erase(index,count)` 函数将字符串 `index` 位置开始（含）的 `count` 个字符删除（若不传参给 `count` 则表示删去 `index` 位置及以后的所有字符）．
+`erase(index,count)` deletes `count` characters starting at (and including) position `index` (if `count` is not given, it deletes every character from position `index` onward).
 
-示例：
+Example:
 
 ```cpp
 string s = "OI Wiki", t = " Wiki";
 char u = '!';
 s.erase(2);
-printf("从字符串 s 的第三位开始删去所有字符后得到的字符串是 %s\n", s.c_str());
+printf("after deleting everything from the 3rd character of s, the string is %s\n", s.c_str());
 s.insert(2, t);
-printf("在字符串 s 的第三位处插入字符串 t 后得到的字符串是 %s\n", s.c_str());
+printf("after inserting string t at the 3rd character of s, the string is %s\n", s.c_str());
 s.insert(7, 3, u);
-printf("在字符串 s 的第八位处连续插入 3 次字符串 u 后得到的字符串是 %s",
+printf("after inserting string u 3 times in a row at the 8th character of s, the string is %s",
        s.c_str());
 ```
 
-输出：
+Output:
 
 ```text
-从字符串 s 的第三位开始删去所有字符后得到的字符串是 OI
-在字符串 s 的第三位处插入字符串 t 后得到的字符串是 OI Wiki
-在字符串 s 的第八位处连续插入 3 次字符串 u 后得到的字符串是 OI Wiki!!!
+after deleting everything from the 3rd character of s, the string is OI
+after inserting string t at the 3rd character of s, the string is OI Wiki
+after inserting string u 3 times in a row at the 8th character of s, the string is OI Wiki!!!
 ```
 
-### 替换字符（串）
+### Replacing characters (or strings)
 
-`replace(pos,count,str)` 和 `replace(first,last,str)` 是比较常见的替换函数．它们分别表示将从 `pos` 位置开始 `count` 个字符的子串替换为 `str` 以及将以 `first` 开始（含）、`last` 结束（不含）的子串替换为 `str`，其中 `first` 和 `last` 均为迭代器．
+`replace(pos,count,str)` and `replace(first,last,str)` are the common replacement functions. The first replaces the substring of `count` characters starting at `pos` with `str`. The second replaces the substring that starts at `first` (inclusive) and ends at `last` (exclusive) with `str`, where `first` and `last` are both iterators.
 
-示例：
+Example:
 
 ```cpp
 string s = "OI Wiki";
 s.replace(2, 5, "");
-printf("将字符串 s 的第 3~7 位替换为空串后得到的字符串是 %s\n", s.c_str());
+printf("after replacing characters 3 to 7 of s with an empty string, the string is %s\n", s.c_str());
 s.replace(s.begin(), s.begin() + 2, "NOI");
-printf("将字符串 s 的前两位替换为 NOI 后得到的字符串是 %s", s.c_str());
+printf("after replacing the first two characters of s with NOI, the string is %s", s.c_str());
 ```
 
-输出：
+Output:
 
 ```text
-将字符串 s 的第 3~7 位替换为空串后得到的字符串是 OI
-将字符串 s 的前两位替换为 NOI 后得到的字符串是 NOI
+after replacing characters 3 to 7 of s with an empty string, the string is OI
+after replacing the first two characters of s with NOI, the string is NOI
 ```
 
-## 参考资料与注释
+## References and notes
 
-[^string1]: [C++ 标准草案 \[basic.string\]](https://eel.is/c++draft/basic.string#general-3)
+[^string1]: [C++ standard draft \[basic.string\]](https://eel.is/c++draft/basic.string#general-3)

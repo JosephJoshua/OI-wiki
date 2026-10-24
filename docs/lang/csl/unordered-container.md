@@ -1,38 +1,38 @@
-## 概述
+## Overview
 
-自 C++11 标准起，四种基于 [哈希](../../ds/hash.md) 实现的无序关联式容器正式纳入了 C++ 的标准模板库中，分别是：`unordered_set`，`unordered_multiset`，`unordered_map`，`unordered_multimap`．
+Since C++11, four unordered associative containers based on [hashing](../../ds/hash.md) have been part of the C++ standard library: `unordered_set`, `unordered_multiset`, `unordered_map` and `unordered_multimap`.
 
-??? note "编译器不支持 C++11 的使用方法"
-    在 C++11 之前，无序关联式容器属于 C++ 的 TR1 扩展．所以，如果编译器不支持 C++11，在使用时需要在头文件的名称中加入 `tr1/` 前缀，并且使用 `std::tr1` 命名空间．如 `#include <unordered_map>` 需要改成 `#include <tr1/unordered_map>`；`std::unordered_map` 需要改为 `std::tr1::unordered_map`（如果使用 `using namespace std;`，则为 `tr1::unordered_map`）．
+??? note "Usage when the compiler does not support C++11"
+    Before C++11, the unordered associative containers were part of the C++ TR1 extensions. So if your compiler does not support C++11, add the `tr1/` prefix to the header name and use the `std::tr1` namespace. For example, change `#include <unordered_map>` to `#include <tr1/unordered_map>`, and change `std::unordered_map` to `std::tr1::unordered_map` (or `tr1::unordered_map` if you use `using namespace std;`).
 
-它们与相应的关联式容器在功能，函数等方面有诸多共同点，而最大的不同点则体现在普通的关联式容器一般采用红黑树实现，内部元素按特定顺序进行排序；而这几种无序关联式容器则采用哈希方式存储元素，内部元素不以任何特定顺序进行排序，所以访问无序关联式容器中的元素时，访问顺序也没有任何保证．
+They have a lot in common with the corresponding associative containers in features, member functions and so on. The biggest difference is this: the ordinary associative containers are usually implemented with red-black trees, and their elements are kept sorted in a specific order; the unordered associative containers store elements by hashing, and their elements are not sorted in any particular order, so there is no guarantee about the order in which you visit them.
 
-采用哈希存储的特点使得无序关联式容器 **在平均情况下** 大多数操作（包括查找，插入，删除）都能在常数时间复杂度内完成，相较于关联式容器与容器大小成对数的时间复杂度更加优秀．
+Because they use hashing, the unordered associative containers can do most operations (including lookup, insertion and deletion) in constant time **on average**. This is better than the associative containers, whose time complexity is logarithmic in the container size.
 
 ??? warning "Warning"
-    在最坏情况下，对无序关联式容器进行插入、删除、查找等操作的时间复杂度会 **与容器大小成线性关系**！这一情况往往在容器内出现大量哈希冲突时产生．
+    In the worst case, insertion, deletion, lookup and other operations on an unordered associative container take time **linear in the container size**! This usually happens when there are many hash collisions in the container.
     
-    同时，由于无序关联式容器的操作时通常存在较大的常数，其效率有时并不比普通的关联式容器好太多．
+    Also, operations on unordered associative containers usually have a large constant factor, so they are sometimes not much faster than the ordinary associative containers.
     
-    因此应谨慎使用无序关联式容器，尽量避免滥用（例如懒得离散化，直接将 `unordered_map<int, int>` 当作空间无限的普通数组使用）．
+    So use the unordered associative containers with care and avoid overusing them (for example, skipping coordinate compression out of laziness and using `unordered_map<int, int>` as an ordinary array with unlimited space).
 
-由于无序关联式容器与相应的关联式容器在用途和操作中有很多共同点，这里不再介绍无序关联式容器的各种操作，这些内容读者可以参考 [关联式容器](./associative-container.md)．
+Since the unordered associative containers share many uses and operations with the corresponding associative containers, we do not cover their operations here. See [Associative containers](./associative-container.md) for those.
 
-## 制造哈希冲突
+## Creating hash collisions
 
-上文中提到了，在最坏情况下，对无序关联式容器进行一些操作的时间复杂度会与容器大小成线性关系．
+As mentioned above, in the worst case some operations on an unordered associative container take time linear in the container size.
 
-在哈希函数确定的情况下，可以构造出数据使得容器内产生大量哈希冲突，导致复杂度达到上界．
+When the hash function is fixed, one can construct data that causes many hash collisions in the container, so the complexity reaches its upper bound.
 
-在标准库实现里，每个元素的散列值是将值对一个质数取模得到的，更具体地说，是 [这个列表](https://github.com/gcc-mirror/gcc/blob/releases/gcc-8.1.0/libstdc%2B%2B-v3/src/shared/hashtable-aux.cc) 中的质数（g++ 6 及以前版本的编译器，这个质数一般是 $126271$，g++ 7 及之后版本的编译器，这个质数一般是 $107897$）．
+In the standard library implementation, each element's hash value is the value taken modulo a prime. More precisely, the primes come from [this list](https://github.com/gcc-mirror/gcc/blob/releases/gcc-8.1.0/libstdc%2B%2B-v3/src/shared/hashtable-aux.cc) (with g++ 6 and earlier, this prime is usually $126271$; with g++ 7 and later, it is usually $107897$).
 
-因此可以通过向容器中插入这些模数的倍数来达到制造大量哈希冲突的目的．
+So inserting multiples of these moduli into the container produces a large number of hash collisions.
 
-## 自定义哈希函数
+## Custom hash functions
 
-使用自定义哈希函数可以有效避免构造数据产生的大量哈希冲突．
+A custom hash function is an effective way to avoid the many hash collisions caused by constructed data.
 
-要想使用自定义哈希函数，需要定义一个结构体，并在结构体中重载 `()` 运算符，像这样：
+To use a custom hash function, define a struct and overload the `()` operator in it, like this:
 
 ```cpp
 struct my_hash {
@@ -40,9 +40,9 @@ struct my_hash {
 };
 ```
 
-当然，为了确保哈希函数不会被迅速破解（例如 Codeforces 中对使用无序关联式容器的提交进行 hack），可以试着在哈希函数中加入一些随机化函数（如时间）来增加破解的难度．
+Of course, to make sure the hash function is not broken quickly (for example, when someone hacks a Codeforces submission that uses unordered associative containers), you can add some randomization (such as the current time) to the hash function to make it harder to break.
 
-例如，在 [这篇博客](https://codeforces.com/blog/entry/62393) 中给出了如下哈希函数：
+For example, [this blog post](https://codeforces.com/blog/entry/62393) gives the following hash function:
 
 ```cpp
 struct my_hash {
@@ -59,7 +59,7 @@ struct my_hash {
     return splitmix64(x + FIXED_RANDOM);
   }
 
-  // 针对 std::pair<int, int> 作为主键类型的哈希函数
+  // hash function for std::pair<int, int> as the key type
   size_t operator()(pair<uint64_t, uint64_t> x) const {
     static const uint64_t FIXED_RANDOM =
         chrono::steady_clock::now().time_since_epoch().count();
@@ -69,4 +69,4 @@ struct my_hash {
 };
 ```
 
-写完自定义的哈希函数后，就可以通过 `unordered_map<int, int, my_hash> my_map;` 或者 `unordered_map<pair<int, int>, int, my_hash> my_pair_map;` 的定义方式将自定义的哈希函数传入容器了．
+After writing the custom hash function, you can pass it to the container with a definition like `unordered_map<int, int, my_hash> my_map;` or `unordered_map<pair<int, int>, int, my_hash> my_pair_map;`.

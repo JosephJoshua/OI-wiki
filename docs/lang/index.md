@@ -1,7 +1,7 @@
-本章将会介绍编程相关的知识，包括 C++ 从入门到进阶教程和一些其它语言的简介．
+This chapter covers programming: a C++ tutorial from beginner to advanced level, plus short introductions to some other languages.
 
-程序是算法与数据结构的载体，是解决 OI 问题的工具．
+A program is how algorithms and data structures are put to work. It is the tool for solving OI problems.
 
-在 OI 中，最常用的编程语言是 C++．
+In OI, the most commonly used programming language is C++.
 
-学习编程是学习 OI 最基础的部分．
+Learning to program is the most basic part of learning OI.

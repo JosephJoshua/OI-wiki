@@ -2,55 +2,55 @@ author: MingqiHuang, Xeonacid, greyqz, i-Yirannn, ChenZ01
 
 ## `vector`
 
-`std::vector` 是 STL 提供的 **内存连续的**、**可变长度** 的数组（亦称列表）数据结构．能够提供线性复杂度的插入和删除，以及常数复杂度的随机访问．
+`std::vector` is an array (also called a list) data structure provided by the STL that is **stored contiguously in memory** and has **variable length**. It supports insertion and deletion in linear time and random access in constant time.
 
-### 为什么要使用 `vector`
+### Why use `vector`
 
-作为 OIer，对程序效率的追求远比对工程级别的稳定性要高得多，而 `vector` 由于其对内存的动态处理，时间效率在部分情况下低于静态数组，并且在 OJ 服务器不一定开全优化的情况下更加糟糕．所以在正常存储数据的时候，通常不选择 `vector`．下面给出几个 `vector` 优秀的特性，在需要用到这些特性的情况下，`vector` 能给我们带来很大的帮助．
+As OIers, we care much more about program speed than about engineering-grade robustness. Because `vector` manages memory dynamically, it is sometimes slower than a static array, and it can be even worse when the OJ server does not turn on full optimization. So we usually do not use `vector` for ordinary data storage. Below are some nice features of `vector`; when you need them, `vector` can help a lot.
 
-#### `vector` 可以动态分配内存
+#### `vector` can allocate memory dynamically
 
-很多时候我们不能提前开好那么大的空间（eg：预处理 1\~n 中所有数的约数）．尽管我们能知道数据总量在空间允许的级别，但是单份数据还可能非常大，这种时候我们就需要 `vector` 来把内存占用量控制在合适的范围内．`vector` 还支持动态扩容，在内存非常紧张的时候这个特性就能派上用场了．
+Often we cannot allocate that much space in advance (e.g. when precomputing the divisors of every number from 1 to n). Even if we know the total amount of data fits in memory, a single piece of data can still be very large. In such cases we need `vector` to keep memory use within a reasonable range. `vector` can also grow dynamically, which comes in handy when memory is very tight.
 
-#### `vector` 重写了比较运算符及赋值运算符
+#### `vector` overloads the comparison and assignment operators
 
-`vector` 重载了六个比较运算符，以字典序实现，这使得我们可以方便的判断两个容器是否相等（复杂度与容器大小成线性关系）．例如可以利用 `vector<char>` 实现字符串比较（当然，还是用 `std::string` 会更快更方便）．另外 `vector` 也重载了赋值运算符，使得数组拷贝更加方便．
+`vector` overloads all six comparison operators, using lexicographic order. This makes it easy to check whether two containers are equal (in time linear in the container size). For example, you can compare strings using `vector<char>` (though `std::string` is faster and more convenient). `vector` also overloads the assignment operator, which makes copying arrays easier.
 
-#### `vector` 便利的初始化
+#### Convenient initialization of `vector`
 
-由于 `vector` 重载了 `=` 运算符，所以我们可以方便地进行 `vector` 的整体赋值操作．此外从 C++11 起 `vector` 还支持 [列表初始化](https://zh.cppreference.com/w/cpp/language/list_initialization)，例如 `vector<int> data {1, 2, 3};`．
+Since `vector` overloads the `=` operator, we can easily assign a whole `vector` at once. Since C++11, `vector` also supports [list initialization](https://zh.cppreference.com/w/cpp/language/list_initialization), for example `vector<int> data {1, 2, 3};`.
 
-### `vector` 的使用方法
+### Using `vector`
 
-以下介绍常用用法，详细内容 [请参见 C++ 文档](https://zh.cppreference.com/w/cpp/container/vector)．
+Common usage is described below. For details, [see the C++ documentation](https://zh.cppreference.com/w/cpp/container/vector).
 
-#### 构造函数
+#### Constructors
 
-用例参见如下代码（假设你已经 `using` 了 `std` 命名空间相关类型）：
+See the code below for examples (assuming you have already brought the relevant types of the `std` namespace in with `using`):
 
 ```cpp
-// 1. 创建空vector; 常数复杂度
+// 1. Create an empty vector; constant time
 vector<int> v0;
-// 1+. 这句代码可以使得向vector中插入前3个元素时，保证常数时间复杂度
+// 1+. This line guarantees constant time when inserting the first 3 elements into the vector
 v0.reserve(3);
-// 2. 创建一个初始空间为3的vector，其元素的默认值是0; 线性复杂度
+// 2. Create a vector with initial size 3, whose elements default to 0; linear time
 vector<int> v1(3);
-// 3. 创建一个初始空间为3的vector，其元素的默认值是2; 线性复杂度
+// 3. Create a vector with initial size 3, whose elements default to 2; linear time
 vector<int> v2(3, 2);
-// 4. 创建一个初始空间为3的vector，其元素的默认值是1，
-// 并且使用v2的空间配置器; 线性复杂度
+// 4. Create a vector with initial size 3, whose elements default to 1,
+// using the allocator of v2; linear time
 vector<int> v3(3, 1, v2.get_allocator());
-// 5. 创建一个v2的拷贝vector v4， 其内容元素和v2一样; 线性复杂度
+// 5. Create vector v4 as a copy of v2, with the same elements as v2; linear time
 vector<int> v4(v2);
-// 6. 创建一个v4的拷贝vector v5，其内容是{v4[1], v4[2]}; 线性复杂度
+// 6. Create vector v5 as a copy of part of v4, with contents {v4[1], v4[2]}; linear time
 vector<int> v5(v4.begin() + 1, v4.begin() + 3);
-// 7. 移动v2到新创建的vector v6，不发生拷贝; 常数复杂度; 需要 C++11
-vector<int> v6(std::move(v2));  // 或者 v6 = std::move(v2);
+// 7. Move v2 into the newly created vector v6 without copying; constant time; requires C++11
+vector<int> v6(std::move(v2));  // or v6 = std::move(v2);
 ```
 
-??? note "测试代码"
+??? note "Test code"
     ```cpp
-    // 以下是测试代码，有兴趣的同学可以自己编译运行一下本代码．
+    // Test code below; if you are interested, compile and run it yourself.
     cout << "v1 = ";
     copy(v1.begin(), v1.end(), ostream_iterator<int>(cout, " "));
     cout << endl;
@@ -71,247 +71,247 @@ vector<int> v6(std::move(v2));  // 或者 v6 = std::move(v2);
     cout << endl;
     ```
 
-可以利用上述的方法构造一个 `vector`，足够我们使用了．
+With the methods above you can construct a `vector`, which is all we need.
 
-#### 元素访问
+#### Element access
 
-`vector` 提供了如下几种方法进行元素访问
+`vector` provides the following ways to access elements
 
 1.  `at()`
 
-    `v.at(pos)` 返回容器中下标为 `pos` 的引用．如果数组越界抛出 `std::out_of_range` 类型的异常．
+    `v.at(pos)` returns a reference to the element at index `pos`. If the index is out of bounds, it throws an exception of type `std::out_of_range`.
 
 2.  `operator[]`
 
-    `v[pos]` 返回容器中下标为 `pos` 的引用．不执行越界检查．
+    `v[pos]` returns a reference to the element at index `pos`. It does not check bounds.
 
 3.  `front()`
 
-    `v.front()` 返回首元素的引用．
+    `v.front()` returns a reference to the first element.
 
 4.  `back()`
 
-    `v.back()` 返回末尾元素的引用．
+    `v.back()` returns a reference to the last element.
 
 5.  `data()`
 
-    `v.data()` 返回 `v` 内部存储数据使用的连续内存空间中首元素的指针．
+    `v.data()` returns a pointer to the first element of the contiguous memory that `v` uses to store its data.
 
-#### 迭代器
+#### Iterators
 
-vector 提供了如下几种 [迭代器](./iterator.md)
+vector provides the following [iterators](./iterator.md)
 
 1.  `begin()/cbegin()`
 
-    返回指向首元素的迭代器，其中 `*begin = front`．
+    Returns an iterator to the first element, where `*begin = front`.
 
 2.  `end()/cend()`
 
-    返回指向容器尾端占位符的迭代器，注意是没有元素的．
+    Returns an iterator to the past-the-end placeholder of the container. Note that there is no element there.
 
 3.  `rbegin()/crbegin()`
 
-    返回指向逆向数组的首元素的逆向迭代器，可以理解为正向容器的末元素．
+    Returns a reverse iterator to the first element of the reversed array, which you can think of as the last element of the container.
 
 4.  `rend()/crend()`
 
-    返回指向逆向数组末元素后一位置的迭代器，对应容器首的前一个位置，没有元素．
+    Returns an iterator to the position after the last element of the reversed array. This corresponds to the position before the start of the container, and there is no element there.
 
-以上列出的迭代器中，含有字符 `c` 的为只读迭代器，你不能通过只读迭代器去修改 `vector` 中的元素的值．如果一个 `vector` 本身就是只读的，那么它的一般迭代器和只读迭代器完全等价．只读迭代器自 C++11 开始支持．
+Among the iterators listed above, those with the letter `c` are read-only (const) iterators: you cannot change the values of elements in the `vector` through them. If a `vector` is itself read-only, its normal iterators and read-only iterators are exactly the same. Read-only iterators are supported since C++11.
 
-#### 长度和容量
+#### Size and capacity
 
-`vector` 有以下几个与容器长度和容量相关的函数．注意，`vector` 的长度（size）指有效元素数量，而容量（capacity）指其实际分配的内存长度，相关细节请参见后文的实现细节介绍．
+`vector` has the following functions related to its size and capacity. Note that the size of a `vector` is the number of valid elements, while its capacity is the length of the memory actually allocated. See the implementation details later for more.
 
-**与长度相关**：
+**Related to size**:
 
--   `empty()` 返回一个 `bool` 值，即 `v.begin() == v.end()`，`true` 为空，`false` 为非空．
+-   `empty()` returns a `bool` value, namely `v.begin() == v.end()`: `true` means empty, `false` means not empty.
 
--   `size()` 返回容器长度（元素数量），即 `std::distance(v.begin(), v.end())`．
+-   `size()` returns the size of the container (the number of elements), namely `std::distance(v.begin(), v.end())`.
 
--   `resize(n)` 改变 `vector` 的长度为 `n`．如果 `n` 大于当前长度，则会补充元素，如果参数中提供了要补充的元素，则使用参数，否则使用默认值；如果 `n` 小于当前长度，则保留前 `n` 个元素，后续元素删除．
+-   `resize(n)` changes the size of the `vector` to `n`. If `n` is larger than the current size, elements are added: if an element to add is given as an argument, that element is used; otherwise the default value is used. If `n` is smaller than the current size, the first `n` elements are kept and the rest are deleted.
 
--   `max_size()` 返回容器的最大可能长度．
+-   `max_size()` returns the largest possible size of the container.
 
-    **与容量相关**：
+    **Related to capacity**:
 
--   `reserve()` 使得 `vector` 预留一定的内存空间，避免不必要的内存分配与拷贝．
+-   `reserve()` makes the `vector` reserve some memory in advance, to avoid unnecessary allocations and copies.
 
--   `capacity()` 返回容器的容量，即当前 `vector` 已经为多少个元素分配了空间．
+-   `capacity()` returns the capacity of the container, i.e. how many elements the `vector` has currently allocated space for.
 
--   `shrink_to_fit()` 使得 `vector` 的容量与长度一致，去除该 `vector` 没有用到的容量．
+-   `shrink_to_fit()` makes the capacity of the `vector` equal to its size, freeing the capacity it does not use.
 
-### 元素增删及修改
+### Adding, removing and modifying elements
 
--   `clear()` 清除所有元素
--   `insert()` 支持在某个迭代器位置插入元素、可以插入多个．**复杂度与 `pos` 距离末尾长度成线性而非常数的**
--   `erase()` 删除某个迭代器或者区间的元素，返回最后被删除的迭代器．复杂度与 `insert` 一致．
--   `push_back()` 在末尾插入一个元素，均摊复杂度为 **常数**，最坏为线性复杂度．
--   `pop_back()` 删除末尾元素，常数复杂度．
--   `swap()` 与另一个容器进行交换，此操作是 **常数复杂度** 而非线性的．
+-   `clear()` removes all elements
+-   `insert()` inserts elements at an iterator position; it can insert several at once. **Its time is linear in the distance from `pos` to the end, not constant**
+-   `erase()` deletes the element at an iterator or the elements in a range, and returns the iterator after the last deleted element. Its complexity is the same as `insert`.
+-   `push_back()` inserts an element at the end. Its amortized complexity is **constant**, and its worst case is linear.
+-   `pop_back()` deletes the last element in constant time.
+-   `swap()` swaps with another container. This takes **constant time**, not linear time.
 
-### `vector` 的实现细节
+### Implementation details of `vector`
 
-`vector` 的底层其实仍然是定长数组，它能够实现动态扩容的原因是增加了避免数量溢出的操作．首先需要指明的是 `vector` 中元素的数量（长度）$n$ 与它已分配内存最多能包含元素的数量（容量）$N$ 是不一致的，`vector` 会分开存储这两个量．当向 `vector` 中添加元素时，如发现 $n>N$，那么容器会分配一个尺寸为 $2N$ 的数组，然后将旧数据从原本的位置拷贝到新的数组中，再将原来的内存释放．尽管这个操作的渐近复杂度是 $O(n)$，但是可以证明其均摊复杂度为 $O(1)$．而在末尾删除元素和访问元素则都仍然是 $O(1)$ 的开销．
-因此，只要对 `vector` 的尺寸估计得当并善用 `resize()` 和 `reserve()`，就能使得 `vector` 的效率与定长数组不会有太大差距．
+Underneath, a `vector` is still a fixed-length array. It can grow dynamically because it adds steps to avoid overflowing that array. First note that the number of elements in a `vector` (its size) $n$ is not the same as the maximum number of elements its allocated memory can hold (its capacity) $N$; `vector` stores these two values separately. When an element is added and the container finds $n>N$, it allocates an array of size $2N$, copies the old data to the new array, and then frees the old memory. Although this operation takes $O(n)$ time, one can prove that its amortized cost is $O(1)$. Deleting an element at the end and accessing an element are still $O(1)$.
+So as long as you estimate the size of a `vector` well and make good use of `resize()` and `reserve()`, a `vector` is not much slower than a fixed-length array.
 
 ### `vector<bool>`
 
-标准库特别提供了对 `bool` 的 `vector` 特化，每个「`bool`」只占 1 bit，且支持动态增长．但是其 `operator[]` 的返回值的类型不是 `bool&` 而是 `vector<bool>::reference`．因此，使用 `vector<bool>` 使需谨慎，可以考虑使用 `deque<bool>` 或 `vector<char>` 替代．而如果你需要节省空间，请直接使用 [`bitset`](./bitset.md)．
+The standard library provides a special version of `vector` for `bool`, where each "`bool`" takes only 1 bit and the vector can still grow dynamically. But its `operator[]` returns `vector<bool>::reference` instead of `bool&`. So be careful when using `vector<bool>`; consider using `deque<bool>` or `vector<char>` instead. If you need to save space, just use [`bitset`](./bitset.md).
 
 ## `array`(C++11)
 
-`std::array` 是 STL 提供的 **内存连续的**、**固定长度** 的数组数据结构．其本质是对原生数组的直接封装．
+`std::array` is an array data structure provided by the STL that is **stored contiguously in memory** and has **fixed length**. It is simply a thin wrapper around a built-in array.
 
-### 为什么要用 `array`
+### Why use `array`
 
-`array` 实际上是 STL 对数组的封装．它相比 `vector` 牺牲了动态扩容的特性，但是换来了与原生数组几乎一致的性能（在开满优化的前提下）．因此如果能使用 C++11 特性的情况下，能够使用原生数组的地方几乎都可以直接把定长数组都换成 `array`，而动态分配的数组可以替换为 `vector`．
+`array` is really the STL's wrapper around an array. Compared with `vector`, it gives up dynamic growth, but in return its performance is almost the same as a built-in array (with full optimization on). So if you can use C++11 features, you can replace almost any fixed-length built-in array with `array`, and any dynamically allocated array with `vector`.
 
-### 成员函数
+### Member functions
 
-#### 隐式定义的成员函数
+#### Implicitly defined member functions
 
-| 函数          | 作用                                  |
+| Function    | Purpose                             |
 | ----------- | ----------------------------------- |
-| `operator=` | 以来自另一 `array` 的每个元素重写 `array` 的对应元素 |
+| `operator=` | overwrites each element of the `array` with the corresponding element of another `array` |
 
-#### 元素访问
+#### Element access
 
-| 函数           | 作用                   |
+| Function     | Purpose              |
 | ------------ | -------------------- |
-| `at`         | 访问指定的元素，同时进行越界检查     |
-| `operator[]` | 访问指定的元素，**不** 进行越界检查 |
-| `front`      | 访问第一个元素              |
-| `back`       | 访问最后一个元素             |
-| `data`       | 返回指向内存中数组第一个元素的指针    |
+| `at`         | accesses the given element, with bounds checking |
+| `operator[]` | accesses the given element, **without** bounds checking |
+| `front`      | accesses the first element |
+| `back`       | accesses the last element |
+| `data`       | returns a pointer to the first element of the array in memory |
 
-`at` 若遇 `pos >= size()` 的情况会抛出 `std::out_of_range`．
+`at` throws `std::out_of_range` if `pos >= size()`.
 
-#### 容量
+#### Capacity
 
-| 函数         | 作用          |
+| Function   | Purpose     |
 | ---------- | ----------- |
-| `empty`    | 检查容器是否为空    |
-| `size`     | 返回容纳的元素数    |
-| `max_size` | 返回可容纳的最大元素数 |
+| `empty`    | checks whether the container is empty |
+| `size`     | returns the number of elements |
+| `max_size` | returns the maximum possible number of elements |
 
-由于每个 `array` 都是固定大小容器，`size()` 返回的值等于 `max_size()` 返回的值．
+Since every `array` is a fixed-size container, the value returned by `size()` equals the value returned by `max_size()`.
 
-### 操作
+### Operations
 
-| 函数     | 作用       |
+| Function | Purpose  |
 | ------ | -------- |
-| `fill` | 以指定值填充容器 |
-| `swap` | 交换内容     |
+| `fill` | fills the container with the given value |
+| `swap` | swaps the contents |
 
-**注意，交换两个 `array` 是 $\Theta(\text{size})$ 的，而非与常规 STL 容器一样为 $O(1)$．**
+**Note: swapping two `array`s takes $\Theta(\text{size})$ time, not $O(1)$ like ordinary STL containers.**
 
-### 非成员函数
+### Non-member functions
 
-| 函数             | 作用                  |
+| Function       | Purpose             |
 | -------------- | ------------------- |
-| `operator==` 等 | 按照字典序比较 `array` 中的值 |
-| `std::get`     | 访问 `array` 的一个元素    |
-| `std::swap`    | 特化的 `std::swap` 算法  |
+| `operator==` etc. | compares the values in the `array`s in lexicographic order |
+| `std::get`     | accesses one element of an `array` |
+| `std::swap`    | specialized `std::swap` algorithm |
 
-下面是一个 `array` 的使用示例：
+Here is an example of using `array`:
 
 ```cpp
-// 1. 创建空array，长度为3; 常数复杂度
+// 1. Create an array of length 3 with no initial values; constant time
 std::array<int, 3> v0;
-// 2. 用指定常数创建array; 常数复杂度
+// 2. Create an array with the given constants; constant time
 std::array<int, 3> v1{1, 2, 3};
 
-v0.fill(1);  // 填充数组
+v0.fill(1);  // fill the array
 
-// 访问数组
+// access the array
 for (int i = 0; i != arr.size(); ++i) cout << arr[i] << " ";
 ```
 
 ## `deque`
 
-`std::deque` 是 STL 提供的 [双端队列](../../ds/queue.md#双端队列) 数据结构．能够提供线性复杂度的插入和删除，以及常数复杂度的随机访问．
+`std::deque` is a [double-ended queue](../../ds/queue.md#双端队列) data structure provided by the STL. It supports insertion and deletion in linear time and random access in constant time.
 
-### `deque` 的使用方法
+### Using `deque`
 
-以下介绍常用用法，详细内容 [请参见 C++ 文档](https://zh.cppreference.com/w/cpp/container/deque)．`deque` 的迭代器函数与 `vector` 相同，因此不作详细介绍．
+Common usage is described below. For details, [see the C++ documentation](https://zh.cppreference.com/w/cpp/container/deque). The iterator functions of `deque` are the same as those of `vector`, so they are not described in detail.
 
-#### 构造函数
+#### Constructors
 
-参见如下代码（假设你已经 `using` 了 `std` 命名空间相关类型）：
+See the code below (assuming you have already brought the relevant types of the `std` namespace in with `using`):
 
 ```cpp
-// 1. 定义一个int类型的空双端队列 v0
+// 1. Define an empty deque of int, v0
 deque<int> v0;
-// 2. 定义一个int类型的双端队列 v1，并设置初始大小为10; 线性复杂度
+// 2. Define a deque of int, v1, with initial size 10; linear time
 deque<int> v1(10);
-// 3. 定义一个int类型的双端队列 v2，并初始化为10个1; 线性复杂度
+// 3. Define a deque of int, v2, initialized to ten 1s; linear time
 deque<int> v2(10, 1);
-// 4. 复制已有的双端队列 v1; 线性复杂度
+// 4. Copy the existing deque v1; linear time
 deque<int> v3(v1);
-// 5. 创建一个v2的拷贝deque v4，其内容是v4[0]至v4[2]; 线性复杂度
+// 5. Create deque v4 as a copy of part of v2, with contents v2[0] to v2[2]; linear time
 deque<int> v4(v2.begin(), v2.begin() + 3);
-// 6. 移动v2到新创建的deque v5，不发生拷贝; 常数复杂度; 需要 C++11
+// 6. Move v2 into the newly created deque v5 without copying; constant time; requires C++11
 deque<int> v5(std::move(v2));
 ```
 
-#### 元素访问
+#### Element access
 
-与 `vector` 一致，但无法访问底层内存．其高效的元素访问速度可参考实现细节部分．
+Same as `vector`, but you cannot access the underlying memory. For why element access is still fast, see the implementation details section.
 
--   `at()` 返回容器中指定位置元素的引用，执行越界检查，**常数复杂度**．
--   `operator[]` 返回容器中指定位置元素的引用．不执行越界检查，**常数复杂度**．
--   `front()` 返回首元素的引用．
--   `back()` 返回末尾元素的引用．
+-   `at()` returns a reference to the element at the given position, with bounds checking, in **constant time**.
+-   `operator[]` returns a reference to the element at the given position, without bounds checking, in **constant time**.
+-   `front()` returns a reference to the first element.
+-   `back()` returns a reference to the last element.
 
-#### 迭代器
+#### Iterators
 
-与 `vector` 一致．
+Same as `vector`.
 
-#### 长度
+#### Size
 
-与 `vector` 一致，但是没有 `reserve()` 和 `capacity()` 函数．（仍然有 `shrink_to_fit()` 函数）
+Same as `vector`, but there are no `reserve()` and `capacity()` functions. (There is still a `shrink_to_fit()` function.)
 
-#### 元素增删及修改
+#### Adding, removing and modifying elements
 
-与 `vector` 一致，并额外有向队列头部增加元素的函数．
+Same as `vector`, plus functions that add elements at the front of the queue.
 
--   `clear()` 清除所有元素
--   `insert()` 支持在某个迭代器位置插入元素、可以插入多个．**复杂度与 `pos` 与两端距离较小者成线性**．
--   `erase()` 删除某个迭代器或者区间的元素，返回最后被删除的迭代器．复杂度与 `insert` 一致．
--   `push_front()` 在头部插入一个元素，**常数复杂度**．
--   `pop_front()` 删除头部元素，**常数复杂度**．
--   `push_back()` 在末尾插入一个元素，**常数复杂度**．
--   `pop_back()` 删除末尾元素，**常数复杂度**．
--   `swap()` 与另一个容器进行交换，此操作是 **常数复杂度** 而非线性的．
+-   `clear()` removes all elements
+-   `insert()` inserts elements at an iterator position; it can insert several at once. **Its time is linear in the smaller of the distances from `pos` to the two ends**.
+-   `erase()` deletes the element at an iterator or the elements in a range, and returns the iterator after the last deleted element. Its complexity is the same as `insert`.
+-   `push_front()` inserts an element at the front in **constant time**.
+-   `pop_front()` deletes the first element in **constant time**.
+-   `push_back()` inserts an element at the end in **constant time**.
+-   `pop_back()` deletes the last element in **constant time**.
+-   `swap()` swaps with another container. This takes **constant time**, not linear time.
 
-### `deque` 的实现细节
+### Implementation details of `deque`
 
-`deque` 通常的底层实现是多个不连续的缓冲区，而缓冲区中的内存是连续的．而每个缓冲区还会记录首指针和尾指针，用来标记有效数据的区间．当一个缓冲区填满之后便会在之前或者之后分配新的缓冲区来存储更多的数据．更详细的说明可以参考 [《STL 源码剖析》deque 实现原理](https://www.cnblogs.com/q1076452761/p/16903229.html)．
+`deque` is usually implemented as several separate buffers; memory inside each buffer is contiguous. Each buffer also records a head pointer and a tail pointer that mark the range of valid data. When a buffer is full, a new buffer is allocated before or after it to store more data. For a more detailed explanation, see [*The Annotated STL Sources*: how deque is implemented](https://www.cnblogs.com/q1076452761/p/16903229.html).
 
 ## `list`
 
-`std::list` 是 STL 提供的 [双向链表](../../ds/linked-list.md) 数据结构．能够提供线性复杂度的随机访问，以及常数复杂度的插入和删除．
+`std::list` is a [doubly linked list](../../ds/linked-list.md) data structure provided by the STL. It supports random access in linear time and insertion and deletion in constant time.
 
-### `list` 的使用方法
+### Using `list`
 
-`list` 的使用方法与 `deque` 基本相同，但是增删操作和访问的复杂度不同．详细内容 [请参见 C++ 文档](https://zh.cppreference.com/w/cpp/container/list)．`list` 的迭代器、长度、元素增删及修改相关的函数与 `deque` 相同，因此不作详细介绍．
+`list` is used in almost the same way as `deque`, but the costs of insertion, deletion and access are different. For details, [see the C++ documentation](https://zh.cppreference.com/w/cpp/container/list). The functions of `list` for iterators, size, and adding, removing and modifying elements are the same as those of `deque`, so they are not described in detail.
 
-#### 元素访问
+#### Element access
 
-由于 `list` 的实现是链表，因此它不提供随机访问的接口．若需要访问中间元素，则需要使用迭代器．
+Since `list` is implemented as a linked list, it does not provide random access. To access an element in the middle, you need to use iterators.
 
--   `front()` 返回首元素的引用．
--   `back()` 返回末尾元素的引用．
+-   `front()` returns a reference to the first element.
+-   `back()` returns a reference to the last element.
 
-#### 操作
+#### Operations
 
-`list` 类型还提供了一些针对其特性实现的 STL 算法函数．由于这些算法需要 [随机访问迭代器](./iterator.md)，因此 `list` 提供了特别的实现以便于使用．这些算法有 `splice()`、`remove()`、`sort()`、`unique()`、`merge()` 等．
+The `list` type also provides some STL algorithm functions implemented for its own structure. Since the general versions of these algorithms require [random access iterators](./iterator.md), `list` provides its own special versions for convenience. These algorithms include `splice()`, `remove()`, `sort()`, `unique()`, `merge()` and so on.
 
-## `forward_list`（C++11）
+## `forward_list` (C++11)
 
-`std::forward_list` 是 STL 提供的 [单向链表](../../ds/linked-list.md) 数据结构，相比于 `std::list` 减小了空间开销．
+`std::forward_list` is a [singly linked list](../../ds/linked-list.md) data structure provided by the STL. It uses less space than `std::list`.
 
-### `forward_list` 的使用方法
+### Using `forward_list`
 
-`forward_list` 的使用方法与 `list` 几乎一致，但是迭代器只有单向的，因此其具体用法不作详细介绍．详细内容 [请参见 C++ 文档](https://zh.cppreference.com/w/cpp/container/forward_list)
+`forward_list` is used almost the same way as `list`, but its iterators only go in one direction, so its usage is not described in detail. For details, [see the C++ documentation](https://zh.cppreference.com/w/cpp/container/forward_list)

@@ -1,106 +1,106 @@
-## 关于 Java
+## About Java
 
-Java 是一种广泛使用的计算机编程语言，拥有 **跨平台**、**面向对象**、**泛型编程** 的特性，广泛应用于企业级 Web 应用开发和移动应用开发．
+Java is a widely used programming language. It is **cross-platform**, **object-oriented** and supports **generic programming**. It is widely used for enterprise web applications and mobile apps.
 
-## 环境安装
+## Installation
 
-参见 [JDK](../tools/compiler.md#jdk)．
+See [JDK](../tools/compiler.md#jdk).
 
-## 基本语法
+## Basic syntax
 
-### 主函数
+### The main function
 
-Java 类似 C/C++ 语言，需要一个函数（在面向对象中，这被称为方法）作为程序执行的入口点．
+Like C/C++, Java needs a function (in object-oriented programming this is called a method) as the entry point where the program starts running.
 
-Java 的主函数的格式是固定的，形如：
+The main function in Java has a fixed form:
 
 ```java
 class Test {
     public static void main(String[] args) {
-        // 程序的代码
+        // the program's code
     }
 }
 ```
 
-一个打包的 Java 程序（名称一般是 `*.jar`）中可以有很多个类似的函数，但是当运行这个程序的时候，只有其中一个函数会被运行，这是定义在 `Jar` 的 `Manifest` 文件中的，在 OI 比赛中一般用不到关于它的知识．
+A packaged Java program (usually named `*.jar`) can contain many functions like this, but when the program is run, only one of them is executed. Which one is set in the `Manifest` file of the `Jar`. You usually do not need to know about this in OI contests.
 
-### 注释
+### Comments
 
-和 C/C++ 一样，Java 使用 `//` 和 `/* */` 分别注释单行和多行．
+As in C/C++, Java uses `//` for single-line comments and `/* */` for multi-line comments.
 
-### 基本数据类型
+### Primitive data types
 
-|   类型名   |   意义  |
+|   Type name   |   Meaning  |
 | :-----: | :---: |
-| boolean |  布尔类型 |
-|   byte  |  字节类型 |
-|   char  |  字符型  |
-|  double | 双精度浮点 |
-|  float  | 单精度浮点 |
-|   int   |   整型  |
-|   long  |  长整型  |
-|  short  |  短整型  |
-|   null  |   空   |
+| boolean |  boolean |
+|   byte  |  byte |
+|   char  |  character  |
+|  double | double-precision floating point |
+|  float  | single-precision floating point |
+|   int   |   integer  |
+|   long  |  long integer  |
+|  short  |  short integer  |
+|   null  |   null   |
 
-### 声明变量
+### Declaring variables
 
 ```java
-int a = 12; // 设置 a 为整数类型,并给 a 赋值为 12
-String str = "Hello, OI-wiki"; // 声明字符串变量 str
+int a = 12; // declare a as an integer and assign 12 to it
+String str = "Hello, OI-wiki"; // declare the string variable str
 char ch = 'W';
 double PI = 3.1415926;
 ```
 
-### final 关键字
+### The final keyword
 
-`final` 含义是这是最终的、不可更改的结果，被 `final` 修饰的变量只能被赋值一次，赋值后不再改变．
+`final` means the value is final and cannot be changed. A variable marked `final` can be assigned only once and never changes after that.
 
 ```java
 final double PI = 3.1415926;
 ```
 
-### 数组
+### Arrays
 
 ```java
-// 有十个元素的整数类型数组
-// 其语法格式为 数据类型[] 变量名 = new 数据类型[数组大小]
+// an integer array with ten elements
+// the syntax is: type[] name = new type[size]
 int[] ary = new int[10];
 ```
 
-### 字符串
+### Strings
 
--   字符串是 Java 一个内置的类．
+-   String is a built-in class in Java.
 
 ```java
-// 最为简单的构造一个字符串变量的方法如下
+// the simplest way to create a string variable is as follows
 String a = "Hello";
 
-// 还可以使用字符数组构造一个字符串变量
+// you can also create a string variable from a character array
 char[] stringArray = { 'H', 'e', 'l', 'l', 'o' };
 String s = new String(stringArray);
 ```
 
-### 包和导入包
+### Packages and imports
 
-Java 中的类（`Class`）都被放在一个个包（`package`）里面．在一个包里面不允许有同名的类．在类的第一行通常要说明这个类是属于哪个包的．例如：
+Every class (`Class`) in Java is placed in a package (`package`). Two classes in the same package cannot have the same name. The first line of a class file usually states which package the class belongs to. For example:
 
 ```java
 package org.oi-wiki.tutorial;
 ```
 
-包的命名规范一般是：`项目所有者的顶级域.项目所有者的二级域.项目名称`．
+Packages are usually named like this: `owner's top-level domain.owner's second-level domain.project name`.
 
-通过 `import` 关键字来导入不在本类所属的包下面的类．例如下面要用到的 `Scanner`：
+Use the `import` keyword to import classes that are not in the same package as the current class. For example, the `Scanner` class used below:
 
 ```java
 import java.util.Scanner;
 ```
 
-如果想要导入某包下面所有的类，只需要把这个语句最后的分号前的类名换成 `*`．
+To import all classes in a package, replace the class name before the semicolon at the end of this statement with `*`.
 
-### 输入
+### Input
 
-可以通过 `Scanner` 类来处理命令行输入．
+You can handle command-line input with the `Scanner` class.
 
 ```java
 package org.oiwiki.tutorial;
@@ -109,7 +109,7 @@ import java.util.Scanner;
 
 class Test {
     public static void main(String[] args) {
-        Scanner scan = new Scanner(System.in); // System.in 是输入流
+        Scanner scan = new Scanner(System.in); // System.in is the input stream
         int a = scan.nextInt();
         double b = scan.nextDouble();
         String c = scan.nextLine();
@@ -117,16 +117,16 @@ class Test {
 }
 ```
 
-### 输出
+### Output
 
-可以对变量进行格式化输出．
+You can print variables with formatted output.
 
-|  符号  |   意义  |
+|  Symbol  |   Meaning  |
 | :--: | :---: |
-| `%f` |  浮点类型 |
-| `%s` | 字符串类型 |
-| `%d` |  整数类型 |
-| `%c` |  字符类型 |
+| `%f` |  floating point |
+| `%s` | string |
+| `%d` |  integer |
+| `%c` |  character |
 
 ```java
 class Test {
@@ -143,19 +143,19 @@ class Test {
 }
 ```
 
-### 控制语句
+### Control statements
 
-Java 的流程控制语句与 C++ 是基本相同的．
+Java's control flow statements are basically the same as those of C++.
 
-#### 选择
+#### Selection
 
 -   if
 
 ```java
 class Test {
     public static void main(String[] args) {
-        if ( /* 判断条件 */ ){
-            // 条件成立时执行这里面的代码
+        if ( /* condition */ ){
+            // code here runs when the condition is true
         }
     }
 }
@@ -166,10 +166,10 @@ class Test {
 ```java
 class Test {
     public static void main(String[] args) {
-        if ( /* 判断条件 */ ) {
-            // 条件成立时执行这里面的代码
+        if ( /* condition */ ) {
+            // code here runs when the condition is true
         } else {
-            // 条件不成立时执行这里面的代码
+            // code here runs when the condition is false
         }
     }
 }
@@ -180,12 +180,12 @@ class Test {
 ```java
 class Test {
     public static void main(String[] args) {
-        if ( /* 判断条件 */ ) {
-            //判断条件成立执行这里面的代码
-        } else if ( /* 判断条件2 */ ) {
-            // 判断条件2成立执行这里面的代码
+        if ( /* condition */ ) {
+            //code here runs when the condition is true
+        } else if ( /* condition 2 */ ) {
+            // code here runs when condition 2 is true
         } else {
-          // 上述条件都不成立执行这里面的代码
+          // code here runs when none of the conditions above is true
         }
     }
 }
@@ -196,43 +196,43 @@ class Test {
 ```java
 class Test {
     public static void main(String[] args) {
-        switch ( /* 表达式 */ ){
-          case /* 值 1 */:
-              // 当表达式取得的值符合值 1 执行此段代码
-              break; // 如果不加上 break 语句,会让程序按顺序往下执行直到 break
-          case /* 值 2 */:
-              // 当表达式取得的值符合值 2 执行此段代码
+        switch ( /* expression */ ){
+          case /* value 1 */:
+              // this code runs when the expression equals value 1
+              break; // without break, the program keeps running the following code in order until it reaches a break
+          case /* value 2 */:
+              // this code runs when the expression equals value 2
               break;
           default:
-              // 当表达式不符合上面列举的值的时候执行这里面的代码
+              // code here runs when the expression matches none of the values listed above
         }
     }
 }
 ```
 
-#### 循环
+#### Loops
 
 -   for
 
-`for` 关键字有两种使用方法，其中第一种是普通的 `for` 循环，形式如下：
+The `for` keyword can be used in two ways. The first is the ordinary `for` loop:
 
 ```java
 class Test {
     public static void main(String[] args) {
-        for ( /* 初始化 */; /* 循环的判断条件 */; /* 每次循环后执行的步骤 */ ) {
-            // 当循环的条件成立执行循环体内代码
+        for ( /* initialization */; /* loop condition */; /* step run after each iteration */ ) {
+            // the loop body runs while the loop condition is true
         }
     }
 }
 ```
 
-第二种是类似 C++ 的 `foreach` 使用方法，用于循环数组或者集合中的数据，相当于把上一种方式中的循环变量隐藏起来了，形式如下：
+The second is similar to `foreach` in C++. It loops over the data in an array or collection, as if the loop variable of the first form were hidden. It looks like this:
 
 ```java
 class Test {
     public static void main(String[] args) {
-        for ( /* 元素类型X */ /* 元素名Y */ : /* 集合Z */ ) {
-            // 这个语句块的每一次循环时，元素Y分别是集合Z中的一个元素．
+        for ( /* element type X */ /* element name Y */ : /* collection Z */ ) {
+            // in each iteration of this block, Y is one of the elements of collection Z.
         }
     }
 }
@@ -243,8 +243,8 @@ class Test {
 ```java
 class Test {
     public static void main(String[] args) {
-        while ( /* 判定条件 */ ) {
-            // 条件成立时执行循环体内代码
+        while ( /* condition */ ) {
+            // the loop body runs while the condition is true
         }
     }
 }
@@ -256,19 +256,19 @@ class Test {
 class Test {
     public static void main(String[] args) {
         do {
-          // 需要执行的代码
-        } while ( /* 循环判断条件 */ );
+          // the code to run
+        } while ( /* loop condition */ );
     }
 }
 ```
 
-## 注意事项
+## Things to note
 
-### 类名与文件名一致
+### The class name must match the file name
 
-创建  Java 源程序需要类名和文件名一致才能编译通过，否则编译器会提示找不到类．通常该文件名会在具体 OJ 中指定．
+To compile a Java source file, the class name must match the file name; otherwise the compiler reports that it cannot find the class. The file name is usually given by the OJ.
 
-例：
+Example:
 
 `Add.java`
 
@@ -280,4 +280,4 @@ class Add {
 }
 ```
 
-在该文件中需使用 `Add` 为类名方可编译通过．
+In this file, you must use `Add` as the class name for it to compile.
