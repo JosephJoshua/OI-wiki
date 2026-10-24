@@ -1,126 +1,126 @@
 author: cesonic, Enter-tainer, Great-designer, Ir1d, ksyx, lychees, MegaOwIer, RUIN-RISE, wjy-yy, rsdbkhusky, ouuan, Menci, Tiphereth-A
 
-回想高中数学立体几何中基向量的概念，我们可以在三维欧氏空间中找到一组基向量 $\boldsymbol{i}$，$\boldsymbol{j}$，$\boldsymbol{k}$，之后空间中任意一个向量都可以由这组基向量表示．换句话说，我们可以 **通过有限的基向量来描述无限的三维空间**，这足以体现基向量的重要性．
+Recall the idea of basis vectors from solid geometry in high school math. In three-dimensional Euclidean space we can find a set of basis vectors $\boldsymbol{i}$, $\boldsymbol{j}$, $\boldsymbol{k}$, and then every vector in the space can be written in terms of them. In other words, we can **describe the infinite three-dimensional space with finitely many basis vectors**, which shows how important basis vectors are.
 
-三维欧氏空间是特殊的 [线性空间](./vector-space.md)，三维欧氏空间的基向量在线性空间中就被推广为了线性基．
+Three-dimensional Euclidean space is a special [vector space](./vector-space.md), and its basis vectors generalize to a basis of a vector space.
 
-OI 中有关线性基的应用一般只涉及两类线性空间：$n$ 维实线性空间 $\mathbf{R}^n$ 和 $n$ 维 [布尔域](https://en.wikipedia.org/wiki/Boolean_domain) 线性空间 $\mathbf{Z}_2^n$，我们会在 [应用](#应用) 一节中详细介绍．若您不熟悉线性代数，则推荐从应用部分开始阅读．
+In OI, applications of bases usually involve only two kinds of vector spaces: the $n$-dimensional real vector space $\mathbf{R}^n$ and the $n$-dimensional vector space over the [Boolean domain](https://en.wikipedia.org/wiki/Boolean_domain) $\mathbf{Z}_2^n$. We cover them in detail in the [Applications](#applications) section. If you are not familiar with linear algebra, we recommend starting from the applications part.
 
-以下会从一般的线性空间出发来介绍线性基，并给出线性基的常见性质．
+Below we introduce bases starting from general vector spaces, and give their common properties.
 
-前置知识：[线性空间](./vector-space.md)．
+Prerequisites: [vector space](./vector-space.md).
 
-线性基是线性空间的一组基，是研究线性空间的重要工具．
+A basis of a vector space (also called a linear basis) is an important tool for studying vector spaces.
 
-## 定义
+## Definition
 
-称线性空间 $V$ 的一个极大线性无关组为 $V$ 的一组 **Hamel 基** 或 **线性基**，简称 **基**．
+A maximal linearly independent set of a vector space $V$ is called a **Hamel basis** or **linear basis** of $V$, or simply a **basis**.
 
-规定线性空间 $\{\theta\}$ 的基为空集．
+By convention, the basis of the vector space $\{\theta\}$ is the empty set.
 
-可以证明任意线性空间均存在线性基[^existence_basis]，我们定义线性空间 $V$ 的 **维数** 为线性基的元素个数（或势），记作 $\dim V$．
+One can prove that every vector space has a basis[^existence_basis]. We define the **dimension** of a vector space $V$ as the number of elements (or cardinality) of a basis, written $\dim V$.
 
-## 性质
+## Properties
 
-1.  对于有限维线性空间 $V$, 设其维数为 $n$, 则：
+1.  Let $V$ be a finite-dimensional vector space of dimension $n$. Then:
 
-    1.  $V$ 中的任意 $n+1$ 个向量线性相关．
+    1.  Any $n+1$ vectors in $V$ are linearly dependent.
 
-    2.  $V$ 中的任意 $n$ 个线性无关的向量均为 $V$ 的基．
+    2.  Any $n$ linearly independent vectors in $V$ form a basis of $V$.
 
-    3.  若 $V$ 中的任意向量均可被向量组 $a_1,a_2,\dots,a_n$ 线性表出，则其是 $V$ 的一个基．
+    3.  If every vector in $V$ is a linear combination of the vectors $a_1,a_2,\dots,a_n$, then they form a basis of $V$.
 
-        ???+ note "证明"
-            任取 $V$ 中的一组基 $b_1,b_2,\dots,b_n$, 由已知条件，向量组 $b_1,b_2,\dots,b_n$ 可被 $a_1,a_2,\dots,a_n$ 线性表出，故
+        ???+ note "Proof"
+            Take any basis $b_1,b_2,\dots,b_n$ of $V$. By assumption, $b_1,b_2,\dots,b_n$ are linear combinations of $a_1,a_2,\dots,a_n$, so
             
             $$
             n=\operatorname{rank}\{b_1,b_2,\dots,b_n\}\leq\operatorname{rank}\{a_1,a_2,\dots,a_n\}\leq n
             $$
             
-            因此 $\operatorname{rank}\{a_1,a_2,\dots,a_n\}=n$
+            Hence $\operatorname{rank}\{a_1,a_2,\dots,a_n\}=n$
 
-    4.  $V$ 中任意线性无关向量组 $a_1,a_2,\dots,a_m$ 均可通过插入一些向量使得其变为 $V$ 的一个基．
+    4.  Any linearly independent set $a_1,a_2,\dots,a_m$ in $V$ can be extended to a basis of $V$ by adding some vectors.
 
-2.  （子空间维数公式）令 $V_1,V_2$ 是关于 $\Bbb{P}$ 的有限维线性空间，且 $V_1+V_2$ 和 $V_1\cap V_2$ 也是有限维的，则 $\dim V_1+\dim V_2=\dim(V_1+V_2)+\dim(V_1\cap V_2)$
+2.  (Dimension formula for subspaces) Let $V_1,V_2$ be finite-dimensional vector spaces over $\Bbb{P}$ such that $V_1+V_2$ and $V_1\cap V_2$ are also finite-dimensional. Then $\dim V_1+\dim V_2=\dim(V_1+V_2)+\dim(V_1\cap V_2)$
 
-    ???+ note "证明"
-        设 $\dim V_1=n_1$,$\dim V_2=n_2$,$\dim(V_1\cap V_2)=m$.
+    ???+ note "Proof"
+        Let $\dim V_1=n_1$,$\dim V_2=n_2$,$\dim(V_1\cap V_2)=m$.
         
-        取 $V_1\cap V_2$ 的一组基 $a_1,a_2,\dots,a_m$, 将其分别扩充为 $V_1$ 和 $V_2$ 中的基：$a_1,a_2,\dots,a_m,b_1,b_2,\dots,b_{n_1-m}$ 和 $a_1,a_2,\dots,a_m,c_1,c_2,\dots,c_{n_2-m}$.
+        Take a basis $a_1,a_2,\dots,a_m$ of $V_1\cap V_2$ and extend it to bases of $V_1$ and $V_2$: $a_1,a_2,\dots,a_m,b_1,b_2,\dots,b_{n_1-m}$ and $a_1,a_2,\dots,a_m,c_1,c_2,\dots,c_{n_2-m}$.
         
-        接下来只需证明向量组 $a_1,a_2,\dots,a_m,b_1,b_2,\dots,b_{n_1-m},c_1,c_2,\dots,c_{n_2-m}$ 线性无关即可．
+        It is enough to show that the vectors $a_1,a_2,\dots,a_m,b_1,b_2,\dots,b_{n_1-m},c_1,c_2,\dots,c_{n_2-m}$ are linearly independent.
         
-        设 $\sum_{i=1}^m r_ia_i+\sum_{i=1}^{n_1-m} s_ib_i+\sum_{i=1}^{n_2-m} t_ic_i=\theta$.
+        Suppose $\sum_{i=1}^m r_ia_i+\sum_{i=1}^{n_1-m} s_ib_i+\sum_{i=1}^{n_2-m} t_ic_i=\theta$.
         
-        则 $\sum_{i=1}^{n_2-m} t_ic_i=-\sum_{i=1}^m r_ia_i-\sum_{i=1}^{n_1-m} s_ib_i$.
+        Then $\sum_{i=1}^{n_2-m} t_ic_i=-\sum_{i=1}^m r_ia_i-\sum_{i=1}^{n_1-m} s_ib_i$.
         
-        注意到上式左边在 $V_2$ 中，右边在 $V_1$ 中，故两边均在 $V_1\cap V_2$ 中，因此 $\sum_{i=1}^{n_2-m} t_ic_i=\sum_{i=1}^m k_ia_i$
+        The left side lies in $V_2$ and the right side lies in $V_1$, so both sides lie in $V_1\cap V_2$. Hence $\sum_{i=1}^{n_2-m} t_ic_i=\sum_{i=1}^m k_ia_i$
         
-        故 $t_1=t_2=\dots=t_{n_2-m}=k_1=k_2=\dots=k_m=0$, 进而 $r_1=r_2=\dots=r_m=s_1=s_2=\dots=s_{n_1-m}=t_1=t_2=\dots=t_{n_2-m}=0$
+        So $t_1=t_2=\dots=t_{n_2-m}=k_1=k_2=\dots=k_m=0$, and then $r_1=r_2=\dots=r_m=s_1=s_2=\dots=s_{n_1-m}=t_1=t_2=\dots=t_{n_2-m}=0$
 
-3.  令 $V_1,V_2$ 是关于 $\Bbb{P}$ 的有限维线性空间，且 $V_1+V_2$ 和 $V_1\cap V_2$ 也是有限维的，则下列诸款等价：
+3.  Let $V_1,V_2$ be finite-dimensional vector spaces over $\Bbb{P}$ such that $V_1+V_2$ and $V_1\cap V_2$ are also finite-dimensional. Then the following are equivalent:
 
     1.  $V_1+V_2=V_1\oplus V_2$.
 
     2.  $\dim V_1+\dim V_2=\dim(V_1+V_2)$.
 
-    3.  若 $a_1,a_2,\dots,a_n$ 是 $V_1$ 的一组基，$b_1,b_2,\dots,b_m$ 是 $V_2$ 的一组基，则 $a_1,a_2,\dots,a_n,b_1,b_2,\dots,b_m$ 是 $V_1+V_2$ 的一组基．
+    3.  If $a_1,a_2,\dots,a_n$ is a basis of $V_1$ and $b_1,b_2,\dots,b_m$ is a basis of $V_2$, then $a_1,a_2,\dots,a_n,b_1,b_2,\dots,b_m$ is a basis of $V_1+V_2$.
 
     ???+ note "Note"
-        1,3 两条可推广到无限维线性空间中
+        Items 1 and 3 generalize to infinite-dimensional vector spaces.
 
-## 例子
+## Examples
 
-考虑 $\Bbb{R}^2$ 的基．
+Consider bases of $\Bbb{R}^2$.
 
-1.  如图
+1.  As shown in the figure
 
     ![](./images/basis-1.svg)
 
-    $u,v$ 是一组基．
+    $u,v$ is a basis.
 
-2.  如图
+2.  As shown in the figure
 
     ![](./images/basis-2.svg)
 
-    $u,v$ 是一组基．
+    $u,v$ is a basis.
 
-3.  如图
+3.  As shown in the figure
 
     ![](./images/basis-3.svg)
 
-    $u,v$ 不是一组基，因为 $u=-v$.
+    $u,v$ is not a basis, because $u=-v$.
 
-4.  如图
+4.  As shown in the figure
 
     ![](./images/basis-4.svg)
 
-    $u,v,w$ 不是一组基，因为 $u+4v+6w=\theta$.
+    $u,v,w$ is not a basis, because $u+4v+6w=\theta$.
 
-## 正交基与单位正交基
+## Orthogonal bases and orthonormal bases
 
-若线性空间 $V$ 的一组基 $B$ 满足 $\forall b,b'\in B,~(b,b')\ne 0\iff b=b'$（即两两正交），则称这组基是 **正交基**．
+If a basis $B$ of a vector space $V$ satisfies $\forall b,b'\in B,~(b,b')\ne 0\iff b=b'$ (that is, its vectors are pairwise orthogonal), it is called an **orthogonal basis**.
 
-若线性空间 $V$ 的一组正交基 $B$ 还满足 $\forall b\in B,~|b|=\sqrt{(b,b)}=1$，则称这组基是 **单位正交基**．
+If an orthogonal basis $B$ of $V$ also satisfies $\forall b\in B,~|b|=\sqrt{(b,b)}=1$, it is called an **orthonormal basis**.
 
-任意有限维线性空间 $V$ 的基都可以通过 [Schmidt 正交化](https://en.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process) 变换为正交基．
+Any basis of a finite-dimensional vector space $V$ can be turned into an orthogonal basis with [Gram–Schmidt orthogonalization](https://en.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process).
 
-## 应用
+## Applications
 
-根据前文内容，我们可以利用线性基实现：
+Based on the above, we can use a basis to:
 
-1.  求给定向量组的秩；
-2.  对给定的向量组，找到一组极大线性无关组（或其张成的线性空间的一组基）；
-3.  向给定的向量组插入某些向量，在插入操作后的向量组中找到一组极大线性无关组（或其张成的线性空间的一组基）；
-4.  对找到的一组极大线性无关组（或基），判断某向量能否被其线性表出；
-5.  对找到的一组极大线性无关组（或基），求其张成的线性空间中的特殊元素（如最大元、最小元等）．
+1.  find the rank of a given set of vectors;
+2.  for a given set of vectors, find a maximal linearly independent subset (or a basis of the space it spans);
+3.  insert some vectors into a given set, and find a maximal linearly independent subset of the new set (or a basis of the space it spans);
+4.  for a maximal linearly independent subset (or basis) we found, decide whether a given vector is a linear combination of it;
+5.  for a maximal linearly independent subset (or basis) we found, find special elements of the space it spans (such as the largest or smallest element).
 
-在 OI 中，我们一般将 $n$ 维实线性空间 $\mathbf{R}^n$ 下的线性基称为 **实数线性基**，$n$ 维布尔域线性空间 $\mathbf{Z}_2^n$ 下的线性基称为 **异或线性基**．
+In OI, a basis of the $n$-dimensional real vector space $\mathbf{R}^n$ is usually called a **real linear basis**, and a basis of the $n$-dimensional Boolean vector space $\mathbf{Z}_2^n$ is called a **XOR basis**.
 
 ???+ tip "Tip"
-    $\mathbf{Z}_2$ 中的加法为异或，乘法为与，可以证明 $\mathbf{Z}_2$ 是域．
+    In $\mathbf{Z}_2$, addition is XOR and multiplication is AND. One can prove that $\mathbf{Z}_2$ is a field.
     
-    可以证明代数系统 $(\mathbf{Z}_2^n,+,\cdot,\mathbf{Z}_2)$ 是线性空间，其中：
+    One can prove that the algebraic system $(\mathbf{Z}_2^n,+,\cdot,\mathbf{Z}_2)$ is a vector space, where:
     
     $$
     (a_1,\dots,a_n)+(b_1,\dots,b_n):=(a_1+b_1,\dots,a_n+b_n),
@@ -130,74 +130,74 @@ OI 中有关线性基的应用一般只涉及两类线性空间：$n$ 维实线�
     k\cdot(a_1,\dots,a_n):=(ka_1,\dots,ka_n).
     $$
     
-    即加法是异或，数乘是与．
+    That is, addition is XOR and scalar multiplication is AND.
 
-以异或线性基为例，我们可以根据给定的一组布尔序列 $X=\{x_1,\dots,x_m\}$ 构造出一组异或线性基 $B=\{b_1,\dots,b_n\}$，这组基有如下性质：
+Take the XOR basis as an example. From a given set of Boolean sequences $X=\{x_1,\dots,x_m\}$ we can build a XOR basis $B=\{b_1,\dots,b_n\}$ with the following properties:
 
-1.  $B$ 中任意非空子集的异或和不为 $0$；
-2.  对 $X$ 中的任意元素 $x$，都可在 $B$ 中取出若干元素使其异或和为 $x$；
-3.  对任意满足上两条的集合 $B'$，其元素个数不会小于 $B$ 的元素个数．
+1.  The XOR of any non-empty subset of $B$ is not $0$;
+2.  For any element $x$ of $X$, we can pick some elements of $B$ whose XOR is $x$;
+3.  Any set $B'$ satisfying the two properties above has at least as many elements as $B$.
 
-我们可以利用异或线性基实现：
+With a XOR basis we can:
 
-1.  判断一个数能否表示成某数集子集的异或和；
-2.  求一个数表示成某数集子集异或和的方案数；
-3.  求某数集子集的最大/最小/第 $k$ 大/第 $k$ 小异或和；
-4.  求一个数在某数集子集异或和中的排名．
+1.  decide whether a number can be written as the XOR of a subset of a given set of numbers;
+2.  count the ways a number can be written as the XOR of a subset of a given set;
+3.  find the maximum / minimum / $k$-th largest / $k$-th smallest XOR of a subset of a given set;
+4.  find the rank of a number among the subset XORs of a given set.
 
-### 构造方法
+### How to build one
 
-因为异或线性基与实数线性基没有本质差别，所以接下来以异或线性基为例，实数线性基版本的代码只需做一点简单修改即可．
+A XOR basis and a real linear basis are not essentially different, so below we use the XOR basis as the example. The code for a real linear basis needs only small changes.
 
-#### 贪心法
+#### Greedy method
 
-对原集合的每个数 $p$ 转为二进制，从高位向低位扫，对于第 $x$ 位是 $1$ 的，如果 $a_x$ 不存在，那么令 $a_x \leftarrow p$ 并结束扫描，如果存在，令 $p\leftarrow p~\text{xor}~a_x$．
+Write each number $p$ in the original set in binary and scan from the highest bit to the lowest. For each bit $x$ that is $1$: if $a_x$ does not exist, set $a_x \leftarrow p$ and stop scanning; if it exists, set $p\leftarrow p~\text{xor}~a_x$.
 
-查询原集合内任意几个元素 $\text{xor}$ 的最大值，只需将线性基从高位向低位扫，若 $\text{xor}$ 上当前扫到的 $a_x$ 答案变大，就把答案异或上 $a_x$．
+To find the maximum $\text{xor}$ of any elements of the original set, scan the basis from the highest bit to the lowest. If XORing the current $a_x$ into the answer makes the answer larger, XOR $a_x$ into the answer.
 
-为什么能行呢？因为从高往低位扫，若当前扫到第 $i$ 位，意味着可以保证答案的第 $i$ 位为 $1$，且后面没有机会改变第 $i$ 位．
+Why does this work? Because we scan from high bits to low bits, when we are at bit $i$, we can guarantee that bit $i$ of the answer is $1$, and later steps have no chance to change bit $i$.
 
-查询原集合内任意几个元素 $\text{xor}$ 的最小值，就是线性基集合所有元素中最小的那个．
+The minimum $\text{xor}$ of any elements of the original set is simply the smallest element of the basis.
 
-查询某个数是否能被异或出来，类似于插入，如果最后插入的数 $p$ 被异或成了 $0$，则能被异或出来．
+Checking whether a number can be obtained by XOR works like insertion: if the number $p$ being inserted ends up XORed to $0$, then it can be obtained.
 
-??? example "代码（洛谷 P3812 [【模板】线性基](https://www.luogu.com.cn/problem/P3812)）"
+??? example "Code (Luogu P3812 [Template: Linear Basis](https://www.luogu.com.cn/problem/P3812))"
     ```cpp
     --8<-- "docs/math/code/basis/basis_1.cpp"
     ```
 
-#### 高斯消元法
+#### Gaussian elimination method
 
-高斯消元法相当于从线性方程组的角度去构造线性基，正确性显然．
+Gaussian elimination builds the basis from the point of view of a system of linear equations, and its correctness is obvious.
 
-??? example "代码（洛谷 P3812 [【模板】线性基](https://www.luogu.com.cn/problem/P3812)）"
+??? example "Code (Luogu P3812 [Template: Linear Basis](https://www.luogu.com.cn/problem/P3812))"
     ```cpp
     --8<-- "docs/math/code/basis/basis_2.cpp"
     ```
 
-### 性质
+### Properties
 
-贪心法构造的线性基具有如下性质：
+A basis built with the greedy method has these properties:
 
--   线性基没有异或和为 $0$ 的子集．
--   线性基中各数二进制最高位不同．
+-   No subset of the basis has XOR equal to $0$.
+-   The numbers in the basis all have different highest set bits.
 
-高斯消元法构造出的线性基满足如下性质：
+A basis built with Gaussian elimination has this property:
 
--   高斯消元后的矩阵是一个行简化阶梯形矩阵．
+-   The matrix after Gaussian elimination is in reduced row echelon form.
 
-    > 该性质包含了贪心法构造的线性基满足的两条性质
+    > This property includes both properties of the basis built with the greedy method.
 
-    如果不理解这条性质的正确性，可以跳转 [高斯消元](../numerical/gauss.md)．
+    If you don't see why this property holds, see [Gaussian elimination](../numerical/gauss.md).
 
-提供一组样例：
+Here is a sample input:
 
 ```text
 5
 633 211 169 841 1008
 ```
 
-二进制表示：
+In binary:
 
 ```text
 1001111001
@@ -207,7 +207,7 @@ OI 中有关线性基的应用一般只涉及两类线性空间：$n$ 维实线�
 1111110000
 ```
 
-贪心法生成的线性基：
+The basis produced by the greedy method:
 
 ```text
 1001111001
@@ -222,7 +222,7 @@ OI 中有关线性基的应用一般只涉及两类线性空间：$n$ 维实线�
 0000000000
 ```
 
-高斯消元法生成的线性基：
+The basis produced by Gaussian elimination:
 
 ```text
 1000000011
@@ -237,96 +237,96 @@ OI 中有关线性基的应用一般只涉及两类线性空间：$n$ 维实线�
 0000000000
 ```
 
-这是一条非常好的性质，能帮我们更方便的解决很多问题．比如：给定一些数，选其中一些异或起来，求异或最大值，如果用贪心法构造线性基，需要再做一遍贪心，如果 `ans` 的当前位是 `0`，那么异或一定会更优，否则当前位如果为 `1`，则一定不会更优；而使用高斯消元法构造线性基后直接将线性基中所有元素都异或起来输出即可．
+This is a very nice property that makes many problems easier. For example: given some numbers, choose some of them and XOR them together to get the maximum value. With the greedy basis, we need another greedy pass: if the current bit of `ans` is `0`, XORing always helps; if the current bit is `1`, it never helps. With the Gaussian elimination basis, we simply XOR all elements of the basis together and output the result.
 
-对于其他比较经典的问题（查询一个数能否被异或得到，查询能被异或得到的第 $k$ 大数等），高斯消元法得到的线性基也能更加方便地解决．
+For other classic problems (checking whether a number can be obtained by XOR, finding the $k$-th largest obtainable number, and so on), the basis from Gaussian elimination also makes things easier.
 
-### 时间复杂度
+### Time complexity
 
-设向量长度为 $n$, 总数为 $m$, 则时间复杂度为 $O(nm)$. 其中高斯消元法的常数略大．
+Let the vector length be $n$ and the number of vectors be $m$. The time complexity is $O(nm)$. Gaussian elimination has a slightly larger constant factor.
 
-若是实数线性基，则时间复杂度为 $O(n^2m)$.
+For a real linear basis, the time complexity is $O(n^2m)$.
 
-### 线性基合并
+### Merging bases
 
-线性基的合并只需要暴力处理，即将要合并的一组线性基暴力地插入到另一组线性基即可．单次合并的时间复杂度是 $O(n^2)$（异或线性基）或 $O(n^3)$（实数线性基）．
+To merge bases, just use brute force: insert every vector of one basis into the other. One merge takes $O(n^2)$ time (XOR basis) or $O(n^3)$ time (real linear basis).
 
-### 线性基求交
+### Intersecting bases
 
-线性基求交，严格地说就是求它们张成的两个线性空间的交空间的一组线性基．本节介绍两种算法．这两种算法，单次求交的时间复杂度都是 $O(n^2)$（异或线性基）或 $O(n^3)$（实数线性基）．
+Strictly speaking, intersecting two bases means finding a basis of the intersection of the two spaces they span. This section introduces two algorithms. Both take $O(n^2)$ time (XOR basis) or $O(n^3)$ time (real linear basis) per intersection.
 
-#### 朴素算法
+#### Naive algorithm
 
-设要求交的线性基分别是 $\alpha$ 和 $\beta$．线性基求交的算法只需要对线性基暴力合并的算法做如下调整：（以异或线性基为例）
+Let the bases to intersect be $\alpha$ and $\beta$. The intersection algorithm only needs the following changes to the brute-force merge algorithm (using the XOR basis as the example):
 
--   将线性基 $\beta$ 中的向量 $\beta_j$ 利用 [贪心法](#贪心法) 尝试插入到 $\alpha$ 中，并初始化线性基的交 $\gamma$ 为空集；
--   在插入时，需要记录要插入的向量中，线性基 $\beta$ 中元素的贡献．具体地，维持一个新向量 $b$，初始化为 $\beta_j$，而且，如果正在插入的向量与线性基中第 $x$ 位的向量取了异或，那么贡献 $b$ 也要与第 $x$ 位记录的贡献 $b_x$ 取一次异或；
--   如果插入成功，在线性基的第 $x$ 位插入了向量 $\beta_j'$，就将第 $x$ 位记录的 $b_x$ 改为得到 $\beta_j'$ 的过程中线性基 $\beta$ 中元素的贡献 $b$；
--   如果插入不成功，就将过程中记录到的线性基 $\beta$ 中元素的贡献 $b$ 插入到 $\gamma$ 中．
+-   Try to insert each vector $\beta_j$ of basis $\beta$ into $\alpha$ using the [greedy method](#greedy-method), and initialize the intersection $\gamma$ as the empty set;
+-   During insertion, record the contribution of elements of $\beta$ to the vector being inserted. Specifically, keep a new vector $b$, initialized to $\beta_j$. Whenever the vector being inserted is XORed with the basis vector at position $x$, also XOR the contribution $b$ with the contribution $b_x$ recorded at position $x$;
+-   If the insertion succeeds and the vector $\beta_j'$ is placed at position $x$ of the basis, set the recorded $b_x$ at position $x$ to the contribution $b$ of elements of $\beta$ collected while producing $\beta_j'$;
+-   If the insertion fails, insert the recorded contribution $b$ of elements of $\beta$ into $\gamma$.
 
-这样得到的线性基 $\gamma$ 就是所求的交，当然，该算法同时也求出了线性基的并．
+The resulting basis $\gamma$ is the intersection we want. Of course, the algorithm also finds the union of the bases.
 
-??? note "对算法的解释"
-    设合并后的线性基为 $\{\alpha_1,\cdots,\alpha_m,\beta'_{j_1},\cdots,\beta'_{j_\ell}\}$，其中，$\beta'_{j_k}$ 是插入 $\beta_{j_k}$ 时最后得到的向量．那么，$\{\alpha_1,\cdots,\alpha_m,\beta_{j_1},\cdots,\beta_{j_\ell}\}$ 同样是一组合并后的线性基．记 $\beta^+$ 为集合 $\{\beta_{j_1},\cdots,\beta_{j_\ell}\}$，则合并后的基可以写作 $\alpha\cup\beta^+$．而且，和空间中的每个向量 $c$ 都可以唯一地表示成
+??? note "Explanation of the algorithm"
+    Let the merged basis be $\{\alpha_1,\cdots,\alpha_m,\beta'_{j_1},\cdots,\beta'_{j_\ell}\}$, where $\beta'_{j_k}$ is the vector finally obtained when inserting $\beta_{j_k}$. Then $\{\alpha_1,\cdots,\alpha_m,\beta_{j_1},\cdots,\beta_{j_\ell}\}$ is also a merged basis. Write $\beta^+$ for the set $\{\beta_{j_1},\cdots,\beta_{j_\ell}\}$, so the merged basis can be written as $\alpha\cup\beta^+$. Moreover, every vector $c$ in the sum space can be uniquely written as
     
     $$
     c = a\oplus b
     $$
     
-    的形式，其中，$a\in\operatorname{span}\alpha$ 且 $b\in\operatorname{span}\beta^+$．这个分解中的 $b$ 就是前文算法所 **试图** 记录的「线性基 $\beta$ 中元素的贡献」．严格地说，只是 $\beta$ 中最后成功插入的那些向量的贡献．
+    where $a\in\operatorname{span}\alpha$ and $b\in\operatorname{span}\beta^+$. The $b$ in this decomposition is exactly the "contribution of elements of $\beta$" that the algorithm above **tries** to record. Strictly speaking, it is only the contribution of the vectors of $\beta$ that were successfully inserted in the end.
     
-    对于成功的插入，最后记录的 $b$ 就是该分解中的 $b$ 项．设 $\beta_j\in\beta^+$．初始时，$\beta_j=0\oplus\beta_j$，已经是 $\beta_j$ 在基 $\alpha\cup\beta^+$ 上的正确的分解．在更新 $\beta'_j=a\oplus b$ 为 $\beta'_j\oplus c_x$ 时，因为 $\beta_j'\oplus c_x=(a\oplus a_x)\oplus(b\oplus b_x)$，所以，只需要更新 $b$ 为 $b\oplus b_x$，就可以保证分解依然正确．因此，归纳可知，最后插入 $\beta'_j$ 到合并后的线性基中时，记录的贡献 $b$ 就是上述分解中的 $b$ 项．
+    For a successful insertion, the final recorded $b$ is the $b$ term of this decomposition. Let $\beta_j\in\beta^+$. Initially $\beta_j=0\oplus\beta_j$, which is already the correct decomposition of $\beta_j$ over the basis $\alpha\cup\beta^+$. When we update $\beta'_j=a\oplus b$ to $\beta'_j\oplus c_x$, since $\beta_j'\oplus c_x=(a\oplus a_x)\oplus(b\oplus b_x)$, we only need to update $b$ to $b\oplus b_x$ to keep the decomposition correct. So by induction, when $\beta'_j$ is finally inserted into the merged basis, the recorded contribution $b$ is the $b$ term of the decomposition above.
     
-    对于不成功的插入，最后要插入的变量一定会变成 $0$，而此时的贡献 $b$ 要插入到 $\gamma$ 中．此时，如果重复上面的论证，会发现仍然能够保证在插入过程中总是有 $\beta_j'=a\oplus b$，且 $a\in\operatorname{span}\alpha$，只是 $b$ 不再属于 $\operatorname{span}\beta^+$．这是因为初始化时，$\beta_j=0\oplus\beta_j$ 中的 $\beta_j\notin\beta^+$．除此之外，贡献更新时异或的项都属于 $\operatorname{span}\beta^+$．所以，实际上，有 $b\oplus\beta_j\in\operatorname{span}\beta^+$．
+    For a failed insertion, the vector being inserted must end up as $0$, and then the contribution $b$ is inserted into $\gamma$. Repeating the argument above, we still always have $\beta_j'=a\oplus b$ during insertion with $a\in\operatorname{span}\alpha$, except that $b$ no longer lies in $\operatorname{span}\beta^+$. This is because at initialization, the $\beta_j$ in $\beta_j=0\oplus\beta_j$ satisfies $\beta_j\notin\beta^+$. Apart from that, every term XORed in when updating the contribution lies in $\operatorname{span}\beta^+$. So in fact $b\oplus\beta_j\in\operatorname{span}\beta^+$.
     
-    那么，为什么将这些插入不成功时的 $b$ 都插入到 $\gamma$ 中，就能得到交空间的线性基呢？首先，插入 $\beta_j$ 不成功，最后一定会得到 $0=a\oplus b$，其中，$a\in\operatorname{span}\alpha$ 且 $b\in\operatorname{span}(\beta^+\cup\{\beta_j\})\subseteq\operatorname{span}\beta$．因此，$b=a$ 必然位于交空间 $\operatorname{span}\alpha\cap\operatorname{span}\beta$ 中．反过来，设 $c$ 是交空间中的任意元素，因为 $c\in\operatorname{span}\beta$，所以 $c$ 可以表示为 $\beta$ 中元素的线性组合（异或和）：
+    So why does inserting all these $b$ from failed insertions into $\gamma$ give a basis of the intersection? First, if inserting $\beta_j$ fails, we must end with $0=a\oplus b$, where $a\in\operatorname{span}\alpha$ and $b\in\operatorname{span}(\beta^+\cup\{\beta_j\})\subseteq\operatorname{span}\beta$. Hence $b=a$ must lie in the intersection $\operatorname{span}\alpha\cap\operatorname{span}\beta$. Conversely, let $c$ be any element of the intersection. Since $c\in\operatorname{span}\beta$, $c$ can be written as a linear combination (XOR sum) of elements of $\beta$:
     
     $$
     c = \bigoplus_{\beta_j\in\beta}\lambda_j\beta_j,
     $$
     
-    其中，$\lambda_j\in\{0,1\}$．对于每一个 $\beta_j\notin\beta^+$，记相应的插入到 $\gamma$ 中的贡献为 $b_j$，就有
+    where $\lambda_j\in\{0,1\}$. For each $\beta_j\notin\beta^+$, let $b_j$ be the corresponding contribution inserted into $\gamma$. Then
     
     $$
     c\oplus\bigoplus_{\beta_j\notin\beta^+}\lambda_jb_j = \bigoplus_{\beta_j\in\beta^+}\lambda_j\beta_j+\bigoplus_{\beta_j\notin\beta^+}\lambda_j(\beta_j\oplus b_j),
     $$
     
-    注意到，$b_j$ 和 $c$ 都位于交空间中，因而左侧必然也位于交空间中，故而左侧可以写成 $\alpha$ 中元素的线性组合；同时，右侧所有项，要么 $\beta_j\in\beta^+$，要么 $\beta_j\notin\beta^+$ 且 $\beta_j\oplus b_j\in\beta^+$，故而，右侧实际上是 $\beta^+$ 中元素的线性组合．但是，$\alpha\cup\beta^+$ 线性无关，故而所有的系数都是 $0$，也就是说 $c=\bigoplus_{\beta_j\notin\beta^+}\lambda_jb_j\in\operatorname{span}\{b_1,\cdots,b_j\}$．这就说明了，这些无法插入的向量的贡献 $b$ 共同张成了交空间．
+    Note that $b_j$ and $c$ both lie in the intersection, so the left side also lies in the intersection, and hence it can be written as a linear combination of elements of $\alpha$. Meanwhile, every term on the right side has either $\beta_j\in\beta^+$, or $\beta_j\notin\beta^+$ and $\beta_j\oplus b_j\in\beta^+$, so the right side is actually a linear combination of elements of $\beta^+$. But $\alpha\cup\beta^+$ is linearly independent, so all coefficients are $0$. That is, $c=\bigoplus_{\beta_j\notin\beta^+}\lambda_jb_j\in\operatorname{span}\{b_1,\cdots,b_j\}$. This shows that the contributions $b$ of the vectors that failed to insert together span the intersection.
     
-    根据这一解释，过程中维护贡献 $b$ 的目的，实际上是为了维护分解 $a\oplus b$；而且，最后向 $\gamma$ 插入贡献时也总有 $a=b$．所以，无论维护 $\alpha$ 还是 $\beta$ 中元素的贡献（即无论维护 $a$ 还是 $b$），得到的结果都是正确的．如果要维护线性基 $\alpha$ 中元素的贡献，只需要修改初始化时相应贡献的取值：每个 $\alpha$ 中的向量 $\alpha_i$ 初始就有贡献 $\alpha_i$，而插入的 $\beta_j$ 初始贡献为 $0$．
+    From this explanation, the real purpose of maintaining the contribution $b$ is to maintain the decomposition $a\oplus b$. Also, when a contribution is finally inserted into $\gamma$, we always have $a=b$. So whether we maintain the contribution of elements of $\alpha$ or of $\beta$ (that is, whether we maintain $a$ or $b$), the result is correct. To maintain the contribution of elements of $\alpha$, just change the initial contributions: each vector $\alpha_i$ in $\alpha$ starts with contribution $\alpha_i$, and each inserted $\beta_j$ starts with contribution $0$.
 
-模板题代码如下：
+Code for the template problem:
 
-??? example "代码（Library Checker [Intersection of $\mathbf F_2$ vector spaces](https://judge.yosupo.jp/problem/intersection_of_f2_vector_spaces)）"
+??? example "Code (Library Checker [Intersection of $\mathbf F_2$ vector spaces](https://judge.yosupo.jp/problem/intersection_of_f2_vector_spaces))"
     ```cpp
     --8<-- "docs/math/code/basis/basis_intersect_1.cpp"
     ```
 
-#### Zassenhaus 算法
+#### Zassenhaus algorithm
 
-另一种等价的做法是 Zassenhaus 算法，它同样可以同时计算出两个线性基的并和交．复杂度和上文完全一致．
+An equivalent approach is the Zassenhaus algorithm, which also computes both the union and the intersection of two bases. Its complexity is exactly the same as above.
 
-具体步骤如下：
+The steps are:
 
--   初始化一个向量长度为 $2n$ 的线性基 $\gamma$ 为空，其中的向量写成 $(a,b)$ 的形式，且 $a$ 和 $b$ 长度均为 $n$；
--   将 $\alpha$ 中的元素 $\alpha_i$ 以 $(\alpha_i,\alpha_i)$ 的形式插入 $\gamma$ 中；
--   将 $\beta$ 中的元素 $\beta_j$ 以 $(\beta_j,0)$ 的形式插入 $\gamma$ 中；
--   最后得到的线性基 $\gamma$ 中的所有非零元素 $(c_k,d_k)$ 中，$c_k$ 非零的那些向量中项 $c_k$ 的全体组成了 $\alpha$ 和 $\beta$ 的并的线性基，$c_k$ 为零的那些向量中项 $d_k$ 的全体组成了 $\alpha$ 和 $\beta$ 的交的线性基．
+-   Initialize an empty basis $\gamma$ of vectors of length $2n$. Write its vectors as $(a,b)$, where $a$ and $b$ both have length $n$;
+-   Insert each element $\alpha_i$ of $\alpha$ into $\gamma$ as $(\alpha_i,\alpha_i)$;
+-   Insert each element $\beta_j$ of $\beta$ into $\gamma$ as $(\beta_j,0)$;
+-   Among all non-zero elements $(c_k,d_k)$ of the final basis $\gamma$, the $c_k$ from the vectors with non-zero $c_k$ together form a basis of the union of $\alpha$ and $\beta$, and the $d_k$ from the vectors with zero $c_k$ together form a basis of the intersection of $\alpha$ and $\beta$.
 
-算法中的构造线性基的方法可以是 [贪心法](#贪心法) 或 [高斯消元法](#高斯消元法)，只要保证 $\gamma$ 中的线性基组成行阶梯型矩阵即可．
+The basis-building method used in the algorithm can be the [greedy method](#greedy-method) or [Gaussian elimination](#gaussian-elimination-method), as long as the basis $\gamma$ forms a matrix in row echelon form.
 
-将 Zassenhaus 算法中的消元的步骤与上面的朴素算法相比较，很容易发现，基于贪心法的 Zassenhaus 算法相当于维护 $\alpha$ 中元素的贡献的朴素算法．如果转而先插入所有 $(\alpha_i,0)$，再插入所有 $(\beta_j,\beta_j)$，那么基于贪心法的 Zassenhaus 算法就相当于维护 $\beta$ 中元素贡献的朴素算法．根据消元步骤的等价性，Zassenhaus 算法的正确性也是成立的．
+Comparing the elimination steps of the Zassenhaus algorithm with the naive algorithm above, it is easy to see that the Zassenhaus algorithm based on the greedy method is the same as the naive algorithm that maintains the contribution of elements of $\alpha$. If we instead first insert all $(\alpha_i,0)$ and then insert all $(\beta_j,\beta_j)$, the greedy-based Zassenhaus algorithm becomes the naive algorithm that maintains the contribution of elements of $\beta$. Since the elimination steps are equivalent, the Zassenhaus algorithm is also correct.
 
-除此之外，还可以再提供一个独立且更为一般的代数证明：
+Besides that, here is an independent and more general algebraic proof:
 
-??? note "正确性证明"
-    设 $V$ 为一线性空间，且有子空间 $U=\operatorname{span}\alpha$ 和 $W=\operatorname{span}\beta$．算法本身相当于通过化简为行阶梯型来求子空间
+??? note "Proof of correctness"
+    Let $V$ be a vector space with subspaces $U=\operatorname{span}\alpha$ and $W=\operatorname{span}\beta$. The algorithm reduces to row echelon form to find a basis $\gamma$ of the subspace
     
     $$
     H = \operatorname{span}(\{(\alpha_i,\alpha_i):\alpha_i\in\alpha\}\cup\{(\beta_j,0):\beta_j\in\beta\})
     $$
     
-    的一组基 $\gamma$．算法最后，$\gamma$ 中的元素 $(c_k,d_k)$ 根据 $c_k\neq 0$ 与否需要分为两类，所以不妨考察投影映射 $\pi:H\rightarrow V$ 且 $\pi(a,b)=a$．于是，$\pi(H)=U+W$ 且容易验证
+    At the end of the algorithm, the elements $(c_k,d_k)$ of $\gamma$ are split into two groups by whether $c_k\neq 0$, so consider the projection $\pi:H\rightarrow V$ with $\pi(a,b)=a$. Then $\pi(H)=U+W$, and it is easy to check that
     
     $$
     \begin{aligned}
@@ -334,70 +334,70 @@ OI 中有关线性基的应用一般只涉及两类线性空间：$n$ 维实线�
     \end{aligned}
     $$
     
-    根据 [线性映射的相关定理](./linear-mapping.md#线性映射的核空间与像空间)，有 $\dim H = \dim\pi(H)+\dim\ker\pi = \dim(U+W)+\dim(U\cap W)$．
+    By the [theorems on linear maps](./linear-mapping.md#线性映射的核空间与像空间), $\dim H = \dim\pi(H)+\dim\ker\pi = \dim(U+W)+\dim(U\cap W)$.
     
-    行阶梯型矩阵的前几列仍然是行阶梯型矩阵，因而 $c_k\neq 0$ 的行的数目，恰好等于 $\alpha\cup\beta$ 的行秩，亦即 $\dim(U+W)$；而且，这些行中 $c_k$ 的集合就形成了 $U+W$ 的一组基．剩下的非零行恰好有 $\dim(U\cap W)$ 个，且都满足 $c_k=0$．对于这些行中的 $d_k$，因为有 $(0,d_k)\in\ker\pi$，所以 $d_k\in U\cap W$；而且，$(0,d_k)$ 作为行阶梯型矩阵的行，必然线性无关，这就说明这些 $d_k$ 都线性无关．综合起来，这些 $d_k$ 是交空间 $U\cap W$ 中大小为 $\dim(U\cap W)$ 的线性无关组，所以也必然是该空间的一组基．
+    The first few columns of a matrix in row echelon form are still in row echelon form, so the number of rows with $c_k\neq 0$ equals the row rank of $\alpha\cup\beta$, i.e. $\dim(U+W)$; moreover, the $c_k$ of these rows form a basis of $U+W$. The remaining non-zero rows number exactly $\dim(U\cap W)$, and all have $c_k=0$. For the $d_k$ in these rows, since $(0,d_k)\in\ker\pi$, we have $d_k\in U\cap W$; also, the $(0,d_k)$ are rows of a row echelon matrix, so they are linearly independent, which means the $d_k$ are linearly independent. Together, the $d_k$ form a linearly independent set of size $\dim(U\cap W)$ in the intersection $U\cap W$, so they must be a basis of that space.
 
-模板题代码如下：
+Code for the template problem:
 
-??? example "代码（Library Checker [Intersection of $\mathbf F_2$ vector spaces](https://judge.yosupo.jp/problem/intersection_of_f2_vector_spaces)）"
+??? example "Code (Library Checker [Intersection of $\mathbf F_2$ vector spaces](https://judge.yosupo.jp/problem/intersection_of_f2_vector_spaces))"
     ```cpp
     --8<-- "docs/math/code/basis/basis_intersect_2.cpp"
     ```
 
-注意，输出时只需要考虑前 $n$ 位均为零的向量即可．
+Note that when printing, you only need to consider the vectors whose first $n$ bits are all zero.
 
-### 拓展：前缀线性基
+### Extension: prefix linear basis
 
-本节只讨论异或线性基的情形，并假设单个向量可以存储在 $O(1)$ 的空间内，且单次操作复杂度总是 $O(1)$ 的．
+This section only covers XOR bases, and assumes that a single vector can be stored in $O(1)$ space and that each single operation takes $O(1)$ time.
 
-对于需要多次查询区间异或最大值的情形，一种常见的做法是 [猫树](../../ds/cat-tree.md) 配合线性基，时间复杂度为 $O(nm\log m+n^2q)$，其中，$n$ 是向量长度，$m$ 是序列长度，$q$ 是询问次数．另一种可行的做法是利用前缀线性基（或称时间戳线性基），可以将复杂度降低到 $O(n(m+q))$．
+When we need to answer many queries for the maximum XOR over a range, a common approach is a [cat tree](../../ds/cat-tree.md) combined with linear bases, with time complexity $O(nm\log m+n^2q)$, where $n$ is the vector length, $m$ is the sequence length and $q$ is the number of queries. Another approach uses a prefix linear basis (also called a timestamped linear basis), which brings the complexity down to $O(n(m+q))$.
 
-前缀线性基允许对于序列的每个前缀，都维护该前缀的所有后缀的线性基，这样就可以支持查询每个区间的线性基．注意到序列的某个前缀 $[1,i]$ 的所有后缀 $[j,i]$ 的线性基是相互包含的，即 $[j,i]$ 的线性基总是包含着 $[j+1,i]$ 的线性基，所以，这些后缀的线性基中互不相同的至多只有 $n$ 种，而且总是可以通过向空集中逐步添加新的向量来得到自 $[i,i]$ 到 $[1,i]$ 所有这些后缀的线性基．因此，利用这个单调性，只需要为添加的每个向量 $v$，都标记它出现的最大下标 $t$，就可以在 $O(n)$ 的空间内存储所有后缀的线性基．而且，查询区间 $[j,i]$ 对应的线性基时，只需要在 $i$ 处的前缀线性基中仅保留标记 $t\ge j$ 的那些向量即可．
+A prefix linear basis maintains, for each prefix of the sequence, the bases of all suffixes of that prefix, so it can answer queries for the basis of any range. Note that the bases of all suffixes $[j,i]$ of a prefix $[1,i]$ are nested: the basis of $[j,i]$ always contains the basis of $[j+1,i]$. So among these suffix bases there are at most $n$ distinct ones, and we can always get all the suffix bases from $[i,i]$ to $[1,i]$ by adding new vectors one at a time to the empty set. Using this monotonicity, we only need to mark each added vector $v$ with the largest index $t$ at which it appears, and then we can store the bases of all suffixes in $O(n)$ space. To query the basis of range $[j,i]$, take the prefix linear basis at $i$ and keep only the vectors with mark $t\ge j$.
 
-不妨将每个向量 $v$ 的标记 $t$ 称为它的时间戳．线性基中的向量 $v$ 总是可以表示为原序列中某些元素的异或和，比如 $v_{i_1}\oplus v_{i_2}\oplus\cdots\oplus v_{i_k}$．而在所有这样的可能的表示中，最小下标的最大值就是 $t$，即
+Call the mark $t$ of each vector $v$ its timestamp. A vector $v$ in the basis can always be written as the XOR of some elements of the original sequence, such as $v_{i_1}\oplus v_{i_2}\oplus\cdots\oplus v_{i_k}$. Over all such possible representations, the largest possible minimum index is $t$, that is,
 
 $$
 t(v) = \max\{j:\exists i_1,\cdots,i_k\in[j,i]\text{ s.t. }v=v_{i_1}\oplus v_{i_2}\oplus\cdots\oplus v_{i_k}\}.
 $$
 
-这个表达式不过是将上一段的叙述用形式的语言写出来而已．它给我们带来的启发是，要维护线性基中每个向量 $v$ 的时间戳，只需要贪心地选取尽可能新的向量替换掉旧的向量即可．
+This expression just restates the previous paragraph in formal language. What it suggests is that to maintain the timestamp of each vector $v$ in the basis, we only need to greedily replace old vectors with vectors that are as new as possible.
 
-基于上文提到的 [贪心法](#贪心法) 构造线性基，前缀线性基在构造过程中做了如下调整：
+Starting from the [greedy method](#greedy-method) above, the prefix linear basis makes the following changes during construction:
 
--   为线性基中保留的每个向量 $a_x$ 都保存一个时间戳 $t_x$，初始时均设为 $0$；
--   要添加序列中第 $i$ 个向量 $v$，仍然从高位向低位扫，但同时需要记录当前时间 $i$；
--   如果 $v$ 的第 $x$ 位是一，就比较线性基中已有的向量 $a_x$ 的时间戳 $t_x$ 和当前时间 $i$：
-    -   如果 $i>t_x$，即要添加的向量时间更晚，就将 $a_x$ 设为 $v$，并更新时间戳为 $i$，并将旧的 $a_x$ 异或 $v$ 的结果 $a_x\oplus v$ 按照之前记录的时间 $t_x$ 继续添加过程；
-    -   如果 $i<t_x$，即要添加的向量时间更早，不更新 $a_x$ 和 $t_x$，将 $v$ 异或 $a_x$ 后继续添加即可．
+-   Store a timestamp $t_x$ for every vector $a_x$ kept in the basis, initially all $0$;
+-   To add the $i$-th vector $v$ of the sequence, still scan from the highest bit to the lowest, but also keep track of the current time $i$;
+-   If bit $x$ of $v$ is one, compare the timestamp $t_x$ of the existing basis vector $a_x$ with the current time $i$:
+    -   If $i>t_x$, the vector being added is newer: set $a_x$ to $v$, update the timestamp to $i$, and continue the adding process with $a_x\oplus v$ (the old $a_x$ XOR $v$) using the previously recorded time $t_x$;
+    -   If $i<t_x$, the vector being added is older: leave $a_x$ and $t_x$ unchanged, XOR $v$ with $a_x$, and continue adding.
 
-也就是说，如果当前位可以通过较新的向量表示，就直接用较新的向量；否则，保留原来的向量．在更新位置 $x$ 的向量时，不能将异或的结果 $a_x\oplus v$ 存入位置 $x$，因为异或的结果 $a_x\oplus v$ 的时间戳为 $\min\{t(a_x)=t(v)\}=t(a_x)$，小于要添加的变量 $v$ 的时间戳 $t(v)$．同样的原因，[高斯消元法](#高斯消元法) 构造线性基的过程中向上更新时可能会破坏时间戳的性质，所以不再适用于构造前缀线性基．
+In other words, if the current bit can be represented by a newer vector, use the newer vector; otherwise keep the old one. When updating the vector at position $x$, we cannot store the XOR result $a_x\oplus v$ at position $x$, because its timestamp is $\min\{t(a_x)=t(v)\}=t(a_x)$, which is smaller than the timestamp $t(v)$ of the vector $v$ being added. For the same reason, building a basis with [Gaussian elimination](#gaussian-elimination-method) may break the timestamp property when it updates upward, so it no longer works for building a prefix linear basis.
 
-模板题代码如下：
+Code for the template problem:
 
-??? example "代码（Codeforces [1100F Ivan and Burgers](https://codeforces.com/problemset/problem/1100/F)）"
+??? example "Code (Codeforces [1100F Ivan and Burgers](https://codeforces.com/problemset/problem/1100/F))"
     ```cpp
     --8<-- "docs/math/code/basis/prefix_basis.cpp"
     ```
 
-如果需要在线询问，也可以用 $O(mn)$ 的空间将每个前缀处的前缀线性基都存下来再查询，这可以看作是一种「可持久化」线性基．如果需要用到高斯消元法得到的线性基的性质，可以在查询时另行处理．
+If queries must be answered online, we can also spend $O(mn)$ space to store the prefix linear basis at every prefix and then query. This can be seen as a kind of "persistent" linear basis. If you need the properties of the basis produced by Gaussian elimination, handle that separately at query time.
 
-### 练习题
+### Exercises
 
--   [Luogu P3812【模板】线性基](https://www.luogu.com.cn/problem/P3812)
--   [Acwing 3164. 线性基](https://www.acwing.com/problem/content/description/3167)
+-   [Luogu P3812 Template: Linear Basis](https://www.luogu.com.cn/problem/P3812)
+-   [Acwing 3164. Linear Basis](https://www.acwing.com/problem/content/description/3167)
 -   [SGU 275 to xor or not xor](https://codeforces.com/problemsets/acmsguru/problem/99999/275)
 -   [HDU 3949 XOR](https://acm.hdu.edu.cn/showproblem.php?pid=3949)
 -   [HDU 6579 Operation](https://acm.hdu.edu.cn/showproblem.php?pid=6579)
--   [Luogu P4151 \[WC2011\] 最大 XOR 和路径](https://www.luogu.com.cn/problem/P4151)
+-   [Luogu P4151 \[WC2011\] Maximum XOR Path](https://www.luogu.com.cn/problem/P4151)
 -   [Library Checker - Intersection of $\mathbf F_2$ vector spaces](https://judge.yosupo.jp/problem/intersection_of_f2_vector_spaces)
 -   [AtCoder Grand Contest 045 A - Xor Battle](https://atcoder.jp/contests/agc045/tasks/agc045_a)
 -   [Codeforces 1100F Ivan and Burgers](https://codeforces.com/problemset/problem/1100/F)
--   [Luogu P3292 \[SCOI2016\] 幸运数字](https://www.luogu.com.cn/problem/P3292)
+-   [Luogu P3292 \[SCOI2016\] Lucky Numbers](https://www.luogu.com.cn/problem/P3292)
 
-## 参考资料与注释
+## References and notes
 
-1.  丘维声，高等代数（下）．清华大学出版社．
+1.  Qiu Weisheng, *Advanced Algebra* (Volume 2). Tsinghua University Press.
 2.  [Basis (linear algebra) - Wikipedia](https://en.wikipedia.org/wiki/Basis_%28linear_algebra%29)
 3.  [Vector Basis -- from Wolfram MathWorld](https://mathworld.wolfram.com/VectorBasis.html)
 4.  [Zassenhaus algorithm - Wikipedia](https://en.wikipedia.org/wiki/Zassenhaus_algorithm)

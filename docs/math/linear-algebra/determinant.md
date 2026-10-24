@@ -1,14 +1,14 @@
-行列式，是方阵的一种运算．对于方阵 $A$，$\det A$ 表示方阵 $A$ 的行列式．
+The determinant is an operation on square matrices. For a square matrix $A$, $\det A$ denotes the determinant of $A$.
 
-本文介绍行列式的三种定义．可以证明，本文中的定义方法是等价的．
+This page introduces three definitions of the determinant. One can prove that they are equivalent.
 
-## 全排列方法定义
+## Definition via permutations
 
-前置知识：[置换](../permutation.md)、[逆序数](../permutation.md#逆序数)．
+Prerequisites: [permutations](../permutation.md), [inversion number](../permutation.md#逆序数).
 
-手动计算较低阶的行列式可以采用这种方法，它的时间复杂度为阶乘量级．
+This method works for computing low-order determinants by hand. Its time complexity is factorial.
 
-使用记号 $\pi(j_1j_2\cdots j_n)$ 表示排列 $j_1j_2\cdots j_n$ 的逆序数，$S_n$ 为全体长度为 $n$ 的排列构成的集合．记号：
+Let $\pi(j_1j_2\cdots j_n)$ denote the inversion number of the permutation $j_1j_2\cdots j_n$, and let $S_n$ be the set of all permutations of length $n$. The notation
 
 $$
 \begin{aligned}
@@ -22,19 +22,19 @@ a_{n1} & a_{n2} & \cdots & a_{nn}\\
 \end{aligned}
 $$
 
-表示的 $n$ 阶行列式是指 $n!$ 项的代数和，这些项是一切可能的取自方阵 $A$ 中不同的行与不同的列上的 $n$ 个元素的乘积 $a_{1j_1}a_{2j_2}\cdots a_{nj_n}$．
+denotes the determinant of order $n$, which is the signed sum of $n!$ terms. These terms are all possible products $a_{1j_1}a_{2j_2}\cdots a_{nj_n}$ of $n$ entries of $A$ taken from different rows and different columns.
 
-项 $a_{1j_1}a_{2j_2}\cdots a_{nj_n}$ 前面的符号是 ${(-1)}^{\pi(j_1j_2\cdots j_n)}$，也就是说，当 $j_1j_2\cdots j_n$ 是偶排列时，符号为正，当 $j_1j_2\cdots j_n$ 是奇排列时，符号为负．
+The sign in front of the term $a_{1j_1}a_{2j_2}\cdots a_{nj_n}$ is ${(-1)}^{\pi(j_1j_2\cdots j_n)}$. That is, the sign is positive when $j_1j_2\cdots j_n$ is an even permutation, and negative when it is an odd permutation.
 
-对于二三阶行列式的对角线法则，事实上就是采用了全排列定义．四阶以上行列式不再适用于对角线法则，也是同样的原因．特别地，一阶行列式就是元素本身．
+The diagonal rule for determinants of order 2 and 3 actually uses the permutation definition. The same reason explains why the diagonal rule no longer works for determinants of order 4 or higher. In particular, a determinant of order 1 is just the entry itself.
 
-定理：从 $n$ 阶行列式的第 $i_1,i_2,\cdots,i_n$ 行和第 $j_1,j_2,\cdots,j_n$ 列取出元素做乘积
+Theorem: take the product of entries from rows $i_1,i_2,\cdots,i_n$ and columns $j_1,j_2,\cdots,j_n$ of a determinant of order $n$:
 
 $$
 a_{i_1j_1}a_{i_2j_2}\cdots a_{i_nj_n}
 $$
 
-这里 $i_1,i_2,\cdots,i_n$ 和 $j_1,j_2,\cdots,j_n$ 都是 $1,2,\cdots,n$ 这 $n$ 个数的排列．那么这一项在行列式中的符号是 ${(-1)}^{s+t}$，其中
+where $i_1,i_2,\cdots,i_n$ and $j_1,j_2,\cdots,j_n$ are both permutations of the $n$ numbers $1,2,\cdots,n$. Then the sign of this term in the determinant is ${(-1)}^{s+t}$, where
 
 $$
 s=\pi(i_1i_2\cdots i_n)
@@ -44,9 +44,9 @@ $$
 t=\pi(j_1j_2\cdots j_n)
 $$
 
-定理：行列式和它的转置行列式相等．
+Theorem: a determinant equals the determinant of its transpose.
 
-定理：设行列式 $\det A$ 的第 $i$ 行的所有元素都可以表示成两项的和：
+Theorem: suppose every entry in row $i$ of the determinant $\det A$ can be written as a sum of two terms:
 
 $$
 \begin{vmatrix}
@@ -58,31 +58,31 @@ a_{n1} & a_{n2} & \cdots & a_{nn}\\
 \end{vmatrix}
 $$
 
-那么该行列式等于两个行列式 $\det A_1$ 和 $\det A_2$ 的和．其中 $A_1$ 的第 $i$ 行是 $b_{i1},b_{i2},\cdots,b_{in}$，$A_2$ 的第 $i$ 行是 $c_{i1},c_{i2},\cdots,c_{in}$，$A_1$ 和 $A_2$ 的其余各行都和 $A$ 相同．同样的性质对于列来说也成立．
+Then this determinant equals the sum of two determinants $\det A_1$ and $\det A_2$, where row $i$ of $A_1$ is $b_{i1},b_{i2},\cdots,b_{in}$, row $i$ of $A_2$ is $c_{i1},c_{i2},\cdots,c_{in}$, and all other rows of $A_1$ and $A_2$ are the same as in $A$. The same property also holds for columns.
 
-## 归纳方法定义
+## Inductive definition
 
-这种方法只是描述了行列式的一种代数性质，时间复杂度也为阶乘量级，不适合用于计算．
+This method only describes an algebraic property of the determinant. Its time complexity is also factorial, so it is not suitable for computation.
 
-### 代数余子式
+### Cofactors
 
-在 $n$ 阶行列式 $\det A$ 中，任意取定矩阵 $A$ 的 $k$ 行和 $k$ 列．位于这些行列相交处的元素构成的 $k$ 阶矩阵叫做 $k$ 阶子矩阵，其行列式称为 $k$ 阶子式．
+In a determinant $\det A$ of order $n$, pick any $k$ rows and $k$ columns of the matrix $A$. The entries where these rows and columns cross form a $k\times k$ matrix called a submatrix of order $k$, and its determinant is called a minor of order $k$.
 
-对于 $n$ 阶行列式 $\det A$，某一元素 $a_{ij}$ 的余子阵 $M_{ij}$ 指的是原矩阵 $A$ 中，划去 $a_{ij}$ 所在的行和列后，余下的 $n-1$ 阶子矩阵；其行列式 $\det M_{ij}$ 称为余子式．
+For a determinant $\det A$ of order $n$, the complementary submatrix $M_{ij}$ of an entry $a_{ij}$ is the $(n-1)\times(n-1)$ submatrix left after deleting the row and column containing $a_{ij}$ from $A$; its determinant $\det M_{ij}$ is called the minor.
 
-对于 $n$ 阶行列式 $\det A$，元素 $a_{ij}$ 的余子式 $\det M_{ij}$ 附以符号 ${(-1)}^{i+j}$ 之后，叫做元素 $a_{ij}$ 的代数余子式，用符号 $A_{ij}$ 表示．
+For a determinant $\det A$ of order $n$, the minor $\det M_{ij}$ of the entry $a_{ij}$ with the sign ${(-1)}^{i+j}$ attached is called the cofactor of $a_{ij}$, written $A_{ij}$.
 
-从上一节全排列方法的定义可以推出结论：
+From the permutation definition in the previous section we can derive:
 
-定理：若在一个 $n$ 阶行列式 $\det A$ 中，第 $i$ 行或第 $j$ 列的元素除了 $a_{ij}$ 都是 $0$，那么这个行列式等于 $a_{ij}$ 和它的代数余子式 $A_{ij}$ 的乘积．
+Theorem: if, in a determinant $\det A$ of order $n$, all entries of row $i$ or of column $j$ other than $a_{ij}$ are $0$, then the determinant equals the product of $a_{ij}$ and its cofactor $A_{ij}$.
 
-### 行列式展开
+### Cofactor expansion
 
-由于方阵转置，行列式不变，只需介绍按行展开或按列展开之一即可．
+Since transposing a square matrix does not change its determinant, we only need to introduce one of row expansion or column expansion.
 
-行列式 $\det A$ 定义为它任意一行（或一列）的所有元素与它们的对应代数余子式乘积的和．
+The determinant $\det A$ is defined as the sum of the products of all entries in any one row (or column) with their corresponding cofactors.
 
-换句话说，行列式可以使用按行（或按列）的展开式递归定义：
+In other words, the determinant can be defined recursively by expansion along a row (or column):
 
 $$
 \begin{aligned}
@@ -100,13 +100,13 @@ $$
 \end{aligned}
 $$
 
-递归终点为一阶矩阵的行列式，其即为该矩阵包含的唯一一个元素．
+The recursion ends at the determinant of a $1\times 1$ matrix, which is the only entry of that matrix.
 
-于是有结论：
+This gives the following result:
 
-定理：行列式 $\det A$ 的某一行（或某一列）的元素与另外一行（或另外一列）对应元素的代数余子式的乘积之和等于 $0$．
+Theorem: the sum of the products of the entries of one row (or column) of $\det A$ with the cofactors of the corresponding entries of another row (or column) is $0$.
 
-换句话说，当 $i\neq j$ 时：
+In other words, when $i\neq j$:
 
 $$
 a_{i1}A_{j1}+a_{i2}A_{j2}+\cdots+a_{in}A_{jn}=0
@@ -116,47 +116,47 @@ $$
 a_{1i}A_{1j}+a_{2i}A_{2j}+\cdots+a_{ni}A_{nj}=0
 $$
 
-## 公理化定义
+## Axiomatic definition
 
-公理化定义是说，满足了某些性质的运算只能是行列式．
+The axiomatic definition says that an operation satisfying certain properties can only be the determinant.
 
-前置知识：[初等变换](./elementary-operations.md)．
+Prerequisites: [elementary operations](./elementary-operations.md).
 
-记 $D_i(k)$ 为 [倍乘矩阵](./elementary-operations.md#倍乘矩阵)、$P_{ij}$ 为 [对换矩阵](./elementary-operations.md#对换矩阵)、$T_{ij}(k)$ 为 [倍加矩阵](./elementary-operations.md#倍加矩阵)．
+Let $D_i(k)$ be a [scaling matrix](./elementary-operations.md#倍乘矩阵), $P_{ij}$ a [swap matrix](./elementary-operations.md#对换矩阵), and $T_{ij}(k)$ a [row-addition matrix](./elementary-operations.md#倍加矩阵).
 
-对于一个 $n$ 阶矩阵 $A$ 的运算 $\det$，如果满足以下四个性质，称为行列式：
+An operation $\det$ on $n\times n$ matrices $A$ is called the determinant if it satisfies the following four properties:
 
--   把一个行列式的某一行或某一列的所有元素同时乘以一个数 $k$，等于用 $k$ 乘这个行列式．
+-   Multiplying all entries of one row or one column of a determinant by a number $k$ multiplies the determinant by $k$.
 
     $$
     \det(D_i(k)A) = \det(AD_i(k)) = k \det A
     $$
 
--   交换一个行列式的两行或两列，行列式改变符号．
+-   Swapping two rows or two columns of a determinant changes its sign.
 
     $$
     \det(P_{ij}A) = \det(AP_{ij}) = -\det A
     $$
 
--   把行列式的某一行或某一列的元素乘以同一数后加到另一行或另一列的对应元素上，行列式不变．
+-   Multiplying the entries of one row or column by the same number and adding them to the corresponding entries of another row or column does not change the determinant.
 
     $$
     \det(T_{ij}(k)A) = \det(AT_{ij}(k))= \det A
     $$
 
--   单位矩阵的行列式为 $1$．
+-   The determinant of the identity matrix is $1$.
 
     $$
     \det I = 1
     $$
 
-利用行列式有关初等变换的性质，可以方便手动计算更高阶的行列式．[「高斯消元」法计算行列式](../numerical/gauss.md#行列式计算)，也用到了这个性质，时间复杂度为 $O(n^3)$．
+The properties of the determinant under elementary operations make it convenient to compute higher-order determinants by hand. [Computing the determinant with Gaussian elimination](../numerical/gauss.md#行列式计算) also uses these properties, with time complexity $O(n^3)$.
 
-上述性质也有若干推论：
+These properties have several corollaries:
 
--   一个行列式中某一行或某一列的公因子可以提到行列式符号的外边．
--   如果一个行列式的某一行或某一列的元素全部是 $0$，那么这个行列式等于 $0$．
--   如果一个行列式有两行或两列的对应元素成比例，那么这个行列式等于 $0$．
--   如果一个行列式有两行或两列完全相同，那么这个行列式等于 $0$．
+-   A common factor of one row or one column can be pulled out in front of the determinant.
+-   If all entries of one row or one column of a determinant are $0$, the determinant is $0$.
+-   If two rows or two columns of a determinant are proportional, the determinant is $0$.
+-   If two rows or two columns of a determinant are identical, the determinant is $0$.
 
-这些推论在手算行列式的时候非常常用．
+These corollaries are used all the time when computing determinants by hand.
