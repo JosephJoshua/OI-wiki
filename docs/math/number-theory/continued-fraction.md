@@ -1,66 +1,66 @@
 author: 383494, CCXXXI, chunibyo-wly, Enter-tainer, Great-designer, megakite, Menci, shawlleyw, shuzhouliu, StudyingFather, Tiphereth-A, untitledunrevised, c-forrest, Resorie
 
-## 引入
+## Introduction
 
-连分数可以将实数表示为一个收敛的有理数数列的极限．这个数列中的有理数易于计算，而且提供了这个实数的最佳逼近，因而在算法竞赛中常常会用到连分数．除此之外，连分数还和欧几里得算法密切相关，因而可以应用到一系列数论问题中．
+A continued fraction represents a real number as the limit of a convergent sequence of rational numbers. The rationals in this sequence are easy to compute, and they give the best approximations of the real number, so continued fractions often come up in competitive programming. Continued fractions are also closely tied to the Euclidean algorithm, so they apply to a whole range of number theory problems.
 
-???+ info "关于连分数相关的算法实现"
-    本文会提供一系列的连分数的算法实现，其中部分算法可能无法保证计算中间过程所涉及的整数都在 32 位或 64 位整型变量的取值范围内．对于这种情形，请参考相应的 Python 的实现，或将 C++ 实现中的整型变量替换为 [高精度整数类](../bignum.md)．为突出重点，本文行文过程中的部分代码可能会调用前文实现过的函数而不再重复给出实现．
+???+ info "About the implementations of continued fraction algorithms"
+    This page gives a number of implementations of continued fraction algorithms. Some of them cannot guarantee that every integer that appears during the computation fits in a 32-bit or 64-bit integer variable. In that case, please refer to the corresponding Python implementation, or replace the integer variables in the C++ implementation with a [big integer class](../bignum.md). To keep the focus on the main ideas, some code on this page calls functions implemented earlier on the page without repeating their implementations.
 
-## 连分数
+## Continued fractions
 
-**连分数**（continued fraction）本身只是一种形式记号．
+A **continued fraction** is, by itself, just a formal notation.
 
-???+ abstract "有限连分数"
-    对于数列 $\{a_k\}_{k=0}^n$，连分数 $[a_0,a_1,\ldots,a_n]$ 表示展开式
+???+ abstract "Finite continued fraction"
+    For a sequence $\{a_k\}_{k=0}^n$, the continued fraction $[a_0,a_1,\ldots,a_n]$ denotes the expression
     
     $$
     x = a_0+\dfrac{1}{a_1+\dfrac{1}{a_2+\dfrac{1}{\cdots+\dfrac{1}{a_n}}}}.
     $$
     
-    连分数有意义，当且仅当对应的展开式有意义．这些 $a_k$ 称为连分数的 **项**（term）或 **系数**（coefficient）．
+    The continued fraction is meaningful if and only if this expression is meaningful. The numbers $a_k$ are called the **terms** or **coefficients** of the continued fraction.
 
-???+ info "记号"
-    更一般的连分数允许展开式中的分子不恒为 $1$，相应的连分数记号也需要修改，这超出了本文的范畴．另外，有些文献中会将第一个逗号「$,$」写作分号「$;$」，这与本文的记号在含义上没有差异．
+???+ info "Notation"
+    More general continued fractions allow the numerators in the expansion to be something other than $1$, and the notation has to change accordingly; that is beyond the scope of this page. Also, some references write the first comma "$,$" as a semicolon "$;$". This means exactly the same as the notation on this page.
 
-当然，连分数还可以推广到无穷数列的情形．
+Of course, continued fractions also extend to infinite sequences.
 
-???+ abstract "无限连分数"
-    对于无穷数列 $\{a_k\}_{k=0}^\infty$，连分数 $[a_0,a_1,\ldots]$ 表示极限
+???+ abstract "Infinite continued fraction"
+    For an infinite sequence $\{a_k\}_{k=0}^\infty$, the continued fraction $[a_0,a_1,\ldots]$ denotes the limit
     
     $$
     x = \lim_{k\rightarrow\infty} x_k = \lim_{k\rightarrow\infty} [a_0,a_1,\ldots,a_k].
     $$
     
-    连分数有意义，当且仅当对应的极限有意义．其中，$x_k=[a_0,a_1,\ldots,a_k]$ 称为 $x$ 的第 $k$ 个 **渐近分数**（convergent）或 **收敛子**，而 $r_k=[a_k,a_{k+1},\ldots]$ 称为 $x$ 的第 $k$ 个 **余项** 或 **完全商**（complete quotient）．相应地，项 $a_k$ 有时也称为第 $k$ 个 **部分商**（partial quotient）．
+    The continued fraction is meaningful if and only if this limit exists. Here $x_k=[a_0,a_1,\ldots,a_k]$ is called the $k$-th **convergent** of $x$, and $r_k=[a_k,a_{k+1},\ldots]$ is called the $k$-th **remainder** or **complete quotient** of $x$. Correspondingly, the term $a_k$ is sometimes called the $k$-th **partial quotient**.
 
-### 简单连分数
+### Simple continued fractions
 
-数论中，主要考虑连分数的项都是整数的情形．
+In number theory, we mainly consider continued fractions whose terms are all integers.
 
-???+ abstract "简单连分数"
-    对于连分数 $[a_0,a_1,\ldots]$，如果 $a_0$ 是整数，$a_1,a_2,\ldots$ 都是正整数，则称它为 **简单连分数**（simple continued fraction），也简称 **连分数**．如果数列 $\{a_i\}$ 有限，则称为 **有限（简单）连分数**；否则称为 **无限（简单）连分数**．而且，$a_0$ 称为它的 **整数部分**（integer part）．
+???+ abstract "Simple continued fraction"
+    A continued fraction $[a_0,a_1,\ldots]$ where $a_0$ is an integer and $a_1,a_2,\ldots$ are all positive integers is called a **simple continued fraction**, or just a **continued fraction**. If the sequence $\{a_i\}$ is finite, it is called a **finite (simple) continued fraction**; otherwise, it is called an **infinite (simple) continued fraction**. Also, $a_0$ is called its **integer part**.
 
-除非特别说明，本文提到的连分数都指的是简单连分数．可以证明，无限的简单连分数必然是收敛的，而且简单连分数的余项也一定是正的．
+Unless stated otherwise, "continued fraction" on this page always means a simple continued fraction. One can prove that an infinite simple continued fraction always converges, and that the remainders of a simple continued fraction are always positive.
 
-连分数有如下基本性质：
+Continued fractions have the following basic properties:
 
-???+ note "性质"
-    设实数 $x=[a_0,a_1,a_2,\ldots]$．那么，成立如下性质：
+???+ note "Properties"
+    Let the real number $x=[a_0,a_1,a_2,\ldots]$. Then:
     
-    1.  对于任意 $k\in\mathbf Z$，有 $x+k=[a_0+k,a_1,a_2,\ldots]$；
-    2.  对实数 $x>1$，有 $a_0>0$，且它的倒数 $x^{-1}=[0,a_0,a_1,a_2,\ldots]$．
+    1.  For any $k\in\mathbf Z$, $x+k=[a_0+k,a_1,a_2,\ldots]$;
+    2.  For a real number $x>1$, $a_0>0$, and its reciprocal is $x^{-1}=[0,a_0,a_1,a_2,\ldots]$.
 
-有限连分数对应的是有理数．每个有理数都有且仅有两种方式可以表示成连分数，长度必然一奇一偶．这两种方式唯一的区别在于最后一项是否为 $1$，即
+Finite continued fractions correspond to rational numbers. Every rational number can be written as a continued fraction in exactly two ways, and the two lengths are always one odd and one even. The only difference between the two is whether the last term is $1$, that is,
 
 $$
 x = [a_0,a_1,\ldots,a_n] = [a_0,a_1,\ldots,a_n-1,1].
 $$
 
-这两个连分数称为有理数 $x$ 的 **连分数表示**（continued fraction representation）．其中，末项不为一的称为标准表示，末项为一的称为非标准表示．[^one-representation]
+These two continued fractions are called the **continued fraction representations** of the rational number $x$. The one whose last term is not one is called the canonical representation, and the one whose last term is one is called the non-canonical representation.[^one-representation]
 
-??? example "例子"
-    有理数 $x=\dfrac{5}{3}$ 的连分数表示为
+??? example "Example"
+    The continued fraction representations of the rational number $x=\dfrac{5}{3}$ are
     
     $$
     \begin{aligned}
@@ -69,34 +69,34 @@ $$
     \end{aligned}
     $$
 
-无限连分数对应的是无理数．而且，每个无理数仅有唯一的方式表示为连分数，称为无理数的连分数表示．
+Infinite continued fractions correspond to irrational numbers. Moreover, every irrational number can be written as a continued fraction in exactly one way, called the continued fraction representation of the irrational number.
 
-### 连分数表示的求法
+### Computing the continued fraction representation
 
-要求某个实数 $x$ 的连分数表示，只需要注意到它的余项 $r_k$ 如果不是整数，就一定满足
+To find the continued fraction representation of a real number $x$, just note that if a remainder $r_k$ is not an integer, it must satisfy
 
 $$
 r_k = [a_k,a_{k+1},\ldots] = [a_k,r_{k+1}] = a_k + \dfrac{1}{r_{k+1}}.
 $$
 
-而且，$r_{k+1}>1$．因此，可以从 $r_0=x$ 开始递归地计算
+Moreover, $r_{k+1}>1$. So, starting from $r_0=x$, we can compute recursively
 
 $$
 a_k = \lfloor r_k\rfloor,\ r_{k+1} = \dfrac{1}{r_k-a_k}.
 $$
 
-这个过程产生的数列 $\{a_k\}$ 总是唯一确定的，除非某个余项 $r_k$ 成为整数．如果出现了 $r_k$ 是整数，则说明过程应当终止，可以选择输出相应的标准表示或者非标准表示．
+The sequence $\{a_k\}$ produced this way is always uniquely determined, unless some remainder $r_k$ becomes an integer. If $r_k$ is an integer, the process should stop, and we may output either the canonical or the non-canonical representation.
 
-在算法竞赛中，往往处理的都是有理数 $x=\dfrac{p}{q}$ 的情形．此时，每个余项 $r_k$ 都是有理数 $\dfrac{p_k}{q_k}$，而且对于 $k>0$，因为 $r_k>1$，就总有 $p_k>q_k$．具体计算上述递推关系，可以发现
+In competitive programming, we usually deal with a rational number $x=\dfrac{p}{q}$. Then every remainder $r_k$ is a rational number $\dfrac{p_k}{q_k}$, and for $k>0$, since $r_k>1$, we always have $p_k>q_k$. Working out the recurrence above explicitly, we find
 
 $$
 a_k = \left\lfloor\frac{p_k}{q_k}\right\rfloor,\ r_{k+1} = \dfrac{1}{r_k-a_k} = \dfrac{q_k}{p_k-a_kq_k} = \dfrac{q_k}{p_k\bmod q_k}.
 $$
 
-此时的计算过程实际上是对 $p$ 和 $q$ 做 [辗转相除法](./gcd.md#欧几里得算法)．这也说明，对于有理数 $x=\dfrac{p}{q}$，连分数表示的长度是 $O(\log\min\{p, q\})$ 的．计算有理数 $\dfrac{p}{q}$ 的复杂度也是 $O(\log\min\{p, q\})$ 的．
+This computation is really just the [Euclidean algorithm](./gcd.md#欧几里得算法) applied to $p$ and $q$. It also shows that for a rational number $x=\dfrac{p}{q}$, the length of the continued fraction representation is $O(\log\min\{p, q\})$. The complexity of computing it for $\dfrac{p}{q}$ is also $O(\log\min\{p, q\})$.
 
-???+ example "参考实现"
-    给定分数的分子 $p$ 和分母 $q$，输出连分数的系数序列 $[a_0,a_1,\ldots,a_n]$．
+???+ example "Reference implementation"
+    Given the numerator $p$ and denominator $q$ of a fraction, output the coefficient sequence $[a_0,a_1,\ldots,a_n]$ of its continued fraction.
     
     === "C++"
         ```cpp
@@ -108,12 +108,12 @@ $$
         --8<-- "docs/math/code/continued-fraction/diophantine.py:fraction"
         ```
 
-## 渐近分数
+## Convergents
 
-在连分数的定义中介绍了渐近分数的概念．实数的渐近分数就是它的连分数表示的渐近分数：在实数 $x$ 的连分数表示中，只保留前 $k$ 个项，得到的连分数 $x_k$ 就称为实数 $x$ 的第 $k$ 个渐近分数．实数 $x$ 的渐近分数 $x_k$ 都是有理数，而且序列 $\{x_k\}$ 收敛于实数 $x$．
+The definition of continued fractions introduced convergents. The convergents of a real number are the convergents of its continued fraction representation: in the continued fraction representation of a real number $x$, keep only the first $k$ terms; the resulting continued fraction $x_k$ is called the $k$-th convergent of $x$. The convergents $x_k$ of a real number $x$ are all rational, and the sequence $\{x_k\}$ converges to $x$.
 
-??? example "例子：黄金分割比的渐近分数"
-    连分数 $x=[1,1,1,1,\ldots]$ 的前几个渐近分数分别是
+??? example "Example: convergents of the golden ratio"
+    The first few convergents of the continued fraction $x=[1,1,1,1,\ldots]$ are
     
     $$
     \begin{aligned}
@@ -125,34 +125,34 @@ $$
     \end{aligned}
     $$
     
-    可以归纳地证明
+    By induction one can show that
     
     $$
     x_k = \frac{F_{k+2}}{F_{k+1}},
     $$
     
-    其中，$\{F_k\}$ 是 [斐波那契数列](../combinatorics/fibonacci.md)．根据它的通项公式可知，
+    where $\{F_k\}$ is the [Fibonacci sequence](../combinatorics/fibonacci.md). From its closed-form formula,
     
     $$
     x_k = \frac{\phi^{k+2}-(-\phi)^{-(k+2)}}{\phi^{k+1}-(-\phi)^{-(k+1)}},
     $$
     
-    其中的 $\phi=\dfrac{1+\sqrt{5}}{2}$ 是黄金分割比．当 $k$ 趋于无穷时，有
+    where $\phi=\dfrac{1+\sqrt{5}}{2}$ is the golden ratio. As $k$ tends to infinity,
     
     $$
     x=\lim_{k\rightarrow\infty}x_k=\phi.
     $$
     
-    因而，连分数 $x=[1,1,1,1,\ldots]$ 表示的是黄金分割比 $\phi$．
+    So the continued fraction $x=[1,1,1,1,\ldots]$ represents the golden ratio $\phi$.
 
-这些渐近分数趋近于相应的实数，所以可以用于逼近该实数．为此，有必要了解渐近分数的性质．
+These convergents approach the corresponding real number, so they can be used to approximate it. For that, we need to understand the properties of convergents.
 
-### 递推关系
+### Recurrence
 
-首先，要解决这些渐近分数的计算问题．虽然渐近分数总是在连分数的后面添加一项，但是并不需要每次都重新计算它的值．其实，渐近分数有如下递推关系：
+First, we need to compute these convergents. Although each convergent just appends one more term to the continued fraction, we don't need to recompute its value from scratch every time. In fact, convergents satisfy the following recurrence:
 
-???+ note "递推公式"
-    对于连分数 $x=[a_0,a_1,a_2,\ldots]$，设它的第 $k$ 个渐近分数 $x_k=[a_0,a_1,\ldots,a_k]$ 可以唯一写成既约分数 $\dfrac{p_k}{q_k}$．那么，有
+???+ note "Recurrence formula"
+    For a continued fraction $x=[a_0,a_1,a_2,\ldots]$, let its $k$-th convergent $x_k=[a_0,a_1,\ldots,a_k]$ be written uniquely as the reduced fraction $\dfrac{p_k}{q_k}$. Then
     
     $$
     \begin{aligned}
@@ -161,14 +161,14 @@ $$
     \end{aligned}
     $$
     
-    递推的起点是（形式）分数
+    The recurrence starts from the (formal) fractions
     
     $$
     x_{-1}=\frac{p_{-1}}{q_{-1}}=\frac{1}{0},\ x_{-2}=\frac{p_{-2}}{q_{-2}}=\frac{0}{1}.
     $$
 
-??? note "证明"
-    每个渐近分数都是有限连分数．前面已经提到过，求有限连分数其实相当于做辗转相除法．但是辗转相除法得到的实际上是连分数的一个后缀，而渐近分数需要的是连分数的一个前缀．为了得到这个前缀，需要考察每次加上一步时，连分数怎么变化．为此，可以使用矩阵乘法表示辗转相除过程的一步，即
+??? note "Proof"
+    Every convergent is a finite continued fraction. As mentioned above, evaluating a finite continued fraction is essentially running the Euclidean algorithm. But the Euclidean algorithm actually produces a suffix of the continued fraction, while a convergent needs a prefix. To get this prefix, we need to see how the continued fraction changes when we add one more step. For this, we can express one step of the Euclidean algorithm as a matrix multiplication:
     
     $$
     M(a)=\begin{pmatrix} a & 1 \\ 1 & 0 \end{pmatrix},\qquad
@@ -176,19 +176,19 @@ $$
     \frac{au+v}{u}=a+\frac{1}{u/v}.
     $$
     
-    向量 $(a_k,1)^{\mathrm{T}}$ 表示有限连分数 $[a_k]$；依次左乘矩阵相当于在左侧依次补上连分数的系数．将该连分数补成渐近分数 $x_k=\dfrac{p_k}{q_k}=[a_0,a_1,\ldots,a_k]$ 的过程得到如下等式：
+    The vector $(a_k,1)^{\mathrm{T}}$ represents the finite continued fraction $[a_k]$; multiplying by matrices on the left one by one adds coefficients to the continued fraction on the left one by one. Extending this continued fraction to the convergent $x_k=\dfrac{p_k}{q_k}=[a_0,a_1,\ldots,a_k]$ gives the following equation:
     
     $$
     M(a_0)M(a_1)M(a_2)\cdots M(a_{k-1})\begin{pmatrix}a_k\\1\end{pmatrix}=\begin{pmatrix}p_k\\q_k\end{pmatrix}.
     $$
     
-    由 $\det(M(a_0)M(a_1)\cdots M(a_{k-1}))=(-1)^{k}$ 知，该矩阵变换将本原向量 $(a_k,1)^{\mathrm{T}}$ 变换为 $(p_k,q_k)^{\mathrm{T}}$，故 $p_k$ 和 $q_k$ 必互质．$M(a_k)$ 的第二列为 $(1,0)^{\mathrm{T}}$，而 $M(a_{k-1})(1,0)^{\mathrm{T}}=(a_{k-1},1)^{\mathrm{T}}$，这一列的乘积可以递推代入得到．补上这一列，便得到
+    Since $\det(M(a_0)M(a_1)\cdots M(a_{k-1}))=(-1)^{k}$, this matrix maps the primitive vector $(a_k,1)^{\mathrm{T}}$ to $(p_k,q_k)^{\mathrm{T}}$, so $p_k$ and $q_k$ must be coprime. The second column of $M(a_k)$ is $(1,0)^{\mathrm{T}}$, and $M(a_{k-1})(1,0)^{\mathrm{T}}=(a_{k-1},1)^{\mathrm{T}}$, so the product for this column can be obtained by substituting recursively. Adding this column, we get
     
     $$
     M(a_0)M(a_1)M(a_2)\cdots M(a_k)=\begin{pmatrix}p_k & p_{k-1}\\q_k & q_{k-1}\end{pmatrix}.
     $$
     
-    现在只需代入矩阵乘法的前 $k$ 项，便容易得渐近分数的递推公式：
+    Now just substitute the product of the first $k$ factors, and the recurrence for convergents follows easily:
     
     $$
     \begin{aligned}
@@ -198,21 +198,21 @@ $$
     \end{aligned}
     $$
 
-???+ info "记号"
-    本文将渐近分数 $x_k$ 记作 $\dfrac{p_k}{q_k}$ 时，总是默认分子 $p_k$ 和 $q_k$ 由上面的递推关系给出．前文的证明说明，这样总能得到渐近分数的既约表示．
+???+ info "Notation"
+    Whenever this page writes a convergent $x_k$ as $\dfrac{p_k}{q_k}$, it always assumes that the numerator $p_k$ and denominator $q_k$ are given by the recurrence above. The proof above shows that this always gives the reduced form of the convergent.
 
-这个递推式说明
+This recurrence shows that
 
 $$
 x_k=\dfrac{a_kp_{k-1}+p_{k-2}}{a_kq_{k-1}+q_{k-2}}
 $$
 
-介于 $x_{k-1}$ 和 $x_{k-2}$ 之间．
+lies between $x_{k-1}$ and $x_{k-2}$.
 
-利用本节得到的递推关系，可以得到计算渐近分数的算法如下：
+Using the recurrence from this section, we get the following algorithm for computing convergents:
 
-???+ example "参考实现"
-    给定连分数的系数 $a_0,a_1,\ldots,a_n$，求渐近分数的分子和分母序列 $(p_0,q_0),(p_1,q_1),\ldots,(p_n,q_n)$．
+???+ example "Reference implementation"
+    Given the coefficients $a_0,a_1,\ldots,a_n$ of a continued fraction, find the sequences of numerators and denominators of the convergents $(p_0,q_0),(p_1,q_1),\ldots,(p_n,q_n)$.
     
     === "C++"
         ```cpp
@@ -224,29 +224,29 @@ $$
         --8<-- "docs/math/code/continued-fraction/diophantine.py:convergents"
         ```
 
-### 连项式
+### Continuants
 
-**连项式**（continuant）来源于渐近分数递推关系的中间量．[^continuant]
+A **continuant** comes from the intermediate quantities in the recurrence for convergents.[^continuant]
 
-???+ abstract "连项式"
-    对任意有限序列，如下递归定义连项式：
+???+ abstract "Continuant"
+    For any finite sequence, define the continuant recursively as follows:
     
-    -   $K(\varnothing)=1,\, K(a)=a$；
-    -   对 $n\ge 1$，$K(a_0,\ldots,a_n)=a_n K(a_0,\ldots,a_{n-1})+K(a_0,\ldots,a_{n-2})$．
+    -   $K(\varnothing)=1,\, K(a)=a$;
+    -   for $n\ge 1$, $K(a_0,\ldots,a_n)=a_n K(a_0,\ldots,a_{n-1})+K(a_0,\ldots,a_{n-2})$.
 
-根据渐近分数的递推容易发现，对 $x=[a_0,a_1,a_2,\ldots]$，其渐近分数 $\dfrac{p_k}{q_k}=[a_0,a_1,\ldots,a_k]$ 可以表示成连项式的形式：
+From the recurrence for convergents, it is easy to see that for $x=[a_0,a_1,a_2,\ldots]$, its convergent $\dfrac{p_k}{q_k}=[a_0,a_1,\ldots,a_k]$ can be written in terms of continuants:
 
 $$
 p_k=K(a_0,a_1,\ldots,a_k),\quad q_k=K(a_1,\ldots,a_k).
 $$
 
-也就是说，连项式可以用来表示有限连分数：
+In other words, continuants can represent finite continued fractions:
 
 $$
 \frac{K(a_0,a_1,\ldots,a_k)}{K(a_1,\ldots,a_k)}=[a_0,a_1,\ldots,a_k].
 $$
 
-先前的矩阵表示也容易用连项式改写．当 $k\ge 1$ 时，有
+The earlier matrix form is also easy to rewrite with continuants. For $k\ge 1$,
 
 $$
 M(a_0)\cdots M(a_k)=
@@ -256,32 +256,32 @@ K(a_1,\ldots,a_k)&K(a_1,\ldots,a_{k-1})
 \end{pmatrix}.
 $$
 
-连项式最重要的性质是其对称性．
+The most important property of continuants is their symmetry.
 
-???+ note "连项式的对称性"
-    对任意有限序列 $(a_0,\ldots,a_n)$，有
+???+ note "Symmetry of continuants"
+    For any finite sequence $(a_0,\ldots,a_n)$,
     
     $$
     K(a_0,\ldots,a_n)=K(a_n,\ldots,a_0).
     $$
 
-??? note "证明"
-    由于任意矩阵 $M(a)$ 都是对称矩阵，将其乘积转置，得到
+??? note "Proof"
+    Since every matrix $M(a)$ is symmetric, transposing the product gives
     
     $$
     (M(a_0)\cdots M(a_n))^{\mathrm{T}}=M(a_n)^{\mathrm{T}}\cdots M(a_0)^{\mathrm{T}}=M(a_n)\cdots M(a_0).
     $$
     
-    比较两个乘积矩阵的左上角，立即得到结论．
+    Comparing the top-left entries of the two products gives the result immediately.
 
-由对称性，连项式的递推关系也可以反向写作
+By symmetry, the recurrence for continuants can also be written in reverse:
 
 $$
 K(a_0,\ldots,a_n)=a_0 K(a_1,\ldots,a_n)+K(a_2,\ldots,a_n).
 $$
 
-??? info "连项式的行列式表示"
-    连项式可以写成行列式的形式：
+??? info "Determinant form of continuants"
+    A continuant can be written as a determinant:
     
     $$
     K(a_0,\ldots,a_k)=\det
@@ -294,38 +294,38 @@ $$
     \end{pmatrix}.
     $$
     
-    这是一个 [三对角矩阵](https://en.wikipedia.org/wiki/Tridiagonal_matrix) 的行列式，从左上角开始展开，可以得到反向递推．反过来，从右下角开始展开，则能得到定义中的递推关系．
+    This is the determinant of a [tridiagonal matrix](https://en.wikipedia.org/wiki/Tridiagonal_matrix). Expanding from the top-left corner gives the reverse recurrence. Conversely, expanding from the bottom-right corner gives the recurrence in the definition.
 
-连项式另一个有趣的性质是其拼接性质．
+Another interesting property of continuants is the concatenation property.
 
-???+ note "连项式的拼接"
-    对两个非空序列 $(a_1,\ldots,a_m)$ 和 $(b_1,\ldots,b_n)$，有
+???+ note "Concatenation of continuants"
+    For two non-empty sequences $(a_1,\ldots,a_m)$ and $(b_1,\ldots,b_n)$,
     
     $$
     K(a_1,\ldots,a_m,b_1,\ldots,b_n)=K(a_1,\ldots,a_m)K(b_1,\ldots,b_n)+K(a_1,\ldots,a_{m-1})K(b_2,\ldots,b_n).
     $$
 
-??? note "证明"
-    仅需要将两段矩阵乘积利用结合律分开即可．令
+??? note "Proof"
+    Just split the matrix product into two parts using associativity. Let
     
     $$
     P=M(a_1)\cdots M(a_m),\quad Q=M(b_1)\cdots M(b_n),
     $$
     
-    那么有
+    then
     
     $$
     (PQ)_{1,1}=P_{1,1}Q_{1,1}+P_{1,2}Q_{2,1}.
     $$
     
-    这恰对应拼接性质的恒等式．
+    This is exactly the identity of the concatenation property.
 
-该性质可以用来考察辗转相除法的中间量．例如，Heilbronn 曾用它估计辗转相除法的平均步数[^heilbronn]．下面给出一个利用该性质处理相关求和问题的竞赛例题．
+This property can be used to study the intermediate quantities of the Euclidean algorithm. For example, Heilbronn used it to estimate the average number of steps of the Euclidean algorithm[^heilbronn]. Below is a contest problem that uses this property to handle a related sum.
 
-???+ example "[洛谷 P17229 \[Math×Girl²\] 英雄变奏曲](https://www.luogu.com.cn/problem/P17229)"
-    给定一个正整数 $N$，以及两个整数值函数 $g,h:\{1,2,\ldots,N\}\to\mathbf{Z}$ 的点值．
+???+ example "[Luogu P17229 \[Math×Girl²\] Heroic Variations](https://www.luogu.com.cn/problem/P17229)"
+    Given a positive integer $N$ and the values of two integer-valued functions $g,h:\{1,2,\ldots,N\}\to\mathbf{Z}$.
     
-    对于满足 $1\le y<x\le N$ 的整数 $x,y$，令 $z=x\bmod y$，并递归定义
+    For integers $x,y$ with $1\le y<x\le N$, let $z=x\bmod y$, and define recursively
     
     $$
     f(x,y)=
@@ -337,27 +337,27 @@ $$
     \end{cases}
     $$
     
-    求
+    Compute
     
     $$
     S(N)=
     \sum_{\substack{1\le b<a\le N\\\gcd(a,b)=1}}f(a,b).
     $$
 
-??? note "思路"
-    题目中 $f(x,y)$ 的定义对应欧几里得算法的过程．用连分数表示欧几里得算法，设 $\dfrac{x}{y}=[a_0,a_1,\ldots,a_k]$ 为有限连分数的标准表示，那么有
+??? note "Idea"
+    The definition of $f(x,y)$ in the problem follows the steps of the Euclidean algorithm. Express the Euclidean algorithm with continued fractions: let $\dfrac{x}{y}=[a_0,a_1,\ldots,a_k]$ be the canonical representation of the finite continued fraction. Then
     
     $$
     f(x,y)=\sum_{i=0}^{k-1}g(a_i)h(a_{i+1}).
     $$
     
-    利用连项式的拼接性质，从 $a_i$ 处切开连项式，有
+    Using the concatenation property of continuants and cutting the continuant at $a_i$, we get
     
     $$
     K(a_0,a_1,\ldots,a_k)=K(a_0,\ldots,a_i)K(a_{i+1},\ldots,a_k)+K(a_0,\ldots,a_{i-1})K(a_{i+2},\ldots,a_k).
     $$
     
-    令
+    Let
     
     $$
     \begin{aligned}
@@ -366,21 +366,21 @@ $$
     \end{aligned}
     $$
     
-    由连项式表示有限连分数的性质得到
+    Since continuants represent finite continued fractions, we get
     
     $$
     \frac{X}{Y}=[a_i,a_{i-1},\ldots,a_0],\quad \frac{Z}{W}=[a_{i+1},a_{i+2},\ldots,a_k].
     $$
     
-    需要满足的条件是 $\gcd(X,Y)=\gcd(Z,W)=1$，$1\le Y\le X$，$1\le W\le Z$，$XZ+YW=x\le N$．看起来我们做出了一个 $(x,y,i)$ 和 $(X,Y,Z,W)$ 之间的双射．但是注意此处由于 $a_0$ 可能为 $1$，$\dfrac{X}{Y}$ 对应的连分数可能是非标准表示；而 $\dfrac{Z}{W}$ 对应的连分数则必定为标准表示（由此也必不可能有 $Z=W=1$）．
+    The conditions to satisfy are $\gcd(X,Y)=\gcd(Z,W)=1$, $1\le Y\le X$, $1\le W\le Z$, $XZ+YW=x\le N$. It looks like we have built a bijection between $(x,y,i)$ and $(X,Y,Z,W)$. But note that since $a_0$ may be $1$, the continued fraction for $\dfrac{X}{Y}$ may be the non-canonical representation, while the continued fraction for $\dfrac{Z}{W}$ is always the canonical representation (so $Z=W=1$ is also impossible).
     
-    现在算一下这个变换之后，四元组 $(X,Y,Z,W)$ 对原求和式的贡献．对分数取整可以得到连分数首项，这样我们就得到了函数的自变量．接下来对 $(X,Y)$ 分情况讨论：
+    Now let's compute the contribution of a quadruple $(X,Y,Z,W)$ to the original sum after this transformation. Taking the floor of a fraction gives the first term of its continued fraction, which gives us the function arguments. Next, we split into cases on $(X,Y)$:
     
-    1.  $Y>1$：$\dfrac{X}{Y}$ 的标准表示和非标准表示均对应一组 $(x,y,i)$，贡献为 $2g\left(\left\lfloor\dfrac{X}{Y}\right\rfloor\right)h\left(\left\lfloor\dfrac{Z}{W}\right\rfloor\right)$；
-    2.  $Y=1,X\ge2$：$\dfrac{X}{Y}=X$，对应 $[X]$ 和 $[X-1,1]$，注意后者的贡献不同，总贡献为 $(g(X)+g(X-1))h\left(\left\lfloor\dfrac{Z}{W}\right\rfloor\right)$；
-    3.  $X=Y=1$：贡献为 $g(1)h\left(\left\lfloor\dfrac{Z}{W}\right\rfloor\right)$．
+    1.  $Y>1$: both the canonical and the non-canonical representations of $\dfrac{X}{Y}$ correspond to a triple $(x,y,i)$, so the contribution is $2g\left(\left\lfloor\dfrac{X}{Y}\right\rfloor\right)h\left(\left\lfloor\dfrac{Z}{W}\right\rfloor\right)$;
+    2.  $Y=1,X\ge2$: $\dfrac{X}{Y}=X$, corresponding to $[X]$ and $[X-1,1]$. Note that the latter contributes differently, so the total contribution is $(g(X)+g(X-1))h\left(\left\lfloor\dfrac{Z}{W}\right\rfloor\right)$;
+    3.  $X=Y=1$: the contribution is $g(1)h\left(\left\lfloor\dfrac{Z}{W}\right\rfloor\right)$.
     
-    由此，我们将特别难处理的 $S(N)$ 变为了以下关于 $X,Y,Z,W$ 的求和（补充定义 $g(0)=2g(1)$）：
+    This turns the very hard sum $S(N)$ into the following sum over $X,Y,Z,W$ (with the extra definition $g(0)=2g(1)$):
     
     $$
     \begin{aligned}
@@ -389,12 +389,12 @@ $$
     \end{aligned}
     $$
     
-    这个和式相对更容易用常规工具处理，在此不再赘述．
+    This sum is easier to handle with standard tools, so we won't go into the details here.
 
-作为渐近分数的递推关系和连项式性质的推论，成立如下的反序定理和倒数定理：
+As corollaries of the recurrence for convergents and the properties of continuants, we have the following reversal theorem and reciprocal theorem:
 
-???+ note "反序定理"
-    设实数 $x=[a_0,a_1,a_2,\ldots]>0$ 的第 $k$ 个渐近分数是 $\dfrac{p_k}{q_k}$，则相邻两个渐近分数的分子和分母的比值分别为
+???+ note "Reversal theorem"
+    Let the $k$-th convergent of a real number $x=[a_0,a_1,a_2,\ldots]>0$ be $\dfrac{p_k}{q_k}$. Then the ratios of the numerators and of the denominators of two consecutive convergents are
     
     $$
     \begin{aligned}
@@ -403,54 +403,54 @@ $$
     \end{aligned}
     $$
     
-    如果 $a_0=0$ 且 $k\ge 2$，则第一个连分数应当理解为在倒数第二项处截断，即 $[a_k,a_{k-1},\ldots,a_2]$．
+    If $a_0=0$ and $k\ge 2$, the first continued fraction should be understood as cut off at the second-to-last term, that is, $[a_k,a_{k-1},\ldots,a_2]$.
 
-??? note "证明"
-    根据连项式表示可知
+??? note "Proof"
+    From the continuant representation,
     
     $$
     \frac{q_k}{q_{k-1}}=\frac{K(a_1,\ldots,a_{k-1},a_k)}{K(a_1,\ldots,a_{k-1})}=\frac{K(a_k,a_{k-1},\ldots,a_1)}{K(a_{k-1},\ldots,a_1)}=[a_k,a_{k-1},\ldots,a_1].
     $$
     
-    如果 $a_0\neq 0$，则
+    If $a_0\neq 0$, then
     
     $$
     \frac{p_k}{p_{k-1}}=\frac{K(a_0,\ldots,a_{k-1},a_k)}{K(a_0,\ldots,a_{k-1})}=\frac{K(a_k,a_{k-1},\ldots,a_0)}{K(a_{k-1},\ldots,a_0)}=[a_k,a_{k-1},\ldots,a_0].
     $$
     
-    如果 $a_0=0$，由连项式的递推关系有 $K(0,a_1,a_2,\ldots,a_k)=K(a_2,\ldots,a_k)$，故有
+    If $a_0=0$, the recurrence for continuants gives $K(0,a_1,a_2,\ldots,a_k)=K(a_2,\ldots,a_k)$, so
     
     $$
     \frac{p_k}{p_{k-1}}=\frac{K(a_2,\ldots,a_{k-1},a_k)}{K(a_2,\ldots,a_{k-1})}=\frac{K(a_k,a_{k-1},\ldots,a_2)}{K(a_{k-1},\ldots,a_2)}=[a_k,a_{k-1},\ldots,a_2].
     $$
 
-???+ note "倒数定理"
-    实数 $x>0$ 的渐近分数的倒数是 $x^{-1}$ 的渐近分数．
+???+ note "Reciprocal theorem"
+    The reciprocals of the convergents of a real number $x>0$ are the convergents of $x^{-1}$.
 
-??? note "证明"
-    不妨设 $x>1$ 且有连分数表示 $[a_0,a_1,a_2,\ldots]$，则 $x^{-1}$ 的连分数表示是 $[0,a_0,a_1,a_2,\ldots]$．它们的渐近分数可以从递推关系中求得．而且，对于 $x$，有初值条件 $x_{-2}=\dfrac{0}{1}$ 和 $x_{-1}=\dfrac{1}{0}$；对于 $y=x^{-1}$，有初值条件 $y_{-1}=\dfrac{1}{0}$ 和 $y_{0}=\dfrac{0}{1}$．因此，有 $x_{-2}=(y_{-1})^{-1}$ 和 $x_{-1}=(y_0)^{-1}$．根据递推关系，可以得到 $x_k=y_{k+1}^{-1}$．这就说明，$x$ 的渐近分数的倒数是 $y=x^{-1}$ 的渐近分数．对于 $0<x\le 1$ 的情形，也可以做类似讨论．
+??? note "Proof"
+    Without loss of generality, let $x>1$ have the continued fraction representation $[a_0,a_1,a_2,\ldots]$. Then the continued fraction representation of $x^{-1}$ is $[0,a_0,a_1,a_2,\ldots]$. Their convergents can be found from the recurrence. For $x$, the initial values are $x_{-2}=\dfrac{0}{1}$ and $x_{-1}=\dfrac{1}{0}$; for $y=x^{-1}$, the initial values are $y_{-1}=\dfrac{1}{0}$ and $y_{0}=\dfrac{0}{1}$. So $x_{-2}=(y_{-1})^{-1}$ and $x_{-1}=(y_0)^{-1}$. By the recurrence, $x_k=y_{k+1}^{-1}$. This shows that the reciprocals of the convergents of $x$ are the convergents of $y=x^{-1}$. The case $0<x\le 1$ can be handled similarly.
 
-### 误差估计
+### Error estimates
 
-利用渐近分数的递推公式，可以估计用渐近分数逼近实数产生的误差．
+Using the recurrence for convergents, we can estimate the error made when approximating a real number by its convergents.
 
-首先，可以计算相邻的渐近分数的差值：
+First, we can compute the difference between consecutive convergents:
 
-???+ note "渐近分数的差分"
-    设 $x_k=\dfrac{p_k}{q_k}$ 是实数 $x$ 的第 $k$ 个渐近分数．那么，有
+???+ note "Differences of convergents"
+    Let $x_k=\dfrac{p_k}{q_k}$ be the $k$-th convergent of a real number $x$. Then
     
     $$
     p_{k+1}q_k - p_kq_{k+1} = (-1)^k.
     $$
     
-    因此，相邻两项的渐近分数的差分是
+    So the difference between two consecutive convergents is
     
     $$
     x_{k+1} - x_k = \dfrac{(-1)^k}{q_{k+1}q_k}.
     $$
 
-??? note "证明"
-    根据递推关系，有
+??? note "Proof"
+    By the recurrence,
     
     $$
     \begin{aligned}
@@ -485,100 +485,100 @@ $$
     \end{aligned}
     $$
     
-    这就是 $p_{k+1}q_k - p_kq_{k+1} = (-1)^k$．对两边同除以 $q_{k+1}q_k$，就得到关于 $x_{k+1}-x_k$ 的结论．
+    This is $p_{k+1}q_k - p_kq_{k+1} = (-1)^k$. Dividing both sides by $q_{k+1}q_k$ gives the result for $x_{k+1}-x_k$.
 
-因而，奇数项渐近分数总是大于相邻两项，偶数项渐近分数总是小于相邻两项：渐近分数是交错变化的．
+So each odd-indexed convergent is always larger than its two neighbors, and each even-indexed convergent is always smaller than its two neighbors: the convergents alternate.
 
-如果只看偶数项（奇数项）渐近分数，序列也是单调递增（递减）的．这是因为
+If we look only at the even-indexed (odd-indexed) convergents, the sequence is also monotonically increasing (decreasing). This is because
 
 $$
 x_{k+2}-x_k = \dfrac{(-1)^{k+1}}{q_{k+2}q_{k+1}}+\dfrac{(-1)^{k}}{q_{k+1}q_{k}} = \dfrac{(-1)^k(q_{k+2}-q_k)}{q_{k+2}q_{k+1}q_k} = \dfrac{(-1)^ka_{k+2}}{q_{k+2}q_k}
 $$
 
-当 $k$ 为偶数（奇数）时为正（负）．同时，因为成立递推关系 $q_{k}=a_kq_{k-1}+q_{k-2}$，分母 $q_k$ 的增长速度不会慢于斐波那契数列的速度．所以，相邻两项的差一定趋近于零．这就说明，偶数项和奇数项渐近分数分别自下而上和自上而下地逼近同一极限．这就证明了无限简单连分数一定收敛．渐近分数趋近于相应实数的动态可以见下图：
+is positive (negative) when $k$ is even (odd). Also, because of the recurrence $q_{k}=a_kq_{k-1}+q_{k-2}$, the denominators $q_k$ grow at least as fast as the Fibonacci sequence. So the difference between consecutive terms must tend to zero. This shows that the even-indexed and odd-indexed convergents approach the same limit from below and from above, respectively. This proves that an infinite simple continued fraction always converges. The figure below shows how the convergents approach the corresponding real number:
 
 ![](./images/golden-ratio-convergents.svg)
 
-???+ abstract "上（下）渐近分数"
-    对于实数 $x$ 和它的渐近分数 $x_k$，如果 $x_k>x$（$x_k<x$），就称 $x_k$ 为 $x$ 的 **上（下）渐近分数**（upper (lower) convergent）．
+???+ abstract "Upper (lower) convergents"
+    For a real number $x$ and its convergent $x_k$, if $x_k>x$ ($x_k<x$), then $x_k$ is called an **upper (lower) convergent** of $x$.
 
-前面已经说明，上渐近分数就是奇数项渐近分数，下渐近分数就是偶数项渐近分数．
+As shown above, the upper convergents are exactly the odd-indexed convergents, and the lower convergents are exactly the even-indexed convergents.
 
-利用差分公式，可以将实数 $x$ 写成交错级数的形式：
+Using the difference formula, we can write a real number $x$ as an alternating series:
 
 $$
 x = a_0+\sum_{k=0}^{\infty}\dfrac{(-1)^k}{q_{k+1}q_k}.
 $$
 
-连分数定义中的渐近分数和余项就是该级数的部分和和余项．
+The convergents and remainders in the definition of continued fractions are exactly the partial sums and remainders of this series.
 
-利用差分公式，还可以直接对渐近分数逼近实数产生的误差做出估计：
+The difference formula also lets us directly estimate the error of approximating a real number by its convergents:
 
-???+ note "误差"
-    设 $x_k=\dfrac{p_k}{q_k}\neq x$ 是实数 $x$ 的第 $k$ 个渐近分数．那么，有
+???+ note "Error"
+    Let $x_k=\dfrac{p_k}{q_k}\neq x$ be the $k$-th convergent of a real number $x$. Then
     
     $$
     x_k - x = \dfrac{(-1)^k}{q_k\left(r_{k+1}q_k+q_{k-1}\right)},
     $$
     
-    其中，$r_{k+1}$ 是实数 $x$ 的第 $k+1$ 个余项．进而，有
+    where $r_{k+1}$ is the $(k+1)$-th remainder of $x$. Furthermore,
     
     $$
     \dfrac{1}{2q_{k+1}^2} \le \dfrac{1}{q_k(q_k+q_{k+1})} \le \left|x-\frac{p_k}{q_k}\right| \le \dfrac{1}{q_kq_{k+1}} \le \dfrac{1}{q_k^2}.
     $$
 
-??? note "证明"
-    因为 $x=[a_0,a_1,\ldots,a_k,r_{k+1}]$，而且对形式连分数也成立渐近分数的差分公式，所以有
+??? note "Proof"
+    Since $x=[a_0,a_1,\ldots,a_k,r_{k+1}]$, and the difference formula for convergents also holds for formal continued fractions, we have
     
     $$
     x-x_k = \dfrac{(-1)^k}{q_k\left(r_{k+1}q_k+q_{k-1}\right)},
     $$
     
-    其中，$r_{k+1}q_k+q_{k-1}$ 就是按照递推公式得到的这个形式连分数的第 $k+1$ 个渐近分数的分母．
+    where $r_{k+1}q_k+q_{k-1}$ is exactly the denominator of the $(k+1)$-th convergent of this formal continued fraction given by the recurrence.
     
-    要完成随后的不等式估计，只需要注意到当 $x_k\neq x$ 时，总成立
+    To finish the inequalities that follow, just note that when $x_k\neq x$, we always have
     
     $$
     1\le a_{k+1}\le r_{k+1} \le a_{k+1}+1,
     $$
     
-    所以有
+    so
     
     $$
     q_{k+1}=a_{k+1}q_k+q_{k-1}\le r_{k+1}q_k+q_{k-1} \le q_k+(a_{k+1}q_k+q_{k-1}) = q_k+q_{k+1}.
     $$
     
-    因此，有不等式
+    Therefore, we get the inequality
     
     $$
     \dfrac{1}{q_k(q_k+q_{k+1})} \le \left|x-\frac{p_k}{q_k}\right| = \dfrac{1}{q_k\left(r_{k+1}q_k+q_{k-1}\right)} \le \dfrac{1}{q_kq_{k+1}}.
     $$
     
-    要得到外侧的放缩，再注意到 $q_k\le q_{k+1}$ 就可以了．
+    For the outer bounds, just note that $q_k\le q_{k+1}$.
 
-本节的差分公式还有一个简单推论：渐近分数 $\dfrac{p_k}{q_k}$ 都是既约的．
+The difference formula in this section has another simple corollary: the convergents $\dfrac{p_k}{q_k}$ are all in lowest terms.
 
-???+ note "推论"
-    对于任何实数 $x$，且渐近分数 $x_k=\dfrac{p_k}{q_k}$ 的分子和分母由递推公式给出，则 $\dfrac{p_k}{q_k}$ 是既约分数，即 $\gcd(p_k,q_k)=1$．
+???+ note "Corollary"
+    For any real number $x$, if the numerator and denominator of the convergent $x_k=\dfrac{p_k}{q_k}$ are given by the recurrence, then $\dfrac{p_k}{q_k}$ is a reduced fraction, that is, $\gcd(p_k,q_k)=1$.
 
-??? note "证明"
-    对差分公式应用 [裴蜀定理](./bezouts.md) 即可．
+??? note "Proof"
+    Just apply [Bézout's theorem](./bezouts.md) to the difference formula.
 
-其实，二元一次不定方程的解可以通过连分数的方法求解．
+In fact, linear Diophantine equations in two variables can be solved with continued fractions.
 
-???+ example "二元一次不定方程的求解"
-    给定 $A, B, C \in \mathbf Z$．查找 $x, y \in \mathbf Z$，使得 $Ax + By = C$ 成立．
+???+ example "Solving linear Diophantine equations in two variables"
+    Given $A, B, C \in \mathbf Z$, find $x, y \in \mathbf Z$ such that $Ax + By = C$.
 
-??? note "解答"
-    虽然这个问题通常是用 [扩展欧几里得算法](./bezouts.md#两个变量的情形) 解决的，但是同样可以通过连分数求解．
+??? note "Solution"
+    Although this problem is usually solved with the [extended Euclidean algorithm](./bezouts.md#两个变量的情形), it can also be solved with continued fractions.
     
-    设 $\dfrac{A}{B}=[a_0, a_1, \ldots, a_k]$．上面证明了 $p_k q_{k-1} - p_{k-1} q_k = (-1)^{k-1}$．将 $p_k$ 和 $q_k$ 替换为 $A$ 和 $B$，得到
+    Let $\dfrac{A}{B}=[a_0, a_1, \ldots, a_k]$. We proved above that $p_k q_{k-1} - p_{k-1} q_k = (-1)^{k-1}$. Replacing $p_k$ and $q_k$ with $A$ and $B$, we get
     
     $$
     Aq_{k-1} - Bp_{k-1} = (-1)^{k-1} g,
     $$
     
-    其中，$g = \gcd(A, B)$．如果 $g$ 整除 $C$，则一组解为 $x = (-1)^{k-1}\dfrac{C}{g} q_{k-1}$ 和 $y = (-1)^{k}\dfrac{C}{g} p_{k-1}$；否则无解．
+    where $g = \gcd(A, B)$. If $g$ divides $C$, then one solution is $x = (-1)^{k-1}\dfrac{C}{g} q_{k-1}$ and $y = (-1)^{k}\dfrac{C}{g} p_{k-1}$; otherwise there is no solution.
     
     === "C++"
         ```cpp
@@ -590,47 +590,47 @@ $$
         --8<-- "docs/math/code/continued-fraction/diophantine.py:dio"
         ```
 
-## 丢番图逼近
+## Diophantine approximation
 
-连分数理论的一个重要应用就是丢番图逼近理论．丢番图逼近（Diophantine approximation）是指用有理数逼近实数．当然，由于有理数的稠密性，如果不加以限制，可以得到误差任意小的逼近．因此，需要对可以使用的有理数做出限制，比如只能选择分母小于某个值的有理数．本节就讨论了这种限制下的最佳逼近和连分数的关系．
+An important application of continued fraction theory is Diophantine approximation. Diophantine approximation means approximating real numbers by rational numbers. Of course, since the rationals are dense, without any restriction we can get approximations with arbitrarily small error. So we need to restrict which rationals may be used, for example only rationals whose denominator is below some value. This section discusses the relationship between best approximations under such restrictions and continued fractions.
 
-### 用渐近分数逼近实数
+### Approximating real numbers by convergents
 
-首先，利用渐近分数的误差估计，立刻得到如下结果：
+First, the error estimate for convergents immediately gives the following result:
 
-???+ note "定理（Dirichlet）"
-    对于无理数 $x$，存在无穷多个既约分数 $\dfrac{p}{q}$ 使得
+???+ note "Theorem (Dirichlet)"
+    For an irrational number $x$, there are infinitely many reduced fractions $\dfrac{p}{q}$ such that
     
     $$
     \left|x-\dfrac{p}{q}\right| < \dfrac{1}{q^2} 
     $$
     
-    成立．
+    holds.
 
-??? note "证明"
-    根据渐近分数的误差估计，对于无理数 $x$ 的第 $k$ 个渐近分数 $x_k=\dfrac{p_k}{q_k}$，有
+??? note "Proof"
+    By the error estimate for convergents, the $k$-th convergent $x_k=\dfrac{p_k}{q_k}$ of an irrational number $x$ satisfies
     
     $$
     \left|x-\dfrac{p_k}{q_k}\right|\le\frac{1}{q_k^2}.
     $$
     
-    检查误差公式的证明即可知，对于任一无理数 $x$，取等条件并不成立．因此，它的所有渐近分数的分子和分母都满足要求．
+    Checking the proof of the error formula shows that equality never holds for an irrational $x$. So the numerators and denominators of all its convergents satisfy the requirement.
 
-这个定理也可以看作是 [Dirichlet 逼近定理](https://en.wikipedia.org/wiki/Dirichlet%27s_approximation_theorem) 的推论．这几乎已经是最好的结果了．不等式右侧分母中的指数 $2$ 已经不能再改进，但是常数上可以做得更好．Hurwitz 定理说明，不等式右侧可以缩小到 $\dfrac{1}{\sqrt{5}q^2}$，且这是最好的界．
+This theorem can also be seen as a corollary of [Dirichlet's approximation theorem](https://en.wikipedia.org/wiki/Dirichlet%27s_approximation_theorem). This is almost the best possible result. The exponent $2$ in the denominator on the right side can no longer be improved, but the constant can be. Hurwitz's theorem says that the right side can be reduced to $\dfrac{1}{\sqrt{5}q^2}$, and this is the best bound.
 
-???+ note "Hurwitz 定理"
-    对于无理数 $x$，存在无穷多个既约分数 $\dfrac{p}{q}$ 使得
+???+ note "Hurwitz's theorem"
+    For an irrational number $x$, there are infinitely many reduced fractions $\dfrac{p}{q}$ such that
     
     $$
     \left|x-\dfrac{p}{q}\right| < \dfrac{1}{\sqrt{5}q^2} 
     $$
     
-    成立，而且不等式右侧的 $\sqrt{5}$ 不能换成更大的实数．
+    holds, and the $\sqrt{5}$ on the right side cannot be replaced by any larger real number.
 
-??? note "证明（Borel）"
-    Borel 实际上证明了，无理数 $x$ 的连续三个渐近分数中，必然有至少一个满足上述条件．因为渐近分数无穷多，且都是既约分数，那么 Hurwitz 定理的第一部分就必然成立．
+??? note "Proof (Borel)"
+    Borel actually proved that among any three consecutive convergents of an irrational number $x$, at least one satisfies the condition above. Since there are infinitely many convergents and they are all reduced fractions, the first part of Hurwitz's theorem must hold.
     
-    反证法．不妨设存在无理数 $x$ 和它的渐近分数 $x_{k-1},x_k,x_{k+1}$，使得
+    Proof by contradiction. Suppose there is an irrational number $x$ with convergents $x_{k-1},x_k,x_{k+1}$ such that
     
     $$
     \left|x-\dfrac{p_{k-1}}{q_{k-1}}\right|\ge\dfrac{1}{\sqrt{5}q_{k-1}^2},\ 
@@ -638,164 +638,164 @@ $$
     \left|x-\dfrac{p_{k+1}}{q_{k+1}}\right|\ge\dfrac{1}{\sqrt{5}q_{k+1}^2}
     $$
     
-    成立．因为相邻的渐近分数必然位于 $x$ 两侧，所以由差分公式知
+    hold. Since consecutive convergents always lie on opposite sides of $x$, the difference formula gives
     
     $$
     \dfrac{1}{q_{k-1}q_{k}}=\left|\dfrac{p_{k-1}}{q_{k-1}}-\dfrac{p_{k}}{q_{k}}\right|=\left|x-\dfrac{p_{k-1}}{q_{k-1}}\right|+\left|x-\dfrac{p_{k}}{q_{k}}\right|\ge\dfrac{1}{\sqrt{5}q_{k-1}^2}+\dfrac{1}{\sqrt{5}q_{k}^2}.
     $$
     
-    它可以写成关于商 $\dfrac{q_{k}}{q_{k-1}}$ 的不等式
+    This can be written as an inequality in the ratio $\dfrac{q_{k}}{q_{k-1}}$:
     
     $$
     \dfrac{q_k}{q_{k-1}}+\dfrac{q_{k-1}}{q_k}\le\sqrt 5.
     $$
     
-    因为左侧是有理数，右侧是无理数，等号必然无法取得．又因为 $q_k\ge q_{k-1}$，所以可以解得
+    Since the left side is rational and the right side is irrational, equality cannot hold. And since $q_k\ge q_{k-1}$, solving gives
     
     $$
     1\le \dfrac{q_{k}}{q_{k-1}} < \dfrac{\sqrt{5}+1}{2}.
     $$
     
-    同理，可以证明
+    In the same way, we can show
     
     $$
     1\le \dfrac{q_{k+1}}{q_{k}} < \dfrac{\sqrt{5}+1}{2}.
     $$
     
-    但是根据递推公式，并结合两式可知，
+    But by the recurrence, combining the two inequalities,
     
     $$
     a_{k+1} = \frac{q_{k+1}}{q_k}-\frac{q_{k-1}}{q_k} < \dfrac{\sqrt{5}+1}{2}-\dfrac{\sqrt{5}-1}{2} = 1
     $$
     
-    这与简单连分数的定义矛盾．所以，Borel 的结论成立．
+    This contradicts the definition of a simple continued fraction. So Borel's result holds.
     
-    要说明这样得到的界是最好的，只需要找到 $x$ 使得对于任何 $C>\sqrt{5}$，都只存在有限多个既约分数 $\dfrac{p}{q}$ 使得不等式
+    To show that this bound is the best, we just need to find an $x$ such that for any $C>\sqrt{5}$, only finitely many reduced fractions $\dfrac{p}{q}$ satisfy the inequality
     
     $$
     \left|x-\dfrac{p}{q}\right| < \dfrac{1}{Cq^2} 
     $$
     
-    成立．下面证明 $\phi=\dfrac{\sqrt{5}+1}{2}$ 就是这样的 $x$．[^sqrt5]
+    Below we prove that $\phi=\dfrac{\sqrt{5}+1}{2}$ is such an $x$.[^sqrt5]
     
-    设 $\phi'=\dfrac{-\sqrt{5}+1}{2}$ 是 $\phi$ 的共轭根．它们都是方程 $x^2-x-1=0$ 的根．因而，对任意实数 $x$，都有
+    Let $\phi'=\dfrac{-\sqrt{5}+1}{2}$ be the conjugate root of $\phi$. Both are roots of the equation $x^2-x-1=0$. So for any real number $x$,
     
     $$
     x^2-x-1 = (x-\phi)(x-\phi').
     $$
     
-    代入既约分数 $\dfrac{p}{q}$，就得到
+    Substituting a reduced fraction $\dfrac{p}{q}$, we get
     
     $$
     \dfrac{1}{q^2}\le\frac{|p^2-pq-q^2|}{q^2}=\left|\dfrac{p}{q}-\phi\right|\left|\dfrac{p}{q}-\phi'\right|\le\left|\dfrac{p}{q}-\phi\right|\left(\left|\dfrac{p}{q}-\phi\right|+|\phi-\phi'|\right)<\dfrac{1}{Cq^2}\left(\dfrac{1}{Cq^2}+\sqrt{5}\right).
     $$
     
-    对于 $C>\sqrt{5}$，可以直接解出 $q<\dfrac{1}{\sqrt{C(C-\sqrt{5})}}$，因而不可能存在无穷多组解满足上述不等式．
+    For $C>\sqrt{5}$, solving directly gives $q<\dfrac{1}{\sqrt{C(C-\sqrt{5})}}$, so there cannot be infinitely many solutions to the inequality above.
 
-这些定理的证明说明，渐近分数提供了相当好的丢番图逼近．但是，这未必是最佳逼近．要讨论最佳逼近，需要说明逼近程度的度量．这常常有两种选择．
+The proofs of these theorems show that convergents give quite good Diophantine approximations. But they are not necessarily the best approximations. To discuss best approximations, we need a measure of how good an approximation is. There are usually two choices.
 
-???+ warning "可能存在最佳逼近相关结论不成立的情形"
-    接下来的两节，会叙述一些关于最佳逼近的结果．这些结果可能对个别无趣的情形并不成立．比如，最佳逼近的两类定义都要求严格不等号，但是对于半奇数 $x=n+\dfrac12$ 且 $n\in\mathbf Z$，它的连分数的形式可以是 $[n,1,1]$．此时，它的前两个渐近分数 $x_0=n$ 和 $x_1=n+1$ 的分母都是 $1$，而且到 $x$ 的距离是一样的．这说明，它们都不是最佳逼近．对于本节的结论的叙述，读者应当默认这样的情形已经排除在外．如果读者不关心最末尾的几个渐近分数，抑或是只关心无理数的逼近，那么不必理会这些额外的复杂情形．
+???+ warning "Cases where results about best approximations may fail"
+    The next two sections state some results about best approximations. These results may fail in a few uninteresting cases. For example, both definitions of best approximation require strict inequalities, but a half-integer $x=n+\dfrac12$ with $n\in\mathbf Z$ can have the continued fraction $[n,1,1]$. Then its first two convergents $x_0=n$ and $x_1=n+1$ both have denominator $1$ and are at the same distance from $x$. So neither of them is a best approximation. When reading the results in this section, assume such cases have been excluded. If you don't care about the last few convergents, or only care about approximating irrational numbers, you can ignore these extra complications.
 
-### 第一类最佳逼近：中间分数
+### Best approximations of the first kind: semiconvergents
 
-第一类最佳逼近使用
+Best approximations of the first kind use
 
 $$
 \left|x-\dfrac{p}{q}\right|
 $$
 
-衡量逼近的程度．
+to measure how good an approximation is.
 
-???+ abstract "第一类最佳逼近"
-    对于实数 $x$ 和有理数 $\dfrac{p}{q}$，如果对于任意的 $\dfrac{p'}{q'}\neq \dfrac{p}{q}$ 且 $0<q'\le q$ 都有
+???+ abstract "Best approximation of the first kind"
+    For a real number $x$ and a rational number $\dfrac{p}{q}$, if for every $\dfrac{p'}{q'}\neq \dfrac{p}{q}$ with $0<q'\le q$ we have
     
     $$
     \left|x-\dfrac{p}{q}\right|<\left|x-\dfrac{p'}{q'}\right|,
     $$
     
-    就称有理数 $\dfrac{p}{q}$ 是实数 $x$ 的 **第一类最佳逼近**（best approximation of the first kind）．
+    then the rational number $\dfrac{p}{q}$ is called a **best approximation of the first kind** of the real number $x$.
 
-第一类最佳逼近未必是渐近分数，而是一类更宽泛的分数．
+A best approximation of the first kind is not necessarily a convergent; it belongs to a broader class of fractions.
 
-???+ abstract "中间分数"
-    设实数 $x$ 有渐近分数 $x_{k+1}=[a_0,a_1,\ldots,a_k,a_{k+1}]$，且整数 $t$ 满足 $0\le t\le a_{k+1}$[^semi-range]，则分数 $x_{k,t}=[a_0,a_1,\ldots,a_{k},t]$ 称为 $x$ 的 **中间分数**（intermediate fraction）、**半收敛子**（semiconvergent）或 **次渐近分数**（secondary convergent）．[^semiconvergent]
+???+ abstract "Semiconvergent"
+    Let a real number $x$ have the convergent $x_{k+1}=[a_0,a_1,\ldots,a_k,a_{k+1}]$, and let the integer $t$ satisfy $0\le t\le a_{k+1}$[^semi-range]. Then the fraction $x_{k,t}=[a_0,a_1,\ldots,a_{k},t]$ is called an **intermediate fraction**, **semiconvergent**, or **secondary convergent** of $x$.[^semiconvergent]
     
-    类似于渐近分数的情形，大于（小于）$x$ 的中间分数称为 **上（下）中间分数**（upper (lower) semiconvergent）．
+    As with convergents, semiconvergents larger (smaller) than $x$ are called **upper (lower) semiconvergents**.
 
-根据递推公式，中间分数可以写成
+By the recurrence, a semiconvergent can be written as
 
 $$
 x_{k,t} = \frac{tp_{k}+p_{k-1}}{tq_{k}+q_{k-1}}.
 $$
 
-它必然是既约分数，而且位于渐近分数 $x_{k-1}$ 和 $x_{k+1}$ 之间．随着 $t$ 增大，它也逐渐向 $x_{k+1}$ 靠拢：（以 $k$ 为偶数的情形为例）
+It is always a reduced fraction, and it lies between the convergents $x_{k-1}$ and $x_{k+1}$. As $t$ increases, it moves steadily toward $x_{k+1}$ (taking even $k$ as an example):
 
 $$
 x_{k-1} = x_{k,0} < x_{k,1} < x_{k,2} < \cdots < x_{k,a_{k+1}} = x_{k+1}.
 $$
 
-因为渐近分数的分子和分母都是递增的，中间分数 $x_{k,t}$（$t\neq 0$）的分子和分母落在了 $x_{k}$ 和 $x_{k+1}$ 之间．如果将这些分数按照分母大小排列，中间分数就是位于相邻的渐近分数中间的一些分数．
+Since the numerators and denominators of convergents are increasing, the numerator and denominator of a semiconvergent $x_{k,t}$ ($t\neq 0$) lie between those of $x_{k}$ and $x_{k+1}$. If we sort these fractions by denominator, the semiconvergents are the fractions lying between consecutive convergents.
 
-所有的第一类最佳逼近都是中间分数，但是并不是所有的中间分数都是第一类最佳逼近．
+Every best approximation of the first kind is a semiconvergent, but not every semiconvergent is a best approximation of the first kind.
 
-???+ note "定理"
-    所有的第一类最佳逼近都是中间分数．
+???+ note "Theorem"
+    Every best approximation of the first kind is a semiconvergent.
 
-??? note "证明"
-    因为 $a_0\le x\le a_0+1$，所以第一类最佳逼近必然位于 $x_{1,0}=a_0$ 与 $x_{0,1}=a_0+1$ 之间．所有中间分数从小到大可以排列成
+??? note "Proof"
+    Since $a_0\le x\le a_0+1$, a best approximation of the first kind must lie between $x_{1,0}=a_0$ and $x_{0,1}=a_0+1$. All semiconvergents can be listed in increasing order as
     
     $$
     x_{1,0}<x_{1,1}< \cdots < x_{1,a_2}=x_{3,0}<\cdots<x<\cdots<x_{2,0}=x_{0,a_1}<\cdots<x_{0,1}.
     $$
     
-    同阶的中间分数是连续出现的，而不同阶的中间分数之间又没有间隔．这意味着，任何位于 $x_{1,0}=a_0$ 与 $x_{0,1}=a_0+1$ 之间的有理数 $\dfrac{p}{q}$ 必然落在两个同阶的中间分数 $x_{k,t}$ 和 $x_{k,t+1}$ 之间．不妨设它不是中间分数且小于 $x$，因而有
+    Semiconvergents of the same order appear consecutively, and there are no gaps between semiconvergents of different orders. This means any rational number $\dfrac{p}{q}$ between $x_{1,0}=a_0$ and $x_{0,1}=a_0+1$ must fall between two semiconvergents $x_{k,t}$ and $x_{k,t+1}$ of the same order. Without loss of generality, suppose it is not a semiconvergent and is less than $x$, so
     
     $$
     x_{k,t}<\dfrac{p}{q}<x_{k,t+1}<x.
     $$
     
-    此时，一方面有
+    Now, on one hand,
     
     $$
     \left|x_{k,t}-\dfrac{p}{q}\right| < \left|x_{k,t}-x_{k,t+1}\right| = \dfrac{1}{((t+1)q_k+q_{k-1})(tq_k+q_{k-1})}.
     $$
     
-    另一方面有
+    On the other hand,
     
     $$
     \left|x_{k,t}-\dfrac{p}{q}\right| = \dfrac{|q(tp_k+p_{k-1})-p(tq_k+q_{k-1})|}{q(tq_k+q_{k-1})}\ge\dfrac{1}{q(tq_k+q_{k-1})}.
     $$
     
-    因此，必然有
+    So we must have
     
     $$
     q>(t+1)q_k+q_{k-1}.
     $$
     
-    也就是说，有理数 $\dfrac{p}{q}$ 的分母一定大于 $x_{k,t+1}$ 的分母，但是它并不是更好的逼近：
+    That is, the denominator of the rational number $\dfrac{p}{q}$ is larger than that of $x_{k,t+1}$, yet it is not a better approximation:
     
     $$
     \left|x-\dfrac{p}{q}\right|>\left|x-x_{k,t+1}\right|
     $$
     
-    因此，它不可能是第一类最佳逼近．这就说明，不是中间分数，就不是第一类最佳逼近；亦即所有第一类最佳逼近都是中间分数．
+    So it cannot be a best approximation of the first kind. This shows that anything that is not a semiconvergent is not a best approximation of the first kind; that is, every best approximation of the first kind is a semiconvergent.
 
-反过来，并不能断言所有的中间分数都是第一类最佳逼近．但是，的确可以给出中间分数成为第一类最佳逼近的条件．
+Conversely, we cannot claim that every semiconvergent is a best approximation of the first kind. But we can give the condition under which a semiconvergent is a best approximation of the first kind.
 
-???+ note "定理"
-    所有渐近分数都是第一类最佳逼近．除此之外，设 $0<t<a_{k+1}$，则中间分数 $x_{k,t}$ 是第一类最佳逼近，当且仅当 $t>\dfrac{a_{k+1}}{2}$ 或者 $t=\dfrac{a_{k+1}}{2}$ 且 $r_{k+2}>\dfrac{q_k}{q_{k-1}}$．
+???+ note "Theorem"
+    Every convergent is a best approximation of the first kind. Besides these, for $0<t<a_{k+1}$, the semiconvergent $x_{k,t}$ is a best approximation of the first kind if and only if $t>\dfrac{a_{k+1}}{2}$, or $t=\dfrac{a_{k+1}}{2}$ and $r_{k+2}>\dfrac{q_k}{q_{k-1}}$.
 
-??? note "证明"
-    下面会证明，渐近分数都是第二类最佳逼近，因而必然是第一类最佳逼近．关键在于那些不是渐近分数的中间分数．
+??? note "Proof"
+    We will show below that convergents are all best approximations of the second kind, and so must be best approximations of the first kind. The key is the semiconvergents that are not convergents.
     
-    前文已经说过，中间分数 $x_{k,t}$ 的分母位于 $x_k$ 和 $x_{k+1}$ 之间，且随着 $t$ 的增加逐渐增大，但是 $x_{k,t}$ 却逐渐接近 $x_{k+1}$，因而更接近 $x$．以 $x_{k,t}<x$ 为例，它与相邻的中间分数的相对位置关系满足：
+    As mentioned above, the denominator of a semiconvergent $x_{k,t}$ lies between those of $x_k$ and $x_{k+1}$ and increases with $t$, while $x_{k,t}$ moves closer to $x_{k+1}$ and hence closer to $x$. Taking $x_{k,t}<x$ as an example, its position relative to the nearby fractions is:
     
     $$
     x_{k-1} < x_{k,t} < x_{k+1} < x < x_{k}.
     $$
     
-    因为 $x_k$ 的分母小于 $x_{k,t}$，所以 $x_{k,t}$ 成为第一类最佳逼近的必要条件就是，它比 $x_k$ 更接近 $x$．这也是充分条件，因为作为渐近分数，没有比 $x_k$ 分母更小但是距离更近的了，而那些比 $x_k$ 分母还要大的中间分数，必然与 $x_{k,t}$ 同阶，但是分母更小，就必然距离 $x$ 更远．对于渐近分数和中间分数的误差，经计算可知
+    Since the denominator of $x_k$ is smaller than that of $x_{k,t}$, a necessary condition for $x_{k,t}$ to be a best approximation of the first kind is that it is closer to $x$ than $x_k$. This is also sufficient: as a convergent, $x_k$ has no fraction with a smaller denominator that is closer, and any semiconvergent with a denominator larger than that of $x_k$ must be of the same order as $x_{k,t}$ but with a smaller denominator, so it must be farther from $x$. For the errors of the convergent and the semiconvergent, a computation gives
     
     $$
     \begin{aligned}
@@ -805,22 +805,22 @@ $$
     \end{aligned}
     $$
     
-    其中用到了 $r_{k+1}\ge a_{k+1}>t$．因此，$x_{k,t}$ 比 $x_k$ 更接近 $x$，成为第一类最佳逼近，当且仅当
+    Here we used $r_{k+1}\ge a_{k+1}>t$. So $x_{k,t}$ is closer to $x$ than $x_k$, and is a best approximation of the first kind, if and only if
     
     $$
     \dfrac{r_{k+1}-t}{tq_{k}+q_{k-1}}<\dfrac{1}{q_k} \iff r_{k+1}<2t+\dfrac{q_{k-1}}{q_k}.
     $$
     
-    此时，有三种可能的情况：
+    There are three possible cases:
     
-    1.  如果 $t<\dfrac{a_{k+1}}{2}$，那么 $2t<a_{k+1}$．因为两侧都是整数，所以 $2t\le a_{k+1}-1$，故而 $2t+\dfrac{q_{k-1}}{q_k}\le 2t+1\le a_{k+1}\le r_{k+1}$．此时，$x_{k,t}$ 不是第一类最佳逼近；
-    2.  如果 $t>\dfrac{a_{k+1}}{2}$，那么 $2t>a_{k+1}$．因为两侧都是整数，所以 $2t\ge a_{k+1}+1>r_{k+1}$．此时，$x_{k,t}$ 是第一类最佳逼近；
-    3.  如果 $a_{k+1}$ 是偶数，还有第三种情况，即 $t=\dfrac{a_{k+1}}{2}$．上述条件等价于 $\dfrac{1}{r_{k+2}}=r_{k+1}-a_{k+1}<\dfrac{q_{k-1}}{q_k}$，亦即 $r_{k+2}>\dfrac{q_k}{q_{k-1}}$．
+    1.  If $t<\dfrac{a_{k+1}}{2}$, then $2t<a_{k+1}$. Since both sides are integers, $2t\le a_{k+1}-1$, so $2t+\dfrac{q_{k-1}}{q_k}\le 2t+1\le a_{k+1}\le r_{k+1}$. In this case, $x_{k,t}$ is not a best approximation of the first kind;
+    2.  If $t>\dfrac{a_{k+1}}{2}$, then $2t>a_{k+1}$. Since both sides are integers, $2t\ge a_{k+1}+1>r_{k+1}$. In this case, $x_{k,t}$ is a best approximation of the first kind;
+    3.  If $a_{k+1}$ is even, there is a third case, $t=\dfrac{a_{k+1}}{2}$. The condition above is equivalent to $\dfrac{1}{r_{k+2}}=r_{k+1}-a_{k+1}<\dfrac{q_{k-1}}{q_k}$, that is, $r_{k+2}>\dfrac{q_k}{q_{k-1}}$.
 
-所以，如果将实数 $x$ 的所有第一类最佳逼近按照分母自小到大的顺序排列，那么它会根据与 $x$ 的大小关系分成若干段．每一段总是由若干个（可以是零个）连续的同阶的中间分数组成，且总以渐近分数结尾．段内总能保持在实数 $x$ 的一侧，段与段之间则交错排列在 $x$ 两侧．
+So if we list all best approximations of the first kind of a real number $x$ in increasing order of denominator, the list splits into several segments according to which side of $x$ they lie on. Each segment consists of some number (possibly zero) of consecutive semiconvergents of the same order, and always ends with a convergent. Within a segment, the fractions stay on one side of $x$; consecutive segments alternate between the two sides of $x$.
 
-??? example "例子：圆周率 $\pi$ 的第一类最佳逼近"
-    圆周率 $\pi=[3,7,15,1,292,\ldots]$，因而它分母最小的前 15 个第一类最佳逼近是：
+??? example "Example: best approximations of the first kind of $\pi$"
+    $\pi=[3,7,15,1,292,\ldots]$, so its first 15 best approximations of the first kind, by smallest denominator, are:
     
     $$
     \begin{aligned}
@@ -842,62 +842,62 @@ $$
     \end{aligned}
     $$
 
-### 第二类最佳逼近
+### Best approximations of the second kind
 
-第二类最佳逼近使用 $|qx-p|$ 来衡量逼近的程度．
+Best approximations of the second kind use $|qx-p|$ to measure how good an approximation is.
 
-???+ abstract "第二类最佳逼近"
-    对于实数 $x$ 和有理数 $\dfrac{p}{q}$，如果对于任意的 $\dfrac{p'}{q'}\neq \dfrac{p}{q}$ 且 $0<q'\le q$ 都有
+???+ abstract "Best approximation of the second kind"
+    For a real number $x$ and a rational number $\dfrac{p}{q}$, if for every $\dfrac{p'}{q'}\neq \dfrac{p}{q}$ with $0<q'\le q$ we have
     
     $$
     \left|qx-p\right|<\left|q'x-p'\right|,
     $$
     
-    就称有理数 $\dfrac{p}{q}$ 是实数 $x$ 的 **第二类最佳逼近**（best approximation of the second kind）．
+    then the rational number $\dfrac{p}{q}$ is called a **best approximation of the second kind** of the real number $x$.
 
-第二类最佳逼近的条件等价于
+The condition for a best approximation of the second kind is equivalent to
 
 $$
 \left|x-\dfrac{p}{q}\right|<\dfrac{q'}{q}\left|x-\dfrac{p'}{q'}\right|.
 $$
 
-因为 $q'\le q$，所以第二类最佳逼近的条件比第一类最佳逼近更为严苛．
+Since $q'\le q$, the condition for a best approximation of the second kind is stricter than that of the first kind.
 
-第二类最佳逼近能且仅能是渐近分数．
+The best approximations of the second kind are exactly the convergents.
 
-???+ note "定理"
-    所有的第二类最佳逼近一定是渐近分数，所有的渐近分数也一定是第二类最佳逼近．
+???+ note "Theorem"
+    Every best approximation of the second kind is a convergent, and every convergent is a best approximation of the second kind.
 
-??? note "证明"
-    要证明第一部分，因为第二类最佳逼近也一定是第一类最佳逼近，所以只需要证明不是渐近分数的中间分数不能成为第二类最佳逼近就可以了．为此，设 $x_{k,t}=\dfrac{p}{q}$ 是中间分数但是不是渐近分数，那么，设 $x_{k,t}<x$，有
+??? note "Proof"
+    For the first part, since a best approximation of the second kind is also a best approximation of the first kind, we only need to show that a semiconvergent that is not a convergent cannot be a best approximation of the second kind. Let $x_{k,t}=\dfrac{p}{q}$ be a semiconvergent but not a convergent. Assuming $x_{k,t}<x$, we have
     
     $$
     x_{k-1} < x_{k,t} < x_{k+1} < x < x_{k}.
     $$
     
-    因为 $x_{k,t}$ 与 $x$ 之间的误差
+    The error between $x_{k,t}$ and $x$ satisfies
     
     $$
     |x_{k,t}-x|\ge |x_{k,t}-x_{k+1}|=\left|\dfrac{p}{q}-\dfrac{p_{k+1}}{q_{k+1}}\right|=\dfrac{|pq_{k+1}-p_{k+1}q|}{qq_{k+1}}\ge\dfrac{1}{qq_{k+1}},
     $$
     
-    并利用渐近分数的误差估计，所以总是有
+    and using the error estimate for convergents, we always have
     
     $$
     |qx_{k,t}-p| \ge \dfrac{1}{q_{k+1}} \ge |q_kx_k-p_k|,
     $$
     
-    即 $x_{k,t}$ 的逼近程度不优于分母更小的 $x_k$ 逼近程度，所以不可能是第二类最佳逼近．
+    that is, $x_{k,t}$ approximates no better than $x_k$, which has a smaller denominator, so it cannot be a best approximation of the second kind.
     
-    反过来，要证明第二部分，即每个渐近分数 $x_k=\dfrac{p_k}{q_k}$ 都是第二类最佳逼近．这就是要说明，对于所有分数 $\dfrac{p}{q}$ 且 $q\le q_k$，都有 $|q_kx-p_k|<|qx-p|$．不考虑半奇数的情形，则可以假定 $k>0$．首先，根据渐近分数逼近实数的误差估计，有
+    Conversely, for the second part we need to show that every convergent $x_k=\dfrac{p_k}{q_k}$ is a best approximation of the second kind. That is, for every fraction $\dfrac{p}{q}$ with $q\le q_k$, we have $|q_kx-p_k|<|qx-p|$. Ignoring the half-integer case, we can assume $k>0$. First, by the error estimate for convergents,
     
     $$
     |q_{k-1} x-p_{k-1}| \ge \frac{1}{q_{k-1}+q_{k}} \ge \dfrac{1}{q_{k+1}}\ge |q_kx-p_k|.
     $$
     
-    不等式全部成立等号，当且仅当 $a_{k+1}=1$ 且是连分数的末项．不考虑这样的情形，那么 $x_{k-1}=\dfrac{p_{k-1}}{q_{k-1}}$ 严格劣于 $x_k=\dfrac{p_k}{q_k}$．
+    All of these inequalities hold with equality if and only if $a_{k+1}=1$ and it is the last term of the continued fraction. Excluding this case, $x_{k-1}=\dfrac{p_{k-1}}{q_{k-1}}$ is strictly worse than $x_k=\dfrac{p_k}{q_k}$.
     
-    任取一分数 $\dfrac{p}{q}\neq x_k$ 且 $0<q\le q_k$，因为有差分公式 $p_{k}q_{k-1} - p_{k-1}q_{k} = (-1)^{k-1}$，所以由 Cramer 法则可知，线性方程组
+    Take any fraction $\dfrac{p}{q}\neq x_k$ with $0<q\le q_k$. Since the difference formula gives $p_{k}q_{k-1} - p_{k-1}q_{k} = (-1)^{k-1}$, Cramer's rule shows that the linear system
     
     $$
     \begin{cases}
@@ -906,196 +906,196 @@ $$
     \end{cases}
     $$
     
-    必然存在唯一的整数解 $(\lambda,\mu)$．如果 $\lambda\mu>0$，那么 $q>|\lambda|q_k\ge q_k$，矛盾．否则，$\lambda\mu\le 0$，即 $\lambda$ 和 $\mu$ 异号，那么因为 $q_{k-1}x-p_{k-1}$ 和 $q_kx-p_k$ 也异号，就有 $\lambda(q_{k-1}x-p_{k-1})$ 和 $\mu(q_kx-p_k)$ 同号，故而
+    has a unique integer solution $(\lambda,\mu)$. If $\lambda\mu>0$, then $q>|\lambda|q_k\ge q_k$, a contradiction. Otherwise, $\lambda\mu\le 0$, that is, $\lambda$ and $\mu$ have opposite signs. Since $q_{k-1}x-p_{k-1}$ and $q_kx-p_k$ also have opposite signs, $\lambda(q_{k-1}x-p_{k-1})$ and $\mu(q_kx-p_k)$ have the same sign, so
     
     $$
     |qx-p|=|\lambda||q_kx-p_k|+|\mu||q_{k-1}x-p_{k-1}|>|q_{k}x-p_{k}|.
     $$
     
-    最后的不等号是严格的，因为 $x_{k-1}$ 严格劣于 $x_k$，且 $\dfrac{p}{q}\neq x_k$．这就说明，$x_k$ 是第二类最佳逼近．
+    The last inequality is strict because $x_{k-1}$ is strictly worse than $x_k$ and $\dfrac{p}{q}\neq x_k$. This shows that $x_k$ is a best approximation of the second kind.
 
-这个性质表明，渐近分数确实是相当好的丢番图逼近．
+This property shows that convergents really are quite good Diophantine approximations.
 
-### 渐近分数的判定
+### Recognizing convergents
 
-第二类最佳逼近提供了判断某个分数是否是渐近分数的充分必要条件．这说明，可以通过检查某个分数逼近的相对程度来判断它是否是渐近分数．Legendre 判别法则提供了根据逼近的绝对程度来判断渐近分数的方法．Legendre 判别法的原始表述提供了充分必要条件，但是它的形式并不实用．本节提供了 Legendre 判别法的简化版本，并说明它并没有漏掉太多的渐近分数．
+Best approximations of the second kind give a necessary and sufficient condition for a fraction to be a convergent. This means we can decide whether a fraction is a convergent by checking how well it approximates relative to other fractions. Legendre's criterion gives a way to recognize convergents from how well they approximate in absolute terms. The original statement of Legendre's criterion gives a necessary and sufficient condition, but its form is not practical. This section gives a simplified version of Legendre's criterion and shows that it does not miss too many convergents.
 
-???+ note "定理（Legendre）"
-    对于实数 $x$ 与分数 $\dfrac{p}{q}$，如果有
+???+ note "Theorem (Legendre)"
+    For a real number $x$ and a fraction $\dfrac{p}{q}$, if
     
     $$
     \left|x-\dfrac{p}{q}\right|<\dfrac{1}{2q^2}
     $$
     
-    那么 $\dfrac{p}{q}$ 一定是 $x$ 的渐近分数．
+    then $\dfrac{p}{q}$ must be a convergent of $x$.
 
-??? note "证明"
-    设 $\epsilon\in\{-1,1\}$ 和 $\theta\in(0,1/2)$ 是使得
+??? note "Proof"
+    Let $\epsilon\in\{-1,1\}$ and $\theta\in(0,1/2)$ be the constants such that
     
     $$
     x-\dfrac{p}{q} = \dfrac{\epsilon\theta}{q^2}
     $$
     
-    成立的常数．将有理数 $\dfrac{p}{q}$ 展开成连分数 $[a_0,a_1,\ldots,a_n]$．此处，有理数有两种连分数表示，其中的 $n$ 恰好相差一，所以可以取连分数表示使得 $(-1)^n=\epsilon$，并记这个连分数表示的渐近分数为 $\dfrac{p_k}{q_k}$．设实数 $\omega$ 满足
+    holds. Expand the rational number $\dfrac{p}{q}$ as a continued fraction $[a_0,a_1,\ldots,a_n]$. A rational number has two continued fraction representations whose values of $n$ differ by exactly one, so we can choose the representation with $(-1)^n=\epsilon$, and denote its convergents by $\dfrac{p_k}{q_k}$. Let the real number $\omega$ satisfy
     
     $$
     x = \dfrac{\omega p_n+p_{n-1}}{\omega q_n+q_{n-1}}.
     $$
     
-    那么，必然有
+    Then we must have
     
     $$
     \dfrac{\epsilon\theta}{q^2} = x-\dfrac{p}{q} = x-\dfrac{p_n}{q_n} = \dfrac{p_{n-1}q_n-p_nq_{n-1}}{(\omega q_n+q_{n-1})q_n} = \dfrac{(-1)^n}{(\omega q_n+q_{n-1})q_n}.
     $$
     
-    故而，有
+    So
     
     $$
     \theta = \dfrac{q_n}{\omega q_n+q_{n-1}}.
     $$
     
-    这说明
+    This shows
     
     $$
     \omega=\dfrac{1}{\theta}-\dfrac{q_{n-1}}{q_n}>1.
     $$
     
-    将 $\omega$ 也展成连分数 $[b_0,b_1,\ldots]$，则
+    Expand $\omega$ as a continued fraction $[b_0,b_1,\ldots]$ as well. Then
     
     $$
     x = \dfrac{\omega p_n+p_{n-1}}{\omega q_n+q_{n-1}} = [a_0,a_1,\ldots,a_n,\omega] = [a_0,a_1,\ldots,a_n,b_0,b_1,\ldots].
     $$
     
-    这是合法的简单连分数，所以 $\dfrac{p}{q}$ 就是 $x$ 的渐近分数．
+    This is a valid simple continued fraction, so $\dfrac{p}{q}$ is a convergent of $x$.
     
-    这个证明实际说明 $\dfrac{p}{q}$ 成为渐近分数的充分必要条件是上述证明中的 $\omega>1$，这正是 Legendre 判别法的原始形式．
+    This proof actually shows that $\dfrac{p}{q}$ is a convergent if and only if $\omega>1$ in the proof above. This is exactly the original form of Legendre's criterion.
 
-这个判别法说明，只要逼近的程度足够好，就一定是渐近分数．下一个定理说明，这样好的渐近分数足够多：至少有一半的渐近分数都符合这个条件．
+This criterion says that any approximation that is good enough must be a convergent. The next theorem says there are plenty of such good convergents: at least half of all convergents satisfy this condition.
 
-???+ note "定理（Vahlen）"
-    实数 $x$ 的相邻两个渐近分数中至少有一个满足
+???+ note "Theorem (Vahlen)"
+    Of any two consecutive convergents of a real number $x$, at least one satisfies
     
     $$
     \left|x-\dfrac{p}{q}\right|<\dfrac{1}{2q^2}.
     $$
 
-??? note "证明"
-    假设不然．存在实数 $x$ 有两个相邻的渐近分数 $x_k$ 和 $x_{k+1}$ 满足
+??? note "Proof"
+    Suppose not. Then there is a real number $x$ with two consecutive convergents $x_k$ and $x_{k+1}$ such that
     
     $$
     \left|x-\dfrac{p_k}{q_k}\right|\ge \dfrac{1}{2q_{k}^2},\ \left|x-\dfrac{p_{k+1}}{q_{k+1}}\right|\ge \dfrac{1}{2q_{k+1}^2}.
     $$
     
-    因为 $x$ 位于 $x_k$ 和 $x_{k+1}$ 之间，所以
+    Since $x$ lies between $x_k$ and $x_{k+1}$,
     
     $$
     \dfrac{1}{2q_{k}^2} + \dfrac{1}{2q_{k+1}^2} \le \left|x-\dfrac{p_k}{q_k}\right| + \left|x-\dfrac{p_{k+1}}{q_{k+1}}\right| = \left|\dfrac{p_k}{q_k}-\dfrac{p_{k+1}}{q_{k+1}}\right| = \dfrac{1}{q_kq_{k+1}}.
     $$
     
-    这说明 $q_k=q_{k+1}$．故而必然有 $k=0$ 且 $a_1=1$．此时前两个渐近分数是 $x_0=a_0$ 和 $x_1=a_0+1$．故而命题的唯一反例是半奇数，按照前文的说明，本文不考虑这种情形．
+    This shows $q_k=q_{k+1}$. So we must have $k=0$ and $a_1=1$. Then the first two convergents are $x_0=a_0$ and $x_1=a_0+1$. So the only counterexamples to the statement are half-integers, which, as explained above, this page does not consider.
 
-## 几何解释
+## Geometric interpretation
 
-连分数理论有着优美的几何解释．
+The theory of continued fractions has a beautiful geometric interpretation.
 
 ![](./images/continued-convergents-geometry.svg)
 
-如图所示，对于实数 $\xi>0$，直线 $y=\xi x$ 将第一象限（包括 $x$ 和 $y$ 坐标轴上的点但不包括原点，下同）上的整点（lattice point）分成上下两部分．对于有理数 $\xi$ 的情形，直线 $y=\xi x$ 上的点既算作直线上方的点，又算作直线下方的点．考虑这两部分的点的凸包．那么，奇数项渐近分数是上半部分的凸包的顶点，偶数项渐近分数是下半部分的凸包的顶点．凸包上两个相邻顶点之间的连线上的整点就是中间分数．图中展示了 $\xi=\dfrac{9}{7}$ 的渐近分数和中间分数（灰点）．
+As shown in the figure, for a real number $\xi>0$, the line $y=\xi x$ splits the lattice points in the first quadrant (including points on the $x$ and $y$ axes but excluding the origin; the same below) into an upper part and a lower part. When $\xi$ is rational, points on the line $y=\xi x$ count both as points above the line and as points below the line. Consider the convex hulls of these two sets of points. Then the odd-indexed convergents are the vertices of the convex hull of the upper part, and the even-indexed convergents are the vertices of the convex hull of the lower part. The lattice points on the segments between two adjacent vertices of a hull are the semiconvergents. The figure shows the convergents and semiconvergents (gray points) of $\xi=\dfrac{9}{7}$.
 
-前文关于连分数的大部分结论都有相应的几何解释：
+Most of the earlier results about continued fractions have a geometric interpretation:
 
-??? note "几何解释"
-    -   每个分数 $\nu=\dfrac{p}{q}$ 都对应着第一象限内的一个整点 $\vec\nu=(q,p)$，分数的大小对应着与原点连线的斜率．
-    -   直线 $y=\xi x$ 的方向向量是 $\vec\xi=(1,\xi)$．利用 [叉积](../linear-algebra/product.md#二维向量的情形) $(x_1,y_1)\times(x_2,y_2)=x_1y_2-x_2y_1$ 的概念，可以通过 $\vec\xi\times\vec\nu=p-q\xi$ 的正负判断点在直线上方还是下方．因而，在直线上方的点就对应着大于等于 $\xi$ 的分数，在直线下方的点就对应着小于等于 $\xi$ 的分数．叉积的绝对值 $|\vec\xi\times\vec\nu|$ 正比于点 $\vec\nu$ 与直线 $y=\xi x$ 的距离
+??? note "Geometric interpretation"
+    -   Each fraction $\nu=\dfrac{p}{q}$ corresponds to a lattice point $\vec\nu=(q,p)$ in the first quadrant, and the value of the fraction corresponds to the slope of the line through it and the origin.
+    -   The direction vector of the line $y=\xi x$ is $\vec\xi=(1,\xi)$. Using the [cross product](../linear-algebra/product.md#二维向量的情形) $(x_1,y_1)\times(x_2,y_2)=x_1y_2-x_2y_1$, we can tell whether a point is above or below the line from the sign of $\vec\xi\times\vec\nu=p-q\xi$. So points above the line correspond to fractions greater than or equal to $\xi$, and points below the line correspond to fractions less than or equal to $\xi$. The absolute value of the cross product $|\vec\xi\times\vec\nu|$ is proportional to the distance from the point $\vec\nu$ to the line $y=\xi x$
     
         $$
         \dfrac{|p-q\xi|}{\sqrt{1+\xi^2}},
         $$
     
-        对应着分数 $\nu$ 对实数 $\xi$ 的逼近程度．
-    -   将渐近分数 $\xi_k=\dfrac{p_k}{q_k}$ 对应的点记作 $\vec\xi_k=(q_k,p_k)$，则递推公式就可以写作
+        which measures how well the fraction $\nu$ approximates the real number $\xi$.
+    -   Denote the point of the convergent $\xi_k=\dfrac{p_k}{q_k}$ by $\vec\xi_k=(q_k,p_k)$. Then the recurrence can be written as
     
         $$
         \vec\xi_k = a_k\vec\xi_{k-1} + \vec\xi_{k-2}.
         $$
     
-        递归的起点是 $\vec\xi_{-2} = (1,0)$ 和 $\vec\xi_{-1} = (0,1)$．
-    -   对于整数 $t$，如果 $0\le t\le a_k$，那么点
+        The recursion starts from $\vec\xi_{-2} = (1,0)$ and $\vec\xi_{-1} = (0,1)$.
+    -   For an integer $t$ with $0\le t\le a_k$, the point
     
         $$
         \vec\xi_{k-1,t} = t\vec\xi_{k-1} + \vec\xi_{k-2}
         $$
     
-        就落在连结点 $\vec\xi_{k-2}$ 和点 $\vec\xi_k$ 的线段上．它们对应着中间分数 $\xi_{k-1,t}$．
-    -   利用几何的方法可以构造出所有的渐近分数和中间分数．从点 $\vec\xi_{-2}=(1,0)$ 和点 $\vec\xi_{-1}=(0,1)$ 开始，两个点位于直线 $y=\xi x$ 两侧，这意味着 $\vec\xi\times\vec\xi_{-2}$ 和 $\vec\xi\times\vec\xi_{-1}$ 符号相反．将 $\vec\xi_{-1}$ 按照向量的加法添加到 $\vec\xi_{-2}$ 上，直到无法继续添加而不穿过直线 $y=\xi x$ 为止，将结果记作 $\vec\xi_0$，此时仍与 $\vec\xi_{-1}$ 不同侧．再将 $\vec\xi_0$ 添加到 $\vec\xi_{-1}$ 上，直到无法继续添加而不穿过直线 $y=\xi x$ 为止，将结果记作 $\vec\xi_1$，此时仍与 $\vec\xi_0$ 不同侧．这个过程可以一直持续到无穷，除非在有限步内某个 $\vec\xi_n$ 就恰好落在直线 $y=\xi x$ 上．后者意味着向量 $\vec\xi$ 与 $\vec\xi_n$ 共线，即 $\xi=\dfrac{p_n}{q_n}$ 为有理点．这个过程就可以得到前面示意图中的图形．Boris Delaunay 将这个过程形象地称为鼻子拉伸算法（nose-stretching algorithm）[^nose-stretching]．
-    -   如果需要快速计算每一步将 $\vec\xi_{k-1}$ 添加到 $\vec\xi_{k-2}$ 需要的次数，可以借助叉积．因为 $\vec\xi\times\vec\xi_{k-1}$ 与 $\vec\xi\times\vec\xi_{k-2}$ 符号相反，所以如果记 $\vec\xi_{k-1,t}=t\vec\xi_{k-1}+\vec\xi_{k-2}$ 为向 $\vec\xi_{k-2}$ 添加 $t$ 次 $\vec\xi_{k-1}$ 得到的结果，则 $\vec\xi\times\vec\xi_{k-1,t}=t(\vec\xi\times\vec\xi_{k-1})+(\vec\xi\times\vec\xi_{k-2})$ 不改变符号，就意味着没有穿过直线．在不变号之前，$\vec\xi\times\vec\xi_{k-1,t}$ 的绝对值会逐渐下降．记
+        lies on the segment joining $\vec\xi_{k-2}$ and $\vec\xi_k$. These points correspond to the semiconvergents $\xi_{k-1,t}$.
+    -   All convergents and semiconvergents can be constructed geometrically. Start from the points $\vec\xi_{-2}=(1,0)$ and $\vec\xi_{-1}=(0,1)$. The two points lie on opposite sides of the line $y=\xi x$, which means $\vec\xi\times\vec\xi_{-2}$ and $\vec\xi\times\vec\xi_{-1}$ have opposite signs. Add $\vec\xi_{-1}$ to $\vec\xi_{-2}$ by vector addition repeatedly, until adding it again would cross the line $y=\xi x$; call the result $\vec\xi_0$. It is still on the opposite side from $\vec\xi_{-1}$. Then add $\vec\xi_0$ to $\vec\xi_{-1}$ repeatedly, until adding it again would cross the line $y=\xi x$; call the result $\vec\xi_1$. It is still on the opposite side from $\vec\xi_0$. This process can go on forever, unless some $\vec\xi_n$ lands exactly on the line $y=\xi x$ after finitely many steps. The latter means the vectors $\vec\xi$ and $\vec\xi_n$ are collinear, that is, $\xi=\dfrac{p_n}{q_n}$ is a rational point. This process produces the figure shown above. Boris Delaunay vividly called this process the nose-stretching algorithm[^nose-stretching].
+    -   To quickly compute how many times $\vec\xi_{k-1}$ is added to $\vec\xi_{k-2}$ in each step, we can use the cross product. Since $\vec\xi\times\vec\xi_{k-1}$ and $\vec\xi\times\vec\xi_{k-2}$ have opposite signs, if $\vec\xi_{k-1,t}=t\vec\xi_{k-1}+\vec\xi_{k-2}$ denotes the result of adding $\vec\xi_{k-1}$ to $\vec\xi_{k-2}$ $t$ times, then the line is not crossed as long as $\vec\xi\times\vec\xi_{k-1,t}=t(\vec\xi\times\vec\xi_{k-1})+(\vec\xi\times\vec\xi_{k-2})$ keeps its sign. Until the sign changes, the absolute value of $\vec\xi\times\vec\xi_{k-1,t}$ keeps decreasing. Let
     
         $$
         r_{k} = \left|\dfrac{\vec\xi\times\vec\xi_{k-2}}{\vec\xi\times\vec\xi_{k-1}}\right| = -\dfrac{\vec\xi\times\vec\xi_{k-2}}{\vec\xi\times\vec\xi_{k-1}}.
         $$
     
-        那么，最大可以下降的次数就是
+        Then the maximum number of decreasing steps is
     
         $$
         a_{k} = \lfloor r_{k}\rfloor = \left\lfloor\left|\dfrac{q_{k-1}\xi-p_{k-1}}{q_{k-2}\xi-p_{k-2}}\right|\right\rfloor.
         $$
     
-        这就是连分数展开的第 $k$ 项．而且，$r_k$ 就是连分数展开的余项，它满足关系式：
+        This is the $k$-th term of the continued fraction expansion. Moreover, $r_k$ is exactly the remainder of the continued fraction expansion, and it satisfies:
     
         $$
         r_k = -\dfrac{q_{k-1}\xi-p_{k-1}}{q_{k-2}\xi-p_{k-2}} \iff \xi = \dfrac{p_{k-1}r_k + p_{k-2}}{q_{k-1}r_k+q_{k-2}}.
         $$
     
-        这就是连分数关系式 $\xi = [a_0,a_1,\ldots,a_{k-1},r_k]$．
-    -   因为每次添加向量造成的 $\vec\xi\times\vec\xi_{k-1,t}$ 的变化的步长都是 $|\vec\xi\times\vec\xi_{k-1}|$，所以最后剩余的距离 $|\vec\xi\times\vec\xi_k|$ 必然严格小于 $|\vec\xi\times\vec\xi_{k-1}|$．这说明，渐近分数的逼近程度（由 $|qx-p|$ 衡量）是随着 $k$ 的增加严格更优的．
-    -   利用叉积的运算法则，有
+        This is the continued fraction relation $\xi = [a_0,a_1,\ldots,a_{k-1},r_k]$.
+    -   Since each added vector changes $\vec\xi\times\vec\xi_{k-1,t}$ by a step of $|\vec\xi\times\vec\xi_{k-1}|$, the remaining distance $|\vec\xi\times\vec\xi_k|$ at the end must be strictly smaller than $|\vec\xi\times\vec\xi_{k-1}|$. This shows that the quality of approximation of the convergents (measured by $|qx-p|$) strictly improves as $k$ increases.
+    -   By the rules of the cross product,
     
         $$
         \vec\xi_{k}\times\vec\xi_{k+1} = \vec\xi_{k}\times(a_{k+1}\vec\xi_k+\vec\xi_{k-1}) = \vec\xi_{k}\times\vec\xi_{k-1} = -\vec\xi_{k-1}\times\vec\xi_{k}.
         $$
     
-        归纳可知
+        By induction,
     
         $$
         \vec\xi_{k}\times\vec\xi_{k+1} = (-1)^{k+2}\vec\xi_{k-2}\times\vec\xi_{k-1} = (-1)^{k}.
         $$
     
-        这就是渐近分数的差分公式 $p_{k+1}q_k-p_kq_{k+1}=(-1)^k$．
-    -   上下两个凸包之间的面积可以剖分成若干个（可能是无穷多个）三角形，其中每个三角形的顶点分别是 $\vec\xi_{k-2}$、$\vec\xi_k$ 和 $\vec 0$．这样的三角形的面积是
+        This is the difference formula for convergents, $p_{k+1}q_k-p_kq_{k+1}=(-1)^k$.
+    -   The region between the upper and lower convex hulls can be divided into several (possibly infinitely many) triangles, each with vertices $\vec\xi_{k-2}$, $\vec\xi_k$ and $\vec 0$. The area of such a triangle is
     
         $$
         \dfrac12|\vec\xi_{k-2}\times\vec\xi_k| = \dfrac12|\vec\xi_{k-2}\times(a_k\vec\xi_{k-1}+\vec\xi_{k-2})| = \dfrac{a_k}{2}|\vec\xi_{k-2}\times\vec\xi_{k-1}| = \dfrac{a_k}{2}.
         $$
     
-        根据 [Pick 定理](../../geometry/pick.md)，这意味着如果设 $I$ 和 $B$ 分别为三角形内部和边界上的整点个数，则
+        By [Pick's theorem](../../geometry/pick.md), if $I$ and $B$ are the numbers of lattice points inside the triangle and on its boundary, then
     
         $$
         I + \dfrac{B}{2} - 1 = \dfrac{a_k}{2}.
         $$
     
-        又已知三角形边界上已经有了 $\{\vec 0\}\cup\{\vec\xi_{k-1,t}:0\le t\le a_k\}$ 这共计 $a_k+2$ 个整点．这说明，就一定有 $I=0$ 和 $B=a_k+2$．因而，三角形的边上没有更多的整点，三角形内部也没有整点．也就是说，$q_k$ 和 $p_k$ 是既约的，中间分数是连结 $\vec\xi_{k-2}$ 和 $\vec\xi_k$ 的边上的全部整点，且第一象限的所有整点都在上下两个凸包内．
+        We already know the boundary of the triangle contains the $a_k+2$ lattice points $\{\vec 0\}\cup\{\vec\xi_{k-1,t}:0\le t\le a_k\}$. So we must have $I=0$ and $B=a_k+2$. Hence there are no more lattice points on the edges of the triangle, and no lattice points inside it. That is, $q_k$ and $p_k$ are coprime, the semiconvergents are all the lattice points on the edge joining $\vec\xi_{k-2}$ and $\vec\xi_k$, and all lattice points in the first quadrant lie inside the upper and lower convex hulls.
 
-这样得到的上下两个凸包称为 Klein 多边形．在高维空间内也可以做类似定义，得到 [Klein 多面体](https://en.wikipedia.org/wiki/Klein_polyhedron)（Klein polyhedron），它可以将连分数的概念推广到高维空间内．
+The upper and lower convex hulls obtained this way are called Klein polygons. A similar definition works in higher dimensions and gives the [Klein polyhedron](https://en.wikipedia.org/wiki/Klein_polyhedron), which generalizes continued fractions to higher-dimensional spaces.
 
-## 连分数的树
+## Continued fractions and trees
 
-主条目：[Stern–Brocot 树与 Farey 序列](./stern-brocot.md)
+Main article: [Stern–Brocot tree and Farey sequences](./stern-brocot.md)
 
-Stern–Brocot 树是存储了所有位于 $[0,\infty]$ 之间的分数的 [二叉搜索树](../../ds/bst.md)．有限连分数实际上编码了 Stern–Brocot 树上从根到某个分数所在位置的路径．也就是说，有理数 $x$ 的连分数表示 $[a_0,a_1,\ldots,a_{n-1},1]$ 意味着从树根 $\dfrac{1}{1}$ 开始，需要先向右子节点移动 $a_0$ 次，再向左子节点移动 $a_1$ 次，交替方向移动，直到向某个方向移动了 $a_{n-1}$ 次为止．应当注意，此处只能使用末尾为 $1$ 的连分数表示．
+The Stern–Brocot tree is a [binary search tree](../../ds/bst.md) that stores all fractions in $[0,\infty]$. A finite continued fraction actually encodes the path in the Stern–Brocot tree from the root to the position of some fraction. That is, the continued fraction representation $[a_0,a_1,\ldots,a_{n-1},1]$ of a rational number $x$ means: starting from the root $\dfrac{1}{1}$, first move to the right child $a_0$ times, then to the left child $a_1$ times, and keep alternating directions until you have moved $a_{n-1}$ times in some direction. Note that only the representation ending in $1$ can be used here.
 
-将连分数表示理解为 Stern–Brocot 树上的路径，可以得到比较连分数大小的算法．
+Viewing a continued fraction representation as a path in the Stern–Brocot tree gives an algorithm for comparing continued fractions.
 
-???+ example "连分数大小比较"
-    给定连分数 $\alpha=[\alpha_0,\alpha_1,\ldots,\alpha_n]$ 和 $\beta=[\beta_0,\beta_1,\ldots,\beta_m]$，比较两者大小．
+???+ example "Comparing continued fractions"
+    Given continued fractions $\alpha=[\alpha_0,\alpha_1,\ldots,\alpha_n]$ and $\beta=[\beta_0,\beta_1,\ldots,\beta_m]$, compare them.
 
-??? note "解答"
-    首先将两个连分数表示都转化成末尾是 $1$ 的形式．不妨设题目所给的已经是这样形式的连分数，即 $\alpha_n=\beta_m=1$．因为偶数位置（下标从 $0$ 开始）是向右移动的步数，奇数位置是向左移动的步数，所以，$\alpha<\beta$ 当且仅当按照 [字典序](../../string/basic.md#字典序) 比较时，有
+??? note "Solution"
+    First convert both continued fraction representations to the form ending in $1$. Without loss of generality, assume the given continued fractions are already in this form, that is, $\alpha_n=\beta_m=1$. Since even positions (indexed from $0$) are the numbers of steps to the right, and odd positions are the numbers of steps to the left, $\alpha<\beta$ if and only if, in [lexicographic order](../../string/basic.md#字典序),
     
     $$
     (\alpha_0,-\alpha_1,\alpha_2,\ldots,(-1)^{n-1}\alpha_{n-1},0,\ldots)<(\beta_0,-\beta_1,\beta_2,\ldots,(-1)^{m-1}\beta_{m-1},0,\ldots).
     $$
     
-    相较于连分数表示，交替地添加正负号，删去末尾的 $1$，并且长度不足的位置用 $0$ 补齐．
+    Compared with the continued fraction representation, we alternate the signs, drop the trailing $1$, and pad the missing positions with $0$.
     
     === "C++"
         ```cpp
@@ -1107,13 +1107,13 @@ Stern–Brocot 树是存储了所有位于 $[0,\infty]$ 之间的分数的 [二�
         --8<-- "docs/math/code/continued-fraction/compare.py:core"
         ```
 
-???+ example "最佳内点"
-    对于 $\dfrac{0}{1}\le\dfrac{p_0}{q_0}<\dfrac{p_1}{q_1}\le\dfrac{1}{0}$，求使得 $\dfrac{p_0}{q_0}<\dfrac{p}{q}<\dfrac{p_1}{q_1}$ 成立且 $(q,p)$ 最小的有理数 $\dfrac{p}{q}$．
+???+ example "Best inner point"
+    For $\dfrac{0}{1}\le\dfrac{p_0}{q_0}<\dfrac{p_1}{q_1}\le\dfrac{1}{0}$, find the rational number $\dfrac{p}{q}$ with the smallest $(q,p)$ such that $\dfrac{p_0}{q_0}<\dfrac{p}{q}<\dfrac{p_1}{q_1}$.
 
-??? note "解答"
-    因为 Stern–Brocot 树既是 $[0,\infty]$ 中的分数的二叉搜索树，又是二元组 $(q,p)$ 的 [笛卡尔树](../../ds/cartesian-tree.md)，所以题意几乎可以转化为求 Stern–Brocot 树上两个点的 LCA（最近公共祖先）．但是，LCA 只能处理闭区间内的情形，LCA 可能是端点本身．为了避免额外的讨论，可以首先构造出 $\dfrac{p_0}{q_0}+\varepsilon$ 和 $\dfrac{p_1}{q_1}-\varepsilon$，再计算 LCA．在已经通过连分数计算出根到节点的路径的情况下，LCA 只要取最长的公共路径即可．
+??? note "Solution"
+    Since the Stern–Brocot tree is both a binary search tree of the fractions in $[0,\infty]$ and a [Cartesian tree](../../ds/cartesian-tree.md) of the pairs $(q,p)$, the problem almost reduces to finding the LCA (lowest common ancestor) of two nodes in the Stern–Brocot tree. But the LCA only handles closed intervals, and the LCA might be one of the endpoints itself. To avoid extra case analysis, we can first construct $\dfrac{p_0}{q_0}+\varepsilon$ and $\dfrac{p_1}{q_1}-\varepsilon$, and then compute the LCA. Once the paths from the root to the nodes have been computed via continued fractions, the LCA is just the longest common prefix of the paths.
     
-    要构造出 $x\pm\varepsilon$，只需要在节点 $x$ 处首先向右（左）移动一次，再向左（右）移动 $\infty$ 次即可．转化成连分数的语言，对于分数 $x=[a_0,a_1,\ldots,a_{n-1},1]$，可以知道 $x\pm\varepsilon$ 必然是 $[a_0,a_1,\ldots,a_{n-1}+1,\infty]$ 和 $[a_0,a_1,\ldots,a_{n-1},1,\infty]$，因而只需要比较这两个连分数，将较大（小）的定义为 $x\pm\varepsilon$．
+    To construct $x\pm\varepsilon$, just move once to the right (left) at node $x$, then move $\infty$ times to the left (right). In the language of continued fractions, for a fraction $x=[a_0,a_1,\ldots,a_{n-1},1]$, $x\pm\varepsilon$ must be $[a_0,a_1,\ldots,a_{n-1}+1,\infty]$ and $[a_0,a_1,\ldots,a_{n-1},1,\infty]$. So we only need to compare these two continued fractions and define the larger (smaller) one as $x\pm\varepsilon$.
     
     === "C++"
         ```cpp
@@ -1126,17 +1126,17 @@ Stern–Brocot 树是存储了所有位于 $[0,\infty]$ 之间的分数的 [二�
         ```
 
 ???+ example "[GCJ 2019, Round 2 - New Elements: Part 2](https://github.com/google/coding-competitions-archive/blob/main/codejam/2019/round_2/new_elements_part_2/statement.pdf)"
-    给定 $N$ 个正整数对 $(C_i,J_i)$，求正整数对 $(x,y)$ 使得 $\{C_ix+J_iy\}$ 严格递增．在所有符合要求的数对中，输出字典序最小的一对．
+    Given $N$ pairs of positive integers $(C_i,J_i)$, find a pair of positive integers $(x,y)$ such that $\{C_ix+J_iy\}$ is strictly increasing. Among all valid pairs, output the lexicographically smallest one.
 
-??? note "解答"
-    不妨设 $A_i=C_i-C_{i-1}$ 和 $B_i=J_i-J_{i-1}$．问题转化为求 $(x,y)$ 使得所有 $A_ix+B_iy$ 都是正数．这些数对可以分为四种情形：
+??? note "Solution"
+    Let $A_i=C_i-C_{i-1}$ and $B_i=J_i-J_{i-1}$. The problem becomes finding $(x,y)$ such that every $A_ix+B_iy$ is positive. These pairs fall into four cases:
     
-    1.  $A_i,B_i>0$ 的情形可以忽略，因为已经假设 $(x,y)>0$；
-    2.  $A_i,B_i\le 0$ 的情形直接输出「IMPOSSIBLE」；
-    3.  $A_i>0,B_i\le 0$ 的情形相当于约束 $\dfrac{y}{x}<\dfrac{A_i}{-B_i}$；
-    4.  $A_i\le 0,B_i>0$ 的情形相当于约束 $\dfrac{y}{x}>\dfrac{-A_i}{B_i}$．
+    1.  The case $A_i,B_i>0$ can be ignored, since we already assume $(x,y)>0$;
+    2.  In the case $A_i,B_i\le 0$, output "IMPOSSIBLE" directly;
+    3.  The case $A_i>0,B_i\le 0$ is equivalent to the constraint $\dfrac{y}{x}<\dfrac{A_i}{-B_i}$;
+    4.  The case $A_i\le 0,B_i>0$ is equivalent to the constraint $\dfrac{y}{x}>\dfrac{-A_i}{B_i}$.
     
-    因此，取 $\dfrac{p_0}{q_0}$ 是第四种情形中最大的 $\dfrac{-A_i}{B_i}$，再取 $\dfrac{p_1}{q_1}$ 是第三种情形中最小的 $\dfrac{A_i}{-B_i}$．原问题就变成了找到字典序最小的 $(q,p)$ 使得 $\dfrac{p_0}{q_0}<\dfrac{p}{q}<\dfrac{p_1}{q_1}$ 成立．
+    So let $\dfrac{p_0}{q_0}$ be the largest $\dfrac{-A_i}{B_i}$ from the fourth case, and let $\dfrac{p_1}{q_1}$ be the smallest $\dfrac{A_i}{-B_i}$ from the third case. The original problem becomes finding the lexicographically smallest $(q,p)$ such that $\dfrac{p_0}{q_0}<\dfrac{p}{q}<\dfrac{p_1}{q_1}$.
     
     === "C++"
         ```cpp
@@ -1148,44 +1148,44 @@ Stern–Brocot 树是存储了所有位于 $[0,\infty]$ 之间的分数的 [二�
         --8<-- "docs/math/code/continued-fraction/gcj-2019.py:core"
         ```
 
-想要了解更多 Stern–Brocot 树的性质和应用，可以参考其主条目页面．
+To learn more about the properties and applications of the Stern–Brocot tree, see its main article.
 
-## 分式线性变换
+## Fractional linear transformations
 
-和连分数相关的另一个重要概念是所谓的分式线性变换．
+Another important concept related to continued fractions is the fractional linear transformation.
 
-???+ abstract "分式线性变换"
-    **分式线性变换**（fractional linear transformation）是指函数 $L:\mathbf R\rightarrow\mathbf R$，使得
+???+ abstract "Fractional linear transformation"
+    A **fractional linear transformation** is a function $L:\mathbf R\rightarrow\mathbf R$ such that
     
     $$
     L(x) = \dfrac{ax+b}{cx+d},
     $$
     
-    其中，$a,b,c,d\in\mathbf R$ 且 $ad-bc\neq 0$．
+    where $a,b,c,d\in\mathbf R$ and $ad-bc\neq 0$.
 
-???+ info "关于条件 $ad-bc\neq 0$"
-    容易验证，当 $ad-bc=0$ 时，函数可能没有定义或者是常函数．
+???+ info "About the condition $ad-bc\neq 0$"
+    It is easy to check that when $ad-bc=0$, the function may be undefined or constant.
 
-分式线性变换有如下性质：
+Fractional linear transformations have the following properties:
 
-???+ note "分式线性变换的性质"
-    设 $L_1,L_2,L_3$ 是分式线性变换，并记 $L_i$ 的系数形成的矩阵为
+???+ note "Properties of fractional linear transformations"
+    Let $L_1,L_2,L_3$ be fractional linear transformations, and let the matrix formed by the coefficients of $L_i$ be
     
     $$
     M_i=\begin{pmatrix}a_i & b_i \\ c_i & d_i\end{pmatrix}
     $$
     
-    则它们有如下性质：[^pgl2]
+    Then they have the following properties:[^pgl2]
     
-    1.  分式线性变换的复合 $L_1\circ L_2$ 和逆变换 $L_1^{-1}$ 仍然是分式线性变换，即全体分式线性变换构成 [群](../algebra/basic.md#群)；
-    2.  分式线性变换在系数同乘以非零常数后保持不变，即对于任意 $\lambda\neq 0$，如果 $M_2=\lambda M_1$，则 $L_2=L_1$；
-    3.  分式线性变换的复合的系数矩阵，对应着系数矩阵的乘积，即如果 $M_1M_2=M_3$，则 $L_1\circ L_2=L_3$；
-    4.  分式线性变换的逆变换的系数矩阵，对应着系数矩阵的逆矩阵，即如果 $M_1^{-1}=M_2$，则 $L_1^{-1}=L_2$．
+    1.  The composition $L_1\circ L_2$ and the inverse $L_1^{-1}$ of fractional linear transformations are still fractional linear transformations; that is, all fractional linear transformations form a [group](../algebra/basic.md#群);
+    2.  A fractional linear transformation does not change when all its coefficients are multiplied by the same non-zero constant; that is, for any $\lambda\neq 0$, if $M_2=\lambda M_1$, then $L_2=L_1$;
+    3.  The coefficient matrix of a composition of fractional linear transformations corresponds to the product of the coefficient matrices; that is, if $M_1M_2=M_3$, then $L_1\circ L_2=L_3$;
+    4.  The coefficient matrix of the inverse of a fractional linear transformation corresponds to the inverse of the coefficient matrix; that is, if $M_1^{-1}=M_2$, then $L_1^{-1}=L_2$.
 
-??? note "证明"
-    此处仅提供分式线性变换的复合和逆变换的形式．得到这个形式后，所有性质都是容易验证的．
+??? note "Proof"
+    Here we only give the forms of the composition and the inverse of fractional linear transformations. Once we have these forms, all the properties are easy to check.
     
-    分式线性变换 $L_1$ 和 $L_2$ 的复合：
+    The composition of fractional linear transformations $L_1$ and $L_2$:
     
     $$
     \begin{aligned}
@@ -1193,59 +1193,59 @@ Stern–Brocot 树是存储了所有位于 $[0,\infty]$ 之间的分数的 [二�
     \end{aligned}
     $$
     
-    分式线性变换 $L_1(x)$ 的逆变换：
+    The inverse of the fractional linear transformation $L_1(x)$:
     
     $$
     y = L_1(x) = \dfrac{a_1x+b_1}{c_1x+d_1} \iff x = L_1^{-1}(y) = \dfrac{d_1y - b_1}{-c_1y + a_1}.
     $$
 
-有限连分数 $[a_0,a_1,\ldots,a_n]$ 可以看做是一系列分式线性变换复合的结果．设
+A finite continued fraction $[a_0,a_1,\ldots,a_n]$ can be seen as the result of composing a series of fractional linear transformations. Let
 
 $$
 L_i(x) = \dfrac{a_ix+1}{x} = [a_i,x]. 
 $$
 
-那么，有限连分数
+Then the finite continued fraction is
 
 $$
 [a_0,a_1,\ldots,a_n] = L_0\circ L_1\circ\cdots\circ L_n(\infty).
 $$
 
-其中，分式线性变换 $L(x)=\dfrac{ax+b}{cx+d}$ 变换在 $x=\infty$ 处的取值是 $\dfrac{a}{c}$，这是函数在 $x\rightarrow\pm\infty$ 时的极限值．
+Here the value of the fractional linear transformation $L(x)=\dfrac{ax+b}{cx+d}$ at $x=\infty$ is $\dfrac{a}{c}$, which is the limit of the function as $x\rightarrow\pm\infty$.
 
-对于一般的连分数，设实数 $x$ 的余项为 $r_{k+1}$，即 $x=[a_0,\ldots,a_k,r_{k+1}]$，则有
+For a general continued fraction, let $r_{k+1}$ be a remainder of the real number $x$, that is, $x=[a_0,\ldots,a_k,r_{k+1}]$. Then
 
 $$
 x = L_0\circ L_1\circ\cdots\circ L_k(r_{k+1}) = \dfrac{p_kr_{k+1}+p_{k-1}}{q_kr_{k+1}+q_{k-1}}.
 $$
 
-这同时也给出了分式线性变换 $L_0\circ L_1\circ\cdots\circ L_k$ 的形式．
+This also gives the form of the fractional linear transformation $L_0\circ L_1\circ\cdots\circ L_k$.
 
-当然也可以直接验证这个表达式．最开始的时候是
+Of course, this expression can also be checked directly. At the very beginning we have
 
 $$
 x=\dfrac{x+0}{0x+1}=\dfrac{p_{-1}x+p_{-2}}{q_{-1}x+q_{-2}}.
 $$
 
-随后，如果 $L_0\circ L_1\circ\cdots\circ L_{k-1}$ 具有
+Then, if $L_0\circ L_1\circ\cdots\circ L_{k-1}$ has the form
 
 $$
 \dfrac{p_{k-1}x+p_{k-2}}{q_{k-1}x+q_{k-2}}
 $$
 
-的形式，那么根据分式线性变换的复合公式，有
+then by the composition formula for fractional linear transformations,
 
 $$
 L_0\circ L_1\circ\cdots\circ L_{k-1}\circ L_k = \dfrac{(p_{k-1}a_k+p_{k-2})x+p_{k-1}}{(q_{k-1}a_k+q_{k-2})x+q_{k-1}} = \dfrac{p_kx+p_{k-1}}{q_kx+q_{k-1}}.
 $$
 
-这就可以归纳地得到了上述形式．分式线性变换也提供了递推公式和初值条件的另一个角度的理解．
+This proves the form above by induction. Fractional linear transformations also give another way to understand the recurrence and its initial values.
 
 ???+ example "[DMOPC '19 Contest 7 P4 - Bob and Continued Fractions](https://dmoj.ca/problem/dmopc19c7p4)"
-    给定正整数数组 $a_1,\ldots,a_n$ 和 $m$ 组查询，每次查询给定 $l\le r$，并要求计算 $[a_l,\ldots,a_r]$ 的值．
+    Given an array of positive integers $a_1,\ldots,a_n$ and $m$ queries. Each query gives $l\le r$ and asks for the value of $[a_l,\ldots,a_r]$.
 
-??? note "解答"
-    将连分数理解为一列分式线性变换的复合在 $x=\infty$ 处取值的结果，只需要能够多次查询一段分式线性变换的复合即可．因为每个分式线性变换都可以取逆，所以可以预处理前缀和再用差分的方法查询，复杂度为 $O(n+m)$ 的；如果需要修改，也可以用线段树等结构存储．
+??? note "Solution"
+    View the continued fraction as the value at $x=\infty$ of a composition of a sequence of fractional linear transformations. Then we just need to answer many queries for the composition of a range of fractional linear transformations. Since every fractional linear transformation is invertible, we can precompute prefix compositions and answer queries by "subtracting" prefixes, in $O(n+m)$ time; if updates are needed, we can also store them in a segment tree or a similar structure.
     
     === "C++"
         ```cpp
@@ -1257,104 +1257,104 @@ $$
         --8<-- "docs/math/code/continued-fraction/flt-presum.py"
         ```
 
-### 连分数的四则运算
+### Arithmetic on continued fractions
 
-利用分式线性变换，可以完成连分数的四则运算．这个算法最早由 Gosper 提出．
+Using fractional linear transformations, we can do arithmetic (addition, subtraction, multiplication and division) on continued fractions. This algorithm was first proposed by Gosper.
 
-算法的基石是计算连分数的分式线性变换．本节以有限连分数为例，但是因为算法每输出一位，只需要读入有限多个连分数的项，所以对于无限连分数也是适用的，而且可以算到任意精度．结合前文的连分数比较算法，可以精确地比较任意精度的实数差异．
+The cornerstone of the algorithm is applying a fractional linear transformation to a continued fraction. This section uses finite continued fractions as an example. But since the algorithm only needs to read finitely many terms of the continued fraction to output each term, it also works for infinite continued fractions and can compute to any precision. Combined with the comparison algorithm for continued fractions above, it can compare real numbers exactly to any precision.
 
-???+ example "连分数的分式线性变换"
-    给定分式线性变换 $L(x)=\dfrac{ax+b}{cx+d}$ 和连分数 $\alpha=[\alpha_0,\alpha_1,\ldots,\alpha_n]$，求 $\beta=L(\alpha)$ 的连分数表示 $[\beta_0,\beta_1,\ldots,\beta_m]$．
+???+ example "Fractional linear transformation of a continued fraction"
+    Given a fractional linear transformation $L(x)=\dfrac{ax+b}{cx+d}$ and a continued fraction $\alpha=[\alpha_0,\alpha_1,\ldots,\alpha_n]$, find the continued fraction representation $[\beta_0,\beta_1,\ldots,\beta_m]$ of $\beta=L(\alpha)$.
 
-??? note "解答"
-    算法的基本思路就是逐个确定 $\beta_i$ 的值．记
+??? note "Solution"
+    The basic idea of the algorithm is to determine the values $\beta_i$ one by one. Let
     
     $$
     L_\gamma(x) = \gamma+\dfrac{1}{x} = \dfrac{\gamma x+1}{x}.
     $$
     
-    因为连分数
+    Since the continued fraction gives
     
     $$
     L(\alpha) = L\circ L_{\alpha_0}\circ L_{\alpha_1}\circ\cdots\circ L_{\alpha_n}(\infty),
     $$
     
-    所以，可以向 $L$ 通过逐步复合 $L_{\alpha_k}$ 的方式计算 $L(\alpha)$ 的大小．但是，如果是希望得到 $L(\alpha)$ 的连分数表示，那么并不需要完全计算 $L(\alpha)$ 的值再求出连分数表示．可以在复合 $L_{\alpha_i}$ 的过程中就能判断 $\beta_0,\beta_1,\ldots$ 的值．
+    we can compute $L(\alpha)$ by composing $L$ with $L_{\alpha_k}$ step by step. But if we want the continued fraction representation of $L(\alpha)$, we don't need to compute the full value of $L(\alpha)$ first and then find its continued fraction representation. We can determine the values of $\beta_0,\beta_1,\ldots$ while composing the $L_{\alpha_i}$.
     
-    比如，假设当前计算到
+    For example, suppose we have computed
     
     $$
     L\circ L_{\alpha_0}\circ L_{\alpha_1}\circ\cdots\circ L_{\alpha_k}(x) = \dfrac{a_kx+b_k}{c_kx+d_k}
     $$
     
-    且 $c_k,d_k$ 同号．那么，$L\circ L_{\alpha_0}\circ L_{\alpha_1}\circ\cdots\circ L_{\alpha_k}(x)$ 在 $[0,\infty]$ 上单调，且必然取值在 $\dfrac{a_k}{c_k}$ 和 $\dfrac{b_k}{d_k}$ 之间．所以，如果
+    and $c_k,d_k$ have the same sign. Then $L\circ L_{\alpha_0}\circ L_{\alpha_1}\circ\cdots\circ L_{\alpha_k}(x)$ is monotonic on $[0,\infty]$, and its value must lie between $\dfrac{a_k}{c_k}$ and $\dfrac{b_k}{d_k}$. So if
     
     $$
     \left\lfloor\dfrac{a_k}{c_k}\right\rfloor = \left\lfloor\dfrac{b_k}{d_k}\right\rfloor,
     $$
     
-    就可以确定它就是 $L\circ L_{\alpha_0}\circ L_{\alpha_1}\circ\cdots\circ L_{\alpha_k}(x)$ 的整数部分 $\beta_0$．此时，在左侧复合 $L_{\beta_0}^{-1}$ 就可以得到
+    we know that this is the integer part $\beta_0$ of $L\circ L_{\alpha_0}\circ L_{\alpha_1}\circ\cdots\circ L_{\alpha_k}(x)$. Then composing $L_{\beta_0}^{-1}$ on the left gives
     
     $$
     L_{\beta_0}^{-1}\circ L\circ L_{\alpha_0}\circ L_{\alpha_1}\circ\cdots\circ L_{\alpha_k}.
     $$
     
-    此时，继续添加 $L_{\alpha_{k+1}},L_{\alpha_{k+2}},\ldots$ 就可以确定新的整数部分，即 $\beta_1$．这样计算下去，直到确定出所有的 $\beta_j$ 的值．
+    Now we keep adding $L_{\alpha_{k+1}},L_{\alpha_{k+2}},\ldots$ until we can determine the new integer part, that is, $\beta_1$. We continue this way until all values $\beta_j$ are determined.
     
-    算法要求 $c$ 和 $d$ 同号，是因为要保证函数的不连续点不在 $[0,\infty]$ 范围内．这总是可能的，因为简单连分数的定义要求（除了 $\alpha_0$ 外的）系数都是正整数．由此可以证明，必然在有限步内成立 $c$ 和 $d$ 同号，且将在之后一直保持同号．
+    The algorithm requires $c$ and $d$ to have the same sign to make sure the discontinuity of the function is not in $[0,\infty]$. This is always achievable, because the definition of a simple continued fraction requires the coefficients (except $\alpha_0$) to be positive integers. From this one can show that $c$ and $d$ must have the same sign after finitely many steps, and keep the same sign from then on.
     
-    具体实现时，只需要维护当前的分式线性变换的系数矩阵 $\begin{pmatrix}a&b\\c&d\end{pmatrix}$ 并检查 $c$ 和 $d$ 是否同号以及 $\dfrac{a}{c}$ 和 $\dfrac{b}{d}$ 是否有相同的整数部分．右复合 $L_{\alpha_i}$ 时，就可以得到 $\begin{pmatrix}a\alpha_i+b&a\\ c\alpha_i+d&c\end{pmatrix}$．如果两者整数部分相同为 $\beta_j$，则在结果的连分数内添加 $\beta_j$，并且左复合 $L_{\beta_j}^{-1}$，这相当于计算 $\begin{pmatrix}c&d\\ a\bmod c & b \bmod d \end{pmatrix}$．
+    In the implementation, we just maintain the coefficient matrix $\begin{pmatrix}a&b\\c&d\end{pmatrix}$ of the current fractional linear transformation, and check whether $c$ and $d$ have the same sign and whether $\dfrac{a}{c}$ and $\dfrac{b}{d}$ have the same integer part. Composing $L_{\alpha_i}$ on the right gives $\begin{pmatrix}a\alpha_i+b&a\\ c\alpha_i+d&c\end{pmatrix}$. If the two integer parts are both equal to $\beta_j$, append $\beta_j$ to the resulting continued fraction and compose $L_{\beta_j}^{-1}$ on the left, which amounts to computing $\begin{pmatrix}c&d\\ a\bmod c & b \bmod d \end{pmatrix}$.
 
-连分数的分式线性变换已经可以用于计算分数和连分数的四则运算问题：
+Fractional linear transformations of continued fractions are already enough for arithmetic between a fraction and a continued fraction:
 
 $$
 \dfrac{p}{q}\pm x = \dfrac{\pm qx+p}{0x+q},\ \dfrac{p}{q}x = \dfrac{px+0}{0x+q},\ \frac{p}{q}/x = \dfrac{0x+p}{qx+0}.
 $$
 
-对于一般的连分数之间的四则运算，需要用到双分式线性变换：
+For arithmetic between two general continued fractions, we need bilinear fractional transformations:
 
 $$
 x+y = \dfrac{0xy+x+y+0}{0xy+0x+0y+1},\ xy = \dfrac{1xy+0x+0y+0}{0xy+0x+0y+1},\ \dfrac{x}{y} = \dfrac{0xy+x+0y+0}{0xy+0x+y+0}.
 $$
 
-???+ example "连分数的双分式线性变换"
-    给定双分式线性变换 $L(x,y)=\dfrac{axy+bx+cy+d}{exy+fx+gy+h}$ 和连分数 $\alpha=[\alpha_0,\alpha_1,\ldots,\alpha_n]$ 和 $\beta=[\beta_0,\beta_1,\ldots,\beta_m]$，求 $\gamma=L(\alpha,\beta)$ 的连分数表示 $[\gamma_0,\gamma_1,\ldots,\gamma_\ell]$．
+???+ example "Bilinear fractional transformation of continued fractions"
+    Given a bilinear fractional transformation $L(x,y)=\dfrac{axy+bx+cy+d}{exy+fx+gy+h}$ and continued fractions $\alpha=[\alpha_0,\alpha_1,\ldots,\alpha_n]$ and $\beta=[\beta_0,\beta_1,\ldots,\beta_m]$, find the continued fraction representation $[\gamma_0,\gamma_1,\ldots,\gamma_\ell]$ of $\gamma=L(\alpha,\beta)$.
 
-??? note "解答"
-    与单变量的分式线性变换的情形类似，要确定整数部分只需要保证当前的分式线性变换在 $(x,y)\in[0,\infty]\times[0,\infty]$ 内的整数部分保持不变，即 $e,f,g,h$ 皆同号，且
+??? note "Solution"
+    As in the single-variable case, to determine an integer part we just need the integer part of the current transformation to stay constant over $(x,y)\in[0,\infty]\times[0,\infty]$, that is, $e,f,g,h$ all have the same sign, and
     
     $$
     \left\lfloor\dfrac{a}{e}\right\rfloor = \left\lfloor\dfrac{b}{f}\right\rfloor = \left\lfloor\dfrac{c}{g}\right\rfloor = \left\lfloor\dfrac{d}{h}\right\rfloor.
     $$
     
-    右复合要替换成计算 $L(x,y)\mapsto L(L_{\alpha_i}(x),y)$ 和 $L(x,y)\mapsto L(x,L_{\beta_j}(y))$，这同样表示成系数的线性变换．左复合则和单变量的情形完全一致，只需要计算取模就可以了．
+    Composition on the right becomes computing $L(x,y)\mapsto L(L_{\alpha_i}(x),y)$ and $L(x,y)\mapsto L(x,L_{\beta_j}(y))$, which can also be expressed as linear transformations of the coefficients. Composition on the left is exactly the same as in the single-variable case: just take remainders.
     
-    相较于单变量的情形，双变量的情形需要决定要先复合 $L_{\alpha_i}$ 还是 $L_{\beta_j}$．因为复合的顺序与最后的结果无关，所以可以自由选择复合顺序，比如交替地复合 $L_{\alpha_i}$ 和 $L_{\beta_j}$．或者采用经验法则，优先复合比值差距更大的维度：如果 $\left|\dfrac{b}{f}-\dfrac{d}{h}\right|>\left|\dfrac{c}{g}-\dfrac{d}{h}\right|$，那么就先复合 $L_{\alpha_i}$；否则，就先复合 $L_{\beta_j}$．
+    Compared with the single-variable case, the two-variable case needs to decide whether to compose $L_{\alpha_i}$ or $L_{\beta_j}$ first. Since the order of composition does not affect the final result, we can choose the order freely, for example alternating between $L_{\alpha_i}$ and $L_{\beta_j}$. Or we can use a rule of thumb and first compose along the dimension where the ratios differ more: if $\left|\dfrac{b}{f}-\dfrac{d}{h}\right|>\left|\dfrac{c}{g}-\dfrac{d}{h}\right|$, compose $L_{\alpha_i}$ first; otherwise, compose $L_{\beta_j}$ first.
 
-## 循环连分数
+## Periodic continued fractions
 
-类似于循环小数的概念，如果连分数的系数形成了循环，就称为循环连分数．
+Similar to repeating decimals, if the coefficients of a continued fraction form a repeating cycle, it is called a periodic continued fraction.
 
-???+ abstract "循环连分数"
-    设连分数 $x=[a_0,a_1,a_2,\ldots]$，且存在自然数 $K$ 和正整数 $L$ 使得对于任何 $k\ge K$，都有 $a_k=a_{k+L}$，就称连分数 $x$ 为 **循环连分数**（periodic continued fraction）．满足这个条件的最小的 $L$ 称为它的最小正周期，而在连分数中重复出现的 $a_{k},\ldots,a_{k+L-1}$ 序列就称为它的循环节．利用循环节，循环连分数可以写作 $x=[a_0,\ldots,a_{k-1},\overline{a_k,\ldots,a_{k+L-1}}]$．如果 $K$ 可以取作 $0$，即 $x=[\overline{a_0,\ldots,a_{L-1}}]$，就称它为 **纯循环连分数**（purely periodic continued fraction），否则称它为 **混循环连分数**（eventually periodic continued fraction）．
+???+ abstract "Periodic continued fraction"
+    Let $x=[a_0,a_1,a_2,\ldots]$ be a continued fraction. If there exist a natural number $K$ and a positive integer $L$ such that $a_k=a_{k+L}$ for every $k\ge K$, then $x$ is called a **periodic continued fraction**. The smallest such $L$ is called its minimal period, and the sequence $a_{k},\ldots,a_{k+L-1}$ that repeats in the continued fraction is called its repeating block. Using the repeating block, a periodic continued fraction can be written as $x=[a_0,\ldots,a_{k-1},\overline{a_k,\ldots,a_{k+L-1}}]$. If $K$ can be taken to be $0$, that is, $x=[\overline{a_0,\ldots,a_{L-1}}]$, it is called a **purely periodic continued fraction**; otherwise, it is called an **eventually periodic continued fraction**.
 
-### 二次无理数
+### Quadratic irrationals
 
-与循环连分数密切相关的概念是 [（实）二次无理数](./quadratic.md)（quadratic irrational），即整系数二次方程的无理数解．所有的二次无理数都可以表示成
+A concept closely related to periodic continued fractions is the [(real) quadratic irrational](./quadratic.md), that is, an irrational solution of a quadratic equation with integer coefficients. Every quadratic irrational can be written in the form
 
 $$
 a+b\sqrt D
 $$
 
-的形式，其中，$a,b$ 是有理数且 $D$ 是无平方因子的正整数．本文提到的二次无理数都默认是实数．而且，$a+b\sqrt D$ 的共轭是指 $a-b\sqrt{D}$．
+where $a,b$ are rational and $D$ is a square-free positive integer. Quadratic irrationals on this page are always assumed to be real. Also, the conjugate of $a+b\sqrt D$ is $a-b\sqrt{D}$.
 
-Euler 的结果说明，所有循环连分数都是二次无理数．
+A result of Euler shows that every periodic continued fraction is a quadratic irrational.
 
-???+ note "定理（Euler）"
-    循环连分数表示的都是二次无理数．
+???+ note "Theorem (Euler)"
+    Every periodic continued fraction represents a quadratic irrational.
 
-??? note "证明"
-    对于一般的循环连分数 $x=[a_0,\ldots,a_{k-1},\overline{a_k,\ldots,a_{k+L-1}}]$，可以设 $y=[\overline{a_k,\ldots,a_{k+L-1}}]$，则
+??? note "Proof"
+    For a general periodic continued fraction $x=[a_0,\ldots,a_{k-1},\overline{a_k,\ldots,a_{k+L-1}}]$, let $y=[\overline{a_k,\ldots,a_{k+L-1}}]$. Then
     
     $$
     \begin{aligned}
@@ -1363,128 +1363,128 @@ Euler 的结果说明，所有循环连分数都是二次无理数．
     \end{aligned}
     $$
     
-    其中，$L_0(\cdot)$ 和 $L_1(\cdot)$ 都是分式线性变换．于是，得到 $x$ 满足的方程
+    where $L_0(\cdot)$ and $L_1(\cdot)$ are both fractional linear transformations. So $x$ satisfies the equation
     
     $$
     x = L_0\circ L_1\circ L_0^{-1}(x). 
     $$
     
-    不妨设分式线性变换 $L_0\circ L_1\circ L_0^{-1}(x) = \dfrac{ax+b}{cx+d}$，则得到 $x$ 满足的方程
+    Let the fractional linear transformation be $L_0\circ L_1\circ L_0^{-1}(x) = \dfrac{ax+b}{cx+d}$. Then $x$ satisfies the equation
     
     $$
     cx^2+(d-a)x-b=0.
     $$
     
-    因而，循环连分数都是整系数二次方程的解．又因为无限连分数都是无理数，所以循环连分数都表示了二次无理数．
+    So every periodic continued fraction is a solution of a quadratic equation with integer coefficients. And since every infinite continued fraction is irrational, every periodic continued fraction represents a quadratic irrational.
 
-Lagrange 的结果说明反过来也成立，因而二次无理数和循环连分数是等价的．
+A result of Lagrange shows that the converse also holds, so quadratic irrationals and periodic continued fractions are equivalent.
 
-???+ note "定理（Lagrange）"
-    二次无理数可以表示成循环连分数．
+???+ note "Theorem (Lagrange)"
+    Every quadratic irrational can be written as a periodic continued fraction.
 
-??? note "证明"
-    思路是证明余项会重复出现．设二次无理数 $x$ 可以写作
+??? note "Proof"
+    The idea is to show that the remainders repeat. Let the quadratic irrational $x$ be written in the form
     
     $$
     x = \dfrac{P_0+\sqrt{D}}{Q_0}
     $$
     
-    的形式，其中，$P_0,Q_0,D$ 都是整数且 $Q_0\mid D-P_0^2$．这总是可能的，比如二次无理数 $x$ 总可以写成
+    where $P_0,Q_0,D$ are integers and $Q_0\mid D-P_0^2$. This is always possible. For example, a quadratic irrational $x$ can always be written as
     
     $$
     a+b\sqrt{D'} = \dfrac{p_a}{q_a}+\dfrac{p_b}{q_b}\sqrt{D'} = \dfrac{p_aq_b+\sqrt{p_b^2q_a^2D'}}{q_aq_b} = \dfrac{p_aq_aq_b^2+\sqrt{(q_aq_b)^2p_b^2q_a^2D'}}{(q_aq_b)^2}
     $$
     
-    再令 $P=p_aq_aq_b^2$，$Q=(q_aq_b)^2$ 和 $D=Qp_b^2q_a^2D'$ 即可（这里设 $b>0$；若 $b<0$，只需将 $P$ 和 $Q$ 同时取相反数）．
+    and then we take $P=p_aq_aq_b^2$, $Q=(q_aq_b)^2$ and $D=Qp_b^2q_a^2D'$ (here we assume $b>0$; if $b<0$, just negate both $P$ and $Q$).
     
-    将它写成这种形式的好处是，可以证明它的所有余项都具有类似的形式：
+    The advantage of this form is that we can show all its remainders have a similar form:
     
     $$
     r_k=\dfrac{P_k+\sqrt D}{Q_k},
     $$
     
-    其中，$P_k,Q_k$ 是整数且 $Q_k\mid D-P_k^2$．其中，条件 $Q_k\mid D-P_k^2$ 保证了所有余项的分子中，$\sqrt{D}$ 前面的系数都是 $1$．
+    where $P_k,Q_k$ are integers and $Q_k\mid D-P_k^2$. The condition $Q_k\mid D-P_k^2$ ensures that in the numerators of all remainders, the coefficient of $\sqrt{D}$ is $1$.
     
-    为得到余项的形式，可以使用数学归纳法．当 $k=0$ 时，显然．假设已经得到了 $r_k$ 的形式，并设 $a_k=\lfloor r_k\rfloor$，就有
+    To get the form of the remainders, we use induction. The case $k=0$ is obvious. Suppose we already have the form of $r_k$, and let $a_k=\lfloor r_k\rfloor$. Then
     
     $$
     r_k = a_k+\dfrac{1}{r_{k+1}}.
     $$
     
-    设 $r_{k+1}$ 也有类似形式，并和 $r_k$ 一起代入上式，有
+    Suppose $r_{k+1}$ has a similar form, and substitute it together with $r_k$ into the equation above:
     
     $$
     \dfrac{P_k+\sqrt D}{Q_k} = a_k + \dfrac{Q_{k+1}}{P_{k+1}+\sqrt{D}} = a_k + \dfrac{Q_{k+1}P_{k+1}-Q_{k+1}\sqrt{D}}{P_{k+1}^2-D}.
     $$
     
-    因为二次无理数表示成 $a+b\sqrt{D}$ 的方式是唯一的，所以比较两侧系数可知
+    Since a quadratic irrational can be written as $a+b\sqrt{D}$ in only one way, comparing coefficients on both sides gives
     
     $$
     \dfrac{P_k}{Q_k} = a_k+\dfrac{Q_{k+1}P_{k+1}}{P_{k+1}^2-D},\ \dfrac{1}{Q_k}=-\dfrac{Q_{k+1}}{P_{k+1}^2-D}.
     $$
     
-    将第二个等式代入第一个等式可以解出 $P_{k+1}$：
+    Substituting the second equation into the first, we can solve for $P_{k+1}$:
     
     $$
     \dfrac{P_k}{Q_k} = a_k-\dfrac{P_{k+1}}{Q_k} \iff P_{k+1} = a_kQ_k-P_k.
     $$
     
-    再代入第二个等式，就可以解出 $Q_{k+1}$：
+    Substituting back into the second equation, we can solve for $Q_{k+1}$:
     
     $$
     Q_{k+1} = \dfrac{D-P_{k+1}^2}{Q_k} = \dfrac{D-(a_kQ_k-P_k)^2}{Q_k} = -a_k^2Q_k+2a_kP_k+\dfrac{D-P_k^2}{Q_k}.
     $$
     
-    根据归纳假设，$Q_k\mid D-P_k^2$，所以确实 $P_{k+1}$ 和 $Q_{k+1}$ 都是整数，即 $r_{k+1}$ 也具有所要求的形式．
+    By the induction hypothesis, $Q_k\mid D-P_k^2$, so $P_{k+1}$ and $Q_{k+1}$ are indeed integers; that is, $r_{k+1}$ also has the required form.
     
-    最后，证明余项只能取得有限多个值，故而必然重复．前文已经求得余项
+    Finally, we show that the remainders can take only finitely many values, so they must repeat. We found the remainder above:
     
     $$
     \dfrac{P_k+\sqrt{D}}{Q_k} = r_k = -\dfrac{q_{k-2}x-p_{k-2}}{q_{k-1}x-p_{k-1}}
     $$
     
-    而且对于无理数，总有 $r_k>1$．同时，它的共轭
+    and for an irrational number, we always have $r_k>1$. Meanwhile, its conjugate
     
     $$
     \dfrac{P_k-\sqrt{D}}{Q_k} = r_k^* = -\dfrac{q_{k-2}x^*-p_{k-2}}{q_{k-1}x^*-p_{k-1}} = -\dfrac{q_{k-2}}{q_{k-1}}\dfrac{x^*-\dfrac{p_{k-2}}{q_{k-2}}}{x^*-\dfrac{p_{k-1}}{q_{k-1}}}
     $$
     
-    对于充分大的 $k$ 必然小于 $0$，因为
+    must be less than $0$ for large enough $k$, because
     
     $$
     \dfrac{q_{k-2}}{q_{k-1}}>0,\ \lim_{k\rightarrow\infty}\dfrac{x^*-\dfrac{p_{k-2}}{q_{k-2}}}{x^*-\dfrac{p_{k-1}}{q_{k-1}}}=\dfrac{x^*-x}{x^*-x}=1.
     $$
     
-    这就说明
+    This shows
     
     $$
     \dfrac{2\sqrt{D}}{Q_k} = r_k-r_k^*>1 \iff 0<Q_k\le 2\sqrt{D}.
     $$
     
-    因此，$Q_k$ 只能取有限多个值．进而，
+    So $Q_k$ can take only finitely many values. Furthermore,
     
     $$
     D-P_{k}^2=Q_kQ_{k-1}>0 \iff |P_k|<\sqrt{D},
     $$
     
-    所以，$P_k$ 也只能取有限多个值．故而，余项 $r_k$ 只有有限多个可能的取值，必然在无限项内重复．
+    so $P_k$ can also take only finitely many values. Hence the remainder $r_k$ has only finitely many possible values, and must repeat among infinitely many terms.
 
-定理的证明也提供了一个计算二次无理数的余项的递推公式：
+The proof of the theorem also gives a recurrence for computing the remainders of a quadratic irrational:
 
-???+ note "二次无理数的余项递推公式"
-    二次无理数总可以表示成
+???+ note "Recurrence for the remainders of a quadratic irrational"
+    A quadratic irrational can always be written in the form
     
     $$
     x=\dfrac{P_0+\sqrt{D}}{Q_0}
     $$
     
-    的形式，且 $Q_0\mid D-P^2_0$．它的余项
+    with $Q_0\mid D-P^2_0$. In its remainders
     
     $$
     r_{k}=\dfrac{P_k+\sqrt{D}}{Q_k}
     $$
     
-    中，$P_k,Q_k$ 都是整数，且满足递推关系
+    $P_k,Q_k$ are integers and satisfy the recurrence
     
     $$
     \begin{aligned}
@@ -1493,13 +1493,13 @@ Lagrange 的结果说明反过来也成立，因而二次无理数和循环连�
     \end{aligned}
     $$
 
-这个递推公式可以直接用于二次无理数的连分数的计算，而且根据定理的证明，$|P_k|<\sqrt{D}$ 且 $Q_k\le 2\sqrt{D}$．该算法的复杂度取决于循环节的长度，而后者可以证明是 $O(\sqrt{D}\log D)$ 的[^period-surd]．
+This recurrence can be used directly to compute the continued fraction of a quadratic irrational, and by the proof of the theorem, $|P_k|<\sqrt{D}$ and $Q_k\le 2\sqrt{D}$. The complexity of this algorithm depends on the length of the period, which can be shown to be $O(\sqrt{D}\log D)$[^period-surd].
 
-???+ example "二次无理数"
-    给定二次无理数 $\alpha=\dfrac{x+y\sqrt{n}}{z}$，求出其连分数的表示．其中，$x,y,z,n\in\mathbf Z$ 且 $n>0$ 不是完全平方．
+???+ example "Quadratic irrational"
+    Given a quadratic irrational $\alpha=\dfrac{x+y\sqrt{n}}{z}$, find its continued fraction representation. Here $x,y,z,n\in\mathbf Z$, and $n>0$ is not a perfect square.
 
-??? note "解答"
-    首先将二次无理数表示成上述形式，再利用递推公式计算即可．连分数的项由 $a_k=\lfloor r_k\rfloor$ 给出．为了求出循环节，需要存储 $(P_k,Q_k)$ 首次出现的下标．
+??? note "Solution"
+    First write the quadratic irrational in the form above, then compute with the recurrence. The terms of the continued fraction are given by $a_k=\lfloor r_k\rfloor$. To find the repeating block, store the index where each $(P_k,Q_k)$ first appears.
     
     === "C++"
         ```cpp
@@ -1512,10 +1512,10 @@ Lagrange 的结果说明反过来也成立，因而二次无理数和循环连�
         ```
 
 ???+ example "[Tavrida NU Akai Contest - Continued Fraction](https://timus.online/problem.aspx?space=1&num=1814)"
-    给定 $x$ 和 $k$，且 $x$ 不是完全平方数，$0\le k\le 10^9$．求出 $\sqrt{x}$ 的第 $k$ 个渐近分数 $x_k$．
+    Given $x$ and $k$, where $x$ is not a perfect square and $0\le k\le 10^9$, find the $k$-th convergent $x_k$ of $\sqrt{x}$.
 
-??? note "解答"
-    首先利用上述算法解出 $\sqrt{x}$ 的周期，将循环节表示成分式线性变换，就可以用 [快速幂](../binary-exponentiation.md) 获得 $x_k$ 的值．当然，对于没有进入循环节和不足一个循环节的部分，需要单独处理．
+??? note "Solution"
+    First use the algorithm above to find the period of $\sqrt{x}$. Express the repeating block as a fractional linear transformation; then [binary exponentiation](../binary-exponentiation.md) gives the value of $x_k$. Of course, the part before the period starts and the part that is shorter than a full period need to be handled separately.
     
     === "C++"
         ```cpp
@@ -1527,29 +1527,29 @@ Lagrange 的结果说明反过来也成立，因而二次无理数和循环连�
         --8<-- "docs/math/code/continued-fraction/surd-convergent.py"
         ```
 
-### 纯循环连分数
+### Purely periodic continued fractions
 
-二次无理数是有循环连分数表示的充分必要条件，本节的讨论则给出了实数具有纯循环连分数表示的充分必要条件．
+Being a quadratic irrational is a necessary and sufficient condition for a real number to have a periodic continued fraction representation. This section gives a necessary and sufficient condition for a real number to have a purely periodic continued fraction representation.
 
-首先，因为纯循环连分数具有类似有限连分数的形式，所以可以做「反序」操作．类似于反序定理，这样得到的连分数表示和原来的连分数表示之间有确定的关系．
+First, since a purely periodic continued fraction looks like a finite continued fraction, we can "reverse" it. As with the reversal theorem, the continued fraction obtained this way has a definite relationship with the original one.
 
-???+ note "定理（Galois）"
-    对于纯循环连分数
+???+ note "Theorem (Galois)"
+    For a purely periodic continued fraction
     
     $$
     x = \left[\overline{a_0,a_1,\ldots,a_{\ell}}\right],
     $$
     
-    记
+    let
     
     $$
     x' = \left[\overline{a_{\ell},\ldots,a_1,a_0}\right].
     $$
     
-    则 $x$ 和 $x'$ 互为「倒数负共轭」，即 $x$ 的共轭的倒数的相反数是 $x'$．
+    Then $x$ and $x'$ are "negative reciprocal conjugates" of each other; that is, the negative of the reciprocal of the conjugate of $x$ is $x'$.
 
-??? note "证明"
-    因为不要求 $\ell+1$ 是最小正周期，所以不妨设 $\ell>0$．利用反序定理可知，
+??? note "Proof"
+    Since $\ell+1$ is not required to be the minimal period, we may assume $\ell>0$. By the reversal theorem,
     
     $$
     \begin{aligned}
@@ -1558,126 +1558,126 @@ Lagrange 的结果说明反过来也成立，因而二次无理数和循环连�
     \end{aligned}
     $$
     
-    因为等式两侧都是既约分数，所以
+    Since both sides of each equation are reduced fractions,
     
     $$
     p'_\ell = p_\ell,\ q'_\ell = p_{\ell-1},\ p'_{\ell-1}=q_\ell,\ q'_{\ell-1} = q_{\ell-1}.
     $$
     
-    对于纯循环连分数 $x$，它的第 $\ell+1$ 个余项就是 $x$，因此，有
+    For a purely periodic continued fraction $x$, its $(\ell+1)$-th remainder is $x$ itself, so
     
     $$
     x = \dfrac{xp_\ell+p_{\ell-1}}{xq_\ell+q_{\ell-1}}.
     $$
     
-    所以，它满足二次方程
+    So it satisfies the quadratic equation
     
     $$
     q_\ell x^2+(q_{\ell-1}-p_\ell)x-p_{\ell-1} = 0.
     $$
     
-    同理，$x'$ 满足二次方程
+    Similarly, $x'$ satisfies the quadratic equation
     
     $$
     q'_\ell(x')^2+(q'_{\ell-1}-p'_\ell)x'-p'_{\ell-1} = 0.
     $$
     
-    利用系数的关系可知，这个方程可以写作
+    Using the relations between the coefficients, this equation can be written as
     
     $$
     p_{\ell-1}(x')^2+(q_{\ell-1}-p_\ell)x'-q_\ell = 0.
     $$
     
-    令 $y=-\dfrac{1}{x'}$，则 $x$ 和 $y$ 满足同一个方程．但是，$x>0>y$，因此它们并非同一个根，而是互为共轭的关系，这就证明了原命题．
+    Let $y=-\dfrac{1}{x'}$. Then $x$ and $y$ satisfy the same equation. But $x>0>y$, so they are not the same root; they are conjugates of each other. This proves the statement.
 
-Galois 利用这个观察，进一步地给出了二次无理数有纯循环连分数表示的充分必要条件．
+Using this observation, Galois went further and gave a necessary and sufficient condition for a quadratic irrational to have a purely periodic continued fraction representation.
 
-???+ note "定理（Galois）"
-    二次无理数 $x$ 可以表示为纯循环连分数，当且仅当 $x>1$ 且它的共轭 $-1<x^*<0$．
+???+ note "Theorem (Galois)"
+    A quadratic irrational $x$ can be written as a purely periodic continued fraction if and only if $x>1$ and its conjugate satisfies $-1<x^*<0$.
 
-??? note "证明"
-    如果 $x$ 是纯循环连分数，那么利用前文的记号，有 $a_0=a_{\ell+1}\ge 1$，故而 $x>1$．又因为它的倒数负共轭也是循环连分数，所以它的共轭 $x^*$ 满足 $-\dfrac{1}{x^*}>1$，亦即 $-1<x^*<0$．这就证明了纯循环连分数都满足该条件．
+??? note "Proof"
+    If $x$ is a purely periodic continued fraction, then with the notation above, $a_0=a_{\ell+1}\ge 1$, so $x>1$. And since its negative reciprocal conjugate is also a periodic continued fraction, its conjugate $x^*$ satisfies $-\dfrac{1}{x^*}>1$, that is, $-1<x^*<0$. This proves that every purely periodic continued fraction satisfies the condition.
     
-    反过来，设二次无理数 $x>1$ 且 $-1<x^*<0$．对于 $x$ 的余项 $r_k$，有递推关系
+    Conversely, let the quadratic irrational $x>1$ with $-1<x^*<0$. The remainders $r_k$ of $x$ satisfy the recurrence
     
     $$
     r_k = a_k+\dfrac{1}{r_{k+1}}.
     $$
     
-    等式两边都是二次无理数，取共轭可知
+    Both sides are quadratic irrationals, so taking conjugates gives
     
     $$
     r_{k}^* = a_k+\dfrac{1}{r_{k+1}^*}.
     $$
     
-    利用这个递推关系，可以证明 $-1<r_{k}^*<0$ 对所有 $k\ge 0$ 都成立．
+    Using this recurrence, we can show that $-1<r_{k}^*<0$ holds for all $k\ge 0$.
     
-    首先，对于 $k=0$，有 $-1<r_0^*=x^*<0$，显然．对于 $k\ge 0$，由简单连分数定义和 $x>1$ 可知，$a_k\ge 1$．故而，假设 $-1<r_k^*<0$，就有
+    First, for $k=0$, $-1<r_0^*=x^*<0$ is clear. For $k\ge 0$, the definition of a simple continued fraction and $x>1$ give $a_k\ge 1$. So, assuming $-1<r_k^*<0$, we have
     
     $$
     -1<-\dfrac{1}{a_k}< r_{k+1}^* = \dfrac{1}{r_k^*-a_k} < -\dfrac{1}{1+a_k} < 0.
     $$
     
-    这就归纳地证明了 $-1<r_{k}^*<0$ 对所有 $k\ge 0$ 都成立．因此，有
+    This proves by induction that $-1<r_{k}^*<0$ for all $k\ge 0$. Therefore,
     
     $$
     a_k = -\dfrac{1}{r_{k+1}^*}+r_k^* = \left\lfloor-\dfrac{1}{r_{k+1}^*}\right\rfloor.
     $$
     
-    因为二次无理数一定是循环连分数，所以存在正整数 $L$ 和至少某个充分大的 $k$，有 $r_{k}=r_{k+L}$．但是，此时必然也有
+    Since a quadratic irrational is always a periodic continued fraction, there is a positive integer $L$ such that $r_{k}=r_{k+L}$ for at least some large enough $k$. But then we must also have
     
     $$
     a_{k-1} = \left\lfloor-\dfrac{1}{r_{k}^*}\right\rfloor = \left\lfloor-\dfrac{1}{r_{k+L}^*}\right\rfloor = a_{k+L-1}.
     $$
     
-    故而，
+    So
     
     $$
     r_{k-1} = a_{k-1}+\dfrac{1}{r_k} = a_{k+L-1}+\dfrac{1}{r_{k+L}} = r_{k+L-1}.
     $$
     
-    这意味着最小的能够使得 $r_{k}=r_{k+L}$ 成立的 $k$ 必然是 $0$．也就是说，$x$ 可以表示成纯循环连分数．
+    This means the smallest $k$ with $r_{k}=r_{k+L}$ must be $0$. That is, $x$ can be written as a purely periodic continued fraction.
 
-Galois 定理揭示了纯二次不尽根（pure quadratic surd）——即形如 $\sqrt{r}$ 的二次无理数——的连分数表示的规律．
+Galois's theorem reveals the pattern in the continued fraction representations of pure quadratic surds, that is, quadratic irrationals of the form $\sqrt{r}$.
 
-???+ note "推论"
-    对于有理数 $r>1$，如果 $\sqrt{r}$ 是无理数，那么
+???+ note "Corollary"
+    For a rational number $r>1$, if $\sqrt{r}$ is irrational, then
     
     $$
     \sqrt{r} = [\lfloor\sqrt{r}\rfloor,\overline{a_1,\ldots,a_{\ell},2\lfloor\sqrt{r}\rfloor}]
     $$
     
-    且对于任意 $1\le k\le\ell$，都有 $a_k = a_{\ell+1-k}$．
+    and $a_k = a_{\ell+1-k}$ for every $1\le k\le\ell$.
 
-??? note "证明"
-    对于二次无理数 $\sqrt{r}$，因为 $\lfloor\sqrt{r}\rfloor+\sqrt{r}>1$ 且 $-1<\lfloor\sqrt{r}\rfloor-\sqrt{r}<0$，所以 $\lfloor\sqrt{r}\rfloor+\sqrt{r}$ 是纯循环连分数：
+??? note "Proof"
+    For the quadratic irrational $\sqrt{r}$, since $\lfloor\sqrt{r}\rfloor+\sqrt{r}>1$ and $-1<\lfloor\sqrt{r}\rfloor-\sqrt{r}<0$, $\lfloor\sqrt{r}\rfloor+\sqrt{r}$ is a purely periodic continued fraction:
     
     $$
     \lfloor\sqrt{r}\rfloor+\sqrt{r} = [\overline{2\lfloor\sqrt{r}\rfloor,a_1,\ldots,a_\ell}].
     $$
     
-    根据上述定理，它的倒数负共轭具有形式
+    By the theorem above, its negative reciprocal conjugate has the form
     
     $$
     \dfrac{1}{\sqrt{r}-\lfloor\sqrt{r}\rfloor} = [\overline{a_\ell,\ldots,a_1,2\lfloor\sqrt{r}\rfloor}].
     $$
     
-    利用连分数的基本性质可知
+    By the basic properties of continued fractions,
     
     $$
     \sqrt{r}=\lfloor\sqrt{r}\rfloor+\dfrac{1}{\dfrac{1}{\sqrt{r}-\lfloor\sqrt{r}\rfloor}}=[\lfloor\sqrt{r}\rfloor,\overline{a_\ell,\ldots,a_1,2\lfloor\sqrt{r}\rfloor}].
     $$
     
-    但是，又由 $\lfloor\sqrt{r}\rfloor+\sqrt{r}$ 的连分数表示可知，
+    But from the continued fraction representation of $\lfloor\sqrt{r}\rfloor+\sqrt{r}$, we also have
     
     $$
     \sqrt{r} = -\lfloor\sqrt{r}\rfloor+\left(\lfloor\sqrt{r}\rfloor+\sqrt{r}\right) = [\lfloor\sqrt{r}\rfloor,\overline{a_1,\ldots,a_\ell,2\lfloor\sqrt{r}\rfloor}].
     $$
     
-    因为无理数的连分数表示是唯一的，所以比较中间的系数就知道，$a_k=a_{\ell+1-k}$ 对所有 $1\le k\le\ell$ 都成立．
+    Since the continued fraction representation of an irrational number is unique, comparing the middle coefficients shows that $a_k=a_{\ell+1-k}$ for all $1\le k\le\ell$.
 
-??? example "例子：$\sqrt{74}$ 的连分数展开"
-    $\sqrt{74}$ 的连分数可以计算如下：（此处仅是为了说明，编程计算应使用前文提到的递归算法）
+??? example "Example: continued fraction expansion of $\sqrt{74}$"
+    The continued fraction of $\sqrt{74}$ can be computed as follows (this is only for illustration; a program should use the recursive algorithm described above):
     
     $$
     \begin{aligned}
@@ -1690,7 +1690,7 @@ Galois 定理揭示了纯二次不尽根（pure quadratic surd）——即形如
     \end{aligned}
     $$
     
-    各个余项分别是：
+    The remainders are:
     
     $$
     \begin{alignedat}{3}
@@ -1702,37 +1702,37 @@ Galois 定理揭示了纯二次不尽根（pure quadratic surd）——即形如
     \end{alignedat}
     $$
     
-    根据 Galois 的结论，余项 $r_k$ 和 $r_{L+1-k}$ 循环部分恰好相反，因此互为倒数负共轭．如果 $\sqrt{D}$ 的循环节长度 $L$ 为奇数，那么中间的一项就与自身互为倒数负共轭；如果循环节长度 $L$ 为偶数，就不存在这样的项．Pell 方程一节的讨论会说明，循环节长度的奇偶性将决定方程 $x^2-Dy^2=-1$ 是否有解．
+    By Galois's result, the periodic parts of the remainders $r_k$ and $r_{L+1-k}$ are exact reverses of each other, so they are negative reciprocal conjugates of each other. If the period length $L$ of $\sqrt{D}$ is odd, the middle term is its own negative reciprocal conjugate; if the period length $L$ is even, there is no such term. The discussion in the section on Pell's equation will show that the parity of the period length determines whether the equation $x^2-Dy^2=-1$ has a solution.
 
-二次无理数 $\sqrt{D}$ 的连分数展开主要应用在 [Pell 方程](./pell-equation.md) 的求解中．
+The continued fraction expansion of the quadratic irrational $\sqrt{D}$ is mainly used for solving [Pell's equation](./pell-equation.md).
 
-## 例题
+## Example problems
 
-在掌握了基础概念后，需要研究一些具体的例题来理解如何在算法竞赛中应用连分数的方法．
+After learning the basic concepts, let's study some concrete example problems to see how continued fraction methods are used in competitive programming.
 
-???+ example "线下凸包"
-    给定 $r=[a_0,a_1,\ldots,a_n]$，求出满足 $0\le x\le N$ 和 $0\le y\le rx$ 的整点 $(x,y)$ 的集合的凸包．
+???+ example "Convex hull under a line"
+    Given $r=[a_0,a_1,\ldots,a_n]$, find the convex hull of the set of lattice points $(x,y)$ with $0\le x\le N$ and $0\le y\le rx$.
 
-??? note "解答"
-    对于无界集合 $x\ge 0$，上凸壳就是直线 $y=rx$ 本身．然而，如下图所示，如果还要求 $x\le N$，那么上凸壳最终会偏离直线．
+??? note "Solution"
+    For the unbounded set $x\ge 0$, the upper hull is just the line $y=rx$ itself. However, as the figure below shows, if we also require $x\le N$, the upper hull eventually moves away from the line.
     
     ![](./images/lattice-hull.svg)
     
-    从 $(0,0)$ 开始，可以自左向右地求出上凸壳的所有整点．假设当前已经求出的上凸壳的最后一个整点是 $(x,y)$．现在要求出下一个整点 $(x',y')$．顶点 $(x',y')$ 在 $(x,y)$ 右上方，记 $(\Delta x,\Delta y)=(x'-x,y'-y)$ 为两者的差值．那么，必然有
+    Starting from $(0,0)$, we can find all lattice points of the upper hull from left to right. Suppose the last lattice point of the upper hull found so far is $(x,y)$. Now we want the next lattice point $(x',y')$. The vertex $(x',y')$ is above and to the right of $(x,y)$; let $(\Delta x,\Delta y)=(x'-x,y'-y)$ be their difference. Then we must have
     
     $$
     0<\Delta x\le N-x,\ 0\le \Delta y\le r\Delta x.
     $$
     
-    第二个不等式成立，因为条件 $\Delta y>r\Delta x$ 与 $(x,y)$ 已经在上凸壳上这件事矛盾．观察 $(\Delta x,\Delta y)$ 需要满足的条件，对于不同的点 $(x,y)$，只有 $\Delta x$ 的上界在变化．所以，只要能解决这个子问题，就可以递归地求出原问题的所有整点．
+    The second inequality holds because the condition $\Delta y>r\Delta x$ would contradict the fact that $(x,y)$ is already on the upper hull. Looking at the conditions $(\Delta x,\Delta y)$ must satisfy, only the upper bound on $\Delta x$ changes for different points $(x,y)$. So if we can solve this subproblem, we can recursively find all the lattice points of the original problem.
     
-    进而，考虑子问题的解法．对比于原问题，子问题相当于将 $x$ 的上界修改为 $N'$，并求出上凸壳中与原点相邻的第一个整点．记子问题的解为 $(q,p)$．那么，$p$ 与 $q$ 必然是互素的（否则不是第一个整点），且与原点连线的斜率 $\dfrac{p}{q}$ 是所有位于直线 $y=rx$ 下方且横坐标不超过 $N'$ 的整点中最大的（否则不在凸包上）．结合前文的 [几何解释](#几何解释) 可知，这样的点 $(x,y)$ 必然对应于 $r$ 的一个下中间分数．因为分母越大的下中间分数离 $r$ 越近，所以子问题的解 $(q,p)$ 对应着所有分母不超过 $N'$ 的下中间分数中分母最大的那个．
+    Next, consider how to solve the subproblem. Compared with the original problem, the subproblem changes the upper bound on $x$ to $N'$ and asks for the first lattice point of the upper hull next to the origin. Let the solution of the subproblem be $(q,p)$. Then $p$ and $q$ must be coprime (otherwise it would not be the first lattice point), and the slope $\dfrac{p}{q}$ of the line to the origin is the largest among all lattice points below the line $y=rx$ with $x$-coordinate at most $N'$ (otherwise it would not be on the convex hull). From the [geometric interpretation](#geometric-interpretation) above, such a point $(x,y)$ must correspond to a lower semiconvergent of $r$. Since lower semiconvergents with larger denominators are closer to $r$, the solution $(q,p)$ of the subproblem corresponds to the lower semiconvergent with the largest denominator among all those with denominator at most $N'$.
     
-    当然，实际求解时，没必要对每个子问题都重新求出这样的下中间分数．应该首先求出所有的渐近分数，这相当于提供了遍历所有的下中间分数的方法．然后分母从大到小地遍历下中间分数，每次都尝试将它加到前一个整点 $(x,y)$ 上，直到不能添加为止才继续尝试下一个下中间分数．
+    Of course, in practice there is no need to recompute such a lower semiconvergent for every subproblem. We should first compute all convergents, which gives us a way to go through all lower semiconvergents. Then go through the lower semiconvergents from the largest denominator to the smallest, each time trying to add it to the previous lattice point $(x,y)$, and move on to the next lower semiconvergent only when it can no longer be added.
     
-    此处有一些显然的优化．首先，对于下中间分数 $(q,p)$，必然存在奇数 $k$ 和 $0\le t<a_{k+1}$ 使得 $(q,p)=(q_{k-1},p_{k-1})+t(q_k,p_k)$．只要找到最大的 $t$ 使得 $q_{k-1}+tq_k+x\le N$ 满足就好了，亦即 $t=\left\lfloor\dfrac{N-q_{k-1}-x}{q_k}\right\rfloor$．不用担心 $t$ 越界，因为更大的下渐近分数 $(q_{k+1},p_{k+1})$ 已经添加完了．而每次确定添加的次数的时候，直接计算 $\left\lfloor\dfrac{N-x}{q}\right\rfloor$ 即可，不必逐个尝试．
+    There are some obvious optimizations here. First, for a lower semiconvergent $(q,p)$, there must be an odd $k$ and $0\le t<a_{k+1}$ such that $(q,p)=(q_{k-1},p_{k-1})+t(q_k,p_k)$. We just need to find the largest $t$ with $q_{k-1}+tq_k+x\le N$, that is, $t=\left\lfloor\dfrac{N-q_{k-1}-x}{q_k}\right\rfloor$. We don't need to worry about $t$ going out of range, because the larger lower convergent $(q_{k+1},p_{k+1})$ has already been fully added. And to determine how many times to add each time, just compute $\left\lfloor\dfrac{N-x}{q}\right\rfloor$ directly instead of trying one at a time.
     
-    优化后的算法的复杂度是 $O(n)$ 的．虽然下中间分数对应的整点可能有很多，但是真正成为增量的并不多．下面要说明，所有 $0\le t<a_{k+1}$ 的下中间分数 $(q,p)=(q_{k-1},p_{k-1})+t(q_k,p_k)$ 中，至多会出现两个增量．假设这些下中间分数中确实出现了增量，则此时必然有 $q_{k-1}\le N-x<q_{k+1}$．不妨设 $t=\left\lfloor\dfrac{N-q_{k-1}-x}{q_k}\right\rfloor$．如果 $t=0$，则增量就有 $\Delta x=q_{k-1}$，故而添加完增量后，就有 $N-x'<q_{k-1}$，不会再在这些下中间分数中出现新的增量；如果 $t>0$，那么添加完增量后，必然有 $N-x'=(N-q_{k-1}-x)\bmod q_k<q_k$，即使还会在同一段下中间分数中出现新的增量，下次也只能有 $t'=0$．因此，在这样的一段下中间分数中，至多只能出现两个增量．这就说明，总的时间复杂度是 $O(n)$ 的．
+    The optimized algorithm runs in $O(n)$ time. Although there may be many lattice points corresponding to lower semiconvergents, few of them actually become increments. We now show that among all lower semiconvergents $(q,p)=(q_{k-1},p_{k-1})+t(q_k,p_k)$ with $0\le t<a_{k+1}$, at most two increments appear. Suppose an increment does appear among these lower semiconvergents; then we must have $q_{k-1}\le N-x<q_{k+1}$. Let $t=\left\lfloor\dfrac{N-q_{k-1}-x}{q_k}\right\rfloor$. If $t=0$, the increment has $\Delta x=q_{k-1}$, so after adding it, $N-x'<q_{k-1}$, and no new increment will appear among these lower semiconvergents; if $t>0$, then after adding the increment, $N-x'=(N-q_{k-1}-x)\bmod q_k<q_k$, so even if another increment appears in the same group of lower semiconvergents, it must have $t'=0$. So at most two increments appear in each such group of lower semiconvergents. This shows that the total time complexity is $O(n)$.
     
     === "C++"
         ```cpp
@@ -1745,30 +1745,30 @@ Galois 定理揭示了纯二次不尽根（pure quadratic surd）——即形如
         ```
 
 ???+ example "[Timus - Crime and Punishment](https://timus.online/problem.aspx?space=1&num=1430)"
-    给定正整数 $A,B,N \le 2\times 10^9$，求 $x,y\ge 0$ 使得 $Ax+By\le N$ 且 $Ax+By$ 尽可能大．
+    Given positive integers $A,B,N \le 2\times 10^9$, find $x,y\ge 0$ such that $Ax+By\le N$ and $Ax+By$ is as large as possible.
 
-??? note "解答"
-    这个问题有一个复杂度为 $O(\sqrt N)$ 的解法：不妨设 $A\ge B$，因为 $A(B+x)+By=Ax+B(A+y)$，所以只需要在 $x\le\min\{N/A, B\}$ 中搜索答案即可．这足够通过本题．但是，如果应用连分数方法，那么时间复杂度就可以降低到 $O(\log N)$．
+??? note "Solution"
+    This problem has an $O(\sqrt N)$ solution: assume $A\ge B$. Since $A(B+x)+By=Ax+B(A+y)$, we only need to search for the answer among $x\le\min\{N/A, B\}$. This is enough to pass the problem. But with continued fractions, the time complexity drops to $O(\log N)$.
     
-    为了讨论方便，首先通过代换 $x\mapsto\left\lfloor N/A\right\rfloor-x$ 来改变 $x$ 的符号．令 $C=N\bmod A$ 和 $M=\left\lfloor N/A\right\rfloor$，则原问题转化为在 $0\le x\le M$ 且 $By-Ax\le C$ 的条件下，求最优的 $(x,y)$ 使得 $By-Ax$ 最大．对于每个固定的 $x$，最优的 $y$ 的取值为 $\left\lfloor\dfrac{Ax+C}{B}\right\rfloor$．
+    For convenience, first flip the sign of $x$ with the substitution $x\mapsto\left\lfloor N/A\right\rfloor-x$. Let $C=N\bmod A$ and $M=\left\lfloor N/A\right\rfloor$. Then the problem becomes: under the conditions $0\le x\le M$ and $By-Ax\le C$, find the optimal $(x,y)$ that maximizes $By-Ax$. For each fixed $x$, the optimal value of $y$ is $\left\lfloor\dfrac{Ax+C}{B}\right\rfloor$.
     
-    接下来要说明的是，这个问题和上一个例题具有类似的解法．但是，与上一个例题中使用下中间分数偏离直线不同，本题需要使用上中间分数来接近直线．具体来说，$C-(By-Ax)$ 的值正比于点 $(x,y)$ 与直线 $By-Ax=C$ 的距离．要最大化 $By-Ax$，就等价于最小化这个距离．算法的目标是要找到直线 $By-Ax=C$ 下方距离它最近的可行的整点．算法的思路就是从最左侧的点开始，沿着这些整点的上凸壳搜索，逐步缩小与直线的距离，直到得到最优解．
+    Next we show that this problem has a solution similar to the previous example. But unlike the previous example, where lower semiconvergents move away from the line, here we need upper semiconvergents to move toward the line. Specifically, the value $C-(By-Ax)$ is proportional to the distance from the point $(x,y)$ to the line $By-Ax=C$. Maximizing $By-Ax$ is equivalent to minimizing this distance. The goal of the algorithm is to find the feasible lattice point below the line $By-Ax=C$ that is closest to it. The idea is to start from the leftmost point and search along the upper hull of these lattice points, reducing the distance to the line step by step, until we get the optimal solution.
     
-    在 $(x,y)$ 的坐标系内，算法从 $(0,\lfloor C/B\rfloor)$ 出发，递归地寻找并添加最优的增量 $(\Delta x,\Delta y)$，且保证添加后的点比起之前更靠近直线 $By-Ax=C$，但是不能到达直线的另一侧，也不能让横坐标大于 $M$．设已经得到的点是 $(x,y)$，那么增量 $(\Delta x,\Delta y)$ 满足的条件就是
+    In the $(x,y)$ coordinate system, the algorithm starts from $(0,\lfloor C/B\rfloor)$ and recursively finds and adds the best increment $(\Delta x,\Delta y)$, making sure that the new point is closer to the line $By-Ax=C$ than before, but does not reach the other side of the line and does not have an $x$-coordinate larger than $M$. Let the current point be $(x,y)$. Then the increment $(\Delta x,\Delta y)$ must satisfy
     
     $$
     0<B\Delta y-A\Delta x\le C-(By-Ax),\ 0<\Delta x\le M-x.
     $$
     
-    按照沿下凸壳搜索的思路，只需要找到满足这些条件的点中 $\Delta x$ 最小的即可．将第一个不等式改写成
+    Following the idea of searching along the lower hull, we just need to find the point with the smallest $\Delta x$ among those satisfying these conditions. Rewrite the first inequality as
     
     $$
     \Delta y \le \dfrac{A}{B}\Delta x+\dfrac{C-(By-Ax)}{B}.
     $$
     
-    结合前文的 [几何解释](#几何解释) 可知，只要后面的常数项小于 $1$，那么满足这个不等式的整点 $(\Delta x,\Delta y)$ 中横坐标最小的，一定对应着某个上中间分数．这是因为它是所有分母不超过它的分母的分数中，从上方逼近某个实数效果最好的，这只能是上中间分数．而每次添加增量后，都会导致 $\Delta y$ 的上界变得更紧，这意味着必须考察分母更大的上中间分数．
+    From the [geometric interpretation](#geometric-interpretation) above, as long as the constant term at the end is less than $1$, the lattice point $(\Delta x,\Delta y)$ with the smallest $x$-coordinate satisfying this inequality must correspond to some upper semiconvergent. This is because, among all fractions whose denominators do not exceed its denominator, it approximates a certain real number from above the best, and only an upper semiconvergent can do that. And each added increment makes the upper bound on $\Delta y$ tighter, which means we must look at upper semiconvergents with larger denominators.
     
-    仿照上一个例题的思路．分母从小到大考察所有上中间分数，如果能够找到横坐标和纵坐标都不越界的上中间分数，就添加进去，并更新相应的上界．当所有可行的上中间分数都添加结束后，得到的就是最优解．相较于之前，这个题目需要同时保证横纵坐标都不越界，需要格外注意．基于和上一个例题类似的论述，不过这次是使用 $B\Delta y-A\Delta x$ 代替之前的 $\Delta x$，可以说明这个算法的复杂度是 $O(\log\min\{A,B\})$ 的．
+    Follow the idea of the previous example. Go through all upper semiconvergents from the smallest denominator to the largest. If we find an upper semiconvergent where neither the $x$- nor the $y$-coordinate goes out of bounds, add it and update the corresponding bounds. When all feasible upper semiconvergents have been added, we have the optimal solution. Compared with before, this problem must keep both coordinates in bounds at the same time, which needs extra care. With an argument similar to the previous example, but using $B\Delta y-A\Delta x$ in place of $\Delta x$, we can show that this algorithm runs in $O(\log\min\{A,B\})$ time.
     
     === "C++"
         ```cpp
@@ -1781,14 +1781,14 @@ Galois 定理揭示了纯二次不尽根（pure quadratic surd）——即形如
         ```
 
 ???+ example "[June Challenge 2017 - Euler Sum](https://www.codechef.com/problems/ES)"
-    求 $\sum\limits_{x=1}^N \lfloor \mathrm{e}x \rfloor$ 的值，其中，$\mathrm{e}$ 是自然对数的底．
+    Compute $\sum\limits_{x=1}^N \lfloor \mathrm{e}x \rfloor$, where $\mathrm{e}$ is the base of the natural logarithm.
     
-    提示：$\mathrm{e} = [2,1,2,1,1,4,1,1,6,1,\ldots,1,2n,1, \ldots]$．[^continued-fraction-of-e]
+    Hint: $\mathrm{e} = [2,1,2,1,1,4,1,1,6,1,\ldots,1,2n,1, \ldots]$.[^continued-fraction-of-e]
 
-??? note "解答"
-    这个和等于集合 $\{(x,y):1\le x\le N,1\le y\le\mathrm{e}x\}$ 中的整点个数．在构建完直线 $y=\mathrm{e}x$ 下的整点的凸包后，可以使用 [Pick 定理](../../geometry/pick.md) 计算整点个数．时间复杂度为 $O(\log N)$．
+??? note "Solution"
+    This sum equals the number of lattice points in the set $\{(x,y):1\le x\le N,1\le y\le\mathrm{e}x\}$. After building the convex hull of the lattice points under the line $y=\mathrm{e}x$, we can count the lattice points with [Pick's theorem](../../geometry/pick.md). The time complexity is $O(\log N)$.
     
-    原问题要求 $N \le 10^{4000}$．此处 C++ 代码仅作示意，并没有实现高精度计算类．
+    The original problem has $N \le 10^{4000}$. The C++ code here is only for illustration and does not implement a big integer class.
     
     === "C++"
         ```cpp
@@ -1801,17 +1801,17 @@ Galois 定理揭示了纯二次不尽根（pure quadratic surd）——即形如
         ```
 
 ???+ example "[NAIPC 2019 - It's a Mod, Mod, Mod, Mod World](https://open.kattis.com/problems/itsamodmodmodmodworld)"
-    给定正整数 $p,q,n$，求 $\sum\limits_{i=1}^n [pi \bmod q]$ 的值．
+    Given positive integers $p,q,n$, compute $\sum\limits_{i=1}^n [pi \bmod q]$.
 
-??? note "解答"
-    因为和式可以变形为
+??? note "Solution"
+    Since the sum can be rewritten as
     
     $$
     \sum_{i=1}^n [pi \bmod q] 
     =\sum_{i=1}^n\left(pi - q\left\lfloor\dfrac{pi}{q}\right\rfloor\right) = \dfrac{pn(n+1)}{2} - q\sum_{i=1}^n\left\lfloor\dfrac{p}{q}i\right\rfloor,
     $$
     
-    这个问题可以转化为上一个问题，只要用 $\dfrac{p}{q}$ 替代 $\mathrm{e}$ 即可．单次查询的时间复杂度为 $O(\log\min\{p,q\})$．
+    this problem reduces to the previous one, just with $\dfrac{p}{q}$ in place of $\mathrm{e}$. Each query takes $O(\log\min\{p,q\})$ time.
     
     === "C++"
         ```cpp
@@ -1824,12 +1824,12 @@ Galois 定理揭示了纯二次不尽根（pure quadratic surd）——即形如
         ```
 
 ???+ example "[Library Checker - Sum of Floor of Linear](https://judge.yosupo.jp/problem/sum_of_floor_of_linear)"
-    给定正整数 $N,M,A,B$，求 $\displaystyle\sum_{i=0}^{N-1} \left\lfloor \dfrac{A \cdot i + B}{M} \right\rfloor$ 的值．
+    Given positive integers $N,M,A,B$, compute $\displaystyle\sum_{i=0}^{N-1} \left\lfloor \dfrac{A \cdot i + B}{M} \right\rfloor$.
 
-??? note "解答"
-    这是到目前为止最为复杂的题目．它可以通过 [类欧几里得算法](./euclidean.md) 计算．此处给出基于连分数的算法，时间复杂度是 $O(\log\min\{A,M\})$．
+??? note "Solution"
+    This is the most complex problem so far. It can be solved with the [Euclidean-like algorithm](./euclidean.md). Here we give an algorithm based on continued fractions, with time complexity $O(\log\min\{A,M\})$.
     
-    可以通过构造直线 $y=\dfrac{Ax+B}{M}$ 以下且 $0\le x< N$ 的全部整点的凸包，并用 Pick 定理计算整点的个数．之前已经解决 $B=0$ 的情形．对于一般的情形，可以分为两步进行．首先通过添加上中间分数来逐步接近直线（即第二个例题），直到找到最接近直线的点，再通过添加下中间分数来逐步远离直线（即第一个例题）．
+    We can build the convex hull of all lattice points under the line $y=\dfrac{Ax+B}{M}$ with $0\le x< N$, and count the lattice points with Pick's theorem. We already solved the case $B=0$. The general case can be done in two steps. First, add upper semiconvergents to move closer and closer to the line (as in the second example) until we find the point closest to the line; then add lower semiconvergents to move away from the line step by step (as in the first example).
     
     === "C++"
         ```cpp
@@ -1842,18 +1842,18 @@ Galois 定理揭示了纯二次不尽根（pure quadratic surd）——即形如
         ```
 
 ???+ example "[OKC 2 - From Modular to Rational](https://codeforces.com/gym/102354/problem/I)"
-    有个未知的有理数 $\dfrac{p}{q}$ 且 $1\le p, q\le 10^9$，可以询问对某个素数 $m\in[10^9,10^{12}]$ 取模后的 $pq^{-1}$ 的值．请在不超过十次询问内确定 $p$ 和 $q$ 的值．
+    There is an unknown rational number $\dfrac{p}{q}$ with $1\le p, q\le 10^9$. You may ask for the value of $pq^{-1}$ modulo some prime $m\in[10^9,10^{12}]$. Determine $p$ and $q$ using at most ten queries.
     
-    这个问题等价于找到 $[1,n]$ 中使得 $rx\bmod m$ 最小的 $x$，其中 $r$ 为 $pq^{-1}$ 对 $m$ 取模的结果，$n=10^9$．
+    This problem is equivalent to finding the $x$ in $[1,n]$ that minimizes $rx\bmod m$, where $r$ is $pq^{-1}$ modulo $m$ and $n=10^9$.
 
-??? note "解答"
-    根据 [中国剩余定理](./crt.md)，询问对多个素数取模后的结果，相当于询问对这些素数的乘积取模的结果．因此，本题可以看作是询问分数对足够大的模数 $m$ 取模后的结果，要求确定分数的分子和分母．
+??? note "Solution"
+    By the [Chinese remainder theorem](./crt.md), asking for the results modulo several primes is equivalent to asking for the result modulo the product of these primes. So this problem can be seen as asking for the value of the fraction modulo a large enough modulus $m$, and then determining the numerator and denominator of the fraction.
     
-    对于某个模数 $m$，使得 $qr\equiv p\pmod m$ 成立的数对 $(p,q)$ 可能并不唯一．假设 $(p_1,q_1)$ 和 $(p_2,q_2)$ 都可以使得这个等式成立，那么必然有 $(p_1q_2-p_2q_1)r\equiv 0\pmod m$．根据 $r$ 的构造可知，$r$ 与 $m$ 互素，所以 $p_1q_2-p_2q_1\equiv 0\pmod m$，亦即 $m\mid(p_1q_2-p_2q_1)$．如果 $p_1q_2-p_2q_1$ 不为零，那么它的绝对值至少是 $m$．问题中限制了 $p,q\in[1,10^9]$，这意味着这个差值不应该超过 $10^{18}$，因此只要取 $m>10^{18}$ 就可以保证求出的 $(p,q)$ 是唯一的．
+    For a given modulus $m$, the pair $(p,q)$ with $qr\equiv p\pmod m$ may not be unique. Suppose both $(p_1,q_1)$ and $(p_2,q_2)$ satisfy this congruence. Then we must have $(p_1q_2-p_2q_1)r\equiv 0\pmod m$. By the construction of $r$, $r$ is coprime to $m$, so $p_1q_2-p_2q_1\equiv 0\pmod m$, that is, $m\mid(p_1q_2-p_2q_1)$. If $p_1q_2-p_2q_1$ is non-zero, its absolute value is at least $m$. The problem restricts $p,q\in[1,10^9]$, so this difference cannot exceed $10^{18}$. So just taking $m>10^{18}$ guarantees that the $(p,q)$ we find is unique.
     
-    现在的问题归结为，给定模数 $m$ 和余数 $r$，求不超过 $n$ 的正整数对 $(p,q)$ 使得 $qr\equiv p\pmod m$．在已知这样的解是唯一的情况下，其实只要找到 $q\in[1,n]$ 时使得 $qr\bmod m$ 最小的 $q$ 即可，因为此时有且仅有一个 $q$ 使得余数不超过 $n$．这正是前面提到的等价表述．
+    Now the problem comes down to: given the modulus $m$ and the remainder $r$, find a pair of positive integers $(p,q)$, each at most $n$, such that $qr\equiv p\pmod m$. Knowing that such a solution is unique, we only need to find the $q\in[1,n]$ that minimizes $qr\bmod m$, because exactly one $q$ makes the remainder at most $n$. This is exactly the equivalent statement mentioned above.
     
-    在 $(q,k)$ 所在的平面坐标系内，这相当于要找到 $q\in[1,n]$ 时在直线 $qr-km=0$ 下方最接近它的整点，因为余数 $qr\bmod m$ 就正比于整点与直线的距离．结合前文的 [几何解释](#几何解释) 可知，这样的整点必然对应着有理分数 $\dfrac{r}{m}$ 的某个下中间分数．算法复杂度是 $O(\log\min\{r,m\})$．
+    In the plane with coordinates $(q,k)$, this means finding, for $q\in[1,n]$, the lattice point below the line $qr-km=0$ that is closest to it, because the remainder $qr\bmod m$ is proportional to the distance from the lattice point to the line. From the [geometric interpretation](#geometric-interpretation) above, such a lattice point must correspond to some lower semiconvergent of the rational number $\dfrac{r}{m}$. The algorithm runs in $O(\log\min\{r,m\})$ time.
     
     === "C++"
         ```cpp
@@ -1865,11 +1865,11 @@ Galois 定理揭示了纯二次不尽根（pure quadratic surd）——即形如
         --8<-- "docs/math/code/continued-fraction/recover-fraction.py:core"
         ```
 
-## 习题
+## Exercises
 
 -   [UVa OJ - Continued Fractions](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=775)
 -   [ProjectEuler+ #64: Odd period square roots](https://www.hackerrank.com/contests/projecteuler/challenges/euler064/problem)
--   [「LibreOJ NOI Round #2」单枪匹马](https://loj.ac/p/573)
+-   [LibreOJ NOI Round #2 Single-Handed](https://loj.ac/p/573)
 -   [Codeforces Round #184 (Div. 2) - Continued Fractions](https://codeforces.com/contest/305/problem/B)
 -   [Codeforces Round #201 (Div. 1) - Doodle Jump](https://codeforces.com/contest/346/problem/E)
 -   [Codeforces Round #325 (Div. 1) - Alice, Bob, Oranges and Apples](https://codeforces.com/contest/585/problem/C)
@@ -1877,36 +1877,36 @@ Galois 定理揭示了纯二次不尽根（pure quadratic surd）——即形如
 -   [2019 Multi-University Training Contest 5 - fraction](http://acm.hdu.edu.cn/showproblem.php?pid=6624)
 -   [SnackDown 2019 Elimination Round - Election Bait](https://www.codechef.com/SNCKEL19/problems/EBAIT)
 -   [Luogu P5179. Fraction](https://www.luogu.com.cn/problem/P5179)
--   [Luogu P7739. \[NOI2021\] 密码箱](https://www.luogu.com.cn/problem/P7739)
+-   [Luogu P7739. \[NOI2021\] Password Box](https://www.luogu.com.cn/problem/P7739)
 
-## 参考文献与拓展阅读
+## References and further reading
 
 -   Hardy, G. H., Wright, E. M., Heath-Brown, R., & Silverman, J. (2008). An Introduction to the Theory of Numbers. Oxford Mathematics.
--   朱尧辰，王连祥《丢番图逼近引论》
--   [FatFish 的博客 - 连分数入门](https://chaoli.club/index.php/2756)
+-   Zhu Yaochen and Wang Lianxiang, *An Introduction to Diophantine Approximation* (in Chinese)
+-   [FatFish's blog - An introduction to continued fractions (in Chinese)](https://chaoli.club/index.php/2756)
 -   [Simple continued fraction - Wikipedia](https://en.wikipedia.org/wiki/Simple_continued_fraction)
 -   [Periodic continued fraction - Wikipedia](https://en.wikipedia.org/wiki/Periodic_continued_fraction)
 -   [Gosper's original notes on continued fraction arithmetic algorithms](https://perl.plover.com/yak/cftalk/INFO/gosper.txt)
 -   [Understanding Bill Gosper's continued fraction arithmetic (implemented in Python)](https://hsinhaoyu.github.io/cont_frac/)
 
-**本页面主要内容译自博文 [Continued fractions](https://cp-algorithms.com/algebra/continued-fractions.html)，版权协议为 CC-BY-SA 4.0，内容有改动．**
+**Most of this page is translated from the blog post [Continued fractions](https://cp-algorithms.com/algebra/continued-fractions.html), licensed under CC-BY-SA 4.0, with modifications.**
 
-[^one-representation]: 自然数 $1$ 只有非标准表示：$1=[1]=[0,1]$．
+[^one-representation]: The natural number $1$ has only a non-canonical representation: $1=[1]=[0,1]$.
 
-[^continuant]: 译名来自张明尧、张凡翻译的《具体数学》第 6.7 节．
+[^continuant]: The Chinese name of this term follows Section 6.7 of the Chinese translation of *Concrete Mathematics* by Zhang Mingyao and Zhang Fan.
 
 [^heilbronn]: [H. Heilbronn, On the Average Length of a Class of Finite Continued Fractions, 1969.](https://link.springer.com/chapter/10.1007/978-1-4615-4819-5_7)
 
-[^sqrt5]: 此时不能默认既约分数 $\dfrac{p}{q}$ 一定是渐近分数，虽然 Legendre 定理表明 $\dfrac{p}{q}$ 确实只能是某个渐近分数．对于渐近分数的情形，可以通过渐近分数逼近实数的误差入手加以证明．
+[^sqrt5]: Here we cannot assume that the reduced fraction $\dfrac{p}{q}$ is a convergent, although Legendre's theorem shows that $\dfrac{p}{q}$ can indeed only be some convergent. For the case of convergents, the proof can start from the error of approximating a real number by its convergents.
 
-[^semi-range]: 不同文献可能对此处的 $t$ 的取值范围是否包括端点有不同的处理．
+[^semi-range]: Different references may differ on whether the range of $t$ here includes the endpoints.
 
-[^semiconvergent]: $t=0$ 时，应理解为形式连分数，相当于截断到连分数的倒数第二项．
+[^semiconvergent]: When $t=0$, this should be understood as a formal continued fraction, which amounts to cutting the continued fraction off at the second-to-last term.
 
-[^nose-stretching]: 此说法并非专业术语．可能转译自俄文文献 [ЦЕПНЫЕ ДРОБИ](https://old.mccme.ru/free-books/mmmf-lectures/book.14-full.pdf)，在 Алгоритм «вытягивания носов» 一节．
+[^nose-stretching]: This name is not a standard technical term. It may be translated from the Russian book [ЦЕПНЫЕ ДРОБИ](https://old.mccme.ru/free-books/mmmf-lectures/book.14-full.pdf), in the section Алгоритм «вытягивания носов».
 
-[^pgl2]: 这些性质表明，全体分式线性变换的群同构于 [射影线性群](https://en.wikipedia.org/wiki/Projective_linear_group)  $PGL_2(\mathbf R)$．
+[^pgl2]: These properties show that the group of all fractional linear transformations is isomorphic to the [projective linear group](https://en.wikipedia.org/wiki/Projective_linear_group)  $PGL_2(\mathbf R)$.
 
-[^period-surd]: 证明见 [维基百科页面](https://en.wikipedia.org/wiki/Periodic_continued_fraction#Length_of_the_repeating_block) 的参考文献．
+[^period-surd]: For a proof, see the references on the [Wikipedia page](https://en.wikipedia.org/wiki/Periodic_continued_fraction#Length_of_the_repeating_block).
 
-[^continued-fraction-of-e]: 关于自然对数的底 $\mathrm{e}$ 的连分数展开的证明可以参考 [此处](https://proofwiki.org/wiki/Continued_Fraction_Expansion_of_Euler%27s_Number)．
+[^continued-fraction-of-e]: For a proof of the continued fraction expansion of the base of the natural logarithm $\mathrm{e}$, see [here](https://proofwiki.org/wiki/Continued_Fraction_Expansion_of_Euler%27s_Number).
