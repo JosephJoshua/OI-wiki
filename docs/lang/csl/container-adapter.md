@@ -1,34 +1,34 @@
 author: Xeonacid, ksyx, Early0v0
 
-## 栈
+## Stack
 
-STL [栈](../../ds/stack.md)(`std::stack`) 是一种后进先出 (Last In, First Out) 的容器适配器，仅支持查询或删除最后一个加入的元素（栈顶元素），不支持随机访问，且为了保证数据的严格有序性，不支持迭代器．
+The STL [stack](../../ds/stack.md) (`std::stack`) is a Last In, First Out container adapter. It only supports reading or removing the most recently added element (the top of the stack). It does not support random access, and to keep the data strictly ordered, it does not support iterators.
 
-### 头文件
+### Header
 
 ```cpp
 #include <stack>
 ```
 
-### 定义
+### Definition
 
 ```cpp
-std::stack<TypeName> s;  // 使用默认底层容器 deque，数据类型为 TypeName
-std::stack<TypeName, Container> s;  // 使用 Container 作为底层容器
-std::stack<TypeName> s2(s1);        // 将 s1 复制一份用于构造 s2
+std::stack<TypeName> s;  // Uses the default underlying container deque; the element type is TypeName
+std::stack<TypeName, Container> s;  // Uses Container as the underlying container
+std::stack<TypeName> s2(s1);        // Constructs s2 as a copy of s1
 ```
 
-### 成员函数
+### Member functions
 
-**以下所有函数均为常数复杂度**
+**All of the following functions take constant time**
 
--   `top()` 访问栈顶元素（如果栈为空，此处会出错）
--   `push(x)` 向栈中插入元素 x
--   `pop()` 删除栈顶元素
--   `size()` 查询容器中的元素数量
--   `empty()` 询问容器是否为空
+-   `top()` accesses the top element (this is an error if the stack is empty)
+-   `push(x)` inserts element x into the stack
+-   `pop()` removes the top element
+-   `size()` returns the number of elements in the container
+-   `empty()` returns whether the container is empty
 
-### 简单示例
+### Simple example
 
 ```cpp
 std::stack<int> s1;
@@ -42,36 +42,36 @@ s1.pop();
 std::cout << s1.empty() << " " << s2.empty() << std::endl;  // 1 0
 ```
 
-## 队列
+## Queue
 
-STL [队列](../../ds/queue.md)(`std::queue`) 是一种先进先出 (First In, First Out) 的容器适配器，仅支持查询或删除第一个加入的元素（队首元素），不支持随机访问，且为了保证数据的严格有序性，不支持迭代器．
+The STL [queue](../../ds/queue.md) (`std::queue`) is a First In, First Out container adapter. It only supports reading or removing the earliest added element (the front of the queue). It does not support random access, and to keep the data strictly ordered, it does not support iterators.
 
-### 头文件
+### Header
 
 ```cpp
 #include <queue>
 ```
 
-### 定义
+### Definition
 
 ```cpp
-std::queue<TypeName> q;  // 使用默认底层容器 deque，数据类型为 TypeName
-std::queue<TypeName, Container> q;  // 使用 Container 作为底层容器
+std::queue<TypeName> q;  // Uses the default underlying container deque; the element type is TypeName
+std::queue<TypeName, Container> q;  // Uses Container as the underlying container
 
-std::queue<TypeName> q2(q1);  // 将 q1 复制一份用于构造 q2
+std::queue<TypeName> q2(q1);  // Constructs q2 as a copy of q1
 ```
 
-### 成员函数
+### Member functions
 
-**以下所有函数均为常数复杂度**
+**All of the following functions take constant time**
 
--   `front()` 访问队首元素（如果队列为空，此处会出错）
--   `push(x)` 向队列中插入元素 x
--   `pop()` 删除队首元素
--   `size()` 查询容器中的元素数量
--   `empty()` 询问容器是否为空
+-   `front()` accesses the front element (this is an error if the queue is empty)
+-   `push(x)` inserts element x into the queue
+-   `pop()` removes the front element
+-   `size()` returns the number of elements in the container
+-   `empty()` returns whether the container is empty
 
-### 简单示例
+### Simple example
 
 ```cpp
 std::queue<int> q1;
@@ -85,31 +85,31 @@ q1.pop();
 std::cout << q1.empty() << " " << q2.empty() << std::endl;  // 1 0
 ```
 
-## 优先队列
+## Priority queue
 
-优先队列 `std::priority_queue` 是一种 [堆](../../ds/heap.md)，一般为 [二叉堆](../../ds/binary-heap.md)．
+The priority queue `std::priority_queue` is a [heap](../../ds/heap.md), usually a [binary heap](../../ds/binary-heap.md).
 
-### 头文件
+### Header
 
 ```cpp
 #include <queue>
 ```
 
-### 定义
+### Definition
 
 ```cpp
-std::priority_queue<TypeName> q;             // 数据类型为 TypeName
-std::priority_queue<TypeName, Container> q;  // 使用 Container 作为底层容器
+std::priority_queue<TypeName> q;             // The element type is TypeName
+std::priority_queue<TypeName, Container> q;  // Uses Container as the underlying container
 std::priority_queue<TypeName, Container, Compare> q;
-// 使用 Container 作为底层容器，使用 Compare 作为比较类型
+// Uses Container as the underlying container and Compare as the comparison type
 
-// 默认使用底层容器 vector
-// 比较类型 less<TypeName>（此时为它的 top() 返回为最大值）
-// 若希望 top() 返回最小值，可令比较类型为 greater<TypeName>
-// 注意：不可跳过 Container 直接传入 Compare
+// The default underlying container is vector
+// The default comparison type is less<TypeName> (then top() returns the maximum)
+// If you want top() to return the minimum, use greater<TypeName> as the comparison type
+// Note: you cannot skip Container and pass Compare directly
 
-// 从 C++11 开始，如果使用 lambda 函数自定义 Compare
-// 则需要将其作为构造函数的参数代入，如：
+// Since C++11, if you use a lambda function as a custom Compare,
+// you need to pass it as a constructor argument, for example:
 auto cmp = [](const std::pair<int, int> &l, const std::pair<int, int> &r) {
   return l.second < r.second;
 };
@@ -118,37 +118,37 @@ std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>,
     pq(cmp);
 ```
 
-### 成员函数
+### Member functions
 
-**以下所有函数均为常数复杂度**
+**All of the following functions take constant time**
 
--   `top()` 访问堆顶元素（此时优先队列不能为空）
--   `empty()` 询问容器是否为空
--   `size()` 查询容器中的元素数量
+-   `top()` accesses the top element of the heap (the priority queue must not be empty)
+-   `empty()` returns whether the container is empty
+-   `size()` returns the number of elements in the container
 
-**以下所有函数均为对数复杂度**
+**All of the following functions take logarithmic time**
 
--   `push(x)` 插入元素，并对底层容器排序
--   `pop()` 删除堆顶元素（此时优先队列不能为空）
+-   `push(x)` inserts an element and reorders the underlying container
+-   `pop()` removes the top element of the heap (the priority queue must not be empty)
 
-### 简单示例
+### Simple example
 
 ```cpp
 std::priority_queue<int> q1;
 std::priority_queue<int, std::vector<int>> q2;
-// C++11 后空格可省略
+// Since C++11, the space can be omitted
 std::priority_queue<int, std::deque<int>, std::greater<int>> q3;
-// q3 为小根堆
+// q3 is a min-heap
 for (int i = 1; i <= 5; i++) q1.push(i);
-// q1 中元素 :  [1, 2, 3, 4, 5]
+// Elements in q1:  [1, 2, 3, 4, 5]
 std::cout << q1.top() << std::endl;
-// 输出结果 : 5
+// Output: 5
 q1.pop();
-// 堆中元素 : [1, 2, 3, 4]
+// Elements in the heap: [1, 2, 3, 4]
 std::cout << q1.size() << std::endl;
-// 输出结果 ：4
+// Output: 4
 for (int i = 1; i <= 5; i++) q3.push(i);
-// q3 中元素 :  [1, 2, 3, 4, 5]
+// Elements in q3:  [1, 2, 3, 4, 5]
 std::cout << q3.top() << std::endl;
-// 输出结果 : 1
+// Output: 1
 ```

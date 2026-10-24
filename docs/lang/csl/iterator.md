@@ -1,61 +1,61 @@
-在 STL 中，迭代器（Iterator）用来访问和检查 STL 容器中元素的对象，它的行为模式和指针类似，但是它封装了一些有效性检查，并且提供了统一的访问格式．类似的概念在其他很多高级语言中都存在，如 Python 的 `__iter__` 函数，C# 的 `IEnumerator`．
+In the STL, an iterator is an object used to access and inspect elements in an STL container. It behaves much like a pointer, but it wraps some validity checks and provides a uniform way to access elements. Similar concepts exist in many other high-level languages, such as Python's `__iter__` function and C#'s `IEnumerator`.
 
-## 基础使用
+## Basic usage
 
-迭代器听起来比较晦涩，其实迭代器本身可以看作一个数据指针．迭代器主要支持两个运算符：自增 (`++`) 和解引用（单目 `*` 运算符），其中自增用来移动迭代器，解引用可以获取或修改它指向的元素．
+Iterators may sound obscure, but an iterator can be thought of as a pointer to data. Iterators mainly support two operators: increment (`++`) and dereference (the unary `*` operator). Increment moves the iterator, and dereference reads or modifies the element it points to.
 
-指向某个 [STL 容器](./container.md)  `container` 中元素的迭代器的类型一般为 `container::iterator`．
+The type of an iterator to elements of an [STL container](./container.md)  `container` is usually `container::iterator`.
 
-迭代器可以用来遍历容器，例如，下面两个 for 循环的效果是一样的：
+You can use iterators to traverse a container. For example, the following two for loops do the same thing:
 
 ```cpp
 vector<int> data(10);
 
 for (int i = 0; i < data.size(); i++)
-  cout << data[i] << endl;  // 使用下标访问元素
+  cout << data[i] << endl;  // Access elements by index
 
 for (vector<int>::iterator iter = data.begin(); iter != data.end(); iter++)
-  cout << *iter << endl;  // 使用迭代器访问元素
-// 在C++11后可以使用 auto iter = data.begin() 来简化上述代码
+  cout << *iter << endl;  // Access elements with an iterator
+// Since C++11, you can write auto iter = data.begin() to simplify the code above
 ```
 
-???+ tip "`auto` 在竞赛中的使用"
-    大部分选手都喜欢使用 `auto` 来代替繁琐的迭代器声明．根据 2021 年 9 月发布的 [关于 NOI 系列活动中编程语言使用限制的补充说明](https://www.noi.cn/xw/2021-09-01/735729.shtml)，NOI 系列比赛（包括 CSP J/S）在评测时将使用 **C++14**，这个版本已经支持了 `auto` 关键字．
+???+ tip "Using `auto` in contests"
+    Most contestants like to use `auto` instead of long iterator declarations. According to the [Supplementary Notes on Programming Language Restrictions in NOI-Series Events](https://www.noi.cn/xw/2021-09-01/735729.shtml) published in September 2021, NOI-series contests (including CSP J/S) are judged with **C++14**, which already supports the `auto` keyword.
 
-## 分类
+## Categories
 
-在 STL 的定义中，迭代器根据其支持的操作依次分为以下几类：
+In the STL definition, iterators are divided into the following categories according to the operations they support:
 
--   InputIterator（输入迭代器）：只要求支持拷贝、自增和解引访问．
--   OutputIterator（输出迭代器）：只要求支持拷贝、自增和解引赋值．
--   ForwardIterator（前向迭代器）：在 InputIterator 的基础上支持多次遍历迭代器解引访问，且保证多次访问的结果一致．
--   BidirectionalIterator（双向迭代器）：在 ForwardIterator 的基础上支持自减（即反向访问）．
--   RandomAccessIterator（随机访问迭代器）：在 BidirectionalIterator 的基础上支持加减运算和比较运算（即随机访问）．
--   ContiguousIterator（连续迭代器）：在 RandomAccessIterator 的基础上要求对可解引用的迭代器 `a + n` 满足 `*(a + n)` 与 `*(std::address_of(*a) + n)` 等价（即连续存储，其中 `a` 为连续迭代器、`n` 为整型值）．
+-   InputIterator: only needs to support copying, incrementing, and reading through dereference.
+-   OutputIterator: only needs to support copying, incrementing, and assigning through dereference.
+-   ForwardIterator: on top of InputIterator, supports traversing and reading through dereference multiple times, and guarantees that repeated reads give the same result.
+-   BidirectionalIterator: on top of ForwardIterator, supports decrement (that is, moving backward).
+-   RandomAccessIterator: on top of BidirectionalIterator, supports addition/subtraction and comparison (that is, random access).
+-   ContiguousIterator: on top of RandomAccessIterator, requires that for a dereferenceable iterator `a + n`, `*(a + n)` is equivalent to `*(std::address_of(*a) + n)` (that is, contiguous storage, where `a` is a contiguous iterator and `n` is an integer).
 
-    ContiguousIterator 于 C++17 中正式引入．
+    ContiguousIterator was formally introduced in C++17.
 
-???+ tip "为什么输入迭代器叫输入迭代器？"
-    「输入」指的是「可以从迭代器中获取输入」，而「输出」指的是「可以输出到迭代器」．
+???+ tip "Why is an input iterator called an input iterator?"
+    "Input" means "you can get input from the iterator", and "output" means "you can output to the iterator".
     
-    「输入」和「输出」的施动者是程序的其它部分，而不是迭代器自身．
+    The one doing the "input" and "output" is the rest of the program, not the iterator itself.
 
-迭代器的这些分类并不互斥．实际上，除了输出迭代器之外，列表中排在前面的迭代器都包含着排在后面的迭代器．例如，在要求使用前向迭代器的地方，同样可以使用双向迭代器．从前向迭代器开始，如果这些迭代器还实现了输出迭代器的功能（即允许写操作），就称它们是可变迭代器．由此，可以衍生出诸如「可变随机访问迭代器」这样的类别．
+These categories are not mutually exclusive. In fact, except for output iterators, each iterator earlier in the list includes all the ones after it. For example, where a forward iterator is required, you can also use a bidirectional iterator. Starting from forward iterators, if these iterators also provide the functionality of output iterators (that is, allow writing), they are called mutable iterators. This gives categories such as "mutable random access iterator".
 
-不同的 [STL 容器](./container.md) 支持的迭代器类型不同，在使用时需要留意．
+Different [STL containers](./container.md) support different iterator types, so keep this in mind when using them.
 
-数组指针满足连续迭代器（或随机访问迭代器，对于 C++14 及以前的版本）的所有要求，可以当作连续迭代器使用．
+Array pointers meet all the requirements of contiguous iterators (or random access iterators, for C++14 and earlier), so they can be used as contiguous iterators.
 
-## 相关函数
+## Related functions
 
-很多 [STL 函数](./algorithm.md) 都使用迭代器作为参数．
+Many [STL functions](./algorithm.md) take iterators as arguments.
 
-可以使用 `std::advance(it, n)` 将迭代器 `it` 向后移动 `n` 步；若 `n` 为负数，则对应向前移动，此时迭代器必须满足双向迭代器，否则行为未定义．
+You can use `std::advance(it, n)` to move iterator `it` forward by `n` steps. If `n` is negative, it moves backward, and the iterator must then be a bidirectional iterator; otherwise the behavior is undefined.
 
-在 C++11 以后可以使用 `std::next(it)` 获得前向迭代器 `it` 的后继（此时迭代器 `it` 不变），`std::next(it, n)` 获得前向迭代器 `it` 的第 `n` 个后继．
+Since C++11, you can use `std::next(it)` to get the successor of a forward iterator `it` (the iterator `it` itself does not change), and `std::next(it, n)` to get the `n`-th successor of a forward iterator `it`.
 
-在 C++11 以后可以使用 `std::prev(it)` 获得双向迭代器 `it` 的前驱（此时迭代器 `it` 不变），`std::prev(it, n)` 获得双向迭代器 `it` 的第 `n` 个前驱．
+Since C++11, you can use `std::prev(it)` to get the predecessor of a bidirectional iterator `it` (the iterator `it` itself does not change), and `std::prev(it, n)` to get the `n`-th predecessor of a bidirectional iterator `it`.
 
-[STL 容器](./container.md) 一般支持从一端或两端开始的访问，以及对 [const 修饰符](../const.md) 的支持．例如容器的 `begin()` 函数可以获得指向容器第一个元素的迭代器，`rbegin()` 函数可以获得指向容器最后一个元素的反向迭代器，`cbegin()` 函数可以获得指向容器第一个元素的 const 迭代器，`end()` 函数可以获得指向容器尾端（「尾端」并不是最后一个元素，可以看作是最后一个元素的后继；「尾端」的前驱是容器里的最后一个元素，其本身不指向任何一个元素）的迭代器．
+[STL containers](./container.md) usually support access starting from one or both ends, and support the [const qualifier](../const.md). For example, a container's `begin()` function gives an iterator to the first element of the container, `rbegin()` gives a reverse iterator to the last element, `cbegin()` gives a const iterator to the first element, and `end()` gives an iterator to the end of the container (the "end" is not the last element; think of it as the successor of the last element. The predecessor of the "end" is the last element in the container, and the end itself does not point to any element).
 
-可在 [Iterator library - cppreference.com](https://en.cppreference.com/w/cpp/iterator) 查看更多用法．
+See [Iterator library - cppreference.com](https://en.cppreference.com/w/cpp/iterator) for more usage.

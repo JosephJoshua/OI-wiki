@@ -1,79 +1,79 @@
-一个程序默认是按照代码的顺序执行下来的，有时我们需要选择性的执行某些语句，这时候就需要分支的功能来实现．选择合适的分支语句可以提高程序的效率．
+By default, a program runs its code in order. Sometimes we want to run certain statements only in some cases, and that is what branches are for. Choosing the right branch statement can make a program more efficient.
 
-## if 语句
+## if statements
 
-### 基本 if 语句
+### Basic if statement
 
-以下是基本 if 语句的结构．
+Here is the structure of a basic if statement.
 
 ```cpp
-if (条件) {
-  主体;
+if (condition) {
+  body;
 }
 ```
 
-if 语句通过对条件进行求值，若结果为真（非 0），执行语句，否则不执行．
+An if statement evaluates the condition. If the result is true (nonzero), it runs the body; otherwise it does not.
 
-如果主体中只有单个语句的话，花括号可以省略．
+If the body has only one statement, you can leave out the braces.
 
-### if...else 语句
+### if...else statement
 
 ```cpp
-if (条件) {
-  主体1;
+if (condition) {
+  body1;
 } else {
-  主体2;
+  body2;
 }
 ```
 
-if...else 语句和 if 语句类似，else 不需要再写条件．当 if 语句的条件满足时会执行 if 里的语句，if 语句的条件不满足时会执行 else 里的语句．同样，当主体只有一条语句时，可以省略花括号．
+The if...else statement is similar to the if statement; else does not need its own condition. When the condition of the if is satisfied, the statements in the if run; when it is not, the statements in the else run. Again, when a body has only one statement, you can leave out the braces.
 
-### else if 语句
+### else if statement
 
 ```cpp
-if (条件1) {
-  主体1;
-} else if (条件2) {
-  主体2;
-} else if (条件3) {
-  主体3;
+if (condition1) {
+  body1;
+} else if (condition2) {
+  body2;
+} else if (condition3) {
+  body3;
 } else {
-  主体4;
+  body4;
 }
 ```
 
-else if 语句是 if 和 else 的组合，对多个条件进行判断并选择不同的语句分支．在最后一条的 else 语句不需要再写条件．例如，若条件 1 为真，执行主体 1，条件 3 为真而条件 1 和条件 2 都为假，执行主体 3，所有的条件都为假才执行主体 4．
+The else if statement combines if and else. It checks several conditions and picks a different branch of statements. The final else does not need a condition. For example, if condition 1 is true, body 1 runs; if condition 3 is true while conditions 1 and 2 are both false, body 3 runs; only when all conditions are false does body 4 run.
 
-实际上，这一个语句相当于第一个 if 的 else 分句只有一个 if 语句，就将花括号省略之后放在一起了．如果条件相互之间是并列关系，这样写可以让代码的逻辑更清晰．
+In fact, this statement is just the first if's else clause containing a single if statement, with the braces left out and everything put together. If the conditions are parallel alternatives, writing it this way makes the logic of the code clearer.
 
-在逻辑上，大约相当于这一段话：
+Logically, it is roughly like this passage:
 
-> 解一元二次方程的时候，方程的根与判别式的关系：
+> When solving a quadratic equation in one variable, the relation between the roots and the discriminant is:
 >
-> -   如果 ($\Delta<0$)
->     方程无解；
-> -   否则，如果 ($\Delta=0$)
->     方程有两个相同的实数解；
-> -   否则
->     方程有两个不相同的实数解；
+> -   If ($\Delta<0$)
+>     the equation has no real solution;
+> -   Otherwise, if ($\Delta=0$)
+>     the equation has two equal real solutions;
+> -   Otherwise
+>     the equation has two distinct real solutions;
 
-## switch 语句
+## switch statement
 
 ```cpp
-switch (选择句) {
-  case 标签1:
-    主体1;
-  case 标签2:
-    主体2;
+switch (selector) {
+  case label1:
+    body1;
+  case label2:
+    body2;
   default:
-    主体3;
+    body3;
 }
 ```
 
-switch 语句执行时，先求出选择句的值，然后根据选择句的值选择相应的标签，从标签处开始执行．其中，选择句必须是一个整数类型表达式，而标签都必须是整数类型的常量．例如：
+When a switch statement runs, it first evaluates the selector, then picks the matching label based on its value and starts running from that label. The selector must be an expression of integer type, and every label must be a constant of integer type. For example:
 
 ```cpp
-int i = 1;  // 这里的 i 的数据类型是整型 ，满足整数类型的表达式的要求
+int i = 1;  // Here i has type int, which meets the requirement of an integer-type expression
 
 switch (i) {
   case 1:
@@ -84,15 +84,15 @@ switch (i) {
 ```cpp
 char i = 'A';
 
-// 这里的 i 的数据类型是字符型 ，但 char
-// 也是属于整数的类型，满足整数类型的表达式的要求
+// Here i has type char, but char
+// is also an integer type, so it meets the requirement of an integer-type expression
 switch (i) {
   case 'A':
     cout << "OI WIKI" << endl;
 }
 ```
 
-switch 语句中还要根据需求加入 break 语句进行中断，否则在对应的 case 被选择之后接下来的所有 case 里的语句和 default 里的语句都会被运行．具体例子可看下面的示例．
+In a switch statement you also need to add break statements where needed to stop execution. Otherwise, after a case is selected, the statements in all following cases and in default will also run. See the example below.
 
 ```cpp
 char i = 'B';
@@ -110,7 +110,7 @@ switch (i) {
 }
 ```
 
-以上代码运行后输出的结果为 `WIKI` 和 `Hello World`，如果不想让下面分支的语句被运行就需要 break 了，具体例子可看下面的示例．
+The code above prints `WIKI` and `Hello World`. If you don't want the statements in the branches below to run, you need break, as in the example below.
 
 ```cpp
 char i = 'B';
@@ -129,9 +129,9 @@ switch (i) {
 }
 ```
 
-以上代码运行后输出的结果为 WIKI，因为 break 的存在，接下来的语句就不会继续被执行了．最后一个语句不需要 break，因为下面没有语句了．
+The code above prints WIKI. Because of the break, the statements after it do not run. The last branch does not need a break, because there are no statements after it.
 
-处理入口编号不能重复，但可以颠倒．也就是说，入口编号的顺序不重要．各个 case（包括 default）的出现次序可任意．例如：
+The entry labels must not repeat, but they can be in any order. In other words, the order of the labels does not matter, and the cases (including default) can appear in any order. For example:
 
 ```cpp
 char i = 'B';
@@ -150,7 +150,7 @@ switch (i) {
 }
 ```
 
-switch 的 case 分句中也可以选择性的加花括号．不过要注意的是，如果需要在 switch 语句中定义变量，花括号是必须要加的．例如：
+You may optionally add braces to the case clauses of a switch. Note, however, that if you need to define variables inside a switch statement, the braces are required. For example:
 
 ```cpp
 char i = 'B';
@@ -176,5 +176,5 @@ switch (i) {
 }
 ```
 
-??? note "如何理解 switch"
-    在上文中，用了大量「case 分句」，「case 子句」等用语，实际上，在底层实现中，switch 相当于一组跳转语句．也因此，有 Duff's Device 这种奇技淫巧，希望了解的人可以自行学习．
+??? note "How to think about switch"
+    Above we used terms like "case clause" a lot. In fact, in the underlying implementation a switch is equivalent to a group of jump statements. That is also why tricks like Duff's Device exist; if you are curious, you can look into it yourself.

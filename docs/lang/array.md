@@ -1,37 +1,37 @@
-数组是存放相同类型对象的容器，数组中存放的对象没有名字，而是要通过其所在的位置访问．数组的大小是固定的，不能随意改变数组的长度．
+An array is a container that stores objects of the same type. The objects stored in an array have no names; you access them by their position. The size of an array is fixed, and you cannot change its length freely.
 
-## 定义数组
+## Defining an array
 
-数组的声明形如 `a[d]`，其中，`a` 是数组的名字，`d` 是数组中元素的个数．在编译时，`d` 应该是已知的，也就是说，`d` 应该是一个整型的常量表达式．
+An array is declared in the form `a[d]`, where `a` is the name of the array and `d` is the number of elements in it. The value of `d` must be known at compile time, which means `d` must be an integral constant expression.
 
 ```cpp
 unsigned int d1 = 42;
 const int d2 = 42;
-int arr1[d1];  // 错误：d1 不是常量表达式
-int arr2[d2];  // 正确：arr2 是一个长度为 42 的数组
+int arr1[d1];  // Error: d1 is not a constant expression
+int arr2[d2];  // OK: arr2 is an array of length 42
 ```
 
-不能将一个数组直接赋值给另一个数组：
+You cannot assign one array directly to another:
 
 ```cpp
 int arr1[3];
-int arr2 = arr1;  // 错误
-arr2 = arr1;      // 错误
+int arr2 = arr1;  // Error
+arr2 = arr1;      // Error
 ```
 
-应该尽量将较大的数组定义为全局变量．因为局部变量会被创建在栈区中，过大（大于栈的大小）的数组会爆栈，进而导致 RE．如果将数组声明在全局作用域中，就会在静态区中创建数组．
+You should define large arrays as global variables whenever you can. Local variables are created on the stack, and an array that is too large (larger than the stack size) will overflow the stack and cause a runtime error (RE). If you declare the array in global scope, it is created in the static storage area instead.
 
-## 访问数组元素
+## Accessing array elements
 
-可以通过下标运算符 `[]` 来访问数组内元素，数组的索引（即方括号中的值）从 0 开始．以一个包含 10 个元素的数组为例，它的索引为 0 到 9，而非 1 到 10．但在 OI 中，为了使用方便，我们通常会将数组开大一点，不使用数组的第一个元素，从下标 1 开始访问数组元素．
+You can access the elements of an array with the subscript operator `[]`. Array indices (the values inside the square brackets) start at 0. For example, an array with 10 elements has indices 0 to 9, not 1 to 10. In OI, however, for convenience we usually make the array a little bigger, skip the first element, and start accessing elements from index 1.
 
-例 1：从标准输入中读取一个整数 $n$，再读取 $n$ 个数，存入数组中．其中，$n\leq 1000$．
+Example 1: read an integer $n$ from standard input, then read $n$ numbers and store them in an array. Here $n\leq 1000$.
 
 ```cpp
 #include <iostream>
 using namespace std;
 
-int arr[1001];  // 数组 arr 的下标范围是 [0, 1001)
+int arr[1001];  // The index range of array arr is [0, 1001)
 
 int main() {
   int n;
@@ -42,7 +42,7 @@ int main() {
 }
 ```
 
-例 2：（接例 1）求和数组 `arr` 中的元素，并输出和．满足数组中所有元素的和小于等于 $2^{31} - 1$
+Example 2: (continuing Example 1) sum the elements of array `arr` and print the sum. The sum of all elements in the array is at most $2^{31} - 1$.
 
 ```cpp
 #include <iostream>
@@ -67,23 +67,23 @@ int main() {
 }
 ```
 
-### 越界访问下标
+### Out-of-bounds indices
 
-数组的下标 $\mathit{idx}$ 应当满足 $0\leq \mathit{idx}< \mathit{size}$，如果下标不在这个范围内，则是未定义行为，会产生不可预料的后果，如段错误（Segmentation Fault），或者修改预期以外的变量等等．
+An array index $\mathit{idx}$ must satisfy $0\leq \mathit{idx}< \mathit{size}$. If the index is outside this range, the behavior is undefined and can have unpredictable results, such as a segmentation fault or changes to variables you did not mean to touch.
 
-## 多维数组
+## Multidimensional arrays
 
-多维数组的实质是「数组的数组」，即外层数组的元素是数组．一个二维数组需要两个维度来定义：数组的长度和数组内元素的长度．访问二维数组时需要写出两个索引：
+A multidimensional array is really an "array of arrays": the elements of the outer array are themselves arrays. A two-dimensional array needs two dimensions to define it: the length of the array and the length of each element. To access a two-dimensional array, you write two indices:
 
 ```cpp
-int arr[3][4];  // 一个长度为 3 的数组，它的元素是「元素为 int 的长度为的 4
-                // 的数组」
-arr[2][1] = 1;  // 访问二维数组
+int arr[3][4];  // An array of length 3 whose elements are "arrays of length 4
+                // with int elements"
+arr[2][1] = 1;  // Access the two-dimensional array
 ```
 
-我们经常使用嵌套的 for 循环来处理二维数组．
+We often use nested for loops to process two-dimensional arrays.
 
-例：从标准输入中读取两个数 $n$ 和 $m$，分别表示黑白图片的高与宽，满足 $n,m\leq 1000$．对于接下来的 $n$ 行数据，每行有用空格分隔开的 $m$ 个数，代表这一位置的亮度值．现在我们读取这张图片，并将其存入二维数组中．
+Example: read two numbers $n$ and $m$ from standard input, the height and width of a black-and-white picture, with $n,m\leq 1000$. Each of the next $n$ lines has $m$ space-separated numbers, giving the brightness at each position. We now read this picture and store it in a two-dimensional array.
 
 ```cpp
 const int MAXN = 1001;
@@ -95,4 +95,4 @@ for (int i = 1; i <= n; ++i)
   for (int j = 1; j <= m; ++j) cin >> pic[i][j];
 ```
 
-同样地，你可以定义三维、四维，以及更高维的数组．
+In the same way, you can define three-dimensional, four-dimensional and even higher-dimensional arrays.

@@ -1,68 +1,68 @@
-## 分类
+## Categories
 
 ![](images/container1.png)
 
-### 序列式容器
+### Sequence containers
 
--   **向量**(`vector`) 后端可高效增加元素的顺序表．
--   **数组**(`array`)**C++11**，定长的顺序表，C 风格数组的简单包装．
--   **双端队列**(`deque`) 双端都可高效增加元素的顺序表．
--   **列表**(`list`) 可以沿双向遍历的链表．
--   **单向列表**(`forward_list`) 只能沿一个方向遍历的链表．
+-   **Vector** (`vector`): a sequential list that can efficiently add elements at the back.
+-   **Array** (`array`) **C++11**: a fixed-length sequential list, a simple wrapper around C-style arrays.
+-   **Double-ended queue** (`deque`): a sequential list that can efficiently add elements at both ends.
+-   **List** (`list`): a linked list that can be traversed in both directions.
+-   **Forward list** (`forward_list`): a linked list that can only be traversed in one direction.
 
-### 关联式容器
+### Associative containers
 
--   **集合**(`set`) 用以有序地存储 **互异** 元素的容器．其实现是由节点组成的红黑树，每个节点都包含着一个元素，节点之间以某种比较元素大小的谓词进行排列．
--   **多重集合**(`multiset`) 用以有序地存储元素的容器．允许存在相等的元素．
--   **映射**(`map`) 由 {键，值} 对组成的集合，以某种比较键大小关系的谓词进行排列．
--   **多重映射**(`multimap`) 由 {键，值} 对组成的多重集合，亦即允许键有相等情况的映射．
+-   **Set** (`set`): a container that stores **distinct** elements in order. It is implemented as a red-black tree made of nodes; each node holds one element, and nodes are ordered by some predicate that compares elements.
+-   **Multiset** (`multiset`): a container that stores elements in order. Equal elements are allowed.
+-   **Map** (`map`): a set of {key, value} pairs, ordered by some predicate that compares keys.
+-   **Multimap** (`multimap`): a multiset of {key, value} pairs, that is, a map that allows equal keys.
 
-???+ note "什么是谓词 ([**Predicate**](https://en.wikipedia.org/wiki/Predicate_%28mathematical_logic%29))？"
-    谓词就是返回值为真或者假的函数．STL 容器中经常会使用到谓词，用于模板参数．
+???+ note "What is a [**predicate**](https://en.wikipedia.org/wiki/Predicate_%28mathematical_logic%29)?"
+    A predicate is a function that returns true or false. STL containers often use predicates as template parameters.
 
-### 无序（关联式）容器
+### Unordered (associative) containers
 
--   **无序（多重）集合**(`unordered_set`/`unordered_multiset`)**C++11**，与 `set`/`multiset` 的区别在于元素无序，只关心「元素是否存在」，使用哈希实现．
--   **无序（多重）映射**(`unordered_map`/`unordered_multimap`)**C++11**，与 `map`/`multimap` 的区别在于键 (key) 无序，只关心 "键与值的对应关系"，使用哈希实现．
+-   **Unordered (multi)set** (`unordered_set`/`unordered_multiset`) **C++11**: differs from `set`/`multiset` in that elements are not ordered; it only cares about "whether an element exists". It is implemented with hashing.
+-   **Unordered (multi)map** (`unordered_map`/`unordered_multimap`) **C++11**: differs from `map`/`multimap` in that keys are not ordered; it only cares about "which value goes with which key". It is implemented with hashing.
 
-### 容器适配器
+### Container adapters
 
-容器适配器其实并不是容器．它们不具有容器的某些特点（如：有迭代器、有 `clear()` 函数……）．
+Container adapters are not really containers. They lack some features of containers (such as iterators, a `clear()` function, ...).
 
-> 「适配器是使一种事物的行为类似于另外一种事物行为的一种机制」，适配器对容器进行包装，使其表现出另外一种行为．
+> "An adapter is a mechanism that makes one thing behave like another." An adapter wraps a container so that it behaves in a different way.
 
--   **栈**(`stack`) 后进先出 (LIFO) 的容器，默认是对双端队列（`deque`）的包装．
--   **队列**(`queue`) 先进先出 (FIFO) 的容器，默认是对双端队列（`deque`）的包装．
--   **优先队列**(`priority_queue`) 元素的次序是由作用于所存储的值对上的某种谓词决定的一种队列，默认是对向量（`vector`）的包装．
+-   **Stack** (`stack`): a Last In, First Out (LIFO) container; by default a wrapper around a double-ended queue (`deque`).
+-   **Queue** (`queue`): a First In, First Out (FIFO) container; by default a wrapper around a double-ended queue (`deque`).
+-   **Priority queue** (`priority_queue`): a queue in which the order of elements is decided by some predicate applied to the stored values; by default a wrapper around a vector (`vector`).
 
-## 共同点
+## What they have in common
 
-### 容器声明
+### Declaring containers
 
-都是 `containerName<typeName,...> name` 的形式，但模板参数（`<>` 内的参数）的个数、形式会根据具体容器而变．
+They are all declared in the form `containerName<typeName,...> name`, but the number and form of template parameters (the parameters inside `<>`) vary with the container.
 
-本质原因：STL 就是「标准模板库」，所以容器都是模板类．
+The underlying reason: the STL is the "Standard Template Library", so all containers are class templates.
 
-### 迭代器
+### Iterators
 
-请参考 [迭代器](./iterator.md)．
+See [Iterators](./iterator.md).
 
-### 共有函数
+### Common functions
 
-`=`：有赋值运算符以及复制构造函数．
+`=`: there is an assignment operator and a copy constructor.
 
-`begin()`：返回指向开头元素的迭代器．
+`begin()`: returns an iterator to the first element.
 
-`end()`：返回指向末尾的下一个元素的迭代器．`end()` 不指向某个元素，但它是末尾元素的后继．
+`end()`: returns an iterator to the position just past the last element. `end()` does not point to any element, but it is the successor of the last element.
 
-`size()`：返回容器内的元素个数．
+`size()`: returns the number of elements in the container.
 
-`max_size()`：返回容器 **理论上** 能存储的最大元素个数．依容器类型和所存储变量的类型而变．
+`max_size()`: returns the maximum number of elements the container can **theoretically** hold. It depends on the container type and the type of the stored variables.
 
-`empty()`：返回容器是否为空．
+`empty()`: returns whether the container is empty.
 
-`swap()`：交换两个容器．
+`swap()`: swaps two containers.
 
-`clear()`：清空容器．
+`clear()`: empties the container.
 
-`==`/`!=`/`<`/`>`/`<=`/`>=`：按 **字典序** 比较两个容器的大小．（比较元素大小时 `map` 的每个元素相当于 `set<pair<key, value>>`，无序容器不支持 `<`/`>`/`<=`/`>=`．）
+`==`/`!=`/`<`/`>`/`<=`/`>=`: compares two containers in **lexicographic order**. (When comparing elements, each element of a `map` is treated like `set<pair<key, value>>`; unordered containers do not support `<`/`>`/`<=`/`>=`.)
