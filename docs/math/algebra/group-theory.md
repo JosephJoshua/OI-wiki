@@ -1,329 +1,329 @@
 author: jifbt, billchenchina, Enter-tainer, Great-designer, iamtwz, ImpleLee, isdanni, Menci, ouuan, Tiphereth-A, warzone-oier, Xeonacid, c-forrest, cervoliu
 
-前置知识：[抽象代数基本概念](./basic.md)、[置换与排列](../permutation.md)
+Prerequisites: [Basic Concepts of Abstract Algebra](./basic.md), [Permutations and Arrangements](../permutation.md)
 
-## 引入
+## Introduction
 
-**群论**（group theory）主要研究群这个 [代数结构](https://en.wikipedia.org/wiki/Algebraic_structure)．
+**Group theory** studies the [algebraic structure](https://en.wikipedia.org/wiki/Algebraic_structure) called a group.
 
-为了研究群的结构，需要掌握一些基本工具，这包括子群、群同态和群作用．算法竞赛中，主要涉及到的群是数论相关的群（比如整数模 $n$ 乘法群 $(\mathbf Z/n\mathbf Z)^\times$）以及置换群，本文将着重介绍相关的概念．本文未涉及的群论部分，比如有限群的结构理论和群的线性表示理论，有兴趣的读者应当参考专业书籍．
+To study the structure of groups, we need a few basic tools: subgroups, group homomorphisms and group actions. In competitive programming, the groups that come up most are groups from number theory (such as the multiplicative group of integers modulo $n$, $(\mathbf Z/n\mathbf Z)^\times$) and permutation groups, so this article focuses on the related concepts. For parts of group theory not covered here, such as the structure theory of finite groups and the theory of linear representations of groups, interested readers should consult specialized books.
 
-???+ info "记号"
-    在不引起歧义时，本文可能会将 $g\cdot h$ 写作 $gh$，也可能会将群 $(G,\cdot)$ 写作群 $G$．
+???+ info "Notation"
+    When there is no ambiguity, this article may write $g\cdot h$ as $gh$, and may write the group $(G,\cdot)$ simply as the group $G$.
 
-理解抽象代数不能够离开实例．作为理解下文概念的例子，这里讨论正三角形的空间对称群 $D_6$．
+You can't understand abstract algebra without examples. As a running example for the concepts below, we discuss the symmetry group $D_6$ of an equilateral triangle.
 
-???+ example "例子：正三角形的空间对称群 $D_6$"
-    如图所示，对于给定正三角形，共计有六种不同的操作可以使得它与自身重合．
-    
-    ![正三角形的空间对称群 D\_6](../images/triangle_d6.svg)
-    
-    这里，使用 $r$ 表示顺时针旋转，使用 $s$ 表示沿顶点 $1$ 到三角形中心的连线翻转，操作自右向左复合，即 $sr$ 表示先旋转（$r$）再翻转（$s$）．两个操作不同，当且仅当某个三角形的顶点在两个操作之后所处位置不同．
-    
-    |   记号   |          操作         |  阶  |   置换表示  |
+???+ example "Example: the symmetry group $D_6$ of an equilateral triangle"
+    As shown in the figure, there are six different operations that map a given equilateral triangle onto itself.
+
+    ![Symmetry group D\_6 of an equilateral triangle](../images/triangle_d6.svg)
+
+    Here, $r$ denotes a clockwise rotation, and $s$ denotes a flip across the line from vertex $1$ to the center of the triangle. Operations are composed from right to left, so $sr$ means rotate first ($r$) and then flip ($s$). Two operations are different if and only if some vertex of the triangle ends up in a different position after the two operations.
+
+    | Notation |          Operation         | Order | Permutation |
     | :----: | :-----------------: | :-: | :-----: |
-    |   $e$  |     恒等变换，即什么也不做     |  1  |  $(1)$  |
-    |   $r$  |  顺时针旋转 $120^\circ$  |  3  | $(123)$ |
-    |  $r^2$ |  顺时针旋转 $240^\circ$  |  3  | $(132)$ |
-    |   $s$  |    沿 $1$ 到中心连线翻转    |  2  |  $(23)$ |
-    |  $sr$  | 先旋转 $120^\circ$，再翻转 |  2  |  $(13)$ |
-    | $sr^2$ | 先旋转 $240^\circ$，再翻转 |  2  |  $(12)$ |
-    
-    容易验证，这些操作确实构成了群．比如说，该群的单位元是 $e$，而 $sr$ 的逆元是它自身．而且，群 $D_6$ 并不是交换群，比如可以直接验证 $rs=sr^{-1}$．
-    
-    表中记录的操作并不是该记号对应的唯一的对称操作．比如，「沿 $2$ 到中心的连线翻转」也是三角形的对称操作，它不在表中，但它的结果和操作「先旋转 $120^\circ$，再翻转」相同．表中的「阶」和「置换表示」等概念下文会给予说明．
+    |   $e$  |     Identity, i.e. do nothing     |  1  |  $(1)$  |
+    |   $r$  |  Rotate clockwise by $120^\circ$  |  3  | $(123)$ |
+    |  $r^2$ |  Rotate clockwise by $240^\circ$  |  3  | $(132)$ |
+    |   $s$  |    Flip across the line from $1$ to the center    |  2  |  $(23)$ |
+    |  $sr$  | Rotate by $120^\circ$, then flip |  2  |  $(13)$ |
+    | $sr^2$ | Rotate by $240^\circ$, then flip |  2  |  $(12)$ |
 
-## 子群
+    It is easy to check that these operations really form a group. For example, the identity of the group is $e$, and the inverse of $sr$ is itself. Also, $D_6$ is not a commutative group; for example, you can check directly that $rs=sr^{-1}$.
 
-要理解给定群的结构，可以首先分析其子结构．群的子结构就是那些在同一运算下仍然成为一个群的该群的子集．由此，有如下定义．
+    The operations listed in the table are not the only symmetry operations matching each notation. For example, "flip across the line from $2$ to the center" is also a symmetry of the triangle. It is not in the table, but its result is the same as the operation "rotate by $120^\circ$, then flip". Concepts in the table such as "order" and "permutation representation" are explained below.
 
-???+ abstract "子群"
-    对于群 $(G,\cdot)$ 和它的一个子集 $H\subseteq G$，如果 $(H,\cdot)$ 也是一个群，则称子集 $H$ 是 $G$ 的一个 **子群**（subgroup），记作 $H\le G$．
+## Subgroups
 
-???+ example "例子：正三角形的空间对称群 $D_6$（续）"
-    在 $D_6$ 中，容易验证它的子群有 $\{e\}$，$\{e,s\}$，$\{e,sr\}$，$\{e,sr^2\}$，$\{e,r,r^2\}$ 和 $D_6$ 本身，共计六个．除群 $D_6$ 外，这些子群的结构都更为简单，而且蕴含了关于原来群的部分信息．
+To understand the structure of a given group, we can first look at its substructures. A substructure of a group is a subset of the group that is still a group under the same operation. This leads to the following definition.
 
-要判断给定子集 $H\subseteq G$ 是不是子群，并不需要逐一验证群的定义：结合律自然成立；子集成为子群，只要保证它对二元运算封闭、有单位元且对取逆封闭就好了．事实上，这些条件可以总结在一起．
+???+ abstract "Subgroup"
+    For a group $(G,\cdot)$ and a subset $H\subseteq G$, if $(H,\cdot)$ is also a group, then $H$ is called a **subgroup** of $G$, written $H\le G$.
 
-???+ note "定理（子群判别法）"
-    群 $G$ 的非空子集 $H$ 是子群，当且仅当，对于所有元素 $g,h \in H$ 都有 $g^{-1}h\in H$．
+???+ example "Example: the symmetry group $D_6$ of an equilateral triangle (continued)"
+    In $D_6$, it is easy to check that the subgroups are $\{e\}$, $\{e,s\}$, $\{e,sr\}$, $\{e,sr^2\}$, $\{e,r,r^2\}$ and $D_6$ itself, six in total. Apart from $D_6$ itself, these subgroups all have simpler structures, and they carry part of the information about the original group.
 
-### 由子集生成的子群
+To decide whether a given subset $H\subseteq G$ is a subgroup, we don't need to check the group axioms one by one: associativity holds automatically. For a subset to be a subgroup, it is enough that it is closed under the binary operation, contains the identity, and is closed under taking inverses. In fact, these conditions can be combined into one.
 
-一般地，给定群 $G$ 中的子集 $S$，从 $S$ 中的元素出发，重复进行乘法和取逆运算有限次，能够得到的所有结果的集合构成 $G$ 的一个子群．这称为由子集 $S$ 生成的子群．
+???+ note "Theorem (subgroup test)"
+    A nonempty subset $H$ of a group $G$ is a subgroup if and only if $g^{-1}h\in H$ for all elements $g,h \in H$.
 
-???+ abstract "由子集生成的子群"
-    对于群 $G$ 和它的非空子集 $S\subseteq G$，如果 $H$ 是包含 $S$ 的 $G$ 的子群中（依包含关系）最小的，则子群 $H$ 称为 **由子集 $S$ 生成的子群**（subgroup generated by a subset），并记作 $\langle S\rangle$．特别地，如果 $S=\{x\}$ 是单元素集合，则 $\langle S\rangle$ 也记作 $\langle x\rangle$，称为 $x$ 的幂的循环子群（cyclic subgroup of the powers of an element）．
+### Subgroups generated by a subset
 
-可以证明，任给定这样的子集 $S$，总能找到这样的子群：$\langle S\rangle$ 可以构造为所有包含 $S$ 的 $G$ 的子群的交．
+In general, given a subset $S$ of a group $G$, start from the elements of $S$ and apply multiplication and inversion a finite number of times. The set of all results you can get forms a subgroup of $G$. This is called the subgroup generated by the subset $S$.
 
-???+ example "例子：正三角形的空间对称群 $D_6$（续）"
-    在群 $D_6$ 中选定旋转操作 $r$，重复应用它和它的逆操作，就得到子群 $\{e,r,r^2\}$．它可以记作 $\langle r\rangle$．群 $D_6$ 中的所有非平凡子群都可以通过选定某个操作来生成．
+???+ abstract "Subgroup generated by a subset"
+    For a group $G$ and a nonempty subset $S\subseteq G$, if $H$ is the smallest (with respect to inclusion) among the subgroups of $G$ that contain $S$, then $H$ is called the **subgroup generated by the subset $S$**, written $\langle S\rangle$. In particular, if $S=\{x\}$ is a single-element set, then $\langle S\rangle$ is also written $\langle x\rangle$ and is called the cyclic subgroup of the powers of the element $x$.
 
-有些子集生成的子群是群本身．这样的子集尤为特殊，称为群的生成子集．
+One can prove that for any such subset $S$, such a subgroup always exists: $\langle S\rangle$ can be constructed as the intersection of all subgroups of $G$ that contain $S$.
 
-???+ abstract "群的生成子集"
-    如果群 $(G,\cdot)$ 的子集 $S\subseteq G$ 满足 $\langle S\rangle=G$，则称 $S$ 是 $G$ 的 **生成子集**（generating set of a group）．生成子集 $S$ 中的元素称为 **生成元**（generator）．
+???+ example "Example: the symmetry group $D_6$ of an equilateral triangle (continued)"
+    In $D_6$, pick the rotation $r$ and repeatedly apply it and its inverse. This gives the subgroup $\{e,r,r^2\}$, which can be written $\langle r\rangle$. Every nontrivial subgroup of $D_6$ can be generated by choosing a single operation.
 
-群是自身平凡的生成子集．更为有趣的情形是，生成子集远小于群本身的规模．
+Some subsets generate the whole group. Such subsets are especially important and are called generating sets of the group.
 
-???+ example "例子：正三角形的空间对称群 $D_6$（续）"
-    可以验证，$D_6=\langle s,r\rangle$，这就是说，任何正三角形的对称操作都可以通过旋转和翻转的复合得到．
+???+ abstract "Generating set of a group"
+    If a subset $S\subseteq G$ of a group $(G,\cdot)$ satisfies $\langle S\rangle=G$, then $S$ is called a **generating set** of $G$. The elements of a generating set $S$ are called **generators**.
 
-### 循环群
+A group is trivially a generating set of itself. The more interesting case is when a generating set is much smaller than the group itself.
 
-仅由一个元素生成的群的结构非常简单．这样的群称为循环群．
+???+ example "Example: the symmetry group $D_6$ of an equilateral triangle (continued)"
+    You can check that $D_6=\langle s,r\rangle$. In other words, every symmetry operation of the equilateral triangle can be obtained by composing rotations and flips.
 
-???+ abstract "循环群"
-    对于群 $G$，如果存在 $x\in G$，成立 $G=\langle x\rangle$，则称 $G$ 是一个 **循环群**（cyclic group）．
+### Cyclic groups
 
-???+ example "例子：正三角形的空间对称群 $D_6$（续）"
-    所有 $D_6$ 的非平凡子群以及 $\{e\}$ 都是循环群．
+A group generated by a single element has a very simple structure. Such a group is called a cyclic group.
 
-可以证明，循环群的结构由其大小唯一确定．如果循环群无限，则它必然和整数的加法群 $(\mathbf Z,+)$ 具有相同的群结构，记作 $C_\infty$ 或 $\mathbf Z$；否则，记群的元素个数为 $n\in\mathbf N_+$，则它必然和整数模 $n$ 的同余类的加法群 $(\mathbf Z/n\mathbf Z,+)$ 具有相同的群结构，记作 $C_n$ 或 $\mathbf Z_n$．这一结论的严格叙述需要用到下文的 [群同构](#群同构) 的概念，它严格描述了两个群结构相同这一事实．
+???+ abstract "Cyclic group"
+    For a group $G$, if there exists $x\in G$ such that $G=\langle x\rangle$, then $G$ is called a **cyclic group**.
 
-???+ note "循环群分类定理"
-    大小为 $n$ 的有限循环群 $G$ 同构于 $C_n$；无限循环群 $G$ 同构于 $C_\infty$．
+???+ example "Example: the symmetry group $D_6$ of an equilateral triangle (continued)"
+    All nontrivial subgroups of $D_6$, as well as $\{e\}$, are cyclic groups.
 
-??? note "证明"
-    给定循环群 $G=\langle x\rangle$，它总可以写作 $G=\{x^n:n\in\mathbf Z\}$．如果群 $G$ 有限，那么必然存在自然数 $n<m$ 满足 $x^n=x^m$，依消去律，可以得到 $x^{m-n}=e$．此时，不妨取最小的正整数 $n\in\mathbf N_+$ 使得 $x^n=e$，那么列 $\{x^k\}$ 将会是长度为 $n$ 的循环，且循环节内元素各不相同（否则违反 $n$ 的最小性）．此时，映射 $x^k\mapsto\bar k$ 就提供了同构映射 $G\rightarrow\mathbf Z/n\mathbf Z$，亦即 $G\cong C_n$．反之，如果群 $G$ 无限，那么群 $G$ 内元素各不相同，映射 $x^k\mapsto k$ 就提供了同构映射 $G\rightarrow\mathbf Z$，亦即 $G\cong C_\infty$．
+One can prove that the structure of a cyclic group is determined by its size alone. If a cyclic group is infinite, it must have the same group structure as the additive group of integers $(\mathbf Z,+)$, written $C_\infty$ or $\mathbf Z$. Otherwise, let $n\in\mathbf N_+$ be the number of elements of the group; then it must have the same group structure as the additive group of residue classes of integers modulo $n$, $(\mathbf Z/n\mathbf Z,+)$, written $C_n$ or $\mathbf Z_n$. Stating this result rigorously needs the concept of [group isomorphism](#group-isomorphism) introduced below, which describes precisely what it means for two groups to have the same structure.
 
-所有循环群都是 Abel 群．本文的例子 $D_6$ 说明，即使群的所有非平凡子群都是循环群，群本身也可能不是 Abel 群．
+???+ note "Classification theorem for cyclic groups"
+    A finite cyclic group $G$ of size $n$ is isomorphic to $C_n$; an infinite cyclic group $G$ is isomorphic to $C_\infty$.
 
-### 阶
+??? note "Proof"
+    A cyclic group $G=\langle x\rangle$ can always be written as $G=\{x^n:n\in\mathbf Z\}$. If $G$ is finite, there must be natural numbers $n<m$ with $x^n=x^m$, and by the cancellation law, $x^{m-n}=e$. In that case, take the smallest positive integer $n\in\mathbf N_+$ with $x^n=e$. Then the sequence $\{x^k\}$ is a cycle of length $n$, and the elements within one period are all distinct (otherwise $n$ would not be minimal). The map $x^k\mapsto\bar k$ then gives an isomorphism $G\rightarrow\mathbf Z/n\mathbf Z$, that is, $G\cong C_n$. Conversely, if $G$ is infinite, then all the elements $x^k$ are distinct, and the map $x^k\mapsto k$ gives an isomorphism $G\rightarrow\mathbf Z$, that is, $G\cong C_\infty$.
 
-群的阶就是群的元素的个数．群内给定元素的阶就是该元素生成的循环子群的阶．由此，有如下定义：
+All cyclic groups are Abelian groups. The example $D_6$ in this article shows that even if all nontrivial subgroups of a group are cyclic, the group itself may not be Abelian.
 
-???+ abstract "群的阶"
-    群 $G$ 的 **阶**（order）是它的元素个数，记作 $|G|$．无限群的阶也是无限．
+### Order
 
-???+ abstract "元素的阶"
-    群 $G$ 中元素 $x\in G$ 的 **阶**（order）是最小的正整数 $n$ 使得 $x^n=e$ 成立，记作 $|x|$；如果这样的 $n$ 不存在，则称元素 $x$ 的阶是无限，记作 $|x|=\infty$．
+The order of a group is the number of its elements. The order of an element of a group is the order of the cyclic subgroup that element generates. This gives the following definitions:
 
-元素的阶总是不大于群的阶，事实上，下文即证明，元素的阶总是整除群的阶．但是，群的阶并非总是元素的阶的最大值，比如 $D_6$ 是六阶群，但是元素的阶最大是 $3$．群的阶也并不是所有元素的阶的最小公倍数，比如 Klein 四元群[^klein] $V_4$ 的阶是 $4$，但是里面只有 $1$ 阶元和 $2$ 阶元．
+???+ abstract "Order of a group"
+    The **order** of a group $G$ is the number of its elements, written $|G|$. An infinite group has infinite order.
 
-???+ note "定理"
-    有限循环群 $C_n=\langle x\rangle$ 中，元素 $x^k$ 的阶是
-    
+???+ abstract "Order of an element"
+    The **order** of an element $x\in G$ of a group $G$ is the smallest positive integer $n$ such that $x^n=e$, written $|x|$. If no such $n$ exists, the element $x$ is said to have infinite order, written $|x|=\infty$.
+
+The order of an element is never larger than the order of the group. In fact, we prove below that the order of an element always divides the order of the group. However, the order of a group is not always the largest order of its elements; for example, $D_6$ is a group of order six, but its elements have order at most $3$. Nor is the order of a group always the least common multiple of the orders of all its elements; for example, the Klein four-group[^klein] $V_4$ has order $4$, but it only contains elements of order $1$ and $2$.
+
+???+ note "Theorem"
+    In a finite cyclic group $C_n=\langle x\rangle$, the order of the element $x^k$ is
+
     $$
     \frac{n}{\gcd(k,n)}.
     $$
-    
-    特别地，$C_n$ 的生成元的数目是 $\varphi(n)$，这里，$\varphi(\cdot)$ 是 [欧拉函数](../number-theory/euler-totient.md)．
 
-作为上述讨论的应用，注意到模 $n$ 整数乘法群的阶是 $\varphi(n)$，群中的任何元素 $a$ 的阶都整除它，故而必然有 $a^{\varphi(n)}=1$．这就是 [欧拉定理](../number-theory/fermat.md#欧拉定理)，因为该群中的元素就是所有与 $n$ 互质的元素．
+    In particular, the number of generators of $C_n$ is $\varphi(n)$, where $\varphi(\cdot)$ is [Euler's totient function](../number-theory/euler-totient.md).
 
-### 陪集
+As an application of this discussion, note that the multiplicative group of integers modulo $n$ has order $\varphi(n)$, and the order of any element $a$ of the group divides it, so we must have $a^{\varphi(n)}=1$. This is [Euler's theorem](../number-theory/fermat.md#欧拉定理), since the elements of this group are exactly the integers coprime to $n$.
 
-子群以外的元素在群中的结构也并非杂乱无章．
+### Cosets
 
-???+ example "例子：正三角形的空间对称群 $D_6$（续）"
-    观察 $D_6$ 中的子群 $\langle r\rangle$，剩余的元素 $\{s,sr,sr^2\}$ 结构和 $\langle r\rangle$ 十分相似：它当中的每个操作都可以通过 $s$ 和 $\langle r\rangle$ 中的操作复合得到．同理，考虑子群 $\langle s\rangle$，则群中的剩余元素可以分为两类，$\{r,sr\}$ 和 $\{r^2,sr^2\}$，它们可以通过 $\langle s\rangle$ 中的元素分别与 $r$ 和 $r^2$ 复合得到．这样的现象是普遍的．
+The elements outside a subgroup are not arranged in a random way either.
 
-给定子群，可以定义它的陪集．
+???+ example "Example: the symmetry group $D_6$ of an equilateral triangle (continued)"
+    Look at the subgroup $\langle r\rangle$ of $D_6$. The remaining elements $\{s,sr,sr^2\}$ have a structure very similar to $\langle r\rangle$: each of these operations can be obtained by composing $s$ with an operation in $\langle r\rangle$. Similarly, for the subgroup $\langle s\rangle$, the remaining elements of the group split into two classes, $\{r,sr\}$ and $\{r^2,sr^2\}$, which are obtained by composing elements of $\langle s\rangle$ with $r$ and $r^2$ respectively. This phenomenon happens in general.
 
-???+ abstract "陪集"
-    设 $G$ 是群，$H\le G$ 是它的子群，则子群 $H$ 的包含 $g$ 的 **左陪集**（left coset）和 **右陪集**（right coset）分别定义为集合
-    
+Given a subgroup, we can define its cosets.
+
+???+ abstract "Coset"
+    Let $G$ be a group and $H\le G$ a subgroup. The **left coset** and **right coset** of $H$ containing $g$ are the sets
+
     $$
     \begin{aligned}
     gH &= \{gh:h\in H\},\\
     Hg &= \{hg:h\in H\}.
     \end{aligned}
     $$
-    
-    陪集中的元素称为陪集的代表元（representative element）．
 
-子群本身也是其陪集．给定子群，全体陪集构成群的一个分划，即群是全体陪集的不交并．分划总可以看作某个等价关系的等价类．对于左陪集的分划，这个等价关系就是 $g_1\sim g_2$ 当且仅当 $g_1^{-1}g_2\in H$；对于右陪集的分划，这个等价关系就是 $g_1\sim g_2$ 当且仅当 $g_1g_2^{-1}\in H$．
+    The elements of a coset are called representative elements (representatives) of the coset.
 
-???+ example "例子：正三角形的空间对称群 $D_6$（续）"
-    按照陪集的语言，上面的例子中，$D_6$ 可以分别划分成 $\langle r\rangle\cup s\langle r\rangle$ 和 $\langle s\rangle\cup \langle s\rangle r \cup \langle s\rangle r^2$．这里，前者将群划分为若干左陪集，后者将群划分为若干右陪集．应该注意，代表元的选取并无特殊，比如可以验证 $s\langle r\rangle=sr\langle r\rangle$．陪集中的任何元素都是该陪集的代表元．
+A subgroup is itself one of its cosets. For a given subgroup, all its cosets form a partition of the group; that is, the group is the disjoint union of all the cosets. A partition can always be seen as the set of equivalence classes of some equivalence relation. For the partition into left cosets, the relation is $g_1\sim g_2$ if and only if $g_1^{-1}g_2\in H$; for the partition into right cosets, the relation is $g_1\sim g_2$ if and only if $g_1g_2^{-1}\in H$.
 
-同一子群的不同陪集大小都相同，都等于对应子群的大小．由于给定子群的全体陪集构成群的一个分划，有限群的阶必然是子群的阶的整数倍．这叫做 Lagrange 定理．
+???+ example "Example: the symmetry group $D_6$ of an equilateral triangle (continued)"
+    In the language of cosets, the example above splits $D_6$ as $\langle r\rangle\cup s\langle r\rangle$ and as $\langle s\rangle\cup \langle s\rangle r \cup \langle s\rangle r^2$. The first splits the group into left cosets, and the second into right cosets. Note that there is nothing special about the choice of representatives; for example, you can check that $s\langle r\rangle=sr\langle r\rangle$. Every element of a coset is a representative of that coset.
 
-???+ note "Lagrange 定理"
-    对于有限群 $G$ 和它的子群 $H\le G$，成立 $|G|=[G:H]|H|$，这里，$[G:H]$ 表示 $G$ 中子群 $H$ 的左（右）陪集数，称为群 $G$ 中子群 $H$ 的 **指数**（index）．
+Different cosets of the same subgroup all have the same size, equal to the size of the subgroup. Since all cosets of a subgroup form a partition of the group, the order of a finite group must be an integer multiple of the order of the subgroup. This is called Lagrange's theorem.
 
-??? note "证明"
-    考察左乘以 $g$ 的映射 $h\mapsto gh$，则它和映射 $h\mapsto g^{-1}h$ 互为逆映射，因而它们都是双射．这说明，$|H|=|gH|$ 总是成立．
+???+ note "Lagrange's theorem"
+    For a finite group $G$ and a subgroup $H\le G$, we have $|G|=[G:H]|H|$, where $[G:H]$ is the number of left (or right) cosets of $H$ in $G$, called the **index** of the subgroup $H$ in $G$.
 
-注意到，元素的阶就是元素生成的循环子群的阶，所以元素的阶也必然整除群的阶．
+??? note "Proof"
+    Consider the map $h\mapsto gh$, left multiplication by $g$. It and the map $h\mapsto g^{-1}h$ are inverses of each other, so both are bijections. This shows that $|H|=|gH|$ always holds.
 
-### 正规子群
+Note that the order of an element is the order of the cyclic subgroup it generates, so the order of an element must also divide the order of the group.
 
-一般情况下，给定子群的左右陪集并不相同．
+### Normal subgroups
 
-???+ example "例子：正三角形的空间对称群 $D_6$（续）"
-    群 $D_6$ 中，$\langle s\rangle r=\{r,sr\}$，但是 $r\langle s\rangle=\{r,sr^2\}$．但是如果考虑子群 $\langle r\rangle$，那么左右陪集又总是相同的，因为此时群只有两个陪集，而子群作为一个陪集又必然重合．
+In general, the left and right cosets of a subgroup are not the same.
 
-左右陪集是否相同，反映了相应的子群的性质．
+???+ example "Example: the symmetry group $D_6$ of an equilateral triangle (continued)"
+    In $D_6$, $\langle s\rangle r=\{r,sr\}$, but $r\langle s\rangle=\{r,sr^2\}$. However, for the subgroup $\langle r\rangle$, the left and right cosets are always the same. This is because there are only two cosets in that case, and since the subgroup itself is one coset, the other one must coincide as well.
 
-???+ abstract "正规子群"
-    设 $N\le G$ 是群 $G$ 的子群，如果对所有 $h\in N$ 和 $g\in G$，都成立 $ghg^{-1}\in N$，换言之，对所有 $g\in G$，都成立 $gNg^{-1}\subseteq N$，则称 $N$ 是 $G$ 的一个 **正规子群**（normal subgroup），记作 $N\trianglelefteq G$．
+Whether the left and right cosets are the same reflects a property of the subgroup.
 
-这个定义中的条件正等价于 $gN=Ng$ 永远成立．群 $G$ 总有平凡的正规子群，即 $\langle e\rangle$ 和 $G$ 自身．
+???+ abstract "Normal subgroup"
+    Let $N\le G$ be a subgroup of $G$. If $ghg^{-1}\in N$ for all $h\in N$ and $g\in G$, or in other words $gNg^{-1}\subseteq N$ for all $g\in G$, then $N$ is called a **normal subgroup** of $G$, written $N\trianglelefteq G$.
 
-???+ example "例子：正三角形的空间对称群 $D_6$（续）"
-    在群 $D_6$ 中，$\langle s\rangle$ 不是正规子群，而 $\langle r\rangle$ 是正规子群．
+The condition in this definition is exactly equivalent to $gN=Ng$ always holding. A group $G$ always has the trivial normal subgroups $\langle e\rangle$ and $G$ itself.
 
-### 商群
+???+ example "Example: the symmetry group $D_6$ of an equilateral triangle (continued)"
+    In $D_6$, $\langle s\rangle$ is not a normal subgroup, while $\langle r\rangle$ is a normal subgroup.
 
-正规子群是非常重要的一类子群，原因之一就是基于正规子群可以定义商群．
+### Quotient groups
 
-对于群 $G$ 和它的正规子群 $N\trianglelefteq G$，考虑全体陪集的集合
+Normal subgroups are a very important kind of subgroup. One reason is that they let us define quotient groups.
+
+For a group $G$ and a normal subgroup $N\trianglelefteq G$, consider the set of all cosets
 
 $$
 G/N = \{gN:g\in G\}.
 $$
 
-此时，左右陪集相同，不必区分．可以从群 $G$ 的运算出发，定义 $G/N$ 上的二元运算 $\circ$，它满足
+Here the left and right cosets are the same, so we don't need to tell them apart. Starting from the operation of $G$, we can define a binary operation $\circ$ on $G/N$ that satisfies
 
 $$
 g_1N\circ g_2N=(g_1g_2)N.
 $$
 
-可以证明，运算的结果与代表元的选取无关[^quotient]．此时，$(G/N,\circ)$ 确实具有群的结构，它称为 $G$ 模 $N$ 的 **商群**（quotient group）．商群 $G/N$ 并不是群 $G$ 的子群，它的每个元素都是群 $G$ 的一个子集．
+One can prove that the result of this operation does not depend on the choice of representatives[^quotient]. Then $(G/N,\circ)$ really has a group structure; it is called the **quotient group** of $G$ modulo $N$. The quotient group $G/N$ is not a subgroup of $G$; each of its elements is a subset of $G$.
 
-???+ example "例子：正三角形的空间对称群 $D_6$（续）"
-    在群 $D_6$ 中，商群 $G/\langle r\rangle$ 的意义非常显然．它相当于在所有这些对称操作中，忽视操作中将三角形旋转的角度，而只关注它是否将三角形翻转．两个将三角形翻转的操作的复合相当于没有翻转原三角形；但是，如果两个操作一个翻转了三角形而另一个没有，那么复合也必然翻转了三角形．翻转与否也具有群的结构．从群 $D_6$ 中忽视旋转的细节而只考虑翻转的有无，在代数上就是将复杂的群 $D_6$ 模掉 $\langle r\rangle$ 而得到商群 $D_6/\langle r\rangle$．这些论述对子群 $\langle s\rangle$ 是无效的，因为如果忽视翻转的有无，那么旋转的度数就没有办法明确判断，这也是为什么 $G/\langle s\rangle$ 不具有商群的结构．
+???+ example "Example: the symmetry group $D_6$ of an equilateral triangle (continued)"
+    In $D_6$, the meaning of the quotient group $G/\langle r\rangle$ is very clear. It amounts to ignoring, in all these symmetry operations, the angle by which the triangle is rotated, and only paying attention to whether the triangle is flipped. Composing two operations that both flip the triangle gives an operation that does not flip it; but if one operation flips the triangle and the other doesn't, the composition must flip it. "Flipped or not" also has a group structure. Ignoring the details of rotation in $D_6$ and only keeping track of whether there is a flip is, algebraically, taking the complicated group $D_6$ modulo $\langle r\rangle$ to get the quotient group $D_6/\langle r\rangle$. This reasoning does not work for the subgroup $\langle s\rangle$: if we ignore whether there is a flip, the angle of rotation can no longer be determined clearly. This is also why $G/\langle s\rangle$ does not have the structure of a quotient group.
 
-群的商群可以将复杂的群简化，允许观察群的部分结构来了解原来群的结构．这也是商群也称为 **因子群**（factor group）的原因．除平凡正规子群外，再不含其他正规子群的群称为 **单群**（simple group），这些群没有办法简化为更小的群．如同素数一样，它们是组成更复杂的群结构的基石．
+Quotient groups can simplify a complicated group, letting us learn about the structure of the original group by looking at part of its structure. This is why quotient groups are also called **factor groups**. A group with no normal subgroups other than the trivial ones is called a **simple group**; such groups cannot be simplified into smaller groups. Like prime numbers, they are the building blocks of more complicated group structures.
 
-## 群同态
+## Group homomorphisms
 
-理解给定群结构的第二种方法，是将两个群的结构相互比较．
+The second way to understand the structure of a group is to compare the structures of two groups.
 
-对于两个群，要比较它们的结构，就是要构造两个群之间的映射．但是，这样的映射并不能是任意的，它们要保持群的结构，也就是要保持群的运算在映射前后一致．这样的映射称为群的同态．
+To compare the structures of two groups, we construct a map between them. But such a map can't be arbitrary: it has to preserve the group structure, that is, the group operation must agree before and after the map. Such a map is called a group homomorphism.
 
-???+ abstract "群同态"
-    设映射 $\varphi:G\rightarrow H$ 是自群 $(G,\cdot)$ 到群 $(H,\odot)$ 的映射，如果 $\varphi$ 保持群的运算，即对所有 $g_1,g_2\in G$ 都成立 $\varphi(g_1\cdot g_2)=\varphi(g_1)\odot\varphi(g_2)$，则称映射 $\varphi$ 是一个自群 $G$ 到群 $H$ 的 **同态**（homomorphism）．
+???+ abstract "Group homomorphism"
+    Let $\varphi:G\rightarrow H$ be a map from a group $(G,\cdot)$ to a group $(H,\odot)$. If $\varphi$ preserves the group operation, that is, $\varphi(g_1\cdot g_2)=\varphi(g_1)\odot\varphi(g_2)$ for all $g_1,g_2\in G$, then $\varphi$ is called a **homomorphism** from the group $G$ to the group $H$.
 
-群同态必然将单位元映射到单位元，也必然将逆元映射到逆元．
+A group homomorphism must map the identity to the identity, and inverses to inverses.
 
-???+ info "记号"
-    在下文中，如果不引起歧义，不会区分群 $G$ 和 $H$ 中的运算的记号，并且为表述简便，将省略这些记号．
+???+ info "Notation"
+    Below, when there is no ambiguity, we won't distinguish the notation for the operations in $G$ and $H$, and for brevity we will omit these symbols.
 
-### 群同构
+### Group isomorphism
 
-对于自群 $G$ 到群 $H$ 的同态 $\varphi:G\rightarrow H$，一个自然的问题是，这一同态在多大程度上反映了群 $G$ 和群 $H$ 的结构是一致的．为此，考察群 $G$ 在同态 $\varphi$ 下的像 $\varphi(G)$，它将群 $G$ 的结构映射到群 $H$ 中．一方面，$\varphi(G)$ 是群 $H$ 的一个子群；但若同态 $\varphi$ 不是满射，$\varphi(G)$ 与群 $H$ 并不相同．另一方面，同态 $\varphi$ 也未必是单射；如果 $\varphi$ 不是单射，那么 $\varphi(G)$ 只反映了群 $G$ 的部分结构．只有当同态 $\varphi$ 是双射时，群 $G$ 和群 $H$ 的结构才是完全一致的．这种特殊的群同态叫做群同构．
+For a homomorphism $\varphi:G\rightarrow H$ from a group $G$ to a group $H$, a natural question is: how far does this homomorphism show that $G$ and $H$ have the same structure? To answer this, look at the image $\varphi(G)$ of $G$ under $\varphi$, which carries the structure of $G$ into $H$. On one hand, $\varphi(G)$ is a subgroup of $H$; but if $\varphi$ is not surjective, $\varphi(G)$ is not the same as $H$. On the other hand, $\varphi$ need not be injective; if it isn't, then $\varphi(G)$ only reflects part of the structure of $G$. Only when $\varphi$ is a bijection do $G$ and $H$ have exactly the same structure. This special kind of group homomorphism is called a group isomorphism.
 
-???+ abstract "群同构"
-    设 $\varphi:G\rightarrow H$ 是自群 $G$ 到群 $H$ 的同态，如果 $\varphi$ 是双射，则称 $\varphi$ 是群 $G$ 和群 $H$ 之间的 **同构**（isomorphism），记作 $G\cong H$．
+???+ abstract "Group isomorphism"
+    Let $\varphi:G\rightarrow H$ be a homomorphism from a group $G$ to a group $H$. If $\varphi$ is a bijection, then $\varphi$ is called an **isomorphism** between $G$ and $H$, written $G\cong H$.
 
-同构的两个群结构完全一致．如果只关心群的结构，两个同构的群没有必要区分．前文关于循环群的分类定理就是在同构的意义下给出的．
+Two isomorphic groups have exactly the same structure. If we only care about the structure of groups, there is no need to tell two isomorphic groups apart. The classification theorem for cyclic groups above is stated up to isomorphism.
 
-???+ example "例子：正三角形的空间对称群 $D_6$（续）"
-    回到前文的例子，正三角形的每个对称操作都唯一对应了顶点集合上的置换操作．顶点集合上的全体置换也构成群，即 $S_3$．容易验证，这样得到的映射 $\varphi:D_6\rightarrow S_3$ 是群同态；进一步地，它也是群同构．所以，$D_6\cong S_3$．事实上，六阶群要么同构于 $C_6$，要么同构于 $S_3$（证明见下文）．
+???+ example "Example: the symmetry group $D_6$ of an equilateral triangle (continued)"
+    Back to the earlier example: each symmetry operation of the equilateral triangle corresponds to exactly one permutation of the vertex set. All permutations of the vertex set also form a group, namely $S_3$. It is easy to check that the resulting map $\varphi:D_6\rightarrow S_3$ is a group homomorphism; moreover, it is also a group isomorphism. So $D_6\cong S_3$. In fact, a group of order six is isomorphic either to $C_6$ or to $S_3$ (see the proof below).
 
-对给定阶的有限群的结构进行分类，是群论的重要研究内容，但超出了本文的范畴．
+Classifying the structures of finite groups of a given order is an important topic in group theory, but it is beyond the scope of this article.
 
-### 同态的核
+### Kernel of a homomorphism
 
-对于一般的同态，可以进一步讨论有多少关于群的结构的信息损失在了同态中．延续上文的记号．已知 $\varphi(G)$ 是群 $H$ 的子群，现在问题的关键在于 $\varphi(G)$ 和群 $G$ 之间的关系．
+For a general homomorphism, we can go further and ask how much information about the group structure is lost in the homomorphism. We keep the notation from above. We already know that $\varphi(G)$ is a subgroup of $H$; the key question now is how $\varphi(G)$ relates to $G$.
 
-???+ example "例子：正三角形的空间对称群 $D_6$（续）"
-    考虑如下定义的映射 $\varphi: D_6 \rightarrow C_2 = \langle x\rangle$：
-    
+???+ example "Example: the symmetry group $D_6$ of an equilateral triangle (continued)"
+    Consider the map $\varphi: D_6 \rightarrow C_2 = \langle x\rangle$ defined by:
+
     $$
     \varphi(e)=\varphi(r)=\varphi(r^2)=e,\ \varphi(s)=\varphi(sr)=\varphi(sr^2)=x.
     $$
-    
-    容易验证，$\varphi$ 是群同态；它是满射，但不是单射．它的意义很明显，就是将群的每一个对称操作映射到其翻转的有无．这样的同态压缩的群 $D_6$ 中的信息，就是有关它旋转角度的信息．比如说，如果没有翻转，任何角度的旋转都映射到了群 $C_2$ 中的单位元．
 
-这个例子启发使用 $\{e\}$ 的原像衡量同态中损失的结构信息．为此，有如下定义．
+    It is easy to check that $\varphi$ is a group homomorphism; it is surjective but not injective. Its meaning is clear: it maps each symmetry operation to whether or not it flips the triangle. The information in $D_6$ that this homomorphism squeezes out is the information about the rotation angle. For example, if there is no flip, a rotation by any angle is mapped to the identity of $C_2$.
 
-???+ abstract "同态的核"
-    设 $\varphi:G\rightarrow H$ 是自群 $G$ 到群 $H$ 的同态，则同态 $\varphi$ 的 **核**（kernel）是 $\ker\varphi=\{g\in G:\varphi(g)=e\}$，这里，$e$ 是 $H$ 的单位元．
+This example suggests using the preimage of $\{e\}$ to measure the structural information lost in a homomorphism. This leads to the following definition.
 
-### 同态基本定理
+???+ abstract "Kernel of a homomorphism"
+    Let $\varphi:G\rightarrow H$ be a homomorphism from a group $G$ to a group $H$. The **kernel** of $\varphi$ is $\ker\varphi=\{g\in G:\varphi(g)=e\}$, where $e$ is the identity of $H$.
 
-同态的核 $\ker\varphi$ 的确刻画了群同态中损失的结构信息．这一结论的精确表述就是 **同态基本定理**（亦称 **第一同构定理**）（fundamental theorem of group homomorphism, a.k.a., first isomorphism theorem）．
+### Fundamental theorem of homomorphisms
 
-???+ note "同态基本定理（第一同构定理）"
-    设 $\varphi:G\rightarrow H$ 是自群 $G$ 到群 $H$ 的同态，则 $\ker\varphi\trianglelefteq G$，且 $G/\ker\varphi\cong\varphi(G)\le H$．
+The kernel $\ker\varphi$ does indeed capture the structural information lost in a group homomorphism. The precise statement of this fact is the **fundamental theorem of group homomorphisms** (also called the **first isomorphism theorem**).
 
-??? note "证明"
-    首先，$N=\ker\varphi$ 是正规子群，因为对于任意 $h\in N$ 都有 $\varphi(ghg^{-1})=\varphi(g)\varphi(h)\varphi(g)^{-1}=\varphi(g)\varphi(g)^{-1}=e$，亦即 $ghg^{-1}\in\ker\varphi$．然后，考察映射 $\Phi:G/N\rightarrow\varphi(G)$，它满足 $\Phi(gN)=\varphi(g)$．映射是良定义的，因为如果 $g_1N=g_2N$，那么 $g_1^{-1}g_2\in N$，则 $\varphi(g_1^{-1}g_2)=e$，即 $\varphi(g_1)=\varphi(g_2)$．映射 $\Phi$ 显然是满射；它也是单射，因为 $\ker\Phi=\{gN:\varphi(g)=e\}=\{N\}$．故而，$\Phi$ 是群同构．最后，$\varphi(g_1)\varphi(g_2)^{-1}=\varphi(g_1g_2^{-1})\in\varphi(G)$，根据子群判别法，$\varphi(G)$ 必然是子群．
+???+ note "Fundamental theorem of homomorphisms (first isomorphism theorem)"
+    Let $\varphi:G\rightarrow H$ be a homomorphism from a group $G$ to a group $H$. Then $\ker\varphi\trianglelefteq G$, and $G/\ker\varphi\cong\varphi(G)\le H$.
 
-???+ note "推论"
-    同态 $\varphi:G\rightarrow H$ 是单射，当且仅当 $\ker\varphi=\{e\}$．此时，$G$ 同构于 $H$ 的一个子群，即 $G\cong\varphi(G)\le H$．
+??? note "Proof"
+    First, $N=\ker\varphi$ is a normal subgroup, because for any $h\in N$ we have $\varphi(ghg^{-1})=\varphi(g)\varphi(h)\varphi(g)^{-1}=\varphi(g)\varphi(g)^{-1}=e$, that is, $ghg^{-1}\in\ker\varphi$. Next, consider the map $\Phi:G/N\rightarrow\varphi(G)$ with $\Phi(gN)=\varphi(g)$. This map is well-defined, because if $g_1N=g_2N$, then $g_1^{-1}g_2\in N$, so $\varphi(g_1^{-1}g_2)=e$, that is, $\varphi(g_1)=\varphi(g_2)$. The map $\Phi$ is clearly surjective; it is also injective, because $\ker\Phi=\{gN:\varphi(g)=e\}=\{N\}$. So $\Phi$ is a group isomorphism. Finally, $\varphi(g_1)\varphi(g_2)^{-1}=\varphi(g_1g_2^{-1})\in\varphi(G)$, so by the subgroup test, $\varphi(G)$ must be a subgroup.
 
-也就是说，同态 $\varphi$ 的核是群 $G$ 的正规子群，而模 $\ker\varphi$ 得到的商群 $G/\ker\varphi$ 同构于同态的像 $\varphi(G)$，而这一同态的像正是群 $H$ 的子群．
+???+ note "Corollary"
+    A homomorphism $\varphi:G\rightarrow H$ is injective if and only if $\ker\varphi=\{e\}$. In that case, $G$ is isomorphic to a subgroup of $H$, namely $G\cong\varphi(G)\le H$.
 
-???+ example "例子：正三角形的空间对称群 $D_6$（续）"
-    上文给出的群同态 $\varphi: D_6 \rightarrow C_2$ 的核是 $\langle r\rangle$，前文讨论正规子群时也已经说明 $D_6/\langle r\rangle$ 的确同构于 $C_2$．
+In other words, the kernel of the homomorphism $\varphi$ is a normal subgroup of $G$, the quotient group $G/\ker\varphi$ is isomorphic to the image $\varphi(G)$ of the homomorphism, and this image is a subgroup of $H$.
 
-### 自然同态
+???+ example "Example: the symmetry group $D_6$ of an equilateral triangle (continued)"
+    The kernel of the group homomorphism $\varphi: D_6 \rightarrow C_2$ given above is $\langle r\rangle$. When we discussed normal subgroups earlier, we already saw that $D_6/\langle r\rangle$ is indeed isomorphic to $C_2$.
 
-得到这样的结论并不为奇．这是因为在构造同态 $\varphi: D_6 \rightarrow C_2$ 时，利用的正是商群 $D_6/\langle r\rangle$ 的几何意义．这样的现象并不罕见．事实上，对每个商群，都可以构造出群同态，使得同态的像同构于给定的商群．
+### Natural homomorphisms
 
-???+ abstract "自然同态"
-    对于群 $G$ 和其正规子群 $N\trianglelefteq G$，由 $\pi(g)=gN$ 给出的映射 $\pi: G\rightarrow G/N$ 是自 $G$ 到 $G/N$ 的满同态，称为自群 $G$ 到商群 $G/N$ 的 **自然同态**（natural homomorphism）或 **自然映射**．
+This result is not surprising. When we constructed the homomorphism $\varphi: D_6 \rightarrow C_2$, we used exactly the geometric meaning of the quotient group $D_6/\langle r\rangle$. This is not a coincidence. In fact, for every quotient group, we can construct a group homomorphism whose image is isomorphic to that quotient group.
 
-这一结论也说明，对于任何给定群的正规子群，都能够找到对应的群同态，使得这一同态的核就是给定的正规子群．前文同态基本定理则说明，任何同态的核都是正规子群．故而，正规子群和同态的核是一体两面．
+???+ abstract "Natural homomorphism"
+    For a group $G$ and a normal subgroup $N\trianglelefteq G$, the map $\pi: G\rightarrow G/N$ given by $\pi(g)=gN$ is a surjective homomorphism from $G$ to $G/N$. It is called the **natural homomorphism** or **natural map** from the group $G$ to the quotient group $G/N$.
 
-利用自然映射的概念，群的同态基本定理其实是在说如下的 **交换图**（commutative diagram）成立．
+This also shows that for any normal subgroup of a given group, we can find a corresponding group homomorphism whose kernel is exactly that normal subgroup. The fundamental theorem of homomorphisms above shows that the kernel of any homomorphism is a normal subgroup. So normal subgroups and kernels of homomorphisms are two sides of the same coin.
 
-![同态基本定理的交换图](../images/homomorphism.svg)
+Using the natural map, the fundamental theorem of group homomorphisms really says that the following **commutative diagram** holds.
 
-这里，所有箭头都是群同态，且 $N=\ker\varphi$ 是同态 $\varphi$ 的核，$\varphi(G)$ 是同态 $\varphi$ 的像．这些映射依次是，$\pi:g\mapsto gN$ 为群 $G$ 到商群 $G/N$ 的自然映射（满同态），$\Phi:gN\mapsto\varphi(g)$ 是同构映射，$\iota$ 则是嵌入映射（单同态）．交换图意味着，图中从 $G$ 出发到 $H$ 结束的两条不同路径上的映射的复合得到的结果是一致的，即 $\varphi=\iota\circ\Phi\circ\pi$．交换图清晰地说明，同态 $\varphi$ 损失的信息就反映在 $\pi$ 和 $\iota$ 中．
+![Commutative diagram of the fundamental theorem of homomorphisms](../images/homomorphism.svg)
 
-### 群的同构定理
+Here, all arrows are group homomorphisms, $N=\ker\varphi$ is the kernel of $\varphi$, and $\varphi(G)$ is the image of $\varphi$. The maps are, in order: $\pi:g\mapsto gN$, the natural map (a surjective homomorphism) from $G$ to the quotient group $G/N$; $\Phi:gN\mapsto\varphi(g)$, an isomorphism; and $\iota$, the inclusion map (an injective homomorphism). The diagram being commutative means that composing the maps along the two different paths from $G$ to $H$ gives the same result, that is, $\varphi=\iota\circ\Phi\circ\pi$. The commutative diagram shows clearly that the information lost by $\varphi$ is reflected in $\pi$ and $\iota$.
 
-用于理解群的结构的有力工具，是群的同构定理．前文已经给出第一同构定理．为了内容完整，这里再给出其他常见的同构定理．
+### Isomorphism theorems for groups
 
-第二同构定理涉及到子群的乘积的概念．
+The isomorphism theorems are powerful tools for understanding the structure of groups. The first isomorphism theorem was given above. For completeness, here are the other common isomorphism theorems.
 
-???+ abstract "子集的乘积"
-    对于群 $G$ 和它的子集 $A,B\subseteq G$，子集 $A$ 和 $B$ 的 **乘积**（product）是子集 $AB=\{ab:a\in A,b\in B\}$．
+The second isomorphism theorem involves the product of subgroups.
 
-子群的乘积并不总是子群．比如，群 $D_6$ 的子群 $A=\langle s\rangle$ 和子群 $B=\langle sr\rangle$ 的乘积等于 $AB=\{e,s,r,sr\}$，这并不是 $G$ 的子群，因为 $(sr)s=r^2\notin AB$．其实，这种 $a\in A$，$b\in B$，但 $ba\notin AB$ 形式的反例正是乘积不是子群的根本原因．对此，有如下定理．
+???+ abstract "Product of subsets"
+    For a group $G$ and subsets $A,B\subseteq G$, the **product** of $A$ and $B$ is the subset $AB=\{ab:a\in A,b\in B\}$.
 
-???+ note "定理"
-    对于群 $G$ 和它的子群 $A,B\le G$，乘积 $AB$ 是子群，当且仅当 $AB=BA$．
+The product of two subgroups is not always a subgroup. For example, in $D_6$ the product of the subgroups $A=\langle s\rangle$ and $B=\langle sr\rangle$ is $AB=\{e,s,r,sr\}$, which is not a subgroup of $G$, because $(sr)s=r^2\notin AB$. In fact, counterexamples of this form, with $a\in A$ and $b\in B$ but $ba\notin AB$, are exactly the reason a product fails to be a subgroup. This is made precise by the following theorem.
 
-??? note "证明"
-    乘积 $AB$ 是子群，则必然有 $ba=(a^{-1}b^{-1})^{-1}\in AB$ 对任意 $a\in A$ 和 $b\in B$ 都成立，所以 $BA\subseteq AB$．反过来，如果 $AB=BA$，则对于任意 $a_1,a_2\in A$ 和 $b_1,b_2\in B$，都有 $(a_1b_1)(a_2b_2)^{-1}=a_1b_1b_2^{-1}a_2^{-1}\in a_1BA=a_1AB=AB$，则根据子群判别法，必然有 $AB$ 是子群．
+???+ note "Theorem"
+    For a group $G$ and subgroups $A,B\le G$, the product $AB$ is a subgroup if and only if $AB=BA$.
 
-**第二同构定理**（second isomorphism theorem, a.k.a., diamond isomorphism theorem）则给出了子群乘积仍是子群的更为简单的充分条件，并且进一步确定了其结构．
+??? note "Proof"
+    If $AB$ is a subgroup, then $ba=(a^{-1}b^{-1})^{-1}\in AB$ for all $a\in A$ and $b\in B$, so $BA\subseteq AB$. Conversely, if $AB=BA$, then for any $a_1,a_2\in A$ and $b_1,b_2\in B$, we have $(a_1b_1)(a_2b_2)^{-1}=a_1b_1b_2^{-1}a_2^{-1}\in a_1BA=a_1AB=AB$, so by the subgroup test, $AB$ must be a subgroup.
 
-???+ note "第二同构定理"
-    设群 $G$ 和子群 $A,B\le G$ 满足 $A\le N_G(B)$，那么，$AB\le G$，且 $B\trianglelefteq AB$，$A\cap B\trianglelefteq A$，$AB/B\cong A/(A\cap B)$．这里，$N_G(B)$ 是 $B$ 的 [正规化子](#正规化子和中心化子)．特别地，$A\le N_G(B)$ 的一个充分条件是 $B\trianglelefteq G$．
+The **second isomorphism theorem** (also called the diamond isomorphism theorem) gives a simpler sufficient condition for a product of subgroups to be a subgroup, and further determines its structure.
 
-??? note "证明"
-    因为 $A\le N_G(B)$，必然有 $aBa^{-1}=B$ 对于所有 $a\in A$ 都成立，此即 $aB=Ba$．因此，必然有 $AB=BA$，则由上述定理知 $AB$ 是子群．子群 $B$ 作为 $AB$ 的子群，左右陪集相同，因而 $B\trianglelefteq AB$．
-    
-    考察映射 $\varphi:A\rightarrow AB/B$ 满足 $\varphi(a)=aB$，则它是满射，且它的核 $\ker\varphi=\{a\in A:aB=B\}=A\cap B$．应用同态基本定理就可得证．
+???+ note "Second isomorphism theorem"
+    Let $G$ be a group and $A,B\le G$ subgroups with $A\le N_G(B)$. Then $AB\le G$, $B\trianglelefteq AB$, $A\cap B\trianglelefteq A$, and $AB/B\cong A/(A\cap B)$. Here $N_G(B)$ is the [normalizer](#normalizers-and-centralizers) of $B$. In particular, a sufficient condition for $A\le N_G(B)$ is $B\trianglelefteq G$.
 
-**第三同构定理**（third isomorphism theorem）则给出了商群的正规子群和商群与原来群的正规子群和商群之间的对应关系．它解释了将商群进一步分解这一想法的合理性．
+??? note "Proof"
+    Since $A\le N_G(B)$, we have $aBa^{-1}=B$ for all $a\in A$, that is, $aB=Ba$. Therefore $AB=BA$, and by the theorem above $AB$ is a subgroup. As a subgroup of $AB$, $B$ has equal left and right cosets, so $B\trianglelefteq AB$.
 
-???+ note "第三同构定理"
-    设群 $G$ 有正规子群 $H,K\trianglelefteq G$，且 $H\le K$，则 $K/H\trianglelefteq G/H$，且 $(G/H)/(K/H)\cong G/K$．
+    Consider the map $\varphi:A\rightarrow AB/B$ with $\varphi(a)=aB$. It is surjective, and its kernel is $\ker\varphi=\{a\in A:aB=B\}=A\cap B$. Applying the fundamental theorem of homomorphisms completes the proof.
 
-??? note "证明"
-    考察映射 $\varphi:G/H\rightarrow G/K$ 满足 $\varphi(gH)=gK$，则它是满的群同态，且 $\ker\varphi=\{gH:g\in K\}=K/H$．应用同态基本定理就可得证．
+The **third isomorphism theorem** describes how the normal subgroups and quotient groups of a quotient group correspond to the normal subgroups and quotient groups of the original group. It justifies the idea of breaking a quotient group down further.
 
-这一结论可以推广到第四同构定理，或称 **对应定理**（correspondence theorem），它进一步给出了群的子群格和商群的子群格之间的对应关系．
+???+ note "Third isomorphism theorem"
+    Let $G$ be a group with normal subgroups $H,K\trianglelefteq G$ such that $H\le K$. Then $K/H\trianglelefteq G/H$, and $(G/H)/(K/H)\cong G/K$.
 
-???+ note "对应定理"
-    设群 $G$ 有正规子群 $N\trianglelefteq G$，则全体包含 $N$ 的群 $G$ 的子群 $\mathcal H=\{H:N\subseteq H\subseteq G\}$ 和商群 $G/N$ 的全体子群 $\mathcal S=\{S:S\le G/N\}$ 之间存在双射 $\varphi:\mathcal H\rightarrow\mathcal S$，它将 $H\in\mathcal H$ 映射至 $H/N\in\mathcal S$．这个双射保持子群的包含关系，且 $G$ 的正规子群总是映射到 $G/N$ 的正规子群．
+??? note "Proof"
+    Consider the map $\varphi:G/H\rightarrow G/K$ with $\varphi(gH)=gK$. It is a surjective group homomorphism, and $\ker\varphi=\{gH:g\in K\}=K/H$. Applying the fundamental theorem of homomorphisms completes the proof.
 
-??? info "关于同构定理的内容"
-    不同的教材中，群的同构定理的内容和名称可能有所差异．这里选取的是常见的一个版本．[维基百科](https://en.wikipedia.org/wiki/Isomorphism_theorems#Note_on_numbers_and_names) 总结了常见教材中同构定理内容和名称的差异．
+This result can be extended to the fourth isomorphism theorem, also called the **correspondence theorem**. It further gives a correspondence between the subgroup lattice of a group and the subgroup lattice of its quotient group.
 
-## 群作用
+???+ note "Correspondence theorem"
+    Let $G$ be a group with a normal subgroup $N\trianglelefteq G$. Then there is a bijection $\varphi:\mathcal H\rightarrow\mathcal S$ between the set $\mathcal H=\{H:N\subseteq H\subseteq G\}$ of all subgroups of $G$ containing $N$ and the set $\mathcal S=\{S:S\le G/N\}$ of all subgroups of the quotient group $G/N$, which maps $H\in\mathcal H$ to $H/N\in\mathcal S$. This bijection preserves inclusion between subgroups, and normal subgroups of $G$ are always mapped to normal subgroups of $G/N$.
 
-理解给定群结构的第三种方法，是考察群在集合上的作用．
+??? info "About the content of the isomorphism theorems"
+    The content and names of the isomorphism theorems may differ between textbooks. The version chosen here is a common one. [Wikipedia](https://en.wikipedia.org/wiki/Isomorphism_theorems#Note_on_numbers_and_names) summarizes how the content and names of the isomorphism theorems differ across common textbooks.
 
-比如说，本文考察的正三角形的空间对称群就是通过群的元素（即对称操作）在三角形上的作用来定义的．再比如说，对称群 $S_M$ 的定义可以通过它的元素在集合 $M$ 上的作用给出．这里所谓的作用，指的是每个群的元素都对应一个集合上的置换．
+## Group actions
 
-???+ abstract "群在集合上的作用"
-    对于群 $G$ 和集合 $X$ 以及映射 $G\times X\rightarrow X$，记 $(g,x)$ 在该映射下的像为 $g\cdot x$，如果该映射对所有 $g_1,g_2\in G$ 和 $x\in X$ 都满足条件 $g_1\cdot(g_2\cdot x)=(g_1g_2)\cdot x$ 和 $e\cdot x=x$，那么就称该映射为群 $G$ 在集合 $X$ 上的 **群作用**（group action）．
+The third way to understand the structure of a group is to look at how the group acts on a set.
 
-??? info "「左作用」和「右作用」"
-    这里采取的群作用的定义在有些地方[^group-action]会称为左作用（left action），因为在记号 $g\cdot x$ 中，群的元素写在了集合的元素的左侧．相应地，此时群元素的复合 $g_1g_2$ 作用在集合上时，需要先进行 $g_2$ 的作用，再进行 $g_1$ 的作用．当然，也可以相应地定义右作用，记作 $x\cdot g$．此时，群元素的复合顺序与左作用相反，即 $x\cdot (g_1g_2)=(x\cdot g_1)\cdot g_2$．两者只有记号上的区别，而无本质区别，因而本文默认采用左作用的记号．
+For example, the symmetry group of the equilateral triangle studied in this article is defined through how its elements (the symmetry operations) act on the triangle. As another example, the symmetric group $S_M$ can be defined through how its elements act on the set $M$. Here "act" means that each element of the group corresponds to a permutation of the set.
 
-对于满足上述定义的群作用，自然有如下构造
+???+ abstract "Group action on a set"
+    For a group $G$, a set $X$ and a map $G\times X\rightarrow X$, write $g\cdot x$ for the image of $(g,x)$ under this map. If the map satisfies $g_1\cdot(g_2\cdot x)=(g_1g_2)\cdot x$ and $e\cdot x=x$ for all $g_1,g_2\in G$ and $x\in X$, then the map is called a **group action** of $G$ on the set $X$.
+
+??? info "Left actions and right actions"
+    The definition of group action used here is called a left action in some places[^group-action], because in the notation $g\cdot x$ the group element is written to the left of the set element. Accordingly, when a product $g_1g_2$ of group elements acts on the set, $g_2$ acts first and then $g_1$. Of course, we can also define a right action, written $x\cdot g$. In that case the order of composition is the reverse of a left action: $x\cdot (g_1g_2)=(x\cdot g_1)\cdot g_2$. The two differ only in notation, not in substance, so this article uses the left action notation by default.
+
+For a group action as defined above, there is a natural construction
 
 $$
 \begin{aligned}
@@ -333,93 +333,93 @@ $$
 \end{aligned}
 $$
 
-这一映射，将每个群 $G$ 中的元素 $g$ 都对应到集合 $X$ 上的一个置换 $\varphi_g$，且置换 $\varphi_g$ 将元素 $x$ 映射到 $g\cdot x$．
+This map sends each element $g$ of the group $G$ to a permutation $\varphi_g$ of the set $X$, and the permutation $\varphi_g$ maps the element $x$ to $g\cdot x$.
 
-根据定义，群中的单位元 $e$ 对应的双射 $\varphi_e$ 是 $X$ 上的恒等映射，而群中元素 $g$ 对应的映射 $\varphi_g$ 和其逆元 $g^{-1}$ 对应的映射 $\varphi_{g^{-1}}$ 互为逆映射（这也说明为什么 $\varphi_g$ 总是双射）．可以验证，$\varphi_{g_1g_2}=\varphi_{g_1}\varphi_{g_2}$，即 $\varphi$ 是群 $G$ 到群 $S_X$ 的群同态．
+By definition, the bijection $\varphi_e$ corresponding to the identity $e$ is the identity map on $X$, and the map $\varphi_g$ for an element $g$ and the map $\varphi_{g^{-1}}$ for its inverse $g^{-1}$ are inverses of each other (this also explains why $\varphi_g$ is always a bijection). You can check that $\varphi_{g_1g_2}=\varphi_{g_1}\varphi_{g_2}$, that is, $\varphi$ is a group homomorphism from $G$ to $S_X$.
 
-这一群同态 $\varphi$ 称为该群作用的 **置换表示**（permutation representation），它将群 $G$ 映射到了某个置换群上．
+This group homomorphism $\varphi$ is called the **permutation representation** of the group action. It maps the group $G$ onto some permutation group.
 
-???+ abstract "置换群"
-    如果群 $G$ 是某个对称群的子群，则称群 $G$ 是一个 **置换群**（permutation group）．
+???+ abstract "Permutation group"
+    If a group $G$ is a subgroup of some symmetric group, then $G$ is called a **permutation group**.
 
-该群同态的核也称为该群作用的核．如果这一群同态的核是平凡的，即这个同态是单射，则称该群作用是 **忠实的**（faithful），即该作用的置换表示忠实地反映了群结构的信息．此时，群 $G$ 与置换表示得到的置换群同构．
+The kernel of this homomorphism is also called the kernel of the group action. If the kernel is trivial, that is, the homomorphism is injective, the group action is called **faithful**, meaning its permutation representation faithfully reflects the information in the group structure. In that case, $G$ is isomorphic to the permutation group given by the permutation representation.
 
-???+ info "记号"
-    下文中，为表述方便，将省略群作用中的 $\cdot$ 记号．
+???+ info "Notation"
+    Below, for convenience, we omit the $\cdot$ symbol in group actions.
 
-### 轨道
+### Orbits
 
-群作用是二元映射．固定群中的元素 $g$，则可以得到集合上的置换 $\varphi_g$．而如果固定集合上的元素 $x$，则可以得到群对该元素作用的所有可能的结果．
+A group action is a map with two arguments. If we fix an element $g$ of the group, we get the permutation $\varphi_g$ of the set. If instead we fix an element $x$ of the set, we get all the possible results of the group acting on that element.
 
-???+ abstract "轨道"
-    对于群 $G$ 在集合 $X$ 上的作用和 $x\in X$，称 $x$ 在群 $G$ 作用下的 **轨道**（orbit）是子集 $Gx=\{gx:g\in G\}$．
+???+ abstract "Orbit"
+    For an action of a group $G$ on a set $X$ and an element $x\in X$, the **orbit** of $x$ under $G$ is the subset $Gx=\{gx:g\in G\}$.
 
-???+ example "例子：正三角形的空间对称群 $D_6$（续）"
-    比如说，如果考虑群 $\langle s\rangle\le D_6$ 在正三角形顶点集合上的作用，则顶点 $1$ 的轨道是 $\{1\}$，而顶点 $2$ 和 $3$ 的轨道是 $\{2,3\}$．但是，群 $\langle r\rangle\le D_6$ 在顶点集合上的作用只有一个轨道，即全体顶点集．
+???+ example "Example: the symmetry group $D_6$ of an equilateral triangle (continued)"
+    For example, consider the action of the group $\langle s\rangle\le D_6$ on the vertex set of the triangle. The orbit of vertex $1$ is $\{1\}$, and the orbit of vertices $2$ and $3$ is $\{2,3\}$. However, the action of the group $\langle r\rangle\le D_6$ on the vertex set has only one orbit, namely the whole vertex set.
 
-容易证明，群 $G$ 的作用下，集合 $X$ 的全体轨道构成了该集合的一个分划，记作 $X/G$．但是和陪集不同，这些轨道并不一定是等长的．
+It is easy to prove that under the action of $G$, all the orbits of the set $X$ form a partition of the set, written $X/G$. But unlike cosets, these orbits do not necessarily have the same length.
 
-### 稳定化子
+### Stabilizers
 
-群作用下，集合中的一个元素的轨道长度取决于有多少群里的元素对应的置换以它为不动点．
+Under a group action, the length of the orbit of an element of the set depends on how many group elements have permutations that fix it.
 
-???+ example "例子：正三角形的空间对称群 $D_6$（续）"
-    比如说，之所以在群 $\langle s\rangle\le D_6$ 的作用下，顶点 $1$ 的轨道长是一，是因为所有群里的元素都将顶点 $1$ 映到其自身；而顶点 $2$ 的轨道长是二，是因为只有单位元 $e$ 将顶点 $2$ 映射到其自身．
+???+ example "Example: the symmetry group $D_6$ of an equilateral triangle (continued)"
+    For example, under the action of $\langle s\rangle\le D_6$, the orbit of vertex $1$ has length one because every element of the group maps vertex $1$ to itself; the orbit of vertex $2$ has length two because only the identity $e$ maps vertex $2$ to itself.
 
-这启发了如下的定义．
+This motivates the following definition.
 
-???+ abstract "稳定化子"
-    对于群 $G$ 在集合 $X$ 上的作用和 $x\in X$，称群 $G$ 中 $x$ 的 **稳定化子**（stabilizer）是子群 $G_x=\{g\in G:gx=x\}$．
+???+ abstract "Stabilizer"
+    For an action of a group $G$ on a set $X$ and an element $x\in X$, the **stabilizer** of $x$ in $G$ is the subgroup $G_x=\{g\in G:gx=x\}$.
 
-群作用的核就是集合中所有元素的稳定化子的交．
+The kernel of a group action is the intersection of the stabilizers of all elements of the set.
 
-???+ example "例子：正三角形的空间对称群 $D_6$（续）"
-    考虑群 $D_6$ 在顶点集合上的群作用，则顶点 $1$ 的稳定化子是 $\{e,s\}=\langle s\rangle$．这是 $D_6$ 的子群．因为 $D_6$ 可以划分成左陪集 $\langle s\rangle$，$r\langle s\rangle$ 和 $r^2\langle s\rangle$，容易发现，每个左陪集对顶点 $1$ 作用的结果是一样的．
+???+ example "Example: the symmetry group $D_6$ of an equilateral triangle (continued)"
+    Consider the action of $D_6$ on the vertex set. The stabilizer of vertex $1$ is $\{e,s\}=\langle s\rangle$, which is a subgroup of $D_6$. Since $D_6$ splits into the left cosets $\langle s\rangle$, $r\langle s\rangle$ and $r^2\langle s\rangle$, it is easy to see that all elements of the same left coset send vertex $1$ to the same place.
 
-这一例子说明，轨道上的元素，都和稳定化子的左陪集一一对应．这说明如下结果．
+This example shows that the elements of an orbit correspond one-to-one to the left cosets of the stabilizer. This gives the following result.
 
-???+ note "定理"
-    对于群 $G$ 在集合 $X$ 上的作用，元素 $x\in X$ 的稳定化子 $G_x$ 是 $G$ 的子群，且子群 $G_x$ 的左陪集与轨道 $Gx$ 存在双射．
+???+ note "Theorem"
+    For an action of a group $G$ on a set $X$, the stabilizer $G_x$ of an element $x\in X$ is a subgroup of $G$, and there is a bijection between the left cosets of $G_x$ and the orbit $Gx$.
 
-??? note "证明"
-    验证映射 $gG_x\mapsto gx$ 是良定义的双射即可．
+??? note "Proof"
+    It is enough to check that the map $gG_x\mapsto gx$ is a well-defined bijection.
 
-利用 Lagrange 定理，可以将轨道长和稳定化子的陪集数目联系起来．这就是 **轨道稳定化子定理**（orbit-stabilizer theorem）．
+Using Lagrange's theorem, we can relate the length of an orbit to the number of cosets of the stabilizer. This is the **orbit-stabilizer theorem**.
 
-???+ note "轨道稳定化子定理"
-    对于有限群 $G$ 在集合 $X$ 上的作用和 $x\in X$，有 $|Gx|=[G:G_x]=|G|/|G_x|$．
+???+ note "Orbit-stabilizer theorem"
+    For an action of a finite group $G$ on a set $X$ and an element $x\in X$, we have $|Gx|=[G:G_x]=|G|/|G_x|$.
 
-可以在上面的例子中验证这一结论．
+You can verify this result on the example above.
 
-### Burnside 引理
+### Burnside's lemma
 
-这一引理给出了群作用的轨道个数公式．
+This lemma gives a formula for the number of orbits of a group action.
 
-???+ note "Burnside 引理"
-    对于群 $G$ 在集合 $X$ 上的作用，轨道的个数等于群中每个元素对应置换的不动点的平均个数，即
-    
+???+ note "Burnside's lemma"
+    For an action of a group $G$ on a set $X$, the number of orbits equals the average number of fixed points of the permutations corresponding to the elements of the group, that is,
+
     $$
     |X/G| = \frac{1}{|G|}\sum_{g\in G}|X^g|.
     $$
-    
-    这里，$X^g=\{x\in X:gx=x\}$ 是元素 $g\in G$ 对应置换的不动点集合．
 
-??? note "证明"
-    这一定理的证明十分简明．注意到，轨道个数可以写作
-    
+    Here $X^g=\{x\in X:gx=x\}$ is the set of fixed points of the permutation corresponding to $g\in G$.
+
+??? note "Proof"
+    The proof of this theorem is quite short. Note that the number of orbits can be written as
+
     $$
     |X/G|=\sum_{o\in X/G}1=\sum_{x\in X}\frac{1}{|Gx|}=\frac1{|G|}\sum_{x\in X}|G_x|.
     $$
-    
-    最后一个等号就是上面的推论；而右式和所要求证的只差一个 Fubini 定理，因为它们中的求和式都是对集合 $\{(g,x)\in G\times X:gx=x\}$ 的计数，只不过右式先对 $g$ 求和，而所求证的式子先对 $x$ 求和．
 
-这一定理在组合数学中有很多用处，可以用于统计「本质不同」的对象的数目．更多例子和讨论可以参考 [Pólya 计数](../combinatorics/polya.md)．
+    The last equality is the corollary above. The right-hand side differs from what we want to prove only by Fubini's theorem: both sums count the set $\{(g,x)\in G\times X:gx=x\}$, except that the right-hand side sums over $g$ first, while the expression we want to prove sums over $x$ first.
 
-### Cayley 定理
+This theorem has many uses in combinatorics. It can be used to count the number of "essentially different" objects. For more examples and discussion, see [Pólya enumeration](../combinatorics/polya.md).
 
-利用群作用研究群的结构，需要选取合适的集合．事实上，群自身就是这样一个集合．因此，接下来考虑群对自身的两类常见的群作用，并借此分析群的结构．
+### Cayley's theorem
 
-第一个这样的群作用是群对自身的 **左乘作用**（left multiplication）．它的置换表示如下．
+To study the structure of a group using group actions, we need to choose a suitable set. In fact, the group itself is such a set. So next we consider two common actions of a group on itself and use them to analyze the structure of the group.
+
+The first such action is the **left multiplication** action of a group on itself. Its permutation representation is as follows.
 
 $$
 \begin{aligned}
@@ -429,16 +429,16 @@ g\mapsto \varphi_g&: G\rightarrow G\\
 \end{aligned}
 $$
 
-群的左乘作用必然是忠实的，因为群满足消去律．所以，由同态基本定理，$G$ 可以嵌入对称群 $S_G$ 中．这意味着，每个群都同构于某个置换群[^cayley]．
+The left multiplication action of a group is always faithful, because a group satisfies the cancellation law. So by the fundamental theorem of homomorphisms, $G$ can be embedded in the symmetric group $S_G$. This means every group is isomorphic to some permutation group[^cayley].
 
-???+ note "Cayley 定理"
-    群 $G$ 同构于对称群 $S_G$ 的子群．
+???+ note "Cayley's theorem"
+    A group $G$ is isomorphic to a subgroup of the symmetric group $S_G$.
 
-这个群作用只有一个轨道，而且，每个元素的稳定化子都是 $\{e\}$．
+This group action has only one orbit, and the stabilizer of every element is $\{e\}$.
 
-### 共轭作用
+### Conjugation action
 
-第二个群到自身的作用叫做 **共轭作用**（conjugation）．它的置换表示如下．
+The second action of a group on itself is called **conjugation**. Its permutation representation is as follows.
 
 $$
 \begin{aligned}
@@ -448,36 +448,36 @@ g\mapsto \varphi_g&: G\rightarrow G\\
 \end{aligned}
 $$
 
-在群的共轭作用下，轨道和稳定化子都有特别的名字．
+Under the conjugation action, the orbits and stabilizers have special names.
 
-???+ abstract "共轭类"
-    对于群 $G$ 和 $g\in G$，元素 $g$ 在群 $G$ 中的 **共轭类**（conjugacy class）是共轭作用下 $g$ 的轨道．如果元素 $g$ 和 $h$ 处在同一共轭类中，则称 $g$ 和 $h$  **共轭**（conjugate）．
+???+ abstract "Conjugacy class"
+    For a group $G$ and $g\in G$, the **conjugacy class** of $g$ in $G$ is the orbit of $g$ under the conjugation action. If elements $g$ and $h$ are in the same conjugacy class, then $g$ and $h$ are said to be **conjugate**.
 
-???+ abstract "中心化子"
-    对于群 $G$ 和 $a\in G$，元素 $a$ 在群 $G$ 中的 **中心化子**（centralizer）是 $C_G(a)=\{g\in G:ga=ag\}$．
+???+ abstract "Centralizer"
+    For a group $G$ and $a\in G$, the **centralizer** of the element $a$ in $G$ is $C_G(a)=\{g\in G:ga=ag\}$.
 
-???+ abstract "中心"
-    对于群 $G$，群 $G$ 的 **中心**（center）为 $Z(G)=\cap_{a\in G}C_G(a)=\{g\in G:\forall a\in G(ga=ag)\}$．
+???+ abstract "Center"
+    For a group $G$, the **center** of $G$ is $Z(G)=\cap_{a\in G}C_G(a)=\{g\in G:\forall a\in G(ga=ag)\}$.
 
-群的中心，是与群中所有元素都交换的元素的集合；因为它是群作用的核，它必然是正规子群．群的中心的大小，表明了它和交换群之间的差距．给定元素的中心化子，是与该元素交换的所有元素的集合；也是所有以它为中心元素的子群中最大的，这也就是它的名字来源；同时，因为它是共轭作用下某元素的稳定化子，所以它是子群．共轭类一般不是子群．
+The center of a group is the set of elements that commute with every element of the group. Since it is the kernel of a group action, it must be a normal subgroup. The size of the center indicates how far the group is from being commutative. The centralizer of a given element is the set of all elements that commute with it. It is also the largest subgroup that has this element in its center, which is where its name comes from. Also, since it is the stabilizer of an element under the conjugation action, it is a subgroup. A conjugacy class is generally not a subgroup.
 
-???+ example "例子：正三角形的空间对称群 $D_6$（续）"
-    回到群 $D_6$，它的中心是 $\{e\}\neq G$，这说明它不是交换群．元素 $r$ 的中心化子 $C_G(r)$ 是 $\langle r\rangle$，元素 $s$ 的中心化子 $C_G(s)$ 为 $\langle s\rangle$．一般地，对所有 $g\in G$，总成立 $\langle g\rangle\le C_G(g)$．群 $D_6$ 的共轭类共三个，即 $\{e\},\{r,r^2\},\{s,sr,sr^2\}$．容易发现，共轭的元素都是同阶的[^conjugate]．
+???+ example "Example: the symmetry group $D_6$ of an equilateral triangle (continued)"
+    Back to $D_6$: its center is $\{e\}\neq G$, which shows that it is not commutative. The centralizer $C_G(r)$ of $r$ is $\langle r\rangle$, and the centralizer $C_G(s)$ of $s$ is $\langle s\rangle$. In general, $\langle g\rangle\le C_G(g)$ always holds for all $g\in G$. The group $D_6$ has three conjugacy classes: $\{e\},\{r,r^2\},\{s,sr,sr^2\}$. It is easy to see that conjugate elements all have the same order[^conjugate].
 
-群在共轭作用下划分成若干个共轭类．所以，可以写出 **类方程**（class equation）．
+Under the conjugation action, a group splits into a number of conjugacy classes. So we can write down the **class equation**.
 
-???+ note "类方程"
-    对于群 $G$，设 $\{\mathcal K_i\}_{i=1}^r$ 为全体长度大于一的共轭类，且 $g_i$ 是 $\mathcal K_i$ 的代表元，成立
-    
+???+ note "Class equation"
+    For a group $G$, let $\{\mathcal K_i\}_{i=1}^r$ be all the conjugacy classes of length greater than one, and let $g_i$ be a representative of $\mathcal K_i$. Then
+
     $$
     |G|=|Z(G)|+\sum_{i=1}^r[G:C_G(g_i)].
     $$
 
-它可以用于分析群的结构，比如用于证明下文的 [Sylow 定理](#sylow-定理)．
+It can be used to analyze the structure of groups, for example to prove the [Sylow theorems](#sylow-theorems) below.
 
-### 正规化子和中心化子
+### Normalizers and centralizers
 
-事实上，群的幂集也可以是群作用的对象．这里着重讨论群在它的全体子集 $X=\mathcal P(G)$ 上的共轭作用．它的置换表示如下．
+In fact, the power set of a group can also be acted on. Here we focus on the conjugation action of a group on the set of all its subsets $X=\mathcal P(G)$. Its permutation representation is as follows.
 
 $$
 \begin{aligned}
@@ -487,170 +487,170 @@ g\mapsto \varphi_g&: X\rightarrow X\\
 \end{aligned}
 $$
 
-在这一共轭作用下，同样可以定义群的子集的共轭类．它的核依然是群的中心．它的稳定化子则称为正规化子．
+Under this conjugation action, we can also define conjugacy classes of subsets of the group. Its kernel is still the center of the group. Its stabilizers are called normalizers.
 
-???+ abstract "正规化子"
-    对于群 $G$ 和它的子集 $S\subseteq G$，子集 $S$ 在群 $G$ 中的 **正规化子**（normalizer）是 $N_G(S)=\{g\in G:gSg^{-1}=S\}$．
+???+ abstract "Normalizer"
+    For a group $G$ and a subset $S\subseteq G$, the **normalizer** of $S$ in $G$ is $N_G(S)=\{g\in G:gSg^{-1}=S\}$.
 
-正规化子是共轭作用下 $S$ 的稳定化子，必然是 $G$ 的子群；$S$ 的正规化子是能够使得 $S$ 包含在其正规子群中的子群中最大的，这也是正规化子的名字来源．特别地，对于单元素集合 $\{a\}$，$N_G(\{a\})=C_G(a)$．
+The normalizer is the stabilizer of $S$ under the conjugation action, so it must be a subgroup of $G$. The normalizer of $S$ is the largest subgroup in which $S$ is contained in a normal subgroup, which is where the name normalizer comes from. In particular, for a single-element set $\{a\}$, $N_G(\{a\})=C_G(a)$.
 
-中心化子也可以类似地推广到子集的情形．
+The centralizer can also be extended to subsets in a similar way.
 
-???+ abstract "中心化子"
-    对于群 $G$ 和它的子集 $S\subseteq G$，子集 $S$ 在群 $G$ 中的 **中心化子**（centralizer）是 $C_G(S)=\{g\in G:\forall s\in S(gsg^{-1}=s)\}$．
+???+ abstract "Centralizer"
+    For a group $G$ and a subset $S\subseteq G$, the **centralizer** of $S$ in $G$ is $C_G(S)=\{g\in G:\forall s\in S(gsg^{-1}=s)\}$.
 
-中心化子实际上是群 $N_G(S)$ 在 $S$ 的共轭作用的核．所以，必然有 $C_G(S)\trianglelefteq N_G(S)\le G$，所以由子群的传递性，中心化子也是子群．特别地，群的中心 $Z(G)=C_G(G)\trianglelefteq N_G(G)=G$ 必然是正规子群．
+The centralizer is actually the kernel of the conjugation action of $N_G(S)$ on $S$. So we must have $C_G(S)\trianglelefteq N_G(S)\le G$, and by transitivity of subgroups, the centralizer is also a subgroup. In particular, the center $Z(G)=C_G(G)\trianglelefteq N_G(G)=G$ of a group must be a normal subgroup.
 
-### Sylow 定理
+### Sylow theorems
 
-进一步地，对有限群的共轭作用进行分析，可以得到 Sylow 定理．它是处理有限群的结构的有力工具，可以迅速地得到大量小阶群的结构．
+Going further, analyzing the conjugation action of a finite group leads to the Sylow theorems. They are a powerful tool for studying the structure of finite groups, and can quickly determine the structure of many groups of small order.
 
-???+ abstract "$p$‑群"
-    对于群 $G$，如果存在素数 $p$ 和正整数 $\alpha$ 使得 $|G|=p^\alpha$，则称它为 **$p$‑群**（$p$-group）．
+???+ abstract "$p$‑group"
+    For a group $G$, if there is a prime $p$ and a positive integer $\alpha$ such that $|G|=p^\alpha$, then $G$ is called a **$p$‑group**.
 
-??? info "关于 $p$‑群的定义"
-    $p$‑群还有另外一种定义，即所有元素的阶都是素数的幂的群．这两种定义对于有限群是等价的；但是，第二种定义同样适用于无限群的情形．另外，关于 $p$‑群的定义，不同的文献可能对于是否将 $\{e\}$ 算作 $p$‑群存在分歧，读者在阅读时应当加以分辨．
+??? info "About the definition of $p$‑groups"
+    There is another definition of $p$‑groups: a group in which the order of every element is a power of a prime $p$. The two definitions are equivalent for finite groups, but the second also applies to infinite groups. Also, different sources disagree on whether $\{e\}$ counts as a $p$‑group, so readers should pay attention to this when reading.
 
-???+ abstract "$p$‑子群"
-    对于群 $G$ 和它的子群 $P\le G$，如果 $P$ 本身是一个 $p$‑群，则称 $P$ 为 **$p$‑子群**（$p$-subgroup）．
+???+ abstract "$p$‑subgroup"
+    For a group $G$ and a subgroup $P\le G$, if $P$ is itself a $p$‑group, then $P$ is called a **$p$‑subgroup**.
 
-???+ note "Cauchy 定理"
-    如果素数 $p$ 能够整除群 $G$ 的阶，则必然存在 $p$ 阶元．
+???+ note "Cauchy's theorem"
+    If a prime $p$ divides the order of a group $G$, then $G$ must have an element of order $p$.
 
-Cauchy 定理保证了 $p$‑子群的存在性．其实，通过更为细致的分析，能够得到更强的结论，即 Sylow $p$‑子群的存在性．
+Cauchy's theorem guarantees that $p$‑subgroups exist. In fact, a more careful analysis gives a stronger result: Sylow $p$‑subgroups exist.
 
-???+ abstract "Sylow $p$‑子群"
-    对于群 $G$ 和它的子群 $P\le G$，如果 $|G|=p^\alpha m$，$p\perp m$ 且 $|P|=p^\alpha$，则称 $P$ 为 **Sylow $p$‑子群**（Sylow $p$-subgroup）．
+???+ abstract "Sylow $p$‑subgroup"
+    For a group $G$ and a subgroup $P\le G$, if $|G|=p^\alpha m$, $p\perp m$ and $|P|=p^\alpha$, then $P$ is called a **Sylow $p$‑subgroup**.
 
-也就是说，Sylow $p$‑子群是极大的 $p$‑子群．Sylow 定理断言了 Sylow $p$‑子群的存在性，这提供了 Lagrange 定理的一定程度的逆命题．
+In other words, Sylow $p$‑subgroups are the maximal $p$‑subgroups. The Sylow theorems assert that Sylow $p$‑subgroups exist, which gives a partial converse of Lagrange's theorem.
 
-???+ note "Sylow 定理"
-    设有限群 $G$ 的阶 $|G|$ 能表达成 $p^\alpha m$ 的形式，其中，$p$ 是质数且 $p$ 不能整除 $m$，那么有如下结论：
-    
-    1.  存在 Sylow $p$‑子群；
-    2.  对于一个 Sylow $p$‑子群 $P$ 和一个群 $G$ 的 $p$‑子群 $Q$，存在 $g\in G$ 使得 $Q\le gPg^{-1}$ 成立，特别地，所有 Sylow $p$‑子群都共轭；
-    3.  群 $G$ 中的 Sylow $p$‑子群的数目 $n_p$ 满足 $n_p\equiv 1\pmod p$，$n_p\mid m$ 且 $n_p=[G:N_G(P)]$，其中 $P$ 是任意的 Sylow $p$‑子群．
+???+ note "Sylow theorems"
+    Let the order $|G|$ of a finite group $G$ be written as $p^\alpha m$, where $p$ is a prime that does not divide $m$. Then:
 
-??? note "证明"
-    为证明第一部分，对 $|G|$ 进行归纳．考虑类方程
-    
+    1.  A Sylow $p$‑subgroup exists;
+    2.  For a Sylow $p$‑subgroup $P$ and a $p$‑subgroup $Q$ of $G$, there exists $g\in G$ such that $Q\le gPg^{-1}$. In particular, all Sylow $p$‑subgroups are conjugate;
+    3.  The number $n_p$ of Sylow $p$‑subgroups of $G$ satisfies $n_p\equiv 1\pmod p$, $n_p\mid m$ and $n_p=[G:N_G(P)]$, where $P$ is any Sylow $p$‑subgroup.
+
+??? note "Proof"
+    To prove the first part, use induction on $|G|$. Consider the class equation
+
     $$
     |G|=|Z(G)|+\sum_{i=1}^r[G:C_G(g_i)].
     $$
-    
-    如果 $p\mid|Z(G)|$，那么可以任取中心的 $p$ 阶子群 $N\le Z(G)$，因为 $N\le Z(G)$，它与 $G$ 中所有元素交换，故而 $N\trianglelefteq G$，因而，$G/N$ 是更小的群．根据归纳假设，它有 Sylow $p$‑子群 $P/N$，则自然同态下相应的原像 $P$ 就是原来的群 $G$ 的 Sylow $p$‑子群．于是，只要考虑 $p$ 不能整除 $|Z(G)|$ 的情形．此时，可以取 $g_i\in G$，使得 $p$ 不能整除 $[G:C_G(g_i)]$，因而，$|G|$ 中 $p$ 的全部幂次都出现在 $|C_G(g_i)|$ 中．再次根据归纳假设，$C_G(g_i)$ 有 Sylow $p$‑子群 $P$，它正是原来的群 $G$ 的 Sylow $p$‑子群．
-    
-    为证明第二部分和第三部分，设群 $G$ 的 Sylow $p$‑子群 $P$ 的共轭类为 $\mathcal S=\{gPg^{-1}:g\in G\}$，并考察群 $G$ 在 $\mathcal S$ 上的共轭作用限制在某一 $p$‑子群 $Q$ 上的结果．集合 $\mathcal S$ 在该作用下可以划分成若干轨道．设总共有 $r$ 个轨道，每个轨道的代表元为 $P_i$，则有恒等式
-    
+
+    If $p\mid|Z(G)|$, take any subgroup $N\le Z(G)$ of order $p$ in the center. Since $N\le Z(G)$, it commutes with every element of $G$, so $N\trianglelefteq G$, and $G/N$ is a smaller group. By the induction hypothesis, it has a Sylow $p$‑subgroup $P/N$, and the corresponding preimage $P$ under the natural homomorphism is a Sylow $p$‑subgroup of the original group $G$. So we only need to consider the case where $p$ does not divide $|Z(G)|$. In this case, we can pick $g_i\in G$ such that $p$ does not divide $[G:C_G(g_i)]$, so the full power of $p$ in $|G|$ appears in $|C_G(g_i)|$. Again by the induction hypothesis, $C_G(g_i)$ has a Sylow $p$‑subgroup $P$, which is exactly a Sylow $p$‑subgroup of the original group $G$.
+
+    To prove the second and third parts, let $\mathcal S=\{gPg^{-1}:g\in G\}$ be the conjugacy class of a Sylow $p$‑subgroup $P$ of $G$, and consider the conjugation action of $G$ on $\mathcal S$ restricted to some $p$‑subgroup $Q$. Under this action, the set $\mathcal S$ splits into a number of orbits. Suppose there are $r$ orbits in total, with representatives $P_i$. Then we have the identity
+
     $$
     |\mathcal S|=\sum_{i=1}^r[Q:Q\cap N_G(P_i)].
     $$
-    
-    这里，$Q\cap N_G(P_i)$ 是 $P_i$ 在上述群作用下的稳定化子．设 $H=Q\cap N_G(P_i)$，则显然 $H\le N_G(P_i)$，故而根据群的第二同构定理，有 $P_iH/P_i\cong H/(P_i\cap H)$．所以，$|P_iH|=|P_i||H|/|P_i\cap H|$，而右侧是 $p$ 的幂，左侧必然也是 $p$ 的幂，而且需要成立 $|P_i|\le |P_iH|$．但是，$P_i$ 已经是 $G$ 的子群中 $p$ 的幂次最大的，所以 $P_i=P_iH$．代入前文的同构关系中，就有 $H=P_i\cap H=Q\cap P_i$．这里用到了显然的关系 $P_i\le N_G(P_i)$．这样，就知道稳定化子 $Q\cap N_G(P_i)$ 实际上就是 $Q\cap P_i$．所以，上式可以写作
-    
+
+    Here $Q\cap N_G(P_i)$ is the stabilizer of $P_i$ under this group action. Let $H=Q\cap N_G(P_i)$. Clearly $H\le N_G(P_i)$, so by the second isomorphism theorem, $P_iH/P_i\cong H/(P_i\cap H)$. So $|P_iH|=|P_i||H|/|P_i\cap H|$. The right-hand side is a power of $p$, so the left-hand side must be a power of $p$ too, and $|P_i|\le |P_iH|$ must hold. But $P_i$ already has the largest power of $p$ among subgroups of $G$, so $P_i=P_iH$. Substituting into the isomorphism above gives $H=P_i\cap H=Q\cap P_i$. Here we used the obvious relation $P_i\le N_G(P_i)$. So the stabilizer $Q\cap N_G(P_i)$ is actually $Q\cap P_i$, and the equation above can be written as
+
     $$
     |\mathcal S|=\sum_{i=1}^r[Q:Q\cap P_i].
     $$
-    
-    这一等式对于所有 $p$‑子群 $Q$ 都成立．
-    
-    自然，Sylow $p$‑子群 $P$ 也是 $p$‑子群．将 $P$ 代入上式中的 $Q$，则右侧有且仅有一项的大小是 $1$，其余都是 $p$ 的倍数．因此，Sylow $p$‑子群 $P$ 的共轭类的大小 $|\mathcal S|$ 必然模 $p$ 余 $1$．同时，因为这一式子对于任何 $p$‑子群 $Q$ 都成立，就自然存在 $g\in G$，使得 $Q\le gPg^{-1}$；否则，对所有上述等式中的 $P_i$ 都有 $|Q\cap P_i|<|Q|$，就与 $|\mathcal S|\equiv 1\pmod p$ 矛盾．如果此时再考虑 $Q$ 是某个不同于 $P$ 的 Sylow $p$‑子群，则必然有 $Q=gPg^{-1}$ 对某个 $g\in G$ 成立，即所有 Sylow $p$‑子群都共轭．因而，Sylow $p$‑子群的数目 $n_p$ 就是 $|\mathcal S|$，它必然满足 $n_p\equiv 1\pmod p$．最后，注意到 $n_p=|\mathcal S|=[G:N_G(P)]$，且 $P\le N_G(P)$，就成立 $n_p\mid m$．这样就完整地证明了定理的第二部分和第三部分．
 
-??? example "应用：同构意义下，六阶群只有 $C_6$ 和 $S_3$"
-    设 $G$ 的阶是 $6$．那么，根据 Sylow 定理，它有 Sylow $2$‑子群，且它的数目满足 $n_2\equiv 1\pmod 2$ 和 $n_2\mid 3$，所以，只有两个情形：$n_2=1$ 或 $n_2=3$．同理，可以证明群 $G$ 有且只有一个 Sylow $3$‑子群，即 $n_3=1$．
-    
-    对于 $n_2=1$ 的情形，可以发现群 $G$ 中有一个 Sylow $2$‑子群，故而有一个 $2$ 阶元；又有一个 Sylow $3$‑子群，故而有两个 $3$ 阶元．群 $G$ 还有一个单位元，而剩下的元素，根据 Lagrange 定理，它的阶数必须整除 $6$．又不能是新的 $2$ 阶或 $3$ 阶元，否则会出现与前文不同的新的 Sylow $p$‑子群；所以，剩下的元素只能是 $6$ 阶元．存在和群的阶数相同的元素，这意味着群 $G$ 是循环群，所以 $G\cong C_6$．
-    
-    对于 $n_2=3$ 的情形，群 $G$ 有三个共轭的 Sylow $2$‑子群．考虑群 $G$ 在这三个 Sylow $2$‑子群上的共轭作用．对于任何一个 Sylow $2$‑子群 $P$，根据 Sylow 定理，有 $|N_G(P)|=2$；但又有 $P\le N_G(P)$，所以 $P=N_G(P)$．因此，这三个 Sylow $2$‑子群的正规化子的交集，即这个共轭作用的核，是平凡的．所以，这个作用是忠实的，它将 $G$ 嵌入到了这三个 Sylow $2$‑子群上的置换群 $S_3$．但是，因为 $|G|=|S_3|$，必然有 $G\cong S_3$．
+    This equation holds for every $p$‑subgroup $Q$.
 
-## 有限生成 Abel 群
+    Of course, the Sylow $p$‑subgroup $P$ is also a $p$‑subgroup. Substituting $P$ for $Q$ in the equation above, exactly one term on the right-hand side equals $1$, and all others are multiples of $p$. So the size $|\mathcal S|$ of the conjugacy class of the Sylow $p$‑subgroup $P$ must be $1$ modulo $p$. Also, since the equation holds for any $p$‑subgroup $Q$, there must exist $g\in G$ with $Q\le gPg^{-1}$; otherwise $|Q\cap P_i|<|Q|$ for all $P_i$ in the equation, contradicting $|\mathcal S|\equiv 1\pmod p$. If we now take $Q$ to be a Sylow $p$‑subgroup different from $P$, then $Q=gPg^{-1}$ for some $g\in G$; that is, all Sylow $p$‑subgroups are conjugate. Hence the number $n_p$ of Sylow $p$‑subgroups is $|\mathcal S|$, and it must satisfy $n_p\equiv 1\pmod p$. Finally, note that $n_p=|\mathcal S|=[G:N_G(P)]$ and $P\le N_G(P)$, so $n_p\mid m$. This completes the proof of the second and third parts of the theorem.
 
-在掌握分析群结构的基本工具后，现在重点讨论一类群的结构．
+??? example "Application: up to isomorphism, the only groups of order six are $C_6$ and $S_3$"
+    Let $G$ have order $6$. By the Sylow theorems, it has a Sylow $2$‑subgroup, and their number satisfies $n_2\equiv 1\pmod 2$ and $n_2\mid 3$. So there are only two cases: $n_2=1$ or $n_2=3$. Similarly, one can show that $G$ has exactly one Sylow $3$‑subgroup, that is, $n_3=1$.
 
-在概述中提到，Abel 群因为元素可以交换，结构相较于其它群更为简单．其中尤为简单的是那些可以通过有限多个元素生成的 Abel 群．
+    In the case $n_2=1$, $G$ has one Sylow $2$‑subgroup, so it has one element of order $2$; it also has one Sylow $3$‑subgroup, so it has two elements of order $3$. $G$ also has an identity element. By Lagrange's theorem, the order of each remaining element must divide $6$. It can't be a new element of order $2$ or $3$, since that would give a new Sylow $p$‑subgroup different from the ones above. So the remaining elements must have order $6$. Having an element whose order equals the order of the group means $G$ is cyclic, so $G\cong C_6$.
 
-???+ abstract "有限生成"
-    如果群 $G$ 有一个有限的生成子集，则称群 $G$ 是 **有限生成的**（finitely generated）．
+    In the case $n_2=3$, $G$ has three conjugate Sylow $2$‑subgroups. Consider the conjugation action of $G$ on these three Sylow $2$‑subgroups. For any Sylow $2$‑subgroup $P$, the Sylow theorems give $|N_G(P)|=2$; but also $P\le N_G(P)$, so $P=N_G(P)$. Therefore the intersection of the normalizers of the three Sylow $2$‑subgroups, which is the kernel of this conjugation action, is trivial. So the action is faithful, and it embeds $G$ into the permutation group $S_3$ on these three Sylow $2$‑subgroups. But since $|G|=|S_3|$, we must have $G\cong S_3$.
 
-本节的分类定理说明，有限生成的 Abel 群可以看作是有限多个的循环群的简单组合．算法竞赛中涉及的群多为有限群．有限 Abel 群必然是有限生成的，因此总是适用这一结论．
+## Finitely generated Abelian groups
 
-### 直积
+Now that we have the basic tools for analyzing group structure, we focus on the structure of one particular class of groups.
 
-前文对群的分析主要集中在如何将群分解为更小的群；相反地，自然可以讨论如何将两个群组合成更大的群．在所有可能的组合方式中，群的直积是最为简单的一种．
+As mentioned in the overview, Abelian groups have simpler structures than other groups because their elements commute. Among them, the especially simple ones are the Abelian groups that can be generated by finitely many elements.
 
-群的直积的基本想法是，给定两个群 $G$ 和 $H$，考虑其笛卡尔积 $G\times H$，二元对 $(g,h)$ 的运算定义为对两分量分别运算，分量之间互不影响．这样得到的结果显然是更大的群，且原来的两个群可以平凡地嵌入新的群中．
+???+ abstract "Finitely generated"
+    If a group $G$ has a finite generating set, then $G$ is called **finitely generated**.
 
-???+ abstract "直积"
-    群 $(G,\cdot_G)$ 和群 $(H,\cdot_H)$ 的 **直积**（direct product）是群 $(G\times H,\cdot)$，其中，二元运算 $\cdot:(G\times H)\times(G\times H)\rightarrow G\times H$ 定义为 $(g_1,h_1)\cdot(g_2,h_2)=(g_1\cdot_G g_2,h_1\cdot_H h_2)$．群 $G$ 和群 $H$ 的直积记为 $G\times H$．
+The classification theorem in this section shows that a finitely generated Abelian group can be seen as a simple combination of finitely many cyclic groups. The groups that appear in competitive programming are mostly finite. A finite Abelian group is always finitely generated, so this result always applies.
 
-对于直积 $G\times H$，平凡地有嵌入映射 $g\mapsto(g,e_H)$ 和 $h\mapsto(e_G,h)$．反过来，映射 $(g,h)\mapsto g$ 和映射 $(g,h)\mapsto h$ 是群同态，同态的核分别是 $\{e_G\}\times H$ 和 $G\times\{e_H\}$．这两个核恰好是上述嵌入映射的像，且它们的交集是平凡的，即 $\{(e_G,e_H)\}$．所以，群的直积 $G\times H$ 中有两个子群，都是正规子群，交集是平凡的，且它们的乘积就是直积 $G\times H$ 本身．
+### Direct products
 
-这样的分析其实给出了一个群能够写成它的两个子群的直积的充分必要条件．
+The analysis of groups above mainly focused on breaking a group down into smaller groups. Conversely, we can naturally ask how to combine two groups into a larger one. Among all possible ways of combining groups, the direct product is the simplest.
 
-???+ note "定理"
-    对于群 $G$ 和它的子群 $H_1,H_2\le G$，$G\cong H_1\times H_2$ 当且仅当 $H_1,H_2\trianglelefteq G$，$H_1\cap H_2=\{e\}$ 且 $G=H_1H_2$．
+The basic idea of the direct product is this: given two groups $G$ and $H$, take their Cartesian product $G\times H$, and define the operation on pairs $(g,h)$ by operating on the two components separately, without the components affecting each other. The result is clearly a larger group, and the two original groups embed trivially into it.
 
-??? note "证明"
-    这些条件的必要性在正文中已经讨论过，这里证明它们的充分性．考察映射 $\varphi:G\rightarrow H_1\times H_2$ 满足 $h_1h_2\mapsto(h_1,h_2)$．映射 $\varphi$ 是良定义的，因为对于任意 $h_1,k_1\in H_1$ 和 $h_2,k_2\in H_2$，满足 $h_1h_2=k_1k_2$ 就意味着 $h_1=k_1$ 和 $h_2=k_2$；这是因为 $k_1^{-1}h_1=k_2h_2^{-1}\in H_1\cap H_2=\{e\}$．要说明 $\varphi$ 是群同态，则就是要说明 $(h_1h_2)(k_1k_2)=h_1k_1h_2k_2$，这等价于 $k_1$ 和 $h_2$ 是可交换的，亦即 $k_1h_2k_1^{-1}h_2^{-1}=e$．要证明这一关系，只要注意到 $k_1h_2k_1^{-1}h_2^{-1}=(k_1h_2k_1^{-1})h_2^{-1}\in (k_1H_2k_1^{-1})H_2=H_2$，同理也有 $k_1(h_2k_1^{-1}h_2^{-1})\in H_1$，故而 $k_1h_2k_1^{-1}h_2^{-1}\in H_1\cap H_2=\{e\}$．这些就证明了 $\varphi$ 是群同态．它显然是双射，故而它是同构，即 $G\cong H_1\times H_2$．
+???+ abstract "Direct product"
+    The **direct product** of groups $(G,\cdot_G)$ and $(H,\cdot_H)$ is the group $(G\times H,\cdot)$, where the binary operation $\cdot:(G\times H)\times(G\times H)\rightarrow G\times H$ is defined by $(g_1,h_1)\cdot(g_2,h_2)=(g_1\cdot_G g_2,h_1\cdot_H h_2)$. The direct product of $G$ and $H$ is written $G\times H$.
 
-在直积中，两个直积因子的元素必然是可以交换的，这是因为 $hg=(e_G,h)(g,e_H)=(g,h)=gh$．所以，如果两个直积因子都是 Abel 群，那么直积也必然是 Abel 群．
+For the direct product $G\times H$, there are trivial embeddings $g\mapsto(g,e_H)$ and $h\mapsto(e_G,h)$. Conversely, the maps $(g,h)\mapsto g$ and $(g,h)\mapsto h$ are group homomorphisms whose kernels are $\{e_G\}\times H$ and $G\times\{e_H\}$ respectively. These two kernels are exactly the images of the embeddings above, and their intersection is trivial, namely $\{(e_G,e_H)\}$. So the direct product $G\times H$ has two subgroups that are both normal, have trivial intersection, and whose product is the whole direct product $G\times H$.
 
-并不是所有的群都可以写成两个非平凡子群的直积．
+This analysis actually gives a necessary and sufficient condition for a group to be the direct product of two of its subgroups.
 
-???+ example "例子：正三角形的空间对称群 $D_6$（续）"
-    例如，群 $D_6=\langle r,s\rangle$ 就不同构于 $\langle r\rangle\times\langle s\rangle$，因为作为两个循环群的直积，后者必然是 Abel 群．
+???+ note "Theorem"
+    For a group $G$ and subgroups $H_1,H_2\le G$, $G\cong H_1\times H_2$ if and only if $H_1,H_2\trianglelefteq G$, $H_1\cap H_2=\{e\}$ and $G=H_1H_2$.
 
-下面的分类定理则说明，有限生成的 Abel 群都可以写作有限多个循环群的直积．
+??? note "Proof"
+    The necessity of these conditions was discussed in the main text; here we prove that they are sufficient. Consider the map $\varphi:G\rightarrow H_1\times H_2$ with $h_1h_2\mapsto(h_1,h_2)$. The map $\varphi$ is well-defined, because for any $h_1,k_1\in H_1$ and $h_2,k_2\in H_2$, $h_1h_2=k_1k_2$ implies $h_1=k_1$ and $h_2=k_2$; this is because $k_1^{-1}h_1=k_2h_2^{-1}\in H_1\cap H_2=\{e\}$. To show that $\varphi$ is a group homomorphism, we need to show that $(h_1h_2)(k_1k_2)=h_1k_1h_2k_2$, which is equivalent to $k_1$ and $h_2$ commuting, that is, $k_1h_2k_1^{-1}h_2^{-1}=e$. To prove this, note that $k_1h_2k_1^{-1}h_2^{-1}=(k_1h_2k_1^{-1})h_2^{-1}\in (k_1H_2k_1^{-1})H_2=H_2$, and similarly $k_1(h_2k_1^{-1}h_2^{-1})\in H_1$, so $k_1h_2k_1^{-1}h_2^{-1}\in H_1\cap H_2=\{e\}$. This proves that $\varphi$ is a group homomorphism. It is clearly a bijection, so it is an isomorphism, that is, $G\cong H_1\times H_2$.
 
-### 分类定理
+In a direct product, elements of the two factors always commute, because $hg=(e_G,h)(g,e_H)=(g,h)=gh$. So if both factors are Abelian groups, the direct product must also be an Abelian group.
 
-对于有限生成的 Abel 群，有如下分类定理．它称为 **有限生成 Abel 群基本定理**（fundamental theorem of finitely generated Abelian groups）．
+Not every group can be written as the direct product of two nontrivial subgroups.
 
-???+ note "有限生成 Abel 群基本定理"
-    对于有限生成的 Abel 群 $G$，存在整数 $r\ge0$ 和 $n_1,\cdots,n_s\ge 2$，使得
-    
+???+ example "Example: the symmetry group $D_6$ of an equilateral triangle (continued)"
+    For example, $D_6=\langle r,s\rangle$ is not isomorphic to $\langle r\rangle\times\langle s\rangle$, because the latter, as a direct product of two cyclic groups, must be Abelian.
+
+The classification theorem below shows that every finitely generated Abelian group can be written as a direct product of finitely many cyclic groups.
+
+### Classification theorem
+
+For finitely generated Abelian groups, there is the following classification theorem. It is called the **fundamental theorem of finitely generated Abelian groups**.
+
+???+ note "Fundamental theorem of finitely generated Abelian groups"
+    For a finitely generated Abelian group $G$, there exist an integer $r\ge0$ and integers $n_1,\cdots,n_s\ge 2$ such that
+
     $$
     G\cong C_\infty^r\times C_{n_1}\times\cdots\times C_{n_s}.
     $$
-    
-    特别地，$r$ 是唯一确定的，称为群 $G$ 的 **秩**（rank），而且
-    
-    -   可以选取整数 $n_1,\cdots,n_s$ 使其满足 $n_1\ge2,\ n_1|n_2,\ \cdots,\ n_{s-1}|n_s$，此时，整数 $n_1,\cdots,n_s$ 唯一确定，因子 $C_{n_i}$ 称为群 $G$ 的 **不变因子**（invariant factor）；
-    -   也可以选取整数 $n_1,\cdots,n_s$ 使其都是素数幂的形式，此时，这些素数幂也都唯一确定，因子 $C_{n_i}$ 称为群 $G$ 的 **初等因子**（elementary divisor）．
 
-定理首先断言，有限生成的 Abel 群一定是有限多个循环群的直积．
+    In particular, $r$ is uniquely determined and is called the **rank** of $G$. Moreover,
 
-??? note "证明"
-    这里给出一个形式简单的证明[^proof-abelian]；更深刻的证明应当参考主理想整环上的有限生成模的结构定理[^module-pid]．在证明中，为书写简便，将使用加法记号代替一般的群中的乘法记号，此时 $0$ 代表单位元，而记号 $mx$ 代表 $x$ 的 $m$ 次幂．
-    
-    设 $G$ 最少可以由 $k$ 个元素生成．定理的证明需要对 $k$ 进行归纳．当 $k=1$ 时结论是平凡的．当 $k>1$ 时，取 $G$ 的全体生成元组 $(x_1,x_2,\cdots,x_k)$ 中 $x_1$ 的阶最小的那个．下面要说明 $G=\langle x_1\rangle\times\langle x_2,\cdots,x_k\rangle$，后者则根据归纳假设已经可以分解成 $(k-1)$ 个循环群的直积，故归纳步骤得证．
-    
-    根据群的直积的刻画，如果直积分解不成立，必然存在关系 $m_1x_1+m_2x_2+\cdots+m_kx_k=0$，且 $m_1x_1\neq 0$．对于负的系数 $m_i$，可以用逆元 $-x_i$ 代替 $x_i$，则所有系数 $m_i$ 都可以取作非负整数．而且，此时可以取 $0< m_1 <|x_1|$．如果再取 $d=\gcd(m_1,m_2,\cdots,m_k)$ 和 $c_i=m_i/d$，则必然有 $y_1=c_1x_1+c_2x_2+\cdots+c_kx_k$ 满足 $dy_1=0$，因而 $|y_1|\le d\le m_1< |x_1|$，即 $y_1$ 是比 $x_1$ 阶更小的元素．
-    
-    下面证明，$y_1$ 可以扩张成 $G$ 的一组生成元．也就是说，存在元素 $y_2,\cdots,y_k\in G$ 满足 $G=\langle y_1,y_2,\cdots,y_k\rangle$．这里唯一的已知条件是 $y_1$ 本身可以写作 $c_1x_1+c_2x_2+\cdots+c_kx_k$，其中，系数 $c_i$ 都是自然数且它们的最大公约数是一．不妨假设系数（非严格）递减排列，则 $y_1$ 也可以写作 $(c_1-c_2)x_1+c_2(x_1+x_2)+\cdots+c_kx_k$．此时，对比之前的条件，可以发现系数依然全部是自然数，且最大公约数是一，而且 $G=\langle x_1,x_1+x_2,x_3,\cdots,x_k\rangle$，但是全体系数的和减少了 $c_2$．如果 $c_2=0$，则必然有 $c_1=1$，结论是平凡的；否则，系数的和严格地减少了．这意味着，如果对系数的和进行归纳，就可以证明满足上述条件的 $y_1$ 总可以扩张成 $G$ 的一组生成元．
-    
-    进而，此时找到了比 $x_1$ 更小阶的生成元 $y_1$，这与 $x_1$ 的选取矛盾．所以，直积分解必然成立，根据归纳原理就知道所求证的结论成立．
+    -   the integers $n_1,\cdots,n_s$ can be chosen to satisfy $n_1\ge2,\ n_1|n_2,\ \cdots,\ n_{s-1}|n_s$. In that case, the integers $n_1,\cdots,n_s$ are uniquely determined, and the factors $C_{n_i}$ are called the **invariant factors** of $G$;
+    -   the integers $n_1,\cdots,n_s$ can also be chosen to all be prime powers. In that case, these prime powers are also uniquely determined, and the factors $C_{n_i}$ are called the **elementary divisors** of $G$.
 
-当然，循环群可能是无限阶的或是有限阶的，它们分别是上述分解的 $C_\infty$ 部分和 $C_{n_i}$ 部分．然后，定理给出了有限阶循环群 $C_n$ 的结构．定理的初等因子分解的部分其实依赖于如下观察．
+The theorem first asserts that a finitely generated Abelian group must be a direct product of finitely many cyclic groups.
 
-???+ note "引理"
-    如果 $m$ 与 $n$ 互质，那么 $C_{mn}\cong C_m\times C_n$．
+??? note "Proof"
+    Here we give a proof that is simple in form[^proof-abelian]; for a deeper proof, see the structure theorem for finitely generated modules over a principal ideal domain[^module-pid]. In the proof, for ease of writing, we use additive notation instead of the usual multiplicative notation for groups: $0$ denotes the identity, and $mx$ denotes the $m$-th power of $x$.
 
-??? note "证明"
-    设 $x$ 和 $y$ 分别是 $C_m$ 和 $C_n$ 的生成元，那么因为 $(m,n)=1$，就有 $|(x,y)|=mn=|C_m\times C_n|$．所以，$(x,y)$ 就是 $C_m\times C_n$ 的生成元，亦即 $C_m\times C_n=\langle(x,y)\rangle$．所以，它是 $mn$ 阶循环群，必然同构于 $C_{mn}$．
+    Let $k$ be the smallest number of elements that can generate $G$. The proof is by induction on $k$. The case $k=1$ is trivial. When $k>1$, among all generating tuples $(x_1,x_2,\cdots,x_k)$ of $G$, choose one where the order of $x_1$ is smallest. We will show that $G=\langle x_1\rangle\times\langle x_2,\cdots,x_k\rangle$. By the induction hypothesis, the latter already splits into a direct product of $(k-1)$ cyclic groups, which completes the induction step.
 
-给定循环群 $C_{n}$，如果根据算术基本定理有 $n=p_1^{r_1}\cdots p_k^{r_k}$，那么重复利用引理，就可以证明 $C_n\cong C_{p_1^{r_1}}\times\cdots\times C_{p_k^{r_k}}$．在这两步分解之后，实际上就已经得到了定理中的初等因子分解．再根据引理，重组这些素数幂阶循环群，使得它们的阶数符合要求，就可以得到定理中的不变因子分解．定理中的唯一性可以归纳证明得出．
+    By the characterization of direct products, if the direct product decomposition fails, there must be a relation $m_1x_1+m_2x_2+\cdots+m_kx_k=0$ with $m_1x_1\neq 0$. For a negative coefficient $m_i$, we can replace $x_i$ with its inverse $-x_i$, so all coefficients $m_i$ can be taken to be nonnegative integers. Also, we can then take $0< m_1 <|x_1|$. If we further let $d=\gcd(m_1,m_2,\cdots,m_k)$ and $c_i=m_i/d$, then $y_1=c_1x_1+c_2x_2+\cdots+c_kx_k$ satisfies $dy_1=0$, so $|y_1|\le d\le m_1< |x_1|$; that is, $y_1$ has smaller order than $x_1$.
 
-??? example "例子：24 阶 Abel 群的分类"
-    作为示例，可以通过定理得知所有的 24 阶 Abel 群共三种，列举如下．
-    
-    |           不变因子分解          |                初等因子分解               |
+    Next we prove that $y_1$ can be extended to a generating set of $G$. That is, there exist elements $y_2,\cdots,y_k\in G$ with $G=\langle y_1,y_2,\cdots,y_k\rangle$. The only thing we know here is that $y_1$ itself can be written as $c_1x_1+c_2x_2+\cdots+c_kx_k$, where the coefficients $c_i$ are natural numbers with greatest common divisor one. Without loss of generality, assume the coefficients are in (non-strictly) decreasing order. Then $y_1$ can also be written as $(c_1-c_2)x_1+c_2(x_1+x_2)+\cdots+c_kx_k$. Compared with the earlier conditions, the coefficients are still all natural numbers with greatest common divisor one, and $G=\langle x_1,x_1+x_2,x_3,\cdots,x_k\rangle$, but the sum of all coefficients has decreased by $c_2$. If $c_2=0$, then we must have $c_1=1$, and the result is trivial; otherwise, the sum of the coefficients has strictly decreased. This means that by induction on the sum of the coefficients, we can prove that any $y_1$ satisfying the conditions above can always be extended to a generating set of $G$.
+
+    So we have found a generator $y_1$ with smaller order than $x_1$, which contradicts the choice of $x_1$. Therefore the direct product decomposition must hold, and by the principle of induction, the claim is proved.
+
+Of course, a cyclic group may have infinite or finite order; these give the $C_\infty$ part and the $C_{n_i}$ part of the decomposition above, respectively. Next, the theorem describes the structure of finite cyclic groups $C_n$. The elementary divisor part of the theorem actually relies on the following observation.
+
+???+ note "Lemma"
+    If $m$ and $n$ are coprime, then $C_{mn}\cong C_m\times C_n$.
+
+??? note "Proof"
+    Let $x$ and $y$ be generators of $C_m$ and $C_n$ respectively. Since $(m,n)=1$, we have $|(x,y)|=mn=|C_m\times C_n|$. So $(x,y)$ is a generator of $C_m\times C_n$, that is, $C_m\times C_n=\langle(x,y)\rangle$. So it is a cyclic group of order $mn$, and must be isomorphic to $C_{mn}$.
+
+Given a cyclic group $C_{n}$, if $n=p_1^{r_1}\cdots p_k^{r_k}$ by the fundamental theorem of arithmetic, then applying the lemma repeatedly shows that $C_n\cong C_{p_1^{r_1}}\times\cdots\times C_{p_k^{r_k}}$. After these two decomposition steps, we have in fact obtained the elementary divisor decomposition in the theorem. Then, using the lemma again to regroup these cyclic groups of prime power order so that their orders meet the requirements, we get the invariant factor decomposition in the theorem. The uniqueness in the theorem can be proved by induction.
+
+??? example "Example: classification of Abelian groups of order 24"
+    As an example, the theorem tells us that there are exactly three Abelian groups of order 24, listed below.
+
+    |           Invariant factor decomposition          |                Elementary divisor decomposition               |
     | :-----------------------: | :---------------------------------: |
     |          $C_{24}$         |         $C_{3}\times C_{8}$         |
     |    $C_{2}\times C_{12}$   |     $C_2\times C_{3}\times C_4$     |
     | $C_2\times C_2\times C_6$ | $C_2\times C_2\times C_2\times C_3$ |
 
-## 参考资料与注释
+## References and notes
 
 -   Dummit, D.S. and Foote, R.M. (2004) Abstract Algebra. 3rd Edition, John Wiley & Sons, Inc.
 -   [Milne, J.S. (2021) Group Theory](https://www.jmilne.org/math/CourseNotes/GT.pdf).
@@ -659,16 +659,16 @@ Cauchy 定理保证了 $p$‑子群的存在性．其实，通过更为细致的
 -   [Group - Wolfram MathWorld](https://mathworld.wolfram.com/Group.html)
 -   [Visual Group Theory](https://www.youtube.com/playlist?list=PLwV-9DG53NDxU337smpTwm6sef4x-SCLv)
 
-[^klein]: 这个群可以表示为置换群 $\{(1),(12)(34),(13)(24),(14)(23)\}$，也可以写作 $C_2\times C_2$．
+[^klein]: This group can be represented as the permutation group $\{(1),(12)(34),(13)(24),(14)(23)\}$, and can also be written as $C_2\times C_2$.
 
-[^quotient]: 对于一般的子群 $H\le G$，也可以在全体左（右）陪集上尝试定义类似的运算．但是，这样的运算是良定义的，当且仅当 $H$ 是 $G$ 的正规子群．
+[^quotient]: For a general subgroup $H\le G$, we can also try to define a similar operation on all left (right) cosets. However, such an operation is well-defined if and only if $H$ is a normal subgroup of $G$.
 
-[^group-action]: 比如 [Group action - Wikipedia](https://en.wikipedia.org/wiki/Group_action)．
+[^group-action]: For example, [Group action - Wikipedia](https://en.wikipedia.org/wiki/Group_action).
 
-[^cayley]: Cayley 定理本身没有反映太多群本身结构的信息，因为 $S_G$ 这个群的规模通常很庞大，很难讲它的某个大小恰为 $|G|$ 的子群拥有哪些确定的性质．但是，早期群论的发展主要集中在置换群上．所以，Cayley 定理其实是在说，所有可能的群结构都是这些已经充分研究过的对象．尽管在实际研究时，需要更为精细的工具．
+[^cayley]: Cayley's theorem itself does not say much about the structure of a group, because the group $S_G$ is usually huge, and it is hard to say what definite properties a subgroup of size exactly $|G|$ in it has. However, early group theory focused mainly on permutation groups. So Cayley's theorem is really saying that every possible group structure is one of these already well-studied objects, even though actual research needs more refined tools.
 
-[^conjugate]: 更一般地，置换群中共轭的元素必然有着相同的 [型](../permutation.md#置换的型)．
+[^conjugate]: More generally, conjugate elements in a permutation group must have the same [cycle type](../permutation.md#置换的型).
 
-[^proof-abelian]: 参见 Milne, J.S. (2021) Group Theory 第 25 页．
+[^proof-abelian]: See Milne, J.S. (2021) Group Theory, page 25.
 
-[^module-pid]: 参见 [Structure theorem for finitely generated modules over a principal ideal domain - Wikipedia](https://en.wikipedia.org/wiki/Structure_theorem_for_finitely_generated_modules_over_a_principal_ideal_domain)．
+[^module-pid]: See [Structure theorem for finitely generated modules over a principal ideal domain - Wikipedia](https://en.wikipedia.org/wiki/Structure_theorem_for_finitely_generated_modules_over_a_principal_ideal_domain).

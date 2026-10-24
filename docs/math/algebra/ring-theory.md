@@ -1,66 +1,66 @@
-前置知识：[抽象代数基本概念](./basic.md)、[群论](./group-theory.md)
+Prerequisites: [Basic Concepts of Abstract Algebra](./basic.md), [Group Theory](./group-theory.md)
 
-## 引入
+## Introduction
 
-**环论**（ring theory）研究形形色色的环．
+**Ring theory** studies all kinds of rings.
 
-本文涉及的环论的内容，与数论中的整除理论密不可分．首先，类似群论中的正规子群，本文首先介绍环同态的核，它称作环的理想；其实，这是数论中的数的概念在一般环的推广．然后，考虑将整数环上的素数、辗转相除法、质因子分解等概念推广到一般的环上，就有了不同类型的整环的概念．
+The parts of ring theory covered in this article are closely tied to the theory of divisibility in number theory. First, similar to normal subgroups in group theory, this article introduces the kernel of a ring homomorphism, which is called an ideal of the ring; in fact, this generalizes the notion of a number in number theory to general rings. Then, by generalizing concepts on the ring of integers such as primes, the Euclidean algorithm and prime factorization to general rings, we get the concepts of different types of integral domains.
 
-数论中的很多结论在其它常见的环上，都依然成立．可以说，环论的一部分工作，就是在讨论使得这些数论中的结论在一般的环上能否成立；如果不能，需要给环施加怎样的限制才能够使这些结论成立．
+Many results from number theory still hold in other common rings. One could say that part of the work of ring theory is to ask whether these number-theoretic results hold in general rings, and if not, what restrictions must be put on a ring to make them hold.
 
-???+ info "记号"
-    在不引起歧义时，本文可能会省略掉环的乘法记号，并且会将环 $(R,+,\cdot)$ 写作环 $R$．环 $R$ 中，加法单位元也称作零元，记作 $0$；乘法单位元也称作幺元，记作 $1$．
+???+ info "Notation"
+    When there is no ambiguity, this article may omit the multiplication symbol of a ring, and may write the ring $(R,+,\cdot)$ simply as the ring $R$. In a ring $R$, the additive identity is also called the zero element, written $0$; the multiplicative identity is also called the unity (or identity), written $1$.
 
-??? warning "本文的环的定义不要求有幺元"
-    注意，本文的环的定义不要求含幺．有些文章要求环的定义含幺，则本文部分结论的叙述需要稍作调整．比如说，本文中理想可以基于子环定义，但是其它文章中可能需要基于加法子群定义．
+??? warning "Rings in this article are not required to have a unity"
+    Note that the definition of a ring in this article does not require a unity. Some articles require rings to have a unity, in which case the statements of some results here need slight adjustments. For example, in this article ideals can be defined in terms of subrings, but in other articles they may need to be defined in terms of additive subgroups.
 
-## 理想
+## Ideals
 
-类似群的情形，可以建立子环和环同态的概念．
+Similar to the case of groups, we can define subrings and ring homomorphisms.
 
-???+ abstract "子环"
-    对于环 $(R,+,\cdot)$ 和它的子集 $S$，如果 $(S,+,\cdot)$ 也是一个环，则称 $S$ 是 $R$ 的 **子环**（subring）．
+???+ abstract "Subring"
+    For a ring $(R,+,\cdot)$ and a subset $S$, if $(S,+,\cdot)$ is also a ring, then $S$ is called a **subring** of $R$.
 
-???+ example "例子：整数环 $\mathbf Z$"
-    对于任何整数 $n$，都有 $n\mathbf Z=\{nk:k\in\mathbf Z\}$ 是 $\mathbf Z$ 的一个子环．
+???+ example "Example: the ring of integers $\mathbf Z$"
+    For any integer $n$, $n\mathbf Z=\{nk:k\in\mathbf Z\}$ is a subring of $\mathbf Z$.
 
-???+ abstract "环同态"
-    对于环 $(R,+,\cdot)$ 和 $(S,\oplus,\odot)$，如果 $\pi$ 保持环的加法和乘法运算，即对所有 $r_1,r_2\in R$ 都成立 $\pi(r_1+r_2)=\pi(r_1)\oplus\pi(r_2)$ 和 $\pi(r_1\cdot r_2)=\pi(r_1)\odot\pi(r_2)$，则称映射 $\pi:R\rightarrow S$ 是自环 $R$ 到环 $S$ 的 **同态**（homomorphism）．
+???+ abstract "Ring homomorphism"
+    For rings $(R,+,\cdot)$ and $(S,\oplus,\odot)$, if $\pi$ preserves the addition and multiplication of the rings, that is, $\pi(r_1+r_2)=\pi(r_1)\oplus\pi(r_2)$ and $\pi(r_1\cdot r_2)=\pi(r_1)\odot\pi(r_2)$ for all $r_1,r_2\in R$, then the map $\pi:R\rightarrow S$ is called a **homomorphism** from the ring $R$ to the ring $S$.
 
-??? info "环的定义要求含幺的情形"
-    如果环的定义要求含有幺元，那么，环同态的定义也常常要求将幺元映射至幺元．对于非零幺环间的同态来说，这个额外的要求仅仅是保证了同态不会将整个幺环映射到零元．
+??? info "When rings are required to have a unity"
+    If the definition of a ring requires a unity, then the definition of a ring homomorphism also often requires the unity to be mapped to the unity. For homomorphisms between nonzero rings with unity, this extra requirement only ensures that the homomorphism does not map the whole ring to zero.
 
-???+ example "例子：整数环 $\mathbf Z$（续）"
-    对任何非零整数 $n$ 取模的映射，即 $\pi:\mathbf Z\rightarrow\mathbf Z/n\mathbf Z$，其中，$\pi(a)=\bar a$，都是环同态．
+???+ example "Example: the ring of integers $\mathbf Z$ (continued)"
+    For any nonzero integer $n$, the map taking residues modulo $n$, that is, $\pi:\mathbf Z\rightarrow\mathbf Z/n\mathbf Z$ with $\pi(a)=\bar a$, is a ring homomorphism.
 
-对群同态的核和像的 [讨论](./group-theory.md#群同态) 可以几乎原封不动地搬到此处．同态的像的（相对）大小决定了同态是否是满射，而同态的核的平凡与否则决定了同态是否是单射．环同态的核定义如下：
+The [discussion](./group-theory.md#群同态) of kernels and images of group homomorphisms carries over here almost unchanged. The (relative) size of the image decides whether the homomorphism is surjective, and whether the kernel is trivial decides whether it is injective. The kernel of a ring homomorphism is defined as follows:
 
-???+ abstract "同态的核"
-    自环 $R$ 到环 $S$ 的同态 $\pi:R\rightarrow S$ 的 **核**（kernel）是 $\{r\in R:\pi(r)=0\}$，记作 $\ker\pi$，其中，$0$ 是 $S$ 的加法单位元．
+???+ abstract "Kernel of a homomorphism"
+    The **kernel** of a homomorphism $\pi:R\rightarrow S$ from a ring $R$ to a ring $S$ is $\{r\in R:\pi(r)=0\}$, written $\ker\pi$, where $0$ is the additive identity of $S$.
 
-显然，环同态的核和像都是子环．反过来，并不是所有子环都可以成为某个环同态的核．能够成为环同态的核的子环称为环的理想．
+Clearly, the kernel and image of a ring homomorphism are both subrings. Conversely, not every subring can be the kernel of some ring homomorphism. The subrings that can be kernels of ring homomorphisms are called ideals of the ring.
 
-???+ abstract "理想"
-    对于环 $R$ 和它的子环 $I$，则称 $I$ 是 $R$ 的
-    
-    -   **左理想**（left ideal），如果对于所有 $r\in R$，都有 $rI\subseteq I$，这里，$rI=\{ra:a\in I\}$；
-    -   **右理想**（right ideal），如果对于所有 $r\in R$，都有 $Ir\subseteq I$，这里，$Ir=\{ar:a\in I\}$；
-    -   **理想**（ideal），如果 $I$ 既是 $R$ 的左理想，也是 $R$ 的右理想．
+???+ abstract "Ideal"
+    For a ring $R$ and a subring $I$, $I$ is called a
 
-这里要求理想 $I$ 对环 $R$ 的左乘和右乘都封闭．这个条件是自然的．因为，理想中的元素在环同态中会映射到零元，而任何数左乘或右乘以零都应该等于零，这就是所要求的封闭性．除此之外，因为环的加法结构是 Abel 群，任何子群都是正规子群；而环的乘法结构又十分原始，不会对子结构施加额外的限制．这就说明，对左乘和右乘封闭这个条件也是充分的．
+    -   **left ideal** of $R$ if $rI\subseteq I$ for all $r\in R$, where $rI=\{ra:a\in I\}$;
+    -   **right ideal** of $R$ if $Ir\subseteq I$ for all $r\in R$, where $Ir=\{ar:a\in I\}$;
+    -   **ideal** of $R$ if $I$ is both a left ideal and a right ideal of $R$.
 
-???+ example "例子：整数环 $\mathbf Z$（续）"
-    作为例子，前面提到的子环 $n\mathbf Z$ 其实是 $\mathbf Z$ 的理想．它是所有 $n$ 的倍数构成的集合．一个 $n$ 的倍数，与任何整数相乘，都会得到 $n$ 的倍数．事实上，$\mathbf Z$ 的全部理想都是这样的形式，这样的环称为 [主理想整环](#主理想整环)．对于一般的环，有些理想并不是某个元素的倍数的集合；这样的一般的环的存在，也正是研究理想（而不是简单地研究倍数）的最初动机[^ideal-history]．
+Here an ideal $I$ is required to be closed under left and right multiplication by elements of $R$. This condition is natural: elements of an ideal are mapped to zero by the ring homomorphism, and any element multiplied on the left or right by zero should be zero, which is exactly the required closure. Beyond that, since the additive structure of a ring is an Abelian group, every subgroup is a normal subgroup; and the multiplicative structure of a ring is very primitive and puts no extra restrictions on substructures. This shows that being closed under left and right multiplication is also sufficient.
 
-### 商环
+???+ example "Example: the ring of integers $\mathbf Z$ (continued)"
+    As an example, the subring $n\mathbf Z$ mentioned earlier is actually an ideal of $\mathbf Z$. It is the set of all multiples of $n$. A multiple of $n$ times any integer is still a multiple of $n$. In fact, every ideal of $\mathbf Z$ has this form; such a ring is called a [principal ideal domain](#principal-ideal-domains). In a general ring, some ideals are not the set of multiples of a single element; the existence of such rings was the original motivation for studying ideals (rather than simply studying multiples)[^ideal-history].
 
-和群一样，基于环的理想，可以在全体（加法群意义上的）陪集的集合上定义 **商环**（quotient ring）．考虑集合
+### Quotient rings
+
+Just like for groups, given an ideal of a ring, we can define a **quotient ring** on the set of all cosets (in the sense of the additive group). Consider the set
 
 $$
 R/I=\{a+I:a\in R\},
 $$
 
-这里，陪集 $a+I=\{a+b:b\in I\}$．可以证明当且仅当 $I$ 是理想时，运算
+where the coset is $a+I=\{a+b:b\in I\}$. One can prove that the operations
 
 $$
 \begin{aligned}
@@ -69,46 +69,46 @@ $$
 \end{aligned}
 $$
 
-是良定义的，即这些运算的结果和陪集中代表元的选取无关．在这些运算下，$R/I$ 构成环．再次和群的情形一致，可以建立环的 **第一同构定理**（first isomorphism theorem），并存在环到其商环的自然同态．这些证明，环的理想和群的正规子群，在相应结构的同态中起到了一样的作用．
+are well-defined, that is, their results do not depend on the choice of representatives of the cosets, if and only if $I$ is an ideal. Under these operations, $R/I$ forms a ring. Again just as for groups, we can establish the **first isomorphism theorem** for rings, and there is a natural homomorphism from a ring to its quotient ring. These show that ideals of rings play the same role in ring homomorphisms as normal subgroups do in group homomorphisms.
 
-???+ note "第一同构定理"
-    设 $\pi:R\rightarrow S$ 是自环 $R$ 到环 $S$ 的同态，则 $\ker\pi$ 是 $R$ 的理想，且 $R/\ker\pi\cong\pi(R)$ 是 $S$ 的子环．
+???+ note "First isomorphism theorem"
+    Let $\pi:R\rightarrow S$ be a homomorphism from a ring $R$ to a ring $S$. Then $\ker\pi$ is an ideal of $R$, and $R/\ker\pi\cong\pi(R)$ is a subring of $S$.
 
-???+ abstract "自然同态"
-    对于环 $R$ 和它的理想 $I$，则由 $\pi(r)=r+I$ 给出的映射 $\pi:R\rightarrow R/I$ 是自 $R$ 到 $R/I$ 的满同态，称为自环 $R$ 到商环 $R/I$ 的 **自然同态**（natural homomorphism）．
+???+ abstract "Natural homomorphism"
+    For a ring $R$ and an ideal $I$, the map $\pi:R\rightarrow R/I$ given by $\pi(r)=r+I$ is a surjective homomorphism from $R$ to $R/I$, called the **natural homomorphism** from the ring $R$ to the quotient ring $R/I$.
 
-???+ example "例子：整数环 $\mathbf Z$（续）"
-    作为例子，整数模 $n$ 的同余类构成的环 $\mathbf Z/n\mathbf Z$ 是 $\mathbf Z$ 模它的理想 $n\mathbf Z$ 得到的商环．这也解释了符号 $\mathbf Z/n\mathbf Z$ 的含义．上面提到的模 $n$ 的映射 $\pi:\mathbf Z\rightarrow\mathbf Z/n\mathbf Z$ 就是这里提到的自然映射，相应的核正是理想 $n\mathbf Z$．
+???+ example "Example: the ring of integers $\mathbf Z$ (continued)"
+    As an example, the ring $\mathbf Z/n\mathbf Z$ of residue classes of integers modulo $n$ is the quotient ring of $\mathbf Z$ modulo its ideal $n\mathbf Z$. This also explains the notation $\mathbf Z/n\mathbf Z$. The map $\pi:\mathbf Z\rightarrow\mathbf Z/n\mathbf Z$ taking residues modulo $n$ mentioned above is exactly the natural map here, and its kernel is exactly the ideal $n\mathbf Z$.
 
-在环的情形，同样成立其他同构定理．
+The other isomorphism theorems also hold for rings.
 
-???+ note "第二同构定理"
-    设环 $R$ 有子环 $A$ 和理想 $B$，那么 $A+B=\{a+b:a\in A,b\in B\}$ 同样是 $R$ 的子环，而 $A\cap B$ 是 $A$ 的理想，$B$ 是 $A+B$ 的理想，并且 $(A+B)/B\cong A/(A\cap B)$．
+???+ note "Second isomorphism theorem"
+    Let $R$ be a ring with a subring $A$ and an ideal $B$. Then $A+B=\{a+b:a\in A,b\in B\}$ is also a subring of $R$, $A\cap B$ is an ideal of $A$, $B$ is an ideal of $A+B$, and $(A+B)/B\cong A/(A\cap B)$.
 
-???+ note "第三同构定理"
-    设环 $R$ 有理想 $I,J$ 且 $I\subseteq J$，那么 $J/I$ 也是 $R/I$ 的理想，并且 $(R/I)/(J/I)\cong R/J$．
+???+ note "Third isomorphism theorem"
+    Let $R$ be a ring with ideals $I,J$ such that $I\subseteq J$. Then $J/I$ is also an ideal of $R/I$, and $(R/I)/(J/I)\cong R/J$.
 
-???+ note "对应定理"
-    设环 $R$ 有理想 $I$，则全体包含 $I$ 的环 $R$ 的子环 $\mathcal S=\{S:I\subseteq S\subseteq R\}$ 和商环 $R/I$ 的全体子环 $\mathcal T=\{T:T\text{ is a subring of }R/I\}$ 之间存在双射 $\varphi:\mathcal S\rightarrow\mathcal T$，它将 $S\in\mathcal S$ 映射至 $S/I\in\mathcal T$．这个双射保持子环的包含关系，且环 $R$ 的理想总是映射到 $R/I$ 的理想．
+???+ note "Correspondence theorem"
+    Let $R$ be a ring with an ideal $I$. Then there is a bijection $\varphi:\mathcal S\rightarrow\mathcal T$ between the set $\mathcal S=\{S:I\subseteq S\subseteq R\}$ of all subrings of $R$ containing $I$ and the set $\mathcal T=\{T:T\text{ is a subring of }R/I\}$ of all subrings of the quotient ring $R/I$, which maps $S\in\mathcal S$ to $S/I\in\mathcal T$. This bijection preserves inclusion between subrings, and ideals of $R$ are always mapped to ideals of $R/I$.
 
-这些定理在后文中讨论环和理想的结构时将起到基础的作用．
+These theorems play a basic role when we discuss the structure of rings and ideals later.
 
-### 理想的运算
+### Operations on ideals
 
-环的理想上可以定义各种运算．这类似于整数的整除结构上可以定义最大公约数、最小公倍数等概念．
+Various operations can be defined on the ideals of a ring. This is similar to how concepts such as greatest common divisor and least common multiple can be defined on the divisibility structure of the integers.
 
-???+ abstract "理想的运算"
-    设环 $R$ 有理想 $I,J$，可以定义如下运算：
-    
-    -   理想的 **和**（sum）：$I+J=\{a+b:a\in I,b\in J\}$；
-    -   理想的 **乘积**（product）：$IJ=\{\sum_{i=1}^na_ib_i:a_i\in I,b_i\in J\}$，即全体 $ab$ 形式乘积的有限和构成的集合；
-    -   理想的 **交**（intersection）：$I\cap J$．
+???+ abstract "Operations on ideals"
+    Let $R$ be a ring with ideals $I,J$. We can define the following operations:
 
-容易验证，这些运算的结果都依然是环的理想．
+    -   The **sum** of ideals: $I+J=\{a+b:a\in I,b\in J\}$;
+    -   The **product** of ideals: $IJ=\{\sum_{i=1}^na_ib_i:a_i\in I,b_i\in J\}$, that is, the set of all finite sums of products of the form $ab$;
+    -   The **intersection** of ideals: $I\cap J$.
 
-???+ example "例子：整数环 $\mathbf Z$（续）"
-    考虑整数环 $\mathbf Z$ 的情形．对于理想 $n\mathbf Z$ 和 $m\mathbf Z$，可以得到
-    
+It is easy to check that the results of these operations are still ideals of the ring.
+
+???+ example "Example: the ring of integers $\mathbf Z$ (continued)"
+    Consider the ring of integers $\mathbf Z$. For ideals $n\mathbf Z$ and $m\mathbf Z$, we get
+
     $$
     \begin{aligned}
     n\mathbf Z+m\mathbf Z&=\gcd(m,n)\mathbf Z,\\
@@ -117,82 +117,82 @@ $$
     \end{aligned}
     $$
 
-一般地，对于环 $R$ 和它的理想 $I$ 和 $J$，总有
+In general, for a ring $R$ and its ideals $I$ and $J$, we always have
 
 $$
 IJ\subseteq I\cap J\subseteq I,J\subseteq I+J.
 $$
 
-利用这些定义，可以将整数的中国剩余定理推广到一般的环上．但在此之前，还需要进一步将诸如素数和互素等概念推广到一般的环上．
+With these definitions, the Chinese remainder theorem for integers can be generalized to general rings. But before that, we need to further generalize concepts such as primes and coprimality to general rings.
 
-### 极大理想
+### Maximal ideals
 
-通过环的理想的结构，可以理解环的性质．
+We can understand the properties of a ring through the structure of its ideals.
 
-非零环 $R$ 总有两个平凡的理想，即 $\{0\}$ 和 $R$．如果环 $R$ 还是交换的非零幺环，那么只有这两个理想的环能且只能是域[^simple-ring]．
+A nonzero ring $R$ always has two trivial ideals, $\{0\}$ and $R$. If $R$ is also a commutative nonzero ring with unity, then a ring with only these two ideals is exactly a field[^simple-ring].
 
-???+ note "定理"
-    设 $R$ 是交换的非零幺环，那么 $R$ 是域，当且仅当 $R$ 只有平凡理想 $\{0\}$ 和 $R$．
+???+ note "Theorem"
+    Let $R$ be a commutative nonzero ring with unity. Then $R$ is a field if and only if $R$ has only the trivial ideals $\{0\}$ and $R$.
 
-??? note "证明"
-    如果 $R$ 是域，则对于任何非零理想 $I$ 都可以任取非零元素 $a\in I$，于是，任何域中的元素 $r\in R$ 都有 $r=(ra^{-1})a\in (ra^{-1})I\subseteq I$，故而 $I=R$．反过来，对于任何 $a\in R$ 且 $a\neq 0$，可以验证 $aR=\{ar:r\in R\}$ 是理想，它必然等于 $R$，因而存在 $b\in R$ 使得 $ab=1$，这就说明 $a$ 存在逆元，故而有 $R$ 是域．
+??? note "Proof"
+    If $R$ is a field, then for any nonzero ideal $I$ we can pick a nonzero element $a\in I$. Then any element $r\in R$ of the field satisfies $r=(ra^{-1})a\in (ra^{-1})I\subseteq I$, so $I=R$. Conversely, for any $a\in R$ with $a\neq 0$, one can check that $aR=\{ar:r\in R\}$ is an ideal. It must equal $R$, so there exists $b\in R$ with $ab=1$. This shows that $a$ has an inverse, so $R$ is a field.
 
-这里交换环的条件是必要的；不然，需要同时限制左理想和右理想都是平凡的，才能保证环是除环．
+The commutativity condition here is necessary; otherwise, we would need both the left ideals and the right ideals to be trivial to guarantee that the ring is a division ring.
 
-这里的结论可以推广到环本身不是域的情形．但是，此时需要转而考虑商环，讨论交换非零幺环的商环是域的条件．商环 $R/I$ 是域，这意味着商环 $R/I$ 中只有平凡理想，根据对应定理可知，原来的环 $R$ 中没有严格介于模掉的理想 $I$ 和原来的环 $R$ 之间的理想．这样的理想 $I$ 称为极大理想．
+This result can be generalized to the case where the ring itself is not a field. But then we need to look at quotient rings instead, and ask when a quotient ring of a commutative nonzero ring with unity is a field. A quotient ring $R/I$ being a field means that $R/I$ has only trivial ideals. By the correspondence theorem, the original ring $R$ has no ideal strictly between the ideal $I$ being quotiented out and $R$ itself. Such an ideal $I$ is called a maximal ideal.
 
-???+ abstract "极大理想"
-    对于环 $R$ 和它的理想 $M$，如果 $M\neq R$，且包含 $M$ 的 $R$ 的理想只有 $M$ 和 $R$ 两个，则称理想 $M$ 是一个 **极大理想**（maximal ideal）．
+???+ abstract "Maximal ideal"
+    For a ring $R$ and an ideal $M$, if $M\neq R$, and the only ideals of $R$ containing $M$ are $M$ and $R$, then $M$ is called a **maximal ideal**.
 
-???+ note "定理"
-    设交换非零幺环 $R$ 有理想 $M$，那么商环 $R/M$ 是域，当且仅当 $M$ 是极大理想．
+???+ note "Theorem"
+    Let $R$ be a commutative nonzero ring with unity and $M$ an ideal. Then the quotient ring $R/M$ is a field if and only if $M$ is a maximal ideal.
 
-???+ example "例子：整数环 $\mathbf Z$（续）"
-    例如，整数环 $\mathbf Z$ 中的理想 $n\mathbf Z$ 是极大理想，当且仅当 $n$ 是素数．对于素数 $p$，商环 $\mathbf Z/p\mathbf Z$ 是域，也记作 $\mathbf F_p$．
+???+ example "Example: the ring of integers $\mathbf Z$ (continued)"
+    For example, the ideal $n\mathbf Z$ of the ring of integers $\mathbf Z$ is a maximal ideal if and only if $n$ is prime. For a prime $p$, the quotient ring $\mathbf Z/p\mathbf Z$ is a field, also written $\mathbf F_p$.
 
-并不是所有的环都有极大理想，但是非零幺环中总是有极大理想．
+Not every ring has a maximal ideal, but a nonzero ring with unity always does.
 
-???+ note "定理（Krull）"
-    对于非零幺环 $R$ 的理想 $I\neq R$，总有 $R$ 的极大理想 $M$ 使得 $I\subseteq M$ 成立．
+???+ note "Theorem (Krull)"
+    For an ideal $I\neq R$ of a nonzero ring with unity $R$, there is always a maximal ideal $M$ of $R$ with $I\subseteq M$.
 
-??? note "证明"
-    思路是利用 Zorn 引理．考察全体包含 $I$ 的 $R$ 的真理想（即不等于 $R$ 的理想）的集合 $\mathcal S$．因为 $I\in\mathcal S$，它非空，且在包含关系下形成偏序集．对于其中的任何链 $J_0\subseteq J_1\subseteq\cdots\subseteq J_n\subseteq\cdots$，设它们的并集为 $J$，则容易验证这也是理想．而且，$J\neq R$，否则 $1\in J$，亦即存在 $n$ 使得 $1\in J_n$，这与 $J_n$ 是真理想相矛盾．由此，依 Zorn 引理，存在极大理想 $M\supseteq I$．
+??? note "Proof"
+    The idea is to use Zorn's lemma. Consider the set $\mathcal S$ of all proper ideals of $R$ (that is, ideals not equal to $R$) that contain $I$. Since $I\in\mathcal S$, it is nonempty, and it forms a partially ordered set under inclusion. For any chain $J_0\subseteq J_1\subseteq\cdots\subseteq J_n\subseteq\cdots$ in it, let $J$ be their union; it is easy to check that this is also an ideal. Moreover, $J\neq R$; otherwise $1\in J$, that is, there is some $n$ with $1\in J_n$, contradicting that $J_n$ is a proper ideal. Therefore, by Zorn's lemma, there exists a maximal ideal $M\supseteq I$.
 
-极大理想，类比到整除理论中就是不可约元．这是因为，理想的包含关系就是整数的整除关系；没有作为超集的理想，就相当于没有可以除尽的因子．但是，极大理想的概念比不可约元更为宽泛，这是因为并不是所有的理想都是主理想．
+In the theory of divisibility, the analogue of a maximal ideal is an irreducible element. This is because inclusion between ideals corresponds to divisibility between integers; having no ideal as a superset is like having no factor that divides it. However, the concept of a maximal ideal is broader than that of an irreducible element, because not every ideal is a principal ideal.
 
-### 素理想
+### Prime ideals
 
-域的条件比整环的更为苛刻．能够确保商环是整环的理想称为素理想，它类似于整除理论中的素数的概念．
+The condition for a field is stricter than that for an integral domain. An ideal that guarantees the quotient ring is an integral domain is called a prime ideal; it is similar to the concept of a prime number in the theory of divisibility.
 
-???+ abstract "素理想"
-    对于交换环 $R$ 和它的理想 $P$，如果 $P\neq R$，且对于环中任意元素 $a,b\in R$，每当 $ab\in P$ 成立时总有 $a\in P$ 或 $b\in P$，则称理想 $P$ 是一个 **素理想**（prime ideal）．
+???+ abstract "Prime ideal"
+    For a commutative ring $R$ and an ideal $P$, if $P\neq R$, and for any elements $a,b\in R$ of the ring, whenever $ab\in P$ we have $a\in P$ or $b\in P$, then $P$ is called a **prime ideal**.
 
-这个定义看起来稍显突兀，但是对比 [素数的定义](../number-theory/basic.md#算术基本定理)，这个素理想的定义也是自然的．
+This definition may look a bit sudden, but compared with the [definition of a prime](../number-theory/basic.md#算术基本定理), this definition of a prime ideal is natural.
 
-???+ note "定理"
-    设交换非零幺环 $R$ 有理想 $P$，那么商环 $R/P$ 是整环，当且仅当 $P$ 是素理想．
+???+ note "Theorem"
+    Let $R$ be a commutative nonzero ring with unity and $P$ an ideal. Then the quotient ring $R/P$ is an integral domain if and only if $P$ is a prime ideal.
 
-??? note "证明"
-    对于交换非零幺环 $R$，商环 $R/P$ 是整环，当且仅当 $R/P$ 没有零因子．将陪集 $a+P$ 记作 $\bar a$．商环 $R/P$ 没有零因子，就等价于 $\bar a\bar b=\bar 0$ 总能推出 $\bar a=\bar 0$ 或 $\bar b=\bar 0$．根据商环的定义，这就等价于 $ab\in P$ 总能推出 $a\in P$ 或 $b\in P$．
+??? note "Proof"
+    For a commutative nonzero ring with unity $R$, the quotient ring $R/P$ is an integral domain if and only if $R/P$ has no zero divisors. Write $\bar a$ for the coset $a+P$. The quotient ring $R/P$ having no zero divisors is equivalent to $\bar a\bar b=\bar 0$ always implying $\bar a=\bar 0$ or $\bar b=\bar 0$. By the definition of the quotient ring, this is equivalent to $ab\in P$ always implying $a\in P$ or $b\in P$.
 
-在整数环 $\mathbf Z$ 中，$n\mathbf Z$ 是极大理想，当且仅当 $n$ 是素数；而 $n\mathbf Z$ 是素理想，当且仅当 $n$ 是素数或 $n=0$．在一般的交换环中，极大理想总能推出素理想，当然反之未必成立；这从它们对应的商环的性质上可以看出来．
+In the ring of integers $\mathbf Z$, $n\mathbf Z$ is a maximal ideal if and only if $n$ is prime, while $n\mathbf Z$ is a prime ideal if and only if $n$ is prime or $n=0$. In a general commutative ring, a maximal ideal is always a prime ideal, but of course the converse need not hold; this can be seen from the properties of the corresponding quotient rings.
 
-???+ note "定理"
-    对于交换非零幺环 $R$，那么它的极大理想必然是素理想．
+???+ note "Theorem"
+    For a commutative nonzero ring with unity $R$, every maximal ideal is a prime ideal.
 
-稍后要看到，只有在那些具有良好性质、足够与整数环相似的环中，逆命题才成立．
+We will see later that the converse holds only in rings with good properties that are similar enough to the ring of integers.
 
-### 主理想
+### Principal ideals
 
-类似子群的概念，在环的讨论中也常需要考虑由某个子集生成的理想．
+Similar to subgroups, when discussing rings we often need to consider the ideal generated by a subset.
 
-???+ abstract "由子集生成的理想"
-    对于非零幺环 $R$ 和它的非空子集 $A\subseteq R$，如果 $I$ 是包含 $A$ 的 $R$ 的理想中（依包含关系）最小的，则理想 $I$ 称为 **由子集 $A$ 生成的理想**（ideal generated by a subset），并记作 $(A)$．此时，$A$ 称为 $(A)$ 的 **生成子集**（generating set）．
+???+ abstract "Ideal generated by a subset"
+    For a nonzero ring with unity $R$ and a nonempty subset $A\subseteq R$, if $I$ is the smallest (with respect to inclusion) among the ideals of $R$ that contain $A$, then $I$ is called the **ideal generated by the subset $A$**, written $(A)$. In this case, $A$ is called a **generating set** of $(A)$.
 
-???+ abstract "主理想"
-    由单个元素 $a\in R$ 生成的理想称为 **主理想**（principal ideal），记作 $(a)$．此时，$a$ 称为 $(a)$ 的 **生成元**（generator）．
+???+ abstract "Principal ideal"
+    An ideal generated by a single element $a\in R$ is called a **principal ideal**, written $(a)$. In this case, $a$ is called a **generator** of $(a)$.
 
-对于集合 $A$，可以给出其生成的理想的构造．首先，有如下定义
+For a set $A$, we can construct the ideal it generates. First, define
 
 $$
 \begin{aligned}
@@ -201,164 +201,164 @@ AR&=\{a_1r_1+\cdots+a_nr_n:r_i\in R,a_i\in A,n\in\mathbf N_+\}.
 \end{aligned}
 $$
 
-其实它们分别是 $A$ 生成的左理想和右理想．然后，由子集 $A$ 生成的理想就是 $RAR$．对于交换环，定义出来的这些结构都相同．
+These are in fact the left ideal and the right ideal generated by $A$, respectively. Then the ideal generated by the subset $A$ is $RAR$. For a commutative ring, all these structures are the same.
 
-整数环中的所有理想 $n\mathbf Z$ 都是主理想，下文中常记作 $(n)$．
+All ideals $n\mathbf Z$ of the ring of integers are principal ideals, and below they are often written $(n)$.
 
-## 整环
+## Integral domains
 
-整环是交换、含幺、无零因子的非零环．这个概念正是整数环的推广．但是，这样得到的环性质未必足够好到允许将整数的整除理论中的每个结论都原样照搬过来．为了能够推广数论中的结论，可以在整环上进一步作出限制．其中，最为常见的三种整环分别是欧几里得整环、主理想整环和唯一分解整环；前面的概念严格地包含在后面的概念中．
+An integral domain is a commutative nonzero ring with unity and no zero divisors. This concept is exactly a generalization of the ring of integers. However, rings obtained this way do not necessarily have good enough properties to let every result from the divisibility theory of integers carry over unchanged. To generalize results from number theory, we can put further restrictions on integral domains. The three most common kinds are Euclidean domains, principal ideal domains and unique factorization domains; each earlier concept is strictly contained in the later ones.
 
-### 整除关系
+### Divisibility
 
-首先，这里将整数的整除理论中的相关概念推广到一般的交换环上．
+First, we generalize the relevant concepts from the divisibility theory of integers to general commutative rings.
 
-???+ abstract "整除"
-    设交换环 $R$ 有元素 $a,b\in R$，如果存在 $x\in R$，满足 $a=bx$，则称 $b$  **整除**（divide）$a$，记作 $b\mid a$．此时称 $b$ 是 $a$ 的 **因子**（divisor）．
+???+ abstract "Divisibility"
+    Let $R$ be a commutative ring with elements $a,b\in R$. If there exists $x\in R$ with $a=bx$, then $b$ is said to **divide** $a$, written $b\mid a$. In this case, $b$ is called a **divisor** of $a$.
 
-???+ abstract "相伴"
-    设交换环 $R$ 有元素 $a,b\in R$，如果它们只相差了一个可逆元，即存在可逆元 $u\in R$，满足 $a=bu$，则称 $a$ 和 $b$ 是 **相伴的**（associate）．
+???+ abstract "Associates"
+    Let $R$ be a commutative ring with elements $a,b\in R$. If they differ only by a unit, that is, there exists a unit $u\in R$ with $a=bu$, then $a$ and $b$ are called **associates** (or **associate**).
 
-整除关系是环上的 [偏序](../order-theory.md#二元关系) 关系，而相伴关系是环上的等价关系．从理想的角度看，$a\mid b$ 等价于 $(b)\subseteq (a)$，$a$ 和 $b$ 相伴等价于 $(a)=(b)$．因而，在讨论环中的元素时，通常不计较相伴元之间的差异．和整数的情形类似，交换环中 $a$ 和 $b$ 的最大公因子就定义为 $\{a,b\}$ 的下确界．
+Divisibility is a [preorder](../order-theory.md#二元关系) relation on the ring, and being associates is an equivalence relation on the ring. In terms of ideals, $a\mid b$ is equivalent to $(b)\subseteq (a)$, and $a$ and $b$ being associates is equivalent to $(a)=(b)$. So when discussing elements of a ring, we usually don't care about the difference between associates. As with the integers, the greatest common divisor of $a$ and $b$ in a commutative ring is defined as the greatest lower bound (infimum) of $\{a,b\}$.
 
-???+ abstract "最大公因子"
-    对于交换环 $R$ 和它的元素 $a,b\in R$，如果存在非零元素 $d\in R$，它满足 $d\mid a$ 和 $d\mid b$，且对于任何满足 $d'\mid a$ 和 $d'\mid b$ 的 $d'$ 都成立 $d'\mid d$，则称 $d$ 是 $a$ 和 $b$ 的 **最大公因子**（greatest common divisor），记作 $\gcd(a,b)$．
+???+ abstract "Greatest common divisor"
+    For a commutative ring $R$ and elements $a,b\in R$, if there exists a nonzero element $d\in R$ such that $d\mid a$ and $d\mid b$, and $d'\mid d$ for every $d'$ satisfying $d'\mid a$ and $d'\mid b$, then $d$ is called a **greatest common divisor** of $a$ and $b$, written $\gcd(a,b)$.
 
-在整环中，最大公因子在相伴意义下是唯一确定的．下面的讨论就限制在整环中．
+In an integral domain, the greatest common divisor is unique up to associates. The discussion below is restricted to integral domains.
 
-整环中还可以建立类似素数的概念．在整数理论中，素数存在着两个等价的定义，但是在一般的整环中，这两个定义对应着不同的概念：
+In integral domains, we can also set up concepts similar to primes. In the theory of integers, primes have two equivalent definitions, but in general integral domains these two definitions correspond to different concepts:
 
-???+ abstract "素元"
-    设整环 $R$ 有非零元素 $p\in R$，如果 $(p)$ 是素理想，也就是说，$p$ 不是可逆元，且 $p\mid ab$ 总能推出 $p\mid a$ 或 $p\mid b$，则称 $p$ 是 **素元**（prime）．
+???+ abstract "Prime element"
+    Let $R$ be an integral domain and $p\in R$ a nonzero element. If $(p)$ is a prime ideal, that is, $p$ is not a unit and $p\mid ab$ always implies $p\mid a$ or $p\mid b$, then $p$ is called a **prime** (prime element).
 
-???+ abstract "不可约元"
-    设整环 $R$ 有非零元素 $r\in R$，如果 $r$ 不是可逆元，而且对于任何 $a,b\in R$ 且 $r=ab$ 都有 $a$ 或 $b$ 是可逆元，则称 $r$ 是 **不可约元**（irreducible），或称 $r$ 不可约．反过来，如果 $r=ab$ 且 $a,b\in R$ 都不是可逆元，则称 $r$ 可约．
+???+ abstract "Irreducible element"
+    Let $R$ be an integral domain and $r\in R$ a nonzero element. If $r$ is not a unit, and for any $a,b\in R$ with $r=ab$, $a$ or $b$ is a unit, then $r$ is called an **irreducible** element, or $r$ is said to be irreducible. Conversely, if $r=ab$ where neither $a$ nor $b\in R$ is a unit, then $r$ is called reducible.
 
-可以说明，不可约元 $r$ 对应的主理想 $(r)$ 一定是环的所有真主理想中极大的；但是，一般的整环中，并非所有理想都是主理想，所以不可约元和极大理想的概念并不等价．
+One can show that the principal ideal $(r)$ of an irreducible element $r$ must be maximal among all proper principal ideals of the ring; however, in a general integral domain, not all ideals are principal, so the concepts of irreducible element and maximal ideal are not equivalent.
 
-类似于证明主理想整环中，素理想一定是极大理想，一般地可以证明如下结论：
+Similar to proving that prime ideals are maximal ideals in a principal ideal domain, one can prove the following in general:
 
-???+ note "定理"
-    设 $R$ 是整环，如果 $a\in R$ 是素元，那么 $a$ 也一定是不可约元．
+???+ note "Theorem"
+    Let $R$ be an integral domain. If $a\in R$ is a prime, then $a$ must also be irreducible.
 
-??? note "证明"
-    设 $r\in R$ 是素元，且 $a,b\in R$ 满足 $r=ab$．因为 $r$ 是素元，不妨设 $r\mid a$ 成立，则 $a=cr=cba$．因为整环上成立消去律，有 $1=bc$，故而，$b$ 有逆元 $c$．这就说明 $r$ 是不可约元．
+??? note "Proof"
+    Let $r\in R$ be a prime, and let $a,b\in R$ satisfy $r=ab$. Since $r$ is prime, we may assume $r\mid a$, so $a=cr=cba$. Since the cancellation law holds in an integral domain, $1=bc$, so $b$ has the inverse $c$. This shows that $r$ is irreducible.
 
-反过来，这一结论并不成立．
+The converse does not hold.
 
-??? example "反例"
-    在二次整数环 $\mathbf Z[\sqrt{-5}]$ 中，$3$ 是不可约元，但是 $9=3\cdot 3=(2+\sqrt{-5})(2-\sqrt{-5})$，所以它不是素元．
-    
-    这里给出这一反例的证明，不熟悉二次整数环的读者请先阅读 [二次整数环](#例子二次整数环) 部分．设 $N(\cdot)$ 是二次整数环上的范数．对于任何分解 $3=ab$ 都有 $N(a)N(b)=N(3)=9$．如果 $a,b$ 都不是可逆元，则 $N(a)$ 和 $N(b)$ 都大于 $1$，因而必然有 $N(a)=N(b)=3$．但是 $\mathbf Z[\sqrt{-5}]$ 上没有这样的元素，亦即 $x^2+5y^2=3$ 没有整数解．这就说明 $3$ 是不可约元．至于 $3$ 不是素元，就是要证明 $3$ 不能整除 $2\pm\sqrt{-5}$，这显然．
+??? example "Counterexample"
+    In the quadratic integer ring $\mathbf Z[\sqrt{-5}]$, $3$ is irreducible, but $9=3\cdot 3=(2+\sqrt{-5})(2-\sqrt{-5})$, so it is not prime.
 
-### 欧几里得整环
+    Here is a proof of this counterexample. Readers not familiar with quadratic integer rings should first read the section on [quadratic integer rings](#example-quadratic-integer-rings). Let $N(\cdot)$ be the norm on the quadratic integer ring. For any factorization $3=ab$, we have $N(a)N(b)=N(3)=9$. If neither $a$ nor $b$ is a unit, then $N(a)$ and $N(b)$ are both greater than $1$, so we must have $N(a)=N(b)=3$. But $\mathbf Z[\sqrt{-5}]$ has no such element, that is, $x^2+5y^2=3$ has no integer solutions. This shows that $3$ is irreducible. As for $3$ not being prime, we need to show that $3$ does not divide $2\pm\sqrt{-5}$, which is obvious.
 
-相关阅读：[（扩展）欧几里得算法](../number-theory/gcd.md)、[裴蜀定理](../number-theory/bezouts.md)
+### Euclidean domains
 
-欧几里得整环是允许做辗转相除法（即欧几里得算法）的整环．
+Related reading: [(Extended) Euclidean algorithm](../number-theory/gcd.md), [Bézout's theorem](../number-theory/bezouts.md)
 
-???+ abstract "欧几里得整环"
-    对于整环 $R$，如果存在映射 $N:R\setminus\{0\}\rightarrow\mathbf N$，满足对于任意 $a,b\in R$ 且 $b\neq 0$，都存在 $q,r\in R$ 使得 $a=qb+r$ 成立且 $r=0$ 或 $N(r)<N(b)$，则称整环 $R$ 为 **欧几里得整环**（Euclidean domain, ED）．映射 $N$ 称为欧几里得整环中元素的范数（norm）．
+A Euclidean domain is an integral domain in which we can carry out repeated division (the Euclidean algorithm).
 
-??? info "其他等价定义"
-    本文采用的定义仅仅在非零元素处定义了范数．不同文本可能对欧几里得整环的定义有不同处理．比如，有的文本可能补充定义 $N(0)=0$；但是随后的带余除法中并没有用到 $N(0)$ 的值，所以这无关紧要．再比如，[Wikipedia](https://en.wikipedia.org/wiki/Euclidean_domain) 的定义中还要求范数 $N$ 满足性质：对于任何非零 $a,b\in R$ 都有 $N(a)\le N(ab)$．但是，容易验证，如果欧几里得整环 $R$ 有范数 $N(\cdot)$ 满足本文定义所要求的性质，那么，可以定义范数 $N'(a)=\min_{b\in R\setminus\{0\}} N(ab)$ 使得它满足额外的性质 $N'(a)\le N'(ab)$．因此，这些不同的定义都是等价的．
+???+ abstract "Euclidean domain"
+    For an integral domain $R$, if there is a map $N:R\setminus\{0\}\rightarrow\mathbf N$ such that for any $a,b\in R$ with $b\neq 0$, there exist $q,r\in R$ with $a=qb+r$ and either $r=0$ or $N(r)<N(b)$, then $R$ is called a **Euclidean domain** (ED). The map $N$ is called the norm of elements of the Euclidean domain.
 
-这个定义其实就是整数中的带余除法的推广．范数的存在使得能够衡量余数和除数的相对大小．这样在辗转相除的时候，对应的余数的范数也在不断下降；因为范数取值在自然数上，这样的过程必然结束在 $r=0$ 时．这样，就得到了欧几里得整环上的辗转相除法．
+??? info "Other equivalent definitions"
+    The definition used in this article only defines the norm on nonzero elements. Different texts may handle the definition of a Euclidean domain differently. For example, some texts additionally define $N(0)=0$; but the value $N(0)$ is never used in the division with remainder, so this does not matter. As another example, the definition on [Wikipedia](https://en.wikipedia.org/wiki/Euclidean_domain) also requires the norm $N$ to satisfy: $N(a)\le N(ab)$ for any nonzero $a,b\in R$. However, it is easy to check that if a Euclidean domain $R$ has a norm $N(\cdot)$ with the properties required by the definition here, then we can define the norm $N'(a)=\min_{b\in R\setminus\{0\}} N(ab)$ so that it satisfies the extra property $N'(a)\le N'(ab)$. So these different definitions are all equivalent.
 
-能够做辗转相除法，这意味着欧几里得整环上能够高效地计算最大公因子．完全类比整数的整除理论，可以证明，辗转相除法的结果一定是最大公因子，而且裴蜀定理成立，其中的系数可以通过扩展欧几里得算法确定．
+This definition is really a generalization of division with remainder for integers. The norm lets us compare the relative sizes of the remainder and the divisor. So during repeated division, the norms of the remainders keep decreasing; since the norm takes values in the natural numbers, the process must end when $r=0$. This gives the Euclidean algorithm on Euclidean domains.
 
-???+ note "定理"
-    对于欧几里得整环 $R$ 和它的元素 $a,b\in R$，对 $a$ 和 $b$ 做辗转相除法得到的结果 $d$ 是 $a$ 和 $b$ 的最大公约数，且存在 $x,y\in R$ 使得 $d=ax+by$ 成立；反过来，任何 $ax+by$ 形式的元素都是 $d$ 的倍数．
+Being able to run the Euclidean algorithm means that greatest common divisors can be computed efficiently in a Euclidean domain. Exactly as in the divisibility theory of integers, one can prove that the result of the Euclidean algorithm is always a greatest common divisor, and that Bézout's theorem holds, with the coefficients found by the extended Euclidean algorithm.
 
-注意到，在环论的语言中，所有形如 $ax+by$ 的元素正是理想 $(a,b)$ 中的元素，而这一定理就说明了 $(a,b)$ 一定是主理想 $(d)$．
+???+ note "Theorem"
+    For a Euclidean domain $R$ and elements $a,b\in R$, the result $d$ of running the Euclidean algorithm on $a$ and $b$ is a greatest common divisor of $a$ and $b$, and there exist $x,y\in R$ with $d=ax+by$; conversely, every element of the form $ax+by$ is a multiple of $d$.
 
-其实，欧几里得整环中的理想一定是主理想．
+Note that in the language of ring theory, the elements of the form $ax+by$ are exactly the elements of the ideal $(a,b)$, and this theorem shows that $(a,b)$ must be the principal ideal $(d)$.
 
-???+ note "定理"
-    欧几里得整环中的理想一定是主理想．
+In fact, every ideal in a Euclidean domain is a principal ideal.
 
-??? note "证明"
-    设 $R$ 是欧几里得整环，且 $I$ 是它的理想．如果 $I=\{0\}$，它显然是主理想．设 $I$ 是非零理想．依定义，环 $R$ 上有范数 $N(\cdot)$，于是可以取 $I$ 中范数最小的非零元素 $d$．此时，对于任何 $a\in I$，都有 $a=qd+r$ 满足 $r=0$ 或 $N(r)< N(d)$．又因为 $r=a-qd\in I$，所以依 $d$ 的选取方式就可知 $r=0$，也就说 $a=qd\in (d)$．这就说明 $I$ 必然是主理想．
+???+ note "Theorem"
+    Every ideal in a Euclidean domain is a principal ideal.
 
-### 主理想整环
+??? note "Proof"
+    Let $R$ be a Euclidean domain and $I$ an ideal. If $I=\{0\}$, it is clearly a principal ideal. Suppose $I$ is a nonzero ideal. By definition, $R$ has a norm $N(\cdot)$, so we can take a nonzero element $d$ of $I$ with the smallest norm. Then for any $a\in I$, we have $a=qd+r$ with $r=0$ or $N(r)< N(d)$. Since $r=a-qd\in I$, by the choice of $d$ we get $r=0$, that is, $a=qd\in (d)$. This shows that $I$ must be a principal ideal.
 
-所有理想都是主理想的整环叫做主理想整环．这是性质相当良好，也十分常见的一类整环．在这些整环中，环中理想的概念就等同于整数中倍数的概念．
+### Principal ideal domains
 
-???+ abstract "主理想整环"
-    对于整环 $R$，如果它的每个理想都是主理想，则称它为 **主理想整环**（principal ideal domain, PID）．
+An integral domain in which every ideal is principal is called a principal ideal domain. This is a class of integral domains with quite good properties, and they are very common. In these integral domains, the concept of an ideal is the same as the concept of multiples in the integers.
 
-因而，上一节最后一个定理就可以复述如下：
+???+ abstract "Principal ideal domain"
+    For an integral domain $R$, if every ideal of $R$ is a principal ideal, then $R$ is called a **principal ideal domain** (PID).
 
-???+ note "定理"
-    欧几里得整环一定是主理想整环．
+So the last theorem of the previous section can be restated as follows:
 
-在主理想整环中，极大理想就等价于不可约元生成的理想．类似整数中素数和不可约元是等价的，主理想整环中，这两个概念也是等价的，故而极大理想和素理想也是完全等价的．
+???+ note "Theorem"
+    Every Euclidean domain is a principal ideal domain.
 
-???+ note "定理"
-    设主理想整环 $R$ 有非零理想 $I$，则 $I$ 是素理想，当且仅当 $I$ 是极大理想．
+In a principal ideal domain, maximal ideals are exactly the ideals generated by irreducible elements. Just as primes and irreducible elements are equivalent in the integers, these two concepts are also equivalent in a principal ideal domain, so maximal ideals and prime ideals are also completely equivalent.
 
-??? note "证明"
-    只需要证明素理想都是极大理想．设主理想整环 $R$ 中有非零素理想 $(p)$，且同时有理想 $(a)$ 满足 $(p)\subseteq(a)\subseteq R$．这说明 $a\mid p$，故而存在 $b\in R$ 使得 $p=ab$．但由于 $(p)$ 是素理想，$ab\in(p)$ 就意味着 $a\in(p)$ 或 $b\in(p)$．如果 $a\in(p)$，就说明 $(a)\subseteq (p)$，故而 $(a)=(p)$；如果 $b\in(p)$，就说明 $b=cp$，故而 $p=acp$，又因 $p\neq 0$，有 $1=ac$，即 $a$ 存在逆元 $c$，于是 $(a)=R$．这就说明，$(p)$ 是极大理想．
+???+ note "Theorem"
+    Let $R$ be a principal ideal domain with a nonzero ideal $I$. Then $I$ is a prime ideal if and only if $I$ is a maximal ideal.
 
-???+ note "推论"
-    设主理想整环 $R$ 有非零元素 $r$，则 $r$ 是素元，当且仅当 $r$ 是不可约元．
+??? note "Proof"
+    We only need to prove that every prime ideal is maximal. Let $R$ be a principal ideal domain with a nonzero prime ideal $(p)$, and let $(a)$ be an ideal with $(p)\subseteq(a)\subseteq R$. This means $a\mid p$, so there exists $b\in R$ with $p=ab$. Since $(p)$ is a prime ideal, $ab\in(p)$ means $a\in(p)$ or $b\in(p)$. If $a\in(p)$, then $(a)\subseteq (p)$, so $(a)=(p)$; if $b\in(p)$, then $b=cp$, so $p=acp$, and since $p\neq 0$, $1=ac$, that is, $a$ has the inverse $c$, so $(a)=R$. This shows that $(p)$ is a maximal ideal.
 
-上一节中对裴蜀定理的分析可以迁移到主理想整环上．
+???+ note "Corollary"
+    Let $R$ be a principal ideal domain with a nonzero element $r$. Then $r$ is prime if and only if $r$ is irreducible.
 
-???+ note "定理"
-    设 $R$ 是主理想整环，且 $a,b\in R$ 是非零元素．设 $d\in R$ 是理想 $(a,b)$ 的生成元．那么，$a$ 和 $b$ 的最大公因子是 $d$，且在相伴意义下唯一；而且，存在 $x,y\in R$ 使得 $ax+by=d$ 成立．
+The analysis of Bézout's theorem in the previous section carries over to principal ideal domains.
 
-也就是说，主理想整环中 [裴蜀定理](../number-theory/bezouts.md) 依然成立．同样是存在最大公因子，欧几里得整环和主理想整环的最大区别在于在前者中，最大公因子可以通过辗转相除法高效地计算，但是主理想整环中一般并没有这样的高效算法．
+???+ note "Theorem"
+    Let $R$ be a principal ideal domain and $a,b\in R$ nonzero elements. Let $d\in R$ be a generator of the ideal $(a,b)$. Then $d$ is a greatest common divisor of $a$ and $b$, unique up to associates; moreover, there exist $x,y\in R$ with $ax+by=d$.
 
-### 唯一分解整环
+In other words, [Bézout's theorem](../number-theory/bezouts.md) still holds in principal ideal domains. Both have greatest common divisors; the biggest difference between Euclidean domains and principal ideal domains is that in the former, the greatest common divisor can be computed efficiently by the Euclidean algorithm, while principal ideal domains generally have no such efficient algorithm.
 
-比主理想整环更一般的概念是唯一分解整环．整数的唯一分解定理称为 [算术基本定理](../number-theory/basic.md#算术基本定理)．类似的唯一分解定理其实在一些并非主理想整环的整环中依然成立．这样的整环叫做唯一分解整环．
+### Unique factorization domains
 
-???+ abstract "唯一分解整环"
-    对于整环 $R$，如果任何非零且不可逆的元素 $r$ 都能写作 $r=p_1\cdots p_n$ 的形式，这里的 $p_1,\cdots,p_n$ 是可能重复的不可约元，且这样的分解在相伴和重新排列的意义下唯一，则称整环 $R$ 是 **唯一分解整环**（unique factorization domain, UFD）．
+A more general concept than principal ideal domains is unique factorization domains. The unique factorization theorem for integers is called the [fundamental theorem of arithmetic](../number-theory/basic.md#算术基本定理). Similar unique factorization theorems actually still hold in some integral domains that are not principal ideal domains. Such integral domains are called unique factorization domains.
 
-算术基本定理说明，整数环 $\mathbf Z$ 是唯一分解整环．
+???+ abstract "Unique factorization domain"
+    For an integral domain $R$, if every nonzero non-unit element $r$ can be written as $r=p_1\cdots p_n$, where $p_1,\cdots,p_n$ are irreducible elements (possibly repeated), and such a factorization is unique up to associates and reordering, then $R$ is called a **unique factorization domain** (UFD).
 
-前文给出了不可约元不是素元的反例，其中涉及的整环 $\mathbf Z[\sqrt{-5}]$ 中唯一分解定理不再成立．但是，在所有唯一分解整环上，不可约元和素元都是等价的．
+The fundamental theorem of arithmetic says that the ring of integers $\mathbf Z$ is a unique factorization domain.
 
-???+ note "定理"
-    对于唯一分解整环 $R$ 和它的非零元素 $a\in R$，则 $a$ 是素元，当且仅当 $a$ 是不可约元．
+Above we gave a counterexample of an irreducible element that is not prime; in the integral domain $\mathbf Z[\sqrt{-5}]$ involved there, unique factorization no longer holds. However, in every unique factorization domain, irreducible elements and primes are equivalent.
 
-??? note "证明"
-    只需要证明不可约元都是素元．对于不可约元 $r$，如果 $r\mid ab$，那么就存在 $c\in R$ 使得 $ab=rc$ 成立．因为 $R$ 是唯一分解整环，所以可以对 $a,b,c\in R$ 都做分解成不可约元的乘积．比较左右两边，根据分解的唯一性可知，$r$ 必然和 $a$ 或者 $b$ 的某个不可约因子相伴，故而 $r$ 整除 $a$ 或 $b$ 中的一个．这就说明 $r$ 也是素元．
+???+ note "Theorem"
+    For a unique factorization domain $R$ and a nonzero element $a\in R$, $a$ is prime if and only if $a$ is irreducible.
 
-所有的主理想整环都是唯一分解整环．
+??? note "Proof"
+    We only need to prove that every irreducible element is prime. For an irreducible element $r$, if $r\mid ab$, then there exists $c\in R$ with $ab=rc$. Since $R$ is a unique factorization domain, we can factor each of $a,b,c\in R$ into a product of irreducible elements. Comparing both sides, uniqueness of factorization shows that $r$ must be associate to some irreducible factor of $a$ or $b$, so $r$ divides one of $a$ or $b$. This shows that $r$ is also prime.
 
-???+ note "定理"
-    主理想整环一定是唯一分解整环．
+Every principal ideal domain is a unique factorization domain.
 
-??? note "证明"
-    设 $R$ 是主理想整环，且 $r\in R$ 不是零元，也不是可逆元．要说明 $r$ 可以唯一分解为一系列不可约元的乘积，可以分为两步：首先证明分解的存在性，再证明分解的唯一性．
-    
-    分解的存在性比较自然．如果 $r$ 已经是不可约元，就不必继续分解；否则，必然存在 $r_1,r_2$ 使得 $r=r_1r_2$ 且 $r_1,r_2$ 都不是可逆元．进而，如果 $r_1$ 和 $r_2$ 都是不可约元，那么也不必继续分解；否则，对 $r_1$ 和 $r_2$ 中不是不可约元的，可以进一步分解，$r$ 也就可以写成更多元素的乘积．由此，只要乘积中不全是不可约元，就可以将分解过程不断进行下去．分解必然在有限步后终止．不然，选择公理保证可以从 $R$ 中取出无限长的元素链 $\{r_{(i)}\}_{i=0}^\infty$ 满足 $r_{(0)}=r$ 且 $r_{(i+1)}\mid r_{(i)}$ 对所有 $i\in\mathbf N$ 都成立，且这些整除关系都是严格的，即链中不存在相伴元．用理想的语言说，这对应着严格无穷递增的理想列：$I_{0}\subset I_{1}\subset \cdots\subset I_{i}\subset\cdots\subset R$，其中，$I_i=(r_{(i)})$．容易验证，这些理想的并 $I=\bigcup_{i=0}^\infty I_i$ 还是理想，因而必然是主理想．令 $a$ 为主理想 $I$ 的生成元，因而，存在 $n\in\mathbf N$ 满足 $a\in I_n$．所以，$I=(a)\subseteq I_n$．这说明，这个严格无穷递增的理想列并不存在，故而上述分解过程必然在有限步内终止．
-    
-    然后证明分解的唯一性．可以对分解中因子的个数做归纳．归纳的关键步骤在于验证，如果 $r=p_1p_2\cdots p_n=q_1q_2\cdots q_m$ 且 $n\le m$，则必然有 $p_1$ 与某个 $q_j$ 相伴．这里需要用到之前的结论：主理想整环中不可约元都是素元．已知 $p_1$ 是 $R$ 中的不可约元，故而它也是素元，所以对右侧的乘积可以归纳地说明，必然存在某个元素 $q_j$ 使得 $p_1\mid q_j$．所以，存在 $c\in R$ 使得 $q_j=p_1c$，而 $q_j$ 是不可约元，$p_1$ 也是不可约元，依定义只能有 $c$ 是可逆元，故而 $p_1$ 与 $q_j$ 相伴．这样就可以利用消去律在左右两侧分别消去 $p_1$ 和 $q_j$，并将两者相差的相伴元乘到任意一个剩余元素上．根据归纳假设，必然有 $p_2\cdots p_n$ 和 $q_1\cdots q_{j-1}q_{j+1}\cdots q_m$ 中不可约元个数相等，且在相伴意义下是一样的．定理得证．
+???+ note "Theorem"
+    Every principal ideal domain is a unique factorization domain.
 
-最后，最大公因子的存在性在唯一分解整环上依然成立．
+??? note "Proof"
+    Let $R$ be a principal ideal domain, and let $r\in R$ be neither zero nor a unit. To show that $r$ can be uniquely factored into a product of irreducible elements, we proceed in two steps: first prove that a factorization exists, then prove that it is unique.
 
-???+ note "定理"
-    设唯一分解整环 $R$ 有非零元素 $a,b\in R$，且它们可以分解成 $a=up_1^{r_1}\cdots p_n^{r_n}$ 和 $b=vp_1^{s_1}\cdots p_n^{s_n}$ 的形式，其中，$u,v$ 是可逆元，$p_1,\cdots,p_n$ 是各不相同的不可约元，$r_i,s_i$ 都是自然数，那么，它们的一个最大公约数是 $d=p_1^{\min\{r_1,s_1\}}\cdots p_n^{\min\{r_n,s_n\}}$．
+    Existence of a factorization is fairly natural. If $r$ is already irreducible, there is nothing more to factor; otherwise, there must exist $r_1,r_2$ with $r=r_1r_2$ where neither $r_1$ nor $r_2$ is a unit. Then, if $r_1$ and $r_2$ are both irreducible, there is again nothing more to factor; otherwise, whichever of $r_1$ and $r_2$ is not irreducible can be factored further, so $r$ can be written as a product of more elements. In this way, as long as not all factors in the product are irreducible, the factoring process can continue. The factoring must stop after finitely many steps. Otherwise, the axiom of choice lets us pick an infinitely long chain of elements $\{r_{(i)}\}_{i=0}^\infty$ from $R$ with $r_{(0)}=r$ and $r_{(i+1)}\mid r_{(i)}$ for all $i\in\mathbf N$, where all these divisibility relations are strict, that is, the chain contains no associates. In the language of ideals, this corresponds to a strictly increasing infinite sequence of ideals: $I_{0}\subset I_{1}\subset \cdots\subset I_{i}\subset\cdots\subset R$, where $I_i=(r_{(i)})$. It is easy to check that the union $I=\bigcup_{i=0}^\infty I_i$ of these ideals is still an ideal, so it must be a principal ideal. Let $a$ be a generator of the principal ideal $I$; then there exists $n\in\mathbf N$ with $a\in I_n$. So $I=(a)\subseteq I_n$. This shows that such a strictly increasing infinite sequence of ideals does not exist, so the factoring process above must stop in finitely many steps.
 
-这其实说明，最大公因子存在这个性质比唯一分解定理成立还要弱[^gcd-domain]．
+    Next we prove uniqueness of the factorization, by induction on the number of factors. The key step of the induction is to check that if $r=p_1p_2\cdots p_n=q_1q_2\cdots q_m$ with $n\le m$, then $p_1$ must be associate to some $q_j$. Here we need the earlier result: in a principal ideal domain, every irreducible element is prime. Since $p_1$ is an irreducible element of $R$, it is also prime, so by induction on the product on the right-hand side, there must be some element $q_j$ with $p_1\mid q_j$. So there exists $c\in R$ with $q_j=p_1c$. Since $q_j$ is irreducible and $p_1$ is also irreducible, by definition $c$ must be a unit, so $p_1$ and $q_j$ are associates. Then we can use the cancellation law to cancel $p_1$ and $q_j$ from the two sides, and multiply the unit by which they differ into any one of the remaining elements. By the induction hypothesis, $p_2\cdots p_n$ and $q_1\cdots q_{j-1}q_{j+1}\cdots q_m$ must have the same number of irreducible factors, and these are the same up to associates. This proves the theorem.
 
-### 例子：二次整数环
+Finally, the existence of greatest common divisors still holds in unique factorization domains.
 
-相关阅读：[二次域](../number-theory/quadratic.md)
+???+ note "Theorem"
+    Let $R$ be a unique factorization domain with nonzero elements $a,b\in R$, which factor as $a=up_1^{r_1}\cdots p_n^{r_n}$ and $b=vp_1^{s_1}\cdots p_n^{s_n}$, where $u,v$ are units, $p_1,\cdots,p_n$ are pairwise distinct irreducible elements, and $r_i,s_i$ are natural numbers. Then a greatest common divisor of them is $d=p_1^{\min\{r_1,s_1\}}\cdots p_n^{\min\{r_n,s_n\}}$.
 
-抽象代数的理解不能离开例子．正是因为费马大定理的研究过程需要研究一类代数整数的性质，才逐渐发展出了今天的环论[^ring-theory-history]．这里讨论最简单的代数整数，即二次整数．这部分的很多结论的证明需要用到复杂的代数数论知识，故而略去．
+This actually shows that the existence of greatest common divisors is a weaker property than unique factorization[^gcd-domain].
 
-**二次整数**（quadratic integer）指的是二次项系数为一的整系数二次方程 $\alpha^2+b\alpha+c=0$ 的复根．所有二次整数能且仅能有形式
+### Example: quadratic integer rings
+
+Related reading: [Quadratic fields](../number-theory/quadratic.md)
+
+You can't understand abstract algebra without examples. It was precisely because the study of Fermat's Last Theorem required studying the properties of a class of algebraic integers that today's ring theory gradually developed[^ring-theory-history]. Here we discuss the simplest algebraic integers, namely quadratic integers. The proofs of many results in this part need advanced algebraic number theory, so they are omitted.
+
+A **quadratic integer** is a complex root of a quadratic equation $\alpha^2+b\alpha+c=0$ with integer coefficients and leading coefficient one. Every quadratic integer has the form
 
 $$
 \alpha=a+b\omega,~(a,b\in\mathbf Z)
 $$
 
-这里，
+where
 
 $$
 \omega=\begin{cases}
@@ -367,34 +367,34 @@ $$
 \end{cases}
 $$
 
-其中，$D$ 没有平方因子．
+and $D$ is square-free.
 
-??? note "分析"
-    根据二次方程求根公式，可以知道这个方程的根一定可以写成
-    
+??? note "Analysis"
+    By the quadratic formula, the roots of this equation can always be written as
+
     $$
     \alpha=\frac{-b\pm\sqrt{b^2-4c}}{2}.
     $$
-    
-    当 $b=2k+1$ 是奇数时，这个根可以写作
-    
+
+    When $b=2k+1$ is odd, the root can be written as
+
     $$
     \alpha=-k-\frac{1\pm\sqrt{4(k^2+k-c)+1}}{2}.
     $$
-    
-    否则，当 $b=2k$ 是偶数时，这个根可以写作
-    
+
+    Otherwise, when $b=2k$ is even, the root can be written as
+
     $$
     \alpha=-k\pm\sqrt{k^2-c}.
     $$
-    
-    从而可以归纳得知二次整数必然有上述形式．
 
-容易验证，对于这样的 $\omega$，集合 $\mathbf Z[\omega]=\{a+b\omega:a,b\in\mathbf Z\}$ 构成环．这称为 **二次整数环**（quadratic integer ring），它的分式域就是二次域 $\mathbf Q(\sqrt D)$．当 $D>0$ 时，所有二次整数都是实数，故而也称作 **实二次整数环**；当 $D<0$ 时，除了整数外的二次整数都是复数，故而也称作 **虚二次整数环**．
+    From this we can conclude that quadratic integers must have the form above.
 
-所有二次整数环 $\mathbf Z[\omega]$ 都是整环．其中，当 $D=-1$ 时，$\mathbf Z[\sqrt{-1}]$（或记作 $\mathbf Z[\mathrm{i}]$）也称 Gauss 整数环；当 $D=-3$ 时，$\mathbf Z\left[\dfrac{1+\sqrt{-3}}{2}\right]$ 则称为 Eisenstein 整数环．
+It is easy to check that for such an $\omega$, the set $\mathbf Z[\omega]=\{a+b\omega:a,b\in\mathbf Z\}$ forms a ring. This is called a **quadratic integer ring**, and its field of fractions is the quadratic field $\mathbf Q(\sqrt D)$. When $D>0$, all the quadratic integers are real, so it is also called a **real quadratic integer ring**; when $D<0$, all quadratic integers other than ordinary integers are non-real complex numbers, so it is also called an **imaginary quadratic integer ring**.
 
-对于二次整数 $a+b\omega$，可以定义它的 **共轭**（conjugate）是 $a+b\bar\omega$，其中，
+Every quadratic integer ring $\mathbf Z[\omega]$ is an integral domain. When $D=-1$, $\mathbf Z[\sqrt{-1}]$ (also written $\mathbf Z[\mathrm{i}]$) is called the ring of Gaussian integers; when $D=-3$, $\mathbf Z\left[\dfrac{1+\sqrt{-3}}{2}\right]$ is called the ring of Eisenstein integers.
+
+For a quadratic integer $a+b\omega$, we define its **conjugate** to be $a+b\bar\omega$, where
 
 $$
 \bar\omega=\begin{cases}
@@ -403,9 +403,9 @@ $$
 \end{cases}
 $$
 
-注意，因为 $D>0$ 时，二次整数是实数，所以这里的共轭的概念和复数的共轭的概念并不是完全一致的，但它们都是域论中代数元的共轭的概念的特例．共轭的二次整数是同一个整系数二次方程的根．
+Note that when $D>0$, quadratic integers are real numbers, so this notion of conjugate is not exactly the same as the complex conjugate; both are special cases of the notion of conjugate algebraic elements in field theory. Conjugate quadratic integers are roots of the same quadratic equation with integer coefficients.
 
-在二次整数环上可以定义 **范数**
+On a quadratic integer ring we can define the **norm**
 
 $$
 \begin{aligned}
@@ -417,73 +417,73 @@ a^2-Db^2,& D\equiv 2,3\pmod 4.
 \end{aligned}
 $$
 
-二次整数的范数一定是整数．特别地，当 $D<0$ 时，范数一定是自然数．范数保持乘法结构，即 $N(ab)=N(a)N(b)$．
+The norm of a quadratic integer is always an integer. In particular, when $D<0$, the norm is always a natural number. The norm preserves multiplication, that is, $N(ab)=N(a)N(b)$.
 
-二次整数环中的可逆元（单位）能且仅能是那些范数是 $\pm1$ 的元素．对于 $D>0$ 的情形，这就相当于考虑 [Pell 方程](../number-theory/pell-equation.md)  $x^2-Dy^2=\pm1$ 或 $x^2-Dy^2=\pm4$ 的解．对于 $D<0$ 的情形，容易验证，除了 Gauss 整数环 $\mathbf Z[\rm{i}]$ 中可逆元是 $\{\pm1,\pm\rm{i}\}$ 和 Eisenstein 整数环 $\mathbf Z[\omega]$ 中可逆元是 $\{\pm1,\pm\omega,\pm\omega^2\}$ 这两种特殊情形外，其余的可逆元都只有 $\{\pm1\}$．
+The units of a quadratic integer ring are exactly the elements of norm $\pm1$. For $D>0$, this amounts to finding solutions of the [Pell equation](../number-theory/pell-equation.md)  $x^2-Dy^2=\pm1$ or $x^2-Dy^2=\pm4$. For $D<0$, it is easy to check that, apart from the two special cases of the Gaussian integers $\mathbf Z[\rm{i}]$ with units $\{\pm1,\pm\rm{i}\}$ and the Eisenstein integers $\mathbf Z[\omega]$ with units $\{\pm1,\pm\omega,\pm\omega^2\}$, the only units are $\{\pm1\}$.
 
-二次整数环上定义的范数 $N(\alpha)$ 可以用来证明它是欧几里得整环．对于 $D>0$ 的情形，需要使用它的绝对值 $|N(\alpha)|$ 来作为欧几里得整环定义中的范数．利用这样得到的范数，能够证明在 $D<0$ 时，
+The norm $N(\alpha)$ defined on a quadratic integer ring can be used to prove that it is a Euclidean domain. For $D>0$, we need to use its absolute value $|N(\alpha)|$ as the norm in the definition of a Euclidean domain. Using the norm obtained this way, one can prove that for $D<0$ with
 
 $$
 D=-1,-2,-3,-7,-11
 $$
 
-或者在 $D>0$ 时，
+or for $D>0$ with
 
 $$
 D=2, 3, 5, 6, 7, 11, 13, 17, 19, 21, 29, 33, 37, 41, 57, 73
 $$
 
-这些整数对应的二次整数环是在模 $|N(\cdot)|$ 下的欧几里得整环．但是，欧几里得整环定义中的范数未必是上述定义的范数．比如在 $D=14,69$ 时，相应的二次整数环也是欧几里得整环，但是需要用到别的范数．对于 $D<0$ 的情形，可以证明上面给出的情形就是二次整数环中所有的欧几里得整环．
+the corresponding quadratic integer rings are Euclidean domains with respect to $|N(\cdot)|$. However, the norm in the definition of a Euclidean domain need not be the norm defined above. For example, when $D=14,69$, the corresponding quadratic integer rings are also Euclidean domains, but a different norm is needed. For $D<0$, one can prove that the cases above are all the Euclidean domains among quadratic integer rings.
 
-利用更为复杂的方法，还可以判断某个二次整数环是否是主理想整环．可以证明当 $D<0$ 时，只有
+With more advanced methods, we can also decide whether a quadratic integer ring is a principal ideal domain. One can prove that for $D<0$, only
 
 $$
 D=-1,-2,-3,-7,-11,-19,-43,-67,-163
 $$
 
-对应的二次整数环是主理想整环．比较上面的结果，可以知道诸如 $D=-19$ 的情形提供了主理想整环不是欧几里得整环的例子．当 $D>0$ 时，目前尚没有完整的结果．
+give quadratic integer rings that are principal ideal domains. Comparing with the result above, cases such as $D=-19$ give examples of principal ideal domains that are not Euclidean domains. For $D>0$, there is no complete result yet.
 
-但是，可以证明，在二次整数环中，唯一分解整环和主理想整环是等价的．上面的结果说明，比如说 $\mathbf Z[\sqrt{-5}]$ 就不是主理想整环，因而也不是唯一分解整环．之前已经通过例子实际证明过了它不能唯一分解，即
+However, one can prove that among quadratic integer rings, unique factorization domains and principal ideal domains are the same. The result above shows, for example, that $\mathbf Z[\sqrt{-5}]$ is not a principal ideal domain, and so it is not a unique factorization domain either. We already showed with an explicit example that unique factorization fails in it:
 
 $$
 9=3\times3=(2+\sqrt{-5})\times(2-\sqrt{-5}).
 $$
 
-利用同样的例子，可以说明理想 $(3,2+\sqrt{-5})$ 也不是主理想．稍后会看到，是唯一分解整环但不是主理想整环的一个简单例子是多项式环 $\mathbf Z[x]$．
+Using the same example, we can show that the ideal $(3,2+\sqrt{-5})$ is not a principal ideal. We will see later that a simple example of a unique factorization domain that is not a principal ideal domain is the polynomial ring $\mathbf Z[x]$.
 
-尽管很多二次整数环并不是唯一分解整环，但是它们都是 [Dedekind 整环](https://en.wikipedia.org/wiki/Dedekind_domain)．这意味着，所有二次整数环中的非平凡理想都可以唯一分解为一系列素理想之积．但如果二次整数环本身并非主理想整环，这些素理想因子并不一定对应着素元，因而唯一分解定理（即数分解成素数的乘积）不再成立：这也是研究理想而不是数的最初动机．
+Although many quadratic integer rings are not unique factorization domains, they are all [Dedekind domains](https://en.wikipedia.org/wiki/Dedekind_domain). This means every nontrivial ideal in a quadratic integer ring can be uniquely factored into a product of prime ideals. But if the quadratic integer ring itself is not a principal ideal domain, these prime ideal factors do not necessarily correspond to prime elements, so the unique factorization theorem (factoring numbers into products of primes) no longer holds: this was the original motivation for studying ideals rather than numbers.
 
-## 多项式环
+## Polynomial rings
 
-相关阅读：[多项式技术简介](../poly/intro.md)
+Related reading: [Introduction to polynomial techniques](../poly/intro.md)
 
-在算法竞赛中，时常会遇到多项式的各种运算．多项式的乘法、取逆、取余等运算可以看作数的运算在多项式环上的推广．利用抽象代数的语言，可以更快地理解多项式环上相关运算的性质．
+In competitive programming, we often meet various operations on polynomials. Multiplication, inversion, taking remainders and other polynomial operations can be seen as generalizations of operations on numbers to polynomial rings. The language of abstract algebra helps us understand the properties of these operations on polynomial rings more quickly.
 
-???+ abstract "多项式"
-    对于非零交换幺环 $R$，一个 $R$ 上的 **多项式**（polynomial）是指形式和
-    
+???+ abstract "Polynomial"
+    For a nonzero commutative ring with unity $R$, a **polynomial** over $R$ is a formal sum
+
     $$
     \sum_{k=0}^{n}a_kx^k = a_0+a_1x+\cdots+a_{n-1}x^{n-1}+a_nx^n,
     $$
-    
-    其中，$n\in\mathbf N$，且对于每个 $k$，都有 $a_k\in R$．这些 $a_k$ 称为多项式的 **系数**（coefficient），相应的 $a_kx^k$ 称为多项式的 **项**（term）．项 $a_kx^k$ 中的 $k$ 称为该项的 **次数**（degree）．
-    
-    所有系数都为零（即零元）的多项式称为 **零多项式**（zero polynomial），记作 $0$．对于其它多项式，不妨设 $a_n\neq 0$，即 $a_nx^n$ 是系数不为零的项中次数最高的项．此时，自然数 $n$ 称为多项式的 **次数**（degree），而它所在的项 $a_nx^n$ 称为 **最高次项**（leading term），$a_n$ 也称为 **最高次项系数**（leading coefficient）．最高次项系数等于一（即幺元）的多项式称为 **首一**（monic）多项式．零多项式的次数不予指定，或者规定为 $-\infty$．
 
-多项式记号中出现的 $x$ 称为多项式的 **不定元**（indeterminate）．它本身没有任何含义，也没有取值范围．它的存在，仅仅是通过它的指数标记系数的位置．所以，多项式也可以写作 $R$ 上的数列
+    where $n\in\mathbf N$ and $a_k\in R$ for each $k$. These $a_k$ are called the **coefficients** of the polynomial, and the corresponding $a_kx^k$ are called its **terms**. The $k$ in the term $a_kx^k$ is called the **degree** of that term.
+
+    The polynomial whose coefficients are all zero (the zero element) is called the **zero polynomial**, written $0$. For any other polynomial, we may assume $a_n\neq 0$, that is, $a_nx^n$ is the term of highest degree among the terms with nonzero coefficients. Then the natural number $n$ is called the **degree** of the polynomial, the term $a_nx^n$ is called the **leading term**, and $a_n$ is called the **leading coefficient**. A polynomial whose leading coefficient is one (the unity) is called **monic**. The degree of the zero polynomial is left undefined, or defined to be $-\infty$.
+
+The $x$ appearing in the polynomial notation is called the **indeterminate** of the polynomial. It has no meaning of its own and no range of values. It is there only to mark the positions of the coefficients by its exponents. So a polynomial can also be written as a sequence over $R$
 
 $$
 (a_0,a_1,...,a_{n-1},a_n,0,0,\cdots).
 $$
 
-但是，这样的数列只能出现有限多个不为零的项．如果两个多项式对应的系数数列一样，就称两个多项式相等．这相当于在补齐系数为零的项后，它们的形式和完全一致．下文中，不再区分相等的多项式的形式和的记号：如果必要，读者可以自行补齐系数中空缺的零．
+However, such a sequence can only have finitely many nonzero terms. Two polynomials are equal if their coefficient sequences are the same. This is the same as saying their formal sums are identical after filling in the terms with zero coefficients. Below we won't distinguish between different formal-sum notations of equal polynomials: if needed, readers can fill in the missing zero coefficients themselves.
 
-有时候需要将环中的元素代入多项式中的不定元．比如设 $f(x)$ 是 $R$ 的多项式且 $a\in R$，则将 $a$ 代入多项式 $f(x)$ 的结果就是 $f(a)$．它的含义是：在多项式的形式和中，将 $x$ 替换成 $a$，就能得到 $R$ 中的算术表达式，而 $f(a)$ 就是这个表达式在 $R$ 中运算得到的结果．
+Sometimes we need to substitute an element of the ring for the indeterminate of a polynomial. For example, if $f(x)$ is a polynomial over $R$ and $a\in R$, the result of substituting $a$ into $f(x)$ is $f(a)$. This means: replacing $x$ with $a$ in the formal sum of the polynomial gives an arithmetic expression in $R$, and $f(a)$ is the result of evaluating this expression in $R$.
 
-??? info "「多项式」和「多项式函数」"
-    读者不应混淆这两个概念．多项式只是有限长的系数数列，它并不自动成为函数．尽管这里将环中元素代入不定元的操作确实将多项式映射为多项式函数，但是这样的映射未必是单射．比如，$f(x)=x^p-x$ 作为域 $\mathbf F_p$ 上的多项式，显然不等于零多项式；但是 $f(x)$ 作为多项式函数 $\mathbf F_p\rightarrow \mathbf F_p$，恒等于零（即费马小定理）．虽然两者概念不同，很多多项式函数的概念都可以推广到多项式的情形，比如可以仿照多项式函数的微分、不定积分、复合等定义多项式的（形式的）[导数](../poly/intro.md#导数)、[不定积分](../poly/intro.md#导数)、[复合](../poly/intro.md#复合) 等．这些形式运算并不依赖于任何拓扑结构，但是仍然成立很多运算法则．
+??? info "Polynomials and polynomial functions"
+    Readers should not confuse these two concepts. A polynomial is just a finite sequence of coefficients; it does not automatically become a function. Although substituting ring elements for the indeterminate does map polynomials to polynomial functions, this map is not necessarily injective. For example, $f(x)=x^p-x$ as a polynomial over the field $\mathbf F_p$ is clearly not the zero polynomial; but as a polynomial function $\mathbf F_p\rightarrow \mathbf F_p$, $f(x)$ is identically zero (this is Fermat's little theorem). Although the two concepts are different, many concepts for polynomial functions can be generalized to polynomials. For example, by imitating differentiation, indefinite integration and composition of polynomial functions, we can define (formal) [derivatives](../poly/intro.md#导数), [indefinite integrals](../poly/intro.md#导数), [composition](../poly/intro.md#复合) and so on for polynomials. These formal operations don't rely on any topological structure, but many rules of computation still hold.
 
-对于多项式
+For polynomials
 
 $$
 \begin{aligned}
@@ -492,26 +492,26 @@ g(x)&=b_0+b_1x+\cdots+b_{n-1}x^{n-1}+b_nx^n,
 \end{aligned}
 $$
 
-多项式的加法运算定义为
+polynomial addition is defined as
 
 $$
 f(x)+g(x) = (a_0+b_0)+(a_1+b_1)x+\cdots+(a_{n-1}+b_{n-1})x^{n-1}+(a_n+b_n)x^n,
 $$
 
-而多项式的乘法运算定义为
+and polynomial multiplication is defined as
 
 $$
 f(x)g(x) = a_0b_0+(a_1b_0+a_0b_1)x+(a_2b_0+a_1b_1+a_0b_2)x^2+\cdots,
 $$
 
-其中，$x^k$ 项的系数为 $\sum_{i=0}^ka_{k-i}b_i$．在这样定义的加法和乘法运算下，可以证明，$R$ 上的全体多项式构成环，记作 $R[x]$．
+where the coefficient of the $x^k$ term is $\sum_{i=0}^ka_{k-i}b_i$. Under addition and multiplication defined this way, one can prove that all polynomials over $R$ form a ring, written $R[x]$.
 
-多项式 $f(x)$ 的次数记作 $\deg f(x)$．那些次数为零的多项式是常数多项式，它们以及零多项式相当于 $R$ 在 $R[x]$ 中的嵌入．显然，$R$ 有零因子当且仅当 $R[x]$ 有零因子．
+The degree of a polynomial $f(x)$ is written $\deg f(x)$. Polynomials of degree zero are constant polynomials; they and the zero polynomial amount to the embedding of $R$ in $R[x]$. Clearly, $R$ has zero divisors if and only if $R[x]$ has zero divisors.
 
-???+ note "定理"
-    多项式环 $R[x]$ 是整环，当且仅当 $R$ 是整环．
+???+ note "Theorem"
+    The polynomial ring $R[x]$ is an integral domain if and only if $R$ is an integral domain.
 
-整环 $R$ 上的多项式环 $R[x]$ 中，加法和乘法的结果满足
+In the polynomial ring $R[x]$ over an integral domain $R$, the results of addition and multiplication satisfy
 
 $$
 \begin{aligned}
@@ -520,175 +520,175 @@ $$
 \end{aligned}
 $$
 
-这里设 $\deg 0 = -\infty$．所以，多项式环中的可逆元也一定是它的常数多项式中的那些可逆元．任何一次及以上的多项式都不是可逆的．
+Here we set $\deg 0 = -\infty$. So the units of a polynomial ring must be among the units of its constant polynomials. No polynomial of degree one or higher is invertible.
 
-下文的讨论将仅限于整环上的多项式．
+The discussion below is restricted to polynomials over integral domains.
 
-???+ info "约定"
-    下文中，将不加区分地使用「环 $R$ 上的多项式」和「多项式环 $R[x]$ 中的多项式」两种说法．比如，多项式在环 $R$ 上不可约，就是指多项式在环 $R[x]$ 中不可约．而且，如果 $R$ 是 $S$ 的子环，那么 $R$ 上的多项式将自动成为 $S$ 上的多项式；对此也不再多加说明．
+???+ info "Convention"
+    Below, we use "polynomial over the ring $R$" and "polynomial in the polynomial ring $R[x]$" interchangeably. For example, a polynomial being irreducible over $R$ means it is irreducible in $R[x]$. Also, if $R$ is a subring of $S$, then polynomials over $R$ are automatically polynomials over $S$; we won't point this out again.
 
-### 域上的多项式环
+### Polynomial rings over fields
 
-整环上的多项式环中性质最为简单的，当然是域上的多项式环．域 $F$ 上的多项式环 $F[x]$ 因为系数可以做除法，所以可以定义带余除法．不妨设非零多项式 $f(x)$ 的范数 $N(f(x))=\deg f(x)$．那么，对于 $F[x]$ 中的多项式 $f(x)$ 和非零多项式 $g(x)$，显然可以做带余除法
+Among polynomial rings over integral domains, the ones with the simplest properties are of course polynomial rings over fields. In the polynomial ring $F[x]$ over a field $F$, coefficients can be divided, so we can define division with remainder. Let the norm of a nonzero polynomial $f(x)$ be $N(f(x))=\deg f(x)$. Then for a polynomial $f(x)$ and a nonzero polynomial $g(x)$ in $F[x]$, we can clearly divide with remainder:
 
 $$
 f(x)=g(x)q(x)+r(x),
 $$
 
-其中，$q(x),r(x)\in F[x]$，且 $r(x)=0$ 或 $\deg r(x)<\deg g(x)$．这说明，域上的多项式环都是欧几里得整环．
+where $q(x),r(x)\in F[x]$, and $r(x)=0$ or $\deg r(x)<\deg g(x)$. This shows that polynomial rings over fields are Euclidean domains.
 
-???+ note "定理"
-    域 $F$ 上的多项式环 $F[x]$ 是欧几里得整环，也是主理想整环，也是唯一分解整环．
+???+ note "Theorem"
+    The polynomial ring $F[x]$ over a field $F$ is a Euclidean domain, a principal ideal domain, and a unique factorization domain.
 
-算法竞赛中，由于计算精度原因，常常考虑的是多项式环 $\mathbf F_p[x]=(\mathbf Z/p\mathbf Z)[x]$，此时的模数 $p$ 要求是质数．这样的环容许辗转相除法等操作．但是，任意模数 $n$ 对应的多项式环 $(\mathbf Z/n\mathbf Z)[x]$ 甚至都不是整环．
+In competitive programming, because of precision issues in computation, we usually work with the polynomial ring $\mathbf F_p[x]=(\mathbf Z/p\mathbf Z)[x]$, where the modulus $p$ must be prime. Such a ring allows operations like the Euclidean algorithm. However, for an arbitrary modulus $n$, the polynomial ring $(\mathbf Z/n\mathbf Z)[x]$ is not even an integral domain.
 
-成立带余除法意味着多项式的根总对应着它的一个一次因子．
+Having division with remainder means that a root of a polynomial always corresponds to a linear factor of it.
 
-???+ abstract "根"
-    多项式 $f(x)$ 的 **根**（root）指的是使得 $f(\xi)=0$ 成立的元素 $\xi\in F$．
+???+ abstract "Root"
+    A **root** of a polynomial $f(x)$ is an element $\xi\in F$ such that $f(\xi)=0$.
 
-???+ note "定理"
-    对于域 $F$ 上的多项式 $f(x)$ 和域中的元素 $\xi\in F$，那么 $\xi$ 是 $f(x)$ 的根，当且仅当 $f(x)$ 有一次因子 $(x-\xi)$．
+???+ note "Theorem"
+    For a polynomial $f(x)$ over a field $F$ and an element $\xi\in F$, $\xi$ is a root of $f(x)$ if and only if $f(x)$ has the linear factor $(x-\xi)$.
 
-??? note "证明"
-    带余除法说明存在 $q(x),r(x)$，成立 $f(x)=q(x)(x-\xi)+r(x)$ 且 $\deg r(x)<\deg(x-\xi)=1$．因而，$r(x)$ 是常数多项式或者零多项式，令 $r(x)=c$，则必然有 $f(x)=q(x)(x-\xi)+c$．代入 $x=\xi$，故而有 $0=f(\xi)=c$，即 $f(x)=q(x)(x-\xi)$．
+??? note "Proof"
+    Division with remainder gives $q(x),r(x)$ with $f(x)=q(x)(x-\xi)+r(x)$ and $\deg r(x)<\deg(x-\xi)=1$. So $r(x)$ is a constant polynomial or the zero polynomial. Let $r(x)=c$; then $f(x)=q(x)(x-\xi)+c$. Substituting $x=\xi$ gives $0=f(\xi)=c$, that is, $f(x)=q(x)(x-\xi)$.
 
-根的概念可以推广到重根的情形．
+The concept of a root can be extended to multiple roots.
 
-???+ abstract "重根"
-    如果多项式 $f(x)$ 有因子 $(x-\xi)^k$，且 $(x-\xi)^{k+1}$ 不能整除 $f(x)$，则称 $\xi$ 是 $f(x)$ 的 **$k$ 重根**（root of multiplicity $k$）．如果 $k>1$，则根 $\xi$ 称为 $f(x)$ 的 **重根**（multiple root）；如果 $k=1$，则根 $\xi$ 称为 $f(x)$ 的 **单根**（simple root）．
+???+ abstract "Multiple root"
+    If a polynomial $f(x)$ has the factor $(x-\xi)^k$ and $(x-\xi)^{k+1}$ does not divide $f(x)$, then $\xi$ is called a **root of multiplicity $k$** of $f(x)$. If $k>1$, the root $\xi$ is called a **multiple root** of $f(x)$; if $k=1$, the root $\xi$ is called a **simple root** of $f(x)$.
 
-???+ note "定理"
-    如果域 $F$ 上的多项式 $f(x)$ 有（可能重复的）根 $\xi_1,\cdots,\xi_k$，那么，它必然有因子 $(x-\xi_1)\cdots(x-\xi_k)$．进而，域 $F$ 上的多项式 $f(x)$ 次数为 $n$，那么它至多有 $n$ 个根（计重数）．
+???+ note "Theorem"
+    If a polynomial $f(x)$ over a field $F$ has the (possibly repeated) roots $\xi_1,\cdots,\xi_k$, then it must have the factor $(x-\xi_1)\cdots(x-\xi_k)$. Consequently, if a polynomial $f(x)$ over a field $F$ has degree $n$, it has at most $n$ roots (counted with multiplicity).
 
-??? note "证明"
-    注意到 $F[x]$ 是唯一分解整环即可．
+??? note "Proof"
+    It is enough to note that $F[x]$ is a unique factorization domain.
 
-虽然域上的多项式成立唯一分解定理，但是并没有一般的办法判断给定的多项式是否可约．次数比较小的情形相对容易．比如说，所有的一次多项式都是不可约多项式．在特殊的域上，所有的不可约多项式都是一次多项式．这样的域称为 [代数闭域](./field-theory.md#代数闭域)．在这样的域上，所有次数大于零的多项式都有根，因而任何大于一次的多项式都可以进一步分解．一个这样的例子是复数域 $\mathbf C$．而实数域 $\mathbf R$ 上，则存在二次的不可约多项式；有理数域 $\mathbf Q$ 上，不可约多项式的结构就更为复杂．[域论](./field-theory.md) 页面对于有理数域和有限域上的多项式有更多的讨论．
+Although unique factorization holds for polynomials over a field, there is no general way to decide whether a given polynomial is reducible. Low-degree cases are relatively easy. For example, every polynomial of degree one is irreducible. Over special fields, all irreducible polynomials have degree one. Such fields are called [algebraically closed fields](./field-theory.md#代数闭域). Over such a field, every polynomial of positive degree has a root, so any polynomial of degree greater than one can be factored further. One example is the field of complex numbers $\mathbf C$. Over the field of real numbers $\mathbf R$, there are irreducible polynomials of degree two; over the field of rational numbers $\mathbf Q$, the structure of irreducible polynomials is even more complicated. The [field theory](./field-theory.md) page has more discussion of polynomials over the rational numbers and over finite fields.
 
-以上结论都是关于域上的多项式．更一般的整环上的多项式，常常可以转化为这样的情形．
+The results above are all about polynomials over fields. Polynomials over more general integral domains can often be reduced to this case.
 
-下面考虑唯一分解整环 $R$ 上的多项式环 $R[x]$．直接在 $R[x]$ 中做运算，因为系数时常不能做除法，很多运算受到限制．不妨考虑将 $R$ 扩充到它的分式域 $F$，进而考虑将 $R[x]$ 中的多项式 $f(x)$ 在 $F[x]$ 中做分解．已知 $F[x]$ 是唯一分解整环，那就可以通过 $F[x]$ 中 $f(x)$ 的分解反推出 $R[x]$ 中的分解．幸而这样的想法总是可行的．
+Next, consider the polynomial ring $R[x]$ over a unique factorization domain $R$. Working directly in $R[x]$, many operations are limited because coefficients often cannot be divided. Instead, we can extend $R$ to its field of fractions $F$, and factor a polynomial $f(x)$ of $R[x]$ in $F[x]$. Since $F[x]$ is a unique factorization domain, we can then work back from the factorization of $f(x)$ in $F[x]$ to a factorization in $R[x]$. Fortunately, this idea always works.
 
-???+ note "Gauss 引理"
-    对于唯一分解整环 $R$ 和它的分式域 $F$，如果 $f(x)\in R[x]$，那么如果在 $F[x]$ 中 $f(x)=A(x)B(x)$，那么必然存在 $s,t\in F$，使得 $a(x)=sA(x)\in R[x]$，$b(x)=tB(x)\in R[x]$，且 $f(x)=a(x)b(x)$．因此，如果次数大于零的 $f(x)$ 在 $R[x]$ 中不可约，那么它在 $F[x]$ 中不可约．
+???+ note "Gauss's lemma"
+    Let $R$ be a unique factorization domain with field of fractions $F$, and let $f(x)\in R[x]$. If $f(x)=A(x)B(x)$ in $F[x]$, then there must exist $s,t\in F$ such that $a(x)=sA(x)\in R[x]$, $b(x)=tB(x)\in R[x]$, and $f(x)=a(x)b(x)$. Therefore, if $f(x)$ of positive degree is irreducible in $R[x]$, then it is irreducible in $F[x]$.
 
-??? note "证明"
-    设 $f(x)\in R[x]$ 在 $F[x]$ 中可约，且 $f(x)=A(x)B(x)$．设 $r_a$ 和 $r_b$ 分别为 $A(x)$ 和 $B(x)$ 中所有系数的分母的最小公倍数，则有 $\tilde a(x)=r_aA(x)$ 和 $\tilde b(x)=r_bB(x)$ 都是 $R$ 上多项式．令 $r=r_ar_b$，就有 $rf(x)=\tilde a(x)\tilde b(x)$．如果 $r$ 是 $R$ 中可逆元，则可以取分解 $f(x)=(r^{-1}\tilde a(x))\tilde b(x)$，显然满足引理的要求．
-    
-    否则，如果 $r$ 中存在不可约元因子 $p$，这里要证明，等式两侧可以消去这个因子，且保证所有系数仍旧在整环 $R$ 中．注意到 $p$ 必然也是素元，因而 $(p)$ 是素理想．等式左右两边同时模去 $p$，则得到 $(R/(p))[x]$ 上的多项式 $0=\bar a(x)\bar b(x)$，这里，$\bar a$ 和 $\bar b$ 是取模后的多项式．因为 $R/(p)$ 是整环，$(R/(p))[x]$ 也是整环，故而可以设 $\bar a(x)=0$．这说明，$p$ 可以整除 $\tilde a(x)$ 的全部系数．因而，等式两侧可以直接消去因子 $p$．
-    
-    根据唯一分解整环的定义，$r$ 至多有有限个这样的不可约元因子，故而有限次消去它们后就转化为了 $r$ 是 $R$ 中可逆元的情形．引理就得以证明．
+??? note "Proof"
+    Suppose $f(x)\in R[x]$ is reducible in $F[x]$, with $f(x)=A(x)B(x)$. Let $r_a$ and $r_b$ be the least common multiples of the denominators of all coefficients of $A(x)$ and $B(x)$ respectively. Then $\tilde a(x)=r_aA(x)$ and $\tilde b(x)=r_bB(x)$ are both polynomials over $R$. Let $r=r_ar_b$; then $rf(x)=\tilde a(x)\tilde b(x)$. If $r$ is a unit of $R$, we can take the factorization $f(x)=(r^{-1}\tilde a(x))\tilde b(x)$, which clearly satisfies the lemma.
 
-???+ note "推论"
-    对于唯一分解整环 $R$ 和它的分式域 $F$，如果 $f(x)\in R[x]$ 且 $f(x)$ 的所有系数互素（即最大公因子是 $R$ 中幺元），则 $f(x)$ 在 $R[x]$ 中不可约，当且仅当 $f(x)$ 在 $F[x]$ 中不可约．
+    Otherwise, if $r$ has an irreducible factor $p$, we want to show that this factor can be cancelled from both sides while keeping all coefficients in the integral domain $R$. Note that $p$ must also be prime, so $(p)$ is a prime ideal. Taking both sides of the equation modulo $p$ gives the polynomial equation $0=\bar a(x)\bar b(x)$ over $(R/(p))[x]$, where $\bar a$ and $\bar b$ are the polynomials reduced modulo $p$. Since $R/(p)$ is an integral domain, $(R/(p))[x]$ is also an integral domain, so we may assume $\bar a(x)=0$. This shows that $p$ divides all coefficients of $\tilde a(x)$. So the factor $p$ can be cancelled directly from both sides.
 
-也就是说，整系数多项式环 $\mathbf Z[x]$ 中的不可约元都是 $\mathbf Q[x]$ 中的不可约元．判断整系数多项式是否不可约的一个有效方法是 Eisenstein 判别法．根据 Gauss 引理，它也提供了判断有理系数多项式是否不可约的方法．
+    By the definition of a unique factorization domain, $r$ has at most finitely many such irreducible factors, so after cancelling them finitely many times we reach the case where $r$ is a unit of $R$. This proves the lemma.
 
-???+ note "Eisenstein 判别法"
-    设 $n$ 次整系数多项式 $f(x)=a_0+a_1x+\cdots+a_{n-1}x^{n-1}+a_nx^n$，如果存在质数 $p$ 满足 $p\mid a_i$ 对所有 $i=0,1,\cdots,n-1$ 都成立，且 $p$ 不能整除 $a_n$，$p^2$ 不能整除 $a_0$，则多项式 $f(x)$ 在有理数域 $\mathbf Q$ 上不可约．如果 $\gcd(a_0,a_1,\cdots,a_n)=1$，则多项式 $f(x)$ 也在整数环 $\mathbf Z$ 上不可约．
+???+ note "Corollary"
+    Let $R$ be a unique factorization domain with field of fractions $F$. If $f(x)\in R[x]$ and the coefficients of $f(x)$ are coprime (that is, their greatest common divisor is the unity of $R$), then $f(x)$ is irreducible in $R[x]$ if and only if $f(x)$ is irreducible in $F[x]$.
 
-??? note "证明"
-    利用 Gauss 引理可知，如果多项式 $f(x)$ 在有理数域 $\mathbf Q$ 上可约，则它也在整数环 $\mathbf Z$ 上可约．设 $f(x)=b(x)c(x)$ 是它在 $\mathbf Z[x]$ 中的分解．将等式的左右两边对质数 $p$ 取模，则得到 $\mathbf F_p[x]$ 中的分解，$\overline{f}(x)=\overline{b}(x)\overline{c}(x)$．但是定理的条件说明，$\overline{f}(x)=x^n$，则必然存在整数 $m$ 使得 $\overline b(x)=x^m$ 且 $\overline c(x)=x^{n-m}$，其中，$0<m<n$．故而，因子 $b(x)$ 和 $c(x)$ 的常数项 $b_0$ 和 $c_0$ 都是 $p$ 的倍数．故而，$f(x)$ 的常数项 $a_0=b_0c_0$ 必然是 $p^2$ 的倍数．这与所给条件相矛盾．
+In other words, the irreducible elements of the integer polynomial ring $\mathbf Z[x]$ are all irreducible elements of $\mathbf Q[x]$. An effective way to decide whether an integer polynomial is irreducible is Eisenstein's criterion. By Gauss's lemma, it also gives a way to decide whether a polynomial with rational coefficients is irreducible.
 
-??? example "例子"
-    1.  多项式 $x^3-2$ 在 $\mathbf Q[x]$ 中不可约．对 $p=2$ 应用 Eisenstein 判别法即可．
-    2.  多项式 $x^4+1$ 在 $\mathbf Q[x]$ 中不可约．否则，$(x+1)^4+1=x^4+4x^3+6x^2+4x+2$ 也可约．但是，对 $p=2$ 应用 Eisenstein 判别法可知，后者并不可约．
+???+ note "Eisenstein's criterion"
+    Let $f(x)=a_0+a_1x+\cdots+a_{n-1}x^{n-1}+a_nx^n$ be a polynomial of degree $n$ with integer coefficients. If there is a prime $p$ such that $p\mid a_i$ for all $i=0,1,\cdots,n-1$, $p$ does not divide $a_n$, and $p^2$ does not divide $a_0$, then $f(x)$ is irreducible over the field of rational numbers $\mathbf Q$. If moreover $\gcd(a_0,a_1,\cdots,a_n)=1$, then $f(x)$ is also irreducible over the ring of integers $\mathbf Z$.
 
-对于唯一分解整环 $R$，因为相应的分式域 $F$ 上的多项式环是唯一分解整环，而 Gauss 引理说明，分式域 $F$ 上的多项式和原来的整环 $R$ 上的多项式的分解是相互对应的，所以 $R[x]$ 也是唯一分解整环．因此，有如下定理：
+??? note "Proof"
+    By Gauss's lemma, if $f(x)$ is reducible over the field of rational numbers $\mathbf Q$, then it is also reducible over the ring of integers $\mathbf Z$. Let $f(x)=b(x)c(x)$ be its factorization in $\mathbf Z[x]$. Taking both sides modulo the prime $p$ gives a factorization in $\mathbf F_p[x]$: $\overline{f}(x)=\overline{b}(x)\overline{c}(x)$. But the conditions of the theorem say that $\overline{f}(x)=x^n$, so there must be an integer $m$ with $\overline b(x)=x^m$ and $\overline c(x)=x^{n-m}$, where $0<m<n$. So the constant terms $b_0$ and $c_0$ of the factors $b(x)$ and $c(x)$ are both multiples of $p$. Then the constant term $a_0=b_0c_0$ of $f(x)$ must be a multiple of $p^2$. This contradicts the given conditions.
 
-???+ note "定理"
-    多项式环 $R[x]$ 是唯一分解整环，当且仅当 $R$ 是唯一分解整环．
+??? example "Examples"
+    1.  The polynomial $x^3-2$ is irreducible in $\mathbf Q[x]$. Just apply Eisenstein's criterion with $p=2$.
+    2.  The polynomial $x^4+1$ is irreducible in $\mathbf Q[x]$. Otherwise, $(x+1)^4+1=x^4+4x^3+6x^2+4x+2$ would also be reducible. But applying Eisenstein's criterion with $p=2$ shows that the latter is irreducible.
 
-这里的 $\mathbf Z[x]$ 提供了唯一分解整环不一定是主理想整环的例子．例如，在 $\mathbf Z[x]$ 中，$(2,x)$ 并不是主理想．
+For a unique factorization domain $R$, the polynomial ring over its field of fractions $F$ is a unique factorization domain, and Gauss's lemma shows that factorizations of polynomials over $F$ correspond to factorizations of polynomials over the original integral domain $R$. So $R[x]$ is also a unique factorization domain. This gives the following theorem:
 
-有很多方法可以将多项式环扩充到更大的集合．比如说，对于整环上的多项式环 $R[x]$，可以将它扩充到它的分式域，记作 $R(x)$．这个分式域常称作 **有理分式域**（field of rational fractions），其中的元素的基本形式为 $\dfrac{f(x)}{g(x)}$，这里，$f(x)$ 和 $g(x)$ 都是多项式．
+???+ note "Theorem"
+    The polynomial ring $R[x]$ is a unique factorization domain if and only if $R$ is a unique factorization domain.
 
-### 多元多项式环
+Here $\mathbf Z[x]$ gives an example showing that a unique factorization domain is not necessarily a principal ideal domain. For example, in $\mathbf Z[x]$, $(2,x)$ is not a principal ideal.
 
-多项式环可以推广到含有多个不定元的情形．对于交换幺环 $R$，可以定义 $R$ 上的多项式环，即一元多项式环 $R[x]$．进而，可以定义 $R[x]$ 上的多项式环 $R[x][y]$，它可以看作是 $R$ 上的二元多项式环 $R[x,y]$．由此，可以归纳地定义 $R$ 上的 $k$ 元多项式环 $R[x_1,\cdots,x_k]$．当 $R$ 是整环的时候，它上面的任意多元多项式环都是整环；类似地，唯一分解整环的性质也可以传递到任意多元多项式环．
+There are many ways to extend a polynomial ring to a larger set. For example, the polynomial ring $R[x]$ over an integral domain can be extended to its field of fractions, written $R(x)$. This field of fractions is often called the **field of rational fractions**; its elements have the basic form $\dfrac{f(x)}{g(x)}$, where $f(x)$ and $g(x)$ are both polynomials.
 
-### 形式幂级数环
+### Multivariate polynomial rings
 
-也可以考虑形式和中可以有任意多项系数不为零的情形．交换幺环 $R$ 上的 **形式幂级数**（formal power series）定义为
+Polynomial rings can be generalized to the case of several indeterminates. For a commutative ring with unity $R$, we can define the polynomial ring over $R$, namely the univariate polynomial ring $R[x]$. Then we can define the polynomial ring $R[x][y]$ over $R[x]$, which can be seen as the bivariate polynomial ring $R[x,y]$ over $R$. In this way, we can inductively define the $k$-variate polynomial ring $R[x_1,\cdots,x_k]$ over $R$. When $R$ is an integral domain, every multivariate polynomial ring over it is an integral domain; similarly, the property of being a unique factorization domain also carries over to any multivariate polynomial ring.
+
+### Formal power series rings
+
+We can also allow formal sums with arbitrarily many nonzero coefficients. A **formal power series** over a commutative ring with unity $R$ is defined as
 
 $$
 \sum_{k=0}^\infty a_kx^k=a_0+a_1x+a_2x^2+\cdots.
 $$
 
-利用与多项式环 $R[x]$ 一致的方式可以定义幂级数间的加法和乘法运算．并且，此时的形式幂级数也构成环，记作 $R[[x]]$．这里的形式幂级数并不需要考虑其敛散性，因为实际上每个形式幂级数只是它的系数序列，而并没有赋予更多的拓扑结构．
+Addition and multiplication of power series can be defined in the same way as for the polynomial ring $R[x]$. Formal power series then also form a ring, written $R[[x]]$. We don't need to think about convergence of these formal power series, because each formal power series is really just its sequence of coefficients, with no extra topological structure.
 
-形式幂级数环的结构很有趣．整环上的多项式环中，可逆元只能是常数．但是，在形式幂级数环中，却可以有
+The structure of formal power series rings is interesting. In a polynomial ring over an integral domain, the only units are constants. But in a formal power series ring, we can have
 
 $$
 (1-x)^{-1}=\sum_{k=0}^\infty x^k=1+x+x^2+\cdots.
 $$
 
-这个现象是普遍的．只要一个形式幂级数的常数项 $a_0$ 是 $R$ 中的可逆元，就一定有 $\sum_{k=0}^\infty a_kx^k$ 也是可逆的．这是因为如果设
+This happens in general. As long as the constant term $a_0$ of a formal power series is a unit in $R$, $\sum_{k=0}^\infty a_kx^k$ is also invertible. This is because if we set
 
 $$
 \left(\sum_{k=0}^\infty a_kx^k\right)\left(\sum_{k=0}^\infty b_kx^k\right)=1,
 $$
 
-那么，列出系数需要满足的方程组，可以递归地求得 $b_k$ 的表达式，其中只涉及到 $a_0$ 的逆．
+then by writing down the system of equations the coefficients must satisfy, we can recursively find an expression for each $b_k$, which only involves the inverse of $a_0$.
 
-在形式幂级数环上可以定义各种运算，诸如取逆、除法、复合逆、形式导数、初等函数等，详见 [多项式技术简介](../poly/intro.md)．
+Many operations can be defined on formal power series rings, such as inversion, division, compositional inverse, formal derivative and elementary functions. See [Introduction to polynomial techniques](../poly/intro.md) for details.
 
-### 形式洛朗级数环
+### Formal Laurent series rings
 
-形式幂级数环还可以进一步拓展，使得它允许负次数的项．交换幺环 $R$ 上的 **形式洛朗级数**（formal Laurent series）定义为
+Formal power series rings can be extended further to allow terms of negative degree. A **formal Laurent series** over a commutative ring with unity $R$ is defined as
 
 $$
 \sum_{k=N}^\infty a_kx^k,
 $$
 
-这里，$N\in\mathbf Z$．因此，形式洛朗级数可以有有限多个负次数的项．将之前的加法和乘法拓展到形式洛朗级数上，就能得到形式洛朗级数环，记作 $R((x))$．如果 $F$ 是域，那么 $F((x))$ 也是域．
+where $N\in\mathbf Z$. So a formal Laurent series can have finitely many terms of negative degree. Extending the earlier addition and multiplication to formal Laurent series gives the formal Laurent series ring, written $R((x))$. If $F$ is a field, then $F((x))$ is also a field.
 
-形式洛朗级数环在 [Lagrange 反演](../poly/lagrange-inversion.md) 中有应用．
+Formal Laurent series rings are used in [Lagrange inversion](../poly/lagrange-inversion.md).
 
-## 中国剩余定理
+## Chinese remainder theorem
 
-相关阅读：[中国剩余定理](../number-theory/crt.md)
+Related reading: [Chinese remainder theorem](../number-theory/crt.md)
 
-在数论中，中国剩余定理常用来求解数论方程组．对于一般的交换幺环，同样可以建立中国剩余定理．每个同余方程都相当于指定了未知元在某个商环里的像，那么，交换幺环中的中国剩余定理就相当于通过这些商环里的像确定环中的元素．
+In number theory, the Chinese remainder theorem is commonly used to solve systems of congruences. The Chinese remainder theorem can also be established for general commutative rings with unity. Each congruence amounts to specifying the image of the unknown in some quotient ring, so the Chinese remainder theorem in a commutative ring with unity amounts to determining an element of the ring from its images in these quotient rings.
 
-这个讨论可以转化为形式语言．对于非零交换幺环 $R$ 和它的理想 $I_1,\cdots,I_n$，考虑环同态 $\varphi:R\rightarrow R/I_1\times \cdots\times R/I_n$，它将 $r$ 映射至 $(r+I_1,\cdots,r+I_n)$．其中，$r+I_i$ 是陪集，而 $\times$ 表示环的直积：
+This discussion can be put in formal language. For a nonzero commutative ring with unity $R$ and ideals $I_1,\cdots,I_n$, consider the ring homomorphism $\varphi:R\rightarrow R/I_1\times \cdots\times R/I_n$ that maps $r$ to $(r+I_1,\cdots,r+I_n)$. Here $r+I_i$ is a coset, and $\times$ denotes the direct product of rings:
 
-???+ abstract "直积"
-    对于环 $R_1$ 和 $R_2$，它们的加法群的直积 $R_1\times R_2$ 上可以定义乘法为各个分量分别相乘，则 $R_1\times R_2$ 就成为环，称为环 $R_1$ 和 $R_2$ 的 **直积**（direct product），仍记作 $R_1\times R_2$．
+???+ abstract "Direct product"
+    For rings $R_1$ and $R_2$, we can define multiplication on the direct product $R_1\times R_2$ of their additive groups by multiplying componentwise. Then $R_1\times R_2$ becomes a ring, called the **direct product** of $R_1$ and $R_2$, still written $R_1\times R_2$.
 
-同态 $\varphi$ 的核是 $\ker\varphi=I_1\cap\cdots\cap I_n$．中国剩余定理要回答的问题就是这样的映射在什么条件下是满射．
+The kernel of the homomorphism $\varphi$ is $\ker\varphi=I_1\cap\cdots\cap I_n$. The question the Chinese remainder theorem answers is: under what conditions is this map surjective?
 
-在数论的情形下，定理的成立需要这些模数互质．这个条件可以推广到环论的情形．
+In number theory, the theorem requires the moduli to be pairwise coprime. This condition can be generalized to ring theory.
 
-???+ abstract "互素"
-    设环 $R$ 有理想 $I$ 和 $J$，如果 $I+J=R$，则称 $I$ 和 $J$  **互素**（comaximal）．
+???+ abstract "Coprime ideals"
+    Let $R$ be a ring with ideals $I$ and $J$. If $I+J=R$, then $I$ and $J$ are called **coprime** (comaximal).
 
-对于幺环的情形，如果考虑主理想 $(a)$ 和 $(b)$，这个条件就相当于存在 $x,y\in R$ 使得 $ax+by=1$，这类似于整数互素时的裴蜀定理．利用这个定义，可以完全仿照整数环的情形，建立交换幺环上的 **中国剩余定理**（Chinese remainder theorem）．
+For rings with unity, if we consider principal ideals $(a)$ and $(b)$, this condition is equivalent to the existence of $x,y\in R$ with $ax+by=1$, which is similar to Bézout's theorem for coprime integers. With this definition, we can establish the **Chinese remainder theorem** for commutative rings with unity, exactly imitating the case of the ring of integers.
 
-???+ note "中国剩余定理"
-    设非零交换幺环 $R$ 有理想 $I_1,\cdots,I_n$．如果它们两两互素，那么上述定义的环同态 $\varphi$ 是满射，它的核等于这些理想的乘积 $\ker\varphi=I_1\cap\cdots\cap I_n=I_1\cdots I_n$，因此，
-    
+???+ note "Chinese remainder theorem"
+    Let $R$ be a nonzero commutative ring with unity with ideals $I_1,\cdots,I_n$. If they are pairwise coprime, then the ring homomorphism $\varphi$ defined above is surjective, and its kernel equals the product of these ideals, $\ker\varphi=I_1\cap\cdots\cap I_n=I_1\cdots I_n$. Therefore,
+
     $$
     R/(I_1\cdots I_n)=R/(I_1\cap\cdots\cap I_n)\cong R/I_1\times\cdots\times R/I_n.
     $$
 
-??? note "证明"
-    定理内容很丰富，但仍需证明的结论只有两个，即 $\varphi$ 是满射和 $I_1\cap\cdots\cap I_n=I_1\cdots I_n$．关键在于利用好互素的条件．
-    
-    首先证明 $n=2$ 的情形．因为理想 $I_1$ 和 $I_2$ 互素，即 $I_1+I_2=R$，所以，$R$ 中幺元 $1$ 可以写成 $a_1+a_2$ 的形式，其中，$a_i\in I_i$．因为 $a_1\in I_1$ 且 $a_1=1-a_2\in 1+I_2$，所以 $\varphi(a_1)=(I_1,1+I_2)$；同理，$\varphi(a_2)=(1+I_1,I_2)$．因而，$(\varphi(a_2),\varphi(a_1))$ 起到了类似向量空间中的「基」的作用．故而，对任意像 $(r_1+I_1,r_2+I_2)$，都能找到同态 $\varphi$ 下的原像 $r_1a_2+r_2a_1$．这说明 $\varphi$ 是满射．
-    
-    还需要证明 $I_1\cap I_2=I_1I_2$．对于一般的环总有 $I_1I_2\subseteq I_1\cap I_2$，关键在于其反面．对于任意 $r\in I_1\cap I_2$，都有 $r=r(a_1+a_2)=ra_1+ra_2\in I_1I_2$．故而也成立 $I_1\cap I_2\subseteq I_1I_2$．所以，所求得证．
-    
-    对于 $n>2$ 的情形，需要使用数学归纳法．归纳步骤的关键在于证明对于两两互素的理想 $I_1,\cdots,I_n$ 总有理想 $I_1$ 和 $I_2\cdots I_n$ 互素．由于 $I_1$ 与 $I_2,\cdots,I_n$ 都互素，故而对于每个 $i=2,\cdots,n$ 都存在 $a_i\in I_1$ 和 $b_i\in I_i$ 使得 $1=a_i+b_i$ 成立．因而，有 $1=(a_2+b_2)\cdots(a_n+b_n)$ 成立．所以，$1\in (b_2\cdots b_n)+I_1\subseteq I_1+(I_2\cdots I_n)$．这说明，理想 $I_1$ 和 $I_2\cdots I_n$ 互素．
+??? note "Proof"
+    The theorem says a lot, but only two claims still need proof: $\varphi$ is surjective, and $I_1\cap\cdots\cap I_n=I_1\cdots I_n$. The key is to make good use of the coprimality condition.
 
-### 应用：Lagrange 插值公式
+    First, prove the case $n=2$. Since the ideals $I_1$ and $I_2$ are coprime, that is, $I_1+I_2=R$, the unity $1$ of $R$ can be written as $a_1+a_2$ with $a_i\in I_i$. Since $a_1\in I_1$ and $a_1=1-a_2\in 1+I_2$, we have $\varphi(a_1)=(I_1,1+I_2)$; similarly, $\varphi(a_2)=(1+I_1,I_2)$. So $(\varphi(a_2),\varphi(a_1))$ plays a role similar to a "basis" in a vector space. Therefore, for any image $(r_1+I_1,r_2+I_2)$, we can find its preimage $r_1a_2+r_2a_1$ under $\varphi$. This shows that $\varphi$ is surjective.
 
-相关阅读：[Lagrange 插值](../numerical/interp.md#lagrange-插值法)、[多项式快速插值](../poly/multipoint-eval-interpolation.md#多项式的快速插值)
+    We still need to prove that $I_1\cap I_2=I_1I_2$. In a general ring, $I_1I_2\subseteq I_1\cap I_2$ always holds; the key is the reverse inclusion. For any $r\in I_1\cap I_2$, we have $r=r(a_1+a_2)=ra_1+ra_2\in I_1I_2$. So $I_1\cap I_2\subseteq I_1I_2$ also holds. This proves the claim.
 
-插值（interpolation）问题是指，给定一系列点值 $\{(x_i,y_i)\}_{i=1}^n$，寻找域 $F$ 上的多项式 $f(x)$ 使其满足 $f(x_i)=y_i$ 对所有 $i=1,\cdots,n$ 都成立．当然假设所有 $x_i$ 互不相同．Lagrange 插值公式给出了这类问题的通解．
+    For $n>2$, we use mathematical induction. The key to the induction step is to prove that for pairwise coprime ideals $I_1,\cdots,I_n$, the ideals $I_1$ and $I_2\cdots I_n$ are always coprime. Since $I_1$ is coprime to each of $I_2,\cdots,I_n$, for each $i=2,\cdots,n$ there exist $a_i\in I_1$ and $b_i\in I_i$ with $1=a_i+b_i$. So $1=(a_2+b_2)\cdots(a_n+b_n)$. Hence $1\in (b_2\cdots b_n)+I_1\subseteq I_1+(I_2\cdots I_n)$. This shows that the ideals $I_1$ and $I_2\cdots I_n$ are coprime.
 
-对于域 $F$ 上的多项式 $f(x)$，条件 $f(x_i)=y_i$ 等价于 $x_i$ 是多项式 $f(x)-y_i$ 的一个根，因而等价于 $(x-x_i)\mid(f(x)-y_i)$，也就是 $f(x)\equiv y_i\pmod{x-x_i}$．所以，插值问题就等价于求解同余方程组
+### Application: Lagrange interpolation formula
+
+Related reading: [Lagrange interpolation](../numerical/interp.md#lagrange-插值法), [Fast polynomial interpolation](../poly/multipoint-eval-interpolation.md#多项式的快速插值)
+
+The interpolation problem is: given a set of point values $\{(x_i,y_i)\}_{i=1}^n$, find a polynomial $f(x)$ over a field $F$ such that $f(x_i)=y_i$ for all $i=1,\cdots,n$. Of course, we assume all $x_i$ are distinct. The Lagrange interpolation formula gives the general solution to this kind of problem.
+
+For a polynomial $f(x)$ over a field $F$, the condition $f(x_i)=y_i$ is equivalent to $x_i$ being a root of the polynomial $f(x)-y_i$, which is equivalent to $(x-x_i)\mid(f(x)-y_i)$, that is, $f(x)\equiv y_i\pmod{x-x_i}$. So the interpolation problem is equivalent to solving the system of congruences
 
 $$
 \begin{cases}
@@ -699,116 +699,116 @@ f(x)\equiv y_n&\pmod{x-x_n}.
 \end{cases}
 $$
 
-这些一次多项式 $\{x-x_i\}_{i=1}^n$ 两两互质．根据中国剩余定理可知，问题的解应当具有形式
+The linear polynomials $\{x-x_i\}_{i=1}^n$ are pairwise coprime. By the Chinese remainder theorem, the solution should have the form
 
 $$
 f(x)=\sum_{i=1}^ny_iM_i(x),
 $$
 
-这里，$M_i(x)=m_i(x)\prod_{j\neq i}(x-x_j)$ 且 $M_i(x)\equiv 1\pmod{x-x_i}$．根据前文推得的等价性可知，这等价于 $M_i(x_i)=1$，亦即
+where $M_i(x)=m_i(x)\prod_{j\neq i}(x-x_j)$ and $M_i(x)\equiv 1\pmod{x-x_i}$. By the equivalence derived above, this is equivalent to $M_i(x_i)=1$, that is,
 
 $$
 m_i(x_i)\prod_{j\neq i}(x_i-x_j) = 1.
 $$
 
-不妨取 $m_i(x)$ 是常数多项式，即
+We can take $m_i(x)$ to be a constant polynomial, namely
 
 $$
 m_i(x) = \frac{1}{\prod_{j\neq i}(x_i-x_j)}.
 $$
 
-由此，就得到 Lagrange 插值公式
+This gives the Lagrange interpolation formula
 
 $$
 f(x)=\sum_{i=1}^ny_i\frac{\prod_{j\neq i}(x-x_j)}{\prod_{j\neq i}(x_i-x_j)}.
 $$
 
-一般地，将这种方法推广，还可以导出 [Hermite 插值公式](https://en.wikipedia.org/wiki/Hermite_interpolation)，它允许限制多项式在各点处的若干项导数值．
+In general, extending this method also leads to the [Hermite interpolation formula](https://en.wikipedia.org/wiki/Hermite_interpolation), which also allows fixing the values of several derivatives of the polynomial at each point.
 
-### 应用：整数同余类的乘法群
+### Application: the multiplicative group of integers modulo n
 
-相关阅读：[原根](../number-theory/primitive-root.md)、[有限生成 Abel 群基本定理](./group-theory.md#分类定理)
+Related reading: [Primitive roots](../number-theory/primitive-root.md), [Fundamental theorem of finitely generated Abelian groups](./group-theory.md#分类定理)
 
-作为中国剩余定理和群论相关内容的一个应用，这里讨论整数模 $n$ 乘法群的结构．本节略去同余类的横线记号．
+As an application of the Chinese remainder theorem and group theory, here we discuss the structure of the multiplicative group of integers modulo $n$. In this section, we drop the bar notation for residue classes.
 
-**整数模 $n$ 乘法群**（multiplicative group of integers modulo $n$）指的是 $(\mathbf Z/n\mathbf Z)^\times$，即商环 $\mathbf Z/n\mathbf Z$ 中的可逆元的乘法群（也称单位群）．群 $(\mathbf Z/n\mathbf Z)^\times$ 的阶是 $\varphi(n)$，因为存在逆元的充要条件就是与 $n$ 互质．这里的 $\varphi(n)$ 是 [欧拉函数](../number-theory/euler-totient.md)．而且，群 $(\mathbf Z/n\mathbf Z)^\times$ 总是 Abel 群．
+The **multiplicative group of integers modulo $n$** is $(\mathbf Z/n\mathbf Z)^\times$, the multiplicative group of the units of the quotient ring $\mathbf Z/n\mathbf Z$ (also called the unit group). The order of $(\mathbf Z/n\mathbf Z)^\times$ is $\varphi(n)$, since an element has an inverse if and only if it is coprime to $n$. Here $\varphi(n)$ is [Euler's totient function](../number-theory/euler-totient.md). Moreover, $(\mathbf Z/n\mathbf Z)^\times$ is always an Abelian group.
 
-根据算术基本定理，模数 $n$ 可以分解为不同的质数的幂的乘积：
+By the fundamental theorem of arithmetic, the modulus $n$ can be factored into a product of powers of distinct primes:
 
 $$
 n=p_1^{\alpha_1}\cdots p_s^{\alpha_s}.
 $$
 
-容易验证，对于整数环的理想，理想互素的条件等价于理想的生成元互素．所以，应用中国剩余定理可以得到
+It is easy to check that for ideals of the ring of integers, the ideals being coprime is equivalent to their generators being coprime. So applying the Chinese remainder theorem gives
 
 $$
 \mathbf Z/n\mathbf Z\cong\mathbf Z/p_1^{\alpha_1}\mathbf Z\times\cdots\times\mathbf Z/p_s^{\alpha_s}\mathbf Z.
 $$
 
-环的同构意味着相应的乘法结构也同构，所以
+An isomorphism of rings means the corresponding multiplicative structures are also isomorphic, so
 
 $$
 (\mathbf Z/n\mathbf Z)^\times\cong(\mathbf Z/p_1^{\alpha_1}\mathbf Z)^\times\times\cdots\times(\mathbf Z/p_s^{\alpha_s}\mathbf Z)^\times.
 $$
 
-这说明 $\varphi(n)=\varphi(p_1^{\alpha_1})\cdots\varphi(p_s^{\alpha_s})$，即欧拉函数是积性函数．
+This shows that $\varphi(n)=\varphi(p_1^{\alpha_1})\cdots\varphi(p_s^{\alpha_s})$, that is, Euler's totient function is multiplicative.
 
-因此，要研究一般的模数的情形，只要考虑素数幂 $p^k$ 作为模数的情形就可以了．对于素数幂的情形，需要分别考虑 $p=2$ 和 $p$ 为奇素数的两种情形：
+So to study a general modulus, it is enough to consider prime powers $p^k$ as the modulus. For prime powers, we need to consider two cases separately: $p=2$ and $p$ an odd prime:
 
--   对于 $p=2$ 的情形，直接验证可知 $(\mathbf Z/2\mathbf Z)^\times\cong C_1$ 和 $(\mathbf Z/4\mathbf Z)^\times\cong C_2$．对于 $k\ge3$ 的情形，有 $(\mathbf Z/2^k\mathbf Z)^\times\cong C_2\times C_{2^{k-2}}$．
+-   For $p=2$, direct checking shows that $(\mathbf Z/2\mathbf Z)^\times\cong C_1$ and $(\mathbf Z/4\mathbf Z)^\times\cong C_2$. For $k\ge3$, we have $(\mathbf Z/2^k\mathbf Z)^\times\cong C_2\times C_{2^{k-2}}$.
 
-    ??? note "证明"
-        利用二项式定理直接计算可以知道
-        
+    ??? note "Proof"
+        Direct computation with the binomial theorem shows that
+
         $$
         \begin{aligned}
         5^{2^{k-2}}=(1+2^2)^{2^{k-2}}&\equiv 1\pmod {2^k},\\
         5^{2^{k-3}}=(1+2^2)^{2^{k-3}}&\equiv 1+2^{k-1}\pmod {2^k}.
         \end{aligned}
         $$
-        
-        所以，$5$ 是 $(\mathbf Z/2^k\mathbf Z)^\times$ 中的 $2^{k-2}$ 阶元．同时，$-1$ 和 $5^{2^{k-3}}$ 是两个不同的二阶元，所以，$-1\notin\langle 5\rangle$．所以，$\langle-1\rangle$ 和 $\langle 5\rangle$ 交集是平凡的，故而根据群的直积的刻画可知
-        
+
+        So $5$ is an element of order $2^{k-2}$ in $(\mathbf Z/2^k\mathbf Z)^\times$. Also, $-1$ and $5^{2^{k-3}}$ are two different elements of order two, so $-1\notin\langle 5\rangle$. So $\langle-1\rangle$ and $\langle 5\rangle$ have trivial intersection, and by the characterization of direct products of groups,
+
         $$
         (\mathbf Z/2^k\mathbf Z)^\times\cong\langle-1\rangle\times\langle 5\rangle\cong C_2\times C_{2^{k-2}}.
         $$
--   对于 $p$ 为奇素数的情形，可以证明 $(\mathbf Z/p^k\mathbf Z)^\times$ 同构于循环群 $C_{\varphi(p^k)}$．
+-   For $p$ an odd prime, one can prove that $(\mathbf Z/p^k\mathbf Z)^\times$ is isomorphic to the cyclic group $C_{\varphi(p^k)}$.
 
-    ??? note "证明"
-        要证明 $(\mathbf Z/p^k\mathbf Z)^\times$ 是循环群，利用有限 Abel 群基本定理可知，只要证明它的每个 Sylow $q$‑子群都是循环群．首先，对于 Sylow $p$‑子群，直接计算可知
-        
+    ??? note "Proof"
+        To prove that $(\mathbf Z/p^k\mathbf Z)^\times$ is cyclic, by the fundamental theorem of finite Abelian groups it is enough to prove that each of its Sylow $q$‑subgroups is cyclic. First, for the Sylow $p$‑subgroup, direct computation shows that
+
         $$
         \begin{aligned}
         (1+p)^{p^{k-1}} &\equiv 1\pmod{p^k},\\
         (1+p)^{p^{k-2}} &\equiv 1+p^{k-1}\pmod{p^k}.
         \end{aligned}
         $$
-        
-        故而，$(1+p)$ 是 $p^{k-1}$ 阶元．也就是说，$(\mathbf Z/p^k\mathbf Z)^\times$ 的唯一的 Sylow $p$‑子群是循环群 $\langle 1+p\rangle$．
-        
-        对于其它的 Sylow $q$‑子群（$q\neq p$），可以通过群同态将它转化为 $k=1$ 的情形．考虑群同态 $\varphi:(\mathbf Z/p^k\mathbf Z)^\times\rightarrow(\mathbf Z/p\mathbf Z)^\times$，它将陪集 $r+p^k\mathbf Z$ 映射到陪集 $r+p\mathbf Z$．这个映射的核的大小是 $p^{k-1}$，所以，将映射 $\varphi$ 限制在 $(\mathbf Z/p^k\mathbf Z)^\times$ 的 Sylow $q$‑子群（$q\neq p$）上，限制后的映射的核都是平凡的，所以这个 Sylow $q$‑子群同构于映射的像，即 $(\mathbf Z/p\mathbf Z)^\times$ 的 Sylow $q$‑子群．因此，只要证明 $(\mathbf Z/p\mathbf Z)^\times$ 的 Sylow $q$‑子群都是循环群就可以了．
-        
-        最后，证明 $(\mathbf Z/p\mathbf Z)^\times$ 的 Sylow $q$‑子群都是循环群．因为 $(\mathbf Z/p\mathbf Z)^\times$ 是有限 Abel 群，可以将它按照不变因子分解为
-        
+
+        So $(1+p)$ is an element of order $p^{k-1}$. That is, the unique Sylow $p$‑subgroup of $(\mathbf Z/p^k\mathbf Z)^\times$ is the cyclic group $\langle 1+p\rangle$.
+
+        For the other Sylow $q$‑subgroups ($q\neq p$), we can reduce to the case $k=1$ through a group homomorphism. Consider the group homomorphism $\varphi:(\mathbf Z/p^k\mathbf Z)^\times\rightarrow(\mathbf Z/p\mathbf Z)^\times$, which maps the coset $r+p^k\mathbf Z$ to the coset $r+p\mathbf Z$. The kernel of this map has size $p^{k-1}$, so when $\varphi$ is restricted to a Sylow $q$‑subgroup ($q\neq p$) of $(\mathbf Z/p^k\mathbf Z)^\times$, the kernel of the restricted map is trivial. So this Sylow $q$‑subgroup is isomorphic to its image, which is a Sylow $q$‑subgroup of $(\mathbf Z/p\mathbf Z)^\times$. Therefore, it is enough to prove that the Sylow $q$‑subgroups of $(\mathbf Z/p\mathbf Z)^\times$ are all cyclic.
+
+        Finally, we prove that the Sylow $q$‑subgroups of $(\mathbf Z/p\mathbf Z)^\times$ are all cyclic. Since $(\mathbf Z/p\mathbf Z)^\times$ is a finite Abelian group, we can decompose it by invariant factors as
+
         $$
         C_{n_1}\times\cdots\times C_{n_r}.
         $$
-        
-        这里，$n_1\mid n_2\mid \cdots \mid n_r$．所以，每个直积因子中都有 $n_1$ 个元素的阶整除 $n_1$．如果 $r>1$，则必然有严格多于 $n_1$ 个元素满足方程 $x^{n_1}=1$．但是，$\mathbf Z/p\mathbf Z$ 是域，而域上的 $n_1$ 次多项式至多 $n_1$ 个根，所以 $r=1$．也就是说，$(\mathbf Z/p\mathbf Z)^\times\cong C_{p-1}$．
-        
-        这样就证明 $(\mathbf Z/p^k\mathbf Z)^\times\cong C_{p^{k-1}}\times C_{p-1}\cong C_{\varphi(p^{k})}$．
 
-一般的模数的情形的乘法群的结构也随之确定．从现有的结果能够知道整数模 $n$ 乘法群是循环群有且只有模数 $n$ 取
+        Here $n_1\mid n_2\mid \cdots \mid n_r$. So each direct factor has $n_1$ elements whose order divides $n_1$. If $r>1$, then strictly more than $n_1$ elements satisfy the equation $x^{n_1}=1$. But $\mathbf Z/p\mathbf Z$ is a field, and a polynomial of degree $n_1$ over a field has at most $n_1$ roots, so $r=1$. That is, $(\mathbf Z/p\mathbf Z)^\times\cong C_{p-1}$.
+
+        This proves that $(\mathbf Z/p^k\mathbf Z)^\times\cong C_{p^{k-1}}\times C_{p-1}\cong C_{\varphi(p^{k})}$.
+
+The structure of the multiplicative group for a general modulus then follows. From these results, we know that the multiplicative group of integers modulo $n$ is cyclic if and only if the modulus $n$ is
 
 $$
 1,2,4,p^k,2p^k
 $$
 
-时，其中，$p$ 是奇素数；否则，整数模 $n$ 乘法群一定有子群 $C_2\times C_2$，不可能是循环群．当乘法群是循环群的时候，乘法群的生成元就称为该模的 **原根**（primitive root）．因此，这里的定理给出的正是原根存在的充要条件．
+where $p$ is an odd prime; otherwise, the multiplicative group of integers modulo $n$ must contain a subgroup $C_2\times C_2$, so it cannot be cyclic. When the multiplicative group is cyclic, its generators are called **primitive roots** modulo $n$. So the theorem here gives exactly the necessary and sufficient condition for primitive roots to exist.
 
-当然，对乘法群结构的分析蕴含着比原根存在的条件更多的信息．它清楚地反映了乘法群中不同元素的阶．群 $(\mathbf Z/n\mathbf Z)^\times$ 中，满足 $x^k=1$ 的元素 $x$，也就是同余方程 $x^k\equiv 1\pmod n$ 的解，它称为 **模 $n$ 的 $k$ 次单位根**（$k$-th root of unity modulo $n$）；阶恰为 $k$ 的元素，则称为 **模 $n$ 的 $k$ 次本原单位根**（primitive $k$-th root of unity modulo $n$）．利用乘法群的结构，这些单位根的存在性和数目都可以得到精确的计算．最后，群 $(\mathbf Z/n\mathbf Z)^\times$ 中所有元素的阶的最小公倍数，即对所有 $x\in (\mathbf Z/n\mathbf Z)^\times$ 都满足 $x^k=1$ 的最小正整数 $k$，表示为 $n$ 的函数，就是 [Carmichael 函数](../number-theory/primitive-root.md#carmichael-函数)．它的一系列性质，都可以从乘法群的结构中获得．
+Of course, analyzing the structure of the multiplicative group gives more information than just the condition for primitive roots to exist. It clearly shows the orders of different elements of the multiplicative group. In $(\mathbf Z/n\mathbf Z)^\times$, an element $x$ with $x^k=1$, that is, a solution of the congruence $x^k\equiv 1\pmod n$, is called a **$k$-th root of unity modulo $n$**; an element of order exactly $k$ is called a **primitive $k$-th root of unity modulo $n$**. Using the structure of the multiplicative group, the existence and number of these roots of unity can be computed exactly. Finally, the least common multiple of the orders of all elements of $(\mathbf Z/n\mathbf Z)^\times$, that is, the smallest positive integer $k$ with $x^k=1$ for all $x\in (\mathbf Z/n\mathbf Z)^\times$, viewed as a function of $n$, is the [Carmichael function](../number-theory/primitive-root.md#carmichael-函数). Its many properties can all be derived from the structure of the multiplicative group.
 
-## 参考资料和注释
+## References and notes
 
 -   Dummit, D.S. and Foote, R.M. (2004) Abstract Algebra. 3rd Edition, John Wiley & Sons, Inc.
 -   [Quadratic integer - Wikipedia](https://en.wikipedia.org/wiki/Quadratic_integer)
@@ -817,8 +817,8 @@ $$
 
 [^ideal-history]: <https://en.wikipedia.org/wiki/Ideal_(ring_theory)#History>
 
-[^simple-ring]: 和群的情形一致，这样的环叫做 **单环**（simple ring）．交换单环只能是域，非交换单环的情形则复杂得多．
+[^simple-ring]: As with groups, such a ring is called a **simple ring**. A commutative simple ring must be a field; the noncommutative case is much more complicated.
 
-[^gcd-domain]: 最大公因子存在的整环叫做 [最大公因子整环](https://en.wikipedia.org/wiki/GCD_domain)．
+[^gcd-domain]: An integral domain in which greatest common divisors exist is called a [GCD domain](https://en.wikipedia.org/wiki/GCD_domain).
 
-[^ring-theory-history]: 环论的简要历史可以参看 [这里](https://mathshistory.st-andrews.ac.uk/HistTopics/Ring_theory/)．
+[^ring-theory-history]: A brief history of ring theory can be found [here](https://mathshistory.st-andrews.ac.uk/HistTopics/Ring_theory/).
